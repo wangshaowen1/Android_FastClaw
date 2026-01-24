@@ -305,7 +305,7 @@ dependencies {
         exclude group: 'androidx.lifecycle'
         exclude group: 'androidx.recyclerview'
     })
-    implementation 'com.airbnb.android:lottie:6.6.7'
+    implementation 'com.airbnb.android:lottie:6.7.1'
     implementation 'org.ahocorasick:ahocorasick:0.6.3'
     implementation 'io.github.happylishang:antifake:1.7.1'
     //Room
@@ -324,7 +324,7 @@ dependencies {
     implementation libs.blankj.utilcodex
 
     //强烈建议开发者升级到6.16.9及以上版本，提升oaid获取率（必须）
-    implementation 'com.bytedance.applog:RangersAppLog-Lite-cn:6.16.10'
+    implementation 'com.bytedance.applog:RangersAppLog-Lite-cn:6.17.6'
     // attribution_data 需要搭配6.16.10+ SDK使用，优化联调链路，提高联调通过率
     implementation 'com.bytedance.applog:plugin-attributions:1.0.1-rc.2'
     // 商业化转化组件（必须）
@@ -366,7 +366,7 @@ dependencies {
 
     implementation 'com.arthenica:ffmpeg-kit-full-gpl:6.0-2'
     implementation 'org.jcodec:jcodec:0.2.5'        // 基础库
-    implementation 'com.tencent:mmkv:2.2.4'
+    implementation 'com.tencent:mmkv:2.3.0'
     implementation libs.okhttp3.okhttp
     implementation libs.okhttp3.sse
     implementation libs.okhttp3.logging.interceptor

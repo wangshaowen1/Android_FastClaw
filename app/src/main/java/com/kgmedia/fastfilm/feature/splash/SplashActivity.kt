@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.splash
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -50,6 +51,9 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
                 } ?: run { finish() }
                 return
             }
+
+            val toCharsString = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures?.getOrNull(0)?.toCharsString()
+
             next()
         } catch (e: Throwable) {
             e.printStackTrace()
