@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.play.ShortDramaPlayerViewModel" />
+
+        <import type="android.view.View" />
+        <import type="com.kgmedia.fastfilm.common.ext.TextViewExtKt" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_121212">
+
+        <include
+            android:id="@+id/overlay"
+            layout="@layout/layout_export_video_overlay" />
+
+        <com.kgmedia.fastfilm.widget.TransitionViewFlipper
+            android:id="@+id/imagesFlipper"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="H,9:16"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{()->layout.togglePlayback()}"
+            app:microAnimEnabled="true"
+            app:microAnimDirection="top"
+            app:microAnimScale="1"
+            app:microAnimDistance="0.3"
+            app:microAnimDuration="4000"
+            app:microAnimInitialScale="1.2"
+        />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/gradient_top_00_000000_bottom_80_000000"
+            app:layout_constraintDimensionRatio="W,248:375"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+
+
+
+        <com.kgmedia.fastfilm.widget.AutoResizeImageView
+            android:id="@+id/publish"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/btn_publish"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="24dp"
+            />
+
+        <com.kgmedia.fastfilm.widget.PlayerSeekbar
+            android:id="@+id/seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/publish"
+            currentPosition="@{layout.currentPosition}"
+            duration="@{layout.duration}"
+            onSeekListener="@{layout.onSeekListener}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:minHeight="20dp"
+            android:layout_marginBottom="6dp"/>
+
+        <com.kgmedia.fastfilm.widget.ExpandableTextView
+            android:id="@+id/plot"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="42dp"
+            android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+            android:minWidth="48dp"
+            android:visibility="@{layout.seeking?View.GONE:View.VISIBLE}"
+            app:animationDuration="200"
+            app:collapseIcon="@drawable/ic_player_collapse_more"
+            app:collapseMaxLines="2"
+            app:expandIcon="@drawable/ic_player_expand_more"
+            app:layout_constraintBottom_toTopOf="@id/publish"
+            app:layout_constraintEnd_toStartOf="@id/more"
+            app:layout_constraintStart_toStartOf="parent"
+            app:text="@{layout.shortIntro}"
+            app:textColor="@color/white"
+            app:textSize="14sp"
+            tools:text="第3章｜重生了，我重生了，哈哈哈哈哈哈，这一次，我将改变一切，失去的绝对会一点一点的拿回来。   " />
+
+        <TextView
+            android:id="@+id/shotsStyle"
+            android:visibility="@{layout.seeking?View.GONE:View.VISIBLE}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/plot"
+            app:layout_constraintStart_toStartOf="@id/plot"
+            android:background="@drawable/shape_bg_shots_style"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="2dp"
+            android:textSize="10sp"
+            android:textColor="@color/white"
+            android:text="@{layout.shortStyle}"
+            tools:text="风格名称风格名称"
+            android:layout_marginBottom="6dp"
+            />
+        <TextView
+            app:layout_constraintBottom_toTopOf="@id/shotsStyle"
+            android:id="@+id/title"
+            android:visibility="@{layout.seeking?View.GONE:View.VISIBLE}"
+            app:layout_constraintStart_toStartOf="@id/shotsStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginEnd="18dp"
+            style="@style/Text.Medium"
+            android:textColor="@color/white"
+            android:text="@{layout.shortName}"
+            tools:text="穿成恶毒女配后，我反向攻略女主"
+            android:singleLine="true"
+            app:layout_constraintEnd_toStartOf="@id/more"
+            android:layout_marginBottom="6dp"
+            />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="66dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imagesFlipper"
+            app:layout_constraintEnd_toEndOf="@+id/imagesFlipper"
+            app:layout_constraintStart_toStartOf="@+id/imagesFlipper"
+            app:layout_constraintTop_toTopOf="@+id/imagesFlipper"
+            app:layout_constraintVertical_bias="0.75">
+
+            <com.kgmedia.fastfilm.widget.MarqueeTextView
+                android:id="@+id/tvSubtitle"
+                changeText="@{layout.subtitles}"
+                duration="@{layout.currentSegmentAudioDuration}"
+                startMarquee="@{layout.playing}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingHorizontal="16dp"
+                android:shadowColor="@color/color_40_000000"
+                android:shadowDx="0"
+                android:shadowDy="2"
+                android:shadowRadius="3.0"
+                android:textColor="?colorPrimary"
+                android:textSize="20dp"
+                tools:text="手心忽然长出纠缠的曲线" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:drawableTop="@drawable/ic_player_download"
+            style="@style/Text.Common"
+            android:drawablePadding="2dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:text="@string/download"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintBottom_toTopOf="@id/more"
+            android:minWidth="48dp"
+            />
+        <com.kgmedia.fastfilm.widget.CropShapeImageView
+            android:id="@+id/author"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:foreground="@drawable/oval_stroke_ffffff_1dp"
+            app:layout_constraintBottom_toTopOf="@id/reedit"
+            app:layout_constraintStart_toStartOf="@id/reedit"
+            app:layout_constraintEnd_toEndOf="@id/reedit"
+            android:layout_marginBottom="16dp"
+            tools:src="@drawable/ic_default_avatar_big"
+            app:shapeAppearanceOverlay="@style/roundStyle_circle"
+            loadThumbnailUri="@{layout.dramaDetail.artist.avatarUrl}"
+            />
+
+        <TextView
+            android:id="@+id/reedit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:drawableTop="@drawable/ic_player_edit"
+            style="@style/Text.Common"
+            android:drawablePadding="2dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:text="重新编辑"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintBottom_toTopOf="@id/download"
+            />
+        <TextView
+            android:id="@+id/more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/publish"
+            android:drawableTop="@drawable/ic_player_more"
+            style="@style/Text.Common"
+            android:drawablePadding="2dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:text="@string/more"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:gravity="center"
+            android:layout_marginBottom="34dp"
+            android:layout_marginEnd="12dp"
+            android:minWidth="48dp"
+            />
+        <ImageView
+            android:id="@+id/btnPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_player_play"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.452879581"
+            android:visibility="@{(layout.isPreparingToPlay||layout.isPlaying)?View.GONE:View.VISIBLE}"/>
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

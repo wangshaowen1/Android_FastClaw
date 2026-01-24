@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/content_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/actionsheet_left_right_margin"
+        android:layout_marginEnd="@dimen/actionsheet_left_right_margin"
+        android:layout_marginBottom="@dimen/actionsheet_bottom_margin"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/loAlertHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@drawable/bg_actionsheet_header"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvAlertTitle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/actionsheet_title_height"
+                android:gravity="center"
+                android:textColor="@color/textColor_actionsheet_title"
+                android:textSize="@dimen/actionsheet_title_textSize" />
+
+            <TextView
+                android:id="@+id/tvAlertMsg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/actionsheet_msg_bottom_margin"
+                android:gravity="center"
+                android:textColor="@color/textColor_actionsheet_msg"
+                android:textSize="@dimen/actionsheet_msg_textSize" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/alertButtonListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:listSelector="@android:color/transparent"
+            android:scrollbars="none" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/actionsheet_cancel_divider_height"
+            android:background="@color/actionsheet_divider_color" />
+
+        <TextView
+            android:id="@+id/tvAlertCancel"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/actionsheet_button_height"
+            android:background="@drawable/bg_actionsheet_cancel"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingBottom="@dimen/actionsheet_cancel_bottom_padding"
+            android:textColor="@color/textColor_alert_button_cancel"
+            android:textSize="@dimen/actionsheet_button_textSize"
+            android:visibility="gone" />
+    </LinearLayout>
+</FrameLayout>

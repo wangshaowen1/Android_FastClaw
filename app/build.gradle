@@ -1,0 +1,378 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'org.jetbrains.kotlin.plugin.serialization' version "2.2.10"
+    id 'com.growingio.android.autotracker'
+}
+
+void genProguardDict() {
+    def file = file('proguard-dict.txt')
+    if (file.exists()) {
+        file.delete()
+    }
+    def r = new Random()
+    def firstChars = ["o", "O"]
+    def chars = ["o", "O", "0", "Ò", "Ó", "Ô", "Õ", "Ö"]
+    int firstSize = firstChars.size()
+    int size = chars.size()
+    def dict = []
+    for (int length = 10; length <= 30; length++) {
+        for (int firstIndex = 0; firstIndex < 10; firstIndex++) {
+            def word = firstChars.get(r.nextInt(firstSize))
+            for (int appendLength = 1; appendLength <= length; appendLength++) {
+                word += chars.get(r.nextInt(size))
+            }
+            dict.add(word)
+        }
+    }
+    // 打乱顺序
+    Collections.shuffle(dict, r)
+    file.write(dict.join(System.lineSeparator()))
+    println('genProguardDict')
+}
+
+genProguardDict()
+android {
+    compileSdk rootProject.ext.android.compileSdkVersion
+
+    defaultConfig {
+        applicationId rootProject.ext.android.applicationId
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionName rootProject.ext.android.versionName
+        versionCode rootProject.ext.android.versionCodeRelease
+        multiDexEnabled true
+        buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
+        //指定room.schemaLocation生成的文件路径
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+        packagingOptions {
+            doNotStrip "*/armeabi-v7a/*.so"
+            doNotStrip "*/x86/*.so"
+            doNotStrip "*/arm64-v8a/*.so"
+            doNotStrip "*/x86_64/*.so"
+            doNotStrip "armeabi.so"
+        }
+        buildConfigField "String", "DY_CLIENT_KEY", '"awg154kyqmvhns2f"'
+        buildConfigField "String", "WX_APP_ID", '"wx67c51ba86903d153"' //微信AppKey
+        buildConfigField "String", "WX_APP_SECRET", '"8dabf0d5906d5995acaaffdeeaf529f1"'//微信Secret
+        def growingScheme = "b4b9e1a720ce9895"
+        buildConfigField "String", "GROWING_URL_SCHEME", '\"' + growingScheme + '\"' //埋点库GROWINGIO的Urlscheme
+        manifestPlaceholders = [
+                "GROWING_URL_SCHEME": growingScheme, // 埋点库GROWINGIO的Urlscheme
+                "KWAI_APP_ID": "ks664562422307705809", // 快手申请分配的appId
+                "KWAI_SCOPE" : "user_info" // 账号授权需要申请的scope权限，多个scope可以使用","分割。user_info：用户信息授权，user_phone：用户手机号授权。
+        ]
+    }
+
+    signingConfigs {
+        debug {
+            keyAlias 'fastfilm'
+            keyPassword '111111'
+            storeFile file("../com.kgmedia.fastfilm.jks")
+            storePassword '111111'
+        }
+        release {
+            keyAlias 'fastfilm'
+            keyPassword '111111'
+            storeFile file("../com.kgmedia.fastfilm.jks")
+            storePassword '111111'
+        }
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    buildFeatures {
+        viewBinding = true
+        buildConfig true
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            //版本号
+            buildConfigField "String", "APP_VERSION", '"' + rootProject.ext.android.versionCodeRelease + '"'
+            //Zipalign优化
+            zipAlignEnabled true
+            //移除无用的resource文件
+            shrinkResources true
+            signingConfig signingConfigs.release
+            //网络请求地址
+            buildConfigField "boolean", "DEBUG_MODEL", "false" //是否是debug哦是
+            buildConfigField "String", "QQ_APP_ID", '"1112354170"' //QQAppKey APP_ID
+            buildConfigField "String", "QQ_APP_KEY", '"JLx3P8RMZrnTQ2k0"' //QQSecret APP_KEY
+            buildConfigField "String", "WB_APP_KEY", '"4008287256"' //微博AppKey
+            buildConfigField "String", "WB_APP_SECRET", '"9fe4864f3bfff59e241442ae0d645615"'
+            //微博Secret
+            buildConfigField "String", "WB_URL", '"https://m.helloaa.cn/"'
+            //微博地址
+            buildConfigField "String", "SERVICE_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E7%94%A8%E6%88%B7%E6%9C%8D%E5%8A%A1%E5%8D%8F%E8%AE%AE.html"'
+            //服务协议
+            buildConfigField "String", "PRIVACY_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96.html"'
+            //隐私政策
+            buildConfigField "String", "OFFICIAL_URL", '"http://rmgf.wechatrenmai.cn"' //官方网站
+            //友盟SECRET
+            buildConfigField "String", "UMENG_SECRET", '"4b8c2487a2b9f04e095022fb59ed32b8"'
+            buildConfigField "String", "UMENG_APP_KEY", '"69005d13644c9e2c20677a21"'
+            buildConfigField "String", "SHANYAN_APPID", '"FWfSSoWa"' //闪验APPID
+            buildConfigField "String", "SHANYAN_APP_KEY", '"SLszLLH8"' //闪验APPKEY
+
+            manifestPlaceholders = [
+                    UMENG_APP_KEY      : "69005d13644c9e2c20677a21",
+                    OPENINSTALL_APP_KEY: "dacw8u",
+                    OPENINSTALL_SCHEME : "dacw8u",
+                    qqappid            : "1112354170",
+            ]
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled false
+            jniDebuggable false
+            //版本号
+            buildConfigField "String", "APP_VERSION", '"' + rootProject.ext.android.versionCodeDebug + '"'
+            //Zipalign优化 , m,
+            zipAlignEnabled false
+            //移除无用的resource文件
+            shrinkResources false
+
+            buildConfigField "boolean", "DEBUG_MODEL", "true" //是否是debug模式
+            buildConfigField "String", "QQ_APP_ID", '"1112354170"' //QQAppKey APP_ID
+            buildConfigField "String", "QQ_APP_KEY", '"JLx3P8RMZrnTQ2k0"' //QQSecret APP_KEY
+            buildConfigField "String", "WB_APP_KEY", '"4008287256"' //微博AppKey
+            buildConfigField "String", "WB_APP_SECRET", '"9fe4864f3bfff59e241442ae0d645615"'
+            //微博Secret
+            buildConfigField "String", "WB_URL", '"https://m.helloaa.cn/"'
+            //微博地址
+            buildConfigField "String", "SERVICE_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E7%94%A8%E6%88%B7%E6%9C%8D%E5%8A%A1%E5%8D%8F%E8%AE%AE.html"'
+            //服务协议
+            buildConfigField "String", "PRIVACY_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96.html"'
+            //隐私政策
+            buildConfigField "String", "OFFICIAL_URL", '"http://rmgf.wechatrenmai.cn"' //官方网站
+            buildConfigField "String", "UMENG_SECRET", '"4b8c2487a2b9f04e095022fb59ed32b8"'
+            buildConfigField "String", "UMENG_APP_KEY", '"69005d13644c9e2c20677a21"'
+            //友盟SECRET
+            buildConfigField "String", "SHANYAN_APPID", '"FWfSSoWa"' //闪验APPID
+            buildConfigField "String", "SHANYAN_APP_KEY", '"SLszLLH8"' //闪验APPKEY
+
+            versionNameSuffix ""
+            signingConfig signingConfigs.debug
+            manifestPlaceholders = [
+                    UMENG_APP_KEY      : "69005d13644c9e2c20677a21",
+                    OPENINSTALL_APP_KEY: "dacw8u",//gjn2wu
+                    OPENINSTALL_SCHEME : "dacw8u",
+                    qqappid            : "1112354170",
+            ]
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+
+        /**
+         * 打包或运行时再注入版本号
+         */
+        applicationVariants.all { variant ->
+            def buildType = variant.buildType.name
+            def createTime = new Date().format("yyyyMMdd_HHmmss", TimeZone.getTimeZone("GMT+08:00"))
+            if (buildType == "release") {
+                //variant.getPackageApplicationProvider().get().outputDirectory = new File(project.rootDir.absolutePath + "/apks/release/${createTime}")
+            }
+
+            variant.outputs.each { output ->
+                output.versionCodeOverride = rootProject.ext.android.versionCodeRelease
+            }
+
+            variant.outputs.all { output ->
+                def name = (project.name != "app") ? project.name : rootProject.name
+                outputFileName = name + "_" +
+                        variant.versionName + "_" + //版本号
+                        variant.flavorName + (variant.flavorName.endsWith("_") ? "" : "_") + //渠道名
+                        createTime + "_" +
+                        buildType +
+                        ".apk"
+            }
+        }
+    }
+
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        encoding "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+            pickFirsts += ['lib/x86/libc++_shared.so', 'lib/x86_64/libc++_shared.so', 'lib/arm64-v8a/libc++_shared.so', 'lib/armeabi-v7a/libc++_shared.so']
+        }
+        resources {
+            merges += ['META-INF/proguard/androidx-annotations.pro', 'META-INF/proguard/coroutines.pro']
+        }
+    }
+    flavorDimensions = ['env', 'arch']
+    productFlavors {
+        //开发测试环境
+        develop {
+            dimension 'env'
+            //buildConfigField 'String', 'SERVER_URL', '"http://192.168.0.100:5010/"'//高俊毅
+            //buildConfigField 'String', 'SERVER_URL', '"http://192.168.0.8:5010/"'//志才
+            buildConfigField 'String', 'SERVER_URL', '"https://short-api.mynatapp.cc"'//测试外网
+            //buildConfigField 'String', 'SERVER_URL', '"http://192.168.0.40:5010/"'//陆
+            //buildConfigField 'String', 'SERVER_URL', '"http://43.153.117.92:5010/"'//国庆
+            //buildConfigField 'String', 'SERVER_URL', '"http://192.168.0.4:5010/"'//富强
+        }
+        //预发布
+        preview {
+            dimension 'env'
+            buildConfigField 'String', 'SERVER_URL', '"http://120.24.240.28:9010/"'
+        }
+        //生产环境
+        production {
+            dimension 'env'
+            buildConfigField 'String', 'SERVER_URL', '"https://jk.jinguomanju.com/"'
+        }
+        arch32 {
+            dimension 'arch'
+            ndk {
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
+            }
+        }
+        arch64 {
+            dimension 'arch'
+            ndk {
+                abiFilters 'arm64-v8a'
+            }
+        }
+    }
+    namespace 'com.kgmedia.fastfilm'
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
+//        debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
+    implementation project(':magicindicator')
+    implementation project(':datepicker')
+    implementation project(':matisse')
+    implementation project(':audioprocessing')
+    //公共依赖
+    implementation libs.kotlinx.serialization.json
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation libs.ultra.ptr
+    implementation libs.androidx.constraintlayout
+    implementation libs.legacy.support.v4
+    implementation libs.multidex
+
+    implementation libs.androidx.databinding.common
+    implementation libs.androidx.splashscreen
+    implementation rootProject.ext.modules.baselibrary.gav
+    implementation rootProject.ext.modules.imageloader.gav
+    implementation rootProject.ext.modules.oss.gav
+    implementation rootProject.ext.modules.videoedit.gav
+    implementation rootProject.ext.modules.luban.gav
+    implementation rootProject.ext.modules.payment.gav
+    implementation rootProject.ext.modules.permissionx.gav
+    implementation rootProject.ext.modules.ucrop.gav
+    implementation rootProject.ext.modules.mvchelper.gav
+    implementation rootProject.ext.modules.umeng.gav
+    implementation 'com.tencent.bugly:crashreport:latest.release'
+    implementation "me.leolin:ShortcutBadger:1.1.22@aar"
+    implementation 'com.github.gzu-liyujiang:Android_CN_OAID:4.2.4'
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation("io.github.cymchad:BaseRecyclerViewAdapterHelper:4.0.0", {
+        exclude group: 'androidx.lifecycle'
+        exclude group: 'androidx.recyclerview'
+    })
+    implementation 'com.airbnb.android:lottie:6.6.7'
+    implementation 'org.ahocorasick:ahocorasick:0.6.3'
+    implementation 'io.github.happylishang:antifake:1.7.1'
+    //Room
+    def room_version = "2.7.2"
+    implementation "androidx.room:room-common:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-paging:$room_version" // Room 与 Paging 的集成库
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
+    implementation 'androidx.paging:paging-runtime-ktx:3.3.6'
+    implementation 'com.github.zhpanvip:bannerviewpager:3.5.7'
+    implementation 'com.github.jenly1314:zxing-lite:3.3.0'
+    //https://github.com/liangjingkanji/spannable Spannable富文本工具
+    implementation 'com.github.liangjingkanji:spannable:1.2.7'
+
+    implementation libs.blankj.utilcodex
+
+    //强烈建议开发者升级到6.16.9及以上版本，提升oaid获取率（必须）
+    implementation 'com.bytedance.applog:RangersAppLog-Lite-cn:6.16.10'
+    // attribution_data 需要搭配6.16.10+ SDK使用，优化联调链路，提高联调通过率
+    implementation 'com.bytedance.applog:plugin-attributions:1.0.1-rc.2'
+    // 商业化转化组件（必须）
+    implementation 'com.bytedance.ads:AppConvert:2.0.3'
+    //埋点开发工具，DevTools是 Debug 环境下辅助开发者或测试人员进行应用内埋点验证和 SDK 接入问题排查的组件。请使用 debug 依赖，建议仅在 debug 下做调试
+    //debugImplementation 'com.bytedance.applog:RangersAppLog-DevTools:3.3.4'
+
+    def media3_version = "1.5.1"
+    // For media playback using ExoPlayer
+    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    implementation "androidx.media3:media3-datasource:$media3_version"
+    // For building media playback UIs
+    implementation "androidx.media3:media3-ui:$media3_version"
+    implementation "androidx.media3:media3-common:$media3_version"
+    //提取图片的主要颜色
+    implementation 'androidx.palette:palette-ktx:1.0.0'
+    implementation libs.androidx.fragment.ktx
+    implementation 'com.dinuscxj:circleprogressbar:1.3.6'
+
+    //默认使用maven仓库中最高版本，当前建议使用7.0.2.xxx版本,7.0.2.x版本存在local token，local token说明可参考下方 设备token说明部分
+    //注意，线上必须使用以mlBusiness结尾的版本，不能使用以Auth结尾的
+    //implementation 'com.volcengine.bizssdk:ml:7.0.2.5.mlBusiness'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+
+    //implementation 'com.github.barteksc:android-pdf-viewer:2.8.2'
+    //implementation 'io.github.oothp:android-pdf-viewer:3.2.0-beta05'
+    implementation 'com.github.lihangleo2:ShadowLayout:3.4.0'
+
+    //下拉刷新控件
+    implementation libs.refresh.layout.kernel      //核心必须依赖
+    implementation libs.refresh.header.classics    //经典刷新头
+    implementation libs.refresh.footer.classics    //经典加载
+
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    implementation 'com.github.mmin18:realtimeblurview:1.2.1'
+    implementation 'com.github.Dimezis:BlurView:version-3.2.0'
+    implementation libs.jsoup
+    //implementation libs.face.detection
+
+    implementation 'com.arthenica:ffmpeg-kit-full-gpl:6.0-2'
+    implementation 'org.jcodec:jcodec:0.2.5'        // 基础库
+    implementation 'com.tencent:mmkv:2.2.4'
+    implementation libs.okhttp3.okhttp
+    implementation libs.okhttp3.sse
+    implementation libs.okhttp3.logging.interceptor
+
+    implementation libs.retrofit2.retrofit
+    implementation libs.retrofit2.converter.gson
+
+    implementation 'com.growingio.android:autotracker:4.5.2'
+}

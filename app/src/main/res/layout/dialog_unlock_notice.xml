@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?><!--首次充值弹窗-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.play.ShortDramaPlayerViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_tr24"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="付费须知"
+            android:textColor="@color/color_121212"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvNotice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="36dp"
+            android:textColor="@color/color_121212"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            tools:text="可重复看 购买后，除遇不可抗力或政策原因之外，本付费内容可重复观看。 不可退款 本付费内容为虚拟内容，购买后不支持退款，购买前请您仔细阅读说明。 自动解锁 勾选自动解锁下一章后，当进入播放页面时将自动扣除积分。 未成年条款 未成年人禁止购买付费内容。 特别提示 请用户务必通过官方渠道购买，谨防受骗。 其他规则 购买前请仔细阅读《充值协议》《付费会员协议》，提交订单即视为同意上述协议及平台规则。" />
+
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="16dp"
+            android:src="@drawable/ic_light_dialog_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

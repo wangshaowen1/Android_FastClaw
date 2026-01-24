@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingDefaultResource">
+    <dimen name="font_18">18sp</dimen>
+    <dimen name="action_bar_size">44dp</dimen>
+    <dimen name="lineSpacingExtraShort">3dp</dimen>
+    <dimen name="lineSpacingExtra">5dp</dimen>
+    <!--佩戴的勋章最大尺寸-->
+    <!--佩戴的勋章最大尺寸（小号的）-->
+
+    <!--ActionSheet 相关-->
+    <dimen name="common_action_sheet_layout_padding">8dp</dimen>
+    <!--标题文字大小-->
+    <dimen name="actionsheet_title_textSize">16sp</dimen>
+    <!--标题文字高度-->
+    <dimen name="actionsheet_title_height">40dp</dimen>
+
+    <dimen name="actionsheet_msg_textSize">12sp</dimen>
+    <!--消息距离底部间距-->
+    <dimen name="marginBottom_alert_msg">25dp</dimen>
+    <dimen name="actionsheet_msg_bottom_margin">14dp</dimen>
+    <!--窗口模式左右两边到屏幕的间距-->
+    <dimen name="actionsheet_left_right_margin">0dp</dimen>
+    <dimen name="actionsheet_cancel_top_margin">8dp</dimen>
+    <dimen name="actionsheet_cancel_bottom_padding">12dp</dimen>
+    <dimen name="actionsheet_bottom_margin">0dp</dimen>
+
+    <!--线条粗细-->
+    <dimen name="actionsheet_divier_height">1px</dimen>
+    <!--按钮的高度-->
+    <dimen name="actionsheet_button_height">56dp</dimen>
+    <!--按钮文字大小-->
+    <dimen name="actionsheet_button_textSize">16sp</dimen>
+    <!--圆角-->
+    <dimen name="actionsheet_radius">12dp</dimen>
+    <dimen name="actionsheet_cancel_radius">0dp</dimen>
+    <dimen name="actionsheet_cancel_divider_height">4dp</dimen>
+
+    <!--ActionSheet 相关结束-->
+
+
+    <dimen name="main_bottom_nav_height">66dp</dimen>
+    <dimen name="dp1">1dp</dimen>
+    <dimen name="dp20">20dp</dimen>
+    <dimen name="music_hub_divider_height">19dp</dimen>
+    <integer name="blur_dialog_animation_duration">300</integer>
+    <bool name="blur_dialog_has_bottom_navigation_bar">true</bool>
+
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="sp_20">20sp</dimen>
+</resources>

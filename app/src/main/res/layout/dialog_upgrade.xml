@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.base.viewmodel.EmptyViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-50dp"
+            android:background="@drawable/bg_ffffff_r24"
+            app:layout_constraintEnd_toEndOf="@id/card"
+            app:layout_constraintStart_toStartOf="@id/card"
+            app:layout_constraintTop_toBottomOf="@+id/card">
+
+            <com.kgmedia.fastfilm.widget.AtMostScrollView
+                android:id="@+id/llScrollView"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_marginTop="74dp"
+                app:bottomFadingEdgeStrength="1"
+                app:layout_constraintBottom_toTopOf="@+id/upgrade"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:topFadingEdgeStrength="1"
+                app:verticalFadingEdgeEnabled="true">
+
+                <TextView
+                    android:id="@+id/content"
+                    style="@style/Text.Medium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/color_21213b"
+                    android:textSize="14sp"
+                    tools:text="1.优化一键登录;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;" />
+            </com.kgmedia.fastfilm.widget.AtMostScrollView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="26dp"
+                android:background="@drawable/bg_gradient_00_ffffff"
+                app:layout_constraintBottom_toTopOf="@id/upgrade" />
+
+            <TextView
+                android:id="@+id/upgrade"
+                style="@style/Button.Bold"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:gravity="center"
+                android:text="@string/update_now"
+                app:layout_constraintBottom_toTopOf="@+id/cancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="0.8"
+                app:layout_goneMarginBottom="26dp" />
+
+            <TextView
+                android:id="@+id/cancel"
+                style="@style/Text.Bold"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center"
+                android:text="@string/update_cancel"
+                android:textColor="@color/color_60_121212"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_percent="0.8" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/card"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_upgrade"
+            app:layout_constraintDimensionRatio="285:108"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.76" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="42dp"
+            android:src="@drawable/img_txt_new_version"
+            app:layout_constraintStart_toStartOf="@id/card"
+            app:layout_constraintTop_toTopOf="@id/card"
+            app:layout_constraintWidth_percent="0.76" />
+
+        <TextView
+            android:id="@+id/version"
+            style="@style/Text.Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@id/card"
+            app:layout_constraintStart_toStartOf="@id/card"
+            tools:text="V1.1.3" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

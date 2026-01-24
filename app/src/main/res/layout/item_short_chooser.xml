@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.play.ItemSeriesShortVM" />
+
+        <import type="android.view.View"/>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:background="@color/black"
+        singleClick="@{()->item.onItemClick()}"
+        android:background="@{item.playing?@color/color_03_ffffff:@color/transparent}"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/siv_avatar"
+            placeHolder="@{@drawable/ic_default_cover}"
+            loadThumbnailUri="@{item.data.dramasCoverUrl}"
+            android:layout_width="60dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_default_cover"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundStyle_r6" />
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{item.data.locked?View.VISIBLE:View.GONE}"
+            app:layout_constraintTop_toTopOf="@id/siv_avatar"
+            app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
+            app:layout_constraintStart_toStartOf="@id/siv_avatar"
+            app:layout_constraintEnd_toEndOf="@id/siv_avatar"
+            android:background="@drawable/bg_50_000000_r6">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_short_locked_small"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@{`第`+item.data.workNo+`章`+`｜`+item.data.dramasName}"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintBottom_toTopOf="@id/tv_duration"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/siv_avatar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="第1章｜大侠嘎子" />
+
+        <TextView
+            android:id="@+id/tv_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{item.durationText}"
+            tools:text="2025.09.02"
+            android:textColor="@color/color_50_ffffff"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
+            app:layout_constraintStart_toStartOf="@id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintVertical_chainStyle="packed" />
+        <TextView
+            android:id="@+id/tv_play_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@{item.playCountText}"
+            android:textColor="@color/color_50_ffffff"
+            android:textSize="12sp"
+            android:drawablePadding="2dp"
+            android:drawableStart="@drawable/ic_short_play_count"
+            app:layout_constraintStart_toEndOf="@id/tv_duration"
+            app:layout_constraintTop_toTopOf="@id/tv_duration"
+            app:layout_constraintBottom_toBottomOf="@id/tv_duration"
+            tools:text="512.1万"
+        />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

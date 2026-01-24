@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.payment.vip.MembershipBenefitsViewModel" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+
+        <import type="com.kgmedia.fastfilm.common.ext.StringUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_fffaf3">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/img_member_header"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+        <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+            displayChild="@{layout.loadState}"
+            onRetry="@{layout::loadConfig}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:lightMode="true">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.core.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none"
+                    app:layout_constraintBottom_toTopOf="@+id/btnBuy"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+                            android:id="@+id/ivAvatar"
+                            loadThumbnailUri="@{layout.userAvatar}"
+                            placeHolder="@{@drawable/ic_default_avatar}"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="11dp"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintDimensionRatio="1"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_percent="0.096"
+                            app:riv_border_color="@android:color/white"
+                            app:riv_border_width="1dp"
+                            app:riv_oval="true"
+                            tools:src="@drawable/ic_default_avatar" />
+
+                        <TextView
+                            android:id="@+id/tvNickname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="9dp"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:text="@{StringUtils.ellipse(layout.userNickname, 10)}"
+                            android:textColor="@color/color_121212"
+                            android:textSize="14dp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/tvEndTime"
+                            app:layout_constraintStart_toEndOf="@+id/ivAvatar"
+                            app:layout_constraintTop_toTopOf="@+id/ivAvatar"
+                            app:layout_constraintVertical_chainStyle="packed"
+                            tools:text="李天启" />
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_marginStart="5dp"
+                            android:src="@{layout.memberIcon}"
+                            app:layout_constraintBottom_toBottomOf="@+id/tvNickname"
+                            app:layout_constraintStart_toEndOf="@+id/tvNickname"
+                            app:layout_constraintTop_toTopOf="@+id/tvNickname"
+                            tools:src="@drawable/ic_vip_expired54" />
+
+                        <TextView
+                            android:id="@+id/tvEndTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:ellipsize="end"
+                            android:lines="1"
+                            android:text="@{layout.memberStatus}"
+                            android:textColor="@color/color_7f3d00"
+                            android:textSize="12dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/ivAvatar"
+                            app:layout_constraintStart_toStartOf="@+id/tvNickname"
+                            app:layout_constraintTop_toBottomOf="@+id/tvNickname"
+                            tools:text="暂未开通会员，开通即享会员特权" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="25dp"
+                            android:text="开通会员"
+                            android:textColor="@color/color_121212"
+                            android:textSize="14dp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="@+id/ivAvatar"
+                            app:layout_constraintTop_toBottomOf="@+id/ivAvatar" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvMember"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="50dp"
+                            android:clipToPadding="false"
+                            android:orientation="horizontal"
+                            android:overScrollMode="never"
+                            android:paddingHorizontal="10dp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layout_constraintTop_toBottomOf="@+id/ivAvatar"
+                            tools:itemCount="3"
+                            tools:listitem="@layout/item_member" />
+
+                        <LinearLayout
+                            android:id="@+id/givePoints"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="16dp"
+                            android:layout_marginTop="16dp"
+                            android:background="@drawable/gradient_left_30_ffd088_right_30_fef3aa_r12"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="10dp"
+                            android:visibility="@{TextUtils.isEmpty(layout.desc)?View.GONE:View.VISIBLE}"
+                            app:layout_constraintTop_toBottomOf="@+id/rvMember">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:adjustViewBounds="true"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_membership_benefits_03_bg" />
+
+                            <TextView
+                                setTextHtmlSpannable="@{layout.desc}"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_weight="1"
+                                android:textColor="@color/color_1a1a1a"
+                                android:textSize="12dp"
+                                android:textStyle="bold"
+                                tools:text="赠送 500 积分/月，积分可以用来生成绘本" />
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvBenefits"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:clipToPadding="false"
+                            android:nestedScrollingEnabled="false"
+                            android:orientation="vertical"
+                            android:paddingBottom="24dp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layout_constraintTop_toBottomOf="@+id/givePoints"
+                            tools:itemCount="1"
+                            tools:listitem="@layout/item_member_benefits" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.core.widget.NestedScrollView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/gradient_top_00_fffaf3_bottom_fffaf3"
+                    app:layout_constraintBottom_toTopOf="@id/btnBuy" />
+
+                <TextView
+                    android:id="@+id/btnBuy"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@{layout.buttonEnabled?@drawable/btn_common_dark_normal:@drawable/btn_common_dark_disable}"
+                    android:gravity="center"
+                    android:text="@{layout.buttonText}"
+                    android:textColor="@color/white"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@id/tvPolicyRight"
+                    app:layout_constraintDimensionRatio="317:48"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintWidth_percent="0.8453"
+                    tools:text="@string/buy_now" />
+
+                <TextView
+                    android:id="@+id/tvPolicyLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="开通即代表同意"
+                    android:textColor="@color/color_50_1a1a1a"
+                    android:textSize="12dp"
+                    app:layout_constraintBaseline_toBaselineOf="@+id/tvPolicyRight"
+                    app:layout_constraintEnd_toStartOf="@+id/tvPolicyRight"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvPolicyRight"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:paddingVertical="10dp"
+                    android:text="《付费会员协议》"
+                    android:textColor="@color/color_1a1a1a"
+                    android:textSize="12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tvPolicyLeft" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

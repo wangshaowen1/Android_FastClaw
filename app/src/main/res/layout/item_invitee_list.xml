@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.invitation.person.ItemInviteeListVm" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/siv_avatar"
+            placeHolder="@{@drawable/ic_default_avatar_big}"
+            android:layout_width="42dp"
+            loadUri="@{item.data.avatarUrl}"
+            android:layout_height="42dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_default_avatar_big"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundStyle_circle" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@{item.data.nickName}"
+            android:textColor="@color/color_121212"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@id/tv_describe"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/siv_avatar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="李克勤" />
+
+        <TextView
+            android:id="@+id/tv_describe"
+            android:layout_width="0dp"
+            android:layout_height="17dp"
+            android:layout_marginTop="5dp"
+            android:text="@{item.remarks}"
+            tools:text="2025.09.02 00:12 注册成功"
+            android:textColor="@color/color_50_121212"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
+            app:layout_constraintEnd_toEndOf="@id/tv_name"
+            app:layout_constraintStart_toStartOf="@id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintVertical_chainStyle="packed" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

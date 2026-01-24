@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.creator.CreationRootViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="18dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbLeft"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_creation_radiobutton"
+                android:button="@null"
+                android:checked="@{layout.selectedTab==0}"
+                android:gravity="center"
+                android:onClick="@{layout.clickHandler::onClick}"
+                android:text="灵感故事"
+                android:textColor="@color/rb_white_gray_text"
+                android:textSize="14dp"
+                android:textStyle="bold"
+                tools:checked="true" />
+
+            <RadioButton
+                android:id="@+id/rbCenter"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_creation_radiobutton"
+                android:button="@null"
+                android:checked="@{layout.selectedTab==1}"
+                android:gravity="center"
+                android:onClick="@{layout.clickHandler::onClick}"
+                android:text="自己写故事"
+                android:textColor="@color/rb_white_gray_text"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/rbRight"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_creation_radiobutton"
+                android:button="@null"
+                android:checked="@{layout.selectedTab==2}"
+                android:gravity="center"
+                android:onClick="@{layout.clickHandler::onClick}"
+                android:text="续写故事"
+                android:textColor="@color/rb_white_gray_text"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="18dp">
+
+            <ImageView
+                android:id="@+id/arrowLeft"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:importantForAccessibility="no"
+                android:src="@{rbLeft.checked?@drawable/ic_arrow_down:null}" />
+
+            <ImageView
+                android:id="@+id/arrowCenter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:importantForAccessibility="no"
+                android:src="@{rbCenter.checked?@drawable/ic_arrow_down:null}" />
+
+            <ImageView
+                android:id="@+id/arrowRight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:importantForAccessibility="no"
+                android:src="@{rbRight.checked?@drawable/ic_arrow_down:null}" />
+        </LinearLayout>
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="12dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+</layout>

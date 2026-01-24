@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.message.systemnotice.ItemSystemNoticeVM" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="com.kgmedia.fastfilm.common.utils.DateUtil" />
+
+        <import type="com.kgmedia.fastfilm.common.Constant" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        singleClick="@{(it)->item.onClick()}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_ffffff_r12">
+
+        <TextView
+            android:id="@+id/messageTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@{item.data.messagesTitle}"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="标题" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@{DateUtil.format(item.data.createTime,DateUtil.FORMAT_DATETIME_BIAS)}"
+            android:textColor="@color/color_9a9a9a"
+            android:textSize="12dp"
+            app:layout_constraintStart_toStartOf="@id/messageTitle"
+            app:layout_constraintTop_toBottomOf="@id/messageTitle"
+            tools:text="2024-06-10  13:22" />
+
+        <TextView
+            android:id="@+id/messageContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="@dimen/lineSpacingExtra"
+            android:text="@{item.data.messagesContent}"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="14dp"
+            app:layout_constraintTop_toBottomOf="@id/date"
+            tools:text="文案不做缩略，有多少字展示多少字。文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案文案" />
+
+        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+            android:id="@+id/messageImage"
+            loadUri="@{item.data.messagesImage}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:scaleType="centerCrop"
+            android:visibility="@{TextUtils.isEmpty(item.data.messagesImage)||item.imageAdapter!=null?View.GONE:View.VISIBLE}"
+            app:layout_constraintDimensionRatio="319:100"
+            app:layout_constraintTop_toBottomOf="@id/messageContent"
+            app:riv_corner_radius="8dp"
+            tools:src="@color/color_20_000000"
+            tools:visibility="visible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvImages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:adapter="@{item.imageAdapter}"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="8dp"
+            android:visibility="@{item.imageAdapter!=null?View.VISIBLE:View.GONE}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/messageImage"
+            tools:listitem="@layout/item_system_notice_image" />
+
+        <View
+            android:id="@+id/divider"
+            style="@style/DividerLineHorizontal"
+            setLayoutHeightDp="@{item.data.showViewDetail?1:0}"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/color_05_000000"
+            android:visibility="@{item.data.showViewDetail?View.VISIBLE:View.INVISIBLE}"
+            app:layout_constraintTop_toBottomOf="@id/rvImages" />
+
+        <LinearLayout
+            android:id="@+id/viewDetail"
+            setVisible="@{item.data.showViewDetail}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            app:layout_constraintDimensionRatio="343:43"
+            app:layout_constraintTop_toBottomOf="@id/divider">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_arrow_right_all_inspirations"
+                android:drawablePadding="2dp"
+                android:text="查看详情"
+                android:textColor="@color/color_80_121212"
+                android:textSize="14dp" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

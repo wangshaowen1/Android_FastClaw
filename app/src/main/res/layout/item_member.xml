@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.payment.vip.ItemMembershipBenefitsVm" />
+
+        <import type="android.view.View" />
+
+        <import type="com.kgmedia.fastfilm.common.utils.Utils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        setWithPercent="@{item.isHighlight?0.36f:0.32f}"
+        singleClick="@{(v)->item.onItemClick.invoke(v)}"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="6dp"
+        tools:layout_width="135dp">
+
+        <com.kgmedia.fastfilm.widget.GradientBorderView
+            setVisible="@{!item.isSelected()}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:backgroundStartColor="@android:color/white"
+            app:borderStartColor="@color/color_f2f2f2"
+            app:borderWidth="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/box"
+            app:layout_constraintEnd_toEndOf="@+id/box"
+            app:layout_constraintStart_toStartOf="@+id/box"
+            app:layout_constraintTop_toTopOf="@+id/box"
+            app:roundCornerRadius="12dp" />
+
+        <com.kgmedia.fastfilm.widget.GradientBorderView
+            setVisible="@{item.isSelected()}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:backgroundStartColor="#FFFAEB"
+            app:layout_constraintBottom_toBottomOf="@+id/box"
+            app:layout_constraintEnd_toEndOf="@+id/box"
+            app:layout_constraintStart_toStartOf="@+id/box"
+            app:layout_constraintTop_toTopOf="@+id/box"
+            app:roundCornerRadius="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@{item.data.vipName}"
+            android:textColor="@{item.isSelected()?@color/color_b65e00:@color/color_121212}"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/box"
+            app:layout_constraintStart_toStartOf="@+id/box"
+            app:layout_constraintTop_toTopOf="@+id/box"
+            tools:text="半年会员"
+            tools:textColor="@color/color_b65e00" />
+
+        <TextView
+            android:id="@+id/tv_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¥"
+            android:textColor="@color/color_121212"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_price"
+            app:layout_constraintEnd_toStartOf="@id/tv_price"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/box" />
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{item.membershipAmount}"
+            android:textColor="@color/color_121212"
+            android:textSize="28dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/box"
+            app:layout_constraintEnd_toEndOf="@+id/box"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@id/tv_unit"
+            app:layout_constraintTop_toTopOf="@+id/box"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="99" />
+
+        <View
+            android:id="@+id/view_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:background="@{item.isSelected()?@drawable/gradient_left_ffd088_right_fef3aa_br12:@drawable/gradient_left_40_ffd088_right_40_fef3aa_br12}"
+            app:layout_constraintBottom_toBottomOf="@+id/box"
+            tools:background="@drawable/gradient_left_ffd088_right_fef3aa_br12" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:gravity="center"
+            android:text="@{item.data.vipDesc}"
+            android:textColor="@color/color_af6702"
+            android:textSize="13dp"
+            app:layout_constraintBottom_toBottomOf="@id/view_bottom"
+            app:layout_constraintEnd_toEndOf="@id/view_bottom"
+            app:layout_constraintStart_toStartOf="@id/view_bottom"
+            app:layout_constraintTop_toTopOf="@id/view_bottom"
+            tools:text="12个月" />
+
+        <com.kgmedia.fastfilm.widget.GradientBorderView
+            android:id="@+id/box"
+            setDimensionRatio="@{item.isHighlight?`1`:`120:134`}"
+            showBorder="@{item.isSelected()}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="9dp"
+            app:borderEndColor="@color/color_ffcc35"
+            app:borderStartColor="@color/color_fc8a2c"
+            app:borderWidth="3dp"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:roundCornerRadius="12dp" />
+
+        <TextView
+            android:id="@+id/tv_discount"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:background="@drawable/gradient_left_ff6f2c_right_ff161a_member"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="7dp"
+            android:text="@{item.data.vipAdditionalIcon}"
+            android:textColor="@color/white"
+            android:textSize="13dp"
+            android:visibility="@{item.isVipAdditionalIcon?View.VISIBLE:View.GONE}"
+            app:layout_constraintEnd_toEndOf="@+id/box"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="仅0.05元/月" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="9dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_membership_benefits_02_bg"
+            android:visibility="@{item.isVipAdditionalIcon?View.VISIBLE:View.INVISIBLE}"
+            app:layout_constraintEnd_toStartOf="@id/tv_discount"
+            app:layout_constraintTop_toTopOf="@id/tv_discount" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

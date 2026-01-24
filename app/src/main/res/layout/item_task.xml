@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    tools:background="@color/white">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="44dp"
+        android:layout_height="60dp" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/color_292929"
+        android:textSize="11sp"
+        tools:text="500次" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="40dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="9dp"
+        android:background="@drawable/btn_task_status_normal"
+        android:gravity="center"
+        android:text="待完成"
+        android:textColor="@color/color_ff7e3b"
+        android:textSize="9sp"
+        android:visibility="gone" />
+
+</LinearLayout>

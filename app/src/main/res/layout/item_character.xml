@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.creator.character.ItemCharacterVm" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_f5f5f5_r8"
+            android:visibility="@{item.data.genStatus&lt;=1?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/characterAvatar"
+            app:layout_constraintEnd_toEndOf="@id/characterAvatar"
+            app:layout_constraintStart_toStartOf="@id/characterAvatar"
+            app:layout_constraintTop_toTopOf="@id/characterAvatar"
+            tools:visibility="gone">
+
+            <TextView
+                android:id="@+id/generating"
+                style="@style/Text.Common"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:gravity="center"
+                android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+                android:text="角色形象生成中\n请稍候..."
+                android:textColor="@color/color_50_121212"
+                android:textSize="10sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_f5f5f5_r8"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{item.data.genStatus==3?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/characterAvatar"
+            app:layout_constraintEnd_toEndOf="@id/characterAvatar"
+            app:layout_constraintStart_toStartOf="@id/characterAvatar"
+            app:layout_constraintTop_toTopOf="@id/characterAvatar">
+
+            <ImageView
+                android:id="@+id/characterGenerationFailed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_generation_failed" />
+
+            <TextView
+                android:id="@+id/generationFailed"
+                style="@style/Text.Common"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+                android:text="角色形象生成失败"
+                android:textColor="@color/color_50_121212"
+                android:textSize="10sp" />
+
+            <ImageView
+                android:id="@+id/regenerate"
+                singleClick="@{()->item.regenerate()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_regenerate" />
+
+        </LinearLayout>
+
+        <com.kgmedia.fastfilm.widget.CropShapeImageView
+            android:id="@+id/characterAvatar"
+            loadThumbnailUri="@{item.data.roleImageUrl}"
+            android:layout_width="match_parent"
+            android:layout_height="138dp"
+            singleClick="@{()->item.historyRoles()}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundStyle_r8" />
+
+        <ImageView
+            singleClick="@{()->item.delRole()}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_del_circle_white72"
+            android:visibility="@{item.data.isNewRole?View.VISIBLE:View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/regenerateCharacter"
+            singleClick="@{()->item.regenerate()}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/ic_regenerate_light"
+            android:visibility="@{item.data.genStatus==2&amp;&amp;item.data.isNewRole?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/characterAvatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/characterName"
+            style="@style/Text.Common"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{item.data.roleName}"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/characterAvatar"
+            app:layout_constraintTop_toBottomOf="@id/characterAvatar"
+            tools:text="张小凡" />
+
+        <com.kgmedia.fastfilm.widget.TagLayout
+            android:id="@+id/characterTags"
+            setTags="@{item.data.tags}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            app:horizontalSpace="4dp"
+            app:layout_constraintEnd_toEndOf="@id/characterAvatar"
+            app:layout_constraintStart_toStartOf="@id/characterAvatar"
+            app:layout_constraintTop_toBottomOf="@id/characterName"
+            app:maxLines="2"
+            app:tagBackground="@drawable/bg_05_121212_r6"
+            app:tagTextColor="@color/textColorPrimary"
+            app:tagTextHorizontalPadding="10dp"
+            app:tagTextSize="10sp"
+            app:tagTextVerticalPadding="4dp"
+            app:verticalSpace="4dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

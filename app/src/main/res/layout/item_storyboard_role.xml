@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.editor.regenerate.ItemStoryboardRoleVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="10dp">
+
+        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+            android:id="@+id/ivAvatar"
+            loadThumbnailUri="@{item.data.roleImageUrl}"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="84:112"
+            app:layout_constraintStart_toStartOf="parent"
+            app:riv_corner_radius="8dp"
+            tools:src="@color/color_20_000000" />
+
+        <ImageView
+            android:id="@+id/btnDeleteRole"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_del_circle_white72"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:background="@drawable/bg_50_000000_br8"
+            android:gravity="center"
+            android:text="@{item.data.roleName}"
+            android:textColor="@android:color/white"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ivAvatar"
+            app:layout_constraintStart_toStartOf="@+id/ivAvatar"
+            tools:text="张小凡" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

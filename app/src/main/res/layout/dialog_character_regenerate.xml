@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.creator.generate.edit.CharacterRegenerateViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_tr24"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@{layout.isRoleAddModel?`新增角色`:`重新生成形象`}"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="15dp"
+                android:onClick="@{()->layout.dismiss()}"
+                android:padding="3dp"
+                android:src="@drawable/ic_dialog_close_black" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
+            android:text="角色名称"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="@{layout.isRoleAddModel?View.VISIBLE:View.GONE}" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:visibility="@{layout.isRoleAddModel?View.VISIBLE:View.GONE}">
+
+            <com.kgmedia.fastfilm.widget.XEditText
+                android:id="@+id/etRoleName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_f5f5f5_r8"
+                android:hint="请输入角色名称 ..."
+                android:maxLength="10"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="13dp"
+                android:text="@={layout.roleName}"
+                android:textColor="@color/textColorPrimary"
+                android:textColorHint="@color/color_50_121212"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="10dp"
+                android:text="@{layout.roleName.length()+`/10`}"
+                android:textColor="@color/color_50_121212"
+                android:textSize="10sp"
+                tools:text="0/10" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
+            android:text="画面描述"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_f5f5f5_r8">
+
+            <com.kgmedia.fastfilm.widget.CounterInputLayout
+                android:id="@+id/inputer"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                app:inputBottomMargin="28dp"
+                app:inputCounterGravity="right"
+                app:inputCounterTextColor="@color/color_50_121212"
+                app:inputCounterTextSize="10sp"
+                app:inputCounterVisible="true"
+                app:inputHint="请输入角色形象描述 ..."
+                app:inputHorizontalPadding="12dp"
+                app:inputTextColor="@color/textColorPrimary"
+                app:inputTextColorHint="@color/color_50_121212"
+                app:inputTextSize="15sp"
+                app:inputVerticalPadding="12dp"
+                app:maxLength="@{layout.maxInputLength}" />
+
+            <TextView
+                android:id="@+id/btnOptimize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/gradient_10_left_ff4b00_right_ffa029_r50"
+                android:drawableStart="@drawable/ic_optimize_dark36"
+                android:drawablePadding="4dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="帮我优化"
+                android:textColor="@color/color_ff4b00"
+                android:textSize="12sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="16dp">
+
+            <TextView
+                android:id="@+id/btnAge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_f5f5f5_stroke_10_000000_r8"
+                android:drawableEnd="@drawable/ic_arrow_down_black49"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:text="年龄"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/btnGender"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_f5f5f5_stroke_10_000000_r8"
+                android:drawableEnd="@drawable/ic_arrow_down_black49"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:text="性别"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/btnType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_f5f5f5_stroke_10_000000_r8"
+                android:drawableEnd="@drawable/ic_arrow_down_black49"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="8dp"
+                android:text="类别"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="上传照片"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="6dp"
+                android:text="生成形象会参考所上传的照片（非必选）"
+                android:textColor="@color/color_50_121212"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_f5f5f5_r8">
+
+            <ImageView
+                android:id="@+id/btnUpload"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_add_gray48"
+                android:visibility="@{TextUtils.isEmpty(layout.avatarPath)?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivRole"
+                loadUri="@{layout.avatarPath}"
+                android:layout_width="84dp"
+                android:layout_height="112dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearance="@style/roundStyle_r8" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_50_000000_r8"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="@{layout.isAnalysisLoading?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/ivRole"
+                app:layout_constraintEnd_toEndOf="@id/ivRole"
+                app:layout_constraintStart_toStartOf="@id/ivRole"
+                app:layout_constraintTop_toTopOf="@id/ivRole" />
+
+            <ImageView
+                android:id="@+id/rotate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_upload_loading"
+                android:visibility="@{layout.isAnalysisLoading?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toTopOf="@id/text"
+                app:layout_constraintEnd_toEndOf="@id/ivRole"
+                app:layout_constraintStart_toStartOf="@id/ivRole"
+                app:layout_constraintTop_toTopOf="@id/ivRole"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="照片检测中..."
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:visibility="@{layout.isAnalysisLoading?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/ivRole"
+                app:layout_constraintEnd_toEndOf="@id/ivRole"
+                app:layout_constraintStart_toStartOf="@id/ivRole"
+                app:layout_constraintTop_toBottomOf="@id/rotate" />
+
+            <TextView
+                android:id="@+id/btnModifyPic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:background="@drawable/bg_30_ffffff_round"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="4dp"
+                android:text="更换照片"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="@{!TextUtils.isEmpty(layout.avatarPath)&amp;&amp;layout.isImageValid?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@id/ivRole"
+                app:layout_constraintEnd_toEndOf="@id/ivRole"
+                app:layout_constraintStart_toStartOf="@id/ivRole" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btnConfirm"
+            style="@style/Button.Bold"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="34dp"
+            android:layout_marginVertical="22dp"
+            android:text="@{layout.isRoleAddModel?`新增角色`:`生成形象`}" />
+    </LinearLayout>
+</layout>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?><!--选择性别和年龄-->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.login.SimpleProfileViewModel" />
+
+        <import type="com.kgmedia.fastfilm.core.User" />
+    </data>
+
+    <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+        displayChild="@{layout.loadState}"
+        onRetry="@{layout::loadAgeRange}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_r24"
+        android:minHeight="475dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="40dp">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="选择性别和年龄"
+                android:textColor="@color/textColorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="完善信息为你匹配更精准的内容"
+                android:textColor="@color/color_50_121127"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+            <TextView
+                android:id="@+id/tvTips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:onClick="@{(v)->layout.dismiss()}"
+                android:text="跳过"
+                android:textColor="@color/color_6e6e6e"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvTitle" />
+
+            <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+                android:id="@+id/genderMale"
+                showBorder="@{layout.gender == User.MALE}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="20dp"
+                android:onClick="@{(v)->layout.applyGender(User.MALE)}"
+                app:backgroundEndColor="#FF4332"
+                app:borderStartColor="#FFA029"
+                app:borderWidth="3dp"
+                app:layout_constraintEnd_toStartOf="@+id/genderFemale"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
+                app:roundCornerRadius="100dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_gender_male_large"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+
+            <TextView
+                android:id="@+id/tvMale"
+                setTextBold="@{true}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="我是男生"
+                android:textColor="@{layout.gender == User.MALE ? @color/color_ff4b00 : @color/color_121212}"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/genderMale"
+                app:layout_constraintStart_toStartOf="@+id/genderMale"
+                app:layout_constraintTop_toBottomOf="@+id/genderMale"
+                tools:textColor="@color/color_ff4b00" />
+
+            <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+                android:id="@+id/genderFemale"
+                showBorder="@{layout.gender == User.FEMALE}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="50dp"
+                android:onClick="@{(v)->layout.applyGender(User.FEMALE)}"
+                app:backgroundEndColor="#FF4332"
+                app:borderStartColor="#FFA029"
+                app:borderWidth="3dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/genderMale"
+                app:layout_constraintTop_toTopOf="@id/genderMale"
+                app:roundCornerRadius="100dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/ic_gender_female_large"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+
+            <TextView
+                android:id="@+id/tvFemale"
+                setTextBold="@{true}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="我是女生"
+                android:textColor="@{layout.gender == User.FEMALE ? @color/color_ff4b00 : @color/color_121212}"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/genderFemale"
+                app:layout_constraintStart_toStartOf="@+id/genderFemale"
+                app:layout_constraintTop_toBottomOf="@+id/genderFemale"
+                tools:textColor="@color/color_121212" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="53dp"
+                android:adapter="@{layout.ageAdapter}"
+                android:overScrollMode="never"
+                android:paddingHorizontal="11dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/genderMale"
+                app:spanCount="2"
+                tools:itemCount="6"
+                tools:listitem="@layout/item_age_range" />
+
+            <Button
+                style="@style/Button.Bold"
+                singleClick="@{(v)->layout.commit()}"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="34dp"
+                android:layout_marginTop="22dp"
+                android:enabled="@{layout.gender>0 &amp;&amp; layout.selectedItem!=null}"
+                android:gravity="center"
+                android:text="确定"
+                app:layout_constraintDimensionRatio="307:48"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
+</layout>

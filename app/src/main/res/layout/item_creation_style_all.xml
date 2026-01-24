@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.creator.style.ItemCreationStyleVm" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+            app:borderEndColor="#FF4332"
+            app:borderStartColor="#FFA029"
+            app:borderWidth="2dp"
+            app:roundCornerRadius="8dp"
+            app:showBorder="@{item.checked}">
+
+            <com.kgmedia.fastfilm.widget.CropShapeImageView
+                android:id="@+id/ivCover"
+                loadThumbnailUri="@{item.data.styleCoverUrl}"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="78:104"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/roundStyle_r8" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/ic_vip54"
+                android:visibility="@{item.data.vipStatus==1?View.VISIBLE:View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient_top_00_000000_bottom_000000_br8"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:paddingVertical="3dp"
+                android:singleLine="true"
+                android:text="@{item.data.styleName}"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/ivCover"
+                tools:text="日式动漫" />
+        </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+    </FrameLayout>
+</layout>

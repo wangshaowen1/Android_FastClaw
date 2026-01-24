@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.creator.ItemVideoRatioVm" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+        app:backgroundStartColor="@color/white"
+        app:borderEndColor="#FFA029"
+        app:borderStartColor="#FF4332"
+        app:borderWidth="2dp"
+        app:roundCornerRadius="8dp"
+        app:showBorder="@{item.checked}">
+
+        <FrameLayout
+            android:id="@+id/v9to16"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv9to16"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <View
+                setLayoutHeightDp="@{item.getHeight()}"
+                setLayoutWidthDp="@{item.getWidth()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_f7f7f7_stroke_f2f2f2_r2" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv9to16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{item.getText()}"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/v9to16"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="9:16" />
+    </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+</layout>

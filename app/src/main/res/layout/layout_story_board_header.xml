@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="step"
+            type="String" />
+
+        <import type="android.text.TextUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp">
+
+        <TextView
+            android:id="@+id/tvStep1"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:background="@drawable/gradient_left_ff4b00_right_ffa029_r50"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/tvStep1Title"
+            app:layout_constraintStart_toStartOf="@id/tvStep1Title"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvStep1Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|bottom"
+            android:minWidth="66dp"
+            android:minHeight="37dp"
+            android:text="生成分镜"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tvStep2Title"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@{TextUtils.equals(step,`2`)?@drawable/ic_dashed_line_sel:@drawable/ic_dashed_line_nor}"
+            app:layout_constraintBottom_toBottomOf="@id/tvStep1Title"
+            app:layout_constraintEnd_toStartOf="@id/tvStep2Title"
+            app:layout_constraintStart_toEndOf="@id/tvStep1Title"
+            app:layout_constraintTop_toTopOf="@id/tvStep1"
+            tools:src="@drawable/ic_dashed_line_nor" />
+
+        <TextView
+            android:id="@+id/tvStep2"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:alpha="@{TextUtils.equals(step,`2`)?1f:0.5f}"
+            android:background="@drawable/gradient_left_ff4b00_right_ffa029_r50"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="2"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="@id/tvStep2Title"
+            app:layout_constraintStart_toStartOf="@id/tvStep2Title"
+            app:layout_constraintTop_toTopOf="@id/tvStep2Title" />
+
+        <TextView
+            android:id="@+id/tvStep2Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:alpha="@{TextUtils.equals(step,`2`)?1f:0.5f}"
+            android:gravity="center_horizontal|bottom"
+            android:minWidth="66dp"
+            android:minHeight="37dp"
+            android:text="角色确认"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tvStep3Title"
+            app:layout_constraintStart_toEndOf="@id/tvStep1Title"
+            app:layout_constraintTop_toTopOf="@id/tvStep1Title" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_dashed_line_nor"
+            app:layout_constraintBottom_toBottomOf="@id/tvStep1Title"
+            app:layout_constraintEnd_toStartOf="@id/tvStep3Title"
+            app:layout_constraintStart_toEndOf="@id/tvStep2Title"
+            app:layout_constraintTop_toTopOf="@id/tvStep1" />
+
+        <TextView
+            android:id="@+id/tvStep3"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:alpha="0.5"
+            android:background="@drawable/gradient_left_ff4b00_right_ffa029_r50"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="3"
+            android:textColor="@color/white"
+            android:textSize="12dp"
+            app:layout_constraintEnd_toEndOf="@id/tvStep3Title"
+            app:layout_constraintStart_toStartOf="@id/tvStep3Title"
+            app:layout_constraintTop_toTopOf="@id/tvStep3Title" />
+
+        <TextView
+            android:id="@+id/tvStep3Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:alpha="0.5"
+            android:gravity="center_horizontal|bottom"
+            android:minWidth="66dp"
+            android:minHeight="37dp"
+            android:text="生成画面"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvStep2Title"
+            app:layout_constraintTop_toTopOf="@id/tvStep1Title" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+
+

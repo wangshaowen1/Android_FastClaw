@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.editor.history.ItemStoryboardHistoryVM" />
+    </data>
+
+    <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        showBorder="@{item.selected}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="12dp"
+        android:onClick="@{(v) -> item.onItemClick.invoke(v)}"
+        app:borderEndColor="@color/color_ffa029"
+        app:borderStartColor="@color/color_ff4332"
+        app:borderWidth="2dp"
+        app:roundCornerRadius="8dp">
+
+        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+            android:id="@+id/ivCover"
+            loadHQThumbnailUri="@{item.data.shotSegmentImageUrl}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="104:138"
+            app:layout_constraintTop_toTopOf="parent"
+            app:riv_corner_radius="8dp"
+            tools:src="@color/color_20_000000" />
+
+        <TextView
+            setVisible="@{item.data.genStatus!=2}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_dbdbdb_r8"
+            android:gravity="center"
+            android:text="@{item.genStatusText(item.data)}"
+            android:textColor="@color/textColorSecondary"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            tools:text="画面生成中\n请稍等" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_121212_tl8_br8"
+            android:gravity="center"
+            android:text="@{String.format(`%02d`, item.index)}"
+            android:textColor="@android:color/white"
+            android:textSize="10dp"
+            android:textStyle="bold"
+            app:layout_constraintDimensionRatio="28:20"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:layout_constraintWidth_percent="0.269230769231"
+            tools:text="01" />
+
+        <ImageView
+            singleClick="@{() -> item.preview()}"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_preview"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover" />
+    </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+
+</layout>

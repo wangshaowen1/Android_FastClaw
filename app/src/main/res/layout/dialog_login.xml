@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.login.LoginViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.method.LinkMovementMethod" />
+
+        <import type="com.kgmedia.fastfilm.common.utils.DebugUtils" />
+
+        <import type="com.kgmedia.fastfilm.common.Constant.SDKConfiguration" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_tr24">
+
+        <Button
+            style="@style/Button.Menu"
+            singleClick="@{(v)->layout.debugToSettings()}"
+            android:layout_marginStart="16dp"
+            android:text="设置"
+            android:visibility="@{DebugUtils.INSTANCE.isDebug()?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/btnClose"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnClose" />
+
+        <ImageView
+            android:id="@+id/iv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="33dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_log_in_title"
+            app:layout_constraintBottom_toBottomOf="@id/btnClose"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnClose" />
+
+        <LinearLayout
+            android:id="@+id/btnWechat"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="42dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/gradient_left_ff4332_right_ffa029_r50"
+            android:gravity="center"
+            android:visibility="@{SDKConfiguration.IS_SHOW_WE_CHAT?View.VISIBLE:View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnClose"
+            tools:visibility="visible">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_login_wechat" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="4dp"
+                android:text="@string/wechat_login"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnPhone"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="42dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_05_121212_r50"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnWechat"
+            app:layout_goneMarginTop="30dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center_vertical"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_login_phone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="4dp"
+                android:text="@string/mobile_login"
+                android:textColor="@color/color_121212"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_describe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="35dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:onClick="@{(v)->layout.checkPolicy()}"
+            app:layout_constraintBottom_toTopOf="@id/nav_bar_view"
+            app:layout_constraintTop_toBottomOf="@+id/btnPhone">
+
+            <ImageView
+                android:id="@+id/ivCheck"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                android:src="@{layout.checkedPolicy?@drawable/ic_choose_checked:@drawable/ic_choose_normal_dark}"
+                tools:src="@drawable/ic_choose_checked" />
+
+            <TextView
+                android:id="@+id/oneLine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我"
+                android:textColor="@color/color_50_000000"
+                android:textSize="12sp"
+                android:visibility="invisible" />
+
+            <TextView
+                movementMethod="@{LinkMovementMethod.getInstance()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="@dimen/lineSpacingExtra"
+                android:text="@{layout.policyText}"
+                android:textColor="@color/color_50_000000"
+                android:textColorHighlight="@android:color/white"
+                android:textSize="12sp"
+                tools:text="我已阅读并同意《用户协议》、《隐私政策》" />
+        </LinearLayout>
+
+
+        <com.kgmedia.fastfilm.widget.NavBarView
+            android:id="@+id/nav_bar_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_describe" />
+
+        <ImageView
+            android:id="@+id/btnClose"
+            singleClick="@{(v)->layout.back()}"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="8dp"
+            android:importantForAccessibility="no"
+            android:padding="14dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_login_dialog_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.kgmedia.fastfilm.widget.ToastView
+            android:id="@+id/toast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:background="@drawable/bg_toast"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:minHeight="40dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:alpha="1"
+            tools:text="toast" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.settings.personal.PersonalInformationViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="com.kgmedia.fastfilm.common.utils.Utils" />
+        <import type="com.kgmedia.fastfilm.core.User" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/view_model_toolbar"
+                app:layout_constraintTop_toTopOf="parent"
+                app:toolbar="@{layout.mToolbarVM}" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_avatar"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="36dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    loadThumbnailUri="@{layout.avatar}"
+                    placeHolder="@{@drawable/ic_default_avatar_big}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:src="@drawable/ic_default_avatar_big"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/roundStyle_circle"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_change_avatar"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="16dp"
+                android:background="@drawable/bg_white_rectangle_corner_r16">
+
+                <LinearLayout
+                    android:id="@+id/nicknameLayout"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/selector_item_background_top_r16"
+                    >
+
+                    <TextView
+                        style="@style/Text.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/app_nickname"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@{layout.nickname}"
+                        style="@style/Text.Medium"
+                        android:textSize="14sp"
+                        tools:text="Not setting"
+                        android:layout_marginEnd="4dp"
+                        android:textColor="@color/color_60_121212"
+                        android:textColorHint="@color/color_60_121212"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_edit_nick" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/idLayout"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/selector_item_background"
+                    >
+
+                    <TextView
+                        style="@style/Text.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/app_id"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@{layout.uniqueId}"
+                        android:textSize="14sp"
+                        tools:text="87328374"
+                        android:textColor="@color/color_60_121212"
+                        android:textColorHint="@color/color_60_121212"/>
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_copy_pi" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/genderLayout"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/selector_item_background"
+                    >
+
+                    <TextView
+                        style="@style/Text.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/gender"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@{layout.gender==User.GENDER_NULL?``:(layout.gender==User.MALE?`男`:`女`)}"
+                        style="@style/Text.Common"
+                        android:textSize="14sp"
+                        android:hint="请选择"
+                        android:gravity="end"
+                        android:textColor="@color/color_60_121212"
+                        android:textColorHint="@color/color_60_121212"
+                        />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/arrow_right_gray36" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/birthdayLayout"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/selector_item_background"
+                    >
+
+                    <TextView
+                        style="@style/Text.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/birthday"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@{layout.birthday}"
+                        style="@style/Text.Common"
+                        android:textSize="14sp"
+                        android:hint="请选择"
+                        android:textColor="@color/color_60_121212"
+                        android:textColorHint="@color/color_60_121212"
+                        />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/arrow_right_gray36" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/locationLayout"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/selector_item_background"
+                    >
+
+                    <TextView
+                        style="@style/Text.Bold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/location"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@{layout.province==layout.city ? layout.city : layout.province+` `+layout.city}"
+                        style="@style/Text.Common"
+                        android:textSize="14sp"
+                        android:hint="请选择"
+                        android:textColor="@color/color_60_121212"
+                        android:textColorHint="@color/color_60_121212"
+                        />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/arrow_right_gray36" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/introduceLayout"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/selector_item_background_bottom_r16"
+                    >
+
+                    <TextView
+                        style="@style/Text.Bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/introduce"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:gravity="end"
+                        android:ellipsize="end"
+                        android:lines="1"
+                        style="@style/Text.Common"
+                        android:textSize="14sp"
+                        android:hint="请填写"
+                        android:text="@{layout.signature}"
+                        android:textColor="@color/color_60_121212"
+                        android:textColorHint="@color/color_60_121212"
+                        />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/arrow_right_gray36" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</layout>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.play.more.ShortInfoEditorViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_white_rectangle_top_corner_r24"
+        android:paddingBottom="44dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            setTextBold="@{true}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="修改视频信息"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/storyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Bold"
+            android:textSize="14sp"
+            android:text="故事标题"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            />
+        <com.kgmedia.fastfilm.widget.CounterInputLayout
+            android:id="@+id/storyTitleInput"
+            android:background="@drawable/bg_f5f5f5_r12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/storyTitle"
+            app:inputMaxLength="20"
+            app:inputHint="请输入故事标题..."
+            app:inputCounterVisible="true"
+            app:inputTextSize="14sp"
+            app:inputCounterTextColor="@color/color_50_121212"
+            app:inputTextColor="@color/textColorPrimary"
+            app:inputTextColorHint="@color/color_50_121212"
+            app:inputCounterGravity="right|center_vertical"
+            app:inputCounterTextSize="10sp"
+            app:inputPadding="12dp"
+            app:inputRightMargin="36dp"
+            app:inputCounterRightMargin="12dp"
+
+            />
+        <TextView
+            android:id="@+id/storyIntro"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Text.Bold"
+            android:textSize="14sp"
+            android:text="故事简介"
+            app:layout_constraintStart_toStartOf="@id/storyTitle"
+            app:layout_constraintTop_toBottomOf="@id/storyTitleInput"
+            />
+        <com.kgmedia.fastfilm.widget.CounterInputLayout
+            android:id="@+id/storyIntroInput"
+            android:background="@drawable/bg_f5f5f5_r12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/storyIntro"
+            app:inputLines="5"
+            app:inputMaxLength="100"
+            app:inputHint="请输入故事简介..."
+            app:inputCounterVisible="true"
+            app:inputTextSize="14sp"
+            app:inputCounterTextColor="@color/color_50_121212"
+            app:inputTextColor="@color/textColorPrimary"
+            app:inputTextColorHint="@color/color_50_121212"
+            app:inputCounterTextSize="10sp"
+            app:inputPadding="12dp"
+            app:inputCounterBottomMargin="8dp"
+            app:inputCounterRightMargin="12dp"
+            />
+
+        <TextView
+            android:id="@+id/btnClose"
+            android:layout_marginTop="32dp"
+            singleClick="@{()->layout.dismiss()}"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="@string/cancel"
+            style="@style/Text.Medium"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnOk"
+            app:layout_constraintTop_toBottomOf="@id/storyIntroInput"
+            android:background="@drawable/bg_05_121212_r50"
+            />
+
+        <TextView
+            android:id="@+id/btnOk"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_marginStart="9dp"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            style="@style/Button.Medium"
+            app:layout_constraintStart_toEndOf="@id/btnClose"
+            android:gravity="center"
+            android:paddingHorizontal="18dp"
+            android:text="@string/confirm"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btnClose"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnClose"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.settings.feedback.FeedbackViewModel" />
+
+        <import type="android.view.View"/>
+        <import type="com.kgmedia.fastfilm.common.utils.Utils" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/action_bar_size">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="13dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingBottom="60dp">
+
+                <LinearLayout
+                    android:id="@+id/typeLayout"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_white_rectangle_corner_r12"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="选择类型"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/feedbackTypeName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableEnd="@drawable/arrow_right_gray48"
+                        android:drawablePadding="8dp"
+                        android:gravity="end"
+                        android:text="@{layout.type.value}"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp"
+                        tools:text="产品建议" />
+                </LinearLayout>
+
+                <com.kgmedia.fastfilm.widget.CounterInputLayout
+                    android:id="@+id/feedbackInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_white_rectangle_corner_r12"
+                    app:inputTextColor="@color/textColorPrimary"
+                    app:inputTextColorHint="@color/color_30_121212"
+                    app:inputTextSize="14sp"
+                    app:inputVerticalPadding="16dp"
+                    app:inputHorizontalPadding="16dp"
+                    app:inputHint="请输入六个字以上的反馈描述（必填）"
+                    app:inputLines="5"
+                    app:inputMaxLength="300"
+                    app:inputCounterTextColor="@color/color_50_121212"
+                    app:inputCounterTextSize="13sp"
+                    app:inputCounterGravity="right|bottom"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:text="@{`建议截图（`+layout.photoSize+`/4）: `}"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="12sp"
+                        tools:text="建议截图（0/4）:"/>
+                    <TextView
+                        android:layout_width="340dp"
+                        android:layout_height="20dp"
+                        android:text="（非必选）"
+                        android:textColor="@color/color_50_121212"
+                        android:textSize="12sp"
+                        />
+                </LinearLayout>
+
+                <com.kgmedia.fastfilm.widget.PhotoGridView
+                    android:id="@+id/photo_grid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:columnCount="4"
+                    android:minHeight="80dp"
+                    app:add_button_src="@drawable/icon_feedback_addpicture"
+                    app:add_button_visible="true"
+                    app:delete_button_src="@drawable/ic_feedback_close"
+                    app:divider_space="5dp"
+                    app:max_child_count="4" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:text="联系方式："
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="12sp" />
+
+
+                </LinearLayout>
+
+                <com.kgmedia.fastfilm.widget.XEditText
+                    android:id="@+id/contact"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_white_rectangle_corner_r12"
+                    android:hint="请输入手机号便于联系"
+                    android:inputType="phone"
+                    android:maxLength="20"
+                    android:paddingHorizontal="14dp"
+                    android:text="@={layout.phoneNumber}"
+                    style="@style/Text.Common"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/commit"
+                    style="@style/Button.Bold"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_height="48dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginHorizontal="34sp"
+                    android:layout_marginTop="84dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="提交反馈"
+                    android:layout_width="match_parent"
+                    android:alpha="0.5"
+                    />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </FrameLayout>
+</layout>

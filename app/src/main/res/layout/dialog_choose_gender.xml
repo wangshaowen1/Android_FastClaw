@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.settings.personal.PersonalInformationViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_white_rectangle_top_corner_r24"
+        android:paddingBottom="44dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            setTextBold="@{true}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="选择性别"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+            android:id="@+id/genderMale"
+            showBorder="@{layout.editGender==1}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="20dp"
+            android:onClick="@{layout.clickHandler::onClick}"
+            app:backgroundEndColor="#FF4332"
+            app:borderStartColor="#FFA029"
+            app:borderWidth="3dp"
+            app:layout_constraintEnd_toStartOf="@+id/genderFemale"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:roundCornerRadius="100dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_gender_male_large"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+
+        <TextView
+            android:id="@+id/maleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="我是男生"
+            app:layout_constraintStart_toStartOf="@id/genderMale"
+            app:layout_constraintEnd_toEndOf="@id/genderMale"
+            app:layout_constraintTop_toBottomOf="@id/genderMale"
+            android:layout_marginTop="10dp"
+            style="@style/Text.Medium"
+            android:textColor="@{layout.editGender==1?@color/color_ff4b00:@color/color_121212}"
+            />
+
+        <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+            android:id="@+id/genderFemale"
+            showBorder="@{layout.editGender==2}"
+            android:onClick="@{layout.clickHandler::onClick}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundEndColor="#FF4332"
+            app:borderStartColor="#FFA029"
+            app:borderWidth="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/genderMale"
+            app:layout_constraintTop_toTopOf="@id/genderMale"
+            android:layout_marginEnd="50dp"
+            app:roundCornerRadius="100dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_gender_female_large"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="我是女生"
+            app:layout_constraintStart_toStartOf="@id/genderFemale"
+            app:layout_constraintEnd_toEndOf="@id/genderFemale"
+            app:layout_constraintTop_toBottomOf="@id/genderFemale"
+            android:layout_marginTop="10dp"
+            style="@style/Text.Medium"
+            android:textColor="@{layout.editGender==2?@color/color_ff4b00:@color/color_121212}"
+            />
+
+        <Button
+            android:id="@+id/btnClose"
+            style="@style/Button.Bold"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/bg_05_121212_r50"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/textColorPrimary"
+            app:layout_constraintEnd_toStartOf="@id/btnOk"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/maleText" />
+
+        <Button
+            android:id="@+id/btnOk"
+            style="@style/Button.Bold"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="9dp"
+            android:layout_marginEnd="16dp"
+            android:enabled="@{!layout.editSignature.empty}"
+            android:gravity="center"
+            android:paddingHorizontal="18dp"
+            android:text="@string/confirm"
+            app:layout_constraintBottom_toBottomOf="@+id/btnClose"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnClose"
+            app:layout_constraintTop_toTopOf="@+id/btnClose" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

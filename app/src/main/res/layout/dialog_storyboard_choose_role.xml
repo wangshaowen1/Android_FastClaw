@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.editor.chooserole.ChooseRoleViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_tr24"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="选择角色"
+            android:textColor="@color/color_1a1a1a"
+            android:textSize="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRoles"
+            hwRatio="@{300f/375f}"
+            setConstraintMaxHeightByWidth="@{true}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:adapter="@{layout.adapter}"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingHorizontal="8dp"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            app:spanCount="3"
+            tools:itemCount="4"
+            tools:listitem="@layout/item_storyboard_choose_role" />
+
+        <View
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/gradient_top_00_ffffff_bottom_ffffff"
+            app:layout_constraintDimensionRatio="375:92"
+            app:layout_constraintTop_toBottomOf="@+id/rvRoles" />
+
+        <TextView
+            setEnabled="@{layout.buttonEnabled}"
+            singleClick="@{(v)->layout.useSelectedRoles()}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/selector_common_button"
+            android:gravity="center"
+            android:text="使用"
+            android:textColor="@color/sel_common_button_txt"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/bottom"
+            app:layout_constraintDimensionRatio="317:48"
+            app:layout_constraintEnd_toEndOf="@+id/bottom"
+            app:layout_constraintStart_toStartOf="@+id/bottom"
+            app:layout_constraintTop_toTopOf="@+id/bottom"
+            app:layout_constraintWidth_percent="0.85" />
+
+        <ImageView
+            singleClick="@{() -> layout.dismiss()}"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:padding="16dp"
+            android:src="@drawable/ic_light_dialog_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

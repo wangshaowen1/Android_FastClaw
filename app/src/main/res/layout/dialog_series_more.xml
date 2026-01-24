@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.series.more.SeriesMoreViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_tr24"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingBottom="36dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="更多"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/btnEdit"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:drawableTop="@drawable/ic_shots_edit"
+            android:drawablePadding="4dp"
+            android:paddingHorizontal="24dp"
+            android:text="修改信息"
+            android:textColor="@color/color_50_121212"
+            android:textSize="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/btnSetPrice"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:drawableTop="@drawable/ic_set_price"
+            android:drawablePadding="4dp"
+            android:gravity="center"
+            android:paddingHorizontal="24dp"
+            android:text="设置价格"
+            android:textColor="@color/color_50_121212"
+            android:textSize="10dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/btnEdit"
+            app:layout_constraintStart_toEndOf="@+id/btnEdit" />
+
+        <ImageView
+            singleClick="@{() -> layout.dismiss()}"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:padding="16dp"
+            android:src="@drawable/ic_light_dialog_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

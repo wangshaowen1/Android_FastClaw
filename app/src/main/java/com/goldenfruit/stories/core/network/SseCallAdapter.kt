@@ -1,0 +1,199 @@
+package com.kgmedia.fastfilm.core.network
+
+import cn.android.security.APISecurity
+import com.blankj.utilcode.util.ConvertUtils
+import com.nhsd.basic.utils.Logger
+import com.kgmedia.fastfilm.App
+import com.kgmedia.fastfilm.core.User
+import com.tencent.bugly.crashreport.CrashReport
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import okhttp3.internal.http2.ErrorCode
+import okhttp3.internal.http2.StreamResetException
+import okhttp3.sse.EventSource
+import okhttp3.sse.EventSourceListener
+import okio.Buffer
+import retrofit2.Call
+import retrofit2.CallAdapter
+import retrofit2.Retrofit
+import java.io.IOException
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+
+class SseCallAdapter(private val responseType: Type) :
+    CallAdapter<EventSource, Flow<SSEvent>> { // 返回 Flow
+
+    /**
+     * 请求体加密
+     *
+     * @param newBuilder 新请求Builder
+     * @param method     请求Method
+     * @param originBody 原请求未加密body
+     */
+    @Throws(java.lang.Exception::class)
+    private fun encryptRequestBody(newBuilder: Request.Builder, method: String, originBody: RequestBody?) {
+        if (originBody != null) {
+            val requestBuffer = Buffer()
+            originBody.writeTo(requestBuffer)
+            val bytes = requestBuffer.readByteArray()
+            requestBuffer.close()
+            newBuilder.method(
+                method,
+                RequestBody.create(
+                    "application/json".toMediaTypeOrNull(),
+                    APISecurity.sign(App.instance, User.get().id, ConvertUtils.bytes2String(bytes))
+                )
+            )
+        }
+    }
+
+    //if (RetrofitClient.mSseOkHttpClient == null) {
+    //            RetrofitClient.mSseOkHttpClient = OkHttpClient.Builder()
+    //                .addInterceptor(object : Interceptor {
+    //                    @Throws(IOException::class)
+    //                    override fun intercept(chain: Interceptor.Chain): Response {
+    //                        val original = chain.request()
+    //                        if ("GET" == original.method) {
+    //                            return chain.proceed(original)
+    //                        }
+    //                        val requestBuilder = original.newBuilder()
+    //                            .header("Cache-Control", "no-cache")
+    //                            .header("Content-Type", "application/json")
+    //                            .header("Accept", "text/event-stream;charset=UTF-8")
+    //                            .header("userToken", if (User.get() == null || User.get().id == null) "" else User.get().id)
+    //                            .header("appHeader", Gson().toJson(AppHeader()))
+    //                        try {
+    //                            //encryptRequestBody(requestBuilder, original.method, original.body)
+    //                        } catch (e: java.lang.Exception) {
+    //                            e.printStackTrace()
+    //                        }
+    //                        val request = requestBuilder.build()
+    //                        return chain.proceed(request)
+    //                    }
+    //                })
+    //                .protocols(listOf(Protocol.HTTP_1_1))
+    //                .readTimeout(0, TimeUnit.SECONDS) // 禁用读超时
+    //                .connectTimeout(10, TimeUnit.SECONDS)
+    //                .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))
+    //                .build()
+    //        }
+    override fun adapt(call: Call<EventSource>): Flow<SSEvent> = callbackFlow {
+        val factory = RetrofitClient.sseEventFactory
+        var eventSource: EventSource? = null
+        val request = call.request()
+        val listener = object : EventSourceListener() {
+            override fun onClosed(eventSource: EventSource) {
+                Logger.d("[SSE] 服务器主动关闭连接")
+                trySend(SSEvent.Close(true))
+                close() // 正常关闭通道
+            }
+
+            override fun onOpen(source: EventSource, response: Response) {
+                try {
+                    if (!isClosedForSend) { // 检查通道状态
+                        trySend(SSEvent.Open(response))
+                    }
+                } catch (e: Exception) {
+                    Logger.d("[SSE] onOpen发送异常: ${e.stackTraceToString()}")
+                    trySend(SSEvent.Close(false))
+                    close(e)
+                }
+            }
+
+            override fun onEvent(source: EventSource, id: String?, type: String?, data: String) {
+                try {
+                    if (!isClosedForSend) { // 检查通道状态
+                        trySend(SSEvent.Message(data, type, id))
+                    }
+                } catch (e: Exception) {
+                    Logger.d("[SSE] onEvent发送异常: ${e.stackTraceToString()}")
+                }
+            }
+
+            override fun onFailure(source: EventSource, t: Throwable?, response: Response?) {
+                try {
+                    Logger.d("[SSE] 链接失败 ：onFailure=>response=${response},e=${t}")
+                    val exception = t ?: IOException("Unknown error")
+                    when {
+                        response?.code == 204 -> {
+                            trySend(SSEvent.Close(true))
+                            close()
+                        }
+
+                        exception is StreamResetException && exception.errorCode == ErrorCode.CANCEL -> {
+                            Logger.d("连接已提前关闭，忽略异常StreamResetException")
+                            trySend(SSEvent.Close(true))
+                            close()
+                        }
+
+                        // 明确处理 Socket 已关闭的情况
+                        exception.message?.contains("Socket is closed") == true -> {
+                            Logger.d("连接已提前关闭，忽略异常")
+                            return
+                        }
+
+                        exception.message?.contains("Socket closed") == true -> {
+                            Logger.d("连接已提前关闭，忽略异常")
+                            return
+                        }
+
+                        else -> {
+                            trySend(SSEvent.Error(exception))
+                            close(exception)
+                            CrashReport.postCatchedException(exception)
+                        }
+                    }
+                } catch (e: Exception) {
+                    CrashReport.postCatchedException(e)
+                    Logger.d("[SSE] onFailure处理异常: ${e.stackTraceToString()}")
+                }
+            }
+        }
+
+        try {
+            eventSource = factory.newEventSource(request, listener)
+        } catch (e: Exception) {
+            Logger.d("[SSE] 初始化异常: ${e.stackTraceToString()}")
+            close(e)
+        }
+
+        awaitClose {
+            try {
+                if (!isClosedForSend) { // 双重检查
+                    eventSource?.cancel()
+                    Logger.d("[SSE] 客户端主动关闭连接")
+                }
+            } catch (e: Exception) {
+                Logger.d("[SSE] awaitClose异常: ${e.stackTraceToString()}")
+            }
+        }
+    }
+
+    override fun responseType(): Type = responseType
+}
+
+sealed class SSEvent {
+    data class Open(val response: Response) : SSEvent()
+    data class Message(val data: String, val type: String?, val id: String?) : SSEvent()
+    data class Error(val throwable: Throwable) : SSEvent()
+    data class Close(val isServiceClose: Boolean) : SSEvent()
+}
+
+class SseCallAdapterFactory : CallAdapter.Factory() {
+    override fun get(
+        returnType: Type,
+        annotations: Array<Annotation>,
+        retrofit: Retrofit
+    ): CallAdapter<*, *>? {
+        // 检查返回类型是否为 Flow<SSEvent>
+        if (getRawType(returnType) != Flow::class.java) return null
+        val flowType = getParameterUpperBound(0, returnType as ParameterizedType)
+        if (getRawType(flowType) != SSEvent::class.java) return null
+        return SseCallAdapter(flowType)
+    }
+}

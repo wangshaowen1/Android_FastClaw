@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.settings.personal.PersonalInformationViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_white_rectangle_top_corner_r24"
+        android:paddingBottom="52dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            setTextBold="@{true}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="设置个人简介"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/edit"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="30dp"
+            android:elevation="0dp"
+            app:cardBackgroundColor="@color/color_f5f5f5"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp"
+            app:cardMaxElevation="0dp"
+            app:layout_constraintDimensionRatio="343:150"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle">
+
+            <EditText
+                android:id="@+id/etIntroduction"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="填写个人介绍更容易获得关注,点击此处添加"
+                android:maxLength="50"
+                android:paddingHorizontal="12dp"
+                android:lineSpacingExtra="@dimen/lineSpacingExtra"
+                android:paddingTop="12dp"
+                android:paddingBottom="34dp"
+                android:text="@={layout.editSignature}"
+                style="@style/Text.Common"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="10dp"
+                android:text="@{layout.editSignature.length+`/50`}"
+                android:textColor="@color/color_50_121212"
+                android:textSize="10sp"
+                tools:text="0/50" />
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/tv_close"
+            android:layout_marginTop="36dp"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="@string/cancel"
+            style="@style/Button.Bold"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/textColorPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnOk"
+            app:layout_constraintTop_toBottomOf="@id/edit"
+            android:background="@drawable/bg_05_121212_r50"
+            />
+
+        <Button
+            android:id="@+id/btnOk"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_marginStart="9dp"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            style="@style/Button.Bold"
+            app:layout_constraintStart_toEndOf="@id/tv_close"
+            android:gravity="center"
+            android:paddingHorizontal="18dp"
+            android:text="@string/text_save"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_close"
+             />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.settings.logoff.ApplyLogOffViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:toolbar="@{layout.toolbar}" />
+
+        <TextView
+            android:id="@+id/reasonTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:layout_marginStart="15dp"
+            android:textSize="12sp"
+            style="@style/Text.Common"
+            android:layout_marginTop="12dp"
+            android:text="注销理由："
+            />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:elevation="0dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:cardMaxElevation="0dp"
+            app:layout_constraintHeight_percent="0.4766"
+            app:layout_constraintTop_toBottomOf="@+id/reasonTitle">
+
+            <EditText
+                android:id="@+id/etContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:gravity="top"
+                android:hint="请输入你账户注销申请理由…"
+                style="@style/Text.Common"
+                android:lineSpacingExtra="@dimen/lineSpacingExtra"
+                android:maxLength="200"
+                android:orientation="horizontal"
+                android:paddingHorizontal="15dp"
+                android:paddingTop="15dp"
+                android:paddingBottom="45dp"
+                android:text="@={layout.content}"
+                android:textColor="@color/textColorPrimary"
+                android:textColorHint="@color/color_40_121212"
+                android:textSize="14sp"
+                app:layout_constraintDimensionRatio="343:280"
+                app:layout_constraintTop_toBottomOf="@+id/work" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:text="@{(layout.content==null?0:layout.content.length)+`/200`}"
+                android:textColor="@color/color_40_21213b"
+                android:textSize="12sp"
+                tools:text="0/200" />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/btnLogOff"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="32dp"
+            android:background="@{layout.content.length()>9?@drawable/btn_common_normal:@drawable/btn_common_disable}"
+            android:gravity="center"
+            android:text="确认注销"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintDimensionRatio="297:48"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/content"
+            app:layout_constraintWidth_percent="0.792"
+            style="@style/Button.Bold"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

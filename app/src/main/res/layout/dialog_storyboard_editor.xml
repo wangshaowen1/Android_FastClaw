@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.creator.generate.edit.StoryboardEditorViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_tr24"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="@{layout.title}"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="分镜1·画面" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <com.kgmedia.fastfilm.widget.editor.RoleEditText
+                android:id="@+id/inputer"
+                android:layout_width="match_parent"
+                android:layout_height="327dp"
+                android:background="@drawable/bg_f5f5f5_r12"
+                android:gravity="top|start"
+                android:maxLength="@{layout.maxInputLength}"
+                android:paddingHorizontal="12dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="40dp"
+                android:textSize="15sp"
+                app:hint="@{layout.hint}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="12dp"
+                android:text="@{layout.input.length()+`/`+layout.maxInputLength}"
+                android:textColor="@color/color_50_121212"
+                android:textSize="10sp"
+                tools:text="0/500" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="26dp"
+            android:gravity="center_vertical|end">
+
+            <Button
+                android:id="@+id/btnAddRole"
+                style="@style/Button.Menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/gradient_left_93d9ff_right_5b94ff_r10"
+                android:text="插入角色"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/btnConfirm"
+                style="@style/Button.Menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/gradient_left_ffa029_right_ff4b00_r10"
+                android:paddingStart="26dp"
+                android:paddingEnd="26dp"
+                android:text="保存" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

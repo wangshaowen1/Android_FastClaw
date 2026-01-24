@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.play.ShortDramaPlayerViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_white_rectangle_top_corner_r24">
+
+        <!-- 顶部封面图 -->
+        <com.kgmedia.fastfilm.widget.CropShapeImageView
+            android:id="@+id/iv_cover"
+            android:layout_width="45dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_default_cover"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_edit_info"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:shapeAppearanceOverlay="@style/roundStyle_r6"
+            loadThumbnailUri="@{layout.shortCover}"/>
+
+        <!-- 视频标题 -->
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/Text.Bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="14dp"
+            android:ellipsize="end"
+            android:text="穿成恶毒女配后，我反向攻略女主"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_author"
+            app:layout_constraintEnd_toStartOf="@+id/iv_close"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/iv_cover"
+            app:layout_constraintTop_toTopOf="@id/iv_cover"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <!-- 作者名 -->
+        <TextView
+            android:id="@+id/tv_author"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@{layout.dramaDetail.artist.nickName}"
+            android:textColor="@color/color_50_121212"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_cover"
+            app:layout_constraintEnd_toEndOf="@+id/tv_title"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/tv_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            tools:text="奶盖啵啵" />
+
+        <!-- 关闭按钮 -->
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_dialog_close_gray"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="4dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="12dp"
+            singleClick="@{()->layout.dismiss()}"/>
+
+        <!-- 底部功能按钮：修改视频信息 -->
+        <TextView
+            android:id="@+id/tv_edit_info"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="修改视频信息"
+            android:gravity="center"
+            android:textSize="10sp"
+            android:textColor="@color/color_50_121212"
+            style="@style/Text.Medium"
+            android:drawableTop="@drawable/ic_shots_edit"
+            android:drawablePadding="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_cover"
+            app:layout_constraintEnd_toStartOf="@id/tv_reedit"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="42dp" />
+
+        <!-- 底部功能按钮：重新编辑 -->
+        <TextView
+            android:id="@+id/tv_reedit"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="重新编辑"
+            android:textSize="10sp"
+            android:textColor="@color/color_50_121212"
+            style="@style/Text.Medium"
+            android:drawableTop="@drawable/ic_shots_reedit"
+            android:drawablePadding="4dp"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@+id/tv_edit_info"
+            app:layout_constraintEnd_toStartOf="@+id/tv_download"
+            app:layout_constraintBottom_toBottomOf="@id/tv_edit_info"
+            app:layout_constraintTop_toTopOf="@id/tv_edit_info"
+            android:layout_marginStart="22dp" />
+
+        <!-- 底部功能按钮：下载视频 -->
+        <TextView
+            android:id="@+id/tv_download"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="下载视频"
+            android:textSize="10sp"
+            android:textColor="@color/color_50_121212"
+            style="@style/Text.Medium"
+            android:drawableTop="@drawable/ic_shots_download"
+            android:drawablePadding="4dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_reedit"
+            app:layout_constraintEnd_toStartOf="@+id/tv_delete"
+            app:layout_constraintBottom_toBottomOf="@id/tv_edit_info"
+            app:layout_constraintTop_toTopOf="@id/tv_edit_info"
+            android:layout_marginStart="22dp"
+            android:gravity="center" />
+
+        <!-- 底部功能按钮：删除视频 -->
+        <TextView
+            android:id="@+id/tv_delete"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="删除视频"
+            android:layout_marginStart="22dp"
+            android:textSize="10sp"
+            android:textColor="@color/color_50_121212"
+            style="@style/Text.Medium"
+            android:drawableTop="@drawable/ic_shots_delete"
+            android:drawablePadding="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tv_edit_info"
+            app:layout_constraintTop_toTopOf="@id/tv_edit_info"
+            app:layout_constraintStart_toEndOf="@id/tv_download"
+            android:gravity="center" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

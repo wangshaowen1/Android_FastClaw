@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.payment.points.ItemFirstTimeRechargeSampleVM" />
+    </data>
+
+    <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="8dp"
+        app:backgroundEndColor="@color/color_10_ffa029"
+        app:backgroundStartColor="@color/color_10_ff4332"
+        app:roundCornerRadius="50dp">
+
+        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+            android:id="@+id/ivAvatar"
+            loadThumbnailUri="@{item.data.avatarUrl}"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:riv_border_color="@android:color/white"
+            app:riv_border_width="1dp"
+            app:riv_oval="true"
+            tools:src="@color/color_20_000000" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:lines="1"
+            android:paddingEnd="8dp"
+            android:text="@{item.data.tipContext}"
+            android:textColor="@color/color_590e0e"
+            android:textSize="12dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivAvatar"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@+id/ivAvatar"
+            tools:text="用户xxx单部作品收益¥1000" />
+    </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+
+</layout>

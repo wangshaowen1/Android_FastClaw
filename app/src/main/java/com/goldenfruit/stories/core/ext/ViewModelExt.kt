@@ -1,0 +1,110 @@
+package com.kgmedia.fastfilm.core.ext
+
+import androidx.lifecycle.ViewModel
+import com.nhsd.basic.ext.launch
+import com.nhsd.basic.ext.launchWithLoading
+import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.viewmodel.BaseViewModel
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
+import com.kgmedia.fastfilm.core.response
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+
+fun ViewModel.launch(
+    showToast: Boolean = false,
+    block: suspend CoroutineScope.() -> Unit
+): Job {
+    return launch({
+        block.invoke(this)
+    }, {
+        //do nothing
+        if (showToast) {
+            parseMessage(it)?.showToast()
+        }
+    })
+}
+
+fun BaseViewModel.launchWithLoading(
+    showLoading: Boolean = true,
+    block: suspend CoroutineScope.() -> Unit,
+) {
+    launchWithLoading(showLoading, {
+        block.invoke(this)
+    }, {
+        if (showLoading) {
+            parseMessage(it)?.showToast()
+        }
+    })
+}
+
+/**
+ * 自动 launch + 自动切线程 + 自动处理 response
+ */
+fun <T> BaseViewModel.request(
+    apiBlock: suspend () -> ApiResponse<T>?,
+    showToast: Boolean = false,
+    onError: (Throwable?) -> Unit = {},
+    onSuccess: ApiResponse<T>.() -> Unit
+): Job {
+    return launch(showToast) {
+        response(apiBlock, onSuccess) {
+            // 这里是 error 回调
+            onError.invoke(this?.apiException)
+        }
+    }
+}
+
+/**
+ * 功能：
+ * 1. 自动开启协程 (ViewModelScope)
+ * 2. 自动管理 Loading (可选)
+ * 3. 自动捕获异常并 Toast (可选)
+ * 4. 自动切换 IO 线程 (依赖 response 方法的内部实现)
+ * @param apiBlock  网络请求挂起函数
+ * @param showLoading 是否显示 Loading 弹窗
+ * @param showToastError 是否出错时自动 Toast
+ * @param onError   自定义错误回调
+ * @param onSuccess 成功回调
+ */
+fun <T> BaseViewModel.requestWithLoading(
+    apiBlock: suspend () -> ApiResponse<T>?,
+    showLoading: Boolean = true,
+    showToastError: Boolean = true,
+    onError: (Throwable?) -> Unit = {},
+    onSuccess: ApiResponse<T>.() -> Unit
+): Job {
+    return launch(
+        block = {
+            if (showLoading) setLoading(true)
+            try {
+                // response 方法内部包含了 withContext(Dispatchers.IO)
+                response(apiBlock, onSuccess) {
+                    onError(this?.apiException)
+                }
+            } finally {
+                if (showLoading) setLoading(false)
+            }
+        },
+        onError = { e ->
+            if (showToastError) parseMessage(e)?.showToast()
+            onError(e)
+            e.printStackTrace()
+        }
+    )
+}
+
+fun ViewModel.launch(
+    block: suspend CoroutineScope.() -> Unit,
+    onError: (e: Throwable) -> Unit = { _: Throwable -> },
+    onComplete: () -> Unit = {}
+): Job {
+    return launch(block,onError,onComplete)
+}
+
+fun BaseViewModel.launchWithLoading(
+    showLoading: Boolean = true,
+    block: suspend CoroutineScope.() -> Unit,
+    onError: ((e: Throwable) -> Unit)? = null,
+) {
+   launchWithLoading(showLoading, block, onError)
+}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.series.ItemSeriesEpisodeVM" />
+
+        <import type="com.kgmedia.fastfilm.common.ext.FormatUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        singleClick="@{(v) -> item.onClick()}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp">
+
+        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+            android:id="@+id/ivCover"
+            loadThumbnailUri="@{item.data.dramasCoverUrl}"
+            placeHolder="@{@drawable/ic_default_cover}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="3:4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.16"
+            app:riv_corner_radius="6dp"
+            tools:src="@drawable/ic_default_cover" />
+
+        <ImageView
+            setVisible="@{!item.data.mine &amp;&amp; item.data.unlockInfo.unlockStatus != 1}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/bg_50_000000_r6"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_short_locked_small"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@{`第`+item.data.workNo+`章｜`+item.data.dramasName}"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tvDesc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="第1章｜穿成恶毒女配后，我反向攻略女主..." />
+
+        <TextView
+            android:id="@+id/tvDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="4dp"
+            android:ellipsize="end"
+            android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+            android:maxLines="2"
+            android:text="@{item.data.scriptIntro}"
+            android:textColor="@color/color_50_121212"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/tvDuration"
+            app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+            app:layout_constraintStart_toStartOf="@+id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            tools:text="上学的时候黄元元是那种特别讨厌的同学，尤其是在接老师下茬这一点。他坐在我右边，阳光他坐在我右边，阳光阳光..." />
+
+        <TextView
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{FormatUtils.formatDuration((long)item.data.actualDuration*1000)}"
+            android:textColor="@color/color_50_121212"
+            android:textSize="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvDesc"
+            tools:text="05:11" />
+
+        <TextView
+            android:id="@+id/tvPlayNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:drawableStart="@drawable/ic_play_num"
+            android:drawablePadding="2dp"
+            android:gravity="center_vertical"
+            android:text="@{item.data.interaction.playNumStr}"
+            android:textColor="@color/color_50_121212"
+            android:textSize="10dp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tvDuration"
+            app:layout_constraintStart_toEndOf="@+id/tvDuration"
+            tools:text="512.1万" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

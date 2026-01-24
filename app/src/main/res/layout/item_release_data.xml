@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.hit.ItemReleaseDataVm" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="6dp"
+        android:background="@drawable/bg_ffffff_r8"
+        android:paddingVertical="10dp">
+
+        <TextView
+            android:id="@+id/iv_entry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="累计入驻"
+            android:text="@{item.data.title}"
+            android:textColor="@color/color_5b1616"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tv_entry"
+            app:layout_constraintEnd_toStartOf="@id/tv_entry"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_entry"
+          />
+
+        <TextView
+            android:id="@+id/tv_entry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_50_121212"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@id/tv_entry_value"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_entry"
+            android:text="@{`(`+item.data.suffix+`)`}"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="(人)" />
+
+        <TextView
+            android:id="@+id/tv_entry_value"
+            setIncreaseAnimatedValue="@{item.data.count}"
+            setSuffix="@{``}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/color_ff2e2e"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_entry"
+            tools:text="28,444" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

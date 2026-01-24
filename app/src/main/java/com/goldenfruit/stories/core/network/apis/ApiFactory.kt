@@ -1,0 +1,21 @@
+package com.kgmedia.fastfilm.core.network.apis
+
+import com.kgmedia.fastfilm.BuildConfig
+import com.kgmedia.fastfilm.core.Config
+import com.kgmedia.fastfilm.core.network.RetrofitClient
+import com.nhsd.basic.ext.contain
+
+object ApiFactory {
+    val apiService: ApiService by lazy {
+        val baseUrl = Config.get().baseUrlCustom ?: ApiConstants.BASE_URL
+        RetrofitClient.create(baseUrl, ApiService::class.java)
+    }
+
+    val eventService: EventService by lazy {
+        val remoteServer = arrayOf("preview", "production").contain(BuildConfig.FLAVOR_env)
+        val baseUrl = if (remoteServer) "https://track.kuaigeai.cn" else {
+            Config.get().baseUrlCustom ?: ApiConstants.BASE_URL
+        }
+        RetrofitClient.create(baseUrl, EventService::class.java)
+    }
+}

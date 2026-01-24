@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.wallet.details.ItemWithdrawalDetailsVm" />
+
+        <import type="com.kgmedia.fastfilm.core.network.apis.response.WithdrawalRecordInfo"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@{item.data.withdrawalDesc}"
+            android:textColor="@color/color_121212"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@id/tv_describe"
+            app:layout_constraintEnd_toStartOf="@id/tv_amount_of_money"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="提现成功-支付宝" />
+
+        <TextView
+            android:id="@+id/tv_describe"
+            android:layout_width="0dp"
+            android:layout_height="17dp"
+            android:layout_marginTop="5dp"
+            android:text="@{item.remarks}"
+            tools:text="2025.09.02 00:12 充值能力包"
+            android:textColor="@color/color_50_121212"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_name"
+            app:layout_constraintStart_toStartOf="@id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/tv_amount_of_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{item.amount}"
+            android:textColor="@{item.data.withdrawalStatus==WithdrawalRecordInfo.WITHDRAWAL_STATUS_FAIL?@color/color_121212:@color/color_ac0e00}"
+            tools:textColor="@color/color_ac0e00"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="+10元" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

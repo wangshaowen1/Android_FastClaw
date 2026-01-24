@@ -1,0 +1,50 @@
+package com.kgmedia.fastfilm.core
+
+import com.kgmedia.fastfilm.common.ext.ioScope
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesId
+import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
+import com.nhsd.basic.ext.launchNoCrash
+
+/**
+ * 全部变量
+ */
+object Global {
+    /**
+     * 首次注册用户，需要弹出完善资料
+     */
+    var needCompleteProfile = false
+
+    /**
+     * 续写的内容，生命周期内保持，退出登录，退出app或者使用后清除
+     */
+    val continueWritingContent: MutableMap<String?, String?> by lazy { mutableMapOf() }
+
+    /**
+     * 灵感生成的内容，生命周期内保持，退出登录，退出app或者使用后清除
+     */
+    var inspirationContent: String? = null
+
+    /**
+     * 自己写故事内容，生命周期内保持，退出登录，退出app或者使用后清除
+     */
+    var customizedContent: String? = null
+
+    fun refreshUserInfo() {
+        ioScope.launchNoCrash {
+            val resp = ApiFactory.apiService.getUserHomeInfo(UserTokenBody())
+            if (resp.isSuccess) {
+                resp.data?.let { User.get().updateFrom(it) }
+            }
+        }
+    }
+
+    fun clearContinueInputContent(dramasSeriesId: String?) {
+        continueWritingContent.remove(dramasSeriesId)
+    }
+
+    fun clearInputContent() {
+        inspirationContent = null
+        customizedContent = null
+    }
+}

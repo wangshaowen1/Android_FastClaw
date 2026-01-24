@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.settings.logoff.LogoffViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+
+        <TextView
+            style="@style/Text.Common"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="用户注销须知"
+            android:textColor="@color/color_1f1f1f"
+            android:textSize="12sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_white_rectangle_corner_r12"
+            android:lineSpacingExtra="@dimen/lineSpacingExtra"
+            android:padding="16dp"
+            android:text="@string/app_log_off"
+            android:textColor="@color/color_21213b"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_agreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:onClick="@{(v)->layout.checkPolicy()}"
+            android:orientation="horizontal"
+            android:visibility="@{layout.removeAccountState==0?View.VISIBLE:View.GONE}">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="4dp"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                android:src="@{layout.checkedPolicy?@drawable/ic_logoff_choose_checked:@drawable/ic_logoff_choose_normal}"
+                tools:src="@drawable/ic_logoff_choose_checked" />
+
+            <TextView
+                android:id="@+id/tv_purchase_instructions"
+                setSpanText="@{@string/app_purchase_instructions}"
+                singleClick="@{layout.clickHandler::onClick}"
+                spanColor="@{@color/textColorPrimary}"
+                spanText="@{`账号注销说明`}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_purchase_instructions"
+                android:textColor="@color/color_50_121212"
+                android:textSize="12dp"
+                android:layout_marginVertical="4dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="28dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="@{layout.removeAccountState==0?View.VISIBLE:View.GONE}">
+
+            <TextView
+                singleClick="@{(v)->layout.logOff()}"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_common_cancel"
+                android:enabled="@{layout.checkedPolicy}"
+                android:gravity="center"
+                android:text="申请注销"
+                android:textColor="@{layout.checkedPolicy?@color/textColorPrimary:@color/color_40_21213b}"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:textColor="@color/color_21213b" />
+
+            <TextView
+                singleClick="@{(v)->layout.back()}"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                style="@style/Button.Bold"
+                android:gravity="center"
+                android:text="再想想"
+                android:textSize="16sp"
+                 />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/btnCancel"
+            style="@style/Button.Bold"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="32dp"
+            android:text="申请注销中"
+            android:textSize="16sp"
+            android:visibility="@{layout.removeAccountState==1?View.VISIBLE:View.GONE}"
+            tools:visibility="visible" />
+    </LinearLayout>
+</layout>

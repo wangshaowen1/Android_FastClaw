@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.main.MainViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="com.kgmedia.fastfilm.common.ext.FormatUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/overlay"
+            layout="@layout/layout_export_video_overlay" />
+
+        <FrameLayout
+            android:id="@+id/fragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/mrg"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivFirstWorkBar"
+            setVisible="@{layout.firstWorkGuideBar.guideBarStatus==1 &amp;&amp; layout.showTab!=0}"
+            singleClick="@{(v)->layout.clickFirstWorkGuideBar()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/img_first_work_bar"
+            app:layout_constraintBottom_toTopOf="@+id/mrg" />
+
+        <ImageView
+            setVisible="@{layout.firstWorkGuideBar.guideBarStatus==1 &amp;&amp; layout.showTab!=0}"
+            singleClick="@{(v)->layout.forceCloseFirstWorkGuideBar()}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:paddingVertical="10dp"
+            android:src="@drawable/ic_dialog_close"
+            app:layout_constraintBottom_toTopOf="@+id/mrg"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="@+id/ivFirstWorkBar"
+            app:layout_constraintTop_toTopOf="@+id/ivFirstWorkBar"
+            app:tint="#85847B" />
+
+        <com.kgmedia.fastfilm.widget.MoveFrameLayout
+            android:id="@+id/mfl_offset_ticket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="82dp"
+            android:visibility="@{layout.appFloatWindows==null?View.GONE:(layout.appFloatWindows.isOpen()?View.VISIBLE:View.GONE)}"
+            app:layout_constraintBottom_toTopOf="@id/mrg"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                loadUri="@{layout.appFloatWindows.floatIconUrl}"
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_marginEnd="11dp"
+                android:adjustViewBounds="true"
+                android:importantForAccessibility="no" />
+
+        </com.kgmedia.fastfilm.widget.MoveFrameLayout>
+
+<!--        <include-->
+<!--            android:id="@+id/generating"-->
+<!--            layout="@layout/layout_generating"-->
+<!--            viewModel="@{layout.generating}"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:visibility="@{layout.generating.show?View.VISIBLE:View.GONE}"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/mrg" />-->
+
+        <include
+            android:id="@+id/includeDramasGenerating"
+            layout="@layout/layout_dramas_generating"
+            viewModel="@{layout}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{layout.generating!=null&amp;&amp;layout.showTab!=0?View.VISIBLE:View.GONE}"
+            app:layout_constraintBottom_toTopOf="@+id/mrg" />
+
+        <com.kgmedia.fastfilm.widget.MultRadioGroup
+            android:id="@+id/mrg"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@{layout.showTab==0?@color/color_121212:@color/white}"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/nbv">
+
+            <com.kgmedia.fastfilm.widget.FixedAnimatedRadioButton
+                android:id="@+id/tab_home"
+                style="@style/Text.Bold"
+                textColorRes="@{layout.getTabColorSelector(layout.showTab)}"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:onClick="@{layout.clickHandler::onClick}"
+                android:text="@string/tab_home"
+                android:textSize="16sp"
+                tools:checked="false" />
+
+            <com.kgmedia.fastfilm.widget.FixedAnimatedRadioButton
+                android:id="@+id/tab_hot"
+                style="@style/Text.Bold"
+                textColorRes="@{layout.getTabColorSelector(layout.showTab)}"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:onClick="@{layout.clickHandler::onClick}"
+                android:text="@string/tab_hot"
+                android:textSize="16sp"
+                tools:checked="false" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/message"
+                    style="@style/Text.Bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tab_message"
+                    android:textSize="16sp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.kgmedia.fastfilm.widget.FixedAnimatedRadioButton
+                    android:id="@+id/tab_message"
+                    style="@style/Text.Bold"
+                    textColorRes="@{layout.getTabColorSelector(layout.showTab)}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="@{layout.clickHandler::onClick}"
+                    android:text="@string/tab_message"
+                    android:textSize="16sp"
+                    tools:checked="false" />
+
+                <TextView
+                    setVisible="@{layout.unreadNum>0}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:background="@drawable/bg_ff363f_r50"
+                    android:gravity="center"
+                    android:minWidth="16dp"
+                    android:paddingHorizontal="3dp"
+                    android:text="@{FormatUtils.formatMessageNum(layout.unreadNum)}"
+                    android:textColor="@color/white"
+                    android:textSize="12dp"
+                    app:layout_constraintBottom_toTopOf="@+id/message"
+                    app:layout_constraintStart_toEndOf="@+id/message"
+                    app:layout_constraintTop_toTopOf="@+id/message"
+                    tools:text="99" />
+
+                <View
+                    android:id="@+id/view_message_placeholder"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="@{layout.isLogin?View.GONE:View.VISIBLE}" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <com.kgmedia.fastfilm.widget.FixedAnimatedRadioButton
+                    android:id="@+id/tab_mine"
+                    style="@style/Text.Bold"
+                    textColorRes="@{layout.getTabColorSelector(layout.showTab)}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:onClick="@{layout.clickHandler::onClick}"
+                    android:text="@string/tab_mine"
+                    android:textSize="16sp"
+                    tools:checked="false" />
+
+                <View
+                    android:id="@+id/view_mine_placeholder"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="@{layout.isLogin?View.GONE:View.VISIBLE}" />
+            </FrameLayout>
+        </com.kgmedia.fastfilm.widget.MultRadioGroup>
+
+        <com.kgmedia.fastfilm.widget.NavBarView
+            android:id="@+id/nbv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="@drawable/shadow_main_tab"
+            app:layout_constraintBottom_toTopOf="@+id/bottomBarrier" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/bottomBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="top"
+            app:constraint_referenced_ids="generating,mrg" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

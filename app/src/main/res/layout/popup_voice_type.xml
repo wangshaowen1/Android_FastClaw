@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="4dp"
+    >
+
+    <RadioGroup
+        android:id="@+id/popup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_585858_r12"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/randomVoice"
+            android:layout_width="115dp"
+            android:layout_height="38dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/random_sounds"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="12sp"
+             />
+
+        <RadioButton
+            android:id="@+id/manVoice"
+            android:layout_width="115dp"
+            android:layout_height="38dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/male_vocals"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="12sp"
+            tools:checked="true" />
+
+        <RadioButton
+            android:id="@+id/womanVoice"
+            android:layout_width="115dp"
+            android:layout_height="38dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/female_vocals"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="12sp"
+             />
+    </RadioGroup>
+</FrameLayout>

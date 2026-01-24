@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.mine.like.ItemLikeVm" />
+
+        <import type="com.kgmedia.fastfilm.common.ext.FormatUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        singleClick="@{(v)->item.onItemClick()}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="16dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/siv_picture"
+            loadThumbnailUri="@{item.data.dramasCoverUrl}"
+            placeHolder="@{@drawable/ic_default_cover}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="104:138"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearance="@style/roundStyle_r4" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/gradient_top_00_000000_bottom_50_000000_br4"
+            app:layout_constraintBottom_toBottomOf="@id/siv_picture"
+            app:layout_constraintDimensionRatio="104:35" />
+
+        <ImageView
+            android:id="@+id/iv_play_triangle"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="10dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_red_love"
+            app:layout_constraintBottom_toBottomOf="@id/siv_picture"
+            app:layout_constraintStart_toStartOf="@id/siv_picture" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:text="@{FormatUtils.formatPlays(item.data.likeNum)}"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_play_triangle"
+            app:layout_constraintStart_toEndOf="@id/iv_play_triangle"
+            app:layout_constraintTop_toTopOf="@id/iv_play_triangle"
+            tools:text="9932" />
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{item.data.dramasSeries.seriesName}"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/siv_picture"
+            tools:text="青空之恋" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{`第`+item.data.dramasSeries.workNo+`章`}"
+            android:textColor="@color/color_50_121212"
+            android:textSize="12sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            tools:text="第3章" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
