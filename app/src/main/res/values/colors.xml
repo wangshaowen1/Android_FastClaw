@@ -273,7 +273,6 @@
     <color name="color_40_2cdcff">#662CDCFF</color>
 
 
-
     <color name="color_ea9800">#EA9800</color>
     <color name="color_05_ea9800">#0DEA9800</color>
     <color name="color_3c66ff">#3C66FF</color>
@@ -302,7 +301,6 @@
     <color name="color_05_ea1818">#0DEA1818</color>
 
 
-
     <color name="color_ffb8b4">#ffb8b4</color>
     <color name="color_7a7a89">#7A7A89</color>
 
@@ -313,7 +311,6 @@
     <color name="color_05_00af0f">#0d00AF0F</color>
     <color name="color_ff3b3b">#ff3b3b</color>
     <color name="color_40_ff3b3b">#66ff3b3b</color>
-
 
 
     <color name="color_ffbe6e">#FFBE6E</color>
@@ -418,7 +415,52 @@
     <color name="color_ff3f3f">#ff3f3f</color>
     <color name="color_c45f00">#c45f00</color>
     <color name="color__7b2d00">#7B2D00</color>
+    <color name="theme_color_1_dark">#5A6AFE</color>
+    <color name="theme_color_2_dark">#337B9FFC</color>
+    <color name="func_success_dark">#27C346</color>
+    <color name="func_warning_dark">#FF9626</color>
+    <color name="func_failure_dark">#FF544F</color>
+    <color name="func_link_dark">#3C7EFF</color>
+    <color name="func_special_dark">#FFD930</color>
 
+    <color name="fill_color_1_dark">#0FFFFFFF</color>
+    <color name="fill_color_2_dark">#14FFFFFF</color>
+    <color name="fill_color_3_dark">#1FFFFFFF</color>
+    <color name="fill_color_4_dark">#4DFFFFFF</color>
+    <color name="text_color_1_dark">#F5FFFFFF</color>
+    <color name="text_color_2_dark">#E6FFFFFF</color>
+    <color name="text_color_3_dark">#B3FFFFFF</color>
+    <color name="text_color_4_dark">#80FFFFFF</color>
+    <color name="text_color_5_dark">#4DFFFFFF</color>
+    <color name="bg_color_1_dark">#0D0D0D</color>
+    <color name="bg_color_2_dark">#141414</color>
+    <color name="bg_color_3_dark">#2A2A2B</color>
+    <color name="bg_color_4_dark">#313132</color>
+    <color name="bg_color_5_dark">#373739</color>
+    <color name="bg_color_6_dark">#F6F6F6</color>
+
+    <color name="border_color_1_dark">#1F1F1F</color>
+    <color name="border_color_2_dark">#2E2E30</color>
+    <color name="border_color_3_dark">#5F5F60</color>
+    <color name="border_color_4_dark">#929293</color>
+
+    <color name="mask_opacity_60_dark">#99000000</color>
+    <color name="mask_opacity_40_dark">#66000000</color>
+
+    <color name="fixed_black_1">#0D0D0D</color>
+    <color name="fixed_black_2">#333333</color>
+    <color name="fixed_white_1">#F5FFFFFF</color>
+    <color name="fixed_white_2">#B3FFFFFF</color>
+
+    <color name="gradient_btn_start_dark">#73B0F8</color>
+    <color name="gradient_btn_center_dark">#7597F0</color>
+    <color name="gradient_btn_end_dark">#524DEC</color>
+
+    <color name="gradient_random_start_dark">#3457FE</color>
+    <color name="gradient_random_end_dark">#E071FF</color>
+
+    <color name="gradient_text_start_dark">#68BFF9</color>
+    <color name="gradient_text_end_dark">#FF6B13</color>
 </resources>
 
 

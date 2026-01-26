@@ -164,7 +164,7 @@
             android:name="com.kgmedia.fastfilm.feature.PhotoPagerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/PhotoPager" />
+            android:theme="@style/AppTheme.PhotoPager" />
         <activity
             android:name="com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -193,41 +193,27 @@
 
         <meta-data
             android:name="com.openinstall.AD_TRACK"
-            android:value="true"/>
+            android:value="true" />
         <!--设置-->
         <activity
             android:name=".feature.settings.SettingsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--关于我们-->
         <activity
             android:name=".feature.settings.about.AboutUsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--建议-->
         <activity
             android:name=".feature.settings.feedback.FeedbackActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--举报-->
         <activity
             android:name=".feature.settings.report.ReportActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--注销-->
-        <activity
-            android:name=".feature.settings.logoff.LogoffActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
+        <activity android:name=".feature.settings.logoff.LogoffActivity" />
         <!--申请注销-->
-        <activity
-            android:name=".feature.settings.logoff.ApplyLogOffActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
+        <activity android:name=".feature.settings.logoff.ApplyLogOffActivity" />
         <!--个人资料-->
         <activity
             android:name=".feature.settings.personal.PersonalInformationActivity"
@@ -241,8 +227,6 @@
         <!--绑定手机号-->
         <activity
             android:name=".feature.login.bind.BindPhoneActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--手机号登录-->
         <activity
@@ -258,28 +242,20 @@
         <!--积分充值-->
         <activity
             android:name=".feature.payment.points.PointsRechargeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--积分明细-->
         <activity
             android:name=".feature.payment.points.details.PointsDetailActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <!--邀请明细-->
         <activity
             android:name=".feature.invitation.InvitationDetailsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <!--提现明细-->
         <activity
             android:name=".feature.wallet.details.WithdrawalDetailsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <!--创造收益-->
@@ -347,65 +323,32 @@
                 <data android:scheme="__kuaige__" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".feature.timbre.TimbreExtractionActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
-        <activity
-            android:name=".feature.timbre.MyTimbresActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
-        <activity
-            android:name=".feature.creator.generate.StoryEditorActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
+        <activity android:name=".feature.timbre.TimbreExtractionActivity" />
+        <activity android:name=".feature.timbre.MyTimbresActivity" />
+        <activity android:name=".feature.creator.generate.StoryEditorActivity" />
         <activity
             android:name=".feature.editor.ShortDramaEditorActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".feature.play.publish.ShortDramaPublishActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.mine.PhoneShowActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
+        <activity android:name=".feature.mine.PhoneShowActivity" />
         <activity
             android:name=".feature.wallet.withdraw.WithdrawActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.F6" />
+            android:screenOrientation="portrait" />
+        <activity android:name=".feature.message.systemnotice.SystemNoticeActivity" />
+        <activity android:name=".feature.creator.CreationRootActivity" />
+        <activity android:name=".feature.series.SeriesActivity" />
+        <activity android:name=".feature.series.editinfo.EditInfoActivity" />
+        <activity android:name=".feature.creator.continuewriting.ContinueWritingActivity" />
+        <activity android:name=".feature.message.likes.SystemMessageLikesActivity" />
+        <activity android:name=".feature.message.watching.SystemMessageWatchingActivity" />
         <activity
-            android:name=".feature.message.systemnotice.SystemNoticeActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
+            android:name=".feature.play.ShortDramaPlayPagerActivity"
+            android:screenOrientation="portrait" />
         <activity
-            android:name=".feature.creator.CreationRootActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
-        <activity
-            android:name=".feature.series.SeriesActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
-        <activity
-            android:name=".feature.series.editinfo.EditInfoActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
-        <activity
-            android:name=".feature.creator.continuewriting.ContinueWritingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
-        <activity
-            android:name=".feature.message.likes.SystemMessageLikesActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General" />
-        <activity android:name=".feature.message.watching.SystemMessageWatchingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.General"/>
-        <activity android:name=".feature.play.ShortDramaPlayPagerActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".feature.play.ShortDramaPlayerActivity"
-            android:screenOrientation="portrait"/>
+            android:name=".feature.play.ShortDramaPlayerActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".feature.creator.character.CharacterHistoryActivity"
             android:screenOrientation="portrait" />

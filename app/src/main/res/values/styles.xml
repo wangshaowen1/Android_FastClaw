@@ -108,7 +108,7 @@
     <!--        &lt;!&ndash;也可以设置成一张图片 &ndash;&gt;-->
     <!--        <item name="android:windowBackground">@drawable/splash_bg</item>-->
     <!--    </style>-->
-    <style name="PhotoPager" parent="AppTheme.Base">
+    <style name="AppTheme.PhotoPager">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -145,8 +145,42 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="AppTheme.Base">
         <!-- Customize your theme here. -->
-        <!-- <item name="android:background">@color/transparent</item>-->
         <item name="android:windowFrame">@null</item>
+        <item name="themeColor1">@color/theme_color_1_dark</item>
+        <item name="themeColor2">@color/theme_color_2_dark</item>
+
+        <item name="funcColorSuccess">@color/func_success_dark</item>
+        <item name="funcColorWarning">@color/func_warning_dark</item>
+        <item name="funcColorFailure">@color/func_failure_dark</item>
+        <item name="funcColorLink">@color/func_link_dark</item>
+        <item name="funcColorSpecial">@color/func_special_dark</item>
+
+        <item name="fillColor1">@color/fill_color_1_dark</item>
+        <item name="fillColor2">@color/fill_color_2_dark</item>
+        <item name="fillColor3">@color/fill_color_3_dark</item>
+        <item name="fillColor4">@color/fill_color_4_dark</item>
+
+        <item name="textColor1">@color/text_color_1_dark</item>
+        <item name="textColor2">@color/text_color_2_dark</item>
+        <item name="textColor3">@color/text_color_3_dark</item>
+        <item name="textColor4">@color/text_color_4_dark</item>
+        <item name="textColor5">@color/text_color_5_dark</item>
+
+        <item name="bgColor1">@color/bg_color_1_dark</item>
+        <item name="bgColor2">@color/bg_color_2_dark</item>
+        <item name="bgColor3">@color/bg_color_3_dark</item>
+        <item name="bgColor4">@color/bg_color_4_dark</item>
+        <item name="bgColor5">@color/bg_color_5_dark</item>
+        <item name="bgColor6">@color/bg_color_6_dark</item>
+
+        <item name="borderColor1">@color/border_color_1_dark</item>
+        <item name="borderColor2">@color/border_color_2_dark</item>
+        <item name="borderColor3">@color/border_color_3_dark</item>
+        <item name="borderColor4">@color/border_color_4_dark</item>
+
+        <item name="colorPrimary">@color/theme_color_1_dark</item>
+        <item name="android:windowBackground">@color/bg_color_1_dark</item>
+        <item name="android:textColorPrimary">@color/text_color_1_dark</item>
     </style>
     <!-- Base application theme. -->
     <style name="AppTheme.Light">
@@ -154,16 +188,6 @@
         <item name="colorPrimary">@color/color_121212</item> <!-- 下划线颜色 -->
         <item name="colorControlActivated">@color/color_121212</item> <!-- 激活状态颜色 -->
         <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.F6" parent="AppTheme.Light">
-        <item name="android:windowBackground">@color/color_f6f6f6</item>
-    </style>
-    <style name="AppTheme.Dark">
-        <item name="android:windowBackground">@color/color_121212</item>
-        <item name="colorPrimary">@android:color/white</item> <!-- 下划线颜色 -->
-        <item name="colorControlActivated">@android:color/white</item> <!-- 激活状态颜色 -->
-        <item name="colorAccent">@color/color_50_ffffff</item>
     </style>
 
     <style name="NullAnimation" parent="@android:style/Animation.Activity">
