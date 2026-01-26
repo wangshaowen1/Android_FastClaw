@@ -37,7 +37,17 @@ import com.nhsd.mattise.internal.entity.CaptureStrategy
  */
 class FeedbackActivity :
     BaseViewModelActivity<ActivityFeedbackBinding, FeedbackViewModel>(), TextWatcher {
+    companion object {
+        const val REQUEST_CODE_CHOOSE: Int = 0x110
 
+        fun start(
+            activity: Activity?
+        ) {
+            activity ?: return
+            val intent = Intent(activity, FeedbackActivity::class.java)
+            activity.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,17 +145,7 @@ class FeedbackActivity :
     }
 
 
-    companion object {
-        const val REQUEST_CODE_CHOOSE: Int = 0x110
 
-        fun start(
-            activity: Activity?
-        ) {
-            activity ?: return
-            val intent = Intent(activity, FeedbackActivity::class.java)
-            activity.startActivity(intent)
-        }
-    }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 

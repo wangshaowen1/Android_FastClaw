@@ -81,9 +81,9 @@ public class ActionSheetAdapter extends BaseAdapter {
 
             tvAlert.setText(data);
             if (mDestructive != null && mDestructive.contains(data)) {
-                tvAlert.setTextColor(context.getResources().getColor(R.color.textColor_alert_button_destructive));
+                tvAlert.setTextColor(context.getResources().getColor(R.color.text_color_2_dark));
             } else {
-                tvAlert.setTextColor(context.getResources().getColor(R.color.textColor_alert_button_others));
+                tvAlert.setTextColor(context.getResources().getColor(R.color.text_color_2_dark));
             }
         }
     }

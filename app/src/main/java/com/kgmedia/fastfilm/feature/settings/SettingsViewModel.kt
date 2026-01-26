@@ -26,7 +26,6 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { finish() },
         title = R.string.title_settings.getResString(),
-        titleColor = R.color.textColorPrimary.getResColor(),
         background = Color.TRANSPARENT,
     )
 

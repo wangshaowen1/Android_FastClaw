@@ -18,6 +18,7 @@ import com.kgmedia.fastfilm.feature.settings.about.AboutUsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
 import com.kgmedia.fastfilm.feature.settings.logoff.LogoffActivity
 import com.kgmedia.fastfilm.feature.settings.personal.PersonalInformationActivity
+import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.kit.SignUtils
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.actionsheet.ActionSheetHelper
@@ -125,6 +126,32 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 } else {
                     PhoneShowActivity.start(this)
                 }
+            }
+
+            R.id.ll_user_agreement -> {
+                //用户协议
+                SimpleBrowserActivity.launch(
+                    this,
+                    Config.get().serviceUrl,
+                    "用户协议"
+                )
+            }
+
+            R.id.ll_privacy_policy -> {
+                //隐私政策
+                SimpleBrowserActivity.launch(
+                    this,
+                    Config.get().privacyUrl,
+                    "隐私政策"
+                )
+            }
+            R.id.ll_terms_service->{
+                //服务协议
+                SimpleBrowserActivity.launch(
+                    this,
+                    Config.get().privacyUrl,
+                    "服务协议"
+                )
             }
         }
     }

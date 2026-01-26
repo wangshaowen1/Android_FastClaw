@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -22,6 +21,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?android:windowBackground"
         android:orientation="vertical">
 
         <include
@@ -32,8 +32,8 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="@dimen/spacing_m"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,33 +41,29 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:background="@drawable/bg_white_rectangle_corner_r16"
-                    android:layout_marginHorizontal="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/spacing_l"
+                    android:background="@drawable/bg_06_ffffff_r8"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/sll_personal_information"
                         singleClick="@{layout.clickHandler::onClick}"
-                        android:background="@drawable/selector_item_background_top_r16"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-
-
+                        android:layout_height="52dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="12dp">
+                        android:paddingHorizontal="@dimen/spacing_l"
+                        android:visibility="gone">
 
                         <TextView
-                            style="@style/Text.Medium"
+                            style="@style/TextBody"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/app_personal_information"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="14sp" />
+                            android:textColor="@color/text_color_3_dark" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -79,58 +75,55 @@
                     <LinearLayout
                         android:id="@+id/sll_phone"
                         singleClick="@{layout.clickHandler::onClick}"
-                        android:background="@drawable/selector_item_background"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="52dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="12dp">
+                        android:paddingHorizontal="@dimen/spacing_l"
+                        android:visibility="gone">
 
                         <TextView
-                            style="@style/Text.Medium"
+                            style="@style/TextBody"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="手机号码"
-                            android:textSize="14sp" />
+                            android:textColor="@color/text_color_3_dark" />
 
                         <TextView
-                            style="@style/Text.Common"
+                            style="@style/TextBody"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
                             android:hint="未绑定"
                             android:text="@{TextUtils.isEmpty(layout.phone)?``:FormatUtils.encryptPhoneNum(layout.phone)}"
-                            android:textColorHint="@color/color_ff8676"
-                            android:textColor="@color/color_60_121212"
-                            android:textSize="12sp" />
+                            android:textColor="@color/text_color_3_dark"
+                            android:textColorHint="@color/text_color_4_dark" />
 
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
                             android:src="@drawable/arrow_right_gray36" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/sll_about_us"
                         singleClick="@{layout.clickHandler::onClick}"
-                        android:background="@drawable/selector_item_background"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="52dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="12dp">
+                        android:paddingHorizontal="@dimen/spacing_l"
+                        android:visibility="gone">
 
                         <TextView
-                            style="@style/Text.Medium"
+                            style="@style/TextBody"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/app_about_us"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="14sp" />
+                            android:textColor="@color/text_color_3_dark" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -142,31 +135,28 @@
                     <LinearLayout
                         android:id="@+id/sll_contact_customer_service"
                         singleClick="@{layout.clickHandler::onClick}"
-                        android:background="@drawable/selector_item_background"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="52dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="12dp">
+                        android:paddingHorizontal="@dimen/spacing_l"
+                        android:visibility="gone">
 
                         <TextView
-                            style="@style/Text.Medium"
+                            style="@style/TextBody"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/app_contact_customer_service"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="14sp" />
+                            android:textColor="@color/text_color_3_dark" />
 
                         <TextView
-                            style="@style/Text.Common"
+                            style="@style/TextBody"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
                             android:text="@string/app_customer_service_hours"
-                            android:textColor="@color/color_60_121212"
-                            android:textSize="14sp" />
+                            android:textColor="@color/text_color_3_dark" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -178,22 +168,92 @@
                     <LinearLayout
                         android:id="@+id/sll_suggestion_and_feedback"
                         singleClick="@{layout.clickHandler::onClick}"
-                        android:background="@drawable/selector_item_background"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
+                        android:layout_height="52dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="12dp">
+                        android:paddingHorizontal="@dimen/spacing_l"
+                        android:visibility="gone">
 
                         <TextView
-                            style="@style/Text.Medium"
+                            style="@style/TextBody"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/app_suggestion_and_feedback"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="14sp" />
+                            android:textColor="@color/text_color_3_dark" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/arrow_right_gray36" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_privacy_policy"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/spacing_l">
+
+                        <TextView
+                            style="@style/TextBody"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/app_privacy_policy"
+                            android:textColor="@color/text_color_3_dark" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/arrow_right_gray36" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_user_agreement"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/spacing_l">
+
+                        <TextView
+                            style="@style/TextBody"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/app_user_agreement"
+                            android:textColor="@color/text_color_3_dark" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/arrow_right_gray36" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_terms_service"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/spacing_l">
+
+                        <TextView
+                            style="@style/TextBody"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/terms_of_service"
+                            android:textColor="@color/text_color_3_dark" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -206,21 +266,18 @@
                         android:id="@+id/sll_cancel_the_account"
                         singleClick="@{layout.clickHandler::onClick}"
                         android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:background="@drawable/selector_item_background_bottom_r16"
+                        android:layout_height="52dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="12dp">
+                        android:paddingHorizontal="@dimen/spacing_l">
 
                         <TextView
-                            style="@style/Text.Medium"
+                            style="@style/TextBody"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/app_cancel_the_account"
-                            android:textColor="@color/textColorPrimary"
-                            android:textSize="14sp" />
+                            android:textColor="@color/text_color_3_dark" />
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -232,64 +289,60 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_white_rectangle_corner_r16"
+                    android:layout_height="52dp"
+                    android:layout_marginHorizontal="@dimen/spacing_l"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:background="@drawable/bg_06_ffffff_r8"
                     android:gravity="center_vertical"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="12dp"
+                    android:paddingHorizontal="@dimen/spacing_l"
                     android:visibility="@{DebugUtils.INSTANCE.isDebug()?View.VISIBLE:View.GONE}">
 
                     <TextView
+                        style="@style/TextBody"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="测试IP="
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/text_color_3_dark" />
 
                     <EditText
                         android:id="@+id/etIp"
+                        style="@style/TextBody"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@null"
                         android:text="@={layout.debugIp}"
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/text_color_3_dark" />
 
                     <TextView
                         android:id="@+id/btnIPConfirm"
+                        style="@style/TextBody"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="确定 "
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/text_color_3_dark" />
 
                     <TextView
                         android:id="@+id/btnIPSelect"
+                        style="@style/TextBody"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=" 选择"
-                        android:textColor="@color/textColorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/text_color_3_dark" />
                 </LinearLayout>
 
                 <Button
                     android:id="@+id/stv_log_out"
-                    style="@style/Button.Bold"
+                    style="@style/TextBody"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginHorizontal="79dp"
+                    android:layout_height="44dp"
+                    android:layout_marginHorizontal="@dimen/spacing_l"
                     android:layout_marginTop="32dp"
-                    android:layout_marginBottom="50dp"
+                    android:background="@drawable/bg_06_ffffff_r100"
                     android:gravity="center"
-                    android:text="@string/app_log_out" />
+                    android:text="@string/app_log_out"
+                    android:textColor="@color/func_failure_dark" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>

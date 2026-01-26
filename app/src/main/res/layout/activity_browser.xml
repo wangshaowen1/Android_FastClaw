@@ -3,11 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="layout"
             type="com.kgmedia.fastfilm.feature.web.BrowserViewModel" />
-        <import type="android.view.View"/>
-        <import type="android.text.TextUtils"/>
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
     </data>
 
     <FrameLayout
@@ -22,11 +25,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <include
                 android:id="@+id/toolbar"
                 layout="@layout/view_model_toolbar"
-                app:toolbar="@{layout.mToolbarVM}"
-                android:visibility="@{TextUtils.isEmpty(layout.mToolbarVM.mTitle)?View.GONE:View.VISIBLE}"/>
+                android:visibility="@{TextUtils.isEmpty(layout.mToolbarVM.mTitle)?View.GONE:View.VISIBLE}"
+                app:toolbar="@{layout.mToolbarVM}" />
 
             <ViewAnimator
                 android:id="@+id/viewAnimator"
