@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <layer-list>
+            <item android:width="24dp" android:height="24dp">
+                <bitmap android:src="@drawable/ic_main_folder_fill" android:tint="?attr/textColor1" android:tintMode="src_in" />
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_checked="false">
+        <layer-list>
+            <item android:width="24dp" android:height="24dp">
+                <bitmap android:src="@drawable/ic_main_folder_stroke" android:tint="?attr/textColor3" android:tintMode="src_in" />
+            </item>
+        </layer-list>
+    </item>
+</selector>

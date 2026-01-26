@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.fm.openinstall.OpenInstall
 import com.fm.openinstall.listener.AppWakeUpAdapter
 import com.fm.openinstall.model.AppData
+import com.google.gson.Gson
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
@@ -31,17 +32,15 @@ import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.hit.HitFragment
 import com.kgmedia.fastfilm.feature.login.SimpleProfileDialog
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
-import com.kgmedia.fastfilm.feature.message.MessageFragment
 import com.kgmedia.fastfilm.feature.mine.MineFragment
 import com.kgmedia.fastfilm.feature.play.RecommendShortPlayPagerFragment
-import com.kgmedia.fastfilm.feature.play.more.ShareShortDramaActivity
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
-import com.google.gson.Gson
+import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.ext.setupTranslucentStatus
@@ -61,7 +60,7 @@ import kotlinx.coroutines.launch
  * @Version: 1.0
  * *****************************************
  */
-class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>() {
+class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>() {
     companion object {
         val clicks = SparseArray<Long>()
         const val CLICK_INTERVAL_TIME: Long = 500
@@ -165,31 +164,10 @@ class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>
         handleIntent(intent)
     }
 
-    fun setupStatusColor() {
-        when (binding.mrg.checkedRadioButtonId) {
-            R.id.tab_home -> {
-                immersionBar(false)
-            }
-
-            R.id.tab_hot -> {
-                immersionBar(true)
-            }
-
-            R.id.tab_message -> {
-                immersionBar(true)
-            }
-
-            R.id.tab_mine -> {
-                immersionBar(true)
-            }
-        }
-    }
-
     private fun initView() {
         binding.mrg.setOnCheckedChangeListener { _, checkedId ->
-            setupStatusColor()
             when (checkedId) {
-                R.id.tab_home -> {
+                R.id.tabHome -> {
                     //首页
                     EventManager.onAppTrack(AppEvent.JG_VIEW_HOME_TAB_PAGE)
                     setKeepScreenOn(true)
@@ -204,7 +182,7 @@ class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>
                     }
                 }
 
-                R.id.tab_hot -> {
+                R.id.tabWorks -> {
                     //热门
                     EventManager.onAppTrack(AppEvent.JG_VIEW_FADDISH_TAB_PAGE)
                     setKeepScreenOn(false)
@@ -212,42 +190,21 @@ class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>
                     supportFragmentManager.switchFragment(R.id.fragment, HitFragment::class.java)
                 }
 
-                R.id.tab_message -> {
-                    //消息
-                    EventManager.onAppTrack(AppEvent.JG_VIEW_MESSAGE_TAB_PAGE)
-                    setKeepScreenOn(false)
-                    mRealVM.showTab.set(2)
-                    supportFragmentManager.switchFragment(
-                        R.id.fragment,
-                        MessageFragment::class.java
-                    )
-                }
 
-                R.id.tab_mine -> {
+                R.id.tabMine -> {
                     //我的
                     EventManager.onAppTrack(AppEvent.JG_VIEW_MY_TAB_PAGE)
                     setKeepScreenOn(false)
-                    mRealVM.showTab.set(3)
+                    mRealVM.showTab.set(2)
                     supportFragmentManager.switchFragment(R.id.fragment, MineFragment::class.java)
                 }
             }
         }
         when (Config.get().appConfig.openAppLoadTab) {
-            0 -> binding.mrg.check(R.id.tab_home)
-            2 -> binding.mrg.check(R.id.tab_message)
-            3 -> binding.mrg.check(R.id.tab_mine)
-            else -> {//默认选中爆款推荐
-                binding.mrg.check(R.id.tab_hot)
-            }
-        }
-
-        binding.mflOffsetTicket.setOnMfClickListener {
-            //悬浮球
-            if (AppNavigator.checkLoginIntercepted(false)) {
-                return@setOnMfClickListener
-            }
-            val appFloatWindows = mRealVM.appFloatWindows.get() ?: return@setOnMfClickListener
-            AppRouter.jump(appFloatWindows.jumpUrl)
+            0 -> binding.mrg.check(R.id.tabHome)
+            1 -> binding.mrg.check(R.id.tabWorks)
+            2 -> binding.mrg.check(R.id.tabMine)
+            else -> binding.mrg.check(R.id.tabHome)
         }
     }
 
@@ -285,21 +242,14 @@ class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>
 
     override fun onResume() {
         super.onResume()
-        setupStatusColor()
         GeneratingViewModel.visible = false
-
-//        if (App.instance.hasAgree()) {
-//            if (Global.needCompleteProfile) {
-//                displayPopUpBox(MainBulletFrameEnum.COMPLETE_PERSONAL_INFO)
-//            }
-//        }
     }
 
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
-            R.id.tab_home -> {
-                clickTab(tabId = R.id.tab_home) { diff ->
+            R.id.tabHome -> {
+                clickTab(tabId = R.id.tabHome) { diff ->
                     if (diff < CLICK_INTERVAL_TIME) {
                         FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
                         true
@@ -307,8 +257,8 @@ class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>
                 }
             }
 
-            R.id.tab_hot -> {
-                clickTab(tabId = R.id.tab_hot) { diff ->
+            R.id.tabWorks -> {
+                clickTab(tabId = R.id.tabWorks) { diff ->
                     if (diff < CLICK_INTERVAL_TIME) {
                         FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOT))
                         true
@@ -316,31 +266,13 @@ class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>
                 }
             }
 
-            R.id.tab_message -> {
-                FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MESSAGE))
-            }
-
-            R.id.tab_mine -> {
-                clickTab(tabId = R.id.tab_mine) { diff ->
+            R.id.tabMine -> {
+                clickTab(tabId = R.id.tabMine) { diff ->
                     if (diff < CLICK_INTERVAL_TIME) {
                         FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MINE))
                         true
                     } else false
                 }
-            }
-
-            R.id.view_message_placeholder -> {
-                if (AppNavigator.checkLoginIntercepted(false)) {
-                    return
-                }
-                binding.mrg.check(R.id.tab_message)
-            }
-
-            R.id.view_mine_placeholder -> {
-                if (AppNavigator.checkLoginIntercepted(false)) {
-                    return
-                }
-                binding.mrg.check(R.id.tab_mine)
             }
 
             R.id.btnGenerateContinue -> {
@@ -387,17 +319,12 @@ class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>
      * 跳转到首页页面
      */
     fun toHome() {
-        binding.mrg.check(R.id.tab_home)
+        binding.mrg.check(R.id.tabHome)
     }
 
 
     override fun setTranslucentStatus() {
-        immersionBar()
-    }
-
-
-    private fun immersionBar(lightMode: Boolean = true) {
-        setupTranslucentStatus(lightMode, if (lightMode) R.color.white.getResColor() else R.color.color_121212.getResColor())
+        setupTranslucentStatus(false, getThemeColor(R.attr.bgColor2))
     }
 
     private fun checkUpgrade() {
@@ -510,7 +437,4 @@ class MainActivity : ShareShortDramaActivity<ActivityMainBinding, MainViewModel>
         //遍历查询是否初始化完成
         waitApiSecurityInit()
     }
-
-    override val exportVideoOverlay: View?
-        get() = bindingNullable?.overlay?.root
 }
