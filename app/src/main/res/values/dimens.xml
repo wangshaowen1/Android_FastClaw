@@ -47,4 +47,58 @@
 
     <dimen name="sp_16">16sp</dimen>
     <dimen name="sp_20">20sp</dimen>
+
+    <!--特大标题/页面级标题-->
+    <dimen name="text_size_display">28sp</dimen>
+    <!--模块标题-->
+    <dimen name="text_size_headline">20sp</dimen>
+    <!--一级标题/内容标题/卡片标题-->
+    <dimen name="text_size_title">18sp</dimen>
+    <!--用于模块标题/分类标题-->
+    <dimen name="text_size_subtitle">16sp</dimen>
+    <!--用于正文/大段文本-->
+    <dimen name="text_size_body">14sp</dimen>
+    <!--评论区文字&项目方评分-->
+    <dimen name="text_size_comment">13sp</dimen>
+    <!--用于次级、提示文本、标签-->
+    <dimen name="text_size_caption">12sp</dimen>
+    <!--用于标签-->
+    <dimen name="text_size_tag">10sp</dimen>
+
+    <!--特大标题/页面级标题-->
+    <dimen name="line_height_display">42dp</dimen>
+    <!--模块标题-->
+    <dimen name="line_height_headline">30dp</dimen>
+    <!--一级标题/内容标题/卡片标题-->
+    <dimen name="line_height_title">27dp</dimen>
+    <!--用于模块标题/分类标题-->
+    <dimen name="line_height_subtitle">24dp</dimen>
+    <!--用于正文/大段文本-->
+    <dimen name="line_height_body">21dp</dimen>
+    <!--评论区文字&项目方评分-->
+    <dimen name="line_height_comment">19dp</dimen>
+    <!--用于次级、提示文本、标签-->
+    <dimen name="line_height_caption">18dp</dimen>
+    <!--用于标签-->
+    <dimen name="line_height_tag">15dp</dimen>
+
+    <!--16px 大圆角 应用在主按钮、图层模块-->
+    <dimen name="radius_xl">16dp</dimen>
+    <!--12px 中大圆角 应用在大组件模块、弹窗-->
+    <dimen name="radius_l">12dp</dimen>
+    <!--8px 中圆角 应用在卡片/模态框/小组件-->
+    <dimen name="radius_m">8dp</dimen>
+    <!--4px 小圆角 应用在输入框/按钮/小标签-->
+    <dimen name="radius_s">4dp</dimen>
+
+    <!--24px  超大间距 主要用在页面与模块之间的大间距，页面中信息较丰富需要组件严格分割、页边距-->
+    <dimen name="spacing_xl">24dp</dimen>
+    <!--16px  大间距 主要用在不同模块之间需要严格划分的大间距、卡片间距-->
+    <dimen name="spacing_l">16dp</dimen>
+    <!--12px  中间距 主要用在输入框中文字与边框的距离、按钮文字与边缘-->
+    <dimen name="spacing_m">12dp</dimen>
+    <!--8px  小间距 主要用在列表之间的垂直间距、图标与文字间隔、行内元素-->
+    <dimen name="spacing_s">8dp</dimen>
+    <!--4px  最小间距 主要用在小组件中的内间距-->
+    <dimen name="spacing_xs">4dp</dimen>
 </resources>

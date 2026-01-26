@@ -229,10 +229,10 @@
         <item name="android:backgroundDimAmount">0.5</item> <!-- 添加遮罩透明度 -->
     </style>
 
-<!--    <style name="Dialog.ScaleAnim" parent="Dialog.Common">-->
-<!--        <item name="android:windowEnterAnimation">@anim/activity_scale_enter</item>-->
-<!--        <item name="android:windowExitAnimation">@anim/activity_scale_exit</item>-->
-<!--    </style>-->
+    <!--    <style name="Dialog.ScaleAnim" parent="Dialog.Common">-->
+    <!--        <item name="android:windowEnterAnimation">@anim/activity_scale_enter</item>-->
+    <!--        <item name="android:windowExitAnimation">@anim/activity_scale_exit</item>-->
+    <!--    </style>-->
 
     <style name="Dialog.Right.BottomPush" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
@@ -313,9 +313,11 @@
         <item name="android:textColorHint">@color/textColorSecondary</item>
         <item name="android:background">@null</item>
     </style>
+
     <style name="Text.DarkGrayHint" parent="Text.Common">
         <item name="android:textColorHint">@color/textColorGray</item>
     </style>
+
     <style name="Text.Bold" parent="Text.Common">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
@@ -384,10 +386,12 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>
     </style>
+
     <style name="roundStyle_r24">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">24dp</item>
     </style>
+
     <style name="roundStyle_r3">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">3dp</item>
@@ -716,5 +720,53 @@
     <style name="progress_bar">
         <item name="android:indeterminateTintMode">src_atop</item>
         <item name="android:indeterminateTint">#191919</item>
+    </style>
+    <!--特大标题/页面级标题-->
+    <style name="TextAppearance.Display">
+        <item name="android:textSize">@dimen/text_size_display</item>
+        <item name="lineHeight">@dimen/line_height_display</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!--模块标题-->
+    <style name="TextAppearance.Headline">
+        <item name="android:textSize">@dimen/text_size_headline</item>
+        <item name="lineHeight">@dimen/line_height_headline</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!--一级标题/内容标题/卡片标题-->
+    <style name="TextAppearance.Title">
+        <item name="android:textSize">@dimen/text_size_title</item>
+        <item name="lineHeight">@dimen/line_height_title</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!--用于模块标题/分类标题-->
+    <style name="TextAppearance.Subtitle">
+        <item name="android:textSize">@dimen/text_size_subtitle</item>
+        <item name="lineHeight">@dimen/line_height_subtitle</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <!--用于正文/大段文本-->
+    <style name="TextAppearance.Body">
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="lineHeight">@dimen/line_height_body</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <!--评论区文字&项目方评分-->
+    <style name="TextAppearance.Comment">
+        <item name="android:textSize">@dimen/text_size_comment</item>
+        <item name="lineHeight">@dimen/line_height_comment</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <!--用于次级、提示文本、标签-->
+    <style name="TextAppearance.Caption">
+        <item name="android:textSize">@dimen/text_size_caption</item>
+        <item name="lineHeight">@dimen/line_height_caption</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+    <!--用于标签-->
+    <style name="TextAppearance.Tag">
+        <item name="android:textSize">@dimen/text_size_tag</item>
+        <item name="lineHeight">@dimen/line_height_tag</item>
+        <item name="android:textStyle">normal</item>
     </style>
 </resources>
