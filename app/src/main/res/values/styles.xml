@@ -3,16 +3,13 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:screenOrientation">portrait</item>
         <item name="android:windowSoftInputMode">stateHidden</item>
         <!--<item name="android:typeface">monospace</item>-->
-        <item name="android:windowBackground">@color/windowBackground</item>
         <item name="android:windowContentOverlay">@android:color/transparent</item>
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
         <item name="toolbarNavigationButtonStyle">@style/toolbarNavigationButtonStyle</item>
         <item name="actionBarSize">@dimen/action_bar_size</item>
@@ -31,6 +28,41 @@
         <item name="preview.bottomToolbar.apply.textColor">
             @color/zhihu_preview_bottom_toolbar_apply
         </item>
+        <item name="themeColor1">@color/theme_color_1_dark</item>
+        <item name="themeColor2">@color/theme_color_2_dark</item>
+
+        <item name="funcColorSuccess">@color/func_success_dark</item>
+        <item name="funcColorWarning">@color/func_warning_dark</item>
+        <item name="funcColorFailure">@color/func_failure_dark</item>
+        <item name="funcColorLink">@color/func_link_dark</item>
+        <item name="funcColorSpecial">@color/func_special_dark</item>
+
+        <item name="fillColor1">@color/fill_color_1_dark</item>
+        <item name="fillColor2">@color/fill_color_2_dark</item>
+        <item name="fillColor3">@color/fill_color_3_dark</item>
+        <item name="fillColor4">@color/fill_color_4_dark</item>
+
+        <item name="textColor1">@color/text_color_1_dark</item>
+        <item name="textColor2">@color/text_color_2_dark</item>
+        <item name="textColor3">@color/text_color_3_dark</item>
+        <item name="textColor4">@color/text_color_4_dark</item>
+        <item name="textColor5">@color/text_color_5_dark</item>
+
+        <item name="bgColor1">@color/bg_color_1_dark</item>
+        <item name="bgColor2">@color/bg_color_2_dark</item>
+        <item name="bgColor3">@color/bg_color_3_dark</item>
+        <item name="bgColor4">@color/bg_color_4_dark</item>
+        <item name="bgColor5">@color/bg_color_5_dark</item>
+        <item name="bgColor6">@color/bg_color_6_dark</item>
+
+        <item name="borderColor1">@color/border_color_1_dark</item>
+        <item name="borderColor2">@color/border_color_2_dark</item>
+        <item name="borderColor3">@color/border_color_3_dark</item>
+        <item name="borderColor4">@color/border_color_4_dark</item>
+
+        <item name="colorPrimary">@color/theme_color_1_dark</item>
+        <item name="android:windowBackground">@color/bg_color_1_dark</item>
+        <item name="android:textColorPrimary">@color/text_color_1_dark</item>
     </style>
 
     <style name="SplashScreen" parent="Theme.SplashScreen">
@@ -146,41 +178,6 @@
     <style name="AppTheme" parent="AppTheme.Base">
         <!-- Customize your theme here. -->
         <item name="android:windowFrame">@null</item>
-        <item name="themeColor1">@color/theme_color_1_dark</item>
-        <item name="themeColor2">@color/theme_color_2_dark</item>
-
-        <item name="funcColorSuccess">@color/func_success_dark</item>
-        <item name="funcColorWarning">@color/func_warning_dark</item>
-        <item name="funcColorFailure">@color/func_failure_dark</item>
-        <item name="funcColorLink">@color/func_link_dark</item>
-        <item name="funcColorSpecial">@color/func_special_dark</item>
-
-        <item name="fillColor1">@color/fill_color_1_dark</item>
-        <item name="fillColor2">@color/fill_color_2_dark</item>
-        <item name="fillColor3">@color/fill_color_3_dark</item>
-        <item name="fillColor4">@color/fill_color_4_dark</item>
-
-        <item name="textColor1">@color/text_color_1_dark</item>
-        <item name="textColor2">@color/text_color_2_dark</item>
-        <item name="textColor3">@color/text_color_3_dark</item>
-        <item name="textColor4">@color/text_color_4_dark</item>
-        <item name="textColor5">@color/text_color_5_dark</item>
-
-        <item name="bgColor1">@color/bg_color_1_dark</item>
-        <item name="bgColor2">@color/bg_color_2_dark</item>
-        <item name="bgColor3">@color/bg_color_3_dark</item>
-        <item name="bgColor4">@color/bg_color_4_dark</item>
-        <item name="bgColor5">@color/bg_color_5_dark</item>
-        <item name="bgColor6">@color/bg_color_6_dark</item>
-
-        <item name="borderColor1">@color/border_color_1_dark</item>
-        <item name="borderColor2">@color/border_color_2_dark</item>
-        <item name="borderColor3">@color/border_color_3_dark</item>
-        <item name="borderColor4">@color/border_color_4_dark</item>
-
-        <item name="colorPrimary">@color/theme_color_1_dark</item>
-        <item name="android:windowBackground">@color/bg_color_1_dark</item>
-        <item name="android:textColorPrimary">@color/text_color_1_dark</item>
     </style>
     <!-- Base application theme. -->
     <style name="AppTheme.Light">
