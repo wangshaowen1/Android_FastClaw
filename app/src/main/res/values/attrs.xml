@@ -58,7 +58,10 @@
     <attr name="borderColor3" format="color" />
     <!-- 边框颜色4 -->
     <attr name="borderColor4" format="color" />
-
+    <!-- 文本描边颜色 -->
+    <attr name="strokeTextColor" format="reference|color" />
+    <!-- 文本描边粗细 -->
+    <attr name="strokeTextWidth" format="dimension" />
     <declare-styleable name="PageMenuLayout">
         <attr name="pagemenu_row_count" format="integer" />
         <attr name="pagemenu_span_count" format="integer" />
