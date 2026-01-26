@@ -722,49 +722,49 @@
         <item name="android:indeterminateTint">#191919</item>
     </style>
     <!--特大标题/页面级标题-->
-    <style name="TextAppearance.Display">
+    <style name="TextDisplay" >
         <item name="android:textSize">@dimen/text_size_display</item>
         <item name="lineHeight">@dimen/line_height_display</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--模块标题-->
-    <style name="TextAppearance.Headline">
+    <style name="TextHeadline">
         <item name="android:textSize">@dimen/text_size_headline</item>
         <item name="lineHeight">@dimen/line_height_headline</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--一级标题/内容标题/卡片标题-->
-    <style name="TextAppearance.Title">
+    <style name="TextTitle">
         <item name="android:textSize">@dimen/text_size_title</item>
         <item name="lineHeight">@dimen/line_height_title</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--用于模块标题/分类标题-->
-    <style name="TextAppearance.Subtitle">
+    <style name="TextSubtitle">
         <item name="android:textSize">@dimen/text_size_subtitle</item>
         <item name="lineHeight">@dimen/line_height_subtitle</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--用于正文/大段文本-->
-    <style name="TextAppearance.Body">
+    <style name="TextBody">
         <item name="android:textSize">@dimen/text_size_body</item>
         <item name="lineHeight">@dimen/line_height_body</item>
         <item name="android:textStyle">normal</item>
     </style>
     <!--评论区文字&项目方评分-->
-    <style name="TextAppearance.Comment">
+    <style name="TextComment">
         <item name="android:textSize">@dimen/text_size_comment</item>
         <item name="lineHeight">@dimen/line_height_comment</item>
         <item name="android:textStyle">normal</item>
     </style>
     <!--用于次级、提示文本、标签-->
-    <style name="TextAppearance.Caption">
+    <style name="TextCaption">
         <item name="android:textSize">@dimen/text_size_caption</item>
         <item name="lineHeight">@dimen/line_height_caption</item>
         <item name="android:textStyle">normal</item>
     </style>
     <!--用于标签-->
-    <style name="TextAppearance.Tag">
+    <style name="TextTag">
         <item name="android:textSize">@dimen/text_size_tag</item>
         <item name="lineHeight">@dimen/line_height_tag</item>
         <item name="android:textStyle">normal</item>
