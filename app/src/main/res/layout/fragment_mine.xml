@@ -14,350 +14,165 @@
         <import type="android.text.TextUtils" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_general_activity">
+        android:background="?android:windowBackground"
+        android:orientation="vertical">
 
         <com.kgmedia.fastfilm.widget.StatusBarView
             android:id="@+id/sbv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:alpha="0"
-            android:background="@color/color_f6f7fb"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_menu"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/action_bar_size"
-            app:layout_constraintTop_toBottomOf="@id/sbv">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_l">
 
-            <View
-                android:id="@+id/view_menu"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:alpha="0"
-                android:background="@color/color_f6f7fb" />
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/siv_avatar"
+                loadUri="@{layout.userInfo[`avatar`]}"
+                placeHolder="@{@drawable/ic_default_avatar_big}"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="@dimen/spacing_l"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_default_avatar_big"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/roundStyle_circle" />
 
-            <LinearLayout
-                android:id="@+id/ll_points"
+            <TextView
+                android:id="@+id/tv_login"
+                style="@style/TextTitle"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/bg_white_rectangle_corner_r16"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingVertical="5dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_marginStart="@dimen/spacing_m"
+                android:text="登录/注册"
+                android:textColor="@color/text_color_1_dark"
+                android:visibility="@{layout.isLogin()?View.GONE:View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
+                app:layout_constraintStart_toEndOf="@id/siv_avatar"
+                app:layout_constraintTop_toTopOf="@id/siv_avatar"
+                tools:visibility="gone" />
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_point_54" />
+            <androidx.constraintlayout.widget.Group
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{layout.isLogin()?View.VISIBLE:View.GONE}"
+                app:constraint_referenced_ids="tv_name,tv_id,iv_copy" />
 
-                <TextView
-                    style="@style/Text.Bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="@{layout.availableBalance}"
-                    android:textColor="@color/color_1a1a1a"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    tools:text="958" />
+            <TextView
+                android:id="@+id/tv_name"
+                style="@style/TextTitle"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_m"
+                android:layout_marginTop="@dimen/spacing_s"
+                android:text="@{layout.userInfo[`nickname`]}"
+                android:textColor="@color/text_color_1_dark"
+                app:layout_constraintBottom_toTopOf="@id/tv_id"
+                app:layout_constraintStart_toEndOf="@id/siv_avatar"
+                app:layout_constraintTop_toTopOf="@id/siv_avatar"
+                tools:text="Duebass" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_points_add" />
-            </LinearLayout>
-
+            <TextView
+                android:id="@+id/tv_id"
+                style="@style/TextBody"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_s"
+                android:text="@{`ID:`+layout.userInfo[`city`]}"
+                android:textColor="@color/text_color_3_dark"
+                app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
+                app:layout_constraintStart_toStartOf="@id/tv_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_name"
+                tools:text="ID:10000" />
 
             <ImageView
-                android:id="@+id/iv_mine_create_revenue"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_marginEnd="18dp"
-                android:adjustViewBounds="true"
+                android:id="@+id/iv_copy"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="6dp"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_create_revenue"
-                app:layout_constraintBottom_toBottomOf="@id/ll_points"
-                app:layout_constraintEnd_toStartOf="@id/siv_mine_settings"
-                app:layout_constraintTop_toTopOf="@id/ll_points" />
-
-            <com.kgmedia.fastfilm.widget.ScalableImageView
-                android:id="@+id/siv_mine_settings"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="16dp"
-                android:adjustViewBounds="true"
-                android:paddingVertical="10dp"
-                android:src="@drawable/ic_mine_settings"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:src="@drawable/ic_copy"
+                app:layout_constraintBottom_toBottomOf="@id/tv_id"
+                app:layout_constraintStart_toEndOf="@id/tv_id"
+                app:layout_constraintTop_toTopOf="@id/tv_id" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/bottomSpace"
-            app:layout_constraintTop_toBottomOf="@id/cl_menu">
-
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/appbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:elevation="0dp"
-                android:stateListAnimator="@drawable/appbar_elevation">
-
-                <com.google.android.material.appbar.CollapsingToolbarLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp">
-
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:id="@+id/siv_avatar"
-                            loadUri="@{layout.userInfo[`avatar`]}"
-                            placeHolder="@{@drawable/ic_default_avatar_big}"
-                            singleClick="@{layout.clickHandler::onClick}"
-                            android:layout_width="84dp"
-                            android:layout_height="84dp"
-                            android:layout_marginStart="16dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/ic_default_avatar_big"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:shapeAppearanceOverlay="@style/roundStyle_circle" />
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="3dp"
-                            android:importantForAccessibility="no"
-                            android:src="@{layout.isVip()?@drawable/ic_vip54:null}"
-                            app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
-                            app:layout_constraintEnd_toEndOf="@id/siv_avatar"
-                            tools:src="@drawable/ic_vip_expired54" />
-
-                        <FrameLayout
-                            android:id="@+id/ll_nickname"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_marginEnd="16dp"
-                            app:layout_constraintBottom_toTopOf="@id/ll_information"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/siv_avatar"
-                            app:layout_constraintTop_toTopOf="@id/siv_avatar"
-                            app:layout_constraintVertical_chainStyle="packed">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/tv_nickname"
-                                    style="@style/Text.Bold"
-                                    setTextAndRequestLayout="@{layout.userInfo[`nickname`]}"
-                                    singleClick="@{layout.clickHandler::onClick}"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:ellipsize="end"
-                                    android:maxLines="1"
-                                    android:textColor="@color/black"
-                                    android:textSize="16sp"
-                                    tools:text="张三" />
-                            </LinearLayout>
-                        </FrameLayout>
-
-                        <LinearLayout
-                            android:id="@+id/ll_information"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="16dp"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
-                            app:layout_constraintBottom_toTopOf="@id/ll_gender"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="@id/ll_nickname"
-                            app:layout_constraintTop_toBottomOf="@id/ll_nickname">
-
-                            <TextView
-                                android:id="@+id/tv_id"
-                                style="@style/Text.Common"
-                                singleClick="@{layout.clickHandler::onClick}"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@{`ID:`+layout.userInfo[`id`]}"
-                                android:textColor="@color/color_50_121212"
-                                android:textSize="12sp"
-                                android:visibility="@{layout.isLogin?View.VISIBLE:View.INVISIBLE}"
-                                tools:text="ID:123565" />
-
-                            <ImageView
-                                android:id="@+id/iv_copy"
-                                singleClick="@{layout.clickHandler::onClick}"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="2dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_copy"
-                                android:visibility="@{layout.isLogin?View.VISIBLE:View.INVISIBLE}" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/ll_gender"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
-                            app:layout_constraintStart_toStartOf="@id/ll_nickname"
-                            app:layout_constraintTop_toBottomOf="@id/ll_information">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:importantForAccessibility="no"
-                                android:src="@{layout.isMale()?@drawable/ic_gender_male:@drawable/ic_gender_female}"
-                                android:visibility="@{TextUtils.equals(`0`,layout.userInfo[`gender`])?View.GONE:View.VISIBLE}" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="18dp"
-                                android:layout_marginStart="6dp"
-                                android:background="@drawable/bg_05_121212_r50"
-                                android:gravity="center"
-                                android:paddingHorizontal="7dp"
-                                android:text="@{layout.userInfo[`generationLabel`]}"
-                                android:textColor="@color/color_50_121212"
-                                android:textSize="10sp"
-                                android:visibility="@{TextUtils.isEmpty(layout.userInfo[`generationLabel`])?View.GONE:View.VISIBLE}"
-                                tools:text="00后" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="18dp"
-                                android:layout_marginStart="6dp"
-                                android:background="@drawable/bg_05_121212_r50"
-                                android:drawableStart="@drawable/ic_user_location"
-                                android:gravity="center"
-                                android:paddingStart="4dp"
-                                android:paddingEnd="7dp"
-                                android:text="@{layout.userInfo[`city`]}"
-                                android:textColor="@color/color_50_121212"
-                                android:textSize="10sp"
-                                android:visibility="@{TextUtils.isEmpty(layout.userInfo[`city`])?View.GONE:View.VISIBLE}"
-                                tools:text="00后" />
-
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/tv_signature"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="16dp"
-                            android:layout_marginTop="12dp"
-                            android:text="@{layout.userInfo[`signature`]}"
-                            android:textColor="@color/color_50_121212"
-                            android:textSize="12sp"
-                            app:layout_constraintTop_toBottomOf="@id/siv_avatar"
-                            tools:text="我的未来只有天在看，杀出一片天。我的未来只有天在看。我的未来只有天在看，杀出一片天。我的未来只有天在看。我的未来只有天在看。" />
-
-                        <ImageView
-                            android:id="@+id/iv_vip_bg"
-                            singleClick="@{layout.clickHandler::onClick}"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="16dp"
-                            android:layout_marginTop="16dp"
-                            android:adjustViewBounds="true"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/bg_mine_open_vip"
-                            app:layout_constraintTop_toBottomOf="@id/tv_signature" />
-
-
-                        <TextView
-                            android:id="@+id/tv_activate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginEnd="12dp"
-                            android:background="@drawable/gradient_left_2c0101_right_935b00_r50"
-                            android:paddingHorizontal="15dp"
-                            android:paddingVertical="7dp"
-                            android:text="@{layout.isVip()?(layout.isPermanentVip?`已开通`:`去续费`):`去开通`}"
-                            android:textColor="@color/white"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="@id/iv_vip_bg"
-                            app:layout_constraintTop_toTopOf="@id/iv_vip_bg"
-                            tools:text="去开通" />
-
-                        <View
-                            android:id="@+id/view_bottom"
-                            android:layout_width="match_parent"
-                            android:layout_height="5dp"
-                            android:background="@color/color_f6f7fb"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/iv_vip_bg" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.appbar.CollapsingToolbarLayout>
-            </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_06_ffffff_r12"
+            android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/suggestions_feedback"
+                singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/color_f6f7fb"
-                android:orientation="vertical"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_collapseMode="pin">
+                android:layout_height="52dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/spacing_l">
 
-                <com.nhsd.magicindicator.MagicIndicator
-                    android:id="@+id/magic_indicator"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="16dp"
-                    android:clipToPadding="false"
-                    android:paddingHorizontal="4dp" />
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:importantForAccessibility="no" />
 
-                <androidx.viewpager.widget.ViewPager
-                    android:id="@+id/vp"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                <TextView
+                    style="@style/TextBody"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
                     android:layout_weight="1"
-                    android:overScrollMode="never"
-                    android:scrollbars="none" />
+                    android:text="建议与反馈"
+                    android:textColor="@color/text_color_3_dark" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:importantForAccessibility="no" />
             </LinearLayout>
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        <View
-            android:id="@+id/bottomSpace"
-            android:layout_width="match_parent"
-            android:layout_height="84dp"
-            android:visibility="@{layout.showBottomSpace?View.VISIBLE:View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            <LinearLayout
+                android:id="@+id/ll_settings"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/spacing_l">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_mine_settings"
+                    android:importantForAccessibility="no" />
+
+                <TextView
+                    style="@style/TextBody"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:layout_weight="1"
+                    android:text="设置"
+                    android:textColor="@color/text_color_3_dark" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 </layout>

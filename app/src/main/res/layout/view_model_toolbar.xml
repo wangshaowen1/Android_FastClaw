@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/navigationText"
-                style="?borderlessButtonStyle"
+                style="@style/TextSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|left"
@@ -45,12 +45,10 @@
                 android:minHeight="0dp"
                 android:text="@{toolbar.MNavigationText}"
                 android:textColor="@{toolbar.navigationColor}"
-                android:textSize="14sp"
                 android:visibility="@{toolbar.MNavigationText==null?View.GONE:View.VISIBLE}" />
 
             <TextView
                 android:id="@+id/toolbarTitle"
-                style="@style/Text.Common"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/action_bar_size"
                 android:layout_gravity="center"
@@ -59,12 +57,11 @@
                 android:gravity="center"
                 android:maxWidth="180dp"
                 android:maxLines="1"
-                android:textStyle="bold"
                 android:text="@{toolbar.mTitle}"
                 android:textColor="@{toolbar.titleColor}"
-                android:textSize="18sp"
+                style="@style/TextSubtitle"
                 tools:text="Title"
-                tools:textColor="@color/textColorPrimary" />
+                tools:textColor="@color/text_color_1_dark" />
 
             <TextView
                 android:id="@+id/menuText"

@@ -12,6 +12,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.permissions.requestImages2VideosPermissions
 import com.kgmedia.fastfilm.common.utils.Utils
+import com.kgmedia.fastfilm.core.ext.openTheCustomerServiceChat
 import com.kgmedia.fastfilm.databinding.ActivityFeedbackBinding
 import com.kgmedia.fastfilm.widget.PhotoGridView
 import com.kgmedia.fastfilm.widget.actionsheet.ActionSheetDialog
@@ -96,6 +97,9 @@ class FeedbackActivity :
                 }.show(supportFragmentManager)
             }
 
+            R.id.ll_contact_customer -> {
+                openTheCustomerServiceChat()
+            }
         }
     }
 

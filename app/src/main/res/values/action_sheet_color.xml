@@ -9,8 +9,8 @@
     <color name="bgColor_alertview_alert">#ffffff</color>
     <color name="bgColor_alertview_alert_start">#f0f0f0</color>
 
-    <color name="bgColor_alertview_alert_header_nor">#FFFFFF</color>
-    <color name="bgColor_alertview_alert_header_press">#eaeaea</color>
+    <color name="bgColor_alertview_alert_header_nor">#1F1F1F</color>
+    <color name="bgColor_alertview_alert_header_press">#1F1F1F</color>
 
     <!--标题颜色-->
     <color name="textColor_alert_title">#000000</color>

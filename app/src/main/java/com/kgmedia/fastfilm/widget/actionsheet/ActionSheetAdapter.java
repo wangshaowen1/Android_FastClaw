@@ -73,7 +73,7 @@ public class ActionSheetAdapter extends BaseAdapter {
         private View divider;
 
         public Holder(View view) {
-            tvAlert = (TextView) view.findViewById(R.id.tvAlert);
+            tvAlert = view.findViewById(R.id.tvAlert);
             divider = view.findViewById(R.id.divider);
         }
 

@@ -343,10 +343,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     //需要更新apk，那其他弹框就不需要弹了
                     return@on
                 }
-//                displayPopUpBox(
-//                    type = MainBulletFrameEnum.COMPLETE_PERSONAL_INFO,
-//                    start = true
-//                )
             }
             on<Events.UserChangedEvent> { event ->
                 if (event.eventType == Events.UserChangedEvent.TOKEN_EXPIRED) {

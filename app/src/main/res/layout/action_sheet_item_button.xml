@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    android:orientation="vertical">
+
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:background="@color/actionsheet_divider_color"
-        android:layout_height="@dimen/actionsheet_divier_height"/>
+        android:layout_height="@dimen/actionsheet_divier_height"
+        android:background="@color/border_color_1_dark" />
+
     <TextView
         android:id="@+id/tvAlert"
         android:layout_width="match_parent"
         android:layout_height="@dimen/actionsheet_button_height"
         android:gravity="center"
-        android:textColor="@color/textColor_alert_button_others"
-        android:textSize="@dimen/actionsheet_button_textSize" />
+        android:textColor="@color/text_color_2_dark"
+        style="@style/TextSubtitle" />
 </LinearLayout>

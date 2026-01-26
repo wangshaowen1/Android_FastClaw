@@ -100,22 +100,15 @@ public class ActionSheetDialog extends BaseBottomPushDialogFragment<LayoutAction
         LayoutActionsheetBinding binding = getBindingNullable();
         if (binding == null) return;
         binding.alertButtonListView.setAdapter(adapter);
-        binding.alertButtonListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if (onItemClickListener != null)
-                    onItemClickListener.onItemClick(ActionSheetDialog.this, position);
-                dismissAllowingStateLoss();
-            }
+        binding.alertButtonListView.setOnItemClickListener((adapterView, view, position, l) -> {
+            if (onItemClickListener != null)
+                onItemClickListener.onItemClick(ActionSheetDialog.this, position);
+            dismissAllowingStateLoss();
         });
         if (onHeaderClickListener != null) {
-            binding.loAlertHeader.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onHeaderClickListener.onHeaderClick(ActionSheetDialog.this);
-                    dismissAllowingStateLoss();
-                }
-
+            binding.loAlertHeader.setOnClickListener(v -> {
+                onHeaderClickListener.onHeaderClick(ActionSheetDialog.this);
+                dismissAllowingStateLoss();
             });
         }
     }
@@ -123,7 +116,6 @@ public class ActionSheetDialog extends BaseBottomPushDialogFragment<LayoutAction
     protected void initActionSheetViews() {
         initHeaderView();
         initListView();
-
     }
 
 
