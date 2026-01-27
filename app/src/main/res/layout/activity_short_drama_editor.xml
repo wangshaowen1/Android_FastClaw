@@ -34,12 +34,23 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/action_bar_size"
+                    android:gravity="center"
+                    android:text="代码纪元：觉醒指令"
+                    android:textAppearance="@style/Text16"
+                    android:textColor="?attr/textColor1"
+                    app:layout_constraintTop_toBottomOf="@+id/statusBar" />
+
                 <androidx.constraintlayout.widget.Placeholder
                     android:id="@+id/previewArea"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="9:16"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_marginBottom="20dp"
+                    app:layout_constraintBottom_toTopOf="@+id/rvStoryboard"
+                    app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
                 <ImageView
                     android:id="@+id/image"
@@ -56,22 +67,15 @@
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
                     tools:layout_constraintDimensionRatio="16:9" />
 
-                <TextView
-                    marginTopDp="@{layout.shortDrama.videoRatio==1?94:12}"
+                <ImageView
                     setVisible="@{layout.currentSegment.data.generated &amp;&amp; layout.currentSegment.data.image}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:shadowColor="@color/color_40_000000"
-                    android:shadowDx="0"
-                    android:shadowDy="2"
-                    android:shadowRadius="3.0"
-                    android:text="AI生成"
-                    android:textColor="@color/color_50_ffffff"
-                    android:textSize="12dp"
-                    app:layout_constraintEnd_toEndOf="@+id/image"
+                    android:layout_width="32dp"
+                    android:layout_height="16dp"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/icon_ai_label"
+                    app:layout_constraintStart_toStartOf="@+id/image"
                     app:layout_constraintTop_toTopOf="@+id/image"
-                    tools:layout_marginTop="12dp" />
+                    tools:text="AI生成" />
 
                 <ImageView
                     setVisible="@{!layout.playing}"
@@ -145,71 +149,15 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="@drawable/gradient_top_00_000000_bottom_80_000000"
-                    app:layout_constraintBottom_toTopOf="@+id/bottom"
-                    app:layout_constraintDimensionRatio="375:200" />
-
-                <androidx.constraintlayout.widget.Placeholder
-                    android:id="@+id/bottom"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:background="?attr/fillColor1"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="375:72" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="@+id/previewArea"
-                    app:layout_constraintEnd_toEndOf="@+id/previewArea"
-                    app:layout_constraintStart_toStartOf="@+id/previewArea"
-                    app:layout_constraintTop_toTopOf="@+id/previewArea"
-                    app:layout_constraintVertical_bias="0.75">
-
-                    <com.kgmedia.fastfilm.widget.MarqueeTextView
-                        android:id="@+id/tvSubtitle"
-                        changeText="@{TextViewExtKt.parseRoleTagsModernPlain(layout.currentSegmentSubtitle.subtitleContent)}"
-                        duration="@{layout.currentSegmentAudioDuration}"
-                        startMarquee="@{layout.playing}"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:paddingHorizontal="16dp"
-                        android:shadowColor="@color/color_40_000000"
-                        android:shadowDx="0"
-                        android:shadowDy="2"
-                        android:shadowRadius="3.0"
-                        android:textColor="?colorPrimary"
-                        android:textSize="20dp"
-                        tools:text="手心忽然长出纠缠的曲线" />
-
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tvDuration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:text="视频时长约为"
-                    android:textColor="?colorPrimary"
-                    android:textSize="12dp"
-                    app:layout_constraintBottom_toTopOf="@+id/rvStoryboard"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{layout.durationText}"
-                    android:textColor="@color/color_ff4b00"
-                    android:textSize="12dp"
-                    app:layout_constraintBaseline_toBaselineOf="@+id/tvDuration"
-                    app:layout_constraintStart_toEndOf="@+id/tvDuration"
-                    tools:text="01:30(18个分镜)" />
+                    app:layout_constraintTop_toBottomOf="@+id/previewArea" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvStoryboard"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="16dp"
                     android:adapter="@{layout.adapter}"
                     android:clipToPadding="false"
                     android:orientation="horizontal"
@@ -218,152 +166,101 @@
                     android:paddingEnd="2dp"
                     android:scrollbars="none"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toTopOf="@+id/bottom"
-                    app:layout_constraintDimensionRatio="375:58"
+                    app:layout_constraintBottom_toTopOf="@+id/tvStoryboardDescTitle"
+                    app:layout_constraintDimensionRatio="375:82"
                     tools:listitem="@layout/item_short_drama_editor_segment" />
 
-                <View
-                    android:id="@+id/btnDubbing"
-                    singleClick="@{layout.clickHandler::onClick}"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/bottom"
-                    app:layout_constraintEnd_toEndOf="@+id/ivDubbing"
-                    app:layout_constraintStart_toStartOf="@+id/ivDubbing"
-                    app:layout_constraintTop_toTopOf="@+id/bottom"
-                    app:layout_constraintWidth_percent="0.14" />
-
-                <ImageView
-                    android:id="@+id/ivDubbing"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:src="@drawable/ic_dubbing"
-                    app:layout_constraintBottom_toBottomOf="@+id/bottom"
-                    app:layout_constraintDimensionRatio="1"
-                    app:layout_constraintEnd_toEndOf="@+id/bottom"
-                    app:layout_constraintHorizontal_bias="0.174"
-                    app:layout_constraintStart_toStartOf="@+id/bottom"
-                    app:layout_constraintTop_toTopOf="@+id/bottom"
-                    app:layout_constraintVertical_bias="0.25"
-                    app:layout_constraintWidth_percent="0.064" />
-
                 <TextView
+                    android:id="@+id/tvStoryboardDescTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="字幕配音"
-                    android:textColor="?colorAccent"
-                    android:textSize="10dp"
+                    android:layout_marginBottom="12dp"
+                    android:text="分镜描述"
+                    android:textAppearance="@style/Text14"
+                    android:textColor="?attr/textColor1"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/ivDubbing"
-                    app:layout_constraintStart_toStartOf="@+id/ivDubbing"
-                    app:layout_constraintTop_toBottomOf="@+id/ivDubbing" />
+                    app:layout_constraintBottom_toTopOf="@+id/tvStoryboardDesc"
+                    app:layout_constraintDimensionRatio="345:130"
+                    app:layout_constraintStart_toStartOf="@+id/tvStoryboardDesc" />
 
                 <TextView
-                    setVisible="@{layout.dubbing}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_dubbing"
-                    android:paddingHorizontal="6dp"
-                    android:paddingVertical="3dp"
-                    android:text="配音中..."
-                    android:textColor="?colorPrimary"
-                    android:textSize="8dp"
-                    android:translationX="-5dp"
-                    app:layout_constraintBottom_toTopOf="@+id/ivDubbing"
-                    app:layout_constraintStart_toEndOf="@+id/ivDubbing" />
+                    android:id="@+id/tvStoryboardDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginHorizontal="15dp"
+                    android:background="@drawable/fill_color2_r8"
+                    android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+                    android:padding="12dp"
+                    android:text="白天，史莱克学院后山茂密的森林，阳光穿透层层叠叠的树叶，在铺满落叶的空地上洒下斑驳光影。唐三与小舞相对而立，清风吹过。唐三微微领首，脚下升起数圈魂环，地面开始震动。唐三..."
+                    android:textAppearance="@style/Text12"
+                    android:textColor="?attr/textColor2"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/btnRegenerate"
+                    app:layout_constraintDimensionRatio="345:130" />
 
-                <View
+                <TextView
                     android:id="@+id/btnRegenerate"
-                    singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/bottom"
-                    app:layout_constraintEnd_toEndOf="@+id/ivRegenerate"
-                    app:layout_constraintStart_toStartOf="@+id/ivRegenerate"
-                    app:layout_constraintTop_toTopOf="@+id/bottom"
-                    app:layout_constraintWidth_percent="0.14" />
-
-                <ImageView
-                    android:id="@+id/ivRegenerate"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:src="@drawable/ic_segment_regenerate"
-                    app:layout_constraintBottom_toBottomOf="@+id/bottom"
-                    app:layout_constraintDimensionRatio="1"
-                    app:layout_constraintEnd_toEndOf="@+id/bottom"
-                    app:layout_constraintStart_toStartOf="@+id/bottom"
-                    app:layout_constraintTop_toTopOf="@+id/bottom"
-                    app:layout_constraintVertical_bias="0.25"
-                    app:layout_constraintWidth_percent="0.064" />
-
-                <TextView
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
+                    android:drawableTop="@drawable/icon_ai_image"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:paddingVertical="16dp"
                     android:text="重绘分镜"
-                    android:textColor="?colorAccent"
-                    android:textSize="10dp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/ivRegenerate"
-                    app:layout_constraintStart_toStartOf="@+id/ivRegenerate"
-                    app:layout_constraintTop_toBottomOf="@+id/ivRegenerate" />
-
-                <View
-                    android:id="@+id/btnHistory"
-                    singleClick="@{layout.clickHandler::onClick}"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/bottom"
-                    app:layout_constraintEnd_toEndOf="@+id/ivHistory"
-                    app:layout_constraintStart_toStartOf="@+id/ivHistory"
-                    app:layout_constraintTop_toTopOf="@+id/bottom"
-                    app:layout_constraintWidth_percent="0.14" />
-
-                <ImageView
-                    android:id="@+id/ivHistory"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:src="@drawable/ic_segment_history"
-                    app:layout_constraintBottom_toBottomOf="@+id/bottom"
-                    app:layout_constraintDimensionRatio="1"
-                    app:layout_constraintEnd_toEndOf="@+id/bottom"
-                    app:layout_constraintHorizontal_bias="0.826"
-                    app:layout_constraintStart_toStartOf="@+id/bottom"
-                    app:layout_constraintTop_toTopOf="@+id/bottom"
-                    app:layout_constraintVertical_bias="0.25"
-                    app:layout_constraintWidth_percent="0.064" />
+                    android:textAppearance="@style/Text12"
+                    android:textColor="?attr/textColor3"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btnDownload"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/btnDownload"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="历史分镜"
-                    android:textColor="?colorAccent"
-                    android:textSize="10dp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/ivHistory"
-                    app:layout_constraintStart_toStartOf="@+id/ivHistory"
-                    app:layout_constraintTop_toBottomOf="@+id/ivHistory" />
+                    android:drawableTop="@drawable/icon_download"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:paddingVertical="16dp"
+                    android:text="下载视频"
+                    android:textAppearance="@style/Text12"
+                    android:textColor="?attr/textColor3"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btnDelete"
+                    app:layout_constraintStart_toEndOf="@+id/btnRegenerate" />
+
+                <TextView
+                    android:id="@+id/btnDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:drawableTop="@drawable/icon_delete"
+                    android:drawablePadding="8dp"
+                    android:gravity="center"
+                    android:paddingVertical="16dp"
+                    android:text="删除分镜"
+                    android:textAppearance="@style/Text12"
+                    android:textColor="?attr/textColor3"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/btnDownload" />
 
                 <TextView
                     android:id="@+id/btnGenerate"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@{layout.nextStepEnabled?@drawable/btn_common_dark_normal:@drawable/btn_common_dark_disable}"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="13dp"
+                    android:background="@drawable/selector_common_button"
+                    android:drawableStart="@drawable/icon_synthesis"
+                    android:drawablePadding="4dp"
                     android:gravity="center"
-                    android:paddingHorizontal="8dp"
-                    android:text="合成视频"
-                    android:textColor="@{layout.nextStepEnabled?@android:color/white:@color/color_30_ffffff}"
-                    android:textSize="14dp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/statusBar"
-                    tools:background="@drawable/btn_common_dark_disable"
-                    tools:textColor="@color/color_30_ffffff" />
+                    android:paddingHorizontal="12dp"
+                    android:text="合成"
+                    android:textAppearance="@style/Text14"
+                    android:textColor="?attr/textColor1"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+                    app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+                    app:layout_constraintTop_toTopOf="@+id/tvTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
@@ -382,11 +279,11 @@
             <ImageView
                 android:id="@+id/btnBack"
                 singleClick="@{(v)->layout.back()}"
-                android:layout_width="56dp"
+                android:layout_width="48dp"
                 android:layout_height="@dimen/action_bar_size"
                 android:paddingVertical="10dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_nav_back"
+                android:src="@drawable/icon_back_left"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/statusBar1" />
         </LinearLayout>

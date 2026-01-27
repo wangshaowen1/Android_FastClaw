@@ -91,23 +91,6 @@ class ShortDramaEditorActivity : BaseViewModelActivity<ActivityShortDramaEditorB
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
-            R.id.btnDubbing -> {
-                mRealVM.shortDrama.get()?.let {
-                    mRealVM.stopPlay()
-                    DubbingDialog.show(supportFragmentManager, it.dramasId, it.timbreId)
-                }
-            }
-
-            R.id.btnHistory -> {
-                mRealVM.currentSegment.get()?.data?.get()?.let {
-                    if (!it.shotSegmentImageUrl.isNullOrEmpty()) {
-                        StoryboardHistoryDialog.show(supportFragmentManager, mRealVM.dramasId, it.shotSegmentId, it.shotSegmentImageId)
-                    } else {
-                        "请等待分镜生成完成".showToast()
-                    }
-                }
-            }
-
             R.id.btnRegenerate -> {
                 mRealVM.currentSegment.get()?.data?.get()?.let {
                     if (it.isFailed()) {
