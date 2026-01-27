@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.works.ItemMyWorkVM" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+            android:id="@+id/ivCover"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="15dp"
+            android:scaleType="centerCrop"
+            android:src="?funcColorSuccess"
+            app:layout_constraintDimensionRatio="108:152"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.288"
+            app:riv_border_color="?attr/borderColor2"
+            app:riv_border_width="1dp"
+            app:riv_corner_radius="8dp" />
+
+        <TextView
+            android:id="@+id/tvAssetDesc"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/fill_color1_r8"
+            android:ellipsize="end"
+            android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+            android:padding="12dp"
+            android:text="史莱克七怪之首，沉稳冷静。他留着一头深蓝色长发，目光深篷，拥有极强的战斗天赋和统筹全局的智慧。战斗时使用蓝银草魂灵与外附魂骨八蛛矛。"
+            android:textAppearance="@style/Text13"
+            android:textColor="?attr/textColor2"
+            app:layout_constraintDimensionRatio="229:130"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <TextView
+            android:id="@+id/tvAssetName"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/fill_color1_r4"
+            android:drawableEnd="@drawable/icon_edit_text4_16"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="12dp"
+            android:text="唐山"
+            android:textAppearance="@style/Text13"
+            android:textColor="?attr/textColor2"
+            app:layout_constraintDimensionRatio="135:32"
+            app:layout_constraintStart_toStartOf="@+id/tvAssetDesc"
+            app:layout_constraintTop_toBottomOf="@+id/tvAssetDesc"
+            app:layout_constraintWidth_percent="0.36" />
+
+        <FrameLayout
+            android:id="@+id/btnRegenerateDesc"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/fill_color1_r4"
+            app:layout_constraintBottom_toBottomOf="@+id/tvAssetName"
+            app:layout_constraintEnd_toEndOf="@+id/tvAssetDesc"
+            app:layout_constraintStart_toEndOf="@+id/tvAssetName"
+            app:layout_constraintTop_toTopOf="@+id/tvAssetName">
+
+            <com.kgmedia.fastfilm.widget.GradientTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="重新生成"
+                android:textColor="@android:color/white"
+                app:endColor="#8F83FF"
+                app:startColor="#68BFF9" />
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -216,7 +216,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="6dp"
-                    android:background="@drawable/fill_color1_r8"
+                    android:background="@drawable/fill_color1_r4"
                     app:layout_constraintDimensionRatio="229:32"
                     app:layout_constraintEnd_toEndOf="@+id/tvStoryboardDesc"
                     app:layout_constraintStart_toStartOf="@+id/tvStoryboardDesc"
