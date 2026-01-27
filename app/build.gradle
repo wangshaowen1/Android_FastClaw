@@ -332,7 +332,7 @@ dependencies {
     //埋点开发工具，DevTools是 Debug 环境下辅助开发者或测试人员进行应用内埋点验证和 SDK 接入问题排查的组件。请使用 debug 依赖，建议仅在 debug 下做调试
     //debugImplementation 'com.bytedance.applog:RangersAppLog-DevTools:3.3.4'
 
-    def media3_version = "1.5.1"
+    def media3_version = "1.9.1"
     // For media playback using ExoPlayer
     implementation "androidx.media3:media3-exoplayer:$media3_version"
     implementation "androidx.media3:media3-datasource:$media3_version"
