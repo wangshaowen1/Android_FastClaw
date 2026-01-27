@@ -130,7 +130,7 @@
 
     <style name="Button.Bold.Cancel" parent="Button.Bold">
         <item name="android:background">@drawable/btn_common_gray_normal</item>
-        <item name="android:textColor">@color/color_757575</item>
+        <item name="android:textColor">?attr/textColor2</item>
     </style>
 
 

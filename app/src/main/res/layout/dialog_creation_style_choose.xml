@@ -15,17 +15,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_ffffff_tr24">
+        android:background="@drawable/bg_color2_tr20">
 
         <TextView
             android:id="@+id/title"
+            style="@style/Text16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/spacing_l"
             android:text="全部风格"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textColor="?attr/textColor1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,20 +33,20 @@
             android:id="@+id/close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
+            android:layout_marginEnd="@dimen/spacing_l"
             android:onClick="@{()->layout.dismiss()}"
             android:padding="3dp"
-            android:src="@drawable/ic_dialog_close_black"
+            android:src="@drawable/icon_close"
             app:layout_constraintBottom_toBottomOf="@id/title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/title" />
 
         <com.kgmedia.fastfilm.widget.EdgeTransparentView
             android:layout_width="match_parent"
-            android:layout_height="493dp"
-            android:layout_marginTop="20dp"
-            app:edge_position="bottom"
-            app:edge_width="92dp"
+            android:layout_height="408dp"
+            android:layout_marginTop="@dimen/spacing_l"
+            android:layout_marginBottom="@dimen/spacing_m"
+            app:layout_constraintBottom_toTopOf="@id/llBottom"
             app:layout_constraintTop_toBottomOf="@id/title">
 
             <com.kgmedia.fastfilm.widget.LoadStateViewHolder
@@ -65,17 +64,32 @@
             </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
         </com.kgmedia.fastfilm.widget.EdgeTransparentView>
 
-        <!-- 保存按钮 -->
-        <Button
-            android:id="@+id/btnConfirm"
-            style="@style/Button.Bold"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginHorizontal="34dp"
-            android:layout_marginBottom="22dp"
-            android:text="确认"
+        <LinearLayout
+            android:id="@+id/llBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginBottom="30dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/btnCancel"
+                style="@style/Button.Bold.Cancel"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="取消" />
+
+            <!-- 保存按钮 -->
+            <Button
+                android:id="@+id/btnConfirm"
+                style="@style/Button.Bold"
+                android:layout_width="0dp"
+                android:layout_marginStart="@dimen/spacing_l"
+                android:layout_weight="1"
+                android:text="确认" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

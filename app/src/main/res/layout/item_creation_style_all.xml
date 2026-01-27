@@ -20,10 +20,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="@{(v)->item.onItemClick.invoke(v)}"
-            app:borderEndColor="#FF4332"
-            app:borderStartColor="#FFA029"
-            app:borderWidth="2dp"
-            app:roundCornerRadius="8dp"
+            app:borderEndColor="@color/gradient_btn_end_dark"
+            app:borderStartColor="@color/gradient_btn_start_dark"
+            app:borderWidth="1.5dp"
+            app:roundCornerRadius="@dimen/radius_m"
             app:showBorder="@{item.checked}">
 
             <com.kgmedia.fastfilm.widget.CropShapeImageView
@@ -31,7 +31,7 @@
                 loadThumbnailUri="@{item.data.styleCoverUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="78:104"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/roundStyle_r8" />
 
@@ -46,17 +46,16 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                style="@style/Text12"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/gradient_top_00_000000_bottom_60_000000_br8"
                 android:ellipsize="end"
                 android:gravity="center"
-                android:paddingVertical="3dp"
+                android:paddingVertical="@dimen/spacing_s"
                 android:singleLine="true"
                 android:text="@{item.data.styleName}"
-                android:textColor="@color/white"
-                android:textSize="10sp"
-                android:textStyle="bold"
+                android:textColor="?attr/textColor1"
                 app:layout_constraintBottom_toBottomOf="@id/ivCover"
                 tools:text="日式动漫" />
         </com.kgmedia.fastfilm.widget.BorderConstraintLayout>

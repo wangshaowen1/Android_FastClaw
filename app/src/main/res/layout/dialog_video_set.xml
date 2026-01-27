@@ -99,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
-                android:drawableEnd="@drawable/arrow_right_white36"
+                android:drawableEnd="@drawable/arrow_right_gray48"
                 android:text="查看全部"
                 android:textColor="?attr/textColor4" />
         </FrameLayout>
