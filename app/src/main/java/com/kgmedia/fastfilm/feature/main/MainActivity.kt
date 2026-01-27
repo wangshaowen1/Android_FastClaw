@@ -27,12 +27,11 @@ import com.kgmedia.fastfilm.core.manager.UpgradeManager
 import com.kgmedia.fastfilm.core.model.WakeUpEntity
 import com.kgmedia.fastfilm.databinding.ActivityMainBinding
 import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
-import com.kgmedia.fastfilm.feature.hit.HitFragment
 import com.kgmedia.fastfilm.feature.login.SimpleProfileDialog
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.kgmedia.fastfilm.feature.mine.MineFragment
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
-import com.kgmedia.fastfilm.feature.play.more.ShareShortDramaActivity
+import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelActivity
@@ -187,7 +186,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     EventManager.onAppTrack(AppEvent.JG_VIEW_FADDISH_TAB_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(1)
-                    supportFragmentManager.switchFragment(R.id.fragment, HitFragment::class.java)
+                    supportFragmentManager.switchFragment(R.id.fragment, MyWorksFragment::class.java)
                 }
 
 

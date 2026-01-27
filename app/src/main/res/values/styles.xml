@@ -719,51 +719,43 @@
         <item name="android:indeterminateTint">#191919</item>
     </style>
     <!--特大标题/页面级标题-->
-    <style name="TextDisplay" >
-        <item name="android:textSize">@dimen/text_size_display</item>
-        <item name="lineHeight">@dimen/line_height_display</item>
+    <style name="Text28" >
+        <item name="android:textSize">28sp</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--模块标题-->
-    <style name="TextHeadline">
-        <item name="android:textSize">@dimen/text_size_headline</item>
-        <item name="lineHeight">@dimen/line_height_headline</item>
+    <style name="Text20">
+        <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--一级标题/内容标题/卡片标题-->
-    <style name="TextTitle">
-        <item name="android:textSize">@dimen/text_size_title</item>
-        <item name="lineHeight">@dimen/line_height_title</item>
+    <style name="Text18">
+        <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--用于模块标题/分类标题-->
-    <style name="TextSubtitle">
-        <item name="android:textSize">@dimen/text_size_subtitle</item>
-        <item name="lineHeight">@dimen/line_height_subtitle</item>
+    <style name="Text16">
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--用于正文/大段文本-->
-    <style name="TextBody">
-        <item name="android:textSize">@dimen/text_size_body</item>
-        <item name="lineHeight">@dimen/line_height_body</item>
+    <style name="Text14">
+        <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
     </style>
     <!--评论区文字&项目方评分-->
-    <style name="TextComment">
-        <item name="android:textSize">@dimen/text_size_comment</item>
-        <item name="lineHeight">@dimen/line_height_comment</item>
+    <style name="Text13">
+        <item name="android:textSize">13sp</item>
         <item name="android:textStyle">normal</item>
     </style>
     <!--用于次级、提示文本、标签-->
-    <style name="TextCaption">
-        <item name="android:textSize">@dimen/text_size_caption</item>
-        <item name="lineHeight">@dimen/line_height_caption</item>
+    <style name="Text12">
+        <item name="android:textSize">12sp</item>
         <item name="android:textStyle">normal</item>
     </style>
     <!--用于标签-->
-    <style name="TextTag">
-        <item name="android:textSize">@dimen/text_size_tag</item>
-        <item name="lineHeight">@dimen/line_height_tag</item>
+    <style name="Text10">
+        <item name="android:textSize">10sp</item>
         <item name="android:textStyle">normal</item>
     </style>
 </resources>

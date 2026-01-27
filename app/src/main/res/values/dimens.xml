@@ -48,40 +48,6 @@
     <dimen name="sp_16">16sp</dimen>
     <dimen name="sp_20">20sp</dimen>
 
-    <!--特大标题/页面级标题-->
-    <dimen name="text_size_display">28sp</dimen>
-    <!--模块标题-->
-    <dimen name="text_size_headline">20sp</dimen>
-    <!--一级标题/内容标题/卡片标题-->
-    <dimen name="text_size_title">18sp</dimen>
-    <!--用于模块标题/分类标题-->
-    <dimen name="text_size_subtitle">16sp</dimen>
-    <!--用于正文/大段文本-->
-    <dimen name="text_size_body">14sp</dimen>
-    <!--评论区文字&项目方评分-->
-    <dimen name="text_size_comment">13sp</dimen>
-    <!--用于次级、提示文本、标签-->
-    <dimen name="text_size_caption">12sp</dimen>
-    <!--用于标签-->
-    <dimen name="text_size_tag">10sp</dimen>
-
-    <!--特大标题/页面级标题-->
-    <dimen name="line_height_display">42dp</dimen>
-    <!--模块标题-->
-    <dimen name="line_height_headline">30dp</dimen>
-    <!--一级标题/内容标题/卡片标题-->
-    <dimen name="line_height_title">27dp</dimen>
-    <!--用于模块标题/分类标题-->
-    <dimen name="line_height_subtitle">24dp</dimen>
-    <!--用于正文/大段文本-->
-    <dimen name="line_height_body">21dp</dimen>
-    <!--评论区文字&项目方评分-->
-    <dimen name="line_height_comment">19dp</dimen>
-    <!--用于次级、提示文本、标签-->
-    <dimen name="line_height_caption">18dp</dimen>
-    <!--用于标签-->
-    <dimen name="line_height_tag">15dp</dimen>
-
     <!--16px 大圆角 应用在主按钮、图层模块-->
     <dimen name="radius_xl">16dp</dimen>
     <!--12px 中大圆角 应用在大组件模块、弹窗-->
