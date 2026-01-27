@@ -29,9 +29,9 @@
 //此处改为你的APP签名
 #define SHA1 "ec8259d50d0062326cb4803432a3579436df3876"//快出片
 //此处改为你的APP包名
-#define APP_PKG "com.kgmedia.fastfilm"//绘本
+#define APP_PKG "com.kgmedia.fastfilm"//快出片
 //此处改为你的application全名  没有就是android.app.Application
-#define APPLICATION_NAME "com.kgmedia.fastfilm.App"//绘本
+#define APPLICATION_NAME "com.kgmedia.fastfilm.App"//快出片
 //此处填写API盐值  MD5加盐
 #define KEY "LW7KapT4dCcTMDu5Y5W/piXkw2dPMnCI+3pspiCurxBOoM3eStd44vmb3ZGAgu2/ppFLZTCCp1HZkIhjhOy0tLREMtt0iEJvPWRHeZFtCQuA/KgK1/x4ZBuZIZHVX8KBm55VQNMCZpiJJr7WGlRzvXw3aPO4UX5PM/wRwWhYIJPtL4pXnoEXtTzPY275UdAxdn6LWyRaeVVQN5I1HjOEJoXiyKZNxk99lnJ5mSOyOlEQ0LXn+n+yFBf9Be/B/D+9/nODgH7G5dAxRpRAhPsB/+0ixBZidQjr9L4Hd9JjEiBER7iVVI8znb08/hkw4fqY88lCCsuQ/TLNzkh9URpOhQ=="
 #define KEY_DEV "LkFDLgKBrha+Nc8UO9uL74GK9BUL9MxHm6yCEK9wYPzBamQTL1CCgIvTWGbM0tkOW5j9TmYZVYWR2vASLK+OemcbyIHJyL/J8UNJ1MLynhiduUpfeBU2UpKSFZzaFg7h0C0b7u5skdvK2zuf55qKrGKo6bec2NwKaHwmm1Uv8BHWWvAIBEl6ZGf5YYM2JaQWqBnqyyrFqqRBfsUAJyASp/88yeSALoErS+khr+LAHUSyG1mjA8wlPhIb5QFftgI8JAEbdHOZt2UEdMpHf5ExgwNg+FLrp3/ur8Ov0TZD4RBJSW/cV1xDAfpJ5wR6cp1o4P7dLgCuJ8f6V9JUIoDTMg=="
