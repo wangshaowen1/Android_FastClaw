@@ -134,9 +134,6 @@ fun TrackPlayer.play(track: TrackInfo?, skipIntro: Boolean = true): Boolean {
             if (isPaused) {
                 play()
             } else {
-                if (skipIntro) {
-                    seekTo(track.krcFirstTime)
-                }
                 playWhenReady = true
                 prepare()
                 return true

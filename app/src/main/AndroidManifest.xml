@@ -321,9 +321,6 @@
         <activity
             android:name=".feature.editor.ShortDramaEditorActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.play.publish.ShortDramaPublishActivity"
-            android:screenOrientation="portrait" />
         <activity android:name=".feature.mine.PhoneShowActivity" />
         <activity
             android:name=".feature.wallet.withdraw.WithdrawActivity"
@@ -336,14 +333,9 @@
         <activity android:name=".feature.message.likes.SystemMessageLikesActivity" />
         <activity android:name=".feature.message.watching.SystemMessageWatchingActivity" />
         <activity
-            android:name=".feature.play.ShortDramaPlayPagerActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.play.ShortDramaPlayerActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".feature.creator.character.CharacterHistoryActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".feature.play.DramasPlayPagerActivity" android:screenOrientation="portrait" />
     </application>
     <queries>
         <intent>

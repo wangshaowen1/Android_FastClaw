@@ -19,7 +19,6 @@
 
         <com.kgmedia.fastfilm.widget.CoverPlayerView
             android:id="@+id/playerView"
-            player="@{item.player}"
             setCoverUrl="@{item.data.musicCoverUrl}"
             track="@{item.data}"
             android:layout_width="match_parent"

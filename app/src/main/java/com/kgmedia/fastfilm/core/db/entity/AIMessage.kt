@@ -200,12 +200,6 @@ data class SimpleTrack(
     val status: Int?
 ) {
 
-    companion object {
-        fun toSelf(info: TrackInfo?, parentMusicId: String): SimpleTrack {
-            return SimpleTrack(info?.trackId, parentMusicId, info?.trackTitle, info?.lyric, info?.musicCoverUrl(), info?.music?.generateStatus)
-        }
-    }
-
     override fun toString(): String {
         return "SimpleTrack(trackId=$trackId, parentMusicId=$parentMusicId, trackTitle=$trackTitle, coverUrl=$coverUrl, status=$status)"
     }

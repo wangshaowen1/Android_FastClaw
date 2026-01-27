@@ -33,6 +33,7 @@ import com.kgmedia.fastfilm.feature.hit.HitFragment
 import com.kgmedia.fastfilm.feature.login.SimpleProfileDialog
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.kgmedia.fastfilm.feature.mine.MineFragment
+import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.more.ShareShortDramaActivity
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
@@ -176,6 +177,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 //                        R.id.fragment,
 //                        RecommendShortPlayPagerFragment::class.java
 //                    )
+                    DramasPlayPagerActivity.start(null)
                     lifecycleScope.launch {
                         delay(100)
                         displayPopUpBox(MainBulletFrameEnum.COMPLETE_PERSONAL_INFO)

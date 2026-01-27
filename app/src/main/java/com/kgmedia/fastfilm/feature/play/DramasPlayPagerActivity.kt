@@ -10,6 +10,7 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.databinding.ActivityDramasPlayPagerBinding
 import com.kgmedia.fastfilm.feature.play.manger.FeedPlayerManager
 import com.nhsd.basic.BaseViewModelActivity
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -53,7 +54,7 @@ class DramasPlayPagerActivity :
         // 4. 监听数据
         lifecycleScope.launch {
             // 假设这是从 ViewModel 获取的 Flow
-            // viewModel.feedFlow.collectLatest { adapter.submitData(it) }
+             mRealVM.feedFlow.collectLatest { adapter.submitData(it) }
         }
 
         // 5. 监听播放器事件 (进度、自动切集)
