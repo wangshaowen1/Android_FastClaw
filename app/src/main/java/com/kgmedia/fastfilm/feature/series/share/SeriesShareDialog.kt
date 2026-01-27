@@ -61,7 +61,7 @@ class SeriesShareDialog : BaseBottomPushVMDialogFragment<DialogSeriesShareBindin
         }
     private val wxShareContent: String?
         get() {
-            return "来金果一键创作，解锁你的爆款小说漫"
+            return "来快出片一键创作，解锁你的爆款小说漫"
         }
     private val pyqShareTitle: String?
         get() {

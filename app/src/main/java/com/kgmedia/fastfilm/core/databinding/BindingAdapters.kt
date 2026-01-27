@@ -95,6 +95,7 @@ import com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
 import com.kgmedia.fastfilm.widget.htmlview.HtmlStyleParser
 import com.kgmedia.fastfilm.widget.htmlview.HtmlStyleParser.ImgAlignmentEnum
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.kgmedia.fastfilm.widget.CoverPlayerView
 import com.kuaige.imageloader.GlideApp
 import com.kuaige.imageloader.GlideImageLoader
 import com.kuaige.imageloader.transform.BlurTransformation
@@ -1629,3 +1630,38 @@ fun blurWith(blurView: BlurView, targetId: Int) {
         blurView.setupWith(it).setBlurRadius(5f) // 初始模糊半径（0-25）
     }
 }
+
+
+@BindingAdapter("setCoverUrl", "setCoverHeight", "placeHolder", requireAll = false)
+fun setCoverUrl(
+    view: CoverPlayerView,
+    url: String?,
+    coverHeight: Int?,
+    placeHolder: Drawable? = null
+) {
+    coverHeight?.let {
+        view.setCoverHeight(it)
+    }
+    val coverImageView = view.getCoverImage()
+    if (coverImageView == null || url.isNullOrEmpty()) {
+        // 如果封面或 URL 不存在，可选择清空 ImageView 或设置默认图
+        coverImageView?.setImageDrawable(placeHolder)
+        return
+    }
+    if (isVideoUrl(url)) {
+        // 加载视频首帧
+        GlideApp.with(coverImageView)
+            .asBitmap()
+            .load(url)
+            .apply(
+                RequestOptions.frameOf(0L)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL) // 缓存首帧到磁盘
+            )
+            .placeholder(placeHolder)
+            .transition(GenericTransitionOptions.with(com.nhsd.basic.R.anim.fade_in)) // 淡入动画
+            .into(coverImageView)
+    } else {
+        GlideImageLoader.with(coverImageView).hdThumbnail().display(url)
+    }
+}
+

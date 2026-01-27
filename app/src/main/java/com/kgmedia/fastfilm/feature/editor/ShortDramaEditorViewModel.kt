@@ -5,7 +5,6 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
-import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
@@ -20,10 +19,9 @@ import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaSegmentSubtitleIn
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.payment.points.FirstTimeRechargeDialog
 import com.kgmedia.fastfilm.feature.payment.points.FirstTimeUnlockDialog
-import com.kgmedia.fastfilm.feature.play.publish.ShortDramaPublishActivity
-import com.kgmedia.fastfilm.kit.PlayerFactory
-import com.kgmedia.fastfilm.kit.play
-import com.kgmedia.fastfilm.kit.setPlayUrl
+import com.kgmedia.fastfilm.kit.media.PlayerFactory
+import com.kgmedia.fastfilm.kit.media.play
+import com.kgmedia.fastfilm.kit.media.setPlayUrl
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.showToast
@@ -55,7 +53,7 @@ class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorReposit
     val dubbing by lazy { ObservableBoolean(false) }
     private var loopDubbingStatusJob: Job? = null
     val audioPlayer by lazy {
-        PlayerFactory.createPlayer(true, true).apply {
+        PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
             addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     super.onPlaybackStateChanged(playbackState)
@@ -163,8 +161,6 @@ class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorReposit
                 if (dubbing.get()) {
                     "配音完成后会自动替换".showToast()
                 }
-                ActivityUtils.finishActivity(ShortDramaPublishActivity::class.java)
-                ShortDramaPublishActivity.start(dramasId)
                 finish()
                 FlowEventBus.postSync(Events.ShortDramasUpdatedEvent(dramasId))
             } else {

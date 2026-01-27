@@ -78,9 +78,7 @@ class CreationFragment :
                 mRealVM.input.value = s.toString()
             }
         })
-        binding.creationStyleDrag.setDragListener {
-            showAllStyleDialog()
-        }
+
         observeEvents {
             on<Events.ConfigChangeEvent> { event ->
                 mRealVM.refreshConfig()
@@ -164,13 +162,6 @@ class CreationFragment :
                 }
                 EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_RANDOM_INSPIRATION_BUTTON)
                 mRealVM.randomPrompt()
-            }
-
-            R.id.btnAll -> {
-                if (mRealVM.styleVms.isEmpty()) {
-                    mRealVM.creationStyles()
-                }
-                showAllStyleDialog()
             }
 
             R.id.btnVip -> {

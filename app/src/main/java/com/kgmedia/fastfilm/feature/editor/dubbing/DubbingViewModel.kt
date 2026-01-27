@@ -18,8 +18,8 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.editor.ShortDramaEditorRepository
 import com.kgmedia.fastfilm.feature.payment.points.PointsRechargeActivity
 import com.kgmedia.fastfilm.feature.payment.vip.MembershipBenefitsActivity
-import com.kgmedia.fastfilm.kit.PlayerFactory
-import com.kgmedia.fastfilm.kit.play
+import com.kgmedia.fastfilm.kit.media.PlayerFactory
+import com.kgmedia.fastfilm.kit.media.play
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +35,7 @@ class DubbingViewModel : AppRepositoryViewModel<ShortDramaEditorRepository>() {
     val buttonEnabled by lazy { ObservableField<Boolean>() }
     val buyPrice by lazy { ObservableField<Int>() }
     val audioPlayer by lazy {
-        PlayerFactory.createPlayer(true, true).apply {
+        PlayerFactory.createPlayer(true).apply {
             addListener(object : Player.Listener {
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     super.onIsPlayingChanged(isPlaying)

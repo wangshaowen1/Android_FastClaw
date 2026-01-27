@@ -20,70 +20,28 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.kgmedia.fastfilm.widget.EdgeTransparentView
+        <com.kgmedia.fastfilm.widget.CounterInputLayout
+            android:id="@+id/inputView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="4dp"
             android:layout_weight="1"
-            app:edge_position="bottom"
-            app:edge_width="30dp">
-
-            <com.kgmedia.fastfilm.widget.CounterInputLayout
-                android:id="@+id/inputView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="top|start"
-                app:hint="@{layout.hint}"
-                app:inputCounterBottomMargin="4dp"
-                app:inputCounterGravity="right"
-                app:inputCounterRightMargin="0dp"
-                app:inputCounterTextColor="@color/color_40_121212"
-                app:inputCounterTextSize="12sp"
-                app:inputCounterVisible="false"
-                app:inputHorizontalPadding="16dp"
-                app:inputTextColor="@color/textColorPrimary"
-                app:inputTextColorHint="@color/color_30_121212"
-                app:inputTextSize="15sp"
-                app:inputVerticalPadding="12dp"
-                app:maxLength="@{layout.maxInputLength}" />
-        </com.kgmedia.fastfilm.widget.EdgeTransparentView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="4dp"
-            android:gravity="center_vertical"
-            android:visibility="@{layout.inspirationModel()?View.VISIBLE:View.GONE}">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="随机灵感"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <View style="@style/SpaceAutoFit" />
-
-            <TextView
-                android:id="@+id/randomInspirations"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_random_black48"
-                android:drawablePadding="3dp"
-                android:includeFontPadding="false"
-                android:paddingVertical="4dp"
-                android:src="@drawable/ic_random_prompt"
-                android:text="换一换"
-                android:textColor="@color/color_121127"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+            android:background="@null"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="top|start"
+            app:hint="@{layout.hint}"
+            app:inputCounterBottomMargin="4dp"
+            app:inputCounterGravity="right"
+            app:inputCounterRightMargin="0dp"
+            app:inputCounterTextColor="@color/color_40_121212"
+            app:inputCounterTextSize="12sp"
+            app:inputCounterVisible="false"
+            app:inputHorizontalPadding="16dp"
+            app:inputTextColor="@color/textColorPrimary"
+            app:inputTextColorHint="@color/color_30_121212"
+            app:inputTextSize="15sp"
+            app:inputVerticalPadding="12dp"
+            app:maxLength="@{layout.maxInputLength}" />
 
         <com.kgmedia.fastfilm.widget.TagLayout
             android:id="@+id/lyricPrompts"
@@ -105,7 +63,7 @@
             app:tagTextVerticalPadding="6dp"
             app:verticalSpace="12dp" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -125,7 +83,11 @@
                 android:text="帮我优化"
                 android:textColor="@color/color_619dff"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="@{layout.input.length()>0?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/btnRandomPrompt"
@@ -143,52 +105,35 @@
                 android:textColor="@color/color_ff4b00"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:visibility="@{layout.inspirationModel?View.VISIBLE:View.GONE}" />
-
-            <androidx.legacy.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:visibility="@{layout.input.length()==0?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{layout.input.length()+`/`+layout.maxInputLength}"
                 android:textColor="@color/color_40_121212"
-                android:textSize="12sp" />
-
-            <TextView
-                android:id="@+id/btnVip"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/gradient_10_left_ff4b00_right_ffa029_r50"
-                android:drawableStart="@drawable/ic_vip54"
-                android:drawablePadding="4dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:text="提高字数限制"
-                android:textColor="@color/color_ff7300"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:visibility="@{!layout.isVip&amp;&amp;!layout.inspirationModel()?View.VISIBLE:View.GONE}" />
-        </LinearLayout>
-
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="0/5000" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="4dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:visibility="@{layout.inspirationModel()?View.VISIBLE:View.GONE}">
 
             <TextView
-                android:id="@+id/recommendInspiration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="小说风格"
+                android:text="灵感示例"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -196,60 +141,18 @@
             <View style="@style/SpaceAutoFit" />
 
             <TextView
-                android:id="@+id/btnAll"
+                android:id="@+id/randomInspirations"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="14dp"
-                android:drawableEnd="@drawable/arrow_right_gray36"
-                android:drawablePadding="2dp"
-                android:gravity="center_vertical"
+                android:drawableEnd="@drawable/ic_random_black48"
                 android:includeFontPadding="false"
-                android:paddingVertical="12dp"
-                android:paddingStart="2dp"
-                android:text="查看全部"
-                android:textColor="@color/color_50_121212"
-                android:textSize="12sp" />
+                android:padding="4dp"
+                android:src="@drawable/ic_random_prompt"
+                android:textColor="@color/color_121127"
+                android:textSize="14sp"
+                android:textStyle="bold" />
         </LinearLayout>
-
-        <com.kgmedia.fastfilm.widget.dragfooterview.DragContainer
-            android:id="@+id/creationStyleDrag"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                setItemDecoration="@{layout.mAdapterVm.MItemDecoration}"
-                setLinearLayoutManager="@{false}"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adapter="@{layout.mAdapterVm.MAdapter}"
-                tools:itemCount="1"
-                tools:listitem="@layout/item_creation_style" />
-        </com.kgmedia.fastfilm.widget.dragfooterview.DragContainer>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
-            android:text="视频比例"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/videoRatioRv"
-            setGridLayoutManager="@{4}"
-            setItemDecoration="@{layout.mRatioAdapterVm.MItemDecoration}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
-            android:adapter="@{layout.mRatioAdapterVm.MAdapter}"
-            tools:itemCount="1"
-            tools:listitem="@layout/item_video_ratio" />
 
         <Button
             android:id="@+id/btnNext"
@@ -260,6 +163,6 @@
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="22dp"
             android:layout_marginBottom="20dp"
-            android:text="下一步" />
+            android:text="开始创作" />
     </LinearLayout>
 </layout>

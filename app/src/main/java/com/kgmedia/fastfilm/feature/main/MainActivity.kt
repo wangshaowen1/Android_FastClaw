@@ -33,7 +33,7 @@ import com.kgmedia.fastfilm.feature.hit.HitFragment
 import com.kgmedia.fastfilm.feature.login.SimpleProfileDialog
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.kgmedia.fastfilm.feature.mine.MineFragment
-import com.kgmedia.fastfilm.feature.play.RecommendShortPlayPagerFragment
+import com.kgmedia.fastfilm.feature.play.more.ShareShortDramaActivity
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelActivity
@@ -172,10 +172,10 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     EventManager.onAppTrack(AppEvent.JG_VIEW_HOME_TAB_PAGE)
                     setKeepScreenOn(true)
                     mRealVM.showTab.set(0)
-                    supportFragmentManager.switchFragment(
-                        R.id.fragment,
-                        RecommendShortPlayPagerFragment::class.java
-                    )
+//                    supportFragmentManager.switchFragment(
+//                        R.id.fragment,
+//                        RecommendShortPlayPagerFragment::class.java
+//                    )
                     lifecycleScope.launch {
                         delay(100)
                         displayPopUpBox(MainBulletFrameEnum.COMPLETE_PERSONAL_INFO)

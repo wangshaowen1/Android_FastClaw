@@ -58,10 +58,7 @@ class CreationRootActivity :
         binding.rbLeft.setOnClickListener {
             binding.viewPager.currentItem = 0
         }
-        binding.rbCenter.setOnClickListener {
-            EventManager.onAppTrack(AppEvent.JG_CLICK_WRITE_OWN_STORY_BUTTON)
-            binding.viewPager.currentItem = 1
-        }
+
         binding.rbRight.setOnClickListener {
             EventManager.onAppTrack(AppEvent.JG_CLICK_CONTINUE_STORY_BUTTON)
             binding.viewPager.currentItem = 2

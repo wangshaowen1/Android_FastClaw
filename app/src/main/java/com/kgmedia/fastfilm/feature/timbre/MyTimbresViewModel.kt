@@ -21,8 +21,8 @@ import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTimbreIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.timbre.data.TimbreRepository
-import com.kgmedia.fastfilm.kit.PlayerFactory
-import com.kgmedia.fastfilm.kit.play
+import com.kgmedia.fastfilm.kit.media.PlayerFactory
+import com.kgmedia.fastfilm.kit.media.play
 import com.kgmedia.fastfilm.widget.DefaultTrailingLoadStateAdapter
 import com.kgmedia.fastfilm.widget.MyTrackTrailingLoadStateAdapter
 import com.kgmedia.fastfilm.widget.failState

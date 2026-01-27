@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.play.ItemVideoFeedVm" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:background="@color/black">
+
+        <com.kgmedia.fastfilm.widget.CoverPlayerView
+            android:id="@+id/playerView"
+            player="@{item.player}"
+            setCoverUrl="@{item.data.musicCoverUrl}"
+            track="@{item.data}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:saveEnabled="false"
+            app:coverScaleType="fitCenter"
+            app:layout_constraintDimensionRatio="H,9:16"
+            app:layout_constraintTop_toTopOf="parent"
+            app:resize_mode="fit"
+            app:use_controller="false" />
+
+        <ImageView
+            android:id="@+id/btnPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.42" />
+
+        <TextView
+            style="@style/TextTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/tvContent"
+            tools:text="代码纪元：觉醒指令" />
+
+        <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
+            android:id="@+id/tvContent"
+            expandContent="@{`null`}"
+            highlightContent="@{`null`}"
+            onSpanClick="@{null}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="80dp"
+            android:layout_marginBottom="64dp"
+            android:lineSpacingExtra="@dimen/lineSpacingExtra"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:saveEnabled="false"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="13dp"
+            app:collapseLines="1"
+            app:collapseTipLabel="收起"
+            app:expandTipLabel="展开"
+            app:expandable="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tipPosition="align_right"
+            app:tipsColor="@color/color_50_ffffff"
+            app:tipsSize="10dp"
+            tools:text="夏天是最美好的季节。阳光炽热而灿烂，天空湛夏天是最美好的季节。阳光炽热而灿烂，天空湛蓝如宝石。阳光炽热而灿而灿阳…"
+            tools:visibility="visible" />
+
+        <com.kgmedia.fastfilm.widget.PlayerSeekbar
+            android:id="@+id/seekbar"
+            currentPosition="@{item.currentPosition}"
+            duration="@{item.duration}"
+            onSeekListener="@{item.onSeekListener}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

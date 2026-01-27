@@ -12,7 +12,7 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.PlaylistDataTransfer
 import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
-import com.kgmedia.fastfilm.feature.play.ShortDramaPlayPagerActivity
+import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.series.editinfo.EditInfoActivity
 import com.kgmedia.fastfilm.feature.series.more.SeriesMoreDialog
 import com.kgmedia.fastfilm.feature.series.setprice.SetPriceDialog
@@ -108,7 +108,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                             // 如果位置极其靠后且前面的数据被 Drop 了，还是让播放页自己去网络请求比较稳妥
                             PlaylistDataTransfer.put(null)
                         }
-                        ShortDramaPlayPagerActivity.start(seriesId, event.position, true)
+                        DramasPlayPagerActivity.start(seriesId)
                     }
                 }
             }

@@ -115,14 +115,6 @@
             android:screenOrientation="portrait" />
 
         <service android:name="com.kgmedia.fastfilm.service.DownloadService" />
-        <service
-            android:name=".service.PlayerService"
-            android:exported="true"
-            android:foregroundServiceType="mediaPlayback">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </service>
 
         <receiver
             android:name="androidx.media.session.MediaButtonReceiver"

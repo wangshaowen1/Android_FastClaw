@@ -14,9 +14,9 @@ import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.feature.timbre.TimbreExtractionActivity.Companion.EXTRA_TIMBRE_ID
 import com.kgmedia.fastfilm.feature.timbre.data.TimbreRepository
-import com.kgmedia.fastfilm.kit.recorder.AudioRecordEngine
-import com.kgmedia.fastfilm.kit.recorder.NoiseSuppressionHelper
-import com.kgmedia.fastfilm.kit.recorder.RecorderEngine.RecorderEngineListener
+import com.kgmedia.fastfilm.kit.media.recorder.AudioRecordEngine
+import com.kgmedia.fastfilm.kit.media.recorder.NoiseSuppressionHelper
+import com.kgmedia.fastfilm.kit.media.recorder.RecorderEngine.RecorderEngineListener
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.showToast

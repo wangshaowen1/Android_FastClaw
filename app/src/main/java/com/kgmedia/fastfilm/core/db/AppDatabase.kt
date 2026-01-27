@@ -21,7 +21,7 @@ import com.nhsd.basic.BaseApp
         SearchHistory::class,
         Tone::class,
         ShortDramaInfo::class,
-    ], version = 21, exportSchema = true
+    ], version = 1, exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 

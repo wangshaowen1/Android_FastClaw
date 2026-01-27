@@ -77,7 +77,7 @@ fun Activity.openTheCustomerServiceCenter() {
 fun ShortDramaInfo?.shortDramaVideoShareContent(): ShareContent {
     val title = "快来看看我的AI短剧${this?.dramasName ?: ""}"
     val content =
-        "我用AI做了个短剧${this?.dramasName ?: ""}，还挺有意思的，快来看看！AI一键生成短剧太厉害了#金果"
+        "我用AI做了个短剧${this?.dramasName ?: ""}，还挺有意思的，快来看看！AI一键生成短剧太厉害了#快出片"
     return ShareContent(title, content)
 }
 

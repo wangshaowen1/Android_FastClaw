@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
-import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.nhsd.basic.ext.getResColor
 
@@ -14,7 +13,7 @@ class CreationRootViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "创作",
+        title = "故事灵感",
         titleColor = R.color.textColorPrimary.getResColor(),
         background = Color.TRANSPARENT,
     )

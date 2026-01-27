@@ -14,8 +14,7 @@ import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.SceneCostBody
 import com.kgmedia.fastfilm.core.network.apis.response.SceneCostData
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.kit.PlayerFactory
-import com.kgmedia.fastfilm.kit.globalShortsPlayer
+import com.kgmedia.fastfilm.kit.media.PlayerFactory
 
 /**
  * 新建克隆音色弹窗
@@ -79,9 +78,6 @@ class CreateCloneTimbreViewModel : AppRepositoryViewModel<AppRepository>(), Play
             return
         }
         audioPath?.let {
-            if (globalShortsPlayer.isPlaying) {
-                globalShortsPlayer.pause()
-            }
             player.setMediaItem(MediaItem.Builder().setUri(it).build())
             player.playWhenReady = true
             player.prepare()

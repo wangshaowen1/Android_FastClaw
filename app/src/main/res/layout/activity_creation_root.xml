@@ -24,92 +24,59 @@
             layout="@layout/view_model_toolbar"
             app:toolbar="@{layout.mToolbarVM}" />
 
-        <RadioGroup
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginHorizontal="18dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_70_ffffff_r50"
+            android:padding="4dp">
 
-            <RadioButton
+            <View
+                setHorizontalBias="@{layout.tabIndicatorPosition}"
+                android:layout_width="0dp"
+                android:layout_height="34dp"
+                android:background="@drawable/bg_ffffff_r25"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5" />
+
+            <TextView
                 android:id="@+id/rbLeft"
                 android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_weight="1"
-                android:background="@drawable/shape_bg_creation_radiobutton"
-                android:button="@null"
-                android:checked="@{layout.selectedTab==0}"
+                android:layout_height="34dp"
                 android:gravity="center"
                 android:onClick="@{layout.clickHandler::onClick}"
-                android:text="灵感故事"
-                android:textColor="@color/rb_white_gray_text"
+                android:paddingHorizontal="14dp"
+                android:text="灵感创作"
+                android:textColor="@{layout.selectedTab==0?@color/color_121127:@color/color_50_121127}"
                 android:textSize="14dp"
                 android:textStyle="bold"
-                tools:checked="true" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                tools:textColor="@color/color_121127" />
 
-            <RadioButton
-                android:id="@+id/rbCenter"
-                android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/shape_bg_creation_radiobutton"
-                android:button="@null"
-                android:checked="@{layout.selectedTab==1}"
-                android:gravity="center"
-                android:onClick="@{layout.clickHandler::onClick}"
-                android:text="自己写故事"
-                android:textColor="@color/rb_white_gray_text"
-                android:textSize="14dp"
-                android:textStyle="bold" />
-
-            <RadioButton
+            <TextView
                 android:id="@+id/rbRight"
                 android:layout_width="0dp"
-                android:layout_height="36dp"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1"
-                android:background="@drawable/shape_bg_creation_radiobutton"
-                android:button="@null"
-                android:checked="@{layout.selectedTab==2}"
+                android:layout_height="34dp"
                 android:gravity="center"
                 android:onClick="@{layout.clickHandler::onClick}"
-                android:text="续写故事"
-                android:textColor="@color/rb_white_gray_text"
+                android:paddingHorizontal="14dp"
+                android:text="小说改编"
+                android:textColor="@{layout.selectedTab==0?@color/color_50_121127:@color/color_121127}"
                 android:textSize="14dp"
-                android:textStyle="bold" />
-        </RadioGroup>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="18dp">
-
-            <ImageView
-                android:id="@+id/arrowLeft"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:importantForAccessibility="no"
-                android:src="@{rbLeft.checked?@drawable/ic_arrow_down:null}" />
-
-            <ImageView
-                android:id="@+id/arrowCenter"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:importantForAccessibility="no"
-                android:src="@{rbCenter.checked?@drawable/ic_arrow_down:null}" />
-
-            <ImageView
-                android:id="@+id/arrowRight"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:importantForAccessibility="no"
-                android:src="@{rbRight.checked?@drawable/ic_arrow_down:null}" />
-        </LinearLayout>
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                tools:textColor="@color/color_50_121127" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"

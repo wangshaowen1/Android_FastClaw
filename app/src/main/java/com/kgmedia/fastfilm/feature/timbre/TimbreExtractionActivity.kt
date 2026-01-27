@@ -10,8 +10,7 @@ import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.permissions.PermissionsUtils
 import com.kgmedia.fastfilm.common.permissions.requestRxPermissions
 import com.kgmedia.fastfilm.databinding.ActivityTimbreExtractionBinding
-import com.kgmedia.fastfilm.kit.globalShortsPlayer
-import com.kgmedia.fastfilm.kit.recorder.NoiseSuppressionHelper.processPcmFileWithNoiseSuppression
+import com.kgmedia.fastfilm.kit.media.recorder.NoiseSuppressionHelper.processPcmFileWithNoiseSuppression
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -45,9 +44,6 @@ class TimbreExtractionActivity : BaseViewModelActivity<ActivityTimbreExtractionB
 
     override fun onResume() {
         super.onResume()
-        if (globalShortsPlayer.isPlaying) {
-            globalShortsPlayer.pause()
-        }
     }
 
     override fun onBackPressed() {
