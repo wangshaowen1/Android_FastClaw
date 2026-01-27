@@ -42,7 +42,6 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun logOff() {
         startActivity(ApplyLogOffActivity::class.java)
-//        removeAccountState.set(-1)
     }
 
     /**

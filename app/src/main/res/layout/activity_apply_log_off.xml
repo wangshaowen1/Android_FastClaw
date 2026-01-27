@@ -25,14 +25,13 @@
             android:id="@+id/reasonTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
-            android:layout_marginStart="15dp"
-            android:textSize="12sp"
-            style="@style/Text.Common"
-            android:layout_marginTop="12dp"
+            android:layout_marginStart="@dimen/spacing_l"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:textColor="@color/text_color_2_dark"
+            style="@style/TextCaption"
             android:text="注销理由："
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/content"
@@ -41,7 +40,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:elevation="0dp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/fill_color_1_dark"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:cardMaxElevation="0dp"
@@ -55,17 +54,16 @@
                 android:background="@android:color/transparent"
                 android:gravity="top"
                 android:hint="请输入你账户注销申请理由…"
-                style="@style/Text.Common"
                 android:lineSpacingExtra="@dimen/lineSpacingExtra"
                 android:maxLength="200"
                 android:orientation="horizontal"
-                android:paddingHorizontal="15dp"
-                android:paddingTop="15dp"
+                android:paddingHorizontal="@dimen/spacing_l"
+                android:paddingTop="@dimen/spacing_l"
                 android:paddingBottom="45dp"
                 android:text="@={layout.content}"
-                android:textColor="@color/textColorPrimary"
-                android:textColorHint="@color/color_40_121212"
-                android:textSize="14sp"
+                android:textColor="@color/text_color_2_dark"
+                android:textColorHint="@color/text_color_4_dark"
+                style="@style/TextBody"
                 app:layout_constraintDimensionRatio="343:280"
                 app:layout_constraintTop_toBottomOf="@+id/work" />
 
@@ -73,32 +71,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
-                android:layout_margin="16dp"
+                android:layout_margin="@dimen/spacing_l"
                 android:text="@{(layout.content==null?0:layout.content.length)+`/200`}"
-                android:textColor="@color/color_40_21213b"
-                android:textSize="12sp"
+                android:textColor="@color/text_color_2_dark"
+                style="@style/TextCaption"
                 tools:text="0/200" />
 
         </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/btnLogOff"
+            tools:background="@drawable/gradient_left_50_73b0f8_right_50_7567f0_r100"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="32dp"
-            android:background="@{layout.content.length()>9?@drawable/btn_common_normal:@drawable/btn_common_disable}"
+            android:background="@{layout.content.length()>9?@drawable/gradient_left_73b0f8_right_7567f0_r100:@drawable/gradient_left_50_73b0f8_right_50_7567f0_r100}"
             android:gravity="center"
             android:text="确认注销"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:textColor="@color/text_color_1_dark"
+            style="@style/TextSubtitle"
             app:layout_constraintDimensionRatio="297:48"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/content"
-            app:layout_constraintWidth_percent="0.792"
-            style="@style/Button.Bold"/>
-
+            app:layout_constraintWidth_percent="0.792" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
