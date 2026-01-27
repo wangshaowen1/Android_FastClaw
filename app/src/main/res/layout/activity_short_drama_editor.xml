@@ -48,7 +48,8 @@
                     android:id="@+id/previewArea"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginBottom="44dp"
                     app:layout_constraintBottom_toTopOf="@+id/rvStoryboard"
                     app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
@@ -65,7 +66,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/previewArea"
                     app:layout_constraintStart_toStartOf="@+id/previewArea"
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
-                    tools:layout_constraintDimensionRatio="16:9" />
+                    tools:layout_constraintDimensionRatio="9:16" />
 
                 <ImageView
                     setVisible="@{layout.currentSegment.data.generated &amp;&amp; layout.currentSegment.data.image}"
@@ -100,7 +101,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/previewArea"
                     app:layout_constraintStart_toStartOf="@+id/previewArea"
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
-                    tools:layout_constraintDimensionRatio="16:9">
+                    tools:layout_constraintDimensionRatio="9:16">
 
                     <TextView
                         android:id="@+id/tvStoryboardStatus"
@@ -151,7 +152,7 @@
                     android:layout_height="0dp"
                     android:background="?attr/fillColor1"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/previewArea" />
+                    app:layout_constraintTop_toTopOf="@+id/rvStoryboard" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvStoryboard"
@@ -162,8 +163,8 @@
                     android:clipToPadding="false"
                     android:orientation="horizontal"
                     android:overScrollMode="never"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="2dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingTop="20dp"
                     android:scrollbars="none"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintBottom_toTopOf="@+id/tvStoryboardDescTitle"
