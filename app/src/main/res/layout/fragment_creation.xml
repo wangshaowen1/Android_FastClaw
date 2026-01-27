@@ -20,149 +20,192 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.kgmedia.fastfilm.widget.CounterInputLayout
-            android:id="@+id/inputView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@null"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="top|start"
-            app:hint="@{layout.hint}"
-            app:inputCounterBottomMargin="4dp"
-            app:inputCounterGravity="right"
-            app:inputCounterRightMargin="0dp"
-            app:inputCounterTextColor="@color/color_40_121212"
-            app:inputCounterTextSize="12sp"
-            app:inputCounterVisible="false"
-            app:inputHorizontalPadding="16dp"
-            app:inputTextColor="@color/textColorPrimary"
-            app:inputTextColorHint="@color/color_30_121212"
-            app:inputTextSize="15sp"
-            app:inputVerticalPadding="12dp"
-            app:maxLength="@{layout.maxInputLength}" />
-
-        <com.kgmedia.fastfilm.widget.TagLayout
-            android:id="@+id/lyricPrompts"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="14dp"
-            android:visibility="@{layout.inspirationModel()?View.VISIBLE:View.GONE}"
-            app:cacheMode="none"
-            app:horizontalSpace="12dp"
-            app:maxLines="2"
-            app:tagBackground="@drawable/selector_prompts"
-            app:tagSelectMode="single"
-            app:tagTextColor="@color/color_121127"
-            app:tagTextHorizontalPadding="12dp"
-            app:tagTextMaxLine="1"
-            app:tagTextSize="14sp"
-            app:tagTextVerticalPadding="6dp"
-            app:verticalSpace="12dp" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginHorizontal="16dp">
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_weight="1"
+            android:background="@drawable/bg_fill_color_1_r8">
 
-            <TextView
-                android:id="@+id/btnOptimize"
-                singleClick="@{layout.clickHandler::onClick}"
+            <com.kgmedia.fastfilm.widget.CounterInputLayout
+                android:id="@+id/inputView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/spacing_m"
+                android:background="@null"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="top|start"
+                app:hint="@{layout.hint}"
+                app:inputCounterBottomMargin="4dp"
+                app:inputCounterGravity="right"
+                app:inputCounterRightMargin="0dp"
+                app:inputCounterTextColor="@color/color_40_121212"
+                app:inputCounterTextSize="12sp"
+                app:inputCounterVisible="false"
+                app:inputHorizontalPadding="@dimen/spacing_m"
+                app:inputTextColor="?attr/textColor2"
+                app:inputTextColorHint="?attr/textColor4"
+                app:inputTextSize="14sp"
+                app:inputVerticalPadding="@dimen/spacing_m"
+                app:layout_constraintBottom_toTopOf="@id/llBottom"
+                app:layout_constraintTop_toTopOf="parent"
+                app:maxLength="@{layout.maxInputLength}" />
+
+            <LinearLayout
+                android:id="@+id/llBottom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/gradient_10_48b3ff_3e6bff_r50"
-                android:drawableStart="@drawable/ic_optimize36"
-                android:drawablePadding="4dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:text="帮我优化"
-                android:textColor="@color/color_619dff"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:visibility="@{layout.input.length()>0?View.VISIBLE:View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@id/tvContentLength"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/tvContentLength">
+
+                <TextView
+                    android:id="@+id/btnOptimize"
+                    style="@style/Text12"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:background="@drawable/bg_fill_color_3_r50"
+                    android:drawablePadding="@dimen/spacing_xs"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/spacing_s"
+                    android:paddingVertical="@dimen/spacing_xs"
+                    android:text="AI优化"
+                    android:textColor="?attr/textColor2"
+                    android:visibility="@{layout.inspirationModel()&amp;&amp;layout.input.length()>0?View.VISIBLE:View.GONE}"
+                    app:drawableStartCompat="@drawable/icon_optimize12" />
+
+                <TextView
+                    android:id="@+id/btnRandomPrompt"
+                    style="@style/Text12"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:background="@drawable/gradient_button_bg_2_r50"
+                    android:drawablePadding="@dimen/spacing_xs"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/spacing_s"
+                    android:paddingVertical="@dimen/spacing_xs"
+                    android:text="随机灵感"
+                    android:textColor="?attr/textColor1"
+                    android:visibility="@{layout.inspirationModel()&amp;&amp;layout.input.length()==0?View.VISIBLE:View.GONE}"
+                    app:drawableStartCompat="@drawable/icon_ai_12"
+                    tools:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/btnPaste"
+                    style="@style/Text12"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:background="@drawable/bg_fill_color_3_r50"
+                    android:drawablePadding="@dimen/spacing_xs"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/spacing_s"
+                    android:paddingVertical="@dimen/spacing_xs"
+                    android:text="粘贴"
+                    android:textColor="?attr/textColor2"
+                    android:visibility="@{!layout.inspirationModel()?View.VISIBLE:View.GONE}"
+                    app:drawableStartCompat="@drawable/icon_copy_full12" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="18dp"
+                    android:layout_marginHorizontal="@dimen/spacing_s"
+                    android:background="?attr/borderColor2"
+                    android:visibility="@{layout.input.length()>0?View.VISIBLE:View.GONE}" />
+
+                <ImageView
+                    android:id="@+id/btnDelete"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="4dp"
+                    android:src="@drawable/icon_delete"
+                    android:visibility="@{layout.input.length()>0?View.VISIBLE:View.GONE}" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/btnRandomPrompt"
-                singleClick="@{layout.clickHandler::onClick}"
+                android:id="@+id/tvContentLength"
+                style="@style/Text12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/gradient_10_left_ff4b00_right_ffa029_r50"
-                android:drawableStart="@drawable/ic_star36"
-                android:drawablePadding="4dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:text="随机灵感"
-                android:textColor="@color/color_ff4b00"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:visibility="@{layout.input.length()==0?View.VISIBLE:View.GONE}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_m"
+                android:layout_marginBottom="@dimen/spacing_l"
                 android:text="@{layout.input.length()+`/`+layout.maxInputLength}"
-                android:textColor="@color/color_40_121212"
-                android:textSize="12sp"
+                android:textColor="?attr/textColor4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 tools:text="0/5000" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="@dimen/spacing_l"
             android:gravity="center_vertical"
             android:visibility="@{layout.inspirationModel()?View.VISIBLE:View.GONE}">
 
             <TextView
+                style="@style/Text12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="灵感示例"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textColor="?attr/textColor2" />
 
             <View style="@style/SpaceAutoFit" />
 
-            <TextView
+            <ImageView
                 android:id="@+id/randomInspirations"
                 singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_random_black48"
-                android:includeFontPadding="false"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_random_prompt"
-                android:textColor="@color/color_121127"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:src="@drawable/icon_refresh" />
         </LinearLayout>
+
+        <com.kgmedia.fastfilm.widget.TagLayout
+            android:id="@+id/lyricPrompts"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:visibility="@{layout.inspirationModel()?View.VISIBLE:View.GONE}"
+            app:cacheMode="none"
+            app:horizontalSpace="@dimen/spacing_m"
+            app:maxLines="3"
+            app:tagBackground="@drawable/selector_prompts"
+            app:tagSelectMode="single"
+            app:tagTextColor="?attr/textColor3"
+            app:tagTextHorizontalPadding="@dimen/spacing_m"
+            app:tagTextMaxLine="1"
+            app:tagTextSize="14sp"
+            app:tagTextVerticalPadding="6dp"
+            app:verticalSpace="@dimen/spacing_s" />
+
+        <androidx.legacy.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:visibility="@{!layout.inspirationModel()?View.VISIBLE:View.GONE}" />
 
         <Button
             android:id="@+id/btnNext"
             style="@style/Button.Bold"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="22dp"
-            android:layout_marginBottom="20dp"
-            android:text="开始创作" />
+            android:layout_height="44dp"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginBottom="30dp"
+            android:text="下一步" />
     </LinearLayout>
 </layout>

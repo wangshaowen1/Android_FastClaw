@@ -23,7 +23,6 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
         title = "",
-        titleColor = R.color.textColorPrimary.getResColor(),
         background = Color.TRANSPARENT,
     )
 

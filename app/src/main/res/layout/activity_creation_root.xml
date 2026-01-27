@@ -28,16 +28,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_70_ffffff_r50"
-            android:padding="4dp">
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:background="@drawable/bg_fill_color_1_r50"
+            android:padding="@dimen/spacing_xs">
 
             <View
                 setHorizontalBias="@{layout.tabIndicatorPosition}"
                 android:layout_width="0dp"
                 android:layout_height="34dp"
-                android:background="@drawable/bg_ffffff_r25"
+                android:background="@drawable/bg_fill_color_2_r50"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
@@ -51,15 +51,15 @@
                 android:layout_height="34dp"
                 android:gravity="center"
                 android:onClick="@{layout.clickHandler::onClick}"
-                android:paddingHorizontal="14dp"
+                android:selected="@{layout.selectedTab == 0}"
                 android:text="灵感创作"
-                android:textColor="@{layout.selectedTab==0?@color/color_121127:@color/color_50_121127}"
+                android:textColor="@color/tab_text_selector"
                 android:textSize="14dp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.5"
-                tools:textColor="@color/color_121127" />
+                tools:textColor="@color/text_color_1_dark" />
 
             <TextView
                 android:id="@+id/rbRight"
@@ -67,22 +67,22 @@
                 android:layout_height="34dp"
                 android:gravity="center"
                 android:onClick="@{layout.clickHandler::onClick}"
-                android:paddingHorizontal="14dp"
+                android:selected="@{layout.selectedTab == 1}"
                 android:text="小说改编"
-                android:textColor="@{layout.selectedTab==0?@color/color_50_121127:@color/color_121127}"
+                android:textColor="@color/tab_text_selector"
                 android:textSize="14dp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent="0.5"
-                tools:textColor="@color/color_50_121127" />
+                tools:textColor="@color/text_color_2_dark" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/spacing_l"
             android:layout_weight="1" />
     </LinearLayout>
 </layout>
