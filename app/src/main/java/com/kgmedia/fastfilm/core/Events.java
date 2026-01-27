@@ -345,9 +345,9 @@ public class Events{
     public static class MainTabDoubleClickEvent  implements AppEvent {
 
         public static final int TAB_HOME = 0;
-        public static final int TAB_HOT = 1;
-        public static final int TAB_MESSAGE = 2;
-        public static final int TAB_MINE = 3;
+        public static final int TAB_WORKS = 1;
+        public static final int TAB_MINE = 2;
+        public static final int TAB_MESSAGE = 3;
 
         public final int tabType;
 

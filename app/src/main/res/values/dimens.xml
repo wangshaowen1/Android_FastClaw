@@ -38,7 +38,7 @@
     <!--ActionSheet 相关结束-->
 
 
-    <dimen name="main_bottom_nav_height">66dp</dimen>
+    <dimen name="main_bottom_nav_height">62dp</dimen>
     <dimen name="dp1">1dp</dimen>
     <dimen name="dp20">20dp</dimen>
     <dimen name="music_hub_divider_height">19dp</dimen>

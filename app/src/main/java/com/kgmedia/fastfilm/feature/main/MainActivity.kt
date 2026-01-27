@@ -17,7 +17,6 @@ import com.fm.openinstall.model.AppData
 import com.google.gson.Gson
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.R
-import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.permissions.requestRxPermissions
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
@@ -28,7 +27,6 @@ import com.kgmedia.fastfilm.core.manager.UpgradeManager
 import com.kgmedia.fastfilm.core.model.WakeUpEntity
 import com.kgmedia.fastfilm.databinding.ActivityMainBinding
 import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
-import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.hit.HitFragment
 import com.kgmedia.fastfilm.feature.login.SimpleProfileDialog
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
@@ -168,7 +166,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     private fun initView() {
         binding.mrg.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                R.id.tabHome -> {
+                R.id.rbHome -> {
                     //首页
                     EventManager.onAppTrack(AppEvent.JG_VIEW_HOME_TAB_PAGE)
                     setKeepScreenOn(true)
@@ -184,7 +182,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     }
                 }
 
-                R.id.tabWorks -> {
+                R.id.rbWorks -> {
                     //热门
                     EventManager.onAppTrack(AppEvent.JG_VIEW_FADDISH_TAB_PAGE)
                     setKeepScreenOn(false)
@@ -193,7 +191,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 }
 
 
-                R.id.tabMine -> {
+                R.id.rbMine -> {
                     //我的
                     EventManager.onAppTrack(AppEvent.JG_VIEW_MY_TAB_PAGE)
                     setKeepScreenOn(false)
@@ -203,10 +201,10 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
         }
         when (Config.get().appConfig.openAppLoadTab) {
-            0 -> binding.mrg.check(R.id.tabHome)
-            1 -> binding.mrg.check(R.id.tabWorks)
-            2 -> binding.mrg.check(R.id.tabMine)
-            else -> binding.mrg.check(R.id.tabHome)
+            0 -> binding.mrg.check(R.id.rbHome)
+            1 -> binding.mrg.check(R.id.rbWorks)
+            2 -> binding.mrg.check(R.id.rbMine)
+            else -> binding.mrg.check(R.id.rbHome)
         }
     }
 
@@ -251,6 +249,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         super.onClick(view, data)
         when (view?.id) {
             R.id.tabHome -> {
+                binding.mrg.check(R.id.rbHome)
                 clickTab(tabId = R.id.tabHome) { diff ->
                     if (diff < CLICK_INTERVAL_TIME) {
                         FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
@@ -260,32 +259,22 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
 
             R.id.tabWorks -> {
+                binding.mrg.check(R.id.rbWorks)
                 clickTab(tabId = R.id.tabWorks) { diff ->
                     if (diff < CLICK_INTERVAL_TIME) {
-                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOT))
+                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_WORKS))
                         true
                     } else false
                 }
             }
 
             R.id.tabMine -> {
+                binding.mrg.check(R.id.rbMine)
                 clickTab(tabId = R.id.tabMine) { diff ->
                     if (diff < CLICK_INTERVAL_TIME) {
                         FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MINE))
                         true
                     } else false
-                }
-            }
-
-            R.id.btnGenerateContinue -> {
-                mRealVM.generating.get()?.let {
-                    StoryEditorActivity.start(this, step = 1, dramaId = it.dramasId, scriptContent = it.scriptContent)
-                }
-            }
-
-            R.id.ivGenerateClose -> {
-                showCommonDialog("关闭后不再保留故事内容，请注意") {
-                    mRealVM.closeGeneratingDramas()
                 }
             }
         }
@@ -321,7 +310,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
      * 跳转到首页页面
      */
     fun toHome() {
-        binding.mrg.check(R.id.tabHome)
+        binding.mrg.check(R.id.rbHome)
     }
 
 
