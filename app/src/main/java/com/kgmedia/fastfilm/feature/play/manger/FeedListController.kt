@@ -56,6 +56,7 @@ class FeedListController(
 
         // 调用 Manager 播放
         playerManager.attachAndPlay(item, holder.binding.playerView)
+        holder.updatePlayState(true)
 
         // 预加载下一条
         if (position + 1 < adapter.itemCount) {

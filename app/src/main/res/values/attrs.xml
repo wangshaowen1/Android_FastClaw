@@ -2,61 +2,61 @@
 <resources>
     <!-- <attr name="gravity" format="integer" />
      <attr name="spacing" format="dimension" />-->
-    <!-- 主题属性 -->
+    <!-- 主题属性 5a6afe-->
     <attr name="isLightTheme" format="boolean" />
-    <!-- 主题色1 -->
+    <!-- 主题色1 78a2ff-->
     <attr name="themeColor1" format="color" />
-    <!-- 主题色2 -->
+    <!-- 主题色2 7b9ffc 20-->
     <attr name="themeColor2" format="color" />
 
-    <!-- 功能色/成功 -->
+    <!-- 功能色/成功 27c346-->
     <attr name="funcColorSuccess" format="color" />
-    <!-- 功能色/警示 -->
+    <!-- 功能色/警示 ff9626-->
     <attr name="funcColorWarning" format="color" />
-    <!-- 功能色/失败 -->
+    <!-- 功能色/失败 ff544f-->
     <attr name="funcColorFailure" format="color" />
-    <!-- 功能色/链接 -->
+    <!-- 功能色/链接 3c7eff-->
     <attr name="funcColorLink" format="color" />
-    <!-- 功能色/特殊色 -->
+    <!-- 功能色/特殊色 ffd930-->
     <attr name="funcColorSpecial" format="color" />
 
-    <!-- 填充色1 -->
+    <!-- 填充色1 fff 6-->
     <attr name="fillColor1" format="color" />
-    <!-- 填充色2 -->
+    <!-- 填充色2 fff 8-->
     <attr name="fillColor2" format="color" />
-    <!-- 填充色3 -->
+    <!-- 填充色3 fff 12-->
     <attr name="fillColor3" format="color" />
-    <!-- 填充色4 -->
+    <!-- 填充色4 fff 30-->
     <attr name="fillColor4" format="color" />
-    <!-- 文字色1 -->
+    <!-- 文字色1 fff 96-->
     <attr name="textColor1" format="color" />
-    <!-- 文字色2 -->
+    <!-- 文字色2 fff 90-->
     <attr name="textColor2" format="color" />
-    <!-- 文字色3 -->
+    <!-- 文字色3 fff 70-->
     <attr name="textColor3" format="color" />
-    <!-- 文字色4 -->
+    <!-- 文字色4 fff 50-->
     <attr name="textColor4" format="color" />
-    <!-- 文字色5 -->
+    <!-- 文字色5 fff 30-->
     <attr name="textColor5" format="color" />
-    <!-- 背景色1 -->
+    <!-- 背景色1 0d0d0d-->
     <attr name="bgColor1" format="color" />
-    <!-- 背景色2 -->
+    <!-- 背景色2 141414-->
     <attr name="bgColor2" format="color" />
-    <!-- 背景色3 -->
+    <!-- 背景色3 2a2a2b-->
     <attr name="bgColor3" format="color" />
-    <!-- 背景色4 -->
+    <!-- 背景色4 313132-->
     <attr name="bgColor4" format="color" />
-    <!-- 背景色5 -->
+    <!-- 背景色5 373739-->
     <attr name="bgColor5" format="color" />
-    <!-- 背景色6 -->
+    <!-- 背景色6 f6f6f6-->
     <attr name="bgColor6" format="color" />
-    <!-- 边框颜色1 -->
+    <!-- 边框颜色1 1f1f1f-->
     <attr name="borderColor1" format="color" />
-    <!-- 边框颜色2 -->
+    <!-- 边框颜色2 2e2e30-->
     <attr name="borderColor2" format="color" />
-    <!-- 边框颜色3 -->
+    <!-- 边框颜色3 5f5f60-->
     <attr name="borderColor3" format="color" />
-    <!-- 边框颜色4 -->
+    <!-- 边框颜色4 929293-->
     <attr name="borderColor4" format="color" />
     <!-- 文本描边颜色 -->
     <attr name="strokeTextColor" format="reference|color" />

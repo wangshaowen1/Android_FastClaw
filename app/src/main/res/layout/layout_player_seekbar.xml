@@ -44,6 +44,28 @@
         app:layout_constraintEnd_toEndOf="@+id/progress"
         app:layout_constraintStart_toStartOf="@+id/progress" />
 
+    <ImageView
+        android:id="@+id/dragLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_back"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/times"
+        app:layout_constraintEnd_toStartOf="@id/times"
+        app:layout_constraintTop_toTopOf="@id/times"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/dragRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_advance"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/times"
+        app:layout_constraintStart_toEndOf="@id/times"
+        app:layout_constraintTop_toTopOf="@id/times"
+        tools:visibility="visible" />
+
     <LinearLayout
         android:id="@+id/times"
         android:layout_width="wrap_content"
@@ -51,7 +73,7 @@
         android:layout_marginBottom="26dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingHorizontal="15dp"
+        android:paddingHorizontal="2dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/progressBg"
         app:layout_constraintEnd_toEndOf="@+id/progressBg"
@@ -62,6 +84,7 @@
             android:id="@+id/tvProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -70,16 +93,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFeatureSettings="tnum"
+            android:text="/"
+            android:textColor="@color/color_70_ffffff"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:text="/"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/color_50_ffffff"
+            android:fontFeatureSettings="tnum"
+            android:textColor="@color/color_70_ffffff"
             android:textSize="16sp"
             android:textStyle="bold"
             tools:text="02:42" />

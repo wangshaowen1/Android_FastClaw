@@ -50,14 +50,8 @@ class DramasPlayPagerActivity :
         // 进度同步 (幽灵进度问题)
         lifecycleScope.launch {
             playerManager.progressFlow.collect { (current, total) ->
-                val pos = listController.getCurrentPosition()
-                if (pos >= 0) {
-                    val holder = binding.recyclerView.findViewHolderForAdapterPosition(pos) as? VideoFeedAdapter.VideoViewHolder
-                    val item = adapter.peek(pos)
-                    // [双重校验] 只有 View 位置对，且数据 ID 对，才更新进度
-                    if (holder != null && item?.trackId == playerManager.currentPlayingId) {
-                        holder.updateProgress(current, total)
-                    }
+                updateViewHolderSafely { holder ->
+                    holder.updateProgress(current, total)
                 }
             }
         }
@@ -65,10 +59,8 @@ class DramasPlayPagerActivity :
         // 播放状态同步 (图标)
         lifecycleScope.launch {
             playerManager.isPlayingFlow.collect { isPlaying ->
-                val pos = listController.getCurrentPosition()
-                if (pos >= 0) {
-                    val holder = binding.recyclerView.findViewHolderForAdapterPosition(pos) as? VideoFeedAdapter.VideoViewHolder
-                    holder?.updatePlayState(isPlaying)
+                updateViewHolderSafely { holder ->
+                    holder.updatePlayState(isPlaying)
                 }
             }
         }
@@ -77,6 +69,20 @@ class DramasPlayPagerActivity :
         lifecycleScope.launch {
             playerManager.playerEvent.collect { event ->
                 if (event is FeedPlayerManager.PlayerEvent.OnPlayEnded) handlePlayEnded()
+            }
+        }
+    }
+
+    // [封装] 安全更新 ViewHolder 的辅助方法
+    private fun updateViewHolderSafely(action: (VideoFeedAdapter.VideoViewHolder) -> Unit) {
+        val pos = listController.getCurrentPosition()
+        if (pos >= 0) {
+            val holder = binding.recyclerView.findViewHolderForAdapterPosition(pos) as? VideoFeedAdapter.VideoViewHolder
+            val item = adapter.peek(pos)
+
+            // [关键] 只有当 ViewHolder 当前展示的数据 ID 与 播放器正在播的 ID 一致时，才允许更新 UI
+            if (holder != null && item?.trackId == playerManager.currentPlayingId) {
+                action(holder)
             }
         }
     }

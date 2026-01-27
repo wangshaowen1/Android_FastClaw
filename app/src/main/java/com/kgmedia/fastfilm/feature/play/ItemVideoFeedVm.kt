@@ -20,8 +20,6 @@ class ItemVideoFeedVm(info: TrackInfo?) :
         const val LOG_TAG = "ItemVideoFeedVm"
     }
 
-    val player = ObservableField<Player>()
-
     /**
      * 是否播放中
      */
@@ -46,18 +44,4 @@ class ItemVideoFeedVm(info: TrackInfo?) :
      * 拖动进度滑块
      */
     val seeking by lazy { ObservableBoolean(false) }
-
-    val onSeekListener by lazy {
-        object : PlayerSeekbar.OnSeekListener {
-            override fun onDragEnd(position: Long) {
-                Logger.i(LOG_TAG, "onDragEnd seek to position:$position")
-                player.get()?.seekTo(position)
-                seeking.set(false)
-            }
-
-            override fun onDrag() {
-                seeking.set(true)
-            }
-        }
-    }
 }

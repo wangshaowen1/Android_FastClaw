@@ -1,19 +1,26 @@
 package com.kgmedia.fastfilm.feature.play.manger
 
 import android.content.Context
-import android.net.Uri
+import androidx.annotation.OptIn
+import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.MediaItem.SubtitleConfiguration
-import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.exoplayer.ExoPlayer
 import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.widget.CoverPlayerView
-import com.nhsd.basic.utils.Logger
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class FeedPlayerManager(
     private val context: Context,
@@ -39,12 +46,14 @@ class FeedPlayerManager(
     private val _progressFlow = MutableStateFlow(Pair(0L, 0L))
     val progressFlow = _progressFlow.asStateFlow()
 
-    private val _isPlayingFlow = MutableStateFlow(false)
+    // [修复1] 初始值设为 true (乐观模式)，默认假设是自动播放的，防止首帧闪烁
+    private val _isPlayingFlow = MutableStateFlow(true)
     val isPlayingFlow = _isPlayingFlow.asStateFlow()
 
     sealed class PlayerEvent {
         object OnPlayEnded : PlayerEvent()
     }
+
     private val _playerEvent = MutableSharedFlow<PlayerEvent>()
     val playerEvent = _playerEvent.asSharedFlow()
 
@@ -58,15 +67,24 @@ class FeedPlayerManager(
                     scope.launch { _playerEvent.emit(PlayerEvent.OnPlayEnded) }
                 }
             }
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                _isPlayingFlow.value = isPlaying
-                if (isPlaying) startProgressUpdater() else progressJob?.cancel()
+
+//            override fun onIsPlayingChanged(isPlaying: Boolean) {
+//                _isPlayingFlow.value = isPlaying
+//                if (isPlaying) startProgressUpdater() else progressJob?.cancel()
+//            }
+            // [修复2] 改用 playWhenReady 驱动 UI。
+            // 只要 playWhenReady=true，就认为应该显示"播放中"状态(隐藏暂停图标)，忽略 Buffering 导致的 isPlaying=false
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                _isPlayingFlow.value = playWhenReady
+                if (playWhenReady) startProgressUpdater() else progressJob?.cancel()
             }
         })
     }
 
     fun attachAndPlay(track: TrackInfo, coverPlayerView: CoverPlayerView) {
-        // [Bug修复] 防止重复 attach 同一个视频导致画面闪烁
+        //再次强制同步状态，确保切视频瞬间图标是隐藏的
+        _isPlayingFlow.value = true
+        // 防止重复 attach 同一个视频导致画面闪烁
         if (currentPlayingId == track.trackId && currentCoverPlayerView == coverPlayerView) {
             if (!exoPlayer.isPlaying && !isUserPaused) {
                 exoPlayer.play()
@@ -149,16 +167,24 @@ class FeedPlayerManager(
         }
     }
 
-    fun pause() = exoPlayer.pause()
+    fun pause() {
+        exoPlayer.pause()
+    }
 
     fun resume() {
-        if (exoPlayer.playbackState == Player.STATE_READY) exoPlayer.play()
+        // [修复] 只要不是已结束或空闲，就尝试播放（即使是缓冲中）
+        if (exoPlayer.playbackState != Player.STATE_IDLE && exoPlayer.playbackState != Player.STATE_ENDED) {
+            exoPlayer.play()
+        } else if (exoPlayer.playbackState == Player.STATE_ENDED) {
+            // 如果已结束，重新播放
+            replay()
+        }
     }
 
     // 给 Activity onResume 用，遵守用户暂停意愿
     fun resumeOnForeground() {
-        if (!isUserPaused && exoPlayer.playbackState == Player.STATE_READY) {
-            exoPlayer.play()
+        if (!isUserPaused) {
+            resume()
         }
     }
 
@@ -167,17 +193,20 @@ class FeedPlayerManager(
         isUserPaused = false
         exoPlayer.seekTo(0)
         exoPlayer.play()
+        _isPlayingFlow.value = true // Replay 时强制更新状态
     }
 
+    @OptIn(UnstableApi::class)
     fun preload(url: String?) {
         if (url.isNullOrEmpty()) return
         scope.launch(Dispatchers.IO) {
             try {
-                val dataSpec = DataSpec(Uri.parse(url), 0, 1024 * 1024, null)
+                val dataSpec = DataSpec(url.toUri(), 0, 1024 * 1024, null)
                 val dataSource = PlayerFactory.cacheDataSourceFactory.createDataSource()
                 dataSource.open(dataSpec)
                 dataSource.close()
-            } catch (e: Exception) { }
+            } catch (e: Exception) {
+            }
         }
     }
 

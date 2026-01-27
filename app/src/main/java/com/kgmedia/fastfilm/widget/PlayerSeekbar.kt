@@ -53,6 +53,9 @@ class PlayerSeekbar : FrameLayout {
                     binding.thumb.setPadding(7.dp)
                 } else {
                     binding.times.visibility = View.GONE
+                    // 【新增】拖动结束时，隐藏左右指示图标
+                    binding.dragLeft.visibility = View.GONE
+                    binding.dragRight.visibility = View.GONE
                     binding.progressBg.updateLayoutParams<ConstraintLayout.LayoutParams> { it.height = 2.dp }
                     binding.thumb.setPadding(12.dp)
                     onSeekListener?.onDragEnd(dragValue)
@@ -138,11 +141,34 @@ class PlayerSeekbar : FrameLayout {
             binding.progress.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 it.horizontalBias = 0f
             }
+            // 这种情况下也隐藏图标
+            binding.dragLeft.visibility = View.GONE
+            binding.dragRight.visibility = View.GONE
         } else {
             val position = if (dragging) dragValue else currentPosition
             binding.tvProgress.text = position.formatDuration()
             binding.progress.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 it.horizontalBias = (1f * position / duration).coerceAtMost(1f)
+            }
+
+            if (dragging) {
+                when {
+                    dragValue > currentPosition -> {
+                        // 向右拖动（快进）
+                        binding.dragRight.visibility = View.VISIBLE
+                        binding.dragLeft.visibility = View.GONE
+                    }
+                    dragValue < currentPosition -> {
+                        // 向左拖动（后退）
+                        binding.dragRight.visibility = View.GONE
+                        binding.dragLeft.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        // 回到了初始点
+                        binding.dragRight.visibility = View.GONE
+                        binding.dragLeft.visibility = View.GONE
+                    }
+                }
             }
         }
     }

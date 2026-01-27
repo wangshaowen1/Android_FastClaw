@@ -45,14 +45,6 @@ class VideoFeedAdapter(private val interactionListener: InteractionListener) :
 
     inner class VideoViewHolder(binding: ItemVideoFeedBinding) : BindingViewHolder<ItemVideoFeedBinding>(binding) {
 
-        val playerView by lazy {
-            binding.playerView
-        }
-
-        val seekbar by lazy {
-            binding.seekbar
-        }
-
         init {
             binding.playerView.setOnClickListener {
                 interactionListener.onTogglePlay(bindingAdapterPosition)
@@ -98,23 +90,6 @@ class VideoFeedAdapter(private val interactionListener: InteractionListener) :
         fun updatePlayState(isPlaying: Boolean) {
             binding.btnPause.visibility = if (isPlaying) View.GONE else View.VISIBLE
         }
-
-//        fun bind(item: TrackInfo) {
-//            // 1. 强制重置状态 (关键！)
-//            // 必须先把封面图盖上，防止复用了上一个视频的 Surface 画面
-//            coverImage.visibility = View.VISIBLE
-//            coverImage.alpha = 1f
-//
-//            // 2. 加载封面
-//            Glide.with(coverImage).load(item.musicCoverUrl()).into(coverImage)
-//
-//            // 3. 重置进度条
-//            seekBar.progress = 0
-//
-//            // 注意：这里不要操作播放器！播放器操作由 Activity 的 ScrollListener 触发
-//        }
-//
-
     }
 
     companion object {
