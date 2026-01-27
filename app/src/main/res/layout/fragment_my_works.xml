@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="layout"
             type="com.kgmedia.fastfilm.feature.works.MyWorksViewModel" />
@@ -105,7 +106,7 @@
         <LinearLayout
             android:id="@+id/btnDelete"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/main_bottom_nav_height"
             android:gravity="center"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent">

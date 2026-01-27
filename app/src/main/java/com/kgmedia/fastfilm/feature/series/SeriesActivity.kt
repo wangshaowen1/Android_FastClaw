@@ -16,7 +16,6 @@ import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.series.editinfo.EditInfoActivity
 import com.kgmedia.fastfilm.feature.series.more.SeriesMoreDialog
 import com.kgmedia.fastfilm.feature.series.setprice.SetPriceDialog
-import com.kgmedia.fastfilm.feature.series.share.SeriesShareDialog
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelActivity
@@ -148,23 +147,10 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 SeriesMoreDialog.show(null, seriesId, series.launchStatus == 1)
             }
 
-            R.id.btnContinue, R.id.btnContinueSmall -> {
+            R.id.btnContinue -> {
                 mRealVM.series.get()?.let {
                     ContinueWritingActivity.start(this, seriesId, it.seriesName)
                 }
-            }
-
-            R.id.btnShare -> {
-                mRealVM.series.get()?.let { SeriesShareDialog.show(supportFragmentManager, it) }
-            }
-
-            R.id.btnSubscribe -> {
-                mRealVM.subscribe()
-            }
-
-            R.id.tvPrice, R.id.btnRelease -> {
-                val series = mRealVM.series.get() ?: return
-                SetPriceDialog.show(supportFragmentManager, seriesId, series.launchStatus != 1)
             }
         }
     }

@@ -14,7 +14,7 @@ import com.nhsd.crop.util.ViewUtils
 
 class ToolbarViewModel(
     var navigationText: String? = "",
-    var navigationDrawable: Drawable? = R.drawable.ic_nav_back_black.getDrawable(),
+    var navigationDrawable: Drawable? = R.drawable.icon_back_left.getDrawable(),
     var navigationAction: (() -> Unit)? = null,
     var title: String? = "",
     var navigationColor: Int = R.color.text_color_1_dark.getResColor(),
