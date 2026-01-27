@@ -42,7 +42,7 @@
             app:layout_constraintVertical_bias="0.42" />
 
         <TextView
-            style="@style/TextTitle"
+            style="@style/Text18"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/tvContent"

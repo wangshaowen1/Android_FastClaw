@@ -47,13 +47,13 @@
 
             <TextView
                 android:id="@+id/tv_login"
-                style="@style/TextTitle"
+                style="@style/Text18"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_m"
                 android:text="登录/注册"
-                android:textColor="@color/text_color_1_dark"
+                android:textColor="?attr/textColor1"
                 android:visibility="@{layout.isLogin()?View.GONE:View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
                 app:layout_constraintStart_toEndOf="@id/siv_avatar"
@@ -68,14 +68,14 @@
 
             <TextView
                 android:id="@+id/tv_name"
-                style="@style/TextTitle"
+                style="@style/Text18"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_m"
                 android:layout_marginTop="@dimen/spacing_s"
                 android:text="@{layout.userInfo[`nickname`]}"
-                android:textColor="@color/text_color_1_dark"
+                android:textColor="?attr/textColor1"
                 app:layout_constraintBottom_toTopOf="@id/tv_id"
                 app:layout_constraintStart_toEndOf="@id/siv_avatar"
                 app:layout_constraintTop_toTopOf="@id/siv_avatar"
@@ -83,13 +83,13 @@
 
             <TextView
                 android:id="@+id/tv_id"
-                style="@style/TextBody"
+                style="@style/Text14"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_s"
                 android:text="@{`ID:`+layout.userInfo[`city`]}"
-                android:textColor="@color/text_color_3_dark"
+                android:textColor="?attr/textColor3"
                 app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
                 app:layout_constraintStart_toStartOf="@id/tv_name"
                 app:layout_constraintTop_toBottomOf="@id/tv_name"
@@ -130,13 +130,13 @@
                     android:importantForAccessibility="no" />
 
                 <TextView
-                    style="@style/TextBody"
+                    style="@style/Text14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_m"
                     android:layout_weight="1"
                     android:text="建议与反馈"
-                    android:textColor="@color/text_color_3_dark" />
+                    android:textColor="?attr/textColor3" />
 
                 <ImageView
                     android:layout_width="16dp"
@@ -161,13 +161,13 @@
                     android:importantForAccessibility="no" />
 
                 <TextView
-                    style="@style/TextBody"
+                    style="@style/Text14"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_m"
                     android:layout_weight="1"
                     android:text="设置"
-                    android:textColor="@color/text_color_3_dark" />
+                    android:textColor="?attr/textColor3" />
 
                 <ImageView
                     android:layout_width="16dp"

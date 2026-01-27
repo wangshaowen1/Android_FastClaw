@@ -25,8 +25,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/actionsheet_title_height"
                 android:gravity="center"
-                android:textColor="@color/text_color_2_dark"
-                style="@style/TextSubtitle" />
+                android:textColor="?attr/textColor2"
+                style="@style/Text16" />
 
             <TextView
                 android:id="@+id/tvAlertMsg"
@@ -34,8 +34,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/actionsheet_msg_bottom_margin"
                 android:gravity="center"
-                android:textColor="@color/text_color_4_dark"
-                style="@style/TextCaption" />
+                android:textColor="?attr/textColor4"
+                style="@style/Text12" />
         </LinearLayout>
 
         <ListView
@@ -52,7 +52,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/actionsheet_cancel_divider_height"
-            android:background="@color/border_color_1_dark" />
+            android:background="?attr/borderColor1" />
 
         <TextView
             android:id="@+id/tvAlertCancel"
@@ -62,8 +62,8 @@
             android:clickable="true"
             android:gravity="center"
             android:paddingBottom="@dimen/actionsheet_cancel_bottom_padding"
-            android:textColor="@color/text_color_2_dark"
-            style="@style/TextSubtitle"
+            android:textColor="?attr/textColor2"
+            style="@style/Text16"
             android:visibility="gone" />
     </LinearLayout>
 </FrameLayout>

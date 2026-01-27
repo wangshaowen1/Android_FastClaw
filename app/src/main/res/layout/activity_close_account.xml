@@ -36,20 +36,20 @@
                 android:padding="@dimen/radius_l">
 
                 <TextView
-                    style="@style/TextSubtitle"
+                    style="@style/Text16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="用户注销须知"
-                    android:textColor="@color/text_color_2_dark" />
+                    android:textColor="?attr/textColor2" />
 
                 <TextView
-                    style="@style/TextBody"
+                    style="@style/Text14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/radius_l"
                     android:lineSpacingExtra="@dimen/lineSpacingExtra"
                     android:text="@string/app_log_off"
-                    android:textColor="@color/text_color_3_dark" />
+                    android:textColor="?attr/textColor3" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -76,7 +76,7 @@
 
             <TextView
                 android:id="@+id/tv_purchase_instructions"
-                style="@style/TextCaption"
+                style="@style/Text12"
                 setSpanText="@{@string/app_purchase_instructions}"
                 singleClick="@{layout.clickHandler::onClick}"
                 spanColor="@{@color/func_failure_dark}"
@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="4dp"
                 android:text="@string/app_purchase_instructions"
-                android:textColor="@color/text_color_3_dark" />
+                android:textColor="?attr/textColor3" />
         </LinearLayout>
 
         <LinearLayout
@@ -98,7 +98,7 @@
             android:visibility="@{layout.removeAccountState==0?View.VISIBLE:View.GONE}">
 
             <TextView
-                style="@style/TextSubtitle"
+                style="@style/Text16"
                 singleClick="@{(v)->layout.logOff()}"
                 android:layout_width="0dp"
                 android:layout_height="44dp"
@@ -108,10 +108,10 @@
                 android:gravity="center"
                 android:text="申请注销"
                 android:textColor="@{layout.checkedPolicy?@color/textColorPrimary:@color/color_40_21213b}"
-                tools:textColor="@color/text_color_3_dark" />
+                tools:textColor="?attr/textColor3" />
 
             <TextView
-                style="@style/TextSubtitle"
+                style="@style/Text16"
                 singleClick="@{(v)->layout.back()}"
                 android:layout_width="0dp"
                 android:layout_height="44dp"
@@ -120,13 +120,13 @@
                 android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
                 android:gravity="center"
                 android:text="再想想"
-                android:textColor="@color/text_color_1_dark" />
+                android:textColor="?attr/textColor1" />
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/btnCancel"
-            style="@style/TextSubtitle"
+            style="@style/Text16"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
             android:layout_height="44dp"
@@ -136,7 +136,7 @@
             android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
             android:gravity="center"
             android:text="申请注销中"
-            android:textColor="@color/text_color_1_dark"
+            android:textColor="?attr/textColor1"
             android:visibility="@{layout.removeAccountState==1?View.VISIBLE:View.GONE}"
             tools:visibility="visible" />
     </LinearLayout>

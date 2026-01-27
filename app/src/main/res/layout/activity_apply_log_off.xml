@@ -27,8 +27,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"
             android:layout_marginTop="@dimen/spacing_m"
-            android:textColor="@color/text_color_2_dark"
-            style="@style/TextCaption"
+            android:textColor="?attr/textColor2"
+            style="@style/Text12"
             android:text="注销理由："
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
@@ -40,7 +40,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:elevation="0dp"
-            app:cardBackgroundColor="@color/fill_color_1_dark"
+            app:cardBackgroundColor="?attr/fillColor1"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:cardMaxElevation="0dp"
@@ -61,9 +61,9 @@
                 android:paddingTop="@dimen/spacing_l"
                 android:paddingBottom="45dp"
                 android:text="@={layout.content}"
-                android:textColor="@color/text_color_2_dark"
-                android:textColorHint="@color/text_color_4_dark"
-                style="@style/TextBody"
+                android:textColor="?attr/textColor2"
+                android:textColorHint="?attr/textColor4"
+                style="@style/Text14"
                 app:layout_constraintDimensionRatio="343:280"
                 app:layout_constraintTop_toBottomOf="@+id/work" />
 
@@ -73,8 +73,8 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="@dimen/spacing_l"
                 android:text="@{(layout.content==null?0:layout.content.length)+`/200`}"
-                android:textColor="@color/text_color_2_dark"
-                style="@style/TextCaption"
+                android:textColor="?attr/textColor2"
+                style="@style/Text12"
                 tools:text="0/200" />
 
         </androidx.cardview.widget.CardView>
@@ -89,8 +89,8 @@
             android:background="@{layout.content.length()>9?@drawable/gradient_left_73b0f8_right_7567f0_r100:@drawable/gradient_left_50_73b0f8_right_50_7567f0_r100}"
             android:gravity="center"
             android:text="确认注销"
-            android:textColor="@color/text_color_1_dark"
-            style="@style/TextSubtitle"
+            android:textColor="?attr/textColor1"
+            style="@style/Text16"
             app:layout_constraintDimensionRatio="297:48"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

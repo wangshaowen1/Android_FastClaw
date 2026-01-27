@@ -32,8 +32,8 @@
                 android:gravity="center"
                 android:paddingHorizontal="26dp"
                 tools:text="title"
-                android:textColor="@color/text_color_1_dark"
-                style="@style/TextSubtitle"
+                android:textColor="?attr/textColor1"
+                style="@style/Text16"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
@@ -46,8 +46,8 @@
                 android:gravity="center_horizontal"
                 android:lineSpacingExtra="@dimen/lineSpacingExtra"
                 android:paddingHorizontal="26dp"
-                android:textColor="@color/text_color_2_dark"
-                style="@style/TextBody"
+                android:textColor="?attr/textColor2"
+                style="@style/Text14"
                 android:visibility="gone"
                 tools:text="this is testing"
                 tools:visibility="visible" />
@@ -61,8 +61,8 @@
                 android:paddingLeft="22dp"
                 android:paddingRight="22dp"
                 android:text="每邀请1位好友可获得1500谜豆，抵扣15元。"
-                android:textColor="@color/text_color_2_dark"
-                style="@style/TextBody"
+                android:textColor="?attr/textColor2"
+                style="@style/Text14"
                 android:textStyle="bold"
                 android:visibility="gone" />
         </LinearLayout>
@@ -76,9 +76,9 @@
 
             <Button
                 android:id="@+id/cancel"
-                style="@style/TextSubtitle"
+                style="@style/Text16"
                 android:background="@drawable/btn_common_cancel"
-                tools:textColor="@color/text_color_3_dark"
+                tools:textColor="?attr/textColor3"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginEnd="12dp"
@@ -88,14 +88,14 @@
 
             <Button
                 android:id="@+id/confirm"
-                style="@style/TextSubtitle"
+                style="@style/Text16"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
                 android:text="@string/confirm"
-                android:textColor="@color/text_color_1_dark"  />
+                android:textColor="?attr/textColor1"  />
         </LinearLayout>
 
         <TextView
@@ -105,8 +105,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:text="@string/view_download_path"
-            android:textColor="@color/text_color_4_dark"
-            style="@style/TextBody"
+            android:textColor="?attr/textColor4"
+            style="@style/Text14"
             android:visibility="gone"
             tools:visibility="visible" />
     </LinearLayout>

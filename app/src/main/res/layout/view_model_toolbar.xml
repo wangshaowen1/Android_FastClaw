@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/navigationText"
-                style="@style/TextSubtitle"
+                style="@style/Text16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|left"
@@ -59,9 +59,9 @@
                 android:maxLines="1"
                 android:text="@{toolbar.mTitle}"
                 android:textColor="@{toolbar.titleColor}"
-                style="@style/TextSubtitle"
+                style="@style/Text16"
                 tools:text="Title"
-                tools:textColor="@color/text_color_1_dark" />
+                tools:textColor="?attr/textColor1" />
 
             <TextView
                 android:id="@+id/menuText"

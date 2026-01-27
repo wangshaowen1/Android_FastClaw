@@ -51,11 +51,11 @@
                     android:paddingHorizontal="14dp">
 
                     <TextView
-                        style="@style/TextBody"
+                        style="@style/Text14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="选择类型"
-                        android:textColor="@color/text_color_4_dark" />
+                        android:textColor="?attr/textColor4" />
 
                     <TextView
                         android:id="@+id/feedbackTypeName"
@@ -66,8 +66,8 @@
                         android:drawablePadding="8dp"
                         android:gravity="end"
                         android:text="@{layout.type.value}"
-                        android:textColor="@color/text_color_2_dark"
-                        style="@style/TextBody"
+                        android:textColor="?attr/textColor2"
+                        style="@style/Text14"
                         tools:text="产品建议" />
                 </LinearLayout>
 
@@ -78,14 +78,14 @@
                     android:layout_marginTop="@dimen/spacing_m"
                     android:background="@drawable/bg_06_ffffff_r8"
                     app:inputCounterGravity="right|bottom"
-                    app:inputCounterTextColor="@color/text_color_2_dark"
+                    app:inputCounterTextColor="?attr/textColor2"
                     app:inputCounterTextSize="13sp"
                     app:inputHint="请输入六个字以上的反馈描述（必填）"
                     app:inputHorizontalPadding="16dp"
                     app:inputLines="5"
                     app:inputMaxLength="300"
-                    app:inputTextColor="@color/text_color_2_dark"
-                    app:inputTextColorHint="@color/text_color_4_dark"
+                    app:inputTextColor="?attr/textColor2"
+                    app:inputTextColorHint="?attr/textColor4"
                     app:inputTextSize="14sp"
                     app:inputVerticalPadding="16dp" />
 
@@ -98,12 +98,12 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/TextBody"
+                        style="@style/Text14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:text="@{`上传图片（`+layout.photoSize+`/4）: `}"
-                        android:textColor="@color/text_color_2_dark"
+                        android:textColor="?attr/textColor2"
                         tools:text="建议截图（0/4）:" />
 
                 </LinearLayout>
@@ -130,18 +130,18 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/TextBody"
+                        style="@style/Text14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:text="联系方式："
-                        android:textColor="@color/text_color_2_dark" />
+                        android:textColor="?attr/textColor2" />
 
                 </LinearLayout>
 
                 <com.kgmedia.fastfilm.widget.XEditText
                     android:id="@+id/contact"
-                    style="@style/TextBody"
+                    style="@style/Text14"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginTop="@dimen/spacing_m"
@@ -151,12 +151,12 @@
                     android:maxLength="20"
                     android:paddingHorizontal="@dimen/spacing_m"
                     android:text="@={layout.phoneNumber}"
-                    android:textColor="@color/text_color_2_dark"
-                    android:textColorHint="@color/text_color_4_dark" />
+                    android:textColor="?attr/textColor2"
+                    android:textColorHint="?attr/textColor4" />
 
                 <Button
                     android:id="@+id/commit"
-                    style="@style/TextSubtitle"
+                    style="@style/Text16"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
@@ -178,11 +178,11 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/TextCaption"
+                        style="@style/Text12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="点击联系客服>"
-                        android:textColor="@color/text_color_3_dark" />
+                        android:textColor="?attr/textColor3" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
