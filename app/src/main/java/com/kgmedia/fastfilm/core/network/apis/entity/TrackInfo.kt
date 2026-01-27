@@ -9,6 +9,7 @@ class TrackInfo(
     var trackTitle: String? = null,//作品标题
     var playUrl: String? = null,//作品标题
     var coverUrl: String? = null,//作品标题
+    var duration: Long = 0L,
 ) : Parcelable {
 
     val stripedTrickTitle

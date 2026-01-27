@@ -127,7 +127,7 @@ object EventManager {
     @JvmStatic
     fun onAppTrack(code: String, paramsMap: Map<String, String?>? = null) {
         Logger.d("[onAppTrack] Tracking Event -> Code: $code, Params: $paramsMap")
-        GrowingAutotracker.get().trackCustomEvent(code, paramsMap)
+        //GrowingAutotracker.get().trackCustomEvent(code, paramsMap)
     }
 
     /**

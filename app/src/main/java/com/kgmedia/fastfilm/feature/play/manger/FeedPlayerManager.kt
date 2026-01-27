@@ -8,7 +8,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.widget.CoverPlayerView
-import com.nhsd.basic.ext.launchNoCrash
+import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -19,34 +19,26 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-/**
- * 短剧播放管理器
- * 职责：
- * 1. 维护单例 ExoPlayer
- * 2. 处理播放器与 UI (CoverPlayerView) 的绑定与解绑
- * 3. 预加载与状态分发
- */
 class FeedPlayerManager(
     private val context: Context,
     private val scope: CoroutineScope
 ) {
-
-    // 全局单例播放器 (复用 PlayerFactory 的缓存配置)
     private val exoPlayer: ExoPlayer by lazy {
         PlayerFactory.createPlayer(withCache = true).apply {
-            repeatMode = Player.REPEAT_MODE_ONE // 短剧默认单集循环
+            repeatMode = Player.REPEAT_MODE_OFF
             playWhenReady = true
         }
     }
 
-    // 当前绑定的 View
     private var currentCoverPlayerView: CoverPlayerView? = null
 
-    // --- 状态流 ---
+    // 状态流
     private val _progressFlow = MutableStateFlow(Pair(0L, 0L))
     val progressFlow = _progressFlow.asStateFlow()
+
+    private val _isPlayingFlow = MutableStateFlow(false)
+    val isPlayingFlow = _isPlayingFlow.asStateFlow()
 
     sealed class PlayerEvent {
         object OnPlayEnded : PlayerEvent()
@@ -55,65 +47,120 @@ class FeedPlayerManager(
     private val _playerEvent = MutableSharedFlow<PlayerEvent>()
     val playerEvent = _playerEvent.asSharedFlow()
 
+    // [关键变量] 标记是否正在 Seek
+    private var isSeeking = false
     private var progressJob: Job? = null
 
     init {
-        // 全局监听播放结束事件
         exoPlayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
                 if (state == Player.STATE_ENDED) {
                     scope.launch { _playerEvent.emit(PlayerEvent.OnPlayEnded) }
                 }
             }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                _isPlayingFlow.value = isPlaying
+                if (isPlaying) {
+                    startProgressUpdater()
+                } else {
+                    progressJob?.cancel()
+                }
+            }
         })
     }
 
-    /**
-     * 核心：将播放器挂载到指定的 Item View 上
-     */
     fun attachAndPlay(track: TrackInfo, coverPlayerView: CoverPlayerView) {
-        // 1. 如果切换了 View，先解绑旧的
+        // 切换视频时重置 Seek 状态
+        isSeeking = false
+
         if (currentCoverPlayerView != null && currentCoverPlayerView != coverPlayerView) {
             currentCoverPlayerView?.setPlayer(null)
         }
         currentCoverPlayerView = coverPlayerView
 
-        // 2. 将数据传给 View (用于封面显示等逻辑)
         coverPlayerView.setTrack(track)
-
-        // 3. 绑定播放器 (CoverPlayerView 内部会自动处理 Surface 和 Listener)
         coverPlayerView.setPlayer(exoPlayer)
 
-        // 4. 设置媒体源
-        val mediaItem = MediaItem.fromUri(track.musicPlayUrl().toString())
+        val videoUrl = track.playUrl ?: return
+        val mediaItem = MediaItem.fromUri(videoUrl)
 
-        // 只有切集时才 reset，如果是同一集则保持状态
-        val isSameMedia = exoPlayer.currentMediaItem?.localConfiguration?.uri.toString() == track.musicPlayUrl()
-        if (!isSameMedia) {
+        val currentUri = exoPlayer.currentMediaItem?.localConfiguration?.uri.toString()
+        if (currentUri != videoUrl) {
             exoPlayer.setMediaItem(mediaItem)
-            // 如果有断点续播需求，在这里 seekTo
-            // if (track.lastPosition > 0) exoPlayer.seekTo(track.lastPosition)
             exoPlayer.prepare()
         }
 
         exoPlayer.play()
-        startProgressUpdater()
+    }
+
+    fun togglePlay() {
+        if (exoPlayer.isPlaying) {
+            pause()
+        } else {
+            resume()
+        }
+    }
+
+    fun pause() {
+        exoPlayer.pause()
+    }
+
+    fun resume() {
+        if (exoPlayer.playbackState == Player.STATE_READY) {
+            exoPlayer.play()
+        }
+    }
+
+    fun replay() {
+        isSeeking = false
+        exoPlayer.seekTo(0)
+        exoPlayer.play()
     }
 
     /**
-     * 预加载下一集 (利用 CacheDataSource)
+     * 核心 Seek 逻辑修复
      */
-    fun preload(url: String) {
-        scope.launchNoCrash {
+    fun seekTo(position: Long) {
+        Logger.i("FeedPlayerManager", "seekTo: $position")
+
+        // 1. 标记开始 Seek，这会阻止 startProgressUpdater 发射旧的进度
+        isSeeking = true
+
+        // 2. 执行物理 Seek
+        exoPlayer.seekTo(position)
+
+        // 3. 立即强制更新 UI 到目标位置 (防止 UI 闪烁回跳)
+        // 获取当前有效的时长，如果播放器还没准备好时长，使用 0
+        val validDuration = if (exoPlayer.duration > 0) exoPlayer.duration else 0L
+        // 只有当时长有效时，才发射欺骗数据
+        if (validDuration > 0) {
+            _progressFlow.value = Pair(position, validDuration)
+        }
+
+        // 4. 延迟重置 Seek 状态，给播放器缓冲时间
+        scope.launch {
+            delay(1000) // 1秒缓冲保护期
+            isSeeking = false
+            // 恢复后如果是暂停状态，且用户seek了，需要手动触发一次更新确保最终位置正确
+            if (!exoPlayer.isPlaying) {
+                val current = exoPlayer.currentPosition
+                val duration = if (exoPlayer.duration > 0) exoPlayer.duration else 0L
+                _progressFlow.emit(Pair(current, duration))
+            }
+        }
+    }
+
+    fun preload(url: String?) {
+        if (url.isNullOrEmpty()) return
+        scope.launch(Dispatchers.IO) {
             try {
-                withContext(Dispatchers.IO) {
-                    val dataSpec = DataSpec(android.net.Uri.parse(url), 0, 1024 * 1024, null) // 预加载 1MB
-                    val dataSource = PlayerFactory.cacheDataSourceFactory.createDataSource()
-                    dataSource.open(dataSpec)
-                    dataSource.close()
-                }
+                val dataSpec = DataSpec(android.net.Uri.parse(url), 0, 1024 * 1024, null)
+                val dataSource = PlayerFactory.cacheDataSourceFactory.createDataSource()
+                dataSource.open(dataSpec)
+                dataSource.close()
             } catch (e: Exception) {
-                // ignore
+                e.printStackTrace()
             }
         }
     }
@@ -122,29 +169,15 @@ class FeedPlayerManager(
         progressJob?.cancel()
         progressJob = scope.launch {
             while (isActive) {
-                if (exoPlayer.isPlaying) {
-                    _progressFlow.emit(Pair(exoPlayer.currentPosition, exoPlayer.duration))
+                // [关键] 只有当不处于 Seeking 状态时，才更新进度
+                if (exoPlayer.isPlaying && !isSeeking) {
+                    val current = exoPlayer.currentPosition
+                    val duration = if (exoPlayer.duration > 0) exoPlayer.duration else 0L
+                    _progressFlow.emit(Pair(current, duration))
                 }
-                delay(500)
+                delay(200) // 200ms 刷新一次
             }
         }
-    }
-
-    fun pause() {
-        exoPlayer.pause()
-        progressJob?.cancel()
-    }
-
-    fun resume() {
-        if (exoPlayer.playbackState == Player.STATE_READY) {
-            exoPlayer.play()
-            startProgressUpdater()
-        }
-    }
-
-    fun replay() {
-        exoPlayer.seekTo(0)
-        exoPlayer.play()
     }
 
     fun release() {

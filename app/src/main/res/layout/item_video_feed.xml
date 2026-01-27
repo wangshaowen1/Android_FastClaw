@@ -23,7 +23,6 @@
             track="@{item.data}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
             android:saveEnabled="false"
             app:coverScaleType="fitCenter"
             app:layout_constraintDimensionRatio="H,9:16"
@@ -78,11 +77,9 @@
 
         <com.kgmedia.fastfilm.widget.PlayerSeekbar
             android:id="@+id/seekbar"
-            currentPosition="@{item.currentPosition}"
-            duration="@{item.duration}"
-            onSeekListener="@{item.onSeekListener}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

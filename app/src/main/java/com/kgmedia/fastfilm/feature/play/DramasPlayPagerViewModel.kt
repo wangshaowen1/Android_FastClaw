@@ -28,7 +28,7 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
     )
 
     enum class PlayMode { RECOMMEND, SERIES }
-    var currentPlayMode = PlayMode.RECOMMEND
+    var currentPlayMode = PlayMode.SERIES
 
     // 对外暴露的数据流
     private val _feedFlow = MutableStateFlow<PagingData<TrackInfo>>(PagingData.empty())
@@ -36,7 +36,7 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     init {
         // 默认加载一次，方便进入页面直接看效果
-        loadFeed(false, null)
+        loadFeed(true, null)
     }
 
     /**
