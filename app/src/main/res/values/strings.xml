@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,ExtraTranslation">
-    <string name="app_name">金果</string>
+    <string name="app_name">快出片</string>
     <string name="model_temporarily_unavailable">模型升级中，暂不支持使用</string>
     <string name="switch_other_model">切换其它模型</string>
     <string name="status_ai_thinking">正在努力思考中</string>
