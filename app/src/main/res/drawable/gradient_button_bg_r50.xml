@@ -4,10 +4,9 @@
 
     <gradient
         android:angle="0"
-        android:endColor="#524DEC"
-        android:startColor="#73B0F8"
-        android:centerColor="#7567F0"
-        />
+        android:centerColor="@color/gradient_btn_center_dark"
+        android:endColor="@color/gradient_btn_end_dark"
+        android:startColor="@color/gradient_btn_start_dark" />
 
     <corners android:radius="50dp" />
 </shape>

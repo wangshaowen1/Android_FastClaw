@@ -13,47 +13,60 @@
     </data>
 
     <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        selected="@{item.checked}"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="66dp"
+        android:background="@drawable/selector_item_stroke"
         android:onClick="@{(v)->item.onItemClick.invoke(v)}"
-        app:backgroundStartColor="@color/white"
-        app:borderEndColor="#FFA029"
-        app:borderStartColor="#FF4332"
-        app:borderWidth="2dp"
-        app:roundCornerRadius="8dp"
+        app:borderEndColor="@color/gradient_btn_end_dark"
+        app:borderStartColor="@color/gradient_btn_start_dark"
+        app:borderWidth="1.5dp"
+        app:roundCornerRadius="@dimen/radius_m"
         app:showBorder="@{item.checked}">
 
         <FrameLayout
-            android:id="@+id/v9to16"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:id="@+id/llImage"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv9to16"
+            app:layout_constraintEnd_toStartOf="@+id/tvName"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <View
-                setLayoutHeightDp="@{item.getHeight()}"
-                setLayoutWidthDp="@{item.getWidth()}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
                 android:layout_gravity="center"
-                android:background="@drawable/bg_f7f7f7_stroke_f2f2f2_r2" />
+                android:background="@drawable/img_9_16" />
         </FrameLayout>
 
         <TextView
-            android:id="@+id/tv9to16"
+            android:id="@+id/tvName"
+            style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@{item.getText()}"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="@dimen/spacing_s"
+            android:textColor="?attr/textColor2"
+            app:layout_constraintBottom_toTopOf="@id/tvValue"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/v9to16"
+            app:layout_constraintStart_toEndOf="@id/llImage"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="横屏" />
+
+        <TextView
+            android:id="@+id/tvValue"
+            style="@style/Text14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@{item.getText()}"
+            android:textColor="?attr/textColor3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tvName"
+            app:layout_constraintStart_toStartOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tvName"
             tools:text="9:16" />
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 </layout>

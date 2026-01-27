@@ -13,13 +13,13 @@
     </data>
 
     <com.kgmedia.fastfilm.widget.BorderConstraintLayout
-        android:layout_width="78dp"
-        android:layout_height="104dp"
+        android:layout_width="92dp"
+        android:layout_height="92dp"
         android:onClick="@{(v)->item.onItemClick.invoke(v)}"
-        app:borderEndColor="#FF4332"
-        app:borderStartColor="#FFA029"
-        app:borderWidth="2dp"
-        app:roundCornerRadius="8dp"
+        app:borderEndColor="@color/gradient_btn_end_dark"
+        app:borderStartColor="@color/gradient_btn_start_dark"
+        app:borderWidth="1.5dp"
+        app:roundCornerRadius="@dimen/radius_m"
         app:showBorder="@{item.checked}">
 
         <com.kgmedia.fastfilm.widget.CropShapeImageView
@@ -40,17 +40,16 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            style="@style/Text12"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradient_top_00_000000_bottom_000000_br8"
+            android:background="@drawable/gradient_top_00_000000_bottom_60_000000_br8"
             android:ellipsize="end"
             android:gravity="center"
-            android:paddingVertical="3dp"
+            android:paddingVertical="@dimen/spacing_s"
             android:singleLine="true"
             android:text="@{item.data.styleName}"
-            android:textColor="@color/white"
-            android:textSize="10sp"
-            android:textStyle="bold"
+            android:textColor="?attr/textColor1"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="日式动漫" />
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>

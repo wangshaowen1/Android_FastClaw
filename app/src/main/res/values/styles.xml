@@ -125,6 +125,7 @@
     <style name="Button.Bold" parent="Button.Medium">
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:layout_height">44dp</item>
     </style>
 
     <style name="Button.Bold.Cancel" parent="Button.Bold">
@@ -719,7 +720,7 @@
         <item name="android:indeterminateTint">#191919</item>
     </style>
     <!--特大标题/页面级标题-->
-    <style name="Text28" >
+    <style name="Text28">
         <item name="android:textSize">28sp</item>
         <item name="android:textStyle">bold</item>
     </style>

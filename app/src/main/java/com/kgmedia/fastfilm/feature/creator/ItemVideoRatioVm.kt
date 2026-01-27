@@ -18,23 +18,5 @@ class ItemVideoRatioVm(ratio: Int) : AppItemViewModel<Int>(ratio) {
         }
     }
 
-    fun getWidth(): Int {
-        return when (data.get()) {
-            CreationGeneratePreBody.RATIO_9_16 -> 11
-            CreationGeneratePreBody.RATIO_16_9 -> 19
-            CreationGeneratePreBody.RATIO_3_4 -> 15
-            CreationGeneratePreBody.RATIO_4_3 -> 18
-            else -> 0 // 或者返回默认值
-        }
-    }
 
-    fun getHeight(): Int {
-        return when (data.get()) {
-            CreationGeneratePreBody.RATIO_9_16 -> 19
-            CreationGeneratePreBody.RATIO_16_9 -> 11
-            CreationGeneratePreBody.RATIO_3_4 -> 18
-            CreationGeneratePreBody.RATIO_4_3 -> 15
-            else -> 0 // 或者返回默认值
-        }
-    }
 }

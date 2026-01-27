@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.creator.ItemVideoRatioVm" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        selected="@{item.checked}"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_item_stroke"
+        android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+        android:paddingHorizontal="@dimen/spacing_l"
+        android:paddingVertical="@dimen/spacing_s"
+        app:borderEndColor="@color/gradient_btn_end_dark"
+        app:borderStartColor="@color/gradient_btn_start_dark"
+        app:borderWidth="1.5dp"
+        app:roundCornerRadius="@dimen/radius_m"
+        app:showBorder="@{item.checked}">
+
+        <TextView
+            android:id="@+id/tvName"
+            style="@style/Text14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/textColor2"
+            tools:text="自定义集数" />
+
+    </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+</layout>
