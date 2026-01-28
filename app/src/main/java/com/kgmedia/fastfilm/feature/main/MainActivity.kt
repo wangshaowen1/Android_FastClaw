@@ -27,10 +27,10 @@ import com.kgmedia.fastfilm.core.manager.UpgradeManager
 import com.kgmedia.fastfilm.core.model.WakeUpEntity
 import com.kgmedia.fastfilm.databinding.ActivityMainBinding
 import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
+import com.kgmedia.fastfilm.feature.home.HomeFragment
 import com.kgmedia.fastfilm.feature.login.SimpleProfileDialog
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.kgmedia.fastfilm.feature.mine.MineFragment
-import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
@@ -168,13 +168,12 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 R.id.rbHome -> {
                     //首页
                     EventManager.onAppTrack(AppEvent.JG_VIEW_HOME_TAB_PAGE)
-                    setKeepScreenOn(true)
+                    setKeepScreenOn(false)
                     mRealVM.showTab.set(0)
-//                    supportFragmentManager.switchFragment(
-//                        R.id.fragment,
-//                        RecommendShortPlayPagerFragment::class.java
-//                    )
-                    DramasPlayPagerActivity.start(null)
+                    supportFragmentManager.switchFragment(
+                        R.id.fragment,
+                        HomeFragment::class.java
+                    )
                     lifecycleScope.launch {
                         delay(100)
                         displayPopUpBox(MainBulletFrameEnum.COMPLETE_PERSONAL_INFO)

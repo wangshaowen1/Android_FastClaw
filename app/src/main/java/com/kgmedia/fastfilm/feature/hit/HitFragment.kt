@@ -33,10 +33,6 @@ class HitFragment :
         }
     }
 
-    private val releaseDataAdapter by lazy {
-        QuickAdapter(R.layout.item_release_data, arrayListOf())
-    }
-
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
@@ -76,7 +72,6 @@ class HitFragment :
             val alpha = if (ratio < 0.95f) 1f - ratio / 0.95f else 0f
             binding.llTop.alpha = alpha
         }
-        binding.rvReleaseData.adapter = releaseDataAdapter
         binding.magicIndicator.navigator = CommonNavigatorUtils.getCommonNavigator(
             mActivity,
             listOf(
@@ -133,15 +128,6 @@ class HitFragment :
     }
 
     fun dataUpdate() {
-        mRealVM.statisticsData.observe(this) {
-            releaseDataAdapter.submitList(
-                listOf(
-                    ItemReleaseDataVm(ShortDramasStatisticsItem("累计入驻", it.totalEnroll.toString(), "人")),
-                    ItemReleaseDataVm(ShortDramasStatisticsItem("累计创作", it.totalCreation.toString(), "章")),
-                    ItemReleaseDataVm(ShortDramasStatisticsItem("小说市场规模", it.shortDramasMarketValue.toString(), "亿"))
-                )
-            )
-        }
         mRealVM.danmakuList.observe(this) {
 //            // 初始化列表
 //            val list = List(10) {

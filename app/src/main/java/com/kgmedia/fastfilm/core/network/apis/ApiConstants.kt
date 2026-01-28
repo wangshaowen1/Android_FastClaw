@@ -11,7 +11,7 @@ object ApiConstants {
     /**
      * 获取软件配置信息接口
      */
-    const val APP_CONFIG = "sys/getAppConfigInfo"
+    const val APP_CONFIG = "app/getAppConfigInfo"
 
     //用户举报
     const val TIP_OFF = "user/tipOff"
@@ -655,7 +655,7 @@ object ApiConstants {
      */
     const val DRAMAS_DEL_ROLE = "/shortDramas/script/role/remove"
 
-    const val APP_BANNERS = "sys/getAppBannerInfo"
+    const val APP_BANNERS = "/app/home/banner/list"
 
     /**
      * 获取快捷灵感(2条)

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.home.HomeViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
+            android:stateListAnimator="@drawable/appbar_elevation">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/llTop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.zhpan.bannerview.BannerViewPager
+                        android:id="@+id/banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:bvp_can_loop="true"
+                        app:bvp_indicator_visibility="gone"
+                        app:bvp_interval="4000"
+                        app:bvp_scroll_duration="600"
+                        app:layout_constraintDimensionRatio="375:246"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:background="@color/color_20_ffffff" />
+
+                    <Button
+                        android:id="@+id/btnCreation"
+                        style="@style/Button.Bold"
+                        android:layout_width="match_parent"
+                        android:layout_marginHorizontal="@dimen/spacing_l"
+                        android:layout_marginTop="10dp"
+                        android:text="立即创作"
+                        app:layout_constraintBottom_toBottomOf="@id/banner" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="enterAlways">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    style="@style/Text16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_l"
+                    android:layout_marginBottom="@dimen/spacing_s"
+                    android:paddingVertical="@dimen/spacing_m"
+                    android:text="爆款漫剧"
+                    android:textColor="?attr/textColor1"
+                    app:drawableStartCompat="@drawable/img_hot" />
+            </FrameLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/srl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/spacing_m"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:overScrollMode="never"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:srlAccentColor="@color/color_121212"
+            app:srlEnableNestedScrolling="true"
+            app:srlEnablePreviewInEditMode="true"
+            app:srlPrimaryColor="@color/transparent">
+
+            <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+                android:id="@+id/lsv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                    app:spanCount="2"
+                    tools:listitem="@layout/item_home_drama" />
+            </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

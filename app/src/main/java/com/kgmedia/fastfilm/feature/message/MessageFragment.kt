@@ -40,10 +40,10 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
             ) {
                 holder?.apply {
                     val image = findViewById<CropShapeImageView>(R.id.image)
-                    GlideImageLoader.with(image).load(data.bannerImgUrl)
+                    GlideImageLoader.with(image).load(data.jumpCode)
                         .into(image)
                     image.setOnSingleClickListener {
-                        AppRouter.jump(data.bannerJumpUri)
+                        AppRouter.jump(data.jumpCode)
                     }
                 }
             }
