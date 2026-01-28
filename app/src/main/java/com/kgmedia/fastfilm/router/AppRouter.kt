@@ -109,7 +109,7 @@ object AppRouter : IRouter {
 
         when (host) {
             //短剧作品，APP需判断作品当前状态跳转对应页面
-            //goldenfruit://shortDramas?dramasId=短剧id
+            //fastfilm://shortDramas?dramasId=短剧id
             "shortDramas" -> {
                 startShortDrama(uri.getQueryParameter("dramasId"))
             }
