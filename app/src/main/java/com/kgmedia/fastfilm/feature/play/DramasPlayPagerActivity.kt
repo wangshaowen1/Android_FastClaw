@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.play
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.databinding.ActivityDramasPlayPagerBinding
 import com.kgmedia.fastfilm.feature.play.manger.FeedListController
@@ -18,9 +19,12 @@ class DramasPlayPagerActivity :
 
     companion object {
         @JvmStatic
-        fun start(dramasId: String?) {
+        fun start(dramasId: String?, position: Int? = 0) {
             val context = topActivity ?: return
-            val starter = Intent(context, DramasPlayPagerActivity::class.java)
+            val starter = Intent(context, DramasPlayPagerActivity::class.java).apply {
+                putExtra(Constants.Extra.DRAMA_ID, dramasId)
+                putExtra(Constants.Extra.POSITION, position)
+            }
             context.startActivity(starter)
         }
     }
@@ -31,6 +35,8 @@ class DramasPlayPagerActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val dramaId = intent.getStringExtra(Constants.Extra.DRAMA_ID)
+        val initialPos = intent.getIntExtra(Constants.Extra.POSITION, 0)
 
         // 1. 初始化核心组件
         playerManager = FeedPlayerManager(this, lifecycleScope)
@@ -41,6 +47,14 @@ class DramasPlayPagerActivity :
         lifecycleScope.launch {
             mRealVM.feedFlow.collectLatest { adapter.submitData(it) }
         }
+
+        // 告知 Controller 初始位置 (需要在 FeedListController 中加个方法，见下文)
+        listController.setInitialPosition(initialPos)
+
+        // 加载数据
+        // 因为 Repository 是单例且缓存了 Flow，如果列表页也用了 FeedRepository，
+        // 这里会立刻拿到数据，不需要网络请求
+        mRealVM.loadFeed(true, dramaId)
 
         // 3. 事件流
         setupPlayerEvents()
@@ -103,7 +117,15 @@ class DramasPlayPagerActivity :
     override fun onSeek(position: Int, progress: Long) = playerManager.seekTo(progress)
 
     // --- 生命周期 ---
-    override fun onPause() { super.onPause(); playerManager.pause() }
-    override fun onResume() { super.onResume(); playerManager.resumeOnForeground() }
-    override fun onDestroy() { super.onDestroy(); playerManager.release() }
+    override fun onPause() {
+        super.onPause(); playerManager.pause()
+    }
+
+    override fun onResume() {
+        super.onResume(); playerManager.resumeOnForeground()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy(); playerManager.release()
+    }
 }

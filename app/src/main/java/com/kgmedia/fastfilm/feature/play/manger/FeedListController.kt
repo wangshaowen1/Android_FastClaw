@@ -18,6 +18,8 @@ class FeedListController(
     private val snapHelper = PagerSnapHelper()
     private var isFirstLoad = true
 
+    private var targetInitialPosition: Int = -1
+
     init {
         recyclerView.layoutManager = layoutManager
         snapHelper.attachToRecyclerView(recyclerView)
@@ -79,5 +81,38 @@ class FeedListController(
     fun getCurrentPosition(): Int {
         val centerView = snapHelper.findSnapView(layoutManager) ?: return -1
         return layoutManager.getPosition(centerView)
+    }
+
+    /**
+     * 设置初始播放位置
+     */
+    fun setInitialPosition(position: Int) {
+        this.targetInitialPosition = position
+    }
+
+    // 修改 setupFirstLoadListener
+    private fun setupFirstLoadListener() {
+        adapter.addLoadStateListener { loadState ->
+            if (loadState.refresh is LoadState.NotLoading && isFirstLoad) {
+                if (adapter.itemCount > 0) {
+                    isFirstLoad = false
+                    recyclerView.post {
+                        if (recyclerView.isAttachedToWindow) {
+                            // [核心] 如果有指定初始位置，先跳过去
+                            if (targetInitialPosition != -1 && targetInitialPosition < adapter.itemCount) {
+                                recyclerView.scrollToPosition(targetInitialPosition)
+
+                                // 稍微延迟一点点再播放，确保 View 已经布局好
+                                recyclerView.post {
+                                    playCurrentItem()
+                                }
+                            } else {
+                                playCurrentItem()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

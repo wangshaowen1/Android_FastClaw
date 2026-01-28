@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.home
 
+import android.view.View
 import android.widget.ImageView
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
@@ -16,10 +17,13 @@ import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapt
 import com.kuaige.imageloader.GlideImageLoader
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.crop.util.ViewUtils
 import com.zhpan.bannerview.BaseBannerAdapter
 import com.zhpan.bannerview.BaseViewHolder
+import com.zhpan.indicator.enums.IndicatorStyle
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -75,6 +79,18 @@ class HomeFragment :
                 return R.layout.item_message_banner
             }
         }
+        binding.banner.setAdapter(bannerAdapter)
+            .setIndicatorSliderRadius(2f.dp)
+            .setIndicatorSliderGap(4.dp)
+            .setIndicatorHeight(4.dp)
+            .setIndicatorSliderWidth(4.dp, 16.dp)
+            .setIndicatorSliderColor(
+                R.color.color_60_ffffff.getResColor(), R.color.white.getResColor()
+            ).setIndicatorStyle(IndicatorStyle.ROUND_RECT)
+            .setIndicatorMargin(0, 0, 0, 4.dp)
+            .setIndicatorView(binding.ivIndicator)
+            .setIndicatorVisibility(View.VISIBLE)
+            .create()
 
         binding.recyclerView.apply {
             isFocusable = false
@@ -111,6 +127,14 @@ class HomeFragment :
         lifecycleScope.launch {
             mRealVM.dataGet.collect {
                 homeAdapter.submitData(it)
+            }
+        }
+
+        // 2. 观察数据
+        lifecycleScope.launch {
+            mRealVM.feedFlow.collectLatest { pagingData ->
+                // [关键] View 层负责把数据交给 Adapter
+//                homeAdapter.submitData(pagingData)
             }
         }
     }

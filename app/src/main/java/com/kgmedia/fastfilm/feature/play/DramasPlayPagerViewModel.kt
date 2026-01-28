@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import com.kgmedia.fastfilm.feature.play.data.VideoFeedPagingSource
 import com.nhsd.basic.ext.getResColor
 import kotlinx.coroutines.flow.Flow
@@ -44,20 +45,31 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
     fun loadFeed(isSeriesMode: Boolean, id: String?) {
         currentPlayMode = if (isSeriesMode) PlayMode.SERIES else PlayMode.RECOMMEND
 
-        // 1. 创建 Pager
-        val pager = Pager(
-            config = PagingConfig(pageSize = 10, prefetchDistance = 3, enablePlaceholders = false),
-            pagingSourceFactory = {
-                // 直接使用我们写的假数据 Source
-                VideoFeedPagingSource()
-            }
-        )
-
-        // 2. 收集数据并发射给 _feedFlow
         viewModelScope.launch {
-            pager.flow.cachedIn(viewModelScope).collectLatest {
-                _feedFlow.value = it
-            }
+            // [修改] 从单例仓库获取数据流
+            // 注意：这里再次 cachedIn(viewModelScope) 是为了绑定 UI 生命周期，
+            // 但底层数据已经是被 Repository 缓存过的，不会触发网络请求。
+            FeedRepository.getFeedFlow(isSeriesMode, id)
+                .cachedIn(viewModelScope)
+                .collectLatest {
+                    _feedFlow.value = it
+                }
         }
+
+//        // 1. 创建 Pager
+//        val pager = Pager(
+//            config = PagingConfig(pageSize = 10, prefetchDistance = 3, enablePlaceholders = false),
+//            pagingSourceFactory = {
+//                // 直接使用我们写的假数据 Source
+//                VideoFeedPagingSource()
+//            }
+//        )
+//
+//        // 2. 收集数据并发射给 _feedFlow
+//        viewModelScope.launch {
+//            pager.flow.cachedIn(viewModelScope).collectLatest {
+//                _feedFlow.value = it
+//            }
+//        }
     }
 }

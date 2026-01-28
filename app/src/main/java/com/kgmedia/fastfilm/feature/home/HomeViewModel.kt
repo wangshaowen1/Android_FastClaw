@@ -11,10 +11,15 @@ import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.home.data.HomePagingSource
+import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
@@ -38,4 +43,24 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
         config = PagingConfig(initialLoadSize = 20, pageSize = 20),
         pagingSourceFactory = { HomePagingSource() }
     ).flow.cachedIn(viewModelScope)
+
+    // 1. 定义 UI 需要观察的数据流
+    private val _feedFlow = MutableStateFlow<PagingData<TrackInfo>>(PagingData.empty())
+    val feedFlow: Flow<PagingData<TrackInfo>> = _feedFlow
+
+    init {
+        loadData("")
+    }
+
+    // 2. 加载数据
+    fun loadData(seriesId: String) {
+        viewModelScope.launch {
+            // [关键] 调用单例 FeedRepository 获取带缓存的流
+            FeedRepository.getFeedFlow(isSeriesMode = true, id = seriesId)
+                .cachedIn(viewModelScope) // 绑定到当前 ViewModel 生命周期
+                .collectLatest { pagingData ->
+                    _feedFlow.value = pagingData
+                }
+        }
+    }
 }
