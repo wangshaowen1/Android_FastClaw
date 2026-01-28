@@ -44,15 +44,6 @@ class LoginDialog : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window?.apply {
-            setGravity(Gravity.BOTTOM)
-            attributes?.let {
-                it.width = WindowManager.LayoutParams.MATCH_PARENT
-                it.height = WindowManager.LayoutParams.WRAP_CONTENT
-                attributes = it
-            }
-        }
-
         EventManager.onAppTrack(AppEvent.JG_VIEW_LOGIN_PAGE)
     }
 

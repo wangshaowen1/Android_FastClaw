@@ -223,14 +223,13 @@
         <!--手机号登录-->
         <activity
             android:name=".feature.login.flash.PhoneLoginDialogActivity"
-            android:theme="@style/Theme.ActivityBottomDialogStyle"
             android:windowSoftInputMode="stateVisible" />
         <!--手机号登录-->
         <activity
             android:name=".feature.login.LoginDialog"
             android:screenOrientation="behind"
-            android:theme="@style/Theme.ActivityBottomDialogStyle"
             android:windowSoftInputMode="stateAlwaysHidden" />
+<!--          android:theme="@style/Theme.ActivityBottomDialogStyle"-->
         <!--积分充值-->
         <activity
             android:name=".feature.payment.points.PointsRechargeActivity"

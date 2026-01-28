@@ -52,6 +52,7 @@
                         android:layout_marginHorizontal="@dimen/spacing_l"
                         android:layout_marginTop="10dp"
                         android:text="立即创作"
+                        android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@id/banner" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>

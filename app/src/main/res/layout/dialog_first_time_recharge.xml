@@ -107,7 +107,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:drawableStart="@drawable/ic_pm_wechat"
-                android:drawableEnd="@{layout.payment == PaymentMethod.WxPay ? @drawable/ic_choose_checked : @drawable/ic_choose_normal_dark}"
+                android:drawableEnd="@{layout.payment == PaymentMethod.WxPay ? @drawable/icon_choose_checked : @drawable/icon_choose_normal_dark}"
                 android:drawablePadding="4dp"
                 android:gravity="center_vertical"
                 android:onClick="@{() -> layout.changePayment(PaymentMethod.WxPay)}"
@@ -115,7 +115,7 @@
                 android:text="微信支付"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="14dp"
-                tools:drawableEnd="@drawable/ic_choose_checked" />
+                tools:drawableEnd="@drawable/icon_choose_checked" />
 
             <TextView
                 android:id="@+id/btnAlipay"
@@ -123,7 +123,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:drawableStart="@drawable/ic_pm_alipay"
-                android:drawableEnd="@{layout.payment == PaymentMethod.Alipay ? @drawable/ic_choose_checked : @drawable/ic_choose_normal_dark}"
+                android:drawableEnd="@{layout.payment == PaymentMethod.Alipay ? @drawable/icon_choose_checked : @drawable/icon_choose_normal_dark}"
                 android:drawablePadding="4dp"
                 android:gravity="center_vertical"
                 android:onClick="@{() -> layout.changePayment(PaymentMethod.Alipay)}"
@@ -131,7 +131,7 @@
                 android:text="支付宝"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="14dp"
-                tools:drawableEnd="@drawable/ic_choose_normal_dark" />
+                tools:drawableEnd="@drawable/icon_choose_normal_dark" />
 
         </LinearLayout>
 

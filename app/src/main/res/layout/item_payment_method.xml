@@ -40,7 +40,7 @@
             android:id="@+id/iv_selected_state"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:src="@{item.select?@drawable/ic_choose_checked_energy_packet:@drawable/ic_choose_normal_dark}"
+            android:src="@{item.select?@drawable/ic_choose_checked_energy_packet:@drawable/icon_choose_normal_dark}"
             android:importantForAccessibility="no"
             tools:src="@drawable/ic_choose_checked_energy_packet" />
     </LinearLayout>

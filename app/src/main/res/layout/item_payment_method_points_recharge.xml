@@ -40,8 +40,8 @@
             android:id="@+id/iv_selected_state"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:src="@{item.select?@drawable/ic_choose_checked:@drawable/ic_choose_normal_dark}"
+            android:src="@{item.select?@drawable/icon_choose_checked:@drawable/icon_choose_normal_dark}"
             android:importantForAccessibility="no"
-            tools:src="@drawable/ic_choose_checked" />
+            tools:src="@drawable/icon_choose_checked" />
     </LinearLayout>
 </layout>

@@ -151,13 +151,13 @@ class PhoneLoginDialogActivity :
         }
     }
 
-
     override fun setTranslucentStatus() {
         ImmersionBar.with(this)
-            .statusBarDarkFont(true)
+            .statusBarDarkFont(false)
+            .navigationBarColor(R.color.white)
             .transparentStatusBar()
             .transparentNavigationBar()
-            .navigationBarColor(R.color.white)
+            .navigationBarDarkIcon(false)
             .init()
     }
 

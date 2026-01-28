@@ -20,7 +20,9 @@ import com.kgmedia.fastfilm.feature.login.data.ThirdLoginRepository
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.kit.SignUtils
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -34,12 +36,12 @@ class LoginViewModel : AppRepositoryViewModel<ThirdLoginRepository>() {
     val checkedPolicy by lazy { ObservableBoolean(false) }
     val policyText by lazy {
         "我已阅读并同意"
-            .addSpan("《用户协议》", HighlightSpan(Color.BLACK, Typeface.DEFAULT_BOLD) {
+            .addSpan("《用户协议》", HighlightSpan(topActivity?.getThemeColor(R.attr.textColor1), Typeface.DEFAULT_BOLD) {
                 val activity = topActivity ?: return@HighlightSpan
                 SimpleBrowserActivity.launch(activity, Config.get().serviceUrl, R.string.tvSYUserService.getResString())
             })
             .addSpan("、")
-            .addSpan("《隐私政策》", HighlightSpan(Color.BLACK, Typeface.DEFAULT_BOLD) {
+            .addSpan("《隐私政策》", HighlightSpan(topActivity?.getThemeColor(R.attr.textColor1), Typeface.DEFAULT_BOLD) {
                 val activity = topActivity ?: return@HighlightSpan
                 SimpleBrowserActivity.launch(activity, Config.get().privacyUrl, R.string.tvSYPrivateService.getResString())
             })
