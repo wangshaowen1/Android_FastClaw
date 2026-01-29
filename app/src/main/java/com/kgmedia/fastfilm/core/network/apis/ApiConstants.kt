@@ -671,4 +671,9 @@ object ApiConstants {
      * 查询历史角色
      */
     const val GET_HISTORY_ROLES = "/shortDramas/script/role/history"
+
+    /**
+     * 首页作品列表
+     */
+    const val RECOMMEND_DRAMA_LIST = "/app/home/work/page"
 }

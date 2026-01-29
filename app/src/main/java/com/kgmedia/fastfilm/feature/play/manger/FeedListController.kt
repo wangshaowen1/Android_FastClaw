@@ -16,8 +16,10 @@ class FeedListController(
 ) {
     private val layoutManager = LinearLayoutManager(recyclerView.context)
     private val snapHelper = PagerSnapHelper()
-    private var isFirstLoad = true
 
+    // 标记是否是第一次加载数据
+    private var isFirstLoad = true
+    // 目标初始位置，默认为 -1 (不跳转)
     private var targetInitialPosition: Int = -1
 
     init {
@@ -33,14 +35,42 @@ class FeedListController(
             }
         })
 
-        // 2. 首屏加载监听
+        // 2. 初始化首屏监听 (只注册一次！)
+        setupFirstLoadListener()
+    }
+
+    /**
+     * 设置初始播放位置
+     * 注意：这个方法必须在 adapter 数据提交之前（onCreate 中）调用
+     */
+    fun setInitialPosition(position: Int) {
+        this.targetInitialPosition = position
+    }
+
+    private fun setupFirstLoadListener() {
         adapter.addLoadStateListener { loadState ->
+            // 当数据刷新完成 (NotLoading) 且是第一次加载时触发
             if (loadState.refresh is LoadState.NotLoading && isFirstLoad) {
                 if (adapter.itemCount > 0) {
+                    // 立即锁定，防止后续 LoadState 变化重复触发
                     isFirstLoad = false
-                    // Post 确保 Layout 完成
+
                     recyclerView.post {
-                        if (recyclerView.isAttachedToWindow) playCurrentItem()
+                        if (recyclerView.isAttachedToWindow) {
+                            // [核心修复] 在这里统一处理跳转逻辑
+                            if (targetInitialPosition != -1 && targetInitialPosition < adapter.itemCount) {
+                                // 1. 直接闪现到指定位置 (使用 scrollToPositionWithOffset 确保准确置顶)
+                                layoutManager.scrollToPositionWithOffset(targetInitialPosition, 0)
+
+                                // 2. 再次 Post，等待 RecyclerView 布局稳定后，寻找 SnapView 并播放
+                                recyclerView.post {
+                                    playCurrentItem()
+                                }
+                            } else {
+                                // 默认逻辑：播放第 0 个
+                                playCurrentItem()
+                            }
+                        }
                     }
                 }
             }
@@ -58,11 +88,14 @@ class FeedListController(
 
         // 调用 Manager 播放
         playerManager.attachAndPlay(item, holder.binding.playerView)
+        // 强制更新 UI 为播放状态
         holder.updatePlayState(true)
 
         // 预加载下一条
         if (position + 1 < adapter.itemCount) {
             val nextItem = adapter.peek(position + 1)
+            // 根据你的 TrackInfo/DramaInfo 结构调用正确的 url 方法
+            // 假设是 getPlayUrl() 或 playUrl
             nextItem?.getPlayUrl()?.let { playerManager.preload(it) }
         }
     }
@@ -81,38 +114,5 @@ class FeedListController(
     fun getCurrentPosition(): Int {
         val centerView = snapHelper.findSnapView(layoutManager) ?: return -1
         return layoutManager.getPosition(centerView)
-    }
-
-    /**
-     * 设置初始播放位置
-     */
-    fun setInitialPosition(position: Int) {
-        this.targetInitialPosition = position
-    }
-
-    // 修改 setupFirstLoadListener
-    private fun setupFirstLoadListener() {
-        adapter.addLoadStateListener { loadState ->
-            if (loadState.refresh is LoadState.NotLoading && isFirstLoad) {
-                if (adapter.itemCount > 0) {
-                    isFirstLoad = false
-                    recyclerView.post {
-                        if (recyclerView.isAttachedToWindow) {
-                            // [核心] 如果有指定初始位置，先跳过去
-                            if (targetInitialPosition != -1 && targetInitialPosition < adapter.itemCount) {
-                                recyclerView.scrollToPosition(targetInitialPosition)
-
-                                // 稍微延迟一点点再播放，确保 View 已经布局好
-                                recyclerView.post {
-                                    playCurrentItem()
-                                }
-                            } else {
-                                playCurrentItem()
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }

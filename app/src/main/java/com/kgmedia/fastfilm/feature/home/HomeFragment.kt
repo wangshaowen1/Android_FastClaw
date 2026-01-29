@@ -117,7 +117,9 @@ class HomeFragment :
         binding.lsv.apply {
             makeScrollable()
             setRetryListener {
-                //刷新
+                if (mRealVM.bannerData.value.isNullOrEmpty()) {
+                    mRealVM.getData()
+                }
                 homeAdapter.refresh()
             }
         }
@@ -125,17 +127,13 @@ class HomeFragment :
 
     fun dataUpdate() {
         lifecycleScope.launch {
-            mRealVM.dataGet.collect {
-                homeAdapter.submitData(it)
+            mRealVM.feedFlow.collectLatest { pagingData ->
+                homeAdapter.submitData(pagingData)
             }
         }
 
-        // 2. 观察数据
-        lifecycleScope.launch {
-            mRealVM.feedFlow.collectLatest { pagingData ->
-                // [关键] View 层负责把数据交给 Adapter
-//                homeAdapter.submitData(pagingData)
-            }
+        mRealVM.bannerData.observe(this) {
+            binding.banner.create(it)
         }
     }
 }

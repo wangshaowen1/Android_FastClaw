@@ -50,7 +50,6 @@ class DramasPlayPagerActivity :
 
         // 告知 Controller 初始位置 (需要在 FeedListController 中加个方法，见下文)
         listController.setInitialPosition(initialPos)
-
         // 加载数据
         // 因为 Repository 是单例且缓存了 Flow，如果列表页也用了 FeedRepository，
         // 这里会立刻拿到数据，不需要网络请求

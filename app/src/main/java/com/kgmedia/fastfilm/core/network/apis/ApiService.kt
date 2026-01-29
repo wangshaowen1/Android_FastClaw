@@ -6,6 +6,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.CharacterInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ContentInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DanmakuItem
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasSeriesInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasTimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DubbingGenStatusInfo
@@ -933,8 +934,8 @@ interface ApiService {
     suspend fun getInspirationQuickList(@Body body: UserTokenBody): ApiResponse<ListData<InspirationInfo>?>
 
     /**
-     * 查询历史角色
-     */
+    * 查询历史角色
+    */
     @POST(ApiConstants.GET_HISTORY_ROLES)
     suspend fun getHistoryRoles(@Body body: RoleIdBody): ApiResponse<ListData<CharacterInfo>?>
 
@@ -943,4 +944,10 @@ interface ApiService {
      */
     @POST(ApiConstants.HISTORY_ROLE_SWITCH)
     suspend fun historyRoleSwitch(@Body body: RoleSwitchBody): ApiResponse<Any>
+
+    /**
+     * 首页作品列表
+     */
+    @POST(ApiConstants.RECOMMEND_DRAMA_LIST)
+    suspend fun recommendDramaList(@Body body: PagedBody): ApiResponse<PagedList<DramaInfo>?>
 }

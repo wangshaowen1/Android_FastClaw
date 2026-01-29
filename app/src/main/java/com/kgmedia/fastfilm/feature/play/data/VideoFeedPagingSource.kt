@@ -2,7 +2,9 @@ package com.kgmedia.fastfilm.feature.play.data
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
 import kotlinx.coroutines.delay
 
 class VideoFeedPagingSource : PagingSource<Int, DramaInfo>() {
@@ -22,11 +24,9 @@ class VideoFeedPagingSource : PagingSource<Int, DramaInfo>() {
             // ---------------------------
 
             // 如果使用真实接口，把上面那行注释掉，解开下面的：
-            /*
-            val body = PagedBody(pageNum, params.loadSize)
-            val apiResponse = ApiFactory.apiService.messagesLikes(body)
-            val items = if (apiResponse.isSuccess) apiResponse.data?.items ?: emptyList() else emptyList()
-            */
+//            val body = PagedBody(pageNum, params.loadSize)
+//            val apiResponse = ApiFactory.apiService.recommendDramaList(body)
+//            val items = if (apiResponse.isSuccess) apiResponse.data?.items ?: emptyList() else emptyList()
 
             val prevKey = if (pageNum > 1) pageNum - 1 else null
             val nextKey = if (items.isNotEmpty()) pageNum + 1 else null

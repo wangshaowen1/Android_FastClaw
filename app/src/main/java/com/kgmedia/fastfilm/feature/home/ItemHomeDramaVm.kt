@@ -1,12 +1,7 @@
 package com.kgmedia.fastfilm.feature.home
 
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
-import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
-import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 
-class ItemHomeDramaVm(data: HitRecommendInfo?) : AppItemViewModel<HitRecommendInfo>(data) {
-
-    fun onClick() {
-        DramasPlayPagerActivity.start(null)
-    }
+class ItemHomeDramaVm(data: DramaInfo?) : AppItemViewModel<DramaInfo>(data) {
 }

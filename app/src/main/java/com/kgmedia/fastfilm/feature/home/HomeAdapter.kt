@@ -6,11 +6,12 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.getVm
-import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import com.kgmedia.fastfilm.databinding.ItemHomeDramaBinding
+import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.nhsd.basic.item.BindingViewHolder
 
-class HomeAdapter() : PagingDataAdapter<HitRecommendInfo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class HomeAdapter() : PagingDataAdapter<DramaInfo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -28,7 +29,6 @@ class HomeAdapter() : PagingDataAdapter<HitRecommendInfo, RecyclerView.ViewHolde
         }
     }
 
-    var onAdapterItemClick: ((HitRecommendInfo?) -> Unit)? = null
 
     inner class ViewHolder(binding: ItemHomeDramaBinding) :
         BindingViewHolder<ItemHomeDramaBinding>(binding) {
@@ -37,7 +37,7 @@ class HomeAdapter() : PagingDataAdapter<HitRecommendInfo, RecyclerView.ViewHolde
             getItem(position)?.let { item ->
                 val transVM = binding.getVm(position, item, ItemHomeDramaVm::class.java).apply {
                     onItemClick.value = {
-                        onAdapterItemClick?.invoke(data.get())
+                        DramasPlayPagerActivity.start(null, position)
                     }
                 }
                 binding.item = transVM
@@ -48,17 +48,17 @@ class HomeAdapter() : PagingDataAdapter<HitRecommendInfo, RecyclerView.ViewHolde
 
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<HitRecommendInfo>() {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DramaInfo>() {
             override fun areItemsTheSame(
-                oldItem: HitRecommendInfo,
-                newItem: HitRecommendInfo
+                oldItem: DramaInfo,
+                newItem: DramaInfo
             ): Boolean {
                 return oldItem.hashCode() == newItem.hashCode()
             }
 
             override fun areContentsTheSame(
-                oldItem: HitRecommendInfo,
-                newItem: HitRecommendInfo
+                oldItem: DramaInfo,
+                newItem: DramaInfo
             ): Boolean {
                 return oldItem == newItem
             }

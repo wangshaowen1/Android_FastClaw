@@ -1,6 +1,8 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
 import android.os.Parcelable
+import com.kgmedia.fastfilm.common.ext.formatPlays
+import com.kgmedia.fastfilm.common.ext.toUnitText
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -32,6 +34,10 @@ class DramaInfo(
 
     fun getPlayUrl(index: Int = 0): String? {
         return workStoryItemList?.getOrNull(index)?.videoUrl
+    }
+
+    fun getFormatPlaycount(): String? {
+        return playCount?.toUnitText()
     }
 
     override fun toString(): String {

@@ -14,7 +14,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.home.data.HomePagingSource
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,11 +37,6 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
             }
         }
     }
-
-    val dataGet: Flow<PagingData<HitRecommendInfo>> = Pager(
-        config = PagingConfig(initialLoadSize = 20, pageSize = 20),
-        pagingSourceFactory = { HomePagingSource() }
-    ).flow.cachedIn(viewModelScope)
 
     // 1. 定义 UI 需要观察的数据流
     private val _feedFlow = MutableStateFlow<PagingData<DramaInfo>>(PagingData.empty())
