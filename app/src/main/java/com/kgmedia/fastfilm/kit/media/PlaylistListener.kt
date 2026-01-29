@@ -15,7 +15,7 @@
  */
 package com.kgmedia.fastfilm.kit.media
 
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 
 
 /**
@@ -38,7 +38,7 @@ interface PlaylistListener {
      *
      * @param tracks The new list of tracks in the playlist.
      */
-    fun onPlaylistChanged(tracks: List<TrackInfo?>?) {
+    fun onPlaylistChanged(tracks: List<DramaInfo?>?) {
         // Default implementation is empty.
     }
 
@@ -46,19 +46,19 @@ interface PlaylistListener {
      * Callback method called before a new track starts playing.
      * Returning false prevents the track from playing.
      *
-     * @param trackInfo The information about the track that is about to start.
+     * @param dramaInfo The information about the track that is about to start.
      * @return true to allow the track to play, false to prevent it.
      */
-    fun onTrackStart(trackInfo: TrackInfo?): Boolean {
+    fun onTrackStart(dramaInfo: DramaInfo?): Boolean {
         return true
     }
 
     /**
      * Callback method called when a new track begins playing.
      *
-     * @param trackInfo The information about the track that has started playing.
+     * @param dramaInfo The information about the track that has started playing.
      */
-    fun onTrackChanged(trackInfo: TrackInfo?) {
+    fun onTrackChanged(dramaInfo: DramaInfo?) {
         // Default implementation is empty.
     }
 

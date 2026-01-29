@@ -8,7 +8,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.exoplayer.ExoPlayer
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.widget.CoverPlayerView
 import kotlinx.coroutines.CoroutineScope
@@ -81,11 +81,11 @@ class FeedPlayerManager(
         })
     }
 
-    fun attachAndPlay(track: TrackInfo, coverPlayerView: CoverPlayerView) {
+    fun attachAndPlay(track: DramaInfo, coverPlayerView: CoverPlayerView) {
         //再次强制同步状态，确保切视频瞬间图标是隐藏的
         _isPlayingFlow.value = true
         // 防止重复 attach 同一个视频导致画面闪烁
-        if (currentPlayingId == track.trackId && currentCoverPlayerView == coverPlayerView) {
+        if (currentPlayingId == track.id && currentCoverPlayerView == coverPlayerView) {
             if (!exoPlayer.isPlaying && !isUserPaused) {
                 exoPlayer.play()
             }
@@ -94,7 +94,7 @@ class FeedPlayerManager(
 
         isSeeking = false
         isUserPaused = false // 切视频重置暂停状态
-        currentPlayingId = track.trackId
+        currentPlayingId = track.id
 
         // 解绑旧 View
         if (currentCoverPlayerView != null && currentCoverPlayerView != coverPlayerView) {
@@ -106,7 +106,7 @@ class FeedPlayerManager(
         coverPlayerView.setTrack(track)
         coverPlayerView.setPlayer(exoPlayer)
 
-        val videoUrl = track.playUrl ?: return
+        val videoUrl = track.getPlayUrl() ?: return
 
         // [拓展] 构建带字幕的 MediaItem
         val mediaItem = buildMediaItem(track, videoUrl)
@@ -122,7 +122,7 @@ class FeedPlayerManager(
     /**
      * [拓展点] 字幕/多音轨构建逻辑
      */
-    private fun buildMediaItem(track: TrackInfo, url: String): MediaItem {
+    private fun buildMediaItem(track: DramaInfo, url: String): MediaItem {
         val builder = MediaItem.Builder().setUri(url)
 
         // 示例：如果未来 TrackInfo 有 subtitleUrl 字段

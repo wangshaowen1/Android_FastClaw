@@ -19,7 +19,7 @@
 
         <com.kgmedia.fastfilm.widget.CoverPlayerView
             android:id="@+id/playerView"
-            setCoverUrl="@{item.data.musicCoverUrl}"
+            setCoverUrl="@{item.data.videoCoverUrl}"
             track="@{item.data}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -64,14 +64,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"
             android:layout_marginBottom="@dimen/spacing_xs"
-            android:text="@{item.data.trackTitle}"
+            android:text="@{item.data.workName}"
             android:textColor="?attr/textColor1"
             app:layout_constraintBottom_toTopOf="@id/tvContent"
             tools:text="代码纪元：觉醒指令" />
 
         <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
             android:id="@+id/tvContent"
-            expandContent="@{item.data.trackTitle}"
+            expandContent="@{item.data.workName}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"

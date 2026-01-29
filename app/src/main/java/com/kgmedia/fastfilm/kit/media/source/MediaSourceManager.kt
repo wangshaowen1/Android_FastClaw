@@ -2,7 +2,7 @@ package com.kgmedia.fastfilm.kit.media.source
 
 import com.nhsd.basic.utils.Logger
 import com.kgmedia.fastfilm.core.network.apis.ApiException
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import com.kgmedia.fastfilm.common.PagedProxy
 import com.kgmedia.fastfilm.common.ext.ioScope
 import com.kgmedia.fastfilm.kit.media.PlaylistListener
@@ -28,7 +28,6 @@ import kotlin.collections.map
 import kotlin.collections.plus
 import kotlin.collections.toMutableList
 import kotlin.collections.toSet
-import kotlin.compareTo
 import kotlin.jvm.javaClass
 import kotlin.let
 import kotlin.run
@@ -71,30 +70,30 @@ class MediaSourceManager : PlaylistListener {
     private var lastFailedPage: Int = -1
 
     // 数据流
-    private val _allLoadedMedias = MutableStateFlow<List<TrackInfo>>(emptyList())
-    val allLoadedMedias: StateFlow<List<TrackInfo>> = _allLoadedMedias.asStateFlow()
+    private val _allLoadedMedias = MutableStateFlow<List<DramaInfo>>(emptyList())
+    val allLoadedMedias: StateFlow<List<DramaInfo>> = _allLoadedMedias.asStateFlow()
 
     // replay 必须为 0，防止 PagingSource 读到上一页的旧数据
     // extraBufferCapacity = 1 允许发射者在没有订阅者时缓存 1 条数据（避免挂起）
-    private val _newPageDataFlow = MutableSharedFlow<List<TrackInfo>>(
+    private val _newPageDataFlow = MutableSharedFlow<List<DramaInfo>>(
         replay = 0,
         extraBufferCapacity = 1
     )
-    val newPageDataFlow: SharedFlow<List<TrackInfo>> = _newPageDataFlow.asSharedFlow()
+    val newPageDataFlow: SharedFlow<List<DramaInfo>> = _newPageDataFlow.asSharedFlow()
 
     // 错误流
     private val _loadErrorFlow = MutableSharedFlow<Throwable>(replay = 0)
     val loadErrorFlow: SharedFlow<Throwable> = _loadErrorFlow.asSharedFlow()
 
-    private val _preparedMediaDetails = MutableStateFlow<Map<String, TrackInfo>>(emptyMap())
+    private val _preparedMediaDetails = MutableStateFlow<Map<String, DramaInfo>>(emptyMap())
 
-    private var selectionDialogData: List<TrackInfo> = emptyList()
+    private var selectionDialogData: List<DramaInfo> = emptyList()
 
     var mediaSource: TracksPageSource? = null
 
     var trackListPlayer: PlaylistPlayer? = null
-    private val _currentPreparingMedia = MutableSharedFlow<TrackInfo>()
-    val currentPreparingMedia: SharedFlow<TrackInfo> = _currentPreparingMedia.asSharedFlow()
+    private val _currentPreparingMedia = MutableSharedFlow<DramaInfo>()
+    val currentPreparingMedia: SharedFlow<DramaInfo> = _currentPreparingMedia.asSharedFlow()
     private val proxy = PagedProxy()
 
     fun hasNextPage(): Boolean = proxy.hasNextPage()
@@ -114,7 +113,7 @@ class MediaSourceManager : PlaylistListener {
      * 设置初始媒体数据
      */
     fun setInitialMedias(
-        initialMedias: List<TrackInfo>?,
+        initialMedias: List<DramaInfo>?,
         initialMediasIsCache: Boolean = false
     ): MediaSourceManager {
         initialMedias?.let {
@@ -208,11 +207,11 @@ class MediaSourceManager : PlaylistListener {
         }
     }
 
-    fun mergeSelectionData(newData: List<TrackInfo>) {
+    fun mergeSelectionData(newData: List<DramaInfo>) {
         selectionDialogData = newData
         val currentAllData = _allLoadedMedias.value.toMutableList()
         val newItems = newData.filterNot { newItem ->
-            currentAllData.any { it.trackId == newItem.trackId }
+            currentAllData.any { it.id == newItem.id }
         }
 
         if (newItems.isNotEmpty()) {
@@ -226,12 +225,12 @@ class MediaSourceManager : PlaylistListener {
         }
     }
 
-    fun getSelectionDialogInitialData(): List<TrackInfo> {
+    fun getSelectionDialogInitialData(): List<DramaInfo> {
         return selectionDialogData.ifEmpty { _allLoadedMedias.value }
     }
 
-    override fun onTrackChanged(trackInfo: TrackInfo?) {
-        super.onTrackChanged(trackInfo)
+    override fun onTrackChanged(dramaInfo: DramaInfo?) {
+        super.onTrackChanged(dramaInfo)
         checkAndLoadIfNeeded()
     }
 
@@ -273,12 +272,12 @@ class MediaSourceManager : PlaylistListener {
         return true
     }
 
-    private suspend fun processLoadedItems(currentPage: Int, items: List<TrackInfo?>) {
+    private suspend fun processLoadedItems(currentPage: Int, items: List<DramaInfo?>) {
         val validItems = items.filterNotNull()
-        val existingIds = _allLoadedMedias.value.map { it.trackId }.toSet()
+        val existingIds = _allLoadedMedias.value.map { it.id }.toSet()
         val newItems = validItems.filterNot { item ->
-            item.trackId in existingIds
-        }.distinctBy { it.trackId }
+            item.id in existingIds
+        }.distinctBy { it.id }
         Logger.i(LOG_TAG, "加载条数=${validItems.size}, 去重后=${newItems.size}")
         if (newItems.isEmpty() && proxy.hasNextPage()) {
             Logger.i(LOG_TAG, "页面无新数据，尝试下一页")
@@ -294,7 +293,7 @@ class MediaSourceManager : PlaylistListener {
     /**
      * 更新所有已加载的数据
      */
-    private fun updateAllLoadedMedias(newData: List<TrackInfo>) {
+    private fun updateAllLoadedMedias(newData: List<DramaInfo>) {
         _allLoadedMedias.value = newData
     }
 

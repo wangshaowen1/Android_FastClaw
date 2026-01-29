@@ -67,6 +67,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.drake.spannable.replaceSpan
 import com.drake.spannable.span.CenterImageSpan
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.LoadState
@@ -84,6 +85,7 @@ import com.kgmedia.fastfilm.common.utils.BlurBackgroundOptionsBuilder
 import com.kgmedia.fastfilm.common.utils.ImageColorExtractionUtils
 import com.kgmedia.fastfilm.common.utils.setBlurBackground
 import com.kgmedia.fastfilm.widget.CounterInputLayout
+import com.kgmedia.fastfilm.widget.CoverPlayerView
 import com.kgmedia.fastfilm.widget.DecimalInputFilter
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.kgmedia.fastfilm.widget.MarqueeTextView
@@ -94,8 +96,6 @@ import com.kgmedia.fastfilm.widget.ViewFlipperWithListener
 import com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
 import com.kgmedia.fastfilm.widget.htmlview.HtmlStyleParser
 import com.kgmedia.fastfilm.widget.htmlview.HtmlStyleParser.ImgAlignmentEnum
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.kgmedia.fastfilm.widget.CoverPlayerView
 import com.kuaige.imageloader.GlideApp
 import com.kuaige.imageloader.GlideImageLoader
 import com.kuaige.imageloader.transform.BlurTransformation
@@ -1628,6 +1628,13 @@ fun setInputDecimal(editText: EditText, decimal: Boolean, maxIntegerDigits: Int,
 fun blurWith(blurView: BlurView, targetId: Int) {
     (blurView.parent as? View)?.findViewById<BlurTarget>(targetId)?.let {
         blurView.setupWith(it).setBlurRadius(5f) // 初始模糊半径（0-25）
+    }
+}
+
+@BindingAdapter("foregroundLevel")
+fun foregroundLevel(view: View, level: Int?) {
+    if (level != null) {
+        view.foreground.level = level
     }
 }
 

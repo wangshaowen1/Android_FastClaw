@@ -1,20 +1,13 @@
 package com.kgmedia.fastfilm.feature.play
 
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.databinding.ObservableLong
-import androidx.media3.common.Player
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
-import com.kgmedia.fastfilm.common.ext.formatMoney
-import com.kgmedia.fastfilm.common.utils.DateUtil
-import com.kgmedia.fastfilm.core.network.apis.entity.ProfitDetailInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
-import com.kgmedia.fastfilm.widget.PlayerSeekbar
-import com.nhsd.basic.utils.Logger
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 
 
-class ItemVideoFeedVm(info: TrackInfo?) :
-    AppItemViewModel<TrackInfo>(info) {
+class ItemVideoFeedVm(info: DramaInfo?) :
+    AppItemViewModel<DramaInfo>(info) {
 
     companion object{
         const val LOG_TAG = "ItemVideoFeedVm"

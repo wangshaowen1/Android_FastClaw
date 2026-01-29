@@ -335,6 +335,7 @@
             android:name=".feature.creator.character.CharacterHistoryActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".feature.play.DramasPlayPagerActivity" android:screenOrientation="portrait" />
+        <activity android:name=".feature.editor.info.DramaInfoEditActivity" />
     </application>
     <queries>
         <intent>

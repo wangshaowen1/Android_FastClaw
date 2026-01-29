@@ -18,7 +18,7 @@ package com.kgmedia.fastfilm.kit.media;
 
 import androidx.annotation.Nullable;
 
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo;
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo;
 
 import java.util.List;
 
@@ -68,18 +68,18 @@ public interface PlaylistPlayer {
      *
      * @param playlist The list of tracks to set as the playlist.
      */
-    void setPlaylist(List<TrackInfo> playlist);
+    void setPlaylist(List<DramaInfo> playlist);
 
-    void addToPlaylist(TrackInfo trackInfo);
+    void addToPlaylist(DramaInfo dramaInfo);
 
-    void addToPlaylist(List<TrackInfo> playlist);
+    void addToPlaylist(List<DramaInfo> playlist);
 
     /**
      * Retrieves the current playlist.
      *
      * @return The current playlist.
      */
-    List<TrackInfo> getPlaylist();
+    List<DramaInfo> getPlaylist();
 
     /**
      * Starts playing the current track in the playlist.
@@ -92,7 +92,7 @@ public interface PlaylistPlayer {
      * @return The currently playing track, or null if no track is playing.
      */
     @Nullable
-    TrackInfo currentTrack();
+    DramaInfo currentTrack();
     /**
      * Gets the index of the track that is currently playing in the playlist.
      *
@@ -202,10 +202,10 @@ public interface PlaylistPlayer {
     /**
      * Checks if the specified track is in the playlist.
      *
-     * @param trackInfo The track information to check.
+     * @param dramaInfo The track information to check.
      * @return true if the track is in the playlist, false otherwise.
      */
-    boolean inPlayList(TrackInfo trackInfo);
+    boolean inPlayList(DramaInfo dramaInfo);
     /**
      * Checks if the entire playlist has finished playback.
      * Returns true if:
