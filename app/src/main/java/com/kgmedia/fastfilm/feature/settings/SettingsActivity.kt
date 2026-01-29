@@ -154,6 +154,14 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                     "服务协议"
                 )
             }
+            R.id.sll_filing_number -> {
+                //备案号
+                SimpleBrowserActivity.launch(
+                    this,
+                    Config.get().appConfig.beianNoJumpUrl,
+                    "备案号"
+                )
+            }
         }
     }
 }

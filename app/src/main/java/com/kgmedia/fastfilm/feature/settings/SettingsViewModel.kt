@@ -6,6 +6,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
@@ -32,6 +33,8 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
     val debugIp = ObservableField<String>()
 
     var phone = ObservableField(User.get().phoneBind)
+
+    val beiAn by lazy { Config.get().appConfig.beianNo }
 
     /**
      * 退出登录
