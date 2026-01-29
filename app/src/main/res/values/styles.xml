@@ -33,6 +33,7 @@
 
         <item name="themeColor1">@color/theme_color_1_dark</item>
         <item name="themeColor2">@color/theme_color_2_dark</item>
+        <item name="themeColor3">@color/theme_color_3_dark</item>
 
         <item name="funcColorSuccess">@color/func_success_dark</item>
         <item name="funcColorWarning">@color/func_warning_dark</item>

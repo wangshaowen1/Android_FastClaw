@@ -9,6 +9,8 @@
     <!-- 主题色2 7b9ffc 20-->
     <attr name="themeColor2" format="color" />
 
+    <attr name="themeColor3" format="color" />
+
     <!-- 功能色/成功 27c346-->
     <attr name="funcColorSuccess" format="color" />
     <!-- 功能色/警示 ff9626-->

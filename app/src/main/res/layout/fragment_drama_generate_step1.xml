@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.creator.generate.DramaGenerateStep1ViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ViewAnimator
+            displayChild="@{layout.displayChild}"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="20dp">
+
+                <TextView
+                    style="@style/Text14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_l"
+                    android:text="故事简介"
+                    android:textColor="?attr/textColor1" />
+
+                <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
+                    android:id="@+id/expandTextView"
+                    expandContent="@{layout.MContent}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/spacing_l"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:textColor="?attr/textColor3"
+                    android:textSize="14sp"
+                    app:collapseLines="2"
+                    app:expandDrawable="@drawable/icon_edit_full_gray16"
+                    app:expandTipLabel=""
+                    app:expandable="false"
+                    app:tipPosition="align_right" />
+
+                <TextView
+                    style="@style/Text14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_l"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:text="目录"
+                    android:textColor="?attr/textColor1" />
+
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nsv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:fillViewport="true"
+                    android:overScrollMode="never"
+                    android:scrollbars="none">
+
+                    <TextView
+                        android:id="@+id/tvSSEContent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:hint="正在为你加载故事梗概，请稍候..."
+                        android:text="@{layout.MSSEContent}"
+                        android:textColor="@color/textColorPrimary"
+                        android:textColorHint="@color/color_50_121212"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableTop="@drawable/ic_loading_fail"
+                    android:drawablePadding="@dimen/spacing_l"
+                    android:gravity="center"
+                    android:text="生成失败"
+                    android:textColor="?attr/textColor4"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </ViewAnimator>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:paddingHorizontal="@dimen/spacing_l"
+            android:paddingVertical="@dimen/spacing_m">
+
+            <Button
+                style="@style/Button.Bold"
+                android:layout_width="match_parent"
+                android:text="下一步：创建剧本" />
+        </FrameLayout>
+    </LinearLayout>
+
+
+</layout>

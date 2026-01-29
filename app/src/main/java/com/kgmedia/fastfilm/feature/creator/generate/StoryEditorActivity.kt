@@ -88,7 +88,7 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
                 supportFragmentManager.beginTransaction().replace(R.id.container, CharacterFragment.newInstance(mRealVM.dramaId))
                     .commitAllowingStateLoss()
             } else {
-                supportFragmentManager.beginTransaction().replace(R.id.container, StoryBoardFragment.newInstance())
+                supportFragmentManager.beginTransaction().replace(R.id.container, DramaGenerateStep1Fragment.newInstance())
                     .commitAllowingStateLoss()
             }
         }
