@@ -104,13 +104,6 @@ class ContinueWritingActivity :
                 }
             }
 
-            R.id.btnVip -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
-                MembershipBenefitsActivity.start(this, MembershipBenefitsActivity.Scene.InputMaxLimit)
-            }
-
             R.id.btnNext -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
