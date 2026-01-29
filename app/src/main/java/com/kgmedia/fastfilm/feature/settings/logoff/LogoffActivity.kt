@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.databinding.ActivityCloseAccountBinding
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.showToast
 
 /**
  * *****************************************
@@ -21,7 +22,7 @@ class LogoffActivity :
     BaseViewModelActivity<ActivityCloseAccountBinding, LogoffViewModel>() {
     companion object {
         fun start(activity: Activity?) {
-            activity?:return
+            activity ?: return
             val intent = Intent(activity, LogoffActivity::class.java)
             activity.startActivity(intent)
         }
@@ -30,7 +31,26 @@ class LogoffActivity :
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         if (view?.id == R.id.btnCancel) {
-            cancelLogoff()
+            when (mRealVM.removeAccountState.get()) {
+                LogoffViewModel.REMOVE_ACCOUNT_STATE_NOT_APPLY -> {}
+                LogoffViewModel.REMOVE_ACCOUNT_STATE_APPLY -> {
+                    if (mRealVM.checkedPolicy.get()==false){
+                        "如需确认注销，请先阅读并同意注销说明".showToast()
+                        return
+                    }
+                    showConfirmPrompt(
+                        title = "是否注销账号",
+                        cancelText = "取消",
+                        confirmText = "确定"
+                    ) {
+                        mRealVM.commitLogoff("")
+                    }
+                }
+
+                LogoffViewModel.REMOVE_ACCOUNT_STATE_APPLY_NOT_CLICK -> {
+                    cancelLogoff()
+                }
+            }
         }
     }
 
@@ -38,8 +58,8 @@ class LogoffActivity :
      * 取消注销弹窗
      */
     private fun cancelLogoff() {
-        showConfirmPrompt (tip = "是否确认取消注销申请", cancelText = "暂不"){
-                mRealVM.cancelLogoff()
+        showConfirmPrompt(tip = "是否确认取消注销申请", cancelText = "暂不") {
+            mRealVM.cancelLogoff()
         }
     }
 }

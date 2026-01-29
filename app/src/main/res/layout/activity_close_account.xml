@@ -9,6 +9,8 @@
             name="layout"
             type="com.kgmedia.fastfilm.feature.settings.logoff.LogoffViewModel" />
 
+        <import type="com.kgmedia.fastfilm.feature.settings.logoff.LogoffViewModel" />
+
         <import type="android.view.View" />
     </data>
 
@@ -62,7 +64,7 @@
             android:gravity="center"
             android:onClick="@{(v)->layout.checkPolicy()}"
             android:orientation="horizontal"
-            android:visibility="@{layout.removeAccountState==0?View.VISIBLE:View.GONE}">
+            android:visibility="@{layout.removeAccountState==LogoffViewModel.REMOVE_ACCOUNT_STATE_APPLY_NOT_CLICK?View.GONE:View.VISIBLE}">
 
             <ImageView
                 android:layout_width="16dp"
@@ -89,13 +91,14 @@
         </LinearLayout>
 
         <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/spacing_l"
             android:layout_marginTop="18dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:visibility="@{layout.removeAccountState==0?View.VISIBLE:View.GONE}">
+            android:visibility="gone">
 
             <TextView
                 style="@style/Text16"
@@ -121,7 +124,6 @@
                 android:gravity="center"
                 android:text="再想想"
                 android:textColor="?attr/textColor1" />
-
         </LinearLayout>
 
         <TextView
@@ -133,11 +135,12 @@
             android:layout_marginHorizontal="@dimen/spacing_l"
             android:layout_marginTop="18dp"
             android:layout_marginBottom="30dp"
-            android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
+            android:background="@{layout.removeAccountState==LogoffViewModel.REMOVE_ACCOUNT_STATE_NOT_APPLY?@drawable/gradient_left_50_73b0f8_right_50_7567f0_r100:layout.removeAccountState==LogoffViewModel.REMOVE_ACCOUNT_STATE_APPLY?@drawable/gradient_left_73b0f8_right_7567f0_r100:@drawable/btn_common_cancel}"
             android:gravity="center"
-            android:text="申请注销中"
+            android:text="@{layout.submitApplyText}"
             android:textColor="?attr/textColor1"
-            android:visibility="@{layout.removeAccountState==1?View.VISIBLE:View.GONE}"
+            tools:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
+            tools:text="申请注销中"
             tools:visibility="visible" />
     </LinearLayout>
 </layout>

@@ -28,6 +28,9 @@
         <item name="preview.bottomToolbar.apply.textColor">
             @color/zhihu_preview_bottom_toolbar_apply
         </item>
+
+        <item name="isLightTheme">false</item>
+
         <item name="themeColor1">@color/theme_color_1_dark</item>
         <item name="themeColor2">@color/theme_color_2_dark</item>
 

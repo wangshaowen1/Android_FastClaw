@@ -24,7 +24,9 @@ import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.actionsheet.ActionSheetHelper
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -65,14 +67,11 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 }.show(supportFragmentManager)
             }
         }
-
     }
 
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
-
         when (view?.id) {
-
             R.id.sll_personal_information -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
@@ -98,6 +97,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
             }
 
             R.id.sll_cancel_the_account -> {
+                //注销账号
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
@@ -145,7 +145,8 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                     "隐私政策"
                 )
             }
-            R.id.ll_terms_service->{
+
+            R.id.ll_terms_service -> {
                 //服务协议
                 SimpleBrowserActivity.launch(
                     this,

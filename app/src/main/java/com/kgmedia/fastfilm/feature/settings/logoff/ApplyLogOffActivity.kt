@@ -28,7 +28,6 @@ class ApplyLogOffActivity : BaseViewModelActivity<ActivityApplyLogOffBinding, Ap
         showConfirmPrompt(title = "是否确认提交申请", cancelText = "暂不", confirmText = "确定") {
             mRealVM.commitLogoff(content)
         }
-
     }
 
 }
