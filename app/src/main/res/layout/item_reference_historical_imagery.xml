@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.creator.style.ItemCreationStyleVm" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        android:layout_width="80dp"
+        android:layout_height="107dp"
+        android:layout_marginEnd="@dimen/spacing_s"
+        android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+        app:borderEndColor="@color/gradient_btn_end_dark"
+        app:borderStartColor="@color/gradient_btn_start_dark"
+        app:borderWidth="1.5dp"
+        app:roundCornerRadius="@dimen/radius_m"
+        app:showBorder="@{item.checked}">
+
+        <com.kgmedia.fastfilm.widget.CropShapeImageView
+            loadThumbnailUri="@{item.data.styleCoverUrl}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:shapeAppearanceOverlay="@style/roundStyle_r8"
+            tools:srcCompat="@mipmap/ic_launcher" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="6dp"
+            android:src="@drawable/icon_choose_checked"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+</layout>
