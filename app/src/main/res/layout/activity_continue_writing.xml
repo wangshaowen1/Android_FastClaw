@@ -25,42 +25,41 @@
             app:toolbar="@{layout.mToolbarVM}" />
 
         <TextView
+            style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            android:text="前情提要："
-            android:textColor="@color/textColorPrimary"
-            android:textSize="14sp"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:text="上级概要"
+            android:textColor="?attr/textColor1"
             android:textStyle="bold" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="18dp">
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="@dimen/spacing_l">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_avatar"
                 loadHQThumbnailUri="@{layout.info.dramasCoverUrl}"
-                android:layout_width="60dp"
-                android:layout_height="80dp"
+                android:layout_width="78dp"
+                android:layout_height="104dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="@style/roundStyle_r6" />
+                app:shapeAppearance="@style/roundStyle_r8" />
 
             <TextView
                 android:id="@+id/tv_name"
+                style="@style/Text16"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="@dimen/spacing_m"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{`第`+layout.info.workNo+`章 | `+layout.info.dramasName}"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                android:text="@{`第`+layout.info.workNo+`集 | `+layout.info.dramasName}"
+                android:textColor="?attr/textColor1"
                 app:layout_constraintBottom_toTopOf="@id/tv_desc"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -71,14 +70,14 @@
 
             <TextView
                 android:id="@+id/tv_desc"
+                style="@style/Text12"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/spacing_s"
                 android:ellipsize="end"
                 android:maxLines="4"
                 android:text="@{layout.info.scriptIntro}"
-                android:textColor="@color/color_50_121212"
-                android:textSize="10sp"
+                android:textColor="?attr/textColor4"
                 app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_name"
@@ -86,120 +85,147 @@
                 tools:text="上学的时候黄元元是那种特别讨厌的同学，尤其是在接老师下茬这一点。他坐在我右边，阳光茬这一点。他坐在我右边，阳光茬这一点。他坐在我右边，阳光茬这一点。他坐在我右边..." />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
-            android:id="@+id/inputLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="22dp"
-            android:background="@drawable/bg_ffffff_tr16"
-            android:orientation="vertical">
+        <TextView
+            style="@style/Text14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_l"
+            android:layout_marginTop="@dimen/spacing_xl"
+            android:text="续创剧集"
+            android:textColor="?attr/textColor1"
+            android:textStyle="bold" />
 
-            <com.kgmedia.fastfilm.widget.EdgeTransparentView
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:layout_weight="1"
+            android:background="@drawable/bg_fill_color_1_r8">
+
+            <com.kgmedia.fastfilm.widget.CounterInputLayout
+                android:id="@+id/inputView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="4dp"
-                android:layout_weight="1"
-                app:edge_position="bottom"
-                app:edge_width="30dp">
-
-                <com.kgmedia.fastfilm.widget.CounterInputLayout
-                    android:id="@+id/inputView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@null"
-                    android:focusable="true"
-                    setEnabled="@{!layout.isSSEStreaming}"
-                    android:focusableInTouchMode="true"
-                    android:gravity="top|start"
-                    app:inputCounterBottomMargin="4dp"
-                    app:inputCounterGravity="right"
-                    app:inputCounterRightMargin="0dp"
-                    app:inputCounterTextColor="@color/color_40_121212"
-                    app:inputCounterTextSize="12sp"
-                    app:inputCounterVisible="false"
-                    app:inputHint="输入你想要续写的故事想法，也可以让AI帮你丰富内容哦~"
-                    app:inputHorizontalPadding="16dp"
-                    app:inputTextColor="@color/textColorPrimary"
-                    app:inputTextColorHint="@color/color_30_121212"
-                    app:inputTextSize="15sp"
-                    app:inputVerticalPadding="12dp"
-                    app:maxLength="@{layout.maxInputLength}" />
-            </com.kgmedia.fastfilm.widget.EdgeTransparentView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginHorizontal="16dp">
-
-                <TextView
-                    android:id="@+id/btnOptimize"
-                    singleClick="@{layout.clickHandler::onClick}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/gradient_button_bg_r50"
-                    android:drawableStart="@drawable/ic_optimize36"
-                    android:drawablePadding="4dp"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
-                    android:text="帮我续写"
-                    android:textColor="@color/color_619dff"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <androidx.legacy.widget.Space
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{layout.input.length()+`/`+layout.maxInputLength}"
-                    android:textColor="@color/color_40_121212"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/btnVip"
-                    singleClick="@{layout.clickHandler::onClick}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:background="@drawable/gradient_button_bg_2_r50"
-                    android:drawableStart="@drawable/ic_vip54"
-                    android:drawablePadding="4dp"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="4dp"
-                    android:text="提高字数限制"
-                    android:textColor="@color/color_ff7300"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:visibility="@{!layout.isVip?View.VISIBLE:View.GONE}" />
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btnNext"
-                style="@style/Button.Bold"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginHorizontal="32dp"
-                android:layout_marginTop="32dp"
-                android:alpha="@{!layout.isSSEStreaming&amp;&amp;layout.input.length()>layout.minInputLength?1f:0.5f}"
-                android:text="下一步" />
+                android:layout_marginBottom="@dimen/spacing_m"
+                android:background="@null"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="top|start"
+                app:hint="请输入您的原著内容，「快出片」将严格基于你提供的章节内容生成漫剧，不会新增剧情"
+                app:inputCounterGravity="right"
+                app:inputCounterRightMargin="0dp"
+                app:inputCounterTextColor="?attr/textColor4"
+                app:inputCounterTextSize="12sp"
+                app:inputCounterVisible="false"
+                app:inputHorizontalPadding="@dimen/spacing_m"
+                app:inputTextColor="?attr/textColor2"
+                app:inputTextColorHint="?attr/textColor4"
+                app:inputTextSize="14sp"
+                app:inputVerticalPadding="@dimen/spacing_m"
+                app:layout_constraintBottom_toTopOf="@id/llBottom"
+                app:layout_constraintTop_toTopOf="parent"
+                app:maxLength="@{layout.maxInputLength}" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="20dp"
-                android:text="续写故事，将保持之前的风格与画幅，确保作品风格一致。"
-                android:textColor="@color/color_50_121212"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:layout_gravity="center"
+                android:drawableTop="@drawable/ic_loading_fail"
+                android:drawablePadding="@dimen/spacing_l"
+                android:gravity="center"
+                android:text="生成失败"
+                android:textColor="?attr/textColor4"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/llBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@id/tvContentLength"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvContentLength">
+
+                <TextView
+                    android:id="@+id/btnPaste"
+                    style="@style/Text12"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:background="@drawable/bg_fill_color_3_r50"
+                    android:drawablePadding="@dimen/spacing_xs"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/spacing_s"
+                    android:paddingVertical="@dimen/spacing_xs"
+                    android:text="重新生成"
+                    android:textColor="?attr/textColor2"
+                    app:drawableStartCompat="@drawable/icon_refresh_1_12" />
+
+                <TextView
+                    android:id="@+id/btn_continue_writing"
+                    style="@style/Text12"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:background="@drawable/bg_fill_color_3_r50"
+                    android:drawablePadding="@dimen/spacing_xs"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/spacing_s"
+                    android:paddingVertical="@dimen/spacing_xs"
+                    android:text="帮我扩写"
+                    android:textColor="?attr/textColor2"
+                    app:drawableStartCompat="@drawable/icon_optimize12" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="18dp"
+                    android:layout_marginHorizontal="@dimen/spacing_s"
+                    android:background="?attr/borderColor2"
+                    android:visibility="@{layout.input.length()>0?View.VISIBLE:View.GONE}" />
+
+                <ImageView
+                    android:id="@+id/btnDelete"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="4dp"
+                    android:src="@drawable/icon_delete"
+                    android:visibility="@{layout.input.length()>0?View.VISIBLE:View.GONE}" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvContentLength"
+                style="@style/Text12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_m"
+                android:layout_marginBottom="@dimen/spacing_l"
+                android:text="@{layout.input.length()+`/`+layout.maxInputLength}"
+                android:textColor="?attr/textColor4"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="0/5000" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btnNext"
+            style="@style/Button.Bold"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="38dp"
+            android:layout_marginBottom="30dp"
+            android:text="下一步" />
     </LinearLayout>
 </layout>

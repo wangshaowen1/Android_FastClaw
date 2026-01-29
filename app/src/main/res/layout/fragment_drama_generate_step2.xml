@@ -21,13 +21,13 @@
         android:orientation="vertical">
 
         <TextView
-            style="@style/Text14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_l"
-            android:layout_marginTop="20dp"
-            android:text="剧本内容"
-            android:textColor="?attr/textColor1" />
+        style="@style/Text14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_l"
+        android:layout_marginTop="20dp"
+        android:text="剧本内容"
+        android:textColor="?attr/textColor1" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -46,11 +46,10 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:gravity="top|start"
-                app:hint="@{layout.hint}"
-                app:inputCounterBottomMargin="4dp"
+                app:hint=""
                 app:inputCounterGravity="right"
                 app:inputCounterRightMargin="0dp"
-                app:inputCounterTextColor="@color/color_40_121212"
+                app:inputCounterTextColor="?attr/textColor4"
                 app:inputCounterTextSize="12sp"
                 app:inputCounterVisible="false"
                 app:inputHorizontalPadding="@dimen/spacing_m"
