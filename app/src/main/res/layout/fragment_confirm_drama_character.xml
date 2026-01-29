@@ -28,9 +28,6 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <include
-                    layout="@layout/layout_story_board_header"
-                    app:step="@{`2`}" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

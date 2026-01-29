@@ -85,7 +85,7 @@
             app:inputTextColorHint="?attr/textColor4"
             app:inputTextSize="14sp"
             app:inputVerticalPadding="@dimen/spacing_m"
-            app:maxLength="20" />
+            app:inputMaxLength="20" />
 
         <TextView
             style="@style/Text14"
@@ -116,7 +116,7 @@
             app:inputTextColorHint="?attr/textColor4"
             app:inputTextSize="14sp"
             app:inputVerticalPadding="@dimen/spacing_m"
-            app:maxLength="5000" />
+            app:inputMaxLength="5000" />
 
         <Button
             android:id="@+id/btnNext"

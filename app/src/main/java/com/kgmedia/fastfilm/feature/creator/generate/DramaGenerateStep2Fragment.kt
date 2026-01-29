@@ -48,11 +48,11 @@ class DramaGenerateStep2Fragment :
             }
         }
         // 在文本更新时自动滚动到底部
-        binding.tvSSEContent.doAfterTextChanged {
-            binding.nsv.postDelayed({
-                bindingNullable?.nsv?.fullScroll(View.FOCUS_DOWN)
-            }, 100)
-        }
+//        binding.tvSSEContent.doAfterTextChanged {
+//            binding.nsv.postDelayed({
+//                bindingNullable?.nsv?.fullScroll(View.FOCUS_DOWN)
+//            }, 100)
+//        }
 
         mRealVM.dramaId.observe(this) {
             hostVm?.backWarning = false
@@ -60,17 +60,6 @@ class DramaGenerateStep2Fragment :
         }
         mRealVM.mDramaName.observe(this) {
             hostVm?.title?.value = it
-        }
-
-
-        binding.expandTextView.setOnSingleClickListener {
-            mRealVM.mContent.get()?.let {
-                StoryOutlineEditorDialog.newInstance(mRealVM.dramaId.value, mRealVM.mContent.get()).apply {
-                    onSuccess = { content ->
-//                        this@DramaGenerateStep1Fragment.mRealVM.refreshDramaContent(content)
-                    }
-                }.show(childFragmentManager)
-            }
         }
     }
 }

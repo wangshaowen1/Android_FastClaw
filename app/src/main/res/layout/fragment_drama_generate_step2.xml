@@ -46,7 +46,6 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:gravity="top|start"
-                app:hint=""
                 app:inputCounterGravity="right"
                 app:inputCounterRightMargin="0dp"
                 app:inputCounterTextColor="?attr/textColor4"

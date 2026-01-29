@@ -63,7 +63,7 @@ class FeedListController(
         // 预加载下一条
         if (position + 1 < adapter.itemCount) {
             val nextItem = adapter.peek(position + 1)
-            nextItem?.playUrl?.let { playerManager.preload(it) }
+            nextItem?.getPlayUrl()?.let { playerManager.preload(it) }
         }
     }
 

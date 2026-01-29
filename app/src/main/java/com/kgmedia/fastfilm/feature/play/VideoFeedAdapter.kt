@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.kgmedia.fastfilm.common.ext.getVm
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import com.kgmedia.fastfilm.databinding.ItemVideoFeedBinding
 import com.kgmedia.fastfilm.widget.PlayerSeekbar
 import com.nhsd.basic.item.BindingViewHolder
 
 class VideoFeedAdapter(private val interactionListener: InteractionListener) :
-    PagingDataAdapter<TrackInfo, VideoFeedAdapter.VideoViewHolder>(DIFF_CALLBACK) {
+    PagingDataAdapter<DramaInfo, VideoFeedAdapter.VideoViewHolder>(DIFF_CALLBACK) {
 
     // 定义交互回调
     interface InteractionListener {
@@ -74,7 +74,7 @@ class VideoFeedAdapter(private val interactionListener: InteractionListener) :
                 // [补充] 初始设置数据给 PlayerView，防止 DataBinding 延迟
                 binding.playerView.setTrack(item)
                 binding.seekbar.currentPosition = 0
-                binding.seekbar.duration = item.duration ?: 0
+                binding.seekbar.duration = item.getDuring() ?: 0
                 binding.btnPause.visibility = View.GONE
             }
         }
@@ -93,9 +93,9 @@ class VideoFeedAdapter(private val interactionListener: InteractionListener) :
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<TrackInfo>() {
-            override fun areItemsTheSame(oldItem: TrackInfo, newItem: TrackInfo) = oldItem.trackId == newItem.trackId
-            override fun areContentsTheSame(oldItem: TrackInfo, newItem: TrackInfo) = oldItem == newItem
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DramaInfo>() {
+            override fun areItemsTheSame(oldItem: DramaInfo, newItem: DramaInfo) = oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: DramaInfo, newItem: DramaInfo) = oldItem == newItem
         }
     }
 }

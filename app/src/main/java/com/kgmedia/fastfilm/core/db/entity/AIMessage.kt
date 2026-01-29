@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.kgmedia.fastfilm.core.db.convert.AIMessageContentTypeConverter
 import com.kgmedia.fastfilm.core.db.convert.StringListTypeConverter
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
 import com.google.gson.annotations.Expose
 
 @Entity(tableName = "AIMessage")

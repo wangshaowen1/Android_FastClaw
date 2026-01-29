@@ -11,7 +11,7 @@ import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.home.data.HomePagingSource
@@ -45,8 +45,8 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
     ).flow.cachedIn(viewModelScope)
 
     // 1. 定义 UI 需要观察的数据流
-    private val _feedFlow = MutableStateFlow<PagingData<TrackInfo>>(PagingData.empty())
-    val feedFlow: Flow<PagingData<TrackInfo>> = _feedFlow
+    private val _feedFlow = MutableStateFlow<PagingData<DramaInfo>>(PagingData.empty())
+    val feedFlow: Flow<PagingData<DramaInfo>> = _feedFlow
 
     init {
         loadData("")

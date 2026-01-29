@@ -164,14 +164,6 @@ class CreationFragment :
                 mRealVM.randomPrompt()
             }
 
-            R.id.btnVip -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
-                EventManager.onAppTrack(AppEvent.JG_CLICK_WRITE_OWN_STORY_INCREASE_WORD_LIMIT)
-                MembershipBenefitsActivity.start(mActivity, MembershipBenefitsActivity.Scene.InputMaxLimit)
-            }
-
             R.id.btnNext -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return

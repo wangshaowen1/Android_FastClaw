@@ -32,7 +32,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="top|start"
-            app:hint="请输入您的原著内容，「快出片」将严格基于你提供的章节内容生成漫剧，不会新增剧情"
+            app:inputHint="请输入您的原著内容，「快出片」将严格基于你提供的章节内容生成漫剧，不会新增剧情"
             app:inputCounterGravity="right"
             app:inputCounterRightMargin="0dp"
             app:inputCounterTextColor="?attr/textColor4"
@@ -44,7 +44,7 @@
             app:inputTextSize="14sp"
             app:inputVerticalPadding="@dimen/spacing_m"
             app:layout_constraintTop_toTopOf="parent"
-            app:maxLength="500" />
+            app:inputMaxLength="500" />
 
         <ImageView
             android:id="@+id/close"

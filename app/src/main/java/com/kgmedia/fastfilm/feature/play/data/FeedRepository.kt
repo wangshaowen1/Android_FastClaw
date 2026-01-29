@@ -4,7 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,7 +20,7 @@ object FeedRepository {
     private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     // 2. 缓存当前的 Flow
-    private var cachedFeedFlow: Flow<PagingData<TrackInfo>>? = null
+    private var cachedFeedFlow: Flow<PagingData<DramaInfo>>? = null
     
     // 缓存当前的参数，用于判断是否需要刷新
     private var lastSeriesId: String? = null
@@ -30,7 +30,7 @@ object FeedRepository {
      * 获取数据流
      * @param forceRefresh 是否强制刷新（例如下拉刷新时传 true）
      */
-    fun getFeedFlow(isSeriesMode: Boolean, id: String?, forceRefresh: Boolean = false): Flow<PagingData<TrackInfo>> {
+    fun getFeedFlow(isSeriesMode: Boolean, id: String?, forceRefresh: Boolean = false): Flow<PagingData<DramaInfo>> {
         // 如果参数一致且不强制刷新，直接返回缓存的流（实现数据共享的核心！）
         if (!forceRefresh && cachedFeedFlow != null && lastSeriesId == id && lastIsSeriesMode == isSeriesMode) {
             return cachedFeedFlow!!

@@ -2,18 +2,13 @@ package com.kgmedia.fastfilm.feature.play
 
 import android.graphics.Color
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
-import com.kgmedia.fastfilm.core.network.apis.entity.TrackInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
-import com.kgmedia.fastfilm.feature.play.data.VideoFeedPagingSource
-import com.nhsd.basic.ext.getResColor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -31,8 +26,8 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
     var currentPlayMode = PlayMode.SERIES
 
     // 对外暴露的数据流
-    private val _feedFlow = MutableStateFlow<PagingData<TrackInfo>>(PagingData.empty())
-    val feedFlow: Flow<PagingData<TrackInfo>> = _feedFlow
+    private val _feedFlow = MutableStateFlow<PagingData<DramaInfo>>(PagingData.empty())
+    val feedFlow: Flow<PagingData<DramaInfo>> = _feedFlow
 
     init {
         // 默认加载一次，方便进入页面直接看效果
