@@ -86,13 +86,18 @@ fun View.animateScaleExit(duration: Long = 300, listener: Animator.AnimatorListe
 }
 
 
-fun ViewGroup.getChildByType(vararg type: Class<out View>): View? {
-    for (child in children.toList()) {
-        if (type.contains(child.javaClass)) {
+fun ViewGroup.getChildByType(vararg types: Class<out View>): View? {
+    // 1. 先在当前层级找，找不到再深入递归（广度优先思想，性能更好）
+    for (child in children) {
+        if (types.any { it.isInstance(child) }) {
             return child
         }
+    }
+    // 2. 当前层级没找到，再去子层级找
+    for (child in children) {
         if (child is ViewGroup) {
-            return child.getChildByType(*type)
+            val result = child.getChildByType(*types)
+            if (result != null) return result
         }
     }
     return null

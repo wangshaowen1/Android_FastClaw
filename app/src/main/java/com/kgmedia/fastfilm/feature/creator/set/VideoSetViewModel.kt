@@ -1,9 +1,16 @@
 package com.kgmedia.fastfilm.feature.creator.set
 
+import android.view.KeyEvent
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import androidx.appcompat.widget.AppCompatEditText
+import com.blankj.utilcode.util.KeyboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.RecyclerViewVM
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.getChildByType
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
@@ -12,6 +19,7 @@ import com.kgmedia.fastfilm.feature.creator.style.ItemCreationStyleVm
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getParcelableValue
+import com.nhsd.basic.ext.showToast
 
 /**
  * *****************************************
@@ -51,11 +59,40 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
                 checked.set(true)
                 checkedEpisodeSet = this
             }
-            onItemClick.value = {
+            onItemClick.value = { view ->
                 if (checkedEpisodeSet != this) {
                     checkedEpisodeSet?.checked?.set(false)
                     this.checked.set(true)
                     checkedEpisodeSet = this
+                }
+
+                if (ratio.isCustomInput()) {
+                    (view as? ViewGroup)?.getChildByType(
+                        EditText::class.java,
+                        AppCompatEditText::class.java
+                    )?.let {
+                        (it as? EditText)?.setOnEditorActionListener { v, actionId, event ->
+                            // 只要是点击了右下角的确认、完成、搜索等键，都会触发
+                            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                                actionId == EditorInfo.IME_ACTION_NEXT ||
+                                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                                val targetCount = input.get()?.toIntOrNull() ?: 0
+                                if (targetCount > 30) {
+                                    "剧集数不可超过30集".showToast()
+                                    input.set("30")
+                                }
+                                KeyboardUtils.hideSoftInput(v)
+                                return@setOnEditorActionListener true
+                            }
+                            false
+                        }
+                        KeyboardUtils.showSoftInput(it)
+                        it.requestFocus()
+                        (it as? EditText)?.setSelection(it.length())
+                    }
+
+                } else {
+                    view?.let { KeyboardUtils.hideSoftInput(it) }
                 }
             }
         }
