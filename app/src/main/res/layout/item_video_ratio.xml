@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.creator.ItemVideoRatioVm" />
+            type="com.kgmedia.fastfilm.feature.creator.set.ItemVideoConfigVm" />
 
         <import type="android.view.View" />
     </data>
@@ -24,22 +24,18 @@
         app:roundCornerRadius="@dimen/radius_m"
         app:showBorder="@{item.checked}">
 
-        <FrameLayout
+        <ImageView
             android:id="@+id/llImage"
+            loadUri="@{item.data.extraConfig}"
             android:layout_width="37dp"
             android:layout_height="37dp"
+            android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvName"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <View
-                android:layout_width="37dp"
-                android:layout_height="37dp"
-                android:layout_gravity="center"
-                android:background="@drawable/img_9_16" />
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@drawable/img_9_16" />
 
         <TextView
             android:id="@+id/tvName"
@@ -47,6 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_s"
+            android:text="@{item.data.configValue}"
             android:textColor="?attr/textColor2"
             app:layout_constraintBottom_toTopOf="@id/tvValue"
             app:layout_constraintEnd_toEndOf="parent"
@@ -61,7 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="@{item.getText()}"
+            android:text="@{item.data.configCode}"
             android:textColor="?attr/textColor3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/tvName"

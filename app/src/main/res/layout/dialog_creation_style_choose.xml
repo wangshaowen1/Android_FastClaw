@@ -57,9 +57,11 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
+                    setGridLayoutManager="@{3}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="16dp"
+                    android:adapter="@{layout.MStyleAdapterVm.MAdapter}"
                     tools:listitem="@layout/item_creation_style_all" />
             </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
         </com.kgmedia.fastfilm.widget.EdgeTransparentView>

@@ -39,7 +39,7 @@ object ApiConstants {
     /**
      * 退出登录
      */
-    const val LOGOUT_APP = "user/logout"
+    const val LOGOUT_APP = "/auth/logout"
 
     /**
      * 注销账号
@@ -92,7 +92,7 @@ object ApiConstants {
     /**
      * 发送短信验证码
      */
-    const val SEND_SMS_VALIDATE_CODE = "sys/sendSmsValidateCode"
+    const val SEND_SMS_VALIDATE_CODE = "auth/sendSmsValidateCode"
 
     /**
      * 绑定手机号
@@ -108,7 +108,7 @@ object ApiConstants {
     /**
      * 手机登录接口--验证码方式
      */
-    const val LOGIN_BY_PHONE = "user/loginByPhone"
+    const val LOGIN_BY_PHONE = "/auth/register"
 
     /**
      * 取消注销
@@ -196,9 +196,9 @@ object ApiConstants {
     const val CREATION_GENERATE_PRE = "shortDramas/structure/script/generate/pre"
 
     /**
-     * 帮我优化
+     * 业务类型枚举10=随机灵感 11=AI优化灵感 20=剧集梗概 30=梗概剧集剧本 31=小说剧集剧本 32=扩写剧集剧本 33=优化作品简介
      */
-    const val OPTIMIZE_CONTENT = "shortDramas/optimizeContent"
+    const val SSE_CONTENT = "ai/stream/page"
 
     /**
      * 随机灵感故事
@@ -658,9 +658,9 @@ object ApiConstants {
     const val APP_BANNERS = "/app/home/banner/list"
 
     /**
-     * 获取快捷灵感(2条)
+     * 获取随机灵感示例
      */
-    const val INSPIRATION_QUICK_LIST = "/shortDramas/inspiration/quick/random"
+    const val INSPIRATION_QUICK_LIST = "/work/config/getInspirationExamples"
 
     /**
      * 使用历史角色
@@ -676,4 +676,9 @@ object ApiConstants {
      * 首页作品列表
      */
     const val RECOMMEND_DRAMA_LIST = "/app/home/work/page"
+
+    /**
+     * 获取集数/视频比例/视频风格配置
+     */
+    const val VIDEO_SET_CONFIG = "/work/config/list"
 }

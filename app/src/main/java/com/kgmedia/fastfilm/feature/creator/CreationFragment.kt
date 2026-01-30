@@ -5,19 +5,19 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.MotionEvent
 import android.view.View
+import com.blankj.utilcode.util.ClipboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.onUserSignOut
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
+import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
-import com.kgmedia.fastfilm.feature.creator.style.CreationStyleChooseDialog
-import com.kgmedia.fastfilm.feature.payment.vip.MembershipBenefitsActivity
+import com.kgmedia.fastfilm.feature.creator.set.VideoSetDialog
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
@@ -45,7 +45,7 @@ class CreationFragment :
         super.onPrepareView()
         initView()
         mRealVM.inspirationPrompts.observe(this) {
-            binding.lyricPrompts.setTags(it?.mapNotNull { it1 -> it1.inspirationContent }, true)
+            binding.lyricPrompts.setTags(it?.mapNotNull { it1 -> it1.configValue }, true)
         }
         binding.lyricPrompts.setOnItemClickListener { _, index ->
             binding.lyricPrompts.tags.getOrNull(index)?.let {
@@ -119,15 +119,21 @@ class CreationFragment :
         }
     }
 
-    fun showAllStyleDialog() {
+    fun showVideoSetDialog() {
         if (AppNavigator.checkLoginIntercepted(true)) {
             return
         }
-        val newInstance = CreationStyleChooseDialog.newInstance(mRealVM.checkedStyle?.data?.get()?.styleId)
-        newInstance.onSuccess = {
-            mRealVM.addChooseStyle(it)
+        mRealVM.videoSetConfig(true) {
+            val newInstance = VideoSetDialog.newInstance(mRealVM.videoSetConfig.value)
+            newInstance.onSuccess = {
+                StoryEditorActivity.start(
+                    mActivity,
+                    mRealVM.input.value, null, null,
+                    if (mRealVM.inspirationModel()) DramaGenerateBody.GEN_WAY_INSPIRATION else DramaGenerateBody.GEN_WAY_CUSTOMIZED
+                )
+            }
+            newInstance.show(childFragmentManager)
         }
-        newInstance.show(childFragmentManager)
     }
 
     override fun <Data> onClick(view: View, data: Data?) {
@@ -146,7 +152,7 @@ class CreationFragment :
                 } else {
                     EventManager.onAppTrack(AppEvent.JG_CLICK_WRITE_OWN_STORY_OPTIMIZE_BUTTON)
                 }
-                mRealVM.optimizePrompt()
+                mRealVM.sseGenerate(SSEContentBody.TYPE_AI_OPTIMIZE_INSPIRATION, "优化中，请稍候...")
             }
 
             R.id.randomInspirations -> {
@@ -154,6 +160,7 @@ class CreationFragment :
                     return
                 }
                 mRealVM.randomInspirations(true)
+
             }
 
             R.id.btnRandomPrompt -> {
@@ -161,7 +168,21 @@ class CreationFragment :
                     return
                 }
                 EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_RANDOM_INSPIRATION_BUTTON)
-                mRealVM.randomPrompt()
+                mRealVM.sseGenerate(SSEContentBody.TYPE_RANDOM_INSPIRATION, "灵感生成中，请稍候...")
+            }
+
+            R.id.btnDelete -> {
+                if (AppNavigator.checkLoginIntercepted(true)) {
+                    return
+                }
+                mRealVM.input.value = ""
+            }
+
+            R.id.btnPaste -> {
+                if (AppNavigator.checkLoginIntercepted(true)) {
+                    return
+                }
+                mRealVM.input.value = ClipboardUtils.getText().toString()
             }
 
             R.id.btnNext -> {
@@ -172,31 +193,12 @@ class CreationFragment :
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
                 }
-                if (mRealVM.checkedStyle == null) {
-                    "请选择小说风格".showToast()
-                    return
-                }
-                if (mRealVM.checkedStyle?.data?.get()?.isVip == true && !User.get().isVip) {
-                    MembershipBenefitsActivity.start(
-                        mActivity,
-                        if (mRealVM.inspirationModel()) MembershipBenefitsActivity.Scene.InspirationCreationStyle else MembershipBenefitsActivity.Scene.CustomCreationStyle
-                    )
-                    return
-                }
+                showVideoSetDialog()
                 if (mRealVM.inspirationModel()) {
                     EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_NEXT_STEP_BUTTON)
                 } else {
                     EventManager.onAppTrack(AppEvent.JG_CLICK_WRITE_OWN_STORY_NEXT_STEP_BUTTON)
                 }
-                StoryEditorActivity.start(
-                    mActivity,
-                    mRealVM.input.value,
-                    mRealVM.checkedStyle?.data?.get()?.styleId,
-                    mRealVM.checkedRatio?.data?.get(),
-                    if (mRealVM.inspirationModel()) DramaGenerateBody.GEN_WAY_INSPIRATION else DramaGenerateBody.GEN_WAY_CUSTOMIZED
-                )
-//                mRealVM.input.value = ""
-//                Global.clearInputContent()
             }
         }
     }

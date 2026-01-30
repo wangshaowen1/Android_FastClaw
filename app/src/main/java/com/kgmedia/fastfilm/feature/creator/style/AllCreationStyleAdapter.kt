@@ -6,14 +6,11 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.getVm
-import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.core.User
-import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.VideoStyleConfigInfo
 import com.kgmedia.fastfilm.databinding.ItemCreationStyleAllBinding
-import com.kgmedia.fastfilm.feature.payment.vip.MembershipBenefitsActivity
 import com.nhsd.basic.item.BindingViewHolder
 
-class AllCreationStyleAdapter(val lastStyleId: String?) : PagingDataAdapter<CreationStyleInfo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class AllCreationStyleAdapter(val lastStyleId: String?) : PagingDataAdapter<VideoStyleConfigInfo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -40,21 +37,14 @@ class AllCreationStyleAdapter(val lastStyleId: String?) : PagingDataAdapter<Crea
             getItem(position)?.let { item ->
                 val transVM = binding.getVm(position, item, ItemCreationStyleVm::class.java)
                 binding.item = transVM.apply {
-                    if (itemVm == null && item.styleId == lastStyleId) {
+                    if (itemVm == null && item.styleCode == lastStyleId) {
                         checked.set(true)
                         itemVm = this
                     }
                     onItemClick.value = {
-                        if (item.isVip && !User.get().isVip) {
-                            MembershipBenefitsActivity.start(
-                                topActivity,
-                                MembershipBenefitsActivity.Scene.InspirationCreationStyle
-                            )
-                        } else {
-                            itemVm?.checked?.set(false)
-                            this.checked.set(true)
-                            itemVm = this
-                        }
+                        itemVm?.checked?.set(false)
+                        this.checked.set(true)
+                        itemVm = this
                     }
                 }
                 binding.executePendingBindings()
@@ -64,17 +54,17 @@ class AllCreationStyleAdapter(val lastStyleId: String?) : PagingDataAdapter<Crea
 
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<CreationStyleInfo>() {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<VideoStyleConfigInfo>() {
             override fun areItemsTheSame(
-                oldItem: CreationStyleInfo,
-                newItem: CreationStyleInfo
+                oldItem: VideoStyleConfigInfo,
+                newItem: VideoStyleConfigInfo
             ): Boolean {
                 return oldItem.hashCode() == newItem.hashCode()
             }
 
             override fun areContentsTheSame(
-                oldItem: CreationStyleInfo,
-                newItem: CreationStyleInfo
+                oldItem: VideoStyleConfigInfo,
+                newItem: VideoStyleConfigInfo
             ): Boolean {
                 return oldItem == newItem
             }

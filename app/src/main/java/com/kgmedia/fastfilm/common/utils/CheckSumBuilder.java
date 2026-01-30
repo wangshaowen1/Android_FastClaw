@@ -48,7 +48,7 @@ public class CheckSumBuilder {
     /**
      * MD5加密key -- 用于短信加密--这个是生产的，上面的测试是临时使用
      */
-    public final static String MD5_KEY_SEND_SMS = "DFGdfgsd#$%^tsdfgsdfTHWERTU@$%#$^*%^&usdghshd@#$fswtrygwqert87944GFSDRFGSfdrggtuDG!%#$%";
+    public final static String MD5_KEY_SEND_SMS = "D%o43T&hJ63aa!BMS4@aMgE2e2gUPj56&L$t9$^M&&2s#Y897b$X7dL&@%Z2&^JR";
 
     /**
      * MD5加密key -- 用于获取支付宝人脸识别参数鉴权

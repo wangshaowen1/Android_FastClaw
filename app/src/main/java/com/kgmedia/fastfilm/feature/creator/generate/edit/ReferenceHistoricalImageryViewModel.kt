@@ -11,8 +11,9 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
-import com.kgmedia.fastfilm.feature.creator.ItemVideoRatioVm
+import com.kgmedia.fastfilm.feature.creator.set.ItemVideoConfigVm
 import com.kgmedia.fastfilm.feature.creator.data.CreationStylePagingSource
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.nhsd.basic.ext.dp
@@ -26,7 +27,7 @@ import kotlinx.coroutines.flow.Flow
 class ReferenceHistoricalImageryViewModel : AppRepositoryViewModel<AppRepository>() {
     val lastStyleId by lazy { mBundle.getString(Constants.Extra.ID) }
 
-    var checkedRatio: ItemVideoRatioVm? = null
+    var checkedRatio: ItemVideoConfigVm? = null
 
     val ratioVms = arrayListOf(
         initRatioVm(CreationGeneratePreBody.RATIO_9_16),
@@ -35,8 +36,8 @@ class ReferenceHistoricalImageryViewModel : AppRepositoryViewModel<AppRepository
 //        initRatioVm(CreationGeneratePreBody.RATIO_4_3)
     )
 
-    fun initRatioVm(ratio: Int): ItemVideoRatioVm {
-        return ItemVideoRatioVm(ratio).apply {
+    fun initRatioVm(ratio: Int): ItemVideoConfigVm {
+        return ItemVideoConfigVm(VideoConfigInfo()).apply {
             if (ratio == CreationGeneratePreBody.RATIO_9_16) {
                 checked.set(true)
                 checkedRatio = this

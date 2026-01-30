@@ -63,8 +63,8 @@ class SSEStreamHandler(
                     val sseMessage = Json.decodeFromString<SSEMessage>(data)
 
                     if (sseMessage.code == SSEMessage.TYPE_ERROR) {
-                        sseMessage.content?.showToast() // 这里最好把Toast回调出去，保持纯净，暂时保留你的逻辑
-                        onError(RuntimeException("Server returned error type"))
+//                        sseMessage.content?.showToast() // 这里最好把Toast回调出去，保持纯净，暂时保留你的逻辑
+                        onError(RuntimeException(sseMessage.content))
                     } else {
                         processMessage(sseMessage)
                     }

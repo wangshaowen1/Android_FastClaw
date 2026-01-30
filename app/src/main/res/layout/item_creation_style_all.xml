@@ -41,7 +41,7 @@
                 android:layout_marginStart="6dp"
                 android:layout_marginTop="5dp"
                 android:src="@drawable/ic_vip54"
-                android:visibility="@{item.data.vipStatus==1?View.VISIBLE:View.GONE}"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

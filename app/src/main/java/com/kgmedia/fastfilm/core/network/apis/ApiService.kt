@@ -35,6 +35,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.TheTvSeriesIFollowInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.TimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.UserRevenueInformationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.UserShareUrlInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.entity.VipConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawConfirmInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawInfo
@@ -71,7 +72,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.MemberPaymentBody
 import com.kgmedia.fastfilm.core.network.apis.request.MessagesTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
 import com.kgmedia.fastfilm.core.network.apis.request.MyTvSeriesBody
-import com.kgmedia.fastfilm.core.network.apis.request.OptimizeContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeContentData
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeRoleImageDescBody
 import com.kgmedia.fastfilm.core.network.apis.request.OrderStatusBody
@@ -84,6 +84,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.RecommendShortsBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
+import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneContentEditBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneCostBody
 import com.kgmedia.fastfilm.core.network.apis.request.SegmentImageDescOptimizeBody
@@ -322,16 +323,21 @@ interface ApiService {
     suspend fun creationGeneratePre(@Body body: CreationGeneratePreBody): ApiResponse<DramasIdData?>
 
     /**
-     * 帮我优化
+     * SSE流式输出：业务类型枚举10=随机灵感 11=AI优化灵感 20=剧集梗概 30=梗概剧集剧本 31=小说剧集剧本 32=扩写剧集剧本 33=优化作品简介
      */
-    @POST(ApiConstants.OPTIMIZE_CONTENT)
-    suspend fun optimizeContent(@Body body: OptimizeContentBody): ApiResponse<OptimizeContentData?>
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SSE_CONTENT)
+    fun sseContent(@Body body: SSEContentBody): Flow<SSEvent>
 
     /**
      * 随机灵感故事
      */
     @POST(ApiConstants.RANDOM_INSPIRATION_STORY)
-    suspend fun randomInspirationStory(@Body body: OptimizeContentBody): ApiResponse<OptimizeContentData?>
+    suspend fun randomInspirationStory(@Body body: SSEContentBody): ApiResponse<OptimizeContentData?>
 
     /**
      * 轮询短剧剧本大纲
@@ -934,8 +940,8 @@ interface ApiService {
     suspend fun getInspirationQuickList(@Body body: UserTokenBody): ApiResponse<ListData<InspirationInfo>?>
 
     /**
-    * 查询历史角色
-    */
+     * 查询历史角色
+     */
     @POST(ApiConstants.GET_HISTORY_ROLES)
     suspend fun getHistoryRoles(@Body body: RoleIdBody): ApiResponse<ListData<CharacterInfo>?>
 
@@ -950,4 +956,10 @@ interface ApiService {
      */
     @POST(ApiConstants.RECOMMEND_DRAMA_LIST)
     suspend fun recommendDramaList(@Body body: PagedBody): ApiResponse<PagedList<DramaInfo>?>
+
+    /**
+     * 获取集数/视频比例/视频风格配置
+     */
+    @POST(ApiConstants.VIDEO_SET_CONFIG)
+    suspend fun videoSetConfig(@Body body: UserTokenBody): ApiResponse<VideoConfigData?>
 }

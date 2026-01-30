@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.creator.ItemVideoRatioVm" />
+            type="com.kgmedia.fastfilm.feature.creator.set.ItemVideoConfigVm" />
 
         <import type="android.view.View" />
     </data>
@@ -20,6 +20,7 @@
         android:onClick="@{(v)->item.onItemClick.invoke(v)}"
         android:paddingHorizontal="@dimen/spacing_l"
         android:paddingVertical="@dimen/spacing_s"
+        android:layout_marginEnd="@dimen/spacing_m"
         app:borderEndColor="@color/gradient_btn_end_dark"
         app:borderStartColor="@color/gradient_btn_start_dark"
         app:borderWidth="1.5dp"

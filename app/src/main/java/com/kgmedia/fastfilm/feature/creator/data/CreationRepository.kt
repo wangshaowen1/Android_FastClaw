@@ -6,7 +6,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramaContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
-import com.kgmedia.fastfilm.core.network.apis.request.OptimizeContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeRoleImageDescBody
 import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
@@ -67,17 +67,21 @@ class CreationRepository : CommonRepository() {
         api.getInspirationQuickList(UserTokenBody())
     }
 
+    suspend fun videoSetConfig() = withContext(Dispatchers.IO) {
+        api.videoSetConfig(UserTokenBody())
+    }
+
     /**
      * 帮我优化
      */
-    suspend fun optimizeContent(body: OptimizeContentBody) = withContext(Dispatchers.IO) {
-        api.optimizeContent(body)
+    suspend fun sseContent(body: SSEContentBody) = withContext(Dispatchers.IO) {
+        api.sseContent(body)
     }
 
     /**
      * 随机灵感故事
      */
-    suspend fun randomInspirationStory(body: OptimizeContentBody) = withContext(Dispatchers.IO) {
+    suspend fun randomInspirationStory(body: SSEContentBody) = withContext(Dispatchers.IO) {
         api.randomInspirationStory(body)
     }
 

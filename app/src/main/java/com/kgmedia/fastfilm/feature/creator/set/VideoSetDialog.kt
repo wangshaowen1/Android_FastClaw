@@ -1,77 +1,60 @@
 package com.kgmedia.fastfilm.feature.creator.set
 
 import androidx.core.os.bundleOf
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.GridLayoutManager
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.common.ext.getAdapterByItemPosition
 import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.databinding.DialogVideoSetBinding
-import com.kgmedia.fastfilm.feature.creator.style.AllCreationStyleAdapter
-import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
-import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
-import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
+import com.kgmedia.fastfilm.feature.creator.style.CreationStyleChooseDialog
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
-import com.nhsd.basic.ext.dp
-import kotlinx.coroutines.launch
+import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 
 
 class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, VideoSetViewModel>() {
 
     companion object {
-        fun newInstance(lastChooseStyleId: String? = null): VideoSetDialog {
+        fun newInstance(list: VideoConfigData?): VideoSetDialog {
             val fragment = VideoSetDialog()
             fragment.arguments = bundleOf(
-                Constants.Extra.ID to lastChooseStyleId
+                Constants.Extra.DATA to list
             )
             return fragment
         }
     }
 
     var onSuccess: (CreationStyleInfo?) -> Unit = {}
-    val adapter by lazy { AllCreationStyleAdapter(mRealVM.lastStyleId) }
 
     override fun onPrepareView() {
         super.onPrepareView()
-        binding.recyclerView.addItemDecoration(
-            GridSpacingItemDecoration(
-                4,
-                10.dp,
-                12.dp
-            )
-        )
-        binding.recyclerView.layoutManager = GridLayoutManager(mActivity, 4).apply {
-            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-                override fun getSpanSize(position: Int): Int {
-                    val adapter = binding.recyclerView.adapter
-                    if (adapter is ConcatAdapter) {
-                        if (adapter.getAdapterByItemPosition(position) is MyMultiStatePagingFooterAdapter) {
-                            return spanCount
-                        }
+
+        binding.btnAllStyle.setOnSingleClickListener {
+            val newInstance = CreationStyleChooseDialog.newInstance(mRealVM.checkedStyle?.data?.get()?.styleCode, mRealVM.configsData?.list)
+            newInstance.onSuccess = {
+                it?.let {
+                    mRealVM.styleVms.find { vm -> vm.data.get()?.styleCode == it.styleCode }?.let { vm ->
+                        vm.checked.set(true)
+                        mRealVM.checkedStyle = vm
                     }
-                    return 1
                 }
             }
-        }
-        binding.recyclerView.addItemDecoration(BottomSpaceDecoration(40.dp))
-        binding.recyclerView.adapter = adapter.withLoadStateFooter(
-            MyMultiStatePagingFooterAdapter(
-                hostAdapter = adapter,
-                loadMoreLoadEnd = "",
-                refresh = {
-                    adapter.retry()
-                },
-            )
-        )
-        binding.btnConfirm.setOnClickListener {
-            onSuccess.invoke(adapter.itemVm?.data?.get())
-            dismissAllowingStateLoss()
-        }
+            newInstance.show(childFragmentManager)
 
-        lifecycleScope.launch {
-            mRealVM.stylesGet.collect {
-                adapter.submitData(it)
+            binding.btnConfirm.setOnClickListener {
+                if (mRealVM.checkedEpisodeSet == null) {
+                    "请设置故事总集数".showToast()
+                    return@setOnClickListener
+                }
+                if (mRealVM.checkedRatio == null) {
+                    "请选择视频尺寸".showToast()
+                    return@setOnClickListener
+                }
+                if (mRealVM.checkedStyle == null) {
+                    "请选择视频风格".showToast()
+                    return@setOnClickListener
+                }
+//            onSuccess.invoke()
+                dismissAllowingStateLoss()
             }
         }
     }

@@ -15,6 +15,7 @@
     <com.kgmedia.fastfilm.widget.BorderConstraintLayout
         android:layout_width="92dp"
         android:layout_height="92dp"
+        android:layout_marginEnd="10dp"
         android:onClick="@{(v)->item.onItemClick.invoke(v)}"
         app:borderEndColor="@color/gradient_btn_end_dark"
         app:borderStartColor="@color/gradient_btn_start_dark"
@@ -35,7 +36,7 @@
             android:layout_marginStart="6dp"
             android:layout_marginTop="5dp"
             android:src="@drawable/ic_vip54"
-            android:visibility="@{item.data.vipStatus==1?View.VISIBLE:View.GONE}"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
