@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.method.LinkMovementMethod
 import android.view.Gravity
+import com.blankj.utilcode.util.ScreenUtils
 import com.drake.spannable.addSpan
 import com.drake.spannable.span.HighlightSpan
 import com.kgmedia.fastfilm.R
@@ -12,9 +13,9 @@ import com.kgmedia.fastfilm.core.databinding.singleClick
 import com.kgmedia.fastfilm.databinding.DialogPolicyBinding
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.nhsd.basic.BaseDialogFragment
-import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
+import kotlin.math.min
 
 
 /**
@@ -36,7 +37,8 @@ class PolicyDialog : BaseDialogFragment<DialogPolicyBinding>() {
         super.onStart()
         dialog?.window?.let { dialogWindow ->
             dialogWindow.attributes?.let { attr ->
-                attr.width = 285.dp
+                val screenWidth = min(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight())
+                attr.width = (293 / 375f * screenWidth).toInt()
                 attr.gravity = Gravity.CENTER
                 dialogWindow.attributes = attr
             }
@@ -49,6 +51,9 @@ class PolicyDialog : BaseDialogFragment<DialogPolicyBinding>() {
         }
     }
 
+    /**
+     * 《隐私政策》
+     */
     private fun CharSequence.addPrivacyPolicy() = addSpan(
         R.string.tvPrivateService.getResString(),
         HighlightSpan(R.color.color_ff4b00.getResColor()) {
@@ -61,6 +66,9 @@ class PolicyDialog : BaseDialogFragment<DialogPolicyBinding>() {
             }
         })
 
+    /**
+     * 《用户协议》
+     */
     private fun CharSequence.addUserPolicy() = addSpan(
         R.string.tvUserService.getResString(),
         HighlightSpan(R.color.color_ff4b00.getResColor()) {
@@ -77,13 +85,12 @@ class PolicyDialog : BaseDialogFragment<DialogPolicyBinding>() {
         super.onPrepareView()
         binding.tvContent.movementMethod = LinkMovementMethod.getInstance()
         binding.tvContent.text =
-            "点击“同意并继续”代表您已阅读并理解《隐私政策》和《用户协议》,我们深知保护用户隐私信息的重要性，请认真仔细阅读。\n查看完整版"
-                .addPrivacyPolicy()
-                .addSpan("和")
+            "欢迎使用快出片！\n在使用本产品或服务前，请您认证阅读并理解本应用的"
                 .addUserPolicy()
-        singleClick(binding.tvAgree) {
-            (activity as? PolicyCallback)?.onAgreePolicy(this)
-        }
+                .addSpan("和")
+                .addPrivacyPolicy()
+                .addSpan("的全部条款，以了解我们的服务内容和我们在收集和使用您相关个人信息时的处理规则。我们严格按照用户协议和隐私政策为您提供服务，保护您的个人信息。“不同意”，您将无法使用我们的产品和服务。")
+        singleClick(binding.tvAgree) { (activity as? PolicyCallback)?.onAgreePolicy(this) }
         singleClick(binding.tvReject) { (activity as? PolicyCallback)?.onRejectPolicy(this) }
     }
 

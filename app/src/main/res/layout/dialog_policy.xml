@@ -1,70 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.kgmedia.fastfilm.widget.BorderConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_ffffff_r24"
+    android:background="@drawable/bg_color3_r20"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:layout_width="285dp">
-
-    <View
-        android:id="@+id/view_top"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="285:90"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/iv_logo"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:importantForAccessibility="no"
-        android:src="@drawable/img_welcome_2_app"
-        app:layout_constraintDimensionRatio="285:90"
-        app:layout_constraintEnd_toEndOf="@id/view_top"
-        app:layout_constraintStart_toStartOf="@id/view_top"
-        app:layout_constraintTop_toTopOf="@id/view_top" />
+    android:paddingBottom="20dp"
+    tools:layout_width="293dp">
 
     <TextView
-        android:id="@+id/tv_content"
-        style="@style/Text.Common"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="24dp"
-        android:lineSpacingExtra="@dimen/lineSpacingExtra"
-        android:textColor="@color/textColorPrimary"
-        android:textColorHighlight="@color/white"
-        android:textSize="14sp"
-        app:layout_constraintTop_toBottomOf="@id/view_top"
-        tools:text="点击“同意并继续”代表您已阅读并理解《隐私政策》和《用户协议》,我们深知保护用户隐私信息的重要性，请认真仔细阅读。\n查看完整版《隐私政策》和《用户协议》。" />
-
-    <Button
-        android:id="@+id/tv_agree"
-        style="@style/Button.Bold"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginHorizontal="26dp"
-        android:layout_marginTop="32dp"
-        android:text="@string/agree"
-        app:layout_constraintTop_toBottomOf="@id/tv_content" />
-
-    <TextView
-        android:id="@+id/tv_reject"
-        style="@style/Text.Common"
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="24dp"
-        android:text="@string/disagree"
-        android:textColor="@color/color_40_121212"
-        android:textSize="12sp"
+        android:layout_marginTop="20dp"
+        android:text="用户协议及隐私说明"
+        android:textAppearance="@style/Text16"
+        android:textColor="?attr/textColor1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_agree" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="12dp"
+        android:textAppearance="@style/Text14"
+        android:textColor="?attr/textColor3"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        tools:text="欢迎使用快出片！
+在使用本产品或服务前，请您认证阅读并理解本应用的《用户协议》和《隐私政策》的全部条款，以了解我们的服务内容和我们在收集和使用您相关个人信息时的处理规则。我们严格按照用户协议和隐私政策为您提供服务，保护您的个人信息。
+“不同意”，您将无法使用我们的产品和服务。" />
+
+    <TextView
+        android:id="@+id/tvReject"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/btn_fill1_r50"
+        android:gravity="center"
+        android:text="@string/disagree"
+        android:textColor="?attr/textColor2"
+        android:textSize="16sp"
+        app:layout_constraintDimensionRatio="3:1"
+        app:layout_constraintEnd_toStartOf="@+id/tvAgree"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvContent" />
+
+    <TextView
+        android:id="@+id/tvAgree"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/btn_theme1_r50"
+        android:gravity="center"
+        android:text="@string/agree"
+        android:textColor="@color/fixed_white_1"
+        android:textSize="16sp"
+        app:layout_constraintDimensionRatio="3:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvReject"
+        app:layout_constraintTop_toBottomOf="@id/tvReject"
+        app:layout_constraintTop_toTopOf="@+id/tvReject" />
+
+</com.kgmedia.fastfilm.widget.BorderConstraintLayout>
