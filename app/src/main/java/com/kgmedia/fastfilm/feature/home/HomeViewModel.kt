@@ -32,6 +32,30 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun getData() {
         launch {
+            val mockBanners = listOf(
+                BannerInfo(
+                    title = "热点话题：我的2026",
+                    imageUrl = "https://picsum.photos/id/10/720/360",
+                    jumpType = 1,
+                    jumpCode = "page_hot_topic",
+                    sortNo = 1
+                ),
+                BannerInfo(
+                    title = "AI 智能剧本助手体验",
+                    imageUrl = "https://picsum.photos/id/20/720/360",
+                    jumpType = 2,
+                    jumpCode = "https://ai.kgmedia.com/helper",
+                    sortNo = 5
+                ),
+                BannerInfo(
+                    title = "第三方合作活动",
+                    imageUrl = "https://picsum.photos/id/30/720/360",
+                    jumpType = 3,
+                    jumpCode = "https://www.partner-site.com",
+                    sortNo = 10
+                )
+            )
+            bannerData.value =mockBanners
             response(mRepo.api.getAppBanner(BannerBody(1))) {
                 bannerData.value = this.data?.items
             }
@@ -51,7 +75,6 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
         viewModelScope.launch {
             // [关键] 调用单例 FeedRepository 获取带缓存的流
             FeedRepository.getFeedFlow(isSeriesMode = true, id = seriesId)
-                .cachedIn(viewModelScope) // 绑定到当前 ViewModel 生命周期
                 .collectLatest { pagingData ->
                     _feedFlow.value = pagingData
                 }

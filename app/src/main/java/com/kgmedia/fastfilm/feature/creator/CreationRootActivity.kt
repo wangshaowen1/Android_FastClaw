@@ -34,13 +34,12 @@ class CreationRootActivity :
             override fun getItem(position: Int): Fragment {
                 return when (position) {
                     0 -> CreationFragment.newInstance()
-                    1 -> CreationFragment.newInstance(CreationFragment.MODEL_CUSTOM)
-                    else -> ContinueWritingListFragment.newInstance()
+                    else -> CreationFragment.newInstance(CreationFragment.MODEL_CUSTOM)
                 }
             }
 
             override fun getCount(): Int {
-                return 3
+                return 2
             }
         }
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -61,7 +60,7 @@ class CreationRootActivity :
 
         binding.rbRight.setOnClickListener {
             EventManager.onAppTrack(AppEvent.JG_CLICK_CONTINUE_STORY_BUTTON)
-            binding.viewPager.currentItem = 2
+            binding.viewPager.currentItem = 1
         }
     }
 }

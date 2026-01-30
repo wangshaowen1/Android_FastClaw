@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,7 +22,7 @@ object FeedRepository {
 
     // 2. 缓存当前的 Flow
     private var cachedFeedFlow: Flow<PagingData<DramaInfo>>? = null
-    
+
     // 缓存当前的参数，用于判断是否需要刷新
     private var lastSeriesId: String? = null
     private var lastIsSeriesMode: Boolean? = null
@@ -32,24 +33,32 @@ object FeedRepository {
      */
     fun getFeedFlow(isSeriesMode: Boolean, id: String?, forceRefresh: Boolean = false): Flow<PagingData<DramaInfo>> {
         // 如果参数一致且不强制刷新，直接返回缓存的流（实现数据共享的核心！）
-        if (!forceRefresh && cachedFeedFlow != null && lastSeriesId == id && lastIsSeriesMode == isSeriesMode) {
+        Logger.d(
+            "FeedRepository",
+            "Fetching Feed: forceRefresh=$forceRefresh, " +
+                    "hasCache=${cachedFeedFlow != null}, " +
+                    "seriesIdMatch=${lastSeriesId == id} (last:$lastSeriesId, current:$id), " +
+                    "modeMatch=${lastIsSeriesMode == isSeriesMode} (last:$lastIsSeriesMode, current:$isSeriesMode)"
+        )
+        if (!forceRefresh && cachedFeedFlow != null && (lastSeriesId ?: "") == (id ?: "") && lastIsSeriesMode == isSeriesMode) {
+            Logger.d("FeedRepository", "Returning cached feed flow")
             return cachedFeedFlow!!
         }
 
         // 创建新的 Pager
         val newFlow = Pager(
             config = PagingConfig(
-                pageSize = 10, 
-                prefetchDistance = 3, 
+                pageSize = 10,
+                prefetchDistance = 3,
                 enablePlaceholders = false,
                 initialLoadSize = 10 // 保持和 pageSize 一致，防止跳页
             ),
             pagingSourceFactory = {
                 // 这里使用你现有的 PagingSource
-                VideoFeedPagingSource() 
+                VideoFeedPagingSource()
             }
         ).flow
-         .cachedIn(repositoryScope) // [关键] 使用全局 Scope 缓存，使其跨页面存活
+            .cachedIn(repositoryScope) // [关键] 使用全局 Scope 缓存，使其跨页面存活
 
         // 更新缓存
         cachedFeedFlow = newFlow
@@ -58,7 +67,7 @@ object FeedRepository {
 
         return newFlow
     }
-    
+
     /**
      * 清理缓存（可选，比如退出登录或完全退出模块时调用）
      */

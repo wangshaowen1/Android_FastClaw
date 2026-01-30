@@ -53,7 +53,7 @@ class DramasPlayPagerActivity :
         // 加载数据
         // 因为 Repository 是单例且缓存了 Flow，如果列表页也用了 FeedRepository，
         // 这里会立刻拿到数据，不需要网络请求
-        mRealVM.loadFeed(true, dramaId)
+        mRealVM.loadFeed(true, null)
 
         // 3. 事件流
         setupPlayerEvents()

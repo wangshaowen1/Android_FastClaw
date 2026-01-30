@@ -11,11 +11,9 @@ package com.kgmedia.fastfilm.core.network.apis.entity
  *         }
  */
 data class BannerInfo(
-    val title: Int? = null,
+    val title: String? = null,
     val imageUrl: String? = null,
     val jumpType: Int? = null,
     val jumpCode: String? = null,
-    val sortNo: String? = null,
-){
-    
-}
+    val sortNo: Int? = null,
+)

@@ -80,6 +80,8 @@ class HomeFragment :
             }
         }
         binding.banner.setAdapter(bannerAdapter)
+            .setLifecycleRegistry(lifecycle)
+            .setAutoPlay(true)
             .setIndicatorSliderRadius(2f.dp)
             .setIndicatorSliderGap(4.dp)
             .setIndicatorHeight(4.dp)
@@ -133,7 +135,7 @@ class HomeFragment :
         }
 
         mRealVM.bannerData.observe(this) {
-            binding.banner.create(it)
+            binding.banner.refreshData(it)
         }
     }
 }

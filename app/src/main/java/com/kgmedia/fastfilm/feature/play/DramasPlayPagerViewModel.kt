@@ -31,7 +31,7 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     init {
         // 默认加载一次，方便进入页面直接看效果
-        loadFeed(true, null)
+       // loadFeed(true, null)
     }
 
     /**
@@ -45,7 +45,6 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
             // 注意：这里再次 cachedIn(viewModelScope) 是为了绑定 UI 生命周期，
             // 但底层数据已经是被 Repository 缓存过的，不会触发网络请求。
             FeedRepository.getFeedFlow(isSeriesMode, id)
-                .cachedIn(viewModelScope)
                 .collectLatest {
                     _feedFlow.value = it
                 }

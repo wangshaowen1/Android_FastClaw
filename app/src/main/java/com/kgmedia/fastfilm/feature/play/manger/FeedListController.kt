@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.feature.play.VideoFeedAdapter
+import com.nhsd.basic.utils.Logger
 
 /**
  * 列表控制器：负责滑动监听、自动播放、预加载
@@ -19,6 +20,7 @@ class FeedListController(
 
     // 标记是否是第一次加载数据
     private var isFirstLoad = true
+
     // 目标初始位置，默认为 -1 (不跳转)
     private var targetInitialPosition: Int = -1
 
@@ -58,6 +60,7 @@ class FeedListController(
                     recyclerView.post {
                         if (recyclerView.isAttachedToWindow) {
                             // [核心修复] 在这里统一处理跳转逻辑
+                            Logger.d("FeedListController", "targetInitialPosition=$targetInitialPosition adapter.itemcount = ${adapter.itemCount}")
                             if (targetInitialPosition != -1 && targetInitialPosition < adapter.itemCount) {
                                 // 1. 直接闪现到指定位置 (使用 scrollToPositionWithOffset 确保准确置顶)
                                 layoutManager.scrollToPositionWithOffset(targetInitialPosition, 0)

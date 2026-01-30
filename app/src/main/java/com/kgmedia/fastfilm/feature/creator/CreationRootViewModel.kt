@@ -14,7 +14,6 @@ class CreationRootViewModel : AppRepositoryViewModel<CreationRepository>() {
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
         title = "故事灵感",
-        titleColor = R.color.textColorPrimary.getResColor(),
         background = Color.TRANSPARENT,
     )
 
