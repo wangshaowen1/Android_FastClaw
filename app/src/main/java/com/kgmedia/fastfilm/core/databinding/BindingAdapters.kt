@@ -56,6 +56,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.airbnb.lottie.LottieAnimationView
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.ColorUtils
+import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.bumptech.glide.GenericTransitionOptions
 import com.bumptech.glide.Glide
@@ -697,6 +698,22 @@ fun marginEnd(v: View, value: Int) {
 @BindingAdapter("selected")
 fun selected(v: View, value: Boolean) {
     v.isSelected = value
+}
+
+@BindingAdapter("autoFocus")
+fun bindAutoFocus(editText: EditText, isFocused: Boolean) {
+    if (isFocused) {
+        editText.post {
+            editText.requestFocus()
+            // 把光标移动到末尾
+            editText.setSelection(editText.text.length)
+            // 弹出软键盘
+            KeyboardUtils.showSoftInput(editText)
+        }
+    } else {
+        editText.clearFocus()
+        KeyboardUtils.hideSoftInput(editText)
+    }
 }
 
 @BindingAdapter("marginBottomDp")

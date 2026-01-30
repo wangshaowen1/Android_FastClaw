@@ -17,7 +17,11 @@ data class VideoConfigInfo(
     val configValue: String? = null,
     val extraConfig: String? = null,
     val sortNo: Int? = null
-) : Parcelable
+) : Parcelable {
+    fun isCustomInput(): Boolean {
+        return configCode == "ep_custom"
+    }
+}
 
 /**
  * "styleCode": "视频风格 Code",

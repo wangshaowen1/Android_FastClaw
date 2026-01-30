@@ -25,14 +25,17 @@ class CreationStyleChooseViewModel : AppRepositoryViewModel<AppRepository>() {
     override fun onCreate() {
         super.onCreate()
         list?.forEach {
-            initStyleVm(it)
+            styleVms.add(initStyleVm(it))
         }
         mStyleAdapterVm.notifyDataSetChanged()
     }
 
     fun initStyleVm(info: VideoStyleConfigInfo): ItemCreationStyleVm {
         return ItemCreationStyleVm(info).apply {
-            if (checkedStyle == null) {
+            if (lastStyleId != null && info.styleCode == lastStyleId) {
+                checked.set(true)
+                checkedStyle = this
+            } else if (lastStyleId == null && checkedStyle == null) {
                 checked.set(true)
                 checkedStyle = this
             }

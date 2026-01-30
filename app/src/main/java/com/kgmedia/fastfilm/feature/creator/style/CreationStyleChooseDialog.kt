@@ -1,23 +1,14 @@
 package com.kgmedia.fastfilm.feature.creator.style
 
 import androidx.core.os.bundleOf
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.GridLayoutManager
-import com.kgmedia.fastfilm.R
-import com.kgmedia.fastfilm.base.RecyclerViewVM
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.common.ext.getAdapterByItemPosition
-import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoStyleConfigInfo
 import com.kgmedia.fastfilm.databinding.DialogCreationStyleChooseBinding
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
-import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.toArrayList
-import kotlinx.coroutines.launch
 
 
 class CreationStyleChooseDialog : BaseBottomPushVMDialogFragment<DialogCreationStyleChooseBinding, CreationStyleChooseViewModel>() {
@@ -38,6 +29,7 @@ class CreationStyleChooseDialog : BaseBottomPushVMDialogFragment<DialogCreationS
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.loadState.showContent()
         binding.recyclerView.addItemDecoration(
             GridSpacingItemDecoration(
                 4,
@@ -69,6 +61,10 @@ class CreationStyleChooseDialog : BaseBottomPushVMDialogFragment<DialogCreationS
 //            )
 //        )
 //        binding.loadState.startRefreshWithAdapter(adapter)
+        binding.btnCancel.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
+        binding.close.setOnClickListener { dismissAllowingStateLoss() }
         binding.btnConfirm.setOnClickListener {
 //            onSuccess.invoke(adapter.itemVm?.data?.get())
             onSuccess.invoke(mRealVM.checkedStyle?.data?.get())

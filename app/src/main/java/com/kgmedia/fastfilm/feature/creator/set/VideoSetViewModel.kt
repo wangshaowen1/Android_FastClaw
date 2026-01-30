@@ -11,7 +11,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.VideoStyleConfigInfo
 import com.kgmedia.fastfilm.feature.creator.style.ItemCreationStyleVm
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.nhsd.basic.ext.dp
-import com.nhsd.basic.ext.getParcelableArrayListValue
 import com.nhsd.basic.ext.getParcelableValue
 
 /**
@@ -32,8 +31,11 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
+        episodeVms.clear()
+        ratioVms.clear()
+        styleVms.clear()
         configsData?.totalEpisodeCntItemVoList?.forEach {
-            ratioVms.add(initEpisodeVm(it))
+            episodeVms.add(initEpisodeVm(it))
         }
         configsData?.ratioItemVoList?.forEach {
             ratioVms.add(initRatioVm(it))

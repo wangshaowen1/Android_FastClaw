@@ -41,7 +41,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/title" />
 
-        <com.kgmedia.fastfilm.widget.EdgeTransparentView
+        <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+            android:id="@+id/loadState"
             android:layout_width="match_parent"
             android:layout_height="408dp"
             android:layout_marginTop="@dimen/spacing_l"
@@ -49,22 +50,15 @@
             app:layout_constraintBottom_toTopOf="@id/llBottom"
             app:layout_constraintTop_toBottomOf="@id/title">
 
-            <com.kgmedia.fastfilm.widget.LoadStateViewHolder
-                android:id="@+id/loadState"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                setGridLayoutManager="@{3}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:lightMode="true">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    setGridLayoutManager="@{3}"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="16dp"
-                    android:adapter="@{layout.MStyleAdapterVm.MAdapter}"
-                    tools:listitem="@layout/item_creation_style_all" />
-            </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
-        </com.kgmedia.fastfilm.widget.EdgeTransparentView>
+                android:layout_marginHorizontal="16dp"
+                android:adapter="@{layout.MStyleAdapterVm.MAdapter}"
+                tools:listitem="@layout/item_creation_style_all" />
+        </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
 
         <LinearLayout
             android:id="@+id/llBottom"

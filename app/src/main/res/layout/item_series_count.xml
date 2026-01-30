@@ -10,17 +10,18 @@
             type="com.kgmedia.fastfilm.feature.creator.set.ItemVideoConfigVm" />
 
         <import type="android.view.View" />
+        <import type="android.text.TextUtils"/>
     </data>
 
     <com.kgmedia.fastfilm.widget.BorderConstraintLayout
         selected="@{item.checked}"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_m"
         android:background="@drawable/selector_item_stroke"
         android:onClick="@{(v)->item.onItemClick.invoke(v)}"
         android:paddingHorizontal="@dimen/spacing_l"
         android:paddingVertical="@dimen/spacing_s"
-        android:layout_marginEnd="@dimen/spacing_m"
         app:borderEndColor="@color/gradient_btn_end_dark"
         app:borderStartColor="@color/gradient_btn_start_dark"
         app:borderWidth="1.5dp"
@@ -32,8 +33,25 @@
             style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@{item.data.customInput&amp;&amp;!TextUtils.isEmpty(item.input)?item.input:item.data.configValue}"
             android:textColor="?attr/textColor2"
+            android:visibility="@{item.data.customInput&amp;&amp;item.checked?View.GONE:View.VISIBLE}"
             tools:text="自定义集数" />
 
+        <EditText
+            android:id="@+id/etInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center"
+            android:hint="@{item.data.configValue}"
+            android:inputType="number"
+            android:maxLength="2"
+            android:text="@={item.input}"
+            android:textColor="?attr/textColor2"
+            android:textColorHint="?attr/textColor4"
+            android:textSize="14sp"
+            android:visibility="@{item.data.customInput&amp;&amp;item.checked?View.VISIBLE:View.GONE}"
+            app:autoFocus="@{item.data.customInput&amp;&amp;item.checked}" />
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 </layout>

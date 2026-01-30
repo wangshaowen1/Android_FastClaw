@@ -120,9 +120,6 @@ class CreationFragment :
     }
 
     fun showVideoSetDialog() {
-        if (AppNavigator.checkLoginIntercepted(true)) {
-            return
-        }
         mRealVM.videoSetConfig(true) {
             val newInstance = VideoSetDialog.newInstance(mRealVM.videoSetConfig.value)
             newInstance.onSuccess = {
@@ -164,6 +161,8 @@ class CreationFragment :
             }
 
             R.id.btnRandomPrompt -> {
+                showVideoSetDialog()
+                return
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }

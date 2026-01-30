@@ -33,6 +33,7 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
             newInstance.onSuccess = {
                 it?.let {
                     mRealVM.styleVms.find { vm -> vm.data.get()?.styleCode == it.styleCode }?.let { vm ->
+                        mRealVM.checkedStyle?.checked?.set(false)
                         vm.checked.set(true)
                         mRealVM.checkedStyle = vm
                     }
