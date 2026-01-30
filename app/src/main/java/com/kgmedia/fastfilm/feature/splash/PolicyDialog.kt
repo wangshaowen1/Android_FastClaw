@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.nhsd.basic.BaseDialogFragment
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.getThemeColor
 import kotlin.math.min
 
 
@@ -28,9 +29,13 @@ import kotlin.math.min
  * *****************************************
  */
 class PolicyDialog : BaseDialogFragment<DialogPolicyBinding>() {
+
+    private var highlightColor = R.color.theme_color_2_dark.getResColor()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         isCancelable = false
+        activity?.getThemeColor(R.attr.themeColor2)?.let { highlightColor = it }
     }
 
     override fun onStart() {
@@ -56,7 +61,7 @@ class PolicyDialog : BaseDialogFragment<DialogPolicyBinding>() {
      */
     private fun CharSequence.addPrivacyPolicy() = addSpan(
         R.string.tvPrivateService.getResString(),
-        HighlightSpan(R.color.color_ff4b00.getResColor()) {
+        HighlightSpan(highlightColor) {
             activity?.let {
                 SimpleBrowserActivity.launch(
                     it,
@@ -71,7 +76,7 @@ class PolicyDialog : BaseDialogFragment<DialogPolicyBinding>() {
      */
     private fun CharSequence.addUserPolicy() = addSpan(
         R.string.tvUserService.getResString(),
-        HighlightSpan(R.color.color_ff4b00.getResColor()) {
+        HighlightSpan(highlightColor) {
             activity?.let {
                 SimpleBrowserActivity.launch(
                     it,
