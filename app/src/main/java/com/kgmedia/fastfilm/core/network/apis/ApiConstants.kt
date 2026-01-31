@@ -681,4 +681,9 @@ object ApiConstants {
      * 获取集数/视频比例/视频风格配置
      */
     const val VIDEO_SET_CONFIG = "/work/config/list"
+
+    /**
+     * 查询资产参考图列表
+     */
+    const val GET_HISTORY_REFERENCE_IMAGE = "/work/asset/getReferenceImage"
 }

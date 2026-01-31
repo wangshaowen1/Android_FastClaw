@@ -21,6 +21,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.OrderStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.PointConsumePageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ProfitDetailInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.QuantityStatisticsOfWorksInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.RoleTagInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SegmentImageHistoryInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SeriesPriceConfigInfo
@@ -81,6 +82,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.PictureBookId
 import com.kgmedia.fastfilm.core.network.apis.request.PointConfigBody
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RecommendShortsBody
+import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
@@ -962,4 +964,10 @@ interface ApiService {
      */
     @POST(ApiConstants.VIDEO_SET_CONFIG)
     suspend fun videoSetConfig(@Body body: UserTokenBody): ApiResponse<VideoConfigData?>
+
+    /**
+     * 查询资产参考图列表
+     */
+    @POST(ApiConstants.GET_HISTORY_REFERENCE_IMAGE)
+    suspend fun getHistoryReferenceImage(@Body body: ReferenceImageBody): ApiResponse<List<ReferenceImageInfo>?>
 }

@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:minWidth="52dp"
+            android:minWidth="70dp"
             android:visibility="@{item.data.customInput&amp;&amp;item.checked?View.VISIBLE:View.GONE}">
 
             <EditText
@@ -56,10 +56,10 @@
                 android:background="@null"
                 android:gravity="center"
                 android:hint="0"
+                android:imeOptions="actionDone"
                 android:inputType="number"
                 android:maxLength="2"
                 android:minWidth="14dp"
-                android:imeOptions="actionDone"
                 android:text="@={item.input}"
                 android:textColor="?attr/textColor2"
                 android:textColorHint="@color/transparent"

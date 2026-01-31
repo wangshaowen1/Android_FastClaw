@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.creator.style.ItemCreationStyleVm" />
+            type="com.kgmedia.fastfilm.feature.creator.generate.edit.ItemReferenceImageVm" />
 
         <import type="android.view.View" />
     </data>
@@ -24,7 +24,7 @@
         app:showBorder="@{item.checked}">
 
         <com.kgmedia.fastfilm.widget.CropShapeImageView
-            loadThumbnailUri="@{item.data.styleCoverUrl}"
+            loadThumbnailUri="@{item.data.referenceImageUrl}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:shapeAppearanceOverlay="@style/roundStyle_r8"
@@ -35,6 +35,7 @@
             android:layout_height="20dp"
             android:layout_margin="6dp"
             android:src="@drawable/icon_choose_checked"
+            android:visibility="@{item.checked?View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
