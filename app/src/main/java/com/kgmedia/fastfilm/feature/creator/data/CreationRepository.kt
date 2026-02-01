@@ -20,14 +20,6 @@ import kotlinx.coroutines.withContext
 
 class CreationRepository : CommonRepository() {
 
-    suspend fun getDramaInfo(dramaId: String?) = withContext(Dispatchers.IO) {
-        api.getDramaInfo(DramasIdBody(dramaId))
-    }
-
-    suspend fun getDramaInfoRetry(dramaId: String?) = withContext(Dispatchers.IO) {
-        api.getDramaInfoRetry(DramasIdBody(dramaId))
-    }
-
     suspend fun getStoryBoardList(dramaId: String?) = withContext(Dispatchers.IO) {
         api.getStoryBoardList(DramasIdBody(dramaId))
     }
@@ -52,10 +44,6 @@ class CreationRepository : CommonRepository() {
         api.shotDramaGenerate(DramasIdBody(dramaId))
     }
 
-    suspend fun creationStyleList() = withContext(Dispatchers.IO) {
-        api.creationStyleList(PagedBody(1, 8))
-    }
-
     /**
      * 预生成短剧剧本大纲
      */
@@ -69,20 +57,6 @@ class CreationRepository : CommonRepository() {
 
     suspend fun videoSetConfig() = withContext(Dispatchers.IO) {
         api.videoSetConfig(UserTokenBody())
-    }
-
-    /**
-     * 帮我优化
-     */
-    suspend fun sseContent(body: SSEContentBody) = withContext(Dispatchers.IO) {
-        api.sseContent(body)
-    }
-
-    /**
-     * 随机灵感故事
-     */
-    suspend fun randomInspirationStory(body: SSEContentBody) = withContext(Dispatchers.IO) {
-        api.randomInspirationStory(body)
     }
 
     /**

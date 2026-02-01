@@ -372,23 +372,6 @@ interface ApiService {
     @POST(ApiConstants.SSE_CONTENT_AI_EXPAND)
     fun sseContentAIExpand(@Body body: AIExpandBody): Flow<SSEvent>
 
-    /**
-     * 随机灵感故事
-     */
-    @POST(ApiConstants.RANDOM_INSPIRATION_STORY)
-    suspend fun randomInspirationStory(@Body body: SSEContentBody): ApiResponse<OptimizeContentData?>
-
-    /**
-     * 轮询短剧剧本大纲
-     */
-    @POST(ApiConstants.GET_DRAMA_INFO)
-    suspend fun getDramaInfo(@Body body: DramasIdBody): ApiResponse<DramasInfoData?>
-
-    /**
-     * 重新预生成剧本大纲(重新生成)
-     */
-    @POST(ApiConstants.GET_DRAMA_INFO_RETRY)
-    suspend fun getDramaInfoRetry(@Body body: DramasIdBody): ApiResponse<DramasIdData?>
 
     /**
      * 轮询剧本分镜大纲
