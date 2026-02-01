@@ -49,7 +49,7 @@ object OssManager {
         return OssStsConfig(
             accessKeyId = "LTAI5tBeSRMZvDBq9xKFJsnQ",
             accessKeySecret = "c5er42rEKyENOoGdRU6mZ41kyEoVQx",
-            bucket = "kuaige",
+            bucket = "kuaichupian",
             endpoint = "oss-cn-shenzhen.aliyuncs.com",
             region = null,
             netImageUrl = ALIYUN_NET_IMAGE_URL,
