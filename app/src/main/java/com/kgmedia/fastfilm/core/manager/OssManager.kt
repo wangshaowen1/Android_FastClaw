@@ -16,7 +16,7 @@ import com.kuaige.oss.OssType
 object OssManager {
 
     const val TOS_NET_IMAGE_URL: String = "https://kuaige.tos-cn-guangzhou.volces.com/" //OSS 图片基础地址（桶域名:kuaige.tos-cn-guangzhou.volces.com）
-    const val ALIYUN_NET_IMAGE_URL = "https://kuaige.oss-cn-shenzhen.aliyuncs.com/" //OSS 图片基础地址
+    const val ALIYUN_NET_IMAGE_URL = "https://kuaichupian.oss-cn-shenzhen.aliyuncs.com/" //OSS 图片基础地址
 
     @JvmStatic
     fun init(ossType: OssType, ossFileNameProvider: (ossPathName: String,suffix: String) -> String) {
@@ -47,8 +47,8 @@ object OssManager {
 
     private fun getALiYunOssStsConfig(): OssStsConfig {
         return OssStsConfig(
-            accessKeyId = "LTAI5tMu1L5A1rXzsq9DmYiA",
-            accessKeySecret = "NL03P3Asan67vXts5stcicI6JdSOAk",
+            accessKeyId = "LTAI5tBeSRMZvDBq9xKFJsnQ",
+            accessKeySecret = "c5er42rEKyENOoGdRU6mZ41kyEoVQx",
             bucket = "kuaige",
             endpoint = "oss-cn-shenzhen.aliyuncs.com",
             region = null,

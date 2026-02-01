@@ -195,13 +195,13 @@ class App : BaseApp() {
 
         // SAM 转换：直接使用 Lambda
         LoadingConfig.setFactory { LoadingDialog2() }
-        OssManager.init(ossType = OssType.TENCENT, ossFileNameProvider = {ossPathName, suffix ->
+        OssManager.init(ossType = OssType.ALIYUN, ossFileNameProvider = {ossPathName, suffix ->
             val timestamp = System.currentTimeMillis()
-            "gfApp/$ossPathName/${User.get().id}/0$timestamp.$suffix"
+            "FFApp/$ossPathName/${User.get().id}/0$timestamp.$suffix"
         })
         // 初始化加载刷新控件
         initSmartRefreshLayoutView()
-        PaymentConfig.init(BuildConfig.WX_APP_ID, BuildConfig.WX_APP_SECRET)
+//todo 微信支付加上后需要打开这里        PaymentConfig.init(BuildConfig.WX_APP_ID, BuildConfig.WX_APP_SECRET)
         initGrowingIO()
     }
 
