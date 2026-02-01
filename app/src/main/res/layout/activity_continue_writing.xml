@@ -42,7 +42,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_avatar"
-                loadHQThumbnailUri="@{layout.info.dramasCoverUrl}"
+                loadHQThumbnailUri="@{layout.seriesInfo.workCoverUrl}"
                 android:layout_width="78dp"
                 android:layout_height="104dp"
                 android:scaleType="centerCrop"
@@ -58,7 +58,7 @@
                 android:layout_marginStart="@dimen/spacing_m"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{`第`+layout.info.workNo+`集 | `+layout.info.dramasName}"
+                android:text="@{`第`+layout.info.sortNo+`集 | `+layout.info.storyTitle}"
                 android:textColor="?attr/textColor1"
                 app:layout_constraintBottom_toTopOf="@id/tv_desc"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                 android:layout_marginTop="@dimen/spacing_s"
                 android:ellipsize="end"
                 android:maxLines="4"
-                android:text="@{layout.info.scriptIntro}"
+                android:text="@{layout.info.storySummary}"
                 android:textColor="?attr/textColor4"
                 app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -112,20 +112,20 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:gravity="top|start"
-                app:inputHint="请输入您的原著内容，「快出片」将严格基于你提供的章节内容生成漫剧，不会新增剧情"
+                android:maxLength="@{layout.maxInputLength}"
                 app:inputCounterGravity="right"
                 app:inputCounterRightMargin="0dp"
                 app:inputCounterTextColor="?attr/textColor4"
                 app:inputCounterTextSize="12sp"
                 app:inputCounterVisible="false"
+                app:inputHint="请输入您的原著内容，「快出片」将严格基于你提供的章节内容生成漫剧，不会新增剧情"
                 app:inputHorizontalPadding="@dimen/spacing_m"
                 app:inputTextColor="?attr/textColor2"
                 app:inputTextColorHint="?attr/textColor4"
                 app:inputTextSize="14sp"
                 app:inputVerticalPadding="@dimen/spacing_m"
                 app:layout_constraintBottom_toTopOf="@id/llBottom"
-                app:layout_constraintTop_toTopOf="parent"
-                android:maxLength="@{layout.maxInputLength}" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -153,7 +153,7 @@
                 app:layout_constraintTop_toTopOf="@id/tvContentLength">
 
                 <TextView
-                    android:id="@+id/btnPaste"
+                    android:id="@+id/btnRegenerate"
                     style="@style/Text12"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"
@@ -170,7 +170,7 @@
                     app:drawableStartCompat="@drawable/icon_refresh_1_12" />
 
                 <TextView
-                    android:id="@+id/btn_continue_writing"
+                    android:id="@+id/btnAIExpand"
                     style="@style/Text12"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"

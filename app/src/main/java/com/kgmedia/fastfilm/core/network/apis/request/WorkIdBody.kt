@@ -1,10 +1,21 @@
 package com.kgmedia.fastfilm.core.network.apis.request
 
-data class DramasSeriesIdBody(
+data class WorkIdBody(
     /**
      * 剧集Id，接受Long和String类型
      */
-    val dramasSeriesId: String?
+    val workId: String?
+) : UserTokenBody()
+
+data class WorkBody(
+    /**
+     * 作品Id，接受Long和String类型
+     */
+    val workId: String?,
+    /**
+     * 剧集Id，接受Long和String类型
+     */
+    val storyId: String?
 ) : UserTokenBody()
 
 data class ContinueGenerateBody(

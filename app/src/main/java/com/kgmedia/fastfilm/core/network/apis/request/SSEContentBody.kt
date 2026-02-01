@@ -3,7 +3,7 @@ package com.kgmedia.fastfilm.core.network.apis.request
 data class SSEContentBody(
     val prompt: String?,
     /**
-     * 业务类型枚举10=随机灵感 11=AI优化灵感 20=剧集梗概 30=梗概剧集剧本 31=小说剧集剧本 32=扩写剧集剧本 33=优化作品简介
+     * 业务类型枚举10=随机灵感 11=AI优化灵感 12=AI优化小说  20=剧集梗概 30=灵感剧集剧本 31=小说剧集剧本 32=扩写剧集剧本 33=灵感续集剧本 34=优化作品简介
      */
     val bizType: Int? = null//加一个这个参数
 ) : UserTokenBody() {
@@ -17,6 +17,11 @@ data class SSEContentBody(
          * AI优化灵感
          */
         const val TYPE_AI_OPTIMIZE_INSPIRATION = 11
+
+        /**
+         * AI优化小说
+         */
+        const val TYPE_AI_OPTIMIZE_NOVEL = 12
 
         /**
          * 剧集梗概生成
@@ -42,11 +47,29 @@ data class SSEContentBody(
          * 优化作品简介
          */
         const val TYPE_OPTIMIZE_DRAMA_DESC = 33
+
+        /**
+         * 优化剧集简介
+         */
+        const val TYPE_OPTIMIZE_EPISODE_DESC = 34
     }
 }
 
 data class OptimizeContentData(
     val content: String?,
+)
+
+/**
+ * {
+ *     "workId": "作品ID",
+ *     "storyId": "上一集 剧集id",
+ *     "bizType": "业务类型枚举30=灵感剧集剧本  33=灵感续集剧本"
+ * }
+ */
+data class AIExpandBody(
+    val storyId: String? = null,
+    val workId: String? = null,
+    val bizType: Int? = null,
 )
 
 /**

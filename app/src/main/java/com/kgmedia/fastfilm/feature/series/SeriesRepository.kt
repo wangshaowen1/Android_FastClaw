@@ -2,7 +2,7 @@ package com.kgmedia.fastfilm.feature.series
 
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.network.apis.ApiConstants
-import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.SeriesFollowBody
 import com.kgmedia.fastfilm.core.network.apis.request.SeriesModifyInfoBody
 import com.kgmedia.fastfilm.core.network.apis.request.SeriesSetPriceBody
@@ -19,7 +19,7 @@ class SeriesRepository : AppRepository() {
      * @param seriesId 剧集ID
      */
     suspend fun seriesDetail(seriesId: String?) = withContext(Dispatchers.IO) {
-        api.seriesDetail(DramasSeriesIdBody(seriesId))
+        api.seriesDetail(WorkIdBody(seriesId))
     }
 
     /**
@@ -43,7 +43,7 @@ class SeriesRepository : AppRepository() {
      * @param seriesId 剧集ID
      */
     suspend fun seriesPriceConfig(seriesId: String?) = withContext(Dispatchers.IO) {
-        api.seriesPriceConfig(DramasSeriesIdBody(seriesId))
+        api.seriesPriceConfig(WorkIdBody(seriesId))
     }
 
     /**

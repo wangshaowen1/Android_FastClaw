@@ -7,6 +7,8 @@ import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.showToast
@@ -45,27 +47,24 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 //        }
     }
 
-//    private fun saveAlbumInfo() {
-//        mAlbumInfo ?: return
-//        if (name.value?.length == 0) {
-//            "请完善专辑名称".showToast()
-//            return
-//        }
-//        if (isUploading && !mCoverPath.isNullOrEmpty()) {
-//            "封面上传中,请稍等~".showToast()
-//            return
-//        }
-//        launchWithLoading {
-//            response(mRepo.albumInfoEdit(mAlbumInfo!!.albumId, cover.get(), name.value, desc.value)) {
+    private fun saveInfo() {
+        if (name.value?.isEmpty() == true) {
+            "请完善作品名称".showToast()
+            return
+        }
+        if (isUploading && !mCoverPath.isNullOrEmpty()) {
+            "封面上传中,请稍等~".showToast()
+            return
+        }
+        requestWithLoading({mRepo.api.updateWorkInfo(WorkInfoUpdateBody( "",cover.get(), name.value, desc.value))}) {
 //                mAlbumInfo?.albumRemark = desc.value
 //                mAlbumInfo?.albumName = name.value
 //                mAlbumInfo?.albumCoverUrl = cover.get()
 //                Global.albumInfoMap[mAlbumInfo?.albumId] = mAlbumInfo
 //                FlowEventBus.postSync(AlbumChangeEvent(mAlbumInfo?.albumId, AlbumChangeEvent.EVENT_INFO_CHANGE, mAlbumInfo))
-//                finish()
-//            }
-//        }
-//    }
+                finish()
+        }
+    }
 
     /**
      * @param path 本地路径

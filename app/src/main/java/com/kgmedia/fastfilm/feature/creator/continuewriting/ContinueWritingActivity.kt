@@ -15,7 +15,6 @@ import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.databinding.ActivityContinueWritingBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
-import com.kgmedia.fastfilm.feature.payment.vip.MembershipBenefitsActivity
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelActivity
@@ -55,7 +54,7 @@ class ContinueWritingActivity :
             if (mRealVM.input.value != binding.inputView.text) {
                 binding.inputView.setText(mRealVM.input.value)
             }
-            Global.continueWritingContent[mRealVM.dramasSeriesId] = mRealVM.input.value
+            Global.continueWritingContent[mRealVM.workId] = mRealVM.input.value
         }
         binding.inputView.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
@@ -67,7 +66,7 @@ class ContinueWritingActivity :
                 mRealVM.refreshConfig()
             }
             on<Events.ScriptContentGenerateSuccessEvent> {
-                if (it.type == Events.ScriptContentGenerateSuccessEvent.TYPE_CONTINUE_WRITE && it.seriesId == mRealVM.dramasSeriesId) {
+                if (it.type == Events.ScriptContentGenerateSuccessEvent.TYPE_CONTINUE_WRITE && it.seriesId == mRealVM.workId) {
                     finish()
                 }
             }
@@ -95,13 +94,17 @@ class ContinueWritingActivity :
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
-            R.id.btnOptimize -> {
+            R.id.btnRegenerate, R.id.btnAIExpand -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
                 if (!mRealVM.isSSEStreaming.get()) {
-                    mRealVM.sseContinueGenerate()
+                    mRealVM.sseGenerate()
                 }
+            }
+
+            R.id.btnDelete -> {
+                mRealVM.input.value = ""
             }
 
             R.id.btnNext -> {
@@ -129,10 +132,10 @@ class ContinueWritingActivity :
         StoryEditorActivity.start(
             this,
             mRealVM.input.value,
-            mRealVM.info.value?.styleId,
-            mRealVM.info.value?.videoRatio,
+            null,
+            null,
             DramaGenerateBody.GEN_WAY_CONTINUE_STORY,
-            mRealVM.dramasSeriesId
+            mRealVM.workId
         )
 //        Global.clearContinueInputContent(mRealVM.dramasSeriesId)
 //        finish()

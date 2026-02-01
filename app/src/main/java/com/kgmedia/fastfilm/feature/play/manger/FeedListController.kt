@@ -4,6 +4,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.feature.play.VideoFeedAdapter
 import com.nhsd.basic.utils.Logger
 
@@ -88,7 +89,7 @@ class FeedListController(
 
         val item = adapter.peek(position) ?: return
         val holder = recyclerView.getChildViewHolder(centerView) as? VideoFeedAdapter.VideoViewHolder ?: return
-
+        EventManager.onPlayEvent(item.userId, item.id)
         // 调用 Manager 播放
         playerManager.attachAndPlay(item, holder.binding.playerView)
         // 强制更新 UI 为播放状态

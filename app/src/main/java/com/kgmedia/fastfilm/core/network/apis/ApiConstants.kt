@@ -196,9 +196,24 @@ object ApiConstants {
     const val CREATION_GENERATE_PRE = "shortDramas/structure/script/generate/pre"
 
     /**
-     * 业务类型枚举10=随机灵感 11=AI优化灵感 20=剧集梗概 30=梗概剧集剧本 31=小说剧集剧本 32=扩写剧集剧本 33=优化作品简介
+     * 灵感内容优化（AI优化灵感）
      */
-    const val SSE_CONTENT = "ai/stream/page"
+    const val SSE_CONTENT_OPTIMIZE = "/ai/stream/inspiration/refine"
+
+    /**
+     * 随机灵感（无入参）
+     */
+    const val SSE_CONTENT_RANDOM = "/ai/stream/inspiration/random"
+
+    /**
+     * 故事剧本（基于灵感写剧本/灵感续写）
+     */
+    const val SSE_CONTENT_EXPANDING_DRAMA_SCRIPT = "/ai/stream/script/from-idea"
+
+    /**
+     * 扩写剧集剧本（小说）
+     */
+    const val SSE_CONTENT_AI_EXPAND = "/ai/stream/script/expand"
 
     /**
      * 随机灵感故事
@@ -511,9 +526,14 @@ object ApiConstants {
     const val USER_CONTINUABLE_DRAMAS = "shortDramasSeries/userCanRewriteDramasList"
 
     /**
-     * 获取剧集最新一集剧本详情
+     * 续创时查询上一集内容详情
      */
-    const val LATEST_DRAMAS_WORK_DETAIL = "shortDramasSeries/latest/DramasWork/detail"
+    const val LATEST_DRAMAS_WORK_DETAIL = "/work/production/sequel/sequelDetail"
+
+    /**
+     * 查询我的作品详情
+     */
+    const val DRAMA_INFO = "/work/detail"
 
     /**
      * 流式生成帮我续写(生成续写的用户输出内容)
@@ -686,4 +706,14 @@ object ApiConstants {
      * 查询资产参考图列表
      */
     const val GET_HISTORY_REFERENCE_IMAGE = "/work/asset/getReferenceImage"
+
+    /**
+     * 编辑我的作品信息
+     */
+    const val UPDATE_WORK_INFO = "/work/update"
+
+    /**
+     * 作品播放量计数
+     */
+    const val PLAY_EVENT_REPORT = "/app/home/work/playCount"
 }

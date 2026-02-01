@@ -187,14 +187,6 @@ class SetPriceViewModel : AppRepositoryViewModel<SeriesRepository>() {
             startChargeWorkNo = startChargeWorkNo,
             freeStatus = freeStatus
         )
-        EventManager.onAppEvent(
-            AppEvent.JG_CLICK_SET_UP_CHARGES_IMMEDIATE_BUTTON,
-            mapOf(
-                GrowingIO.KEY_ALL_GENERAL_ID to seriesId,
-                GrowingIO.JG_VIP_TYPE to User.get().vipType.toString(),
-                GrowingIO.ALL_PAY_MONEY_YUAN to unlockPrice.formatMoney(),
-            )
-        )
         launchWithLoading {
             if (release) {
                 response(
@@ -224,7 +216,6 @@ class SetPriceViewModel : AppRepositoryViewModel<SeriesRepository>() {
     }
 
     fun startVip() {
-        EventManager.onAppEvent(AppEvent.JG_CLICK_SET_UP_CHARGES_SUBSCRIPTION_VIP_BUTTON, mapOf(GrowingIO.KEY_ALL_GENERAL_ID to seriesId))
         MembershipBenefitsActivity.start(withToast = false)
     }
 }

@@ -13,11 +13,13 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
-import com.kgmedia.fastfilm.core.network.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
+import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
+import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.KEY_MODEL
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.MODEL_INSPIRATION
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
@@ -65,29 +67,34 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     fun sseGenerate(bizType: Int? = null, promptGeneratingContent: String?) {
         promptGenerating.value = true to (promptGeneratingContent ?: "")
-        val sseFlow = mRepo.api.sseContent(SSEContentBody(input.value, bizType))
+        val sseFlow =
+            if (bizType == SSEContentBody.TYPE_RANDOM_INSPIRATION) mRepo.api.sseContentRandom(UserTokenBody()) else mRepo.api.sseContentOptimize(
+                SSEContentBody(input.value, bizType)
+            )
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
             scope = viewModelScope, // 传入协程作用域
-            onStart = {
-                promptGenerating.value = false to ""
-                Logger.d("[SSE]", "Open")
-                input.value = ""
-            },
-            onContentUpdate = { fullContent ->
-                // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                input.value = fullContent
-            },
-            onComplete = {
-                Logger.d("[SSE]", "Finished")
-                // 触发原本结束后的逻辑
-            },
-            onError = { e ->
-                Log.e("[SSE]", "Error: $e")
-                // 根据需要处理特定错误
-                e?.message?.showToast()
-            }
+            processor = PlainTextSseProcessor(
+                scope = viewModelScope,
+                onStart = {
+                    promptGenerating.value = false to ""
+                    Logger.d("[SSE]", "Open")
+                    input.value = ""
+                },
+                onUpdate = { fullContent ->
+                    // 这里自动包含了 50ms 的节流逻辑，直接设置即可
+                    input.value = fullContent
+                },
+                onComplete = {
+                    Logger.d("[SSE]", "Finished")
+                    // 触发原本结束后的逻辑
+                },
+                onError = { e ->
+                    Log.e("[SSE]", "Error: $e")
+                    // 根据需要处理特定错误
+                    e?.message?.showToast()
+                })
         )
         // 3. 启动
         Logger.d("[SSE]", "Starting with content body = $input")

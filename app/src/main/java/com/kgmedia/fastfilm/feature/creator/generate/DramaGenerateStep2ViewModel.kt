@@ -9,11 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.network.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.apis.entity.CharacterInfo
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.InputContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
+import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
+import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.nhsd.basic.utils.Logger
@@ -70,25 +71,27 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
             scope = viewModelScope, // 传入协程作用域
-            onStart = {
-                displayChild.set(DISPLAY_LOADING)
-                mSSEContent.set("")
-                mContent.set("")
-                Logger.d("[SSE]", "Open")
-            },
-            onContentUpdate = { fullContent ->
-                // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                mSSEContent.set(fullContent)
-            },
-            onComplete = {
-                Logger.d("[SSE]", "Finished")
-                // 触发原本结束后的逻辑
-            },
-            onError = { e ->
-                Log.e("[SSE]", "Error: $e")
-                displayChild.set(DISPLAY_FAIL)
-                // 根据需要处理特定错误
-            }
+            processor = PlainTextSseProcessor(
+                scope = viewModelScope,
+                onStart = {
+                    displayChild.set(DISPLAY_LOADING)
+                    mSSEContent.set("")
+                    mContent.set("")
+                    Logger.d("[SSE]", "Open")
+                },
+                onUpdate = { fullContent ->
+                    // 这里自动包含了 50ms 的节流逻辑，直接设置即可
+                    mSSEContent.set(fullContent)
+                },
+                onComplete = {
+                    Logger.d("[SSE]", "Finished")
+                    // 触发原本结束后的逻辑
+                },
+                onError = { e ->
+                    Log.e("[SSE]", "Error: $e")
+                    displayChild.set(DISPLAY_FAIL)
+                    // 根据需要处理特定错误
+                })
         )
 
         // 3. 启动

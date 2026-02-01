@@ -41,6 +41,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.VipConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawConfirmInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawSuccessInfo
+import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AppFloatWindowsBody
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindPhoneBody
@@ -56,7 +57,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesId
-import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbrePagedBody
@@ -79,6 +79,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.OrderStatusBody
 import com.kgmedia.fastfilm.core.network.apis.request.OrderingPointsBody
 import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.PictureBookId
+import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
 import com.kgmedia.fastfilm.core.network.apis.request.PointConfigBody
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RecommendShortsBody
@@ -109,6 +110,8 @@ import com.kgmedia.fastfilm.core.network.apis.request.UserShareUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTimbreIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.WithdrawBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.apis.response.AlipayData
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.AppFloatWindowsInfo
@@ -128,7 +131,8 @@ import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
 import com.kgmedia.fastfilm.core.network.apis.response.RechargePageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.SceneCostData
 import com.kgmedia.fastfilm.core.network.apis.response.ScoreConfigData
-import com.kgmedia.fastfilm.core.network.apis.response.SeriesWorkData
+import com.kgmedia.fastfilm.core.network.apis.response.SeriesData
+import com.kgmedia.fastfilm.core.network.apis.response.LastStoryData
 import com.kgmedia.fastfilm.core.network.apis.response.ShortLikeData
 import com.kgmedia.fastfilm.core.network.apis.response.StoryboardListData
 import com.kgmedia.fastfilm.core.network.apis.response.TimbreIdData
@@ -332,8 +336,41 @@ interface ApiService {
         "Cache-Control: no-cache",     // 禁用缓存
         "Connection: keep-alive"       // 保持长连接
     )
-    @POST(ApiConstants.SSE_CONTENT)
-    fun sseContent(@Body body: SSEContentBody): Flow<SSEvent>
+    @POST(ApiConstants.SSE_CONTENT_OPTIMIZE)
+    fun sseContentOptimize(@Body body: SSEContentBody): Flow<SSEvent>
+
+    /**
+     * SSE流式输出：业务类型枚举10=随机灵感 11=AI优化灵感 20=剧集梗概 30=梗概剧集剧本 31=小说剧集剧本 32=扩写剧集剧本 33=优化作品简介
+     */
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SSE_CONTENT_RANDOM)
+    fun sseContentRandom(@Body body: UserTokenBody): Flow<SSEvent>
+
+    /**
+     *故事剧本（基于灵感写剧本/灵感续写）
+     */
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SSE_CONTENT_EXPANDING_DRAMA_SCRIPT)
+    fun sseContentExpandingDramaScript(@Body body: AIExpandBody): Flow<SSEvent>
+
+    /**
+     *扩写剧集剧本（小说）
+     */
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SSE_CONTENT_AI_EXPAND)
+    fun sseContentAIExpand(@Body body: AIExpandBody): Flow<SSEvent>
 
     /**
      * 随机灵感故事
@@ -727,7 +764,13 @@ interface ApiService {
      * 获取剧集最新一集剧本详情
      */
     @POST(ApiConstants.LATEST_DRAMAS_WORK_DETAIL)
-    suspend fun latestDramasWorkDetail(@Body body: DramasSeriesIdBody): ApiResponse<SeriesWorkData?>
+    suspend fun latestDramasWorkDetail(@Body body: WorkIdBody): ApiResponse<LastStoryData?>
+
+    /**
+     * 查询我的作品详情
+     */
+    @POST(ApiConstants.DRAMA_INFO)
+    suspend fun dramaInfo(@Body body: WorkIdBody): ApiResponse<SeriesData?>
 
     /**
      *流式生成帮我续写(生成续写的用户输出内容)
@@ -768,7 +811,7 @@ interface ApiService {
      * 获取剧集价格配置
      */
     @POST(ApiConstants.SERIES_PRICE_CONFIG)
-    suspend fun seriesPriceConfig(@Body body: DramasSeriesIdBody): ApiResponse<SeriesPriceConfigInfo?>
+    suspend fun seriesPriceConfig(@Body body: WorkIdBody): ApiResponse<SeriesPriceConfigInfo?>
 
     /**
      * 修改剧集信息
@@ -786,7 +829,7 @@ interface ApiService {
      * 获取剧集详情看自己看别人都用这个
      */
     @POST(ApiConstants.SERIES_DETAIL)
-    suspend fun seriesDetail(@Body body: DramasSeriesIdBody): ApiResponse<DramasSeriesInfo?>
+    suspend fun seriesDetail(@Body body: WorkIdBody): ApiResponse<DramasSeriesInfo?>
 
     /**
      * 获取剧集详情看自己看别人都用这个
@@ -970,4 +1013,16 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_HISTORY_REFERENCE_IMAGE)
     suspend fun getHistoryReferenceImage(@Body body: ReferenceImageBody): ApiResponse<List<ReferenceImageInfo>?>
+
+    /**
+     * 编辑我的作品信息
+     */
+    @POST(ApiConstants.UPDATE_WORK_INFO)
+    suspend fun updateWorkInfo(@Body body: WorkInfoUpdateBody): ApiResponse<Any>
+
+    /**
+     * 编辑我的作品信息
+     */
+    @POST(ApiConstants.PLAY_EVENT_REPORT)
+    suspend fun playEventReport(@Body body: PlayEventBody): ApiResponse<Any>
 }

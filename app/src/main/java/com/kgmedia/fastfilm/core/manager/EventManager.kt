@@ -4,11 +4,10 @@ import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.common.ext.ioScope
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
-import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
+import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.ShareReportBody
-import com.growingio.android.sdk.autotrack.GrowingAutotracker
 import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.utils.Logger
 import com.umeng.analytics.MobclickAgent
@@ -23,21 +22,6 @@ object EventManager {
     var playerInSquare = false
     private val apiService = ApiFactory.apiService
 
-
-    /**
-     * 后台接口埋点
-     * @param event 事件名称
-     * @param newUserOnly 仅24小时新用户上报
-     */
-    private fun backendApiEvent(event: String?, newUserOnly: Boolean = false) {
-        if (event == null) return
-        if (newUserOnly) {
-            if (User.get().is24HourNewUser().not()) return
-            onAppEvent(eventCode = event)
-            return
-        }
-        onAppEvent(eventCode = event)
-    }
 
     /**
      * 用户分享操作上报
@@ -84,40 +68,12 @@ object EventManager {
     }
 
     /**
-     * App功能使用数据
-     *
-     * @param eventCode 事件编码
-     * @param bizId 业务id
-     * @param params 任何额外的自定义数据，可根据业务需求添加任意字段
+     * 作品播放量计数
      */
-    @JvmStatic
-    fun onAppEvent(
-        eventCode: String? = null,
-        params: Map<String, Any?>? = null
-    ) {
-        if (eventCode == null) return
-        val map = params?.mapValues { it.value?.toString() ?: "" }
-        Logger.d("EventManager onAppEvent eventCode=$eventCode params=$map")
-        if (map == null) {
-            MobclickAgent.onEvent(App.instance, eventCode)
-        } else {
-            MobclickAgent.onEvent(App.instance, eventCode, map)
+    fun onPlayEvent(userId: String?, dramasId: String?) {
+        ioScope.launchNoCrash {
+            ApiFactory.apiService.playEventReport(PlayEventBody(userId, dramasId))
         }
-//        ioScope.launchNoCrash {
-//            val page = ActivityUtils.getActivityList()?.take(5)?.reversed()
-//                ?.joinToString("->") { it.javaClass.simpleName }
-//            val body = EventTrackingBody(
-//                eventCode = eventCode,
-//                bizId = bizId,
-//                customData = customData,
-//                pageLinking = page
-//            )
-//            ApiFactory.eventService.eventTracking(body)
-//        }
-    }
-
-    suspend fun onDramaShortStart(dramasId: String) {
-        ApiFactory.apiService.shortDramaPlayReport(DramasIdBody(dramasId))
     }
 
     /**

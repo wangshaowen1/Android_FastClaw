@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class DramasSeriesInfo(
     /**
-     * 短剧剧集表id[b_short_dramas_series]
+     * 短剧剧集表id
      */
     val dramasSeriesId: String?,
 
