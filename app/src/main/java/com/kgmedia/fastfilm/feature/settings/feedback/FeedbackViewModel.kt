@@ -69,7 +69,7 @@ class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private fun submit(content: String?, images: List<String>?) {
         launch({
-            val body = FeedbackBody(type.get()?.key, content, images, phoneNumber.value)
+            val body = FeedbackBody(type.get()?.key, content, images?.joinToString(separator = ","), phoneNumber.value)
             val response = withContext(Dispatchers.IO) { mRepo.api.feedback(body) }
             setLoading(false)
             if (response.isSuccess) {

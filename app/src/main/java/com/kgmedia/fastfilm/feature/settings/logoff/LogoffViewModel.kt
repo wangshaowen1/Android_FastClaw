@@ -9,7 +9,6 @@ import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.LogOffStatusInfo
-import com.kgmedia.fastfilm.core.network.apis.request.LogoffBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.response
 import com.nhsd.basic.ext.showToast
@@ -48,29 +47,11 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
     //提交申请文案
     val submitApplyText = ObservableField("申请注销")
     private var countDownTimer: CountDownTimer? = null
-    var firstRequest = true
     override fun onStart() {
         super.onStart()
-        logOffStatus()
         countdown()
     }
 
-    private fun logOffStatus() {
-        launchWithLoading(firstRequest) {
-            response(mRepo.api.logOffStatus(UserTokenBody())) {
-                if (data?.removeAccountState == LogOffStatusInfo.SUBMIT_APPLY) {
-                    removeAccountState.set(REMOVE_ACCOUNT_STATE_APPLY_NOT_CLICK)
-                    submitApplyText.set("申请注销中")
-                } else {
-                    removeAccountState.set(REMOVE_ACCOUNT_STATE_NOT_APPLY)
-                    submitApplyText.set("申请注销")
-                    //开启倒计时
-                    countdown()
-                }
-                firstRequest = false
-            }
-        }
-    }
 
     private fun countdown() {
         // 取消之前的倒计时（如果存在）
@@ -85,7 +66,7 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
             override fun onFinish() {
                 submitApplyText.set("申请注销")
                 removeAccountState.set(REMOVE_ACCOUNT_STATE_APPLY)
-                countDownTimer=null
+                countDownTimer = null
             }
         }.start()
     }
@@ -114,10 +95,9 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 提交注销申请
      */
-    fun commitLogoff(content: String) {
+    fun commitLogoff() {
         launchWithLoading {
-            response(mRepo.api.logOff(LogoffBody(content))) {
-                "若7日内未取消注销申请，则7日后注销成功。".showToast()
+            response(mRepo.api.logOff(UserTokenBody())) {
                 finish()
             }
         }

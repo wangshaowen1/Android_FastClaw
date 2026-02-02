@@ -39,12 +39,12 @@ object ApiConstants {
     /**
      * 退出登录
      */
-    const val LOGOUT_APP = "/auth/logout"
+    const val LOGOUT_APP = "auth/sign-out"
 
     /**
      * 注销账号
      */
-    const val LOG_OFF = "user/removeAccount"
+    const val LOG_OFF = "auth/logout"
 
     /**
      * 获取用户分享链接

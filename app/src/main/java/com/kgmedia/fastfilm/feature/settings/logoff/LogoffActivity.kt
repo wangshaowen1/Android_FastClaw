@@ -43,7 +43,7 @@ class LogoffActivity :
                         cancelText = "取消",
                         confirmText = "确定"
                     ) {
-                        mRealVM.commitLogoff("")
+                        mRealVM.commitLogoff()
                     }
                 }
 

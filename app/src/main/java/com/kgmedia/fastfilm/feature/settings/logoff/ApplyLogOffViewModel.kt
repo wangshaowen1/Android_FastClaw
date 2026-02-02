@@ -5,7 +5,7 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.network.apis.request.LogoffBody
+import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.response
 import com.nhsd.basic.ext.showToast
 
@@ -22,7 +22,7 @@ class ApplyLogOffViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     fun commitLogoff(content: String) {
         launchWithLoading {
-            response(mRepo.api.logOff(LogoffBody(content))) {
+            response(mRepo.api.logOff(UserTokenBody())) {
                 "若7日内未取消注销申请，则7日后注销成功。".showToast()
                 finish()
             }

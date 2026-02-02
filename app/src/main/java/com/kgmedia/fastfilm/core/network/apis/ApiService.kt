@@ -68,7 +68,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.InputContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByFlashMobileBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
-import com.kgmedia.fastfilm.core.network.apis.request.LogoffBody
 import com.kgmedia.fastfilm.core.network.apis.request.MemberPaymentBody
 import com.kgmedia.fastfilm.core.network.apis.request.MessagesTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
@@ -193,7 +192,7 @@ interface ApiService {
      * 注销账号
      */
     @POST(ApiConstants.LOG_OFF)
-    suspend fun logOff(@Body body: LogoffBody): ApiResponse<Any?>
+    suspend fun logOff(@Body body: UserTokenBody): ApiResponse<Any?>
 
     /**
      * 获取用户分享链接
