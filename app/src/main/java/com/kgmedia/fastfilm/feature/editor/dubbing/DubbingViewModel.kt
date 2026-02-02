@@ -117,16 +117,16 @@ class DubbingViewModel : AppRepositoryViewModel<ShortDramaEditorRepository>() {
                 }
 
                 else -> {
-                    if (it.vipStatus == 1 && User.get().isVip.not()) {
+                    if (it.vipStatus == 1) {
                         MembershipBenefitsActivity.start(scene = MembershipBenefitsActivity.Scene.Dubbing)
                         return
                     }
                     val cost = it.timbrePrice ?: 0
-                    if (cost > User.get().scoreBalance) {
-                        "当前余额不足，请充值".showToast()
-                        PointsRechargeActivity.start(null, false)
-                        return
-                    }
+//                    if (cost > User.get().scoreBalance) {
+//                        "当前余额不足，请充值".showToast()
+//                        PointsRechargeActivity.start(null, false)
+//                        return
+//                    }
                     dubbing(it.timbreId)
                 }
             }

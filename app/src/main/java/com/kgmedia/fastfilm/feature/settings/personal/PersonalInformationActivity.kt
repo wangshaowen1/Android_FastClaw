@@ -108,11 +108,10 @@ class PersonalInformationActivity :
         min[1940, min[Calendar.MONTH]] = min[Calendar.DAY_OF_MONTH] + 1
         mDatePicker.setMinDate(min.timeInMillis)
         val birthday = Calendar.getInstance()
-        kotlin.runCatching { birthday.time = DateUtil.parse(mRealVM.birthday.get() ?: Constants.DEFAULT_BIRTHDAY, DateUtil.FORMAT_DATE) }
+        kotlin.runCatching { birthday.time = DateUtil.parse( Constants.DEFAULT_BIRTHDAY, DateUtil.FORMAT_DATE) }
         mDatePicker.updateDate(birthday[Calendar.YEAR], birthday[Calendar.MONTH], birthday[Calendar.DAY_OF_MONTH])
         mDatePicker.setDatePickListener { calendar ->
             val birthday = DateUtil.format(calendar.time, DateUtil.FORMAT_DATE)
-            mRealVM.birthday.set(birthday)
             mRealVM.commit(birthday = calendar.time.time) { }
         }
         mDatePicker.show(supportFragmentManager)
@@ -120,8 +119,8 @@ class PersonalInformationActivity :
 
     private fun showCitySelector() {
         AreaPicker.show(supportFragmentManager) { province, city ->
-            mRealVM.province = province
-            mRealVM.city.set(city)
+//            mRealVM.province = province
+//            mRealVM.city.set(city)
             mRealVM.commit(prov = province, city = city) { }
         }
     }

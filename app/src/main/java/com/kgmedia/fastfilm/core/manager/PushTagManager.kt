@@ -18,7 +18,7 @@ object PushTagManager {
     fun updateTags() {
         var tags = emptyList<String>()
         if (!User.get().isVisitor) {
-            val creationTime = User.get().creationTime
+            val creationTime = User.get().lastLoginTime?.toLong()?:0L
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = creationTime
             val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]
@@ -32,7 +32,6 @@ object PushTagManager {
                 Session.getInstance().channel,
                 if (User.get().isFemale()) "female" else "male",
                 "version_" + Session.getInstance().versionName,
-                if (User.get().hasPaid()) "paid" else null
             )
         }
         tagManager?.getTags { b, existTags ->

@@ -108,7 +108,8 @@ data class ComposeConfigItem(
     }
 
     fun isLastConfig(): Boolean {
-        return User.get().lastComposeConfig == musicGenConfigId
+        //todo 当前用户信息中没有lastComposeConfig字段，后面需要的时候需要改
+        return true //User.get().lastComposeConfig == musicGenConfigId
     }
 
     fun isDefaultAi(): Boolean {

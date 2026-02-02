@@ -38,9 +38,9 @@ class HitRecommendChildFragment : BaseViewModelFragment<FragmentHitRecommendChil
         HitRecommendAdapter().apply {
             onAdapterItemClick = {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
-                    if (it?.isVipValid() == true && !User.get().isVip) {
-                        MembershipBenefitsActivity.start(activity, MembershipBenefitsActivity.Scene.MakeSame)
-                    } else {
+//                    if (it?.isVipValid() == true && !User.get().isVip) {
+//                        MembershipBenefitsActivity.start(activity, MembershipBenefitsActivity.Scene.MakeSame)
+//                    } else {
                         EventManager.onAppTrack(AppEvent.JG_CLICK_FADDISH_PAGE_CELL, mapOf(GrowingIO.KEY_ALL_GENERAL_ID to it?.popularRecommendDramasId))
                         EventManager.hitRecommendClickReport(it?.popularRecommendDramasId)
                         StoryEditorActivity.start(
@@ -51,7 +51,7 @@ class HitRecommendChildFragment : BaseViewModelFragment<FragmentHitRecommendChil
                             DramaGenerateBody.GEN_WAY_MAKE_SAME_STORY,
                             it?.popularRecommendDramasId
                         )
-                    }
+//                    }
                 }
             }
         }

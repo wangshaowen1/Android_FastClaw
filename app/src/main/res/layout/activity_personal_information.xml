@@ -12,13 +12,13 @@
         <import type="android.view.View" />
 
         <import type="com.kgmedia.fastfilm.common.utils.Utils" />
+
         <import type="com.kgmedia.fastfilm.core.User" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
 
         <LinearLayout
@@ -45,10 +45,9 @@
                     placeHolder="@{@drawable/ic_default_avatar_big}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:src="@drawable/ic_default_avatar_big"
                     android:scaleType="centerCrop"
                     app:shapeAppearanceOverlay="@style/roundStyle_circle"
-                    />
+                    tools:src="@drawable/ic_default_avatar_big" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -62,21 +61,20 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:orientation="vertical"
                 android:layout_marginHorizontal="16dp"
-                android:background="@drawable/bg_white_rectangle_corner_r16">
+                android:layout_marginTop="40dp"
+                android:background="@drawable/bg_white_rectangle_corner_r16"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/nicknameLayout"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:background="@drawable/selector_item_background_top_r16"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/selector_item_background_top_r16"
-                    >
+                    android:paddingHorizontal="16dp">
 
                     <TextView
                         style="@style/Text.Bold"
@@ -85,21 +83,20 @@
                         android:layout_weight="1"
                         android:text="@string/app_nickname"
                         android:textColor="@color/textColorPrimary"
-                        android:textSize="14sp"
-                        />
+                        android:textSize="14sp" />
 
                     <TextView
+                        style="@style/Text.Medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="@{layout.nickname}"
-                        style="@style/Text.Medium"
-                        android:textSize="14sp"
-                        tools:text="Not setting"
-                        android:layout_marginEnd="4dp"
                         android:textColor="@color/color_60_121212"
-                        android:textColorHint="@color/color_60_121212"/>
+                        android:textColorHint="@color/color_60_121212"
+                        android:textSize="14sp"
+                        tools:text="Not setting" />
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -114,11 +111,10 @@
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:background="@drawable/selector_item_background"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/selector_item_background"
-                    >
+                    android:paddingHorizontal="16dp">
 
                     <TextView
                         style="@style/Text.Bold"
@@ -136,10 +132,10 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="@{layout.uniqueId}"
-                        android:textSize="14sp"
-                        tools:text="87328374"
                         android:textColor="@color/color_60_121212"
-                        android:textColorHint="@color/color_60_121212"/>
+                        android:textColorHint="@color/color_60_121212"
+                        android:textSize="14sp"
+                        tools:text="87328374" />
 
                     <ImageView
                         android:layout_width="12dp"
@@ -148,16 +144,16 @@
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_copy_pi" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/genderLayout"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:background="@drawable/selector_item_background"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/selector_item_background"
-                    >
+                    android:paddingHorizontal="16dp">
 
                     <TextView
                         style="@style/Text.Bold"
@@ -169,19 +165,18 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        style="@style/Text.Common"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="4dp"
                         android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@{layout.gender==User.GENDER_NULL?``:(layout.gender==User.MALE?`男`:`女`)}"
-                        style="@style/Text.Common"
-                        android:textSize="14sp"
-                        android:hint="请选择"
                         android:gravity="end"
+                        android:hint="请选择"
+                        android:lines="1"
+                        android:text="@{layout.gender==User.MALE?`男`:(layout.gender==User.FEMALE?`女`:``)}"
                         android:textColor="@color/color_60_121212"
                         android:textColorHint="@color/color_60_121212"
-                        />
+                        android:textSize="14sp" />
 
                     <ImageView
                         android:layout_width="12dp"
@@ -190,16 +185,16 @@
                         android:scaleType="fitCenter"
                         android:src="@drawable/arrow_right_gray36" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/birthdayLayout"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:background="@drawable/selector_item_background"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/selector_item_background"
-                    >
+                    android:paddingHorizontal="16dp">
 
                     <TextView
                         style="@style/Text.Bold"
@@ -211,18 +206,16 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        style="@style/Text.Common"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="4dp"
                         android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@{layout.birthday}"
-                        style="@style/Text.Common"
-                        android:textSize="14sp"
                         android:hint="请选择"
+                        android:lines="1"
                         android:textColor="@color/color_60_121212"
                         android:textColorHint="@color/color_60_121212"
-                        />
+                        android:textSize="14sp" />
 
                     <ImageView
                         android:layout_width="12dp"
@@ -231,16 +224,16 @@
                         android:scaleType="fitCenter"
                         android:src="@drawable/arrow_right_gray36" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/locationLayout"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:background="@drawable/selector_item_background"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/selector_item_background"
-                    >
+                    android:paddingHorizontal="16dp">
 
                     <TextView
                         style="@style/Text.Bold"
@@ -252,18 +245,16 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        style="@style/Text.Common"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="4dp"
                         android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@{layout.province==layout.city ? layout.city : layout.province+` `+layout.city}"
-                        style="@style/Text.Common"
-                        android:textSize="14sp"
                         android:hint="请选择"
+                        android:lines="1"
                         android:textColor="@color/color_60_121212"
                         android:textColorHint="@color/color_60_121212"
-                        />
+                        android:textSize="14sp" />
 
                     <ImageView
                         android:layout_width="12dp"
@@ -272,16 +263,16 @@
                         android:scaleType="fitCenter"
                         android:src="@drawable/arrow_right_gray36" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/introduceLayout"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:background="@drawable/selector_item_background_bottom_r16"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/selector_item_background_bottom_r16"
-                    >
+                    android:paddingHorizontal="16dp">
 
                     <TextView
                         style="@style/Text.Bold"
@@ -292,20 +283,19 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        style="@style/Text.Common"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="4dp"
-                        android:gravity="end"
+                        android:layout_weight="1"
                         android:ellipsize="end"
-                        android:lines="1"
-                        style="@style/Text.Common"
-                        android:textSize="14sp"
+                        android:gravity="end"
                         android:hint="请填写"
+                        android:lines="1"
                         android:text="@{layout.signature}"
                         android:textColor="@color/color_60_121212"
                         android:textColorHint="@color/color_60_121212"
-                        />
+                        android:textSize="14sp" />
 
                     <ImageView
                         android:layout_width="12dp"

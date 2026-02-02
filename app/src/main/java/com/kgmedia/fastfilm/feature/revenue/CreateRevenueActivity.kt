@@ -47,7 +47,6 @@ class CreateRevenueActivity :
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
-        EventManager.onAppTrack(AppEvent.JG_VIEW_WRITE_EARNINGS_PAGE, mapOf(GrowingIO.JG_VIP_TYPE to User.get().vipType.toString()))
         initView()
         //数据更新
         dataUpdate()

@@ -54,10 +54,10 @@ class DownloadTypeDialog : BaseBottomPushVMDialogFragment<DialogDownloadBinding,
             }
 
             R.id.btnDownloadNoWatermark -> {
-                if (User.get().isVip.not()) {
-                    MembershipBenefitsActivity.start(activity, MembershipBenefitsActivity.Scene.Download, true)
-                    return
-                }
+//                if (User.get().isVip.not()) {
+//                    MembershipBenefitsActivity.start(activity, MembershipBenefitsActivity.Scene.Download, true)
+//                    return
+//                }
                 launcher?.downloadVideo(false)
                 dismissAllowingStateLoss()
             }

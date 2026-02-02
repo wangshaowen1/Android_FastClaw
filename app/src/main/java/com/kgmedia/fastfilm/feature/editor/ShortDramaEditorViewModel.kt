@@ -320,11 +320,11 @@ class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorReposit
         launchWithLoading {
             response(mRepo.calculatePrice(dramasId)) {
                 val cost = data?.pointAmount ?: 0
-                if (User.get().scoreBalance < cost) {
-                    firstTimeRecharge(cost)
-                } else {
+               // if (User.get().scoreBalance < cost) {
+               //     firstTimeRecharge(cost)
+                //} else {
                     firstTimeUnlock(cost)
-                }
+                //}
             }
         }
     }

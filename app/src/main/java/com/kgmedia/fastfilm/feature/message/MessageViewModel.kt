@@ -165,15 +165,15 @@ class MessageViewModel : AppRepositoryViewModel<MessagesRepository>() {
      * 判断是否显示轮播图
      */
     private fun displayCarouselImage() {
-        val isVip = User.get().isVip
-        if (isVip) {
-            isShowCarousel.set(false)
-            return
-        }
-        if ((bannerList.value?.size ?: 0) <= 0) {
-            isShowCarousel.set(false)
-            return
-        }
-        isShowCarousel.set(true)
+//        val isVip = User.get().isVip
+//        if (isVip) {
+//            isShowCarousel.set(false)
+//            return
+//        }
+//        if ((bannerList.value?.size ?: 0) <= 0) {
+//            isShowCarousel.set(false)
+//            return
+//        }
+//        isShowCarousel.set(true)
     }
 }

@@ -8,7 +8,7 @@ import com.kgmedia.fastfilm.core.User
 
 class PhoneShowViewModel : AppRepositoryViewModel<AppRepository>() {
     var toolbar = ToolbarViewModel(navigationAction = { back() }, title = "手机号码")
-    val phone = User.get().phoneBind
+    val phone = User.get().phoneNum
 
 
 }

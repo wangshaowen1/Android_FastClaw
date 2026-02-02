@@ -28,7 +28,10 @@ import kotlinx.coroutines.withContext
  */
 
 class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
-    var mToolbarVM = ToolbarViewModel(navigationAction = { back() }, title = "意见反馈", paddingTop = 0)
+    var mToolbarVM = ToolbarViewModel(
+        navigationAction = { back() },
+        title = "意见反馈"
+    )
 
     val phoneNumber = MutableLiveData<String>()
     val photoSize = MutableLiveData<Int>(0)
@@ -36,7 +39,6 @@ class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
     val typeNames by lazy { Config.get().appConfig.userFeedBackTypeList }
     override fun onCreate() {
         super.onCreate()
-//        type.set(typeNames?.getOrNull(0))
         photoSize.value = 0
     }
 

@@ -60,10 +60,10 @@ class MembershipBenefitsViewModel : PaymentViewModel<AppRepository>() {
         }
 
     //用户头像
-    val userAvatar = ObservableField<String>(User.get().avatar)
+    val userAvatar = ObservableField<String>(User.get().avatarUrl)
 
     //用户昵称
-    val userNickname = ObservableField<String>(User.get().nickname)
+    val userNickname = ObservableField<String>(User.get().nickName)
 
     //会员状态文案
     val memberStatus = ObservableField("暂未开通会员，开通即享会员特权")
@@ -178,113 +178,113 @@ class MembershipBenefitsViewModel : PaymentViewModel<AppRepository>() {
      * 支付成功获取会员信息
      */
     fun refreshVipInfo(toast: String? = null) {
-        val user = User.get()
-        val vipStatus = user.vipStatus
-        val vipType = user.vipType
-        val vipExpiredTime = user.vipExpiredTime
-        val maxTimes = 3
-        launchWithLoading {
-            var times = 0
-            while (times < maxTimes) {
-                delay(1000)
-                runCatching {
-                    withContext(Dispatchers.IO) { mRepo.api.getUserHomeInfo(UserTokenBody()).data }?.let {
-                        User.get().updateFrom(it)
-                        updateMemberStatus()
-                        if (user.vipStatus != vipStatus || user.vipType != vipType || user.vipExpiredTime != vipExpiredTime) {
-                            times = maxTimes
-                            toast?.showToast()
-
-                            val allPayMoneyYuan = if (paymentTerms?.saleVipAmount == null) {
-                                "0"
-                            } else {
-                                paymentTerms?.saleVipAmount?.div(1000f)?.formatMoney()
-                            }
-                            val allPayType = when (payment) {
-                                PaymentClient.PaymentMethod.WxPay -> "weixinpay"
-                                PaymentClient.PaymentMethod.Alipay -> "alipay"
-                                else -> ""
-                            }
-
-                            EventManager.onAppTrack(
-                                AppEvent.JG_BUY_VIP,
-                                mapOf(
-                                    GrowingIO.ALL_PAY_MONEY_YUAN to allPayMoneyYuan,
-                                    GrowingIO.JG_VIP_TYPE to User.get().vipType.toString(),
-                                    GrowingIO.ALL_PAY_TYPE to allPayType,
-                                )
-                            )
-                            FlowEventBus.postSync(Events.PurchaseEvent(Events.PurchaseEvent.VIP))
-                        }
-                    }
-                }
-                times++
-                if (times < maxTimes) {
-                    delay(2000)
-                }
-            }
-        }
+//        val user = User.get()
+//        val vipStatus = user.vipStatus
+//        val vipType = user.vipType
+//        val vipExpiredTime = user.vipExpiredTime
+//        val maxTimes = 3
+//        launchWithLoading {
+//            var times = 0
+//            while (times < maxTimes) {
+//                delay(1000)
+//                runCatching {
+//                    withContext(Dispatchers.IO) { mRepo.api.getUserHomeInfo(UserTokenBody()).data }?.let {
+//                        User.get().updateFrom(it)
+//                        updateMemberStatus()
+//                        if (user.vipStatus != vipStatus || user.vipType != vipType || user.vipExpiredTime != vipExpiredTime) {
+//                            times = maxTimes
+//                            toast?.showToast()
+//
+//                            val allPayMoneyYuan = if (paymentTerms?.saleVipAmount == null) {
+//                                "0"
+//                            } else {
+//                                paymentTerms?.saleVipAmount?.div(1000f)?.formatMoney()
+//                            }
+//                            val allPayType = when (payment) {
+//                                PaymentClient.PaymentMethod.WxPay -> "weixinpay"
+//                                PaymentClient.PaymentMethod.Alipay -> "alipay"
+//                                else -> ""
+//                            }
+//
+//                            EventManager.onAppTrack(
+//                                AppEvent.JG_BUY_VIP,
+//                                mapOf(
+//                                    GrowingIO.ALL_PAY_MONEY_YUAN to allPayMoneyYuan,
+//                                    GrowingIO.JG_VIP_TYPE to User.get().vipType.toString(),
+//                                    GrowingIO.ALL_PAY_TYPE to allPayType,
+//                                )
+//                            )
+//                            FlowEventBus.postSync(Events.PurchaseEvent(Events.PurchaseEvent.VIP))
+//                        }
+//                    }
+//                }
+//                times++
+//                if (times < maxTimes) {
+//                    delay(2000)
+//                }
+//            }
+//        }
     }
 
     private fun updateMemberStatus() {
-        val user = User.get()
-        if (user.isVip) {
-            //vip类型：1-初级会员 2-中级会员 3-高级会员
-            when (user.vipType) {
-                1 -> memberStatus.set(
-                    "当前为初级会员，到期时间:${
-                        DateUtil.format(
-                            User.get().vipExpiredTime ?: 0L,
-                            DateUtil.FORMAT_DATE
-                        )
-                    }"
-                )
-
-                2 -> memberStatus.set(
-                    "当前为中级会员，到期时间:${
-                        DateUtil.format(
-                            User.get().vipExpiredTime ?: 0L,
-                            DateUtil.FORMAT_DATE
-                        )
-                    }"
-                )
-
-                3 -> memberStatus.set("当前为高级会员")
-            }
-            memberIcon.set(R.drawable.ic_vip54)
-        } else if (user.isExpiredVip) {
-            memberStatus.set("会员已到期，立即续费享受会员特权")
-            memberIcon.set(R.drawable.ic_vip_expired54)
-        } else {
-            memberStatus.set("暂未开通会员，开通即享会员特权")
-            memberIcon.set(null)
-        }
-        updateButton()
+//        val user = User.get()
+//        if (user.isVip) {
+//            //vip类型：1-初级会员 2-中级会员 3-高级会员
+//            when (user.vipType) {
+//                1 -> memberStatus.set(
+//                    "当前为初级会员，到期时间:${
+//                        DateUtil.format(
+//                            User.get().vipExpiredTime ?: 0L,
+//                            DateUtil.FORMAT_DATE
+//                        )
+//                    }"
+//                )
+//
+//                2 -> memberStatus.set(
+//                    "当前为中级会员，到期时间:${
+//                        DateUtil.format(
+//                            User.get().vipExpiredTime ?: 0L,
+//                            DateUtil.FORMAT_DATE
+//                        )
+//                    }"
+//                )
+//
+//                3 -> memberStatus.set("当前为高级会员")
+//            }
+//            memberIcon.set(R.drawable.ic_vip54)
+//        } else if (user.isExpiredVip) {
+//            memberStatus.set("会员已到期，立即续费享受会员特权")
+//            memberIcon.set(R.drawable.ic_vip_expired54)
+//        } else {
+//            memberStatus.set("暂未开通会员，开通即享会员特权")
+//            memberIcon.set(null)
+//        }
+//        updateButton()
     }
 
     private fun updateButton() {
-        val user = User.get()
-        if (user.isVip) {
-            val selectedVipType = selectedConfig?.vipType ?: 0
-            when (user.vipType) {
-                3 -> {
-                    buttonText.set("已开通会员")
-                    buttonEnabled.set(false)
-                }
-
-                selectedVipType -> {
-                    buttonText.set("立即续费")
-                    buttonEnabled.set(true)
-                }
-
-                else -> {
-                    buttonText.set("已开通会员")
-                    buttonEnabled.set(false)
-                }
-            }
-        } else {
-            buttonText.set("立即开通")
-            buttonEnabled.set(true)
-        }
+//        val user = User.get()
+//        if (user.isVip) {
+//            val selectedVipType = selectedConfig?.vipType ?: 0
+//            when (user.vipType) {
+//                3 -> {
+//                    buttonText.set("已开通会员")
+//                    buttonEnabled.set(false)
+//                }
+//
+//                selectedVipType -> {
+//                    buttonText.set("立即续费")
+//                    buttonEnabled.set(true)
+//                }
+//
+//                else -> {
+//                    buttonText.set("已开通会员")
+//                    buttonEnabled.set(false)
+//                }
+//            }
+//        } else {
+//            buttonText.set("立即开通")
+//            buttonEnabled.set(true)
+//        }
     }
 }

@@ -40,7 +40,7 @@ class FirstTimeRechargeViewModel : PaymentViewModel<ShortDramaEditorRepository>(
     val payment by lazy { ObservableField(PaymentClient.PaymentMethod.WxPay) }
     val cost by lazy { ObservableField<CharSequence>() }
     private var protocolUrl: String? = null
-    private val originalBalance = User.get().scoreBalance
+//    private val originalBalance = User.get().scoreBalance
 
     override fun onCreate() {
         super.onCreate()
@@ -178,10 +178,10 @@ class FirstTimeRechargeViewModel : PaymentViewModel<ShortDramaEditorRepository>(
                 runCatching {
                     mRepo.api.getUserHomeInfo(UserTokenBody()).data?.let {
                         User.get().updateFrom(it)
-                        if (User.get().scoreBalance > originalBalance) {
-                            rechargeSuccess()
-                            return@launch
-                        }
+//                        if (User.get().scoreBalance > originalBalance) {
+//                            rechargeSuccess()
+//                            return@launch
+//                        }
                     }
                 }
                 times++

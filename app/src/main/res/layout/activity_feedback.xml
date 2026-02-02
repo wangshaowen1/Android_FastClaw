@@ -14,11 +14,12 @@
         <import type="com.kgmedia.fastfilm.common.utils.Utils" />
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:windowBackground"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
         <include
             android:id="@+id/toolbar"
@@ -28,8 +29,8 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/action_bar_size">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -59,6 +60,7 @@
 
                     <TextView
                         android:id="@+id/feedbackTypeName"
+                        style="@style/Text14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -67,7 +69,6 @@
                         android:gravity="end"
                         android:text="@{layout.type.value}"
                         android:textColor="?attr/textColor2"
-                        style="@style/Text14"
                         tools:text="产品建议" />
                 </LinearLayout>
 
@@ -186,6 +187,5 @@
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
-    </FrameLayout>
+    </LinearLayout>
 </layout>

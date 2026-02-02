@@ -32,7 +32,7 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val debugIp = ObservableField<String>()
 
-    var phone = ObservableField(User.get().phoneBind)
+    var phone = ObservableField(User.get().phoneNum)
 
     val beiAn by lazy { Config.get().appConfig.beianNo }
 
@@ -45,6 +45,6 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onResume() {
         super.onResume()
-        phone.set(User.get().phoneBind)
+        phone.set(User.get().phoneNum)
     }
 }

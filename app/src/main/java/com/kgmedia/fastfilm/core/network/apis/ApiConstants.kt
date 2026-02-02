@@ -19,7 +19,7 @@ object ApiConstants {
     /**
      * 获取用户主页信息接口
      */
-    const val GET_USER_HOME_INFO = "user/info"
+    const val GET_USER_HOME_INFO = "auth/user/info-detail"
 
     /**
      * 修改用户信息

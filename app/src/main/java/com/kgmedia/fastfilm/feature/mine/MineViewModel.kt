@@ -43,7 +43,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     fun refreshUserInfo() {
         User.get().let { user ->
-            isLogin.set(user.isLogged)
+            isLogin.set(!user.isVisitor)
             if (user.isVisitor) {
                 notLoggedIn()
                 return
@@ -66,7 +66,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     private fun getUserHomeInfo() {
         User.get().let { user ->
-            isLogin.set(user.isLogged)
+            isLogin.set(!user.isVisitor)
             if (user.isVisitor) {
                 notLoggedIn()
                 return
@@ -100,10 +100,9 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         val user = User.get()
         userInfo.set(
             mapOf(
-                "id" to user.appId,
-                "nickname" to user.nickname,
-                "avatar" to user.avatar,
-                "city" to user.city,
+                "id" to user.userName,
+                "nickname" to user.nickName,
+                "avatar" to user.avatarUrl,
             )
         )
     }

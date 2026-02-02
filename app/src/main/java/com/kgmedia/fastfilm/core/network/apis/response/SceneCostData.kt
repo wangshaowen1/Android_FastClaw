@@ -15,7 +15,7 @@ data class SceneCostData(
      * 余额是否充足
      */
     fun isBalanceEnough(): Boolean {
-        return if (feeType == 2) User.get().scoreBalance >= (feeNum ?: 0) else (remainingAttempts ?: 0) >= 0
+        return true//if (feeType == 2) User.get().scoreBalance >= (feeNum ?: 0) else (remainingAttempts ?: 0) >= 0
     }
 
     /**

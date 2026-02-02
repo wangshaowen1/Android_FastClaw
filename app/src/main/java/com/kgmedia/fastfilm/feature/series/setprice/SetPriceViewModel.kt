@@ -66,19 +66,19 @@ class SetPriceViewModel : AppRepositoryViewModel<SeriesRepository>() {
     }
 
     private fun memberInformationUpdate() {
-        isVip.set(User.get().isVip)
-        if (isVip.get() == true) {
-            vipRatioDesc.set("")
-            return
-        }
-        //1-初级会员 2-中级会员 3-高级会员
-        val vipName = when (User.get().vipType) {
-            User.VIP_TYPE_PRIMARY -> "初级会员"
-            User.VIP_TYPE_MIDDLE -> "中级会员"
-            User.VIP_TYPE_LIFE -> "高级会员"
-            else -> ""
-        }
-        vipRatioDesc.set("当前为${vipName}，分成比例${User.get().profitSharingRatio}%")
+//        isVip.set(User.get().isVip)
+//        if (isVip.get() == true) {
+//            vipRatioDesc.set("")
+//            return
+//        }
+//        //1-初级会员 2-中级会员 3-高级会员
+//        val vipName = when (User.get().vipType) {
+//            User.VIP_TYPE_PRIMARY -> "初级会员"
+//            User.VIP_TYPE_MIDDLE -> "中级会员"
+//            User.VIP_TYPE_LIFE -> "高级会员"
+//            else -> ""
+//        }
+//        vipRatioDesc.set("当前为${vipName}，分成比例${User.get().profitSharingRatio}%")
     }
 
     fun getPriceConfig() {

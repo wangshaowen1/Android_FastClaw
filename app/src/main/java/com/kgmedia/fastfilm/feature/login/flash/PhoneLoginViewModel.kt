@@ -147,7 +147,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<PhoneLoginRepository>() {
                     response(mRepo.bindPhone(mobile, code), {
                         "绑定成功".showToast()
                         User.get().apply {
-                            storePhoneBind(mobile)
+                            storePhoneNum(mobile)
                         }
                         onLogin?.invoke(null)
                     }, error = {

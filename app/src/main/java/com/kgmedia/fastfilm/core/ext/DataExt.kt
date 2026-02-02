@@ -109,7 +109,7 @@ suspend fun File.putAIGCMetadata(shortDrama: ShortDramaInfo): File {
             val contentProducer = AppUtils.getAppName().let { URLEncoder.encode(it) }
             val produceID = shortDrama.dramasId
             val reservedCode1 = EncryptUtils.encryptMD5ToString("${contentProducer}${produceID}")
-            val contentPropagator = User.get().nickname?.let { URLEncoder.encode(it) }
+            val contentPropagator = User.get().nickName?.let { URLEncoder.encode(it) }
             val propagateID = User.get().getId()
             val reservedCode2 = EncryptUtils.encryptMD5ToString("${contentPropagator}${propagateID}")
             val aigc = JSONObject()

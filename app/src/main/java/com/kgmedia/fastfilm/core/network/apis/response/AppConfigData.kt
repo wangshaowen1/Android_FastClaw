@@ -49,6 +49,11 @@ class AppConfigData {
     val ossDomainList: List<String>? = null
 
     /**
+     * 支付协议/付费协议
+     */
+    val clientPaymentProtocolUrl: String? = null
+
+    /**
      * 个人信息收集清单
      */
     val personalInfoCollectionListUrl: String? = null
@@ -57,6 +62,13 @@ class AppConfigData {
      * 第三方信息共享清单
      */
     val thirdPartyInfoShareListUrl: String? = null
+
+    /**
+     * 用户反馈类型下拉选项
+     */
+    val userFeedBackTypeList: List<KeyValueInfo>? = null
+
+    //TODO下面这些配置信息是老的，可能实际不存在，使用前请注意
 
     /**
      * 支付排序和状态
@@ -70,15 +82,12 @@ class AppConfigData {
 
     val cloneTimbreOriginalVocalsDurationLimit: String = "30-60"
 
-    /**
-     * 支付协议/付费协议
-     */
-    val clientPaymentProtocolUrl: String? = null
 
     /**
      * 付费会员协议
      */
     val userVipProtocolUrl: String? = null
+
     //1v1客服信息
     val customerServiceInfo: CustomerServiceInfo? = null
 
@@ -88,10 +97,6 @@ class AppConfigData {
     @SerializedName("eraV2Configs")
     val ageRangeList: List<AgeRange>? = null
 
-    /**
-     * 用户反馈类型下拉选项
-     */
-    val userFeedBackTypeList: List<KeyValueInfo>? = null
 
     /**
      * 用户举报类型下拉选项

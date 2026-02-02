@@ -25,9 +25,9 @@ class InvitationDetailsViewModel : AppRepositoryViewModel<CommonRepository>() {
 
 
     //用户头像
-    var mUserAvatar = ObservableField(User.get().avatar)
+    var mUserAvatar = ObservableField("")
     //用户昵称
-    var mUserNickname = ObservableField(User.get().nickname)
+    var mUserNickname = ObservableField("")
 
 
     //总收益

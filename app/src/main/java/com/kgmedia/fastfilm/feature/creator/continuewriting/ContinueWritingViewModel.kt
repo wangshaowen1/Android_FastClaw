@@ -47,7 +47,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
 
-    val isVip = ObservableBoolean(User.get().isVip)
+    val isVip = ObservableBoolean(true)
     val isSSEStreaming = ObservableBoolean(false)
 
     override fun onCreate() {

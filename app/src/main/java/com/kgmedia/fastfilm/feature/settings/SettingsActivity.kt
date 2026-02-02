@@ -120,8 +120,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
-                if (User.get().phoneBind.isNullOrEmpty()) {
-                    //                startActivity(BindPhoneActivity::class.java)
+                if (User.get().phoneNum.isNullOrEmpty()) {
                     PhoneLoginDialogActivity.start(this, true)
                 } else {
                     PhoneShowActivity.start(this)

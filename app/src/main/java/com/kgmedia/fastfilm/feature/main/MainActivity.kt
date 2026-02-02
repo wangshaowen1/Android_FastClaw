@@ -373,7 +373,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
             MainBulletFrameEnum.BIND_PHONE_NUMBER_POP_UP_BOX -> {
                 //绑定手机号
-                bindMobilePhone()
             }
         }
     }
@@ -388,18 +387,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     }
 
 
-    private fun bindMobilePhone() {
-        if (User.get().isVisitor) return
-        if (!User.get().phoneBind.isNullOrEmpty()) return
-        //获取用户注册时间
-        val createTime = User.get().creationTime
-        if (registerTime < createTime) {
-            //是新注册的，不显示绑定手机
-            return
-        }
-        //没有手机绑定，跳转到绑定手机页面
-        PhoneLoginDialogActivity.start(activity = this, isBind = true, checkedPolicy = true)
-    }
+
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

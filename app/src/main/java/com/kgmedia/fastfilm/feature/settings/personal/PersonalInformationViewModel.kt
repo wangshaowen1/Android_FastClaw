@@ -43,50 +43,36 @@ class PersonalInformationViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 头像
      */
-    val avatar by lazy { ObservableField(user.avatar) }
+    val avatar by lazy { ObservableField(user.avatarUrl) }
 
     //uniqueId
-    val uniqueId by lazy { user.appId }
+    val uniqueId by lazy { user.userName }
 
     /**
      * 昵称
      */
     //昵称
-    val nickname by lazy { ObservableField(user.nickname) }
-    val editNickname by lazy { MutableLiveData(user.nickname) }
+    val nickname by lazy { ObservableField(user.nickName) }
+    val editNickname by lazy { MutableLiveData(user.nickName) }
 
     /**
      * 签名
      */
-    val signature by lazy { ObservableField(user.signature) }
-    val editSignature by lazy { MutableLiveData(user.signature?.trim()) }
-
-    /**
-     * 生日
-     */
-    val birthday by lazy { ObservableField(user.birthday) }
+    val signature by lazy { ObservableField("") }
+    val editSignature by lazy { MutableLiveData("") }
 
     /**
      * 性别
      */
-    val gender by lazy { ObservableInt(user.gender) }
+    val gender by lazy { ObservableInt(user.gender?:0) }
 
     val editGender by lazy { ObservableInt() }
 
     /**
      * id
      */
-    val id by lazy { user.appId }
+    val id by lazy { user.userId }
 
-    /**
-     * 省
-     */
-    var province = user.province
-
-    /**
-     * 市
-     */
-    val city by lazy { ObservableField(user.city) }
 
 
     fun clearNickname(view: View) {
@@ -158,11 +144,11 @@ class PersonalInformationViewModel : AppRepositoryViewModel<AppRepository>() {
                 this?.msg?.showToast()
                 when (this?.code) {
                     ApiException.IMAGE_ILLEGAL -> {
-                        this@PersonalInformationViewModel.avatar.set(user.avatar)
+                        this@PersonalInformationViewModel.avatar.set(user.avatarUrl)
                     }
 
                     ApiException.TEXT_ILLEGAL -> {
-                        this@PersonalInformationViewModel.editNickname.value = user.nickname
+                        this@PersonalInformationViewModel.editNickname.value = user.nickName
                     }
                 }
             })

@@ -95,7 +95,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
 
             R.id.tv_id, R.id.iv_copy -> {
                 //复制
-                User.get().appId?.let {
+                User.get().userName?.let {
                     ClipboardUtils.copyText(it)
                     getString(R.string.toast_copied).showToast()
                 }

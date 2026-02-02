@@ -121,7 +121,7 @@ class StoryBoardFragment :
                     val cost = it ?: 0
                     ConfirmCostDialog.show(childFragmentManager, cost) {
                         mRealVM.confirmGenerate {
-                            User.get().storeScoreBalance(User.get().scoreBalance - cost)
+                            //User.get().storeScoreBalance(User.get().scoreBalance - cost)
                             hostVm?.step?.value = 2
                         }
                     }

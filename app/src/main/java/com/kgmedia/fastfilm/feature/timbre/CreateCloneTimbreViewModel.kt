@@ -66,7 +66,7 @@ class CreateCloneTimbreViewModel : AppRepositoryViewModel<AppRepository>(), Play
     fun getCost() {
         launchWithLoading {
             response(mRepo.api.sceneCost(SceneCostBody(SceneCostBody.SCENE_TYPE_VOICE_CLONE))) {
-                User.get().storeScoreBalance(data.remainingPoints)
+//                User.get().storeScoreBalance(data.remainingPoints)
                 costData.set(data)
             }
         }

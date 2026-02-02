@@ -14,7 +14,7 @@ object AppNavigator {
      */
     @JvmStatic
     fun forceLogoutAndRestart() {
-        if (User.get().isLogged) {
+        if (!User.get().isVisitor) {
             SignUtils.signOut()
             AppUtils.relaunchApp()
         }

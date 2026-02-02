@@ -27,7 +27,7 @@ class ConfirmCostDialog : BaseBottomPushVMDialogFragment<DialogConfirmCostBindin
         super.onClick(view, data)
         when (view.id) {
             R.id.confirmButton -> {
-                val isBalanceNotEnough = User.get().scoreBalance < cost
+                val isBalanceNotEnough = true//User.get().scoreBalance < cost
                 EventManager.onAppTrack(
                     AppEvent.JG_CLICK_GENERATE_IMAGE_POPUP_CONFIRM_BUTTON,
                     GrowingIO.KEY_ALL_COUNT_INT to cost.toString(),

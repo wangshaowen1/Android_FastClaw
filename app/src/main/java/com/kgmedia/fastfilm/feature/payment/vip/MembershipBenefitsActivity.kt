@@ -108,10 +108,6 @@ class MembershipBenefitsActivity :
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
-        EventManager.onAppTrack(
-            AppEvent.JG_VIEW_VIP_PAGE,
-            mapOf(GrowingIO.JG_VIP_TYPE to User.get().vipType.toString())
-        )
         scene = Scene.entries.getOrNull(intent.getIntExtra(SCENE, 0)) ?: Scene.Mine
         initView()
         //数据更新
@@ -202,24 +198,6 @@ class MembershipBenefitsActivity :
                 AppEvent.JG_CLICK_MY_PAGE_OPEN_NOW_BUTTON,
                 mapOf(GrowingIO.JG_VIP_TYPE to (vm.data.get()?.vipType?:0).toString())
             )
-            val user = User.get()
-            val canBuy = if (user.isVip) {
-                val selectedVipType = vm.data.get()?.vipType ?: 0
-                when (user.vipType) {
-                    3 -> {
-                        "会员有效期内不支持购买其它会员".showToast()
-                        false
-                    }
-
-                    selectedVipType -> true
-
-                    else -> {
-                        "会员有效期内不支持购买其它会员".showToast()
-                        false
-                    }
-                }
-            } else true
-            if (!canBuy) return@let
             mRealVM.paymentTerms = vm.data.get()
             //这个是微信加支付宝支付的模式
             PaymentMethodDialog.verifyThePaymentConditions(

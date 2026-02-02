@@ -35,10 +35,10 @@ class CreateCloneTimbreDialog : BaseBottomPushVMDialogFragment<DialogCreateClone
     override fun onPrepareView() {
         super.onPrepareView()
         binding.btnConfirm.setOnClickListener {
-            if (!User.get().isVip) {
-                MembershipBenefitsActivity.start(activity, MembershipBenefitsActivity.Scene.CloneVoice)
-                return@setOnClickListener
-            }
+//            if (!User.get().isVip) {
+//                MembershipBenefitsActivity.start(activity, MembershipBenefitsActivity.Scene.CloneVoice)
+//                return@setOnClickListener
+//            }
             if (mRealVM.costData.get() == null) {
                 mRealVM.getCost()
                 return@setOnClickListener

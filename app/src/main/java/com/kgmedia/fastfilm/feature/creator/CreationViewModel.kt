@@ -34,7 +34,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
 
-    val isVip = ObservableBoolean(User.get().isVip)
+    val isVip = ObservableBoolean(true)
     val hint = ObservableField<String>()
     val creationModel by lazy {
         mBundle.getInt(KEY_MODEL)

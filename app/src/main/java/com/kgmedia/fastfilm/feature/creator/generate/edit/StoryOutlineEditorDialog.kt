@@ -34,7 +34,7 @@ class StoryOutlineEditorDialog : BaseBottomPushVMDialogFragment<DialogStoryOutli
         val isCustomizeModel = hostVm?.model == DramaGenerateBody.GEN_WAY_CUSTOMIZED || hostVm?.model == DramaGenerateBody.GEN_WAY_CONTINUE_STORY
         Config.get().appConfig.shortDramas?.let {
             mRealVM.maxInputLength.set(
-                if (User.get().isVip && isCustomizeModel) it.shortDramasWriteStoryLimitNumForVip ?: 5000 else it.shortDramasEditStoryLimitNum ?: 2000
+                if (isCustomizeModel) it.shortDramasWriteStoryLimitNumForVip ?: 5000 else it.shortDramasEditStoryLimitNum ?: 2000
             )
         }
         mRealVM.input.observe(this) {

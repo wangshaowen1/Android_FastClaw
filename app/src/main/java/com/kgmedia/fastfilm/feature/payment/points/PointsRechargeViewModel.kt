@@ -52,7 +52,7 @@ class PointsRechargeViewModel : PaymentViewModel<AppRepository>() {
     val refreshType = ObservableBoolean(false)
 
     //当前积分
-    val points = ObservableField((User.get().walletInfo?.pointBalance ?: 0).toString())
+    val points = ObservableField("")
 
     //菜单点击
     val onMenuClick = MutableLiveData(false)
@@ -157,7 +157,7 @@ class PointsRechargeViewModel : PaymentViewModel<AppRepository>() {
                 result = {
                     if (data == null) return@response
                     User.get().updateFrom(data)
-                    points.set((data?.userInfo?.walletInfo?.pointBalance ?: 0).toString())
+                    points.set("0")
 
                     val allPayMoneyYuan = if (paymentTerms?.pointAmount == null) {
                         "0"

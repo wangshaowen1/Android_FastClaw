@@ -128,7 +128,7 @@ class BindPhoneViewModel : AppRepositoryViewModel<BindPhoneRepository>() {
             response(mRepo.bindPhone(mobile, code)) {
                 "绑定成功".showToast()
                 User.get().apply {
-                    storePhoneBind(mobile)
+                    storePhoneNum(mobile)
                 }
                 FlowEventBus.postSync(Events.BindingSuccessfulEvent())
                 callback()
