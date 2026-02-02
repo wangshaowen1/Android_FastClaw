@@ -28,10 +28,14 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SeriesPriceConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramasStatisticsData
+import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.StrategyInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SystemMessageLikeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SystemMessageWatchingInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SystemNoticeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.TaskStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.TheTvSeriesIFollowInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.TimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.UserRevenueInformationInfo
@@ -64,6 +68,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbrePagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.EditDramaBody
 import com.kgmedia.fastfilm.core.network.apis.request.FeedbackBody
 import com.kgmedia.fastfilm.core.network.apis.request.HitRecommendPagedBody
+import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImageUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.InputContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByFlashMobileBody
@@ -82,12 +87,16 @@ import com.kgmedia.fastfilm.core.network.apis.request.PictureBookId
 import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
 import com.kgmedia.fastfilm.core.network.apis.request.PointConfigBody
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.RecommendShortsBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneContentEditBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneCostBody
 import com.kgmedia.fastfilm.core.network.apis.request.SegmentImageDescOptimizeBody
@@ -103,6 +112,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.ShortLikeBody
 import com.kgmedia.fastfilm.core.network.apis.request.ShotSegmentIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyInfoIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.SynthesisUploadBody
+import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.TimbreAddOrOptimizeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TipOffBody
 import com.kgmedia.fastfilm.core.network.apis.request.UpdateTimbreTitleBody
@@ -123,6 +133,8 @@ import com.kgmedia.fastfilm.core.network.apis.response.DramasSeriesIdData
 import com.kgmedia.fastfilm.core.network.apis.response.FollowingData
 import com.kgmedia.fastfilm.core.network.apis.response.InviteIncomePageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.InviteUserPageInfo
+import com.kgmedia.fastfilm.core.network.apis.response.LastEpisodeData
+import com.kgmedia.fastfilm.core.network.apis.response.LastStoryData
 import com.kgmedia.fastfilm.core.network.apis.response.MessageSummaryData
 import com.kgmedia.fastfilm.core.network.apis.response.MessagesUnreadNumData
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBook
@@ -131,8 +143,6 @@ import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
 import com.kgmedia.fastfilm.core.network.apis.response.RechargePageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.SceneCostData
 import com.kgmedia.fastfilm.core.network.apis.response.ScoreConfigData
-import com.kgmedia.fastfilm.core.network.apis.response.LastEpisodeData
-import com.kgmedia.fastfilm.core.network.apis.response.LastStoryData
 import com.kgmedia.fastfilm.core.network.apis.response.ShortLikeData
 import com.kgmedia.fastfilm.core.network.apis.response.StoryboardListData
 import com.kgmedia.fastfilm.core.network.apis.response.TimbreIdData
@@ -1018,4 +1028,70 @@ interface ApiService {
      */
     @POST(ApiConstants.PLAY_EVENT_REPORT)
     suspend fun playEventReport(@Body body: PlayEventBody): ApiResponse<Any>
+
+    /**
+     * 轮询查询全部资产
+     */
+    @POST(ApiConstants.WORK_ASSET_ALL_STATUS)
+    suspend fun workAssetAllStatus(@Body body: TaskIdBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 轮询查询单个资产
+     */
+    @POST(ApiConstants.WORK_ASSET_SINGLE_STATUS)
+    suspend fun workAssetSingleStatus(@Body body: TaskIdBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 场景列表
+     */
+    @POST(ApiConstants.WORK_ASSET_SCENE_LIST)
+    suspend fun workAssetSceneList(@Body body: QueryAssetBody): ApiResponse<List<SimpleSceneInfo>?>
+
+    /**
+     * 场景保存
+     */
+    @POST(ApiConstants.WORK_ASSET_SCENE_SAVE)
+    suspend fun workAssetSceneSave(@Body body: SaveSceneBody): ApiResponse<Any>
+
+    /**
+     * 场景单个删除
+     */
+    @POST(ApiConstants.WORK_ASSET_SCENE_DELETE)
+    suspend fun workAssetSceneDelete(@Body body: IdsBody): ApiResponse<Any>
+
+    /**
+     * 角色列表
+     */
+    @POST(ApiConstants.WORK_ASSET_ROLE_LIST)
+    suspend fun workAssetRoleList(@Body body: QueryAssetBody): ApiResponse<List<SimpleRoleInfo>?>
+
+    /**
+     * 角色保存
+     */
+    @POST(ApiConstants.WORK_ASSET_ROLE_SAVE)
+    suspend fun workAssetRoleSave(@Body body: SaveRoleBody): ApiResponse<Any>
+
+    /**
+     * 角色单个删除
+     */
+    @POST(ApiConstants.WORK_ASSET_ROLE_DELETE)
+    suspend fun workAssetRoleDelete(@Body body: IdsBody): ApiResponse<Any>
+
+    /**
+     * 道具列表
+     */
+    @POST(ApiConstants.WORK_ASSET_PROP_LIST)
+    suspend fun workAssetPropList(@Body body: QueryAssetBody): ApiResponse<List<SimplePropInfo>?>
+
+    /**
+     * 道具保存
+     */
+    @POST(ApiConstants.WORK_ASSET_PROP_SAVE)
+    suspend fun workAssetPropSave(@Body body: SavePropBody): ApiResponse<Any>
+
+    /**
+     * 道具单个删除
+     */
+    @POST(ApiConstants.WORK_ASSET_PROP_DELETE)
+    suspend fun workAssetPropDelete(@Body body: IdsBody): ApiResponse<Any>
 }

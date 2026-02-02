@@ -30,6 +30,22 @@
             app:riv_border_width="1dp"
             app:riv_corner_radius="8dp" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:src="@drawable/icon_ai_label"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="8dp"
+            android:src="@drawable/icon_magnify"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover" />
+
         <TextView
             android:id="@+id/tvAssetDesc"
             android:layout_width="0dp"
@@ -61,20 +77,20 @@
             android:text="唐山"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
-            app:layout_constraintDimensionRatio="135:32"
+            app:layout_constraintDimensionRatio="109:32"
             app:layout_constraintStart_toStartOf="@+id/tvAssetDesc"
             app:layout_constraintTop_toBottomOf="@+id/tvAssetDesc"
-            app:layout_constraintWidth_percent="0.36" />
+            app:layout_constraintWidth_percent="0.29" />
 
         <FrameLayout
             android:id="@+id/btnRegenerateDesc"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginHorizontal="8dp"
             android:background="@drawable/fill_color1_r4"
             app:layout_constraintBottom_toBottomOf="@+id/tvAssetName"
-            app:layout_constraintEnd_toEndOf="@+id/tvAssetDesc"
+            app:layout_constraintEnd_toStartOf="@+id/btnDelete"
             app:layout_constraintStart_toEndOf="@+id/tvAssetName"
             app:layout_constraintTop_toTopOf="@+id/tvAssetName">
 
@@ -83,10 +99,25 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="重新生成"
+                android:textAppearance="@style/Text13"
                 android:textColor="@android:color/white"
                 app:endColor="#8F83FF"
                 app:startColor="#68BFF9" />
         </FrameLayout>
+
+        <ImageView
+            android:id="@+id/btnDelete"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/fill_color1_r4"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_delete_text4_16"
+            app:layout_constraintBottom_toBottomOf="@+id/tvAssetName"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="@+id/tvAssetDesc"
+            app:layout_constraintTop_toTopOf="@+id/tvAssetName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
