@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.works.ItemMyWorkVM" />
+            type="com.kgmedia.fastfilm.feature.creator.assets.ItemAssetVM" />
+
+        <import type="android.view.View" />
     </data>
 
 
@@ -21,16 +24,16 @@
             android:layout_height="0dp"
             android:layout_marginStart="15dp"
             android:scaleType="centerCrop"
-            android:src="?funcColorSuccess"
+            android:src="?attr/fillColor1"
+            android:visibility="@{item.status == 3 ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintDimensionRatio="108:152"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.288"
-            app:riv_border_color="?attr/borderColor2"
-            app:riv_border_width="1dp"
             app:riv_corner_radius="8dp" />
 
         <ImageView
+            setVisible="@{item.status == 3}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
@@ -39,6 +42,9 @@
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
         <ImageView
+            android:id="@+id/btnPreview"
+            setVisible="@{item.status == 3}"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:padding="8dp"
@@ -46,26 +52,89 @@
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover" />
 
-        <TextView
-            android:id="@+id/tvAssetDesc"
+        <ProgressBar
+            setVisible="@{item.status == 1}"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <LinearLayout
+            android:id="@+id/btnAddImg"
+            setVisible="@{item.status == 0}"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/icon_image_add"
+                android:drawablePadding="8dp"
+                android:text="设置角色形象"
+                android:textAppearance="@style/Text12"
+                android:textColor="?attr/textColor3" />
+
+        </LinearLayout>
+
+        <com.kgmedia.fastfilm.widget.GradientBorderView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:borderStartColor="?attr/borderColor2"
+            app:borderWidth="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:roundCornerRadius="8dp" />
+
+        <com.kgmedia.fastfilm.widget.RecyclerEditText
+            android:id="@+id/etAssetDesc"
+            onTextInputListener="@{item.assetDescInputListener}"
+            setEditing="@{item.editingAssetDesc}"
+            text="@{item.assetDesc}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="15dp"
             android:background="@drawable/fill_color1_r8"
             android:ellipsize="end"
+            android:gravity="top"
+            android:hint="角色描述词"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
             android:padding="12dp"
-            android:text="史莱克七怪之首，沉稳冷静。他留着一头深蓝色长发，目光深篷，拥有极强的战斗天赋和统筹全局的智慧。战斗时使用蓝银草魂灵与外附魂骨八蛛矛。"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
+            android:textColorHint="?attr/textColor4"
             app:layout_constraintDimensionRatio="229:130"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
-        <TextView
-            android:id="@+id/tvAssetName"
+        <View
+            android:id="@+id/etAssetDescCover"
+            setVisible="@{item.editingAssetDesc}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+            app:layout_constraintBottom_toBottomOf="@+id/etAssetDesc"
+            app:layout_constraintEnd_toEndOf="@+id/etAssetDesc"
+            app:layout_constraintStart_toStartOf="@+id/etAssetDesc"
+            app:layout_constraintTop_toTopOf="@+id/etAssetDesc" />
+
+        <com.kgmedia.fastfilm.widget.RecyclerEditText
+            android:id="@+id/etAssetName"
+            onTextInputListener="@{item.assetNameInputListener}"
+            setEditing="@{item.editingAssetName}"
+            text="@{item.assetName}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="6dp"
@@ -73,36 +142,49 @@
             android:drawableEnd="@drawable/icon_edit_text4_16"
             android:ellipsize="end"
             android:gravity="center_vertical"
+            android:hint="角色名"
             android:paddingHorizontal="12dp"
-            android:text="唐山"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
+            android:textColorHint="?attr/textColor4"
             app:layout_constraintDimensionRatio="109:32"
-            app:layout_constraintStart_toStartOf="@+id/tvAssetDesc"
-            app:layout_constraintTop_toBottomOf="@+id/tvAssetDesc"
+            app:layout_constraintStart_toStartOf="@+id/etAssetDesc"
+            app:layout_constraintTop_toBottomOf="@+id/etAssetDesc"
             app:layout_constraintWidth_percent="0.29" />
 
+        <View
+            android:id="@+id/etAssetNameCover"
+            setVisible="@{item.editingAssetName}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+            app:layout_constraintBottom_toBottomOf="@+id/etAssetName"
+            app:layout_constraintEnd_toEndOf="@+id/etAssetName"
+            app:layout_constraintStart_toStartOf="@+id/etAssetName"
+            app:layout_constraintTop_toTopOf="@+id/etAssetName" />
+
         <FrameLayout
-            android:id="@+id/btnRegenerateDesc"
-            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:id="@+id/btnGenerate"
+            singleClick="@{(v)->item.generate()}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginHorizontal="8dp"
             android:background="@drawable/fill_color1_r4"
-            app:layout_constraintBottom_toBottomOf="@+id/tvAssetName"
+            app:layout_constraintBottom_toBottomOf="@+id/etAssetName"
             app:layout_constraintEnd_toStartOf="@+id/btnDelete"
-            app:layout_constraintStart_toEndOf="@+id/tvAssetName"
-            app:layout_constraintTop_toTopOf="@+id/tvAssetName">
+            app:layout_constraintStart_toEndOf="@+id/etAssetName"
+            app:layout_constraintTop_toTopOf="@+id/etAssetName">
 
             <com.kgmedia.fastfilm.widget.GradientTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="重新生成"
+                android:text="@{item.status == 0 ? `生成角色` : `重新生成`}"
                 android:textAppearance="@style/Text13"
                 android:textColor="@android:color/white"
                 app:endColor="#8F83FF"
-                app:startColor="#68BFF9" />
+                app:startColor="#68BFF9"
+                tools:text="生成角色" />
         </FrameLayout>
 
         <ImageView
@@ -114,10 +196,10 @@
             android:background="@drawable/fill_color1_r4"
             android:scaleType="centerInside"
             android:src="@drawable/icon_delete_text4_16"
-            app:layout_constraintBottom_toBottomOf="@+id/tvAssetName"
+            app:layout_constraintBottom_toBottomOf="@+id/etAssetName"
             app:layout_constraintDimensionRatio="1"
-            app:layout_constraintEnd_toEndOf="@+id/tvAssetDesc"
-            app:layout_constraintTop_toTopOf="@+id/tvAssetName" />
+            app:layout_constraintEnd_toEndOf="@+id/etAssetDesc"
+            app:layout_constraintTop_toTopOf="@+id/etAssetName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

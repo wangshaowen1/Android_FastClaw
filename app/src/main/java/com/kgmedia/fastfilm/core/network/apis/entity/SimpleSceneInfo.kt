@@ -40,4 +40,9 @@ data class SimpleSceneInfo(
      * 任务ID (雪花算法)
      */
     val taskId: String?
-)
+) : SimpleAsset {
+    override val assetDesc: String?
+        get() = scenePrompt
+    override val assetName: String?
+        get() = sceneName
+}

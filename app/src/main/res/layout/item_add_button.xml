@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.works.ItemMyWorkVM" />
+            type="com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM" />
     </data>
 
 
@@ -37,9 +38,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="添加角色"
+                android:text="@{item.text}"
                 android:textAppearance="@style/Text14"
-                android:textColor="?attr/textColor2" />
+                android:textColor="?attr/textColor2"
+                tools:text="添加角色" />
 
         </LinearLayout>
 

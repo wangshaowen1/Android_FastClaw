@@ -1,5 +1,7 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
+import com.xingin.xhssharesdk.b.r
+
 /**
  * {
  *     "roleId": "角色主键id",
@@ -40,4 +42,9 @@ data class SimpleRoleInfo(
      * 任务ID (雪花算法)
      */
     val taskId: String?
-)
+) : SimpleAsset {
+    override val assetDesc: String?
+        get() = rolePrompt
+    override val assetName: String?
+        get() = roleName
+}

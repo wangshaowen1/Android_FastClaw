@@ -90,6 +90,7 @@ import com.kgmedia.fastfilm.widget.CoverPlayerView
 import com.kgmedia.fastfilm.widget.DecimalInputFilter
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.kgmedia.fastfilm.widget.MarqueeTextView
+import com.kgmedia.fastfilm.widget.RecyclerEditText
 import com.kgmedia.fastfilm.widget.TagGridLayout
 import com.kgmedia.fastfilm.widget.TagLayout
 import com.kgmedia.fastfilm.widget.VerticalDashedLineView
@@ -1689,3 +1690,15 @@ fun setCoverUrl(
     }
 }
 
+@BindingAdapter(value = ["setEditing", "text"], requireAll = true)
+fun setEditing(view: RecyclerEditText, editing: Boolean, text: String) {
+    if (editing) {
+        view.setText(text)
+        KeyboardUtils.showSoftInput(view)
+        view.setSelection(view.length())
+    } else {
+        view.setText(text)
+        view.clearFocus()
+        KeyboardUtils.hideSoftInput(view)
+    }
+}

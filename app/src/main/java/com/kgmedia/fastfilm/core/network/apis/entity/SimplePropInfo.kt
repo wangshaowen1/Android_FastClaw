@@ -40,4 +40,9 @@ data class SimplePropInfo(
      * 任务ID (雪花算法)
      */
     val taskId: String?
-)
+) : SimpleAsset {
+    override val assetDesc: String?
+        get() = propPrompt
+    override val assetName: String?
+        get() = propName
+}
