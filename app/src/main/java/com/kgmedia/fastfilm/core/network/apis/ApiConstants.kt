@@ -771,4 +771,10 @@ object ApiConstants {
      * 道具单个删除
      */
     const val WORK_ASSET_PROP_DELETE = "/work/asset/prop/delete"
+
+
+    /**
+     * 举报提交
+     */
+    const val REPORT_SUBMISSION="app/report/save"
 }

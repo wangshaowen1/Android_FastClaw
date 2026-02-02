@@ -1,4 +1,4 @@
-package com.kgmedia.fastfilm.feature.settings
+package com.kgmedia.fastfilm.feature.settings.customerservice
 
 import androidx.databinding.ObservableField
 import com.kgmedia.fastfilm.base.viewmodel.BaseShareViewModel

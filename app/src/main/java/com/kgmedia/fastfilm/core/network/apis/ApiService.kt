@@ -90,6 +90,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBo
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.RecommendShortsBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
+import com.kgmedia.fastfilm.core.network.apis.request.ReportSubmissionBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
@@ -1094,4 +1095,10 @@ interface ApiService {
      */
     @POST(ApiConstants.WORK_ASSET_PROP_DELETE)
     suspend fun workAssetPropDelete(@Body body: IdsBody): ApiResponse<Any>
+
+    /**
+     * 举报提交
+     */
+    @POST(ApiConstants.REPORT_SUBMISSION)
+    suspend fun reportSubmission(@Body body: ReportSubmissionBody): ApiResponse<Any>
 }

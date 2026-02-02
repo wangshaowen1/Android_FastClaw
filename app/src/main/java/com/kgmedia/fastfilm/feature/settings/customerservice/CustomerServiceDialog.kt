@@ -1,4 +1,4 @@
-package com.kgmedia.fastfilm.feature.settings
+package com.kgmedia.fastfilm.feature.settings.customerservice
 
 import android.view.Gravity
 import android.view.View
