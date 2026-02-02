@@ -14,6 +14,7 @@ import com.kgmedia.fastfilm.databinding.DialogUpgradeBinding
 import com.nhsd.basic.BaseVMDialogFragment
 import com.nhsd.basic.bus.observeEvents
 import java.io.File
+import kotlin.math.min
 
 
 class UpgradeDialogFragment : BaseVMDialogFragment<DialogUpgradeBinding, EmptyViewModel>() {
@@ -65,7 +66,8 @@ class UpgradeDialogFragment : BaseVMDialogFragment<DialogUpgradeBinding, EmptyVi
         super.onStart()
         dialog?.window?.let { dialogWindow ->
             dialogWindow.attributes?.let { attr ->
-                attr.width = ScreenUtils.getScreenWidth()
+                val screenWidth = min(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight())
+                attr.width = (285 / 375f * screenWidth).toInt()
                 attr.gravity = Gravity.CENTER
                 dialogWindow.attributes = attr
             }
