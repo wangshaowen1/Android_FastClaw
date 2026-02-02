@@ -2,7 +2,6 @@ package com.kgmedia.fastfilm.feature.creator.set
 
 import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.databinding.DialogVideoSetBinding
 import com.kgmedia.fastfilm.feature.creator.style.CreationStyleChooseDialog
@@ -23,11 +22,13 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
         }
     }
 
-    var onSuccess: (CreationStyleInfo?) -> Unit = {}
+    /**
+     * 按顺序依次是：集数范围，自定义集数，视频比例，视频风格
+     */
+    var onSuccess: ((String?, String?, String?, String?) -> Unit)? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
-
         binding.btnAllStyle.setOnSingleClickListener {
             val newInstance = CreationStyleChooseDialog.newInstance(mRealVM.checkedStyle?.data?.get()?.styleCode, mRealVM.configsData?.list)
             newInstance.onSuccess = {
@@ -46,6 +47,12 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
                     "请设置故事总集数".showToast()
                     return@setOnClickListener
                 }
+                if (mRealVM.checkedEpisodeSet?.data?.get()?.isCustomInput() == true) {
+                    if (mRealVM.checkedEpisodeSet?.input?.get().isNullOrEmpty()) {
+                        "请输入自定义集数".showToast()
+                        return@setOnClickListener
+                    }
+                }
                 if (mRealVM.checkedRatio == null) {
                     "请选择视频尺寸".showToast()
                     return@setOnClickListener
@@ -54,7 +61,12 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
                     "请选择视频风格".showToast()
                     return@setOnClickListener
                 }
-//            onSuccess.invoke()
+                onSuccess?.invoke(
+                    mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
+                    mRealVM.checkedEpisodeSet?.input?.get(),
+                    mRealVM.checkedRatio?.data?.get()?.configCode,
+                    mRealVM.checkedStyle?.data?.get()?.styleCode
+                )
                 dismissAllowingStateLoss()
             }
         }

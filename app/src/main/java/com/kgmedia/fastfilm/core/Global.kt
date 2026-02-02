@@ -32,9 +32,8 @@ object Global {
 
     fun refreshUserInfo() {
         ioScope.launchNoCrash {
-            val resp = ApiFactory.apiService.getUserHomeInfo(UserTokenBody())
-            if (resp.isSuccess) {
-                resp.data?.let { User.get().updateFrom(it) }
+            response(ApiFactory.apiService.getUserHomeInfo(UserTokenBody())){
+                User.get().updateFrom(data)
             }
         }
     }

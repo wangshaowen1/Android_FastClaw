@@ -31,38 +31,6 @@
                 android:orientation="vertical"
                 android:paddingTop="20dp">
 
-                <TextView
-                    style="@style/Text14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_l"
-                    android:text="故事简介"
-                    android:textColor="?attr/textColor1" />
-
-                <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
-                    android:id="@+id/expandTextView"
-                    expandContent="@{layout.MContent}"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/spacing_l"
-                    android:layout_marginTop="@dimen/spacing_m"
-                    android:textColor="?attr/textColor3"
-                    android:textSize="14sp"
-                    app:collapseLines="2"
-                    app:expandDrawable="@drawable/icon_edit_full_gray16"
-                    app:expandTipLabel=""
-                    app:expandable="false"
-                    app:tipPosition="align_right" />
-
-                <TextView
-                    style="@style/Text14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_l"
-                    android:layout_marginTop="@dimen/spacing_l"
-                    android:text="目录"
-                    android:textColor="?attr/textColor1" />
-
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/nsv"
                     android:layout_width="match_parent"

@@ -12,8 +12,8 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
-import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.databinding.ActivityContinueWritingBinding
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
@@ -129,13 +129,12 @@ class ContinueWritingActivity :
     }
 
     fun toGenerate() {
-        StoryEditorActivity.start(
+        StoryEditorActivity.startContinue(
             this,
             mRealVM.input.value,
-            null,
-            null,
-            DramaGenerateBody.GEN_WAY_CONTINUE_STORY,
-            mRealVM.workId
+            mRealVM.workId,
+            mRealVM.episodeInfo.value?.id,
+            DramaGenerateConstants.MODEL_CONTINUE_STORY,
         )
 //        Global.clearContinueInputContent(mRealVM.dramasSeriesId)
 //        finish()

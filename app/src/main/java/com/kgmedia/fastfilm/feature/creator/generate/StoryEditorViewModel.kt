@@ -6,7 +6,7 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
-import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 
 class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
@@ -19,14 +19,36 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
     var dramaId: String? = null
     val title = MutableLiveData(mBundle.getString(Constants.Extra.TITLE, "未命名标题"))
     val step = MutableLiveData<Int>()
-    val model by lazy { mBundle.getInt(Constants.Extra.MODE, DramaGenerateBody.GEN_WAY_INSPIRATION) }
+    val startFrom = MutableLiveData<Int>()
+    val model by lazy { mBundle.getInt(Constants.Extra.MODE, DramaGenerateConstants.MODEL_INSPIRATION) }
     var backWarning = false//子界面在流式输出的时候 用户要退出的时候需要弹出提示
 
     override fun onCreate() {
         super.onCreate()
         dramaId = mBundle.getString(Constants.Extra.ID)
-        step.value = mBundle.getInt(StoryEditorActivity.KEY_STEP, 1)
+
+        when (model) {
+            DramaGenerateConstants.MODEL_INSPIRATION -> {
+                step.value = 1
+                startFrom.value = 1
+            }
+
+            DramaGenerateConstants.MODEL_STORY -> {
+                step.value = 2
+                startFrom.value = 2
+            }
+
+            DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION -> {
+                step.value = 2
+                startFrom.value = 2
+            }
+
+            DramaGenerateConstants.MODEL_CONTINUE_STORY -> {
+                step.value = 2
+                startFrom.value = 2
+            }
+
+            else -> step.value = mBundle.getInt(StoryEditorActivity.KEY_STEP, 1)//中途恢复界面走这里
+        }
     }
-
-
 }

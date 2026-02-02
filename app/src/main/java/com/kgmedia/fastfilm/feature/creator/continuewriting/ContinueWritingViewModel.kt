@@ -17,7 +17,7 @@ import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.response.LastStoryData
-import com.kgmedia.fastfilm.core.network.apis.response.SeriesData
+import com.kgmedia.fastfilm.core.network.apis.response.LastEpisodeData
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
@@ -39,7 +39,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val workName by lazy { mBundle.getString(Constants.Extra.NAME) }
     val input by lazy { MutableLiveData(Global.continueWritingContent[workId]) }
     val info = MutableLiveData<LastStoryData>()
-    val seriesInfo = MutableLiveData<SeriesData>()
+    val episodeInfo = MutableLiveData<LastEpisodeData>()
     val textLimitNum by lazy { Config.get().appConfig.shortDramas }
     val minInputLength = 10
     val maxInputLength by lazy {
@@ -82,7 +82,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     fun getDramaInfo(function: (() -> Unit)? = null) {
         launchWithLoading {
             response(mRepo.api.dramaInfo(WorkIdBody(workId))) {
-                seriesInfo.value = data
+                episodeInfo.value = data
                 mToolbarVM.mTitle.set(data?.workTitle)
             }
         }

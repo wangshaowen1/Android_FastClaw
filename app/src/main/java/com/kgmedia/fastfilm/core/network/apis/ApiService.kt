@@ -42,6 +42,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawConfirmInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawSuccessInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
+import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.AppFloatWindowsBody
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindPhoneBody
@@ -130,7 +131,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
 import com.kgmedia.fastfilm.core.network.apis.response.RechargePageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.SceneCostData
 import com.kgmedia.fastfilm.core.network.apis.response.ScoreConfigData
-import com.kgmedia.fastfilm.core.network.apis.response.SeriesData
+import com.kgmedia.fastfilm.core.network.apis.response.LastEpisodeData
 import com.kgmedia.fastfilm.core.network.apis.response.LastStoryData
 import com.kgmedia.fastfilm.core.network.apis.response.ShortLikeData
 import com.kgmedia.fastfilm.core.network.apis.response.StoryboardListData
@@ -371,6 +372,16 @@ interface ApiService {
     @POST(ApiConstants.SSE_CONTENT_AI_EXPAND)
     fun sseContentAIExpand(@Body body: AIExpandBody): Flow<SSEvent>
 
+    /**
+     *故事梗概生成（灵感）
+     */
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SSE_CONTENT_SYNOPSIS)
+    fun sseContentSynopsis(@Body body: AISynopsisBody): Flow<SSEvent>
 
     /**
      * 轮询剧本分镜大纲
@@ -752,7 +763,7 @@ interface ApiService {
      * 查询我的作品详情
      */
     @POST(ApiConstants.DRAMA_INFO)
-    suspend fun dramaInfo(@Body body: WorkIdBody): ApiResponse<SeriesData?>
+    suspend fun dramaInfo(@Body body: WorkIdBody): ApiResponse<LastEpisodeData?>
 
     /**
      *流式生成帮我续写(生成续写的用户输出内容)

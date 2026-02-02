@@ -216,9 +216,9 @@ object ApiConstants {
     const val SSE_CONTENT_AI_EXPAND = "/ai/stream/script/expand"
 
     /**
-     * 随机灵感故事
+     * 故事梗概生成（灵感）
      */
-    const val RANDOM_INSPIRATION_STORY = "shortDramas/getRandomInspirationStory"
+    const val SSE_CONTENT_SYNOPSIS = "/ai/stream/script/synopsis"
 
     /**
      *轮询短剧剧本大纲

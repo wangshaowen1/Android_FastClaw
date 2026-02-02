@@ -1,22 +1,35 @@
 package com.kgmedia.fastfilm.feature.editor.info
 
 import android.content.DialogInterface
+import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.databinding.DialogDramaTitleEditBinding
 import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.ext.showToast
 
 /**
- * 修改简介
+ * 修改标题
  */
 class DramaTitleEditDialog() :
     BaseBottomPushDialogFragment<DialogDramaTitleEditBinding>() {
 
+    companion object {
+        @JvmStatic
+        fun newInstance(title: String?): DramaTitleEditDialog {
+            val dialog = DramaTitleEditDialog()
+            dialog.arguments = bundleOf(Constants.Extra.TITLE to title)
+            return dialog
+        }
+    }
+
+    var onSave: ((String) -> Unit)? = null
+
     override fun onPrepareView() {
         super.onPrepareView()
-        binding.nameInputer.setTextNoSelection("")
+        binding.nameInputer.setTextNoSelection(arguments?.getString(Constants.Extra.TITLE))
         binding.close.setOnClickListener {
             dismissAllowingStateLoss()
         }
@@ -25,7 +38,7 @@ class DramaTitleEditDialog() :
                 "请输入需要更新的内容".showToast()
                 return@setOnClickListener
             }
-
+            onSave?.invoke(binding.nameInputer.text.trim())
         }
     }
 
