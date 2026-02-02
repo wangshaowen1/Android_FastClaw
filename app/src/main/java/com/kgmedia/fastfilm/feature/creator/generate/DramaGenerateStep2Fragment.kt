@@ -1,18 +1,13 @@
 package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.os.Bundle
-import android.view.View
-import androidx.core.widget.doAfterTextChanged
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
-import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
-import com.kgmedia.fastfilm.feature.creator.generate.edit.StoryOutlineEditorDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
-import com.nhsd.basic.ext.setOnSingleClickListener
 
 class DramaGenerateStep2Fragment :
     BaseViewModelFragment<FragmentDramaGenerateStep2Binding, DramaGenerateStep2ViewModel>() {
@@ -56,7 +51,7 @@ class DramaGenerateStep2Fragment :
 
         mRealVM.dramaId.observe(this) {
             hostVm?.backWarning = false
-            hostVm?.dramaId = it
+            hostVm?.workId = it
         }
         mRealVM.mDramaName.observe(this) {
             hostVm?.title?.value = it

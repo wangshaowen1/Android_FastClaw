@@ -9,8 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
-import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
+import com.kgmedia.fastfilm.core.network.sse.processor.EpisodeSseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.nhsd.basic.utils.Logger
@@ -42,11 +43,13 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     val nextStepEnabled by lazy { ObservableBoolean(false) }
 
     var onSSECompleted: (() -> Unit)? = null
+    var originalJson: String? = null
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
 
     fun sseGenerate() {
+        nextStepEnabled.set(false)
         // 1. 准备请求 Flow
         val sseFlow = mRepo.api.sseContentSynopsis(AISynopsisBody(inspiration, episodeRangeCode, customEpisodeCount))
 
@@ -54,28 +57,34 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
             scope = viewModelScope, // 传入协程作用域
-            processor = PlainTextSseProcessor(
+            processor = EpisodeSseProcessor(
                 scope = viewModelScope,
                 onStart = {
+                    originalJson = ""
                     displayChild.set(DISPLAY_CONTENT)
                     mSSEContent.value = ""
                     mContent.set("")
+
                     Logger.d("[SSE]", "Open")
                 },
-                onUpdate = { fullContent ->
+                onTitleUpdate = { title ->
+                    mWorkName.value = title
+                },
+                onMdUpdate = { fullContent ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
                     mSSEContent.value = fullContent
                 },
-                onComplete = {
+                onComplete = { originalContent ->
                     Logger.d("[SSE]", "Finished")
+                    originalJson = originalContent
                     // 触发原本结束后的逻辑
                     onSSECompleted?.invoke()
+                    nextStepEnabled.set(true)
                 },
                 onError = { e ->
                     Log.e("[SSE]", "Error: $e")
                     displayChild.set(DISPLAY_FAIL)
                     onSSECompleted?.invoke()
-                    // 根据需要处理特定错误
                 })
         )
 
@@ -94,12 +103,20 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     /**
      * 确认生成
-     * @param onSuccess 成功回调，返回剧本ID
+     * @param onSuccess 成功回调，返回作品ID
      */
     fun confirmGenerate(onSuccess: ((String?) -> Unit)? = null) {
         launchWithLoading {
-            response(mRepo.shotDramaGenerate(workId.value)) {
-                onSuccess?.invoke(data?.dramasId)
+            val body = CreateWorkBody(
+                workTitle = mWorkName.value,
+                storyStructureStr = originalJson,
+                workStyleCode = videoStyleId,
+                workRatio = videoRatio,
+                totalEpisodeCnt = customEpisodeCount,
+                totalEpisodeCntCode = episodeRangeCode
+            )
+            response(mRepo.api.saveWorkSummary(body)) {
+                onSuccess?.invoke(data?.workId)
             }
         }
     }

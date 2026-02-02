@@ -16,7 +16,8 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT
     )
 
-    var dramaId: String? = null
+    var workId: String? = null
+    var episodeId: String? = null
     val title = MutableLiveData(mBundle.getString(Constants.Extra.TITLE, "未命名标题"))
     val step = MutableLiveData<Int>()
     val startFrom = MutableLiveData<Int>()
@@ -25,7 +26,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        dramaId = mBundle.getString(Constants.Extra.ID)
+        workId = mBundle.getString(Constants.Extra.ID)
 
         when (model) {
             DramaGenerateConstants.MODEL_INSPIRATION -> {
@@ -50,5 +51,15 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
             else -> step.value = mBundle.getInt(StoryEditorActivity.KEY_STEP, 1)//中途恢复界面走这里
         }
+    }
+
+    fun switch2Step(step: Int, workId: String? = null, episodeId: String? = null) {
+        workId?.let {
+            this.workId = it
+        }
+        episodeId?.let {
+            this.episodeId = it
+        }
+        this.step.value = step
     }
 }

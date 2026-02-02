@@ -221,9 +221,9 @@ object ApiConstants {
     const val SSE_CONTENT_SYNOPSIS = "/ai/stream/script/synopsis"
 
     /**
-     *轮询短剧剧本大纲
+     *灵感保存故事梗概（下一步创建剧本）
      */
-    const val GET_DRAMA_INFO = "shortDramas/structure/script/info"
+    const val SAVE_WORK_SUMMARY = "/work/production/new/saveStorySummary"
 
     /**
      *重新预生成剧本大纲(重新生成)

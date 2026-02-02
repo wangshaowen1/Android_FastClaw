@@ -60,7 +60,9 @@
             android:paddingVertical="@dimen/spacing_m">
 
             <Button
+                android:id="@+id/btnNext"
                 style="@style/Button.Bold"
+                android:enabled="@{layout.nextStepEnabled}"
                 android:layout_width="match_parent"
                 android:text="下一步：创建剧本" />
         </FrameLayout>

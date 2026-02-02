@@ -54,6 +54,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.BindWithdrawAccountBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindZfbBody
 import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
 import com.kgmedia.fastfilm.core.network.apis.request.ContinueGenerateBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DanmakuBody
 import com.kgmedia.fastfilm.core.network.apis.request.DownloadReportBody
@@ -150,6 +151,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.TimbreIdData
 import com.kgmedia.fastfilm.core.network.apis.response.UpgradeData
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
 import com.kgmedia.fastfilm.core.network.apis.response.WithdrawalRecordInfo
+import com.kgmedia.fastfilm.core.network.apis.response.WorkIdData
 import com.kgmedia.fastfilm.core.network.apis.response.WxPayData
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
@@ -393,6 +395,12 @@ interface ApiService {
     )
     @POST(ApiConstants.SSE_CONTENT_SYNOPSIS)
     fun sseContentSynopsis(@Body body: AISynopsisBody): Flow<SSEvent>
+
+    /**
+     * 灵感保存故事梗概（下一步创建剧本）
+     */
+    @POST(ApiConstants.SAVE_WORK_SUMMARY)
+    suspend fun saveWorkSummary(@Body body: CreateWorkBody): ApiResponse<WorkIdData?>
 
     /**
      * 轮询剧本分镜大纲

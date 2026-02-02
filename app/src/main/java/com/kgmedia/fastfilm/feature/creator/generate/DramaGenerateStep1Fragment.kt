@@ -12,9 +12,10 @@ import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
+import com.nhsd.basic.ext.setOnSingleClickListener
 
 /**
- * 故事更高生成
+ * 故事梗概生成
  */
 class DramaGenerateStep1Fragment :
     BaseViewModelFragment<FragmentDramaGenerateStep1Binding, DramaGenerateStep1ViewModel>() {
@@ -65,16 +66,29 @@ class DramaGenerateStep1Fragment :
 
         mRealVM.mSSEContent.observe(this) {
             markDownTextView.startPrinting(it)
+            //流式使用方式 或许性能会更好 暂时不改了 markDownTextView.appendPrinting(it)
         }
         mRealVM.onSSECompleted = {
             markDownTextView.stopPrinting("")
         }
         mRealVM.workId.observe(this) {
             hostVm?.backWarning = false
-            hostVm?.dramaId = it
+            hostVm?.workId = it
         }
         mRealVM.mWorkName.observe(this) {
-            hostVm?.title?.value = it
+            if (hostVm?.title?.value != it) {
+                hostVm?.title?.value = it
+            }
+        }
+        hostVm?.title?.observe(this) {
+            if (it != mRealVM.mWorkName.value) {
+                mRealVM.mWorkName.value = it
+            }
+        }
+        binding.btnNext.setOnSingleClickListener {
+            mRealVM.confirmGenerate { workId ->
+                hostVm?.switch2Step(2, workId)
+            }
         }
     }
 
