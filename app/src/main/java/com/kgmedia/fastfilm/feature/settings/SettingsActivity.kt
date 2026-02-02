@@ -87,7 +87,6 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
 
             R.id.sll_contact_customer_service -> {
                 //联系客服
-                //CustomerServiceDialog.show()
                 openTheCustomerServiceChat()
             }
 
