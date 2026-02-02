@@ -33,13 +33,15 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     var videoRatio: String? = null
     var videoStyleId: String? = null
 
-    var mSSEContent = ObservableField<String>()
+    var mSSEContent = MutableLiveData<String>()
     var workId = MutableLiveData<String>()
     var mContent = ObservableField<String>()
     var mWorkName = MutableLiveData<String>()
 
     val displayChild = ObservableInt(DISPLAY_LOADING)
     val nextStepEnabled by lazy { ObservableBoolean(false) }
+
+    var onSSECompleted: (() -> Unit)? = null
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
@@ -56,21 +58,23 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 scope = viewModelScope,
                 onStart = {
                     displayChild.set(DISPLAY_CONTENT)
-                    mSSEContent.set("")
+                    mSSEContent.value = ""
                     mContent.set("")
                     Logger.d("[SSE]", "Open")
                 },
                 onUpdate = { fullContent ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                    mSSEContent.set(fullContent)
+                    mSSEContent.value = fullContent
                 },
                 onComplete = {
                     Logger.d("[SSE]", "Finished")
                     // 触发原本结束后的逻辑
+                    onSSECompleted?.invoke()
                 },
                 onError = { e ->
                     Log.e("[SSE]", "Error: $e")
                     displayChild.set(DISPLAY_FAIL)
+                    onSSECompleted?.invoke()
                     // 根据需要处理特定错误
                 })
         )

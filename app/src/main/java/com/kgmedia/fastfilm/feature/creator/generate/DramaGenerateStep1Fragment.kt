@@ -1,8 +1,11 @@
 package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.os.Bundle
-import android.view.View
-import androidx.core.widget.doAfterTextChanged
+import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.fluid.afm.markdown.widget.PrinterMarkDownTextView
+import com.fluid.afm.styles.MarkdownStyles
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
@@ -26,6 +29,7 @@ class DramaGenerateStep1Fragment :
     }
 
     val hostVm by lazy { getViewModelOfActivity<StoryEditorViewModel>() }
+    val markDownTextView by lazy { PrinterMarkDownTextView(mActivity) }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -40,12 +44,31 @@ class DramaGenerateStep1Fragment :
             hostVm?.backWarning = true
         }
 
-        binding.tvSSEContent.doAfterTextChanged {
-            binding.nsv.postDelayed({
-                bindingNullable?.nsv?.fullScroll(View.FOCUS_DOWN)
-            }, 100)
-        }
+        val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerView.setLayoutManager(linearLayoutManager)
 
+        linearLayoutManager.setStackFromEnd(true)
+        binding.recyclerView.setAdapter(object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+                return object : RecyclerView.ViewHolder(markDownTextView) {}
+            }
+
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            }
+
+            override fun getItemCount(): Int {
+                return 1
+            }
+        })
+        markDownTextView.init(MarkdownStyles.getDefaultStyles(), null)
+        markDownTextView.setPrintParams(25, 1)
+
+        mRealVM.mSSEContent.observe(this) {
+            markDownTextView.startPrinting(it)
+        }
+        mRealVM.onSSECompleted = {
+            markDownTextView.stopPrinting("")
+        }
         mRealVM.workId.observe(this) {
             hostVm?.backWarning = false
             hostVm?.dramaId = it
@@ -53,5 +76,12 @@ class DramaGenerateStep1Fragment :
         mRealVM.mWorkName.observe(this) {
             hostVm?.title?.value = it
         }
+    }
+
+    override fun onDestroy() {
+        if (markDownTextView.isStarted) {
+            markDownTextView.stopPrinting("")
+        }
+        super.onDestroy()
     }
 }
