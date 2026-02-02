@@ -7,11 +7,12 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.hit.HitViewModel" />
+            type="com.kgmedia.fastfilm.feature.creator.assets.AssetManagementViewModel" />
     </data>
 
-
     <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+        displayChild="@{layout.loadState}"
+        onRetry="@{layout::getAssets}"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -27,6 +28,7 @@
                 android:orientation="horizontal">
 
                 <RadioGroup
+                    android:id="@+id/rgAssetType"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -34,31 +36,37 @@
                     android:paddingHorizontal="3dp">
 
                     <RadioButton
+                        android:id="@+id/rbRoles"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:button="@null"
                         android:checked="true"
                         android:gravity="center"
+                        android:onClick="@{layout.clickHandler::onClick}"
                         android:paddingHorizontal="12dp"
                         android:text="角色"
                         android:textAppearance="@style/Text14"
                         android:textColor="@color/sel_text2_text3" />
 
                     <RadioButton
+                        android:id="@+id/rbScenes"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:button="@null"
                         android:gravity="center"
+                        android:onClick="@{layout.clickHandler::onClick}"
                         android:paddingHorizontal="12dp"
                         android:text="场景"
                         android:textAppearance="@style/Text14"
                         android:textColor="@color/sel_text2_text3" />
 
                     <RadioButton
+                        android:id="@+id/rbProps"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:button="@null"
                         android:gravity="center"
+                        android:onClick="@{layout.clickHandler::onClick}"
                         android:paddingHorizontal="12dp"
                         android:text="道具"
                         android:textAppearance="@style/Text14"
@@ -67,6 +75,8 @@
                 </RadioGroup>
 
                 <TextView
+                    android:id="@+id/btnOneKeyGenerate"
+                    singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:layout_marginEnd="15dp"
@@ -82,6 +92,7 @@
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAssets"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="16dp"
@@ -99,6 +110,8 @@
                 android:paddingVertical="10dp">
 
                 <TextView
+                    android:id="@+id/btnNext"
+                    singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="15dp"

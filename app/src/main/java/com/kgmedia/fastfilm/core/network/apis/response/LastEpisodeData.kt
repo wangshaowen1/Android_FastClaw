@@ -18,7 +18,7 @@ package com.kgmedia.fastfilm.core.network.apis.response
 }
 }
  */
-data class SeriesData(
+data class LastEpisodeData(
     val finishedEpisodeCnt: Int? = null,
     val id: String? = null,
     val lastEpisodeNo: Int? = null,

@@ -13,9 +13,9 @@ import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.onUserSignOut
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
-import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.creator.set.VideoSetDialog
 import com.kgmedia.fastfilm.router.AppNavigator
@@ -122,11 +122,15 @@ class CreationFragment :
     fun showVideoSetDialog() {
         mRealVM.videoSetConfig(true) {
             val newInstance = VideoSetDialog.newInstance(mRealVM.videoSetConfig.value)
-            newInstance.onSuccess = {
+            newInstance.onSuccess = { range, custom, ratio, style ->
                 StoryEditorActivity.start(
                     mActivity,
-                    mRealVM.input.value, null, null,
-                    if (mRealVM.inspirationModel()) DramaGenerateBody.GEN_WAY_INSPIRATION else DramaGenerateBody.GEN_WAY_CUSTOMIZED
+                    mRealVM.input.value,
+                    range,
+                    custom,
+                    ratio,
+                    style,
+                    if (mRealVM.inspirationModel()) DramaGenerateConstants.MODEL_INSPIRATION else DramaGenerateConstants.MODEL_STORY
                 )
             }
             newInstance.show(childFragmentManager)

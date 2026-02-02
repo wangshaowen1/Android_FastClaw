@@ -103,7 +103,7 @@ public class Constants {
         //新手流程生成完歌曲后进入播放页面
         String SHOW_CREATION_TIPS = "isNoviceProcess";
         String RESULT = "result";
-        String TRACK_ID = "trackId";
+        String LAST_EPISODE_ID = "lastEpisodeId";
         String MV_ID = "mvId";
         String TRACK_NAME = "trackName";
         @Nullable
@@ -154,7 +154,7 @@ public class Constants {
         String DRAMAS_ID = "dramasId";
         String IMAGE_ID = "imageId";
         String UNRELEASED = "unreleased";
-        String SERIES_ID = "seriesId";
+        String WORK_ID = "workId";
         String PLAYER_IN_SERIES = "playerInSeries";
         String NEWLY_PUBLISH = "newlyPublish";
     }

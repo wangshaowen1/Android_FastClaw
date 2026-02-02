@@ -43,14 +43,19 @@
                 app:layout_constraintTop_toBottomOf="@id/statusBar" />
 
             <TextView
+                android:id="@+id/tvWorkName"
+                singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxWidth="160dp"
+                android:text="@{layout.title}"
                 android:textColor="?attr/textColor3"
                 android:textSize="16sp"
                 tools:text="代码纪元：觉醒指令..." />
 
             <ImageView
+                android:id="@+id/btnModify"
+                singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_s"
@@ -59,7 +64,8 @@
 
         <include
             layout="@layout/layout_story_board_header"
-            app:step="@{1}" />
+            app:startFrom="@{layout.startFrom}"
+            app:step="@{layout.step}" />
 
         <FrameLayout
             android:id="@+id/container"

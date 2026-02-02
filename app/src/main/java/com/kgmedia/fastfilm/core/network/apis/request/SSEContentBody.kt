@@ -73,6 +73,19 @@ data class AIExpandBody(
 )
 
 /**
+ * {
+ *     "workInspiration": "作品灵感（小说内容）",
+ *     "configCode": "剧集集数code：1-15=RANGE_1_15  15-30=RANGE_15_30  自定义=CUSTOM_EXACT",
+ *     "totalEpisodeCnt": "自定义具体集数（仅当 CUSTOM_EXACT 时填写的整数）"
+ * }
+ */
+data class AISynopsisBody(
+    val workInspiration: String? = null,
+    val configCode: String? = null,
+    val totalEpisodeCnt: String? = null,
+)
+
+/**
 {
 "inputContent": "输入内容",
 "genWay": "[枚举]生成方式 [1=灵感剧本 2=自定义剧本]",

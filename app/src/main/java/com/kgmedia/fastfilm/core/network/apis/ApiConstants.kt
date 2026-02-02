@@ -216,9 +216,9 @@ object ApiConstants {
     const val SSE_CONTENT_AI_EXPAND = "/ai/stream/script/expand"
 
     /**
-     * 随机灵感故事
+     * 故事梗概生成（灵感）
      */
-    const val RANDOM_INSPIRATION_STORY = "shortDramas/getRandomInspirationStory"
+    const val SSE_CONTENT_SYNOPSIS = "/ai/stream/script/synopsis"
 
     /**
      *轮询短剧剧本大纲
@@ -716,4 +716,59 @@ object ApiConstants {
      * 作品播放量计数
      */
     const val PLAY_EVENT_REPORT = "/app/home/work/playCount"
+
+    /**
+     * 轮询查询全部资产
+     */
+    const val WORK_ASSET_ALL_STATUS = "/ai/task/query/asset/all"
+
+    /**
+     * 轮询查询单个资产
+     */
+    const val WORK_ASSET_SINGLE_STATUS = "/ai/task/query/asset/single"
+
+    /**
+     * 场景列表
+     */
+    const val WORK_ASSET_SCENE_LIST = "/work/asset/scene/list"
+
+    /**
+     * 场景保存
+     */
+    const val WORK_ASSET_SCENE_SAVE = "/work/asset/scene/save"
+
+    /**
+     * 场景单个删除
+     */
+    const val WORK_ASSET_SCENE_DELETE = "/work/asset/scene/delete"
+
+    /**
+     * 角色列表
+     */
+    const val WORK_ASSET_ROLE_LIST = "/work/asset/role/list"
+
+    /**
+     * 角色保存
+     */
+    const val WORK_ASSET_ROLE_SAVE = "/work/asset/role/save"
+
+    /**
+     * 角色单个删除
+     */
+    const val WORK_ASSET_ROLE_DELETE = "/work/asset/role/delete"
+
+    /**
+     * 道具列表
+     */
+    const val WORK_ASSET_PROP_LIST = "/work/asset/prop/list"
+
+    /**
+     * 道具保存
+     */
+    const val WORK_ASSET_PROP_SAVE = "/work/asset/prop/save"
+
+    /**
+     * 道具单个删除
+     */
+    const val WORK_ASSET_PROP_DELETE = "/work/asset/prop/delete"
 }

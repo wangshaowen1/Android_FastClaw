@@ -7,12 +7,8 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
-import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.network.apis.entity.CharacterInfo
-import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
-import com.kgmedia.fastfilm.core.network.apis.request.InputContentBody
-import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
@@ -20,8 +16,7 @@ import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.nhsd.basic.utils.Logger
 
 /**
- * 故事板视图模型，负责处理故事板生成相关的业务逻辑
- * 包括SSE内容生成、角色列表获取、分镜列表获取等功能
+ * 故事梗概生成
  */
 class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>() {
 
@@ -32,20 +27,16 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         const val DISPLAY_CONTENT = 2
     }
 
-    /**
-     * 续写时是剧集id，同款是剧本id
-     */
-    var otherExtraId: String? = null
-    var content: String? = null
-    var model: Int? = null
-    var videoRatio: Int? = null
-    var dramaStyleId: String? = null
+    var inspiration: String? = null
+    var episodeRangeCode: String? = null
+    var customEpisodeCount: String? = null
+    var videoRatio: String? = null
+    var videoStyleId: String? = null
 
     var mSSEContent = ObservableField<String>()
-    var dramaId = MutableLiveData<String>()
+    var workId = MutableLiveData<String>()
     var mContent = ObservableField<String>()
-    var mDramaName = MutableLiveData<String>()
-    var mRoleList = MutableLiveData<List<CharacterInfo>>()
+    var mWorkName = MutableLiveData<String>()
 
     val displayChild = ObservableInt(DISPLAY_LOADING)
     val nextStepEnabled by lazy { ObservableBoolean(false) }
@@ -55,11 +46,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     fun sseGenerate() {
         // 1. 准备请求 Flow
-        val sseFlow = if (model == DramaGenerateBody.GEN_WAY_MAKE_SAME_STORY) {
-            mRepo.api.sseMakeSameContentGenerate(PopularRecommendDramasIdBody(otherExtraId))
-        } else {
-            mRepo.api.sseContentGenerate(InputContentBody(model, content))
-        }
+        val sseFlow = mRepo.api.sseContentSynopsis(AISynopsisBody(inspiration, episodeRangeCode, customEpisodeCount))
 
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
@@ -68,7 +55,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             processor = PlainTextSseProcessor(
                 scope = viewModelScope,
                 onStart = {
-                    displayChild.set(DISPLAY_LOADING)
+                    displayChild.set(DISPLAY_CONTENT)
                     mSSEContent.set("")
                     mContent.set("")
                     Logger.d("[SSE]", "Open")
@@ -89,7 +76,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         )
 
         // 3. 启动
-        Logger.d("[SSE]", "Starting with content body = $content")
+        Logger.d("[SSE]", "Starting with content body = $inspiration")
         sseHandler?.start(sseFlow)
     }
 
@@ -101,38 +88,13 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         sseHandler?.cancel()
     }
 
-
-    /**
-     * 上报来源，仅续写和同款上报
-     */
-    fun report() {
-        val isMakeSame = model == DramaGenerateBody.GEN_WAY_CONTINUE_STORY
-        if (isMakeSame || model == DramaGenerateBody.GEN_WAY_MAKE_SAME_STORY) {
-            launch {
-                response(mRepo.dramaGenerateSourceReport(dramaId.value, if (isMakeSame) 1 else 2, otherExtraId)) {}
-            }
-        }
-    }
-
-    /**
-     * 计算价格
-     * @param onSuccess 成功回调，返回点数金额
-     */
-    fun calculatePrice(onSuccess: ((Int?) -> Unit)? = null) {
-        launchWithLoading {
-            response(mRepo.calculatePrice(dramaId.value)) {
-                onSuccess?.invoke(data?.pointAmount)
-            }
-        }
-    }
-
     /**
      * 确认生成
      * @param onSuccess 成功回调，返回剧本ID
      */
     fun confirmGenerate(onSuccess: ((String?) -> Unit)? = null) {
         launchWithLoading {
-            response(mRepo.shotDramaGenerate(dramaId.value)) {
+            response(mRepo.shotDramaGenerate(workId.value)) {
                 onSuccess?.invoke(data?.dramasId)
             }
         }
