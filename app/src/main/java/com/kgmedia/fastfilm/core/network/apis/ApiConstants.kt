@@ -206,9 +206,14 @@ object ApiConstants {
     const val SSE_CONTENT_RANDOM = "/ai/stream/inspiration/random"
 
     /**
-     * 故事剧本（基于灵感写剧本/灵感续写）
+     * 灵感故事剧本（基于灵感写剧本/灵感续写/小说续写）
      */
-    const val SSE_CONTENT_EXPANDING_DRAMA_SCRIPT = "/ai/stream/script/from-idea"
+    const val SSE_SCRIPT_FROM_IDEA = "/ai/stream/script/from-idea"
+
+    /**
+     * 小说直接生成剧集剧本
+     */
+    const val SSE_SCRIPT_FROM_STORY = "/ai/stream/script/from-novel"
 
     /**
      * 扩写剧集剧本（小说）
@@ -226,9 +231,14 @@ object ApiConstants {
     const val SAVE_WORK_SUMMARY = "/work/production/new/saveStorySummary"
 
     /**
-     *重新预生成剧本大纲(重新生成)
+     *小说保存故事剧集剧本（首次创建）
      */
-    const val GET_DRAMA_INFO_RETRY = "shortDramas/structure/script/generate/pre/retry"
+    const val SAVE_STORY_EPISODE_SCRIPT = "/work/production/new/novel/saveStoryContent"
+
+    /**
+     *保存故事剧集剧本（灵感首创/灵感续集/小说续集）
+     */
+    const val SAVE_EPISODE_SCRIPT = "/work/production/new/saveStoryContent"
 
     /**
      *轮询剧本分镜大纲

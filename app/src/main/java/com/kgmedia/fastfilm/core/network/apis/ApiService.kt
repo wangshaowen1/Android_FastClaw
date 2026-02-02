@@ -54,6 +54,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.BindWithdrawAccountBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindZfbBody
 import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
 import com.kgmedia.fastfilm.core.network.apis.request.ContinueGenerateBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DanmakuBody
@@ -96,6 +97,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
@@ -364,15 +366,26 @@ interface ApiService {
     fun sseContentRandom(@Body body: UserTokenBody): Flow<SSEvent>
 
     /**
-     *故事剧本（基于灵感写剧本/灵感续写）
+     *灵感故事剧本（基于灵感写剧本/灵感续写/小说续写）
      */
     @Headers(
         "Accept: text/event-stream",  // 声明 SSE 媒体类型
         "Cache-Control: no-cache",     // 禁用缓存
         "Connection: keep-alive"       // 保持长连接
     )
-    @POST(ApiConstants.SSE_CONTENT_EXPANDING_DRAMA_SCRIPT)
-    fun sseContentExpandingDramaScript(@Body body: AIExpandBody): Flow<SSEvent>
+    @POST(ApiConstants.SSE_SCRIPT_FROM_IDEA)
+    fun sseScriptFromIdea(@Body body: AIExpandBody): Flow<SSEvent>
+
+    /**
+     *小说直接生成剧集剧本
+     */
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SSE_SCRIPT_FROM_STORY)
+    fun sseScriptFromStory(@Body body: AISynopsisBody): Flow<SSEvent>
 
     /**
      *扩写剧集剧本（小说）
@@ -401,6 +414,18 @@ interface ApiService {
      */
     @POST(ApiConstants.SAVE_WORK_SUMMARY)
     suspend fun saveWorkSummary(@Body body: CreateWorkBody): ApiResponse<WorkIdData?>
+
+    /**
+     * 小说保存故事剧集剧本（首次创建）
+     */
+    @POST(ApiConstants.SAVE_STORY_EPISODE_SCRIPT)
+    suspend fun saveStoryEpisodeScript(@Body body: CreateStoryWorkBody): ApiResponse<WorkIdData?>
+
+    /**
+     *保存故事剧集剧本（灵感首创/灵感续集/小说续集）
+     */
+    @POST(ApiConstants.SAVE_EPISODE_SCRIPT)
+    suspend fun saveEpisodeScript(@Body body: SaveEpisodeScriptBody): ApiResponse<WorkIdData?>
 
     /**
      * 轮询剧本分镜大纲

@@ -86,8 +86,8 @@ class DramaGenerateStep1Fragment :
             }
         }
         binding.btnNext.setOnSingleClickListener {
-            mRealVM.confirmGenerate { workId ->
-                hostVm?.switch2Step(2, workId)
+            mRealVM.confirmGenerate { workId, storyId ->
+                hostVm?.switch2Step(2, workId, storyId)
             }
         }
     }

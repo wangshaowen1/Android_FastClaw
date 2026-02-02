@@ -105,7 +105,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
      * 确认生成
      * @param onSuccess 成功回调，返回作品ID
      */
-    fun confirmGenerate(onSuccess: ((String?) -> Unit)? = null) {
+    fun confirmGenerate(onSuccess: ((String?, String?) -> Unit)? = null) {
         launchWithLoading {
             val body = CreateWorkBody(
                 workTitle = mWorkName.value,
@@ -116,7 +116,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 totalEpisodeCntCode = episodeRangeCode
             )
             response(mRepo.api.saveWorkSummary(body)) {
-                onSuccess?.invoke(data?.workId)
+                onSuccess?.invoke(data?.workId, data?.storyId)
             }
         }
     }

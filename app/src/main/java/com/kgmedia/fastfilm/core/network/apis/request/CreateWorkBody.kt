@@ -18,3 +18,29 @@ data class CreateWorkBody(
     val workRatio: String? = null,
     val workStyleCode: String? = null,
 ) : UserTokenBody()
+
+data class CreateStoryWorkBody(
+    val workTitle: String? = null,
+    val storyContent: String? = null,//剧集剧本内容
+    val totalEpisodeCntCode: String? = null,
+    val totalEpisodeCnt: String? = null,
+    val workRatio: String? = null,
+    val workStyleCode: String? = null,
+) : UserTokenBody()
+
+/**
+ * {
+ *     "workTitle": "作品名称",
+ *     "workDesc": "作品简介",
+ *     "workType": "作品类型：1-灵感创作 2-小说",
+ *     "storyContent": "剧集剧本内容",
+ *     "storyId": "剧集 id",
+ *     "workId": "作品 ID"
+ * }
+ */
+data class SaveEpisodeScriptBody(
+    val storyContent: String? = null,
+    val workId: String? = null,
+    val storyId: String? = null,
+    val workType: Int? = null
+)
