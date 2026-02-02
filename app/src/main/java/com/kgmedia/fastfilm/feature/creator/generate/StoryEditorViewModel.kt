@@ -16,11 +16,11 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT
     )
 
-    var workId: String? = null
-    var episodeId: String? = null
+    var workId: String? = null//作品id
+    var episodeId: String? = null//当前正在创作的剧集id
     val title = MutableLiveData(mBundle.getString(Constants.Extra.TITLE, "未命名标题"))
-    val step = MutableLiveData<Int>()
-    val startFrom = MutableLiveData<Int>()
+    val step = MutableLiveData<Int>()//当前处于的步骤序号
+    val startFrom = MutableLiveData<Int>()//从1还是从2开始，从2开始就是4步创作流程
     val model by lazy { mBundle.getInt(Constants.Extra.MODE, DramaGenerateConstants.MODEL_INSPIRATION) }
     var backWarning = false//子界面在流式输出的时候 用户要退出的时候需要弹出提示
 
@@ -53,7 +53,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
-    fun switch2Step(step: Int, workId: String? = null, episodeId: String? = null) {
+    fun nextStep(step: Int, workId: String? = null, episodeId: String? = null) {
         workId?.let {
             this.workId = it
         }

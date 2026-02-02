@@ -375,4 +375,13 @@ dependencies {
     implementation libs.retrofit2.converter.gson
 
     implementation 'com.growingio.android:autotracker:4.5.2'
+
+    /*markdown库的依赖*/
+    implementation 'ru.noties:jlatexmath-android:0.2.0'
+    implementation 'ru.noties:jlatexmath-android-font-cyrillic:0.2.0'
+    implementation 'ru.noties:jlatexmath-android-font-greek:0.2.0'
+    implementation 'com.vdurmont:emoji-java:5.1.1'
+    api 'com.atlassian.commonmark:commonmark:0.13.0'
+    api 'com.atlassian.commonmark:commonmark-ext-gfm-tables:0.13.0'
+    /*markdown库的依赖*/
 }

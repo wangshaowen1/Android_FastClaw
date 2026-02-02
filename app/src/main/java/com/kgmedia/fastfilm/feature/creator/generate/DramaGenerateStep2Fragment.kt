@@ -66,7 +66,7 @@ class DramaGenerateStep2Fragment :
         }
         binding.btnNext.setOnSingleClickListener {
             mRealVM.confirmGenerate { workId, episodeId ->
-                hostVm?.switch2Step(3, workId, episodeId)
+                hostVm?.nextStep(3, workId, episodeId)
             }
         }
     }

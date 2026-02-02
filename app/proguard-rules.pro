@@ -707,3 +707,5 @@
 }
 -dontwarn com.growingio.**
 ######################GrowingIO#########################
+
+-keep class ru.noties.jlatexmath.** { *; }

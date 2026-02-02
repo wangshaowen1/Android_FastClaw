@@ -165,8 +165,6 @@ class CreationFragment :
             }
 
             R.id.btnRandomPrompt -> {
-                showVideoSetDialog()
-                return
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
@@ -189,9 +187,9 @@ class CreationFragment :
             }
 
             R.id.btnNext -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
+//                if (AppNavigator.checkLoginIntercepted(true)) {
+//                    return
+//                }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return

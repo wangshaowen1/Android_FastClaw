@@ -29,6 +29,34 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.btnConfirm.setOnClickListener {
+            if (mRealVM.checkedEpisodeSet == null) {
+                "请设置故事总集数".showToast()
+                return@setOnClickListener
+            }
+            if (mRealVM.checkedEpisodeSet?.data?.get()?.isCustomInput() == true) {
+                if (mRealVM.checkedEpisodeSet?.input?.get().isNullOrEmpty()) {
+                    "请输入自定义集数".showToast()
+                    return@setOnClickListener
+                }
+            }
+            if (mRealVM.checkedRatio == null) {
+                "请选择视频尺寸".showToast()
+                return@setOnClickListener
+            }
+            if (mRealVM.checkedStyle == null) {
+                "请选择视频风格".showToast()
+                return@setOnClickListener
+            }
+            onSuccess?.invoke(
+                mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
+                mRealVM.checkedEpisodeSet?.input?.get(),
+                mRealVM.checkedRatio?.data?.get()?.configCode,
+                mRealVM.checkedStyle?.data?.get()?.styleCode
+            )
+            dismissAllowingStateLoss()
+        }
+
         binding.btnAllStyle.setOnSingleClickListener {
             val newInstance = CreationStyleChooseDialog.newInstance(mRealVM.checkedStyle?.data?.get()?.styleCode, mRealVM.configsData?.list)
             newInstance.onSuccess = {
@@ -41,34 +69,6 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
                 }
             }
             newInstance.show(childFragmentManager)
-
-            binding.btnConfirm.setOnClickListener {
-                if (mRealVM.checkedEpisodeSet == null) {
-                    "请设置故事总集数".showToast()
-                    return@setOnClickListener
-                }
-                if (mRealVM.checkedEpisodeSet?.data?.get()?.isCustomInput() == true) {
-                    if (mRealVM.checkedEpisodeSet?.input?.get().isNullOrEmpty()) {
-                        "请输入自定义集数".showToast()
-                        return@setOnClickListener
-                    }
-                }
-                if (mRealVM.checkedRatio == null) {
-                    "请选择视频尺寸".showToast()
-                    return@setOnClickListener
-                }
-                if (mRealVM.checkedStyle == null) {
-                    "请选择视频风格".showToast()
-                    return@setOnClickListener
-                }
-                onSuccess?.invoke(
-                    mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
-                    mRealVM.checkedEpisodeSet?.input?.get(),
-                    mRealVM.checkedRatio?.data?.get()?.configCode,
-                    mRealVM.checkedStyle?.data?.get()?.styleCode
-                )
-                dismissAllowingStateLoss()
-            }
         }
     }
 }

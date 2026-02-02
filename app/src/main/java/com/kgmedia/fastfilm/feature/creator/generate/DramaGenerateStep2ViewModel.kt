@@ -78,7 +78,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     Logger.d("[SSE]", "Finished")
                     // 触发原本结束后的逻辑
                 },
-                onError = { e ->
+                onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     displayChild.set(DISPLAY_FAIL)
                     // 根据需要处理特定错误

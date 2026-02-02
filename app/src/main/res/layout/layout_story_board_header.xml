@@ -3,17 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="step"
             type="Integer" />
 
-        <!-- startFrom: 1 = normal five-step; 2 = show last four steps (UI shows 1..4 representing real steps 2..5) -->
         <variable
             name="startFrom"
             type="Integer" />
-
-        <import type="android.text.TextUtils" />
 
         <import type="android.view.View" />
     </data>
@@ -24,17 +20,16 @@
         android:layout_marginTop="16dp"
         android:paddingHorizontal="@dimen/spacing_m">
 
-        <!-- STEP 1 (real step = startFrom + 0) -->
         <TextView
             android:id="@+id/step1_indicator"
-            foregroundLevel='@{step != null ? (step > (startFrom != null ? startFrom : 1) ? 1 : 0) : 0}'
+            foregroundLevel='@{step != null ? (step > 1 ? 1 : 0) : 0}'
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@drawable/selector_step_circle"
             android:foreground="@drawable/fg_step_check"
             android:gravity="center"
-            android:selected="@{step != null ? step == (startFrom != null ? startFrom : 1) : false}"
-            android:text="@{String.valueOf(1)}"
+            android:selected="@{step != null ? step == 1 : false}"
+            android:text="1"
             android:textColor="@color/sel_text1_text4"
             android:textSize="12sp"
             android:visibility='@{(startFrom != null &amp;&amp; startFrom == 2) ? View.GONE : View.VISIBLE}'
@@ -45,12 +40,10 @@
         <TextView
             android:id="@+id/step1_text"
             style="@style/Text12"
-            foregroundLevel='@{step != null ? (step > (startFrom != null ? startFrom : 1) ? 1 : 0) : 0}'
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:foreground="@drawable/fg_step_check"
-            android:selected="@{step != null ? step == (startFrom != null ? startFrom : 1) : false}"
+            android:selected="@{step != null ? step == 1 : false}"
             android:text="故事梗概"
             android:textColor="@color/sel_text1_text4"
             android:visibility='@{(startFrom != null &amp;&amp; startFrom == 2) ? View.GONE : View.VISIBLE}'
@@ -72,16 +65,15 @@
             app:layout_constraintStart_toEndOf="@id/step1_indicator"
             app:layout_constraintTop_toTopOf="@id/step1_indicator" />
 
-        <!-- STEP 2 (real step = startFrom + 1) -->
         <TextView
             android:id="@+id/step2_indicator"
-            foregroundLevel='@{step != null ? (step > ((startFrom != null ? startFrom : 1) + 1) ? 1 : 0) : 0}'
+            foregroundLevel='@{step != null ? (step > 2 ? 1 : 0) : 0}'
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@drawable/selector_step_circle"
             android:foreground="@drawable/fg_step_check"
             android:gravity="center"
-            android:selected='@{step != null ? step == ((startFrom != null ? startFrom : 1) + 1) : false}'
+            android:selected='@{step != null ? step == 2 : false}'
             android:text='@{String.valueOf((startFrom != null &amp;&amp; startFrom == 2) ? 1 : 2)}'
             android:textColor="@color/sel_text1_text4"
             android:textSize="12sp"
@@ -92,12 +84,10 @@
         <TextView
             android:id="@+id/step2_text"
             style="@style/Text12"
-            foregroundLevel='@{step != null ? (step > ((startFrom != null ? startFrom : 1) + 1) ? 1 : 0) : 0}'
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:foreground="@drawable/fg_step_check"
-            android:selected='@{step != null ? step == ((startFrom != null ? startFrom : 1) + 1) : false}'
+            android:selected='@{step != null ? step == 2 : false}'
             android:text="故事剧本"
             android:textColor="@color/sel_text1_text4"
             app:layout_constraintEnd_toStartOf="@+id/step3_text"
@@ -116,16 +106,15 @@
             app:layout_constraintStart_toEndOf="@id/step2_indicator"
             app:layout_constraintTop_toTopOf="@id/step2_indicator" />
 
-        <!-- STEP 3 (real step = startFrom + 2) -->
         <TextView
             android:id="@+id/step3_indicator"
-            foregroundLevel='@{step != null ? (step > ((startFrom != null ? startFrom : 1) + 2) ? 1 : 0) : 0}'
+            foregroundLevel='@{step != null ? (step > 3 ? 1 : 0) : 0}'
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@drawable/selector_step_circle"
             android:foreground="@drawable/fg_step_check"
             android:gravity="center"
-            android:selected='@{step != null ? step == ((startFrom != null ? startFrom : 1) + 2) : false}'
+            android:selected='@{step != null ? step == 3 : false}'
             android:text='@{String.valueOf((startFrom != null &amp;&amp; startFrom == 2) ? 2 : 3)}'
             android:textColor="@color/sel_text1_text4"
             android:textSize="12sp"
@@ -136,12 +125,10 @@
         <TextView
             android:id="@+id/step3_text"
             style="@style/Text12"
-            foregroundLevel='@{step != null ? (step > ((startFrom != null ? startFrom : 1) + 2) ? 1 : 0) : 0}'
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:foreground="@drawable/fg_step_check"
-            android:selected='@{step != null ? step == ((startFrom != null ? startFrom : 1) + 2) : false}'
+            android:selected='@{step != null ? step == 3 : false}'
             android:text="资产管理"
             android:textColor="@color/sel_text1_text4"
             app:layout_constraintEnd_toStartOf="@+id/step4_text"
@@ -160,16 +147,15 @@
             app:layout_constraintStart_toEndOf="@id/step3_indicator"
             app:layout_constraintTop_toTopOf="@id/step3_indicator" />
 
-        <!-- STEP 4 (real step = startFrom + 3) -->
         <TextView
             android:id="@+id/step4_indicator"
-            foregroundLevel='@{step != null ? (step > ((startFrom != null ? startFrom : 1) + 3) ? 1 : 0) : 0}'
+            foregroundLevel='@{step != null ? (step > 4 ? 1 : 0) : 0}'
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@drawable/selector_step_circle"
             android:foreground="@drawable/fg_step_check"
             android:gravity="center"
-            android:selected='@{step != null ? step == ((startFrom != null ? startFrom : 1) + 3) : false}'
+            android:selected='@{step != null ? step == 4 : false}'
             android:text='@{String.valueOf((startFrom != null &amp;&amp; startFrom == 2) ? 3 : 4)}'
             android:textColor="@color/sel_text1_text4"
             android:textSize="12sp"
@@ -180,12 +166,10 @@
         <TextView
             android:id="@+id/step4_text"
             style="@style/Text12"
-            foregroundLevel='@{step != null ? (step > ((startFrom != null ? startFrom : 1) + 3) ? 1 : 0) : 0}'
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:foreground="@drawable/fg_step_check"
-            android:selected='@{step != null ? step == ((startFrom != null ? startFrom : 1) + 3) : false}'
+            android:selected='@{step != null ? step == 4 : false}'
             android:text="分镜设计"
             android:textColor="@color/sel_text1_text4"
             app:layout_constraintEnd_toStartOf="@+id/step5_text"
@@ -204,16 +188,15 @@
             app:layout_constraintStart_toEndOf="@id/step4_indicator"
             app:layout_constraintTop_toTopOf="@id/step4_indicator" />
 
-        <!-- STEP 5 (real step = startFrom + 4) -->
         <TextView
             android:id="@+id/step5_indicator"
-            foregroundLevel='@{step != null ? (step > ((startFrom != null ? startFrom : 1) + 4) ? 1 : 0) : 0}'
+            foregroundLevel='@{step != null ? (step > 5 ? 1 : 0) : 0}'
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:background="@drawable/selector_step_circle"
             android:foreground="@drawable/fg_step_check"
             android:gravity="center"
-            android:selected='@{step != null ? step == ((startFrom != null ? startFrom : 1) + 4) : false}'
+            android:selected='@{step != null ? step == 5 : false}'
             android:text='@{String.valueOf((startFrom != null &amp;&amp; startFrom == 2) ? 4 : 5)}'
             android:textColor="@color/sel_text1_text4"
             android:textSize="12sp"
@@ -224,12 +207,10 @@
         <TextView
             android:id="@+id/step5_text"
             style="@style/Text12"
-            foregroundLevel='@{step != null ? (step > ((startFrom != null ? startFrom : 1) + 4) ? 1 : 0) : 0}'
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:foreground="@drawable/fg_step_check"
-            android:selected='@{step != null ? step == ((startFrom != null ? startFrom : 1) + 4) : false}'
+            android:selected='@{step != null ? step == 5 : false}'
             android:text="分镜预览"
             android:textColor="@color/sel_text1_text4"
             app:layout_constraintEnd_toEndOf="parent"

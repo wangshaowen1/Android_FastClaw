@@ -12,7 +12,6 @@ import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
@@ -114,7 +113,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
                     // 触发原本结束后的逻辑
                     isSSEStreaming.set(false)
                 },
-                onError = { e ->
+                onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     // 根据需要处理特定错误
                     e?.message?.showToast()

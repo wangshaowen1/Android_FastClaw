@@ -8,7 +8,7 @@ class PlainTextSseProcessor(
     private val onStart: () -> Unit,
     private val onUpdate: (String) -> Unit,
     private val onComplete: () -> Unit,
-    private val onError: (Throwable?) -> Unit
+    private val onErrorCallback: (Throwable?) -> Unit
 ) : BaseThrottleSseProcessor(scope, throttleMs) {
 
     private val buffer = StringBuilder(1024)
@@ -34,7 +34,7 @@ class PlainTextSseProcessor(
     }
 
     override fun onError(e: Throwable?) {
-        onError(e)
+        onErrorCallback(e)
     }
 }
 

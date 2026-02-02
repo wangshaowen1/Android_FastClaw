@@ -11,7 +11,7 @@ class EpisodeSseProcessor(
     private val onMdUpdate: (String) -> Unit,
     private val onStart: () -> Unit,
     private val onComplete: (String) -> Unit,
-    private val onError: (Throwable?) -> Unit
+    private val onErrorCallback: (Throwable?) -> Unit
 ) : SseChunkProcessor {
     private val fullSourceAccumulator = StringBuilder()
     private val parser = JsonSseFieldStreamer(
@@ -46,7 +46,7 @@ class EpisodeSseProcessor(
     }
 
     override fun onError(e: Throwable?) {
-        scope.launch(Dispatchers.Main) { onError(e) }
+        scope.launch(Dispatchers.Main) { onErrorCallback(e) }
     }
 }
 

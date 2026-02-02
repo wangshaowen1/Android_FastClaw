@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.Global
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
@@ -90,7 +89,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
                     Logger.d("[SSE]", "Finished")
                     // 触发原本结束后的逻辑
                 },
-                onError = { e ->
+                onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     // 根据需要处理特定错误
                     e?.message?.showToast()

@@ -81,7 +81,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     onSSECompleted?.invoke()
                     nextStepEnabled.set(true)
                 },
-                onError = { e ->
+                onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     displayChild.set(DISPLAY_FAIL)
                     onSSECompleted?.invoke()
