@@ -4,20 +4,20 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
-import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesIdPagedBody
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 
-class SeriesEpisodePagingSource(private val dramasSeriesId: String?, val totalSize: ((Int) -> Unit)? = null) : PagingSource<Int, ShortDramaInfo>() {
+class EpisodePagingSource(private val workId: String?, val totalSize: ((Int) -> Unit)? = null) : PagingSource<Int, EpisodeInfo>() {
 
-    override fun getRefreshKey(state: PagingState<Int, ShortDramaInfo>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, EpisodeInfo>): Int? {
         return null
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ShortDramaInfo> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, EpisodeInfo> {
         return try {
             val pageNum = params.key ?: 1
-            val body = DramasSeriesIdPagedBody(dramasSeriesId, pageNum, params.loadSize)
-            val apiResponse = ApiFactory.apiService.seriesShortList(body)
+            val body = WorkIdPagedBody(workId, pageNum, params.loadSize)
+            val apiResponse = ApiFactory.apiService.episodeList(body)
             if (apiResponse.isSuccess) {
                 totalSize?.invoke(apiResponse.data?.totalSize ?: 0)
                 val prevKey = if (pageNum > 1) pageNum - 1 else null

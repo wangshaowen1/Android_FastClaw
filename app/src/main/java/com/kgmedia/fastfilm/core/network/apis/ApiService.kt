@@ -65,7 +65,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesId
-import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesIdPagedBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbrePagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.EditDramaBody
@@ -862,16 +862,10 @@ interface ApiService {
     suspend fun seriesPublish(@Body body: SeriesSetPriceBody): ApiResponse<Any>
 
     /**
-     * 获取剧集详情看自己看别人都用这个
+     *分页查看作品剧集列表
      */
-    @POST(ApiConstants.SERIES_DETAIL)
-    suspend fun seriesDetail(@Body body: WorkIdBody): ApiResponse<DramasSeriesInfo?>
-
-    /**
-     * 获取剧集详情看自己看别人都用这个
-     */
-    @POST(ApiConstants.SERIES_SHORT_LIST)
-    suspend fun seriesShortList(@Body body: DramasSeriesIdPagedBody): ApiResponse<PagedList<ShortDramaInfo>?>
+    @POST(ApiConstants.EPISODE_LIST)
+    suspend fun episodeList(@Body body: WorkIdPagedBody): ApiResponse<PagedList<EpisodeInfo>?>
 
     /**
      * 新用户创作体验引导条

@@ -571,14 +571,9 @@ object ApiConstants {
     const val SERIES_PUBLISH = "shortDramasSeries/shelf"
 
     /**
-     * 获取剧集详情看自己看别人都用这个
+     * 分页查看作品剧集列表
      */
-    const val SERIES_DETAIL = "shortDramasSeries/detail"
-
-    /**
-     * 获取剧集短剧列表看自己看别人都用这个
-     */
-    const val SERIES_SHORT_LIST = "shortDramasSeries/work/list"
+    const val EPISODE_LIST = "/work/storyPage"
 
     /**
      * 新用户创作体验引导条

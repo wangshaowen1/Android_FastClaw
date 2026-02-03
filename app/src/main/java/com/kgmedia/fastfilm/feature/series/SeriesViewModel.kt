@@ -15,7 +15,7 @@ import com.kgmedia.fastfilm.common.PagedProxy
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
@@ -75,14 +75,14 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
         }
     }
 
-    fun episodeList(): Flow<PagingData<ShortDramaInfo>> {
+    fun episodeList(): Flow<PagingData<EpisodeInfo>> {
         return Pager(
             config = PagingConfig(
                 initialLoadSize = PagedProxy.DEFAULT_PAGE_SIZE * 3,
                 pageSize = PagedProxy.DEFAULT_PAGE_SIZE
             ),
             pagingSourceFactory = {
-                SeriesEpisodePagingSource(workId)
+                EpisodePagingSource(workId)
             }
         ).flow.cachedIn(viewModelScope)
     }
