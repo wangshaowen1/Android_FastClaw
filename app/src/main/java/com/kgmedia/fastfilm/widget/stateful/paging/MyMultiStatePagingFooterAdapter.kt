@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.widget.stateful.paging
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.kgmedia.fastfilm.R
@@ -17,8 +18,8 @@ import com.nhsd.basic.ext.getResString
  * @Version: 1.0
  * *****************************************
  */
- class MyMultiStatePagingFooterAdapter(
-    hostAdapter: RecyclerView.Adapter<*>?=null,
+class MyMultiStatePagingFooterAdapter(
+    hostAdapter: RecyclerView.Adapter<*>? = null,
     //网络异常提示内容
     networkAnomaly: String = R.string.page_network_error.getResString(),
     //请求异常提示内容
@@ -72,7 +73,7 @@ import com.nhsd.basic.ext.getResString
         super.requestButtonText = requestButtonText
         super.noDataButtonText = noDataButtonText
         super.noMoreThreshold = noMoreThreshold
-        super.requestButtonImg=requestButtonImg
+        super.requestButtonImg = requestButtonImg
         super.refresh = refresh
     }
 

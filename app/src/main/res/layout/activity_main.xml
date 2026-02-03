@@ -27,6 +27,7 @@
             android:id="@+id/mrg"
             android:layout_width="match_parent"
             android:layout_height="@dimen/main_bottom_nav_height"
+            android:visibility="@{layout.showBottomBar?View.VISIBLE:View.GONE}"
             android:background="@drawable/bg_color2_tr20"
             android:gravity="center_vertical"
             android:orientation="horizontal"

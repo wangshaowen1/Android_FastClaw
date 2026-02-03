@@ -10,13 +10,15 @@
             type="com.kgmedia.fastfilm.feature.works.ItemMyWorkVM" />
 
         <import type="android.view.View" />
+
+        <import type="com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
-        android:onClick="@{(v)->item.onItemClick.invoke(v)}">
+        android:onClick="@{(v)->item.onClick()}">
 
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
@@ -26,11 +28,13 @@
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
             app:riv_corner_radius="@dimen/radius_m"
+            android:src="@drawable/ic_default_cover"
             tools:src="@drawable/ic_default_cover" />
 
         <com.kgmedia.fastfilm.widget.BorderConstraintLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:visibility="@{item.workState==WorkInformationData.COMPOSING_STATE?View.VISIBLE:View.GONE}"
             app:backgroundStartColor="@color/mask_opacity_60_dark"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
@@ -64,6 +68,7 @@
             android:text="草稿"
             android:textAppearance="@style/Text10"
             android:textColor="@color/fixed_black_1"
+            android:visibility="@{(item.workState==WorkInformationData.DRAFT_STATE&amp;&amp;item.isView())?View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
@@ -77,8 +82,21 @@
             android:text="待合成"
             android:textAppearance="@style/Text10"
             android:textColor="@color/fixed_white_1"
+            android:visibility="@{(item.workState==WorkInformationData.WAIT_STATE&amp;&amp;item.isView())?View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="6dp"
+            android:text="共1集"
+            android:textAppearance="@style/Text12"
+            android:textColor="@{(item.workState==WorkInformationData.COMPOSING_STATE&amp;&amp;item.isView())?@color/fixed_white_3:@color/fixed_white_1}"
+            app:layout_constraintBottom_toBottomOf="@id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            tools:textColor="@color/fixed_white_1" />
 
         <TextView
             android:layout_width="0dp"
@@ -93,6 +111,16 @@
             app:layout_constraintStart_toStartOf="@+id/ivCover"
             app:layout_constraintTop_toBottomOf="@+id/ivCover" />
 
+        <ImageView
+            android:layout_width="16dp"
+            android:importantForAccessibility="no"
+            android:src="@{item.isSelected()?@drawable/ic_my_work_selected:@drawable/ic_my_work_not_selected}"
+            tools:src="@drawable/ic_my_work_selected"
+            android:visibility="@{item.isView()?View.GONE:View.VISIBLE}"
+            app:layout_constraintTop_toTopOf="@id/ivCover"
+            app:layout_constraintEnd_toEndOf="@id/ivCover"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="8dp"
+            android:layout_height="16dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>

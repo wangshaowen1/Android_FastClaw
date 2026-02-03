@@ -1,0 +1,27 @@
+package com.kgmedia.fastfilm.core.db.convert
+
+import androidx.room.TypeConverter
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+
+/**
+ * *****************************************
+ * 项目名称: KgQuan
+ * @Author: SZYMN
+ * @Introduce:
+ * @Data: 2026/1/7/周三  11:23
+ * @Version: 1.0
+ * *****************************************
+ */
+class Converters {
+    @TypeConverter
+    fun fromStringList(value: List<String>?): String {
+        return Gson().toJson(value)
+    }
+
+    @TypeConverter
+    fun toStringList(value: String?): List<String> {
+        val listType = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson(value, listType) ?: emptyList()
+    }
+}

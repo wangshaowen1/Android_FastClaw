@@ -29,6 +29,9 @@ import com.kgmedia.fastfilm.router.AppRouter
  */
 class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
 
+    //显示隐藏底部
+    val showBottomBar = ObservableBoolean(true)
+
     //是否登录
     val isLogin by lazy { ObservableBoolean(false) }
 

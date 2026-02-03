@@ -452,6 +452,7 @@
     <color name="fixed_black_2">#333333</color>
     <color name="fixed_white_1">#F5FFFFFF</color>
     <color name="fixed_white_2">#B3FFFFFF</color>
+    <color name="fixed_white_3">#80FFFFFF</color>
 
     <color name="gradient_btn_start_dark">#73B0F8</color>
     <color name="gradient_btn_center_dark">#7597F0</color>

@@ -22,16 +22,19 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:constraint_referenced_ids="tvTitle,btnEdit"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Group
+            android:id="@+id/groud_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:constraint_referenced_ids="tvSelectCount,btnSelectAll,btnComplete" />
+            tools:visibility="visible"
+            app:constraint_referenced_ids="tvSelectCount,btnSelectAll,btnComplete,btnDelete" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -45,8 +48,10 @@
 
         <ImageView
             android:id="@+id/btnEdit"
+            singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="54dp"
             android:layout_height="@dimen/action_bar_size"
+            android:importantForAccessibility="no"
             android:paddingHorizontal="15dp"
             android:src="@drawable/icon_edit"
             android:textSize="18sp"
@@ -58,13 +63,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/action_bar_size"
             android:gravity="center"
-            android:text="已选择 0 个"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor4"
-            app:layout_constraintTop_toBottomOf="@+id/statusBar" />
+            app:layout_constraintTop_toBottomOf="@+id/statusBar"
+            tools:text="已选择 0 个" />
 
         <TextView
             android:id="@+id/btnSelectAll"
+            singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/action_bar_size"
             android:gravity="center"
@@ -77,6 +83,7 @@
 
         <TextView
             android:id="@+id/btnComplete"
+            singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/action_bar_size"
             android:gravity="center"
@@ -87,24 +94,44 @@
             app:layout_constraintEnd_toEndOf="@+id/tvSelectCount"
             app:layout_constraintTop_toTopOf="@+id/tvSelectCount" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/srl"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/action_bar_size"
-            android:adapter="@{layout.adapter}"
-            android:clipToPadding="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:overScrollMode="never"
-            android:paddingHorizontal="9dp"
-            android:paddingVertical="6dp"
-            android:scrollbars="none"
-            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/btnDelete"
             app:layout_constraintTop_toBottomOf="@+id/statusBar"
-            app:spanCount="3"
-            tools:listitem="@layout/item_my_work" />
+            app:srlAccentColor="@color/white"
+            app:srlEnablePreviewInEditMode="true"
+            app:srlPrimaryColor="@color/transparent">
+
+            <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+                android:id="@+id/lsv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingHorizontal="9dp"
+                    android:paddingVertical="6dp"
+                    android:scrollbars="none"
+                    app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                    app:spanCount="3"
+                    tools:itemCount="9"
+                    tools:listitem="@layout/item_my_work" />
+            </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
         <LinearLayout
             android:id="@+id/btnDelete"
+            singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
             android:layout_height="@dimen/main_bottom_nav_height"
             android:gravity="center"
@@ -119,8 +146,6 @@
                 android:text="删除"
                 android:textAppearance="@style/Text14"
                 android:textColor="?attr/funcColorFailure" />
-
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
