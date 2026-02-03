@@ -1,23 +1,16 @@
 package com.kgmedia.fastfilm.feature.works
 
 import android.graphics.Color
-import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
-import android.text.TextPaint
-import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
-import com.blankj.utilcode.util.ClipboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
-import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
 import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
@@ -27,7 +20,6 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.showToast
-import com.nhsd.basic.item.ItemEventsViewModel
 import kotlinx.coroutines.launch
 
 class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksViewModel>() {
