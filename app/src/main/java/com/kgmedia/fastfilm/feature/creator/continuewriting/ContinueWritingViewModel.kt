@@ -90,7 +90,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     private var sseHandler: SSEStreamHandler? = null
 
     fun sseGenerate() {
-        promptGenerating.value = true to ("AI扩写中，请稍候...")
+        promptGenerating.value = true to ("AI扩写中...")
         val sseFlow = mRepo.api.sseContentAIExpand(AIExpandBody(episodeInfo.value?.storyId, workId))
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()

@@ -65,7 +65,7 @@ class StoryboardRegenerateViewModel : AppRepositoryViewModel<ShortDramaEditorRep
             "请输入画面描述".showToast()
             return
         }
-        promptGenerating.value = true to "正在优化中，请稍候..."
+        promptGenerating.value = true to "正在优化中..."
         launch(block = {
             val promptResponse = mRepo.shortDramasSegmentImageDescOptimize(segment?.shotSegmentId, content)
             promptGenerating.value = false to ""

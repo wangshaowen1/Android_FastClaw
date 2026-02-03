@@ -57,7 +57,7 @@ class CharacterRegenerateViewModel : AppRepositoryViewModel<CreationRepository>(
     }
 
     fun optimizeRoleImageDesc(callback: ((String?) -> Unit)? = null) {
-        promptGenerating.value = true to "正在优化，请稍候..."
+        promptGenerating.value = true to "正在优化..."
         launch({
             val promptResponse =
                 mRepo.optimizeRoleImageDesc(
