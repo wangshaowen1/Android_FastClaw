@@ -10,5 +10,6 @@ package com.kgmedia.fastfilm.core.network.apis.request
  */
 data class PlayEventBody(
     val userId: String? = null,
-    val workId: String? = null
+    val workId: String? = null,
+    val storyId: String? = null
 ) : UserTokenBody()

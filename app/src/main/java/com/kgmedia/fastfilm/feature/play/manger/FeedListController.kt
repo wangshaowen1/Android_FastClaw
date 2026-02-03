@@ -104,7 +104,7 @@ class FeedListController(
 
         onPageChanged?.invoke(item, position)
         val holder = recyclerView.getChildViewHolder(centerView) as? VideoFeedAdapter.VideoViewHolder ?: return
-        EventManager.onPlayEvent(item.userId, item.workId)
+
         // 调用 Manager 播放
         playerManager.attachAndPlay(item, holder.binding.playerView)
         // 强制更新 UI 为播放状态

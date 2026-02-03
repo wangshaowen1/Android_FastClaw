@@ -67,9 +67,9 @@ object EventManager {
     /**
      * 作品播放量计数
      */
-    fun onPlayEvent(userId: String?, workId: String?) {
+    fun onPlayEvent(userId: String?, workId: String?, episodeId: String?) {
         ioScope.launchNoCrash {
-            ApiFactory.apiService.playEventReport(PlayEventBody(userId, workId))
+            ApiFactory.apiService.playEventReport(PlayEventBody(userId, workId,episodeId))
         }
     }
 

@@ -7,6 +7,8 @@ import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
+import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
@@ -20,7 +22,22 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val mToolbarVM by lazy {
         ToolbarViewModel(
-            navigationAction = { back() },
+            navigationAction = {
+                if (isModify) {
+                    topActivity?.showConfirmPrompt(
+                        "您对作品的信息有修改尚未保存，是否保存修改?",
+                        cancelText = "不保存",
+                        confirmText = "保存并退出",
+                        cancel = {
+                            back()
+                        },
+                        confirm = {
+                            saveInfo()
+                        })
+                    return@ToolbarViewModel
+                }
+                back()
+            },
             title = "编辑作品",
             background = Color.TRANSPARENT
         )
@@ -30,6 +47,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private var mCoverPath: String? = null
     var isUploading = false
+    var isModify = false
 
     val cover = ObservableField<String>()
     val name = MutableLiveData<String>()
@@ -68,6 +86,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
     fun changeTargetPicture(path: String) {
         setLoading(true)
         mCoverPath = path
+        isModify = true
         isUploading = true
         val ossClient = OssClient.newInstance(App.instance)
         ossClient.uploadFile(path, OssClient.TYPE_PHOTO_IMG, object : OnUploadListener() {

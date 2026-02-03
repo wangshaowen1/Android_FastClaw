@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.ActivityDramasPlayPagerBinding
 import com.kgmedia.fastfilm.feature.play.manger.FeedListController
 import com.kgmedia.fastfilm.feature.play.manger.FeedPlayerManager
@@ -56,10 +57,13 @@ class DramasPlayPagerActivity :
         // 因为 Repository 是单例且缓存了 Flow，如果列表页也用了 FeedRepository，
         // 这里会立刻拿到数据，不需要网络请求
         mRealVM.loadFeed(!workId.isNullOrEmpty(), workId)
-        if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) {
-            listController.onPageChanged = { workInfo, position ->
+
+        listController.onPageChanged = { workInfo, position ->
+            if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) {
                 binding.tvTitle.text = workInfo.lastEpisodeNo
             }
+            val realWorkId = if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else workInfo.workId
+            EventManager.onPlayEvent(workInfo.userId, realWorkId, workInfo.getEpisodeId())
         }
         // 3. 事件流
         setupPlayerEvents()

@@ -69,11 +69,8 @@ class DramaGenerateStep1Fragment :
             //流式使用方式 或许性能会更好 暂时不改了 markDownTextView.appendPrinting(it)
         }
         mRealVM.onSSECompleted = {
-            markDownTextView.stopPrinting("")
-        }
-        mRealVM.workId.observe(this) {
             hostVm?.backWarning = false
-            hostVm?.workId = it
+            markDownTextView.stopPrinting("")
         }
         mRealVM.mWorkName.observe(this) {
             if (hostVm?.title?.value != it) {

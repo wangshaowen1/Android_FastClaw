@@ -36,11 +36,13 @@ class DramaInfoEditActivity :
         super.onCreate(savedInstanceState)
         binding.nameInputer.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
+                mRealVM.isModify = true
                 mRealVM.name.value = s.toString()
             }
         })
         binding.descInputer.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
+                mRealVM.isModify = true
                 mRealVM.desc.value = s.toString()
             }
         })
