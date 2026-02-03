@@ -783,6 +783,36 @@ object ApiConstants {
     const val WORK_ASSET_SINGLE_GENERATE = "ai/asset/generation/single/image"
 
     /**
+     * 轮询查询单个分镜图片
+     */
+    const val WORK_STORYBOARD_SINGLE_STATUS = "/ai/task/query/storyboard/single"
+
+    /**
+     * 分镜设计列表
+     */
+    const val WORK_STORYBOARD_LIST = "/work/storyboard/designList"
+
+    /**
+     * 分镜保存
+     */
+    const val WORK_STORYBOARD_SAVE = "/work/storyboard/save"
+
+    /**
+     * 分镜单个删除
+     */
+    const val WORK_STORYBOARD_DELETE = "/work/storyboard/delete"
+
+    /**
+     * 生成单个分镜图片（重新生成/点击生成）
+     */
+    const val WORK_STORYBOARD_SINGLE_GENERATE = "/ai/storyboard/generation/image"
+
+    /**
+     * 生成分镜视频
+     */
+    const val WORK_STORYBOARD_VIDEO_GENERATE = "/ai/storyboard/generation/video"
+
+    /**
      * 举报提交
      */
     const val REPORT_SUBMISSION="app/report/save"

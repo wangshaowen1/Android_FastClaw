@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.works.ItemMyWorkVM" />
-    </data>
+            type="com.kgmedia.fastfilm.feature.creator.storyboard.ItemStoryboardVM" />
 
+        <import type="android.view.View" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -20,54 +22,76 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="分镜2"
+            android:text="@{`分镜`+item.data.sortNo}"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor4"
             app:layout_constraintDimensionRatio="345:130"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="分镜2" />
 
-        <TextView
-            android:id="@+id/tvStoryboardDesc"
+        <com.kgmedia.fastfilm.widget.RecyclerEditText
+            android:id="@+id/etStoryboardDesc"
+            onTextInputListener="@{item.storyboardDescInputListener}"
+            setEditing="@{item.editingStoryboardDesc}"
+            text="@{item.storyboardDesc}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="15dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
+            android:layout_marginEnd="15dp"
             android:background="@drawable/fill_color1_r8"
             android:ellipsize="end"
+            android:gravity="top"
+            android:hint="分镜描述词"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
             android:padding="12dp"
             android:text="史莱克七怪之首，沉稳冷静。他留着一头深蓝色长发，目光深篷，拥有极强的战斗天赋和统筹全局的智慧。战斗时使用蓝银草魂灵与外附魂骨八蛛矛。"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
+            android:textColorHint="?attr/textColor4"
             app:layout_constraintDimensionRatio="345:100"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvIndex" />
+
+        <View
+            android:id="@+id/etStoryboardDescCover"
+            setVisible="@{item.editingStoryboardDesc}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+            app:layout_constraintBottom_toBottomOf="@+id/etStoryboardDesc"
+            app:layout_constraintEnd_toEndOf="@+id/etStoryboardDesc"
+            app:layout_constraintStart_toStartOf="@+id/etStoryboardDesc"
+            app:layout_constraintTop_toTopOf="@+id/etStoryboardDesc" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
-            android:text="备注:本分镜采用融会生成视频，为节省您的积分消耗，无需分镇围"
+            android:text="备注：本分镜采用融合生成视频，为节省您的积分消耗，无需分镜图"
             android:textAppearance="@style/Text12"
             android:textColor="?attr/textColor4"
             app:layout_constraintEnd_toStartOf="@+id/btnDelete"
-            app:layout_constraintStart_toStartOf="@+id/tvStoryboardDesc"
-            app:layout_constraintTop_toBottomOf="@+id/tvStoryboardDesc"
+            app:layout_constraintStart_toStartOf="@+id/etStoryboardDesc"
+            app:layout_constraintTop_toBottomOf="@+id/etStoryboardDesc"
             app:layout_constraintTop_toTopOf="@+id/btnDelete" />
 
         <ImageView
             android:id="@+id/btnDelete"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/fill_color1_r4"
-            android:padding="8dp"
-            android:src="@drawable/icon_delete"
-            android:tint="?attr/textColor4"
-            android:tintMode="src_in"
-            app:layout_constraintEnd_toEndOf="@+id/tvStoryboardDesc"
-            app:layout_constraintTop_toBottomOf="@+id/tvStoryboardDesc" />
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_delete_text4_16"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="@+id/etStoryboardDesc"
+            app:layout_constraintTop_toBottomOf="@+id/etStoryboardDesc"
+            app:layout_constraintWidth_percent="0.085333333333" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

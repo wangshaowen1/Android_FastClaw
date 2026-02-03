@@ -121,7 +121,7 @@
 
         <View
             android:id="@+id/etAssetDescCover"
-            setVisible="@{item.editingAssetDesc}"
+            setVisible="@{!item.editingAssetDesc}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:onClick="@{(v)->item.onItemClick.invoke(v)}"
@@ -154,7 +154,7 @@
 
         <View
             android:id="@+id/etAssetNameCover"
-            setVisible="@{item.editingAssetName}"
+            setVisible="@{!item.editingAssetName}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:onClick="@{(v)->item.onItemClick.invoke(v)}"

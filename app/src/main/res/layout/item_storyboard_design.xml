@@ -7,9 +7,10 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.works.ItemMyWorkVM" />
-    </data>
+            type="com.kgmedia.fastfilm.feature.creator.storyboard.ItemStoryboardVM" />
 
+        <import type="android.view.View" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,66 +22,164 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="分镜1"
+            android:text="@{`分镜`+item.data.sortNo}"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor4"
             app:layout_constraintDimensionRatio="345:130"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="分镜1" />
 
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
+            loadHQThumbnailUri="@{item.data.imageUrl}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
+            android:src="?attr/fillColor1"
+            android:visibility="@{item.status == 2 || item.status == 4 ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintDimensionRatio="108:152"
             app:layout_constraintStart_toStartOf="@+id/tvIndex"
             app:layout_constraintTop_toBottomOf="@+id/tvIndex"
             app:layout_constraintWidth_percent="0.288"
-            app:riv_border_color="?attr/borderColor2"
-            app:riv_border_width="1dp"
-            app:riv_corner_radius="8dp"
-            tools:src="?funcColorSuccess" />
+            app:riv_corner_radius="8dp" />
 
-        <TextView
-            android:id="@+id/tvStoryboardDesc"
+        <ImageView
+            setVisible="@{item.status == 2 || item.status == 4}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="6dp"
+            android:src="@drawable/icon_ai_label"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <ImageView
+            android:id="@+id/btnPreview"
+            setVisible="@{item.status == 2 || item.status == 4}"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="8dp"
+            android:src="@drawable/icon_magnify"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover" />
+
+        <ProgressBar
+            setVisible="@{item.status == 1}"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <LinearLayout
+            android:id="@+id/btnAddImg"
+            setVisible="@{item.status &lt; 1}"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/icon_image_add"
+                android:drawablePadding="8dp"
+                android:text="设置角色形象"
+                android:textAppearance="@style/Text12"
+                android:textColor="?attr/textColor3" />
+
+        </LinearLayout>
+
+        <com.kgmedia.fastfilm.widget.GradientBorderView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:borderStartColor="?attr/borderColor2"
+            app:borderWidth="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:roundCornerRadius="8dp" />
+
+        <com.kgmedia.fastfilm.widget.RecyclerEditText
+            android:id="@+id/etStoryboardDesc"
+            onTextInputListener="@{item.storyboardDescInputListener}"
+            setEditing="@{item.editingStoryboardDesc}"
+            text="@{item.storyboardDesc}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="15dp"
             android:background="@drawable/fill_color1_r8"
             android:ellipsize="end"
+            android:gravity="top"
+            android:hint="分镜描述词"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
             android:padding="12dp"
-            android:text="史莱克七怪之首，沉稳冷静。他留着一头深蓝色长发，目光深篷，拥有极强的战斗天赋和统筹全局的智慧。战斗时使用蓝银草魂灵与外附魂骨八蛛矛。"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
+            android:textColorHint="?attr/textColor4"
             app:layout_constraintDimensionRatio="229:130"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
-        <FrameLayout
-            android:id="@+id/btnRegenerateDesc"
+        <View
+            android:id="@+id/etStoryboardDescCover"
+            setVisible="@{!item.editingStoryboardDesc}"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="6dp"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+            app:layout_constraintBottom_toBottomOf="@+id/etStoryboardDesc"
+            app:layout_constraintEnd_toEndOf="@+id/etStoryboardDesc"
+            app:layout_constraintStart_toStartOf="@+id/etStoryboardDesc"
+            app:layout_constraintTop_toTopOf="@+id/etStoryboardDesc" />
+
+        <FrameLayout
+            android:id="@+id/btnGenerate"
+            singleClick="@{(v)->item.generate()}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/fill_color1_r4"
-            app:layout_constraintDimensionRatio="229:32"
-            app:layout_constraintEnd_toEndOf="@+id/tvStoryboardDesc"
-            app:layout_constraintStart_toStartOf="@+id/tvStoryboardDesc"
-            app:layout_constraintTop_toBottomOf="@+id/tvStoryboardDesc">
+            app:layout_constraintBottom_toBottomOf="@+id/btnDelete"
+            app:layout_constraintEnd_toStartOf="@+id/btnDelete"
+            app:layout_constraintStart_toStartOf="@+id/etStoryboardDesc"
+            app:layout_constraintTop_toTopOf="@+id/btnDelete">
 
             <com.kgmedia.fastfilm.widget.GradientTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="重新生成"
+                android:text="@{item.status &lt; 1 ? `生成分镜` : `重新生成`}"
+                android:textAppearance="@style/Text13"
                 android:textColor="@android:color/white"
                 app:endColor="#8F83FF"
-                app:startColor="#68BFF9" />
+                app:startColor="#68BFF9"
+                tools:text="生成分镜" />
         </FrameLayout>
+
+        <ImageView
+            android:id="@+id/btnDelete"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/fill_color1_r4"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_delete_text4_16"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="@+id/etStoryboardDesc"
+            app:layout_constraintTop_toBottomOf="@+id/etStoryboardDesc"
+            app:layout_constraintWidth_percent="0.085333333333" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

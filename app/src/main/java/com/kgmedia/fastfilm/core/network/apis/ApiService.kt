@@ -6,8 +6,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.CharacterInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ContentInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DanmakuItem
-import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.DramasSeriesInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasTimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DubbingGenStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
@@ -32,6 +30,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramasStatisticsData
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.StrategyInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SystemMessageLikeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SystemMessageWatchingInfo
@@ -46,6 +45,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.VipConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawConfirmInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawSuccessInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.AppFloatWindowsBody
@@ -65,12 +65,12 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesId
-import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbrePagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.EditDramaBody
 import com.kgmedia.fastfilm.core.network.apis.request.FeedbackBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
+import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.HitRecommendPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImageUrlBody
@@ -103,6 +103,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneContentEditBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneCostBody
 import com.kgmedia.fastfilm.core.network.apis.request.SegmentImageDescOptimizeBody
@@ -126,7 +127,9 @@ import com.kgmedia.fastfilm.core.network.apis.request.UserShareUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTimbreIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.WithdrawBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.apis.response.AlipayData
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
@@ -1128,6 +1131,42 @@ interface ApiService {
      */
     @POST(ApiConstants.WORK_ASSET_SINGLE_GENERATE)
     suspend fun workAssetSingleGenerate(@Body body: GenerateAssetBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 轮询查询单个分镜图片
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_SINGLE_STATUS)
+    suspend fun workStoryboardSingleStatus(@Body body: TaskIdBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 分镜设计列表
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_LIST)
+    suspend fun workStoryboardList(@Body body: WorkBody): ApiResponse<List<SimpleStoryboardInfo>?>
+
+    /**
+     * 分镜保存
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_SAVE)
+    suspend fun workStoryboardSave(@Body body: SaveStoryboardBody): ApiResponse<SimpleStoryboardInfo?>
+
+    /**
+     * 分镜单个删除
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_DELETE)
+    suspend fun workStoryboardDelete(@Body body: IdsBody): ApiResponse<Any?>
+
+    /**
+     * 生成单个分镜图片（重新生成/点击生成）
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_SINGLE_GENERATE)
+    suspend fun workStoryboardSingleGenerate(@Body body: GenerateStoryboardBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 生成分镜视频
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_VIDEO_GENERATE)
+    suspend fun workStoryboardVideoGenerate(@Body body: WorkBody): ApiResponse<Any>
 
     /**
      * 举报提交
