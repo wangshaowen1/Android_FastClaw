@@ -51,7 +51,7 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
                     sortNo = 10
                 )
             )
-            bannerData.value =mockBanners
+            bannerData.value = mockBanners
             response(mRepo.api.getAppBanner(BannerBody(1))) {
                 bannerData.value = this.data?.items
             }
@@ -63,14 +63,14 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
     val feedFlow: Flow<PagingData<WorkInfo>> = _feedFlow
 
     init {
-        loadData("")
+        loadData()
     }
 
     // 2. 加载数据
-    fun loadData(seriesId: String) {
+    fun loadData() {
         viewModelScope.launch {
             // [关键] 调用单例 FeedRepository 获取带缓存的流
-            FeedRepository.getFeedFlow(isSeriesMode = true, id = seriesId)
+            FeedRepository.getFeedFlow(isSeriesMode = false, null)
                 .collectLatest { pagingData ->
                     _feedFlow.value = pagingData
                 }

@@ -9,11 +9,13 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
-import com.kgmedia.fastfilm.core.PlaylistDataTransfer
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
 import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
+import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import com.kgmedia.fastfilm.feature.series.more.SeriesMoreDialog
 import com.kgmedia.fastfilm.feature.series.setprice.SetPriceDialog
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
@@ -96,18 +98,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 when (event) {
                     is SeriesEpisodeEvent.Click -> {
                         val snapshot = episodeAdapter.snapshot().items
-                        // 只有当 snapshot 包含我们要跳的位置时，才使用 DataTransfer
-                        // 如果 snapshot 数据不全（因为 Paging 回收），则不传数据，让播放页自己去拉取全量/定位
-                        if (event.position < snapshot.size) {
-                            // 注意：这里假设 snapshot 是从 0 开始的连续列表。
-                            // 如果 Paging 使用了 Placeholders (占位符)，snapshot.size 会很大，那是安全的。
-                            // 如果没有 Placeholders 且 Drop 了页面，这里比较复杂。
-                            PlaylistDataTransfer.put(snapshot)
-                        } else {
-                            // 如果位置极其靠后且前面的数据被 Drop 了，还是让播放页自己去网络请求比较稳妥
-                            PlaylistDataTransfer.put(null)
-                        }
-                        DramasPlayPagerActivity.start(seriesId)
+                        onPlayEpisodeClicked(mRealVM.workInfo.get(), snapshot, event.position)
                     }
                 }
             }
@@ -129,6 +120,38 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 }
             }
         }
+    }
+
+    fun onPlayEpisodeClicked(workInfo: WorkInfo?, episodes: List<EpisodeInfo>, clickPosition: Int) {
+        // 1. [核心步骤] 过滤未完成的数据 + 转换为 Adapter 需要的 WorkInfo
+        val validPlayList = episodes
+            .filter { !it.videoUrl.isNullOrEmpty() } // 过滤条件
+            .map { episode ->
+                // 复用父作品信息，包装成 WorkInfo
+                WorkInfo(
+                    workId = episode.storyId ?: "", // 必须唯一
+                    workTitle = workInfo?.workTitle,
+                    workCoverUrl = workInfo?.workCoverUrl,
+                    workDesc = workInfo?.workDesc,
+                    workStoryItemList = listOf(episode), // 这一集的数据
+                    totalEpisodeCnt = workInfo?.totalEpisodeCnt,
+                    playCount = episode.playCount
+                )
+            }
+
+        // 2. 计算修正后的点击位置
+        // 因为过滤了数据，原来的 position 可能变了，需要找到点击的那个 episode 在新列表里的位置
+        val clickedEpisodeId = episodes[clickPosition].storyId
+        val newPosition = validPlayList.indexOfFirst { it.workId == clickedEpisodeId }.coerceAtLeast(0)
+
+        // 3. 存入 Repository
+        FeedRepository.setPreloadedSeries(workInfo?.workId ?: "", validPlayList)
+
+        // 4. 跳转播放页
+        DramasPlayPagerActivity.start(
+            workId = workInfo?.workId,
+            position = newPosition // 传入修正后的位置
+        )
     }
 
     override fun <Data> onClick(view: View?, data: Data?) {

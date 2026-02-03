@@ -19,10 +19,10 @@ class DramasPlayPagerActivity :
 
     companion object {
         @JvmStatic
-        fun start(dramasId: String?, position: Int? = 0) {
+        fun start(workId: String?, position: Int? = 0) {
             val context = topActivity ?: return
             val starter = Intent(context, DramasPlayPagerActivity::class.java).apply {
-                putExtra(Constants.Extra.DRAMA_ID, dramasId)
+                putExtra(Constants.Extra.WORK_ID, workId)
                 putExtra(Constants.Extra.POSITION, position)
             }
             context.startActivity(starter)
@@ -35,7 +35,7 @@ class DramasPlayPagerActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dramaId = intent.getStringExtra(Constants.Extra.DRAMA_ID)
+        val workId = intent.getStringExtra(Constants.Extra.WORK_ID)
         val initialPos = intent.getIntExtra(Constants.Extra.POSITION, 0)
 
         // 1. 初始化核心组件
@@ -53,7 +53,7 @@ class DramasPlayPagerActivity :
         // 加载数据
         // 因为 Repository 是单例且缓存了 Flow，如果列表页也用了 FeedRepository，
         // 这里会立刻拿到数据，不需要网络请求
-        mRealVM.loadFeed(true, null)
+        mRealVM.loadFeed(!workId.isNullOrEmpty(), workId)
 
         // 3. 事件流
         setupPlayerEvents()

@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.play
 import android.graphics.Color
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
@@ -33,36 +34,37 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
        // loadFeed(true, null)
     }
 
-    /**
-     * 加载数据
-     */
     fun loadFeed(isSeriesMode: Boolean, id: String?) {
+        // 1. 设置当前模式
         currentPlayMode = if (isSeriesMode) PlayMode.SERIES else PlayMode.RECOMMEND
 
         viewModelScope.launch {
-            // [修改] 从单例仓库获取数据流
-            // 注意：这里再次 cachedIn(viewModelScope) 是为了绑定 UI 生命周期，
-            // 但底层数据已经是被 Repository 缓存过的，不会触发网络请求。
-            FeedRepository.getFeedFlow(isSeriesMode, id)
-                .collectLatest {
-                    _feedFlow.value = it
-                }
-        }
+            // Step A: 获取原始 Flow
+            val rawFlow = if (isSeriesMode) {
+                // [Series模式]：获取专用数据流（内存预加载 或 独立网络请求）
+                FeedRepository.getSeriesFlowOrNetwork(id ?: "", true)
+            } else {
+                // [Feed模式]：获取全局共享流
+                // Repository 内部已经用 repositoryScope 缓存过了
+                FeedRepository.getFeedFlow(false, id)
+            }
 
-//        // 1. 创建 Pager
-//        val pager = Pager(
-//            config = PagingConfig(pageSize = 10, prefetchDistance = 3, enablePlaceholders = false),
-//            pagingSourceFactory = {
-//                // 直接使用我们写的假数据 Source
-//                VideoFeedPagingSource()
-//            }
-//        )
-//
-//        // 2. 收集数据并发射给 _feedFlow
-//        viewModelScope.launch {
-//            pager.flow.cachedIn(viewModelScope).collectLatest {
-//                _feedFlow.value = it
-//            }
-//        }
+            // Step B: 决定是否需要在当前 ViewModel 缓存
+            val finalFlow = if (isSeriesMode) {
+                // Series 模式下，Flow 可能是新创建的（比如来自 flowOf(PagingData) 或 新的 Pager），
+                // 需要绑定到当前 ViewModel 生命周期，防止配置变更（如旋转）丢失状态
+                rawFlow.cachedIn(viewModelScope)
+            } else {
+                // [关键修改] Feed 模式下，直接使用 Repository 的流。
+                // 因为 Repository 已经 cachedIn(repositoryScope)，它是全局存活的。
+                // 如果这里再 cachedIn(viewModelScope)，会导致 Flow 被包装，可能丢失原有的共享状态。
+                rawFlow
+            }
+
+            // Step C: 收集并发送给 UI
+            finalFlow.collectLatest { pagingData ->
+                _feedFlow.emit(pagingData)
+            }
+        }
     }
 }
