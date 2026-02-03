@@ -120,7 +120,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         observeEvents {
             on<Events.SeriesUpdatedEvent> { event ->
                 if (isActive && event.seriesId == seriesId) {
-                    mRealVM.getSeriesInfo()
+                    mRealVM.getWorkDtl()
                 }
             }
             on<Events.ShortDramasEditInfoEvent> { event ->
@@ -143,13 +143,13 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             R.id.btnMore -> {
-                val series = mRealVM.series.get() ?: return
-                SeriesMoreDialog.show(null, seriesId, series.launchStatus == 1)
+                val series = mRealVM.workInfo.get() ?: return
+                SeriesMoreDialog.show(null, seriesId, series.workStatus == 60)
             }
 
             R.id.btnContinue -> {
-                mRealVM.series.get()?.let {
-                    ContinueWritingActivity.start(this, seriesId, it.seriesName)
+                mRealVM.workInfo.get()?.let {
+                    ContinueWritingActivity.start(this, seriesId, it.workTitle)
                 }
             }
         }

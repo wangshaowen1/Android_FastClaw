@@ -15,11 +15,11 @@ import retrofit2.http.POST
  */
 class SeriesRepository : AppRepository() {
     /**
-     * 剧集详情
-     * @param seriesId 剧集ID
+     * 作品详情
+     * @param workId 剧集ID
      */
-    suspend fun seriesDetail(seriesId: String?) = withContext(Dispatchers.IO) {
-        api.seriesDetail(WorkIdBody(seriesId))
+    suspend fun getWorkInfo(workId: String?) = withContext(Dispatchers.IO) {
+        api.getWorkInfo(WorkIdBody(workId))
     }
 
     /**

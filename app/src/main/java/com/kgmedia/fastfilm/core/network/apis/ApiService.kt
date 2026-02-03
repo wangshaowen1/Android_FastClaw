@@ -10,6 +10,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasSeriesInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasTimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DubbingGenStatusInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.GuideBarStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.HitTabInfo
@@ -137,8 +138,6 @@ import com.kgmedia.fastfilm.core.network.apis.response.DramasSeriesIdData
 import com.kgmedia.fastfilm.core.network.apis.response.FollowingData
 import com.kgmedia.fastfilm.core.network.apis.response.InviteIncomePageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.InviteUserPageInfo
-import com.kgmedia.fastfilm.core.network.apis.response.LastEpisodeData
-import com.kgmedia.fastfilm.core.network.apis.response.LastStoryData
 import com.kgmedia.fastfilm.core.network.apis.response.MessageSummaryData
 import com.kgmedia.fastfilm.core.network.apis.response.MessagesUnreadNumData
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBook
@@ -801,13 +800,13 @@ interface ApiService {
      * 获取剧集最新一集剧本详情
      */
     @POST(ApiConstants.LATEST_DRAMAS_WORK_DETAIL)
-    suspend fun latestDramasWorkDetail(@Body body: WorkIdBody): ApiResponse<LastStoryData?>
+    suspend fun latestEpisode(@Body body: WorkIdBody): ApiResponse<EpisodeInfo?>
 
     /**
      * 查询我的作品详情
      */
-    @POST(ApiConstants.DRAMA_INFO)
-    suspend fun dramaInfo(@Body body: WorkIdBody): ApiResponse<LastEpisodeData?>
+    @POST(ApiConstants.WORK_INFO)
+    suspend fun getWorkInfo(@Body body: WorkIdBody): ApiResponse<WorkInfo?>
 
     /**
      *流式生成帮我续写(生成续写的用户输出内容)

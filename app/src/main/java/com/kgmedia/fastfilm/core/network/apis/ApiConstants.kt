@@ -543,7 +543,7 @@ object ApiConstants {
     /**
      * 查询我的作品详情
      */
-    const val DRAMA_INFO = "/work/detail"
+    const val WORK_INFO = "/work/detail"
 
     /**
      * 流式生成帮我续写(生成续写的用户输出内容)

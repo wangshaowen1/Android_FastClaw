@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.core.network.apis.entity
 
 import android.os.Parcelable
 import com.kgmedia.fastfilm.common.ext.toUnitText
+import com.kgmedia.fastfilm.core.User
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -18,12 +19,16 @@ class WorkInfo(
     var workStoryItemList: List<EpisodeInfo>? = null,
 
     var workInspiration: String? = null,//作品灵感
-    var workType: String? = null,//作品类型：1-灵感创作 2-小说改编
-    var workStatus: String? = null,//作品状态：草稿（30=资产生成中） 生成中（40=分镜生成中  42=分镜视频生成中 50=合成中） 60=已完成 70=失败
-    var finishedEpisodeCnt: String? = null,//已完成集数
+    var workType: Int? = null,//作品类型：1-灵感创作 2-小说改编
+    var workStatus: Int? = null,//作品状态：草稿（30=资产生成中） 生成中（40=分镜生成中  42=分镜视频生成中 50=合成中） 60=已完成 70=失败
+    var finishedEpisodeCnt: Int? = null,//已完成集数
     var lastEpisodeNo: String? = null,//最近生成的集数编号
-    var lastGenerateTime: String? = null,//最近一次生成时间
+    var lastGenerateTime: Long? = null,//最近一次生成时间
 ) : Parcelable {
+
+    fun isMine(): Boolean {
+        return User.get().isSameId(userId)
+    }
 
     val stripedTrickTitle
         get() = workTitle?.replace("\n", "")?.replace("\r", "")
@@ -105,7 +110,7 @@ data class EpisodeInfo(
     val storySummary: String? = null,
     val storyContent: String? = null,
     val sortNo: String? = null,
-    val stepProgress: String? = null,
-    val stepStatus: String? = null,
-    val storyboardTotal: String? = null,
+    val stepProgress: Int? = null,
+    val stepStatus: Int? = null,
+    val storyboardTotal: Int? = null,
 ) : Parcelable

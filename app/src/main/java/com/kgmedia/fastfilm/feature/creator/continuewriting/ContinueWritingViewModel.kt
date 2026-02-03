@@ -13,10 +13,10 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
-import com.kgmedia.fastfilm.core.network.apis.response.LastStoryData
-import com.kgmedia.fastfilm.core.network.apis.response.LastEpisodeData
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
@@ -37,8 +37,8 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.ID) }
     val workName by lazy { mBundle.getString(Constants.Extra.NAME) }
     val input by lazy { MutableLiveData(Global.continueWritingContent[workId]) }
-    val info = MutableLiveData<LastStoryData>()
-    val episodeInfo = MutableLiveData<LastEpisodeData>()
+    val episodeInfo = MutableLiveData<EpisodeInfo>()
+    val workInfo = MutableLiveData<WorkInfo>()
     val textLimitNum by lazy { Config.get().appConfig.shortDramas }
     val minInputLength = 10
     val maxInputLength by lazy {
@@ -54,8 +54,8 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
         workName?.let {
             mToolbarVM.mTitle.set("续创：$it")
         }
-        getDramaWorkInfo()
-        getDramaInfo()
+        getEpisodeInfo()
+        getWorkInfo()
     }
 
     override fun onResume() {
@@ -69,19 +69,19 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
 //        maxInputLength.set(maxLength ?: (if (isVip.get()) 5000 else 1000))
     }
 
-    fun getDramaWorkInfo(function: (() -> Unit)? = null) {
+    fun getEpisodeInfo(function: (() -> Unit)? = null) {
         launchWithLoading {
-            response(mRepo.api.latestDramasWorkDetail(WorkIdBody(workId))) {
-                info.value = data
+            response(mRepo.api.latestEpisode(WorkIdBody(workId))) {
+                episodeInfo.value = data
                 function?.invoke()
             }
         }
     }
 
-    fun getDramaInfo(function: (() -> Unit)? = null) {
+    fun getWorkInfo(function: (() -> Unit)? = null) {
         launchWithLoading {
-            response(mRepo.api.dramaInfo(WorkIdBody(workId))) {
-                episodeInfo.value = data
+            response(mRepo.api.getWorkInfo(WorkIdBody(workId))) {
+                workInfo.value = data
                 mToolbarVM.mTitle.set(data?.workTitle)
             }
         }
@@ -91,7 +91,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     fun sseGenerate() {
         promptGenerating.value = true to ("AI扩写中，请稍候...")
-        val sseFlow = mRepo.api.sseContentAIExpand(AIExpandBody(info.value?.id, workId))
+        val sseFlow = mRepo.api.sseContentAIExpand(AIExpandBody(episodeInfo.value?.storyId, workId))
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(

@@ -17,7 +17,7 @@
 
         <com.kgmedia.fastfilm.widget.LoadStateViewHolder
             displayChild="@{layout.loadState}"
-            onRetry="@{layout::getSeriesInfo}"
+            onRetry="@{layout::getWorkDtl}"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -33,7 +33,7 @@
 
                 <ImageView
                     android:id="@+id/btnMore"
-                    setVisible="@{layout.series.isMine()}"
+                    setVisible="@{layout.workInfo.isMine()}"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="48dp"
                     android:layout_height="@dimen/action_bar_size"
@@ -71,7 +71,7 @@
 
                                 <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
                                     android:id="@+id/ivCover"
-                                    loadThumbnailUri="@{layout.series.seriesCoverUrl}"
+                                    loadThumbnailUri="@{layout.workInfo.workCoverUrl}"
                                     placeHolder="@{@drawable/ic_default_cover}"
                                     android:layout_width="0dp"
                                     android:layout_height="0dp"
@@ -94,7 +94,7 @@
                                     android:ellipsize="end"
                                     android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
                                     android:maxLines="2"
-                                    android:text="@{layout.series.seriesName}"
+                                    android:text="@{layout.workInfo.workTitle}"
                                     android:textAppearance="@style/Text18"
                                     android:textColor="?attr/textColor1"
                                     app:layout_constraintEnd_toEndOf="parent"
@@ -126,7 +126,7 @@
 
                                 <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
                                     android:id="@+id/tvSeriesIntroDesc"
-                                    text="@{layout.series.seriesIntro}"
+                                    text="@{layout.workInfo.workDesc}"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginHorizontal="15dp"
@@ -201,7 +201,7 @@
 
                 <TextView
                     android:id="@+id/btnContinue"
-                    setVisible="@{layout.series.isMine() &amp;&amp; layout.series.launchStatus == 1}"
+                    setVisible="@{layout.workInfo.isMine() &amp;&amp; layout.workInfo.workStatus == 60}"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
