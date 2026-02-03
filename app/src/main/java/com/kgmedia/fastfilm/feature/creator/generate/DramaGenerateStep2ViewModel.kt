@@ -12,7 +12,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
-import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
+import com.kgmedia.fastfilm.core.network.sse.processor.StorySseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
@@ -50,6 +50,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
+    var originalJson: String? = null
 
     fun sseGenerate() {
         val sseFlow = if (model == DramaGenerateConstants.MODEL_STORY) {
@@ -62,19 +63,21 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
             scope = viewModelScope, // 传入协程作用域
-            processor = PlainTextSseProcessor(
+            processor = StorySseProcessor(
                 scope = viewModelScope,
                 onStart = {
                     displayChild.set(DISPLAY_LOADING)
                     input.value = ""
+                    originalJson = ""
                     Logger.d("[SSE]", "Open")
                 },
-                onUpdate = { fullContent ->
+                onStoryUpdate = { fullContent ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
                     input.value = fullContent
                 },
-                onComplete = {
+                onComplete = { originalContent ->
                     nextStepEnabled.set(true)
+                    originalJson = originalContent
                     Logger.d("[SSE]", "Finished")
                     // 触发原本结束后的逻辑
                 },
@@ -106,7 +109,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         launchWithLoading {
             if (model == DramaGenerateConstants.MODEL_STORY) {
                 val body = CreateStoryWorkBody(
-                    storyContent = input.value,
+                    storyContent = originalJson,
                     workStyleCode = videoStyleId,
                     workRatio = videoRatio,
                     totalEpisodeCnt = customEpisodeCount,
@@ -118,7 +121,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             } else {
                 //作品类型：1-灵感创作 2-小说
                 val body = SaveEpisodeScriptBody(
-                    storyContent = input.value,
+                    storyContent = originalJson,
                     workId = workId.value,
                     storyId = episodeId,
                     workType = if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) 2 else 1

@@ -1,10 +1,11 @@
 package com.kgmedia.fastfilm.core.network.sse.processor
 
-import kotlin.text.iterator
-
 class JsonSseFieldStreamer(
-    private val onTitleUpdate: (String) -> Unit,
-    private val onMdUpdate: (String) -> Unit
+    // 1. 改为可空参数，默认 null，这样不同场景可以按需传参
+    private val onTitleUpdate: ((String) -> Unit)? = null,
+    private val onMdUpdate: ((String) -> Unit)? = null,
+    // 2. 新增 story_content 的回调
+    private val onStoryUpdate: ((String) -> Unit)? = null
 ) {
 
     private enum class State {
@@ -16,7 +17,7 @@ class JsonSseFieldStreamer(
         SKIP_VALUE
     }
 
-    private enum class Target { NONE, TITLE, MD }
+    private enum class Target { NONE, TITLE, MD, STORY }
 
     private var state = State.SEEK_KEY
     private var target = Target.NONE
@@ -75,8 +76,9 @@ class JsonSseFieldStreamer(
                 when {
                     c == '"' -> {
                         target = when (keyBuf.toString()) {
-                            "episode_title" -> Target.TITLE
-                            "episode_md" -> Target.MD
+                            "title" -> Target.TITLE
+                            "md" -> Target.MD
+                            "story_content" -> Target.STORY
                             else -> Target.NONE
                         }
                         valueBuf.setLength(0)
@@ -134,13 +136,21 @@ class JsonSseFieldStreamer(
         when (target) {
             Target.TITLE -> {
                 if (isFinal) {
-                    onTitleUpdate(valueBuf.toString())
+                    onTitleUpdate?.invoke(valueBuf.toString())
                 }
             }
             Target.MD -> {
                 val now = System.currentTimeMillis()
                 if (isFinal || now - lastMdEmitTime >= MD_THROTTLE_MS) {
-                    onMdUpdate(valueBuf.toString())
+                    onMdUpdate?.invoke(valueBuf.toString())
+                    lastMdEmitTime = now
+                }
+            }
+            Target.STORY -> {
+                // 5. 处理 Story，通常 story 也是长文本，建议同样应用节流逻辑
+                val now = System.currentTimeMillis()
+                if (isFinal || now - lastMdEmitTime >= MD_THROTTLE_MS) {
+                    onStoryUpdate?.invoke(valueBuf.toString())
                     lastMdEmitTime = now
                 }
             }
