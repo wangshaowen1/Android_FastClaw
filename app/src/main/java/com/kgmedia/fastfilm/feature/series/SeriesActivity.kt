@@ -43,7 +43,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
     private val seriesId by lazy { intent.getStringExtra(Constants.Extra.ID) }
     private val eventVm by lazy { ItemEventsViewModel<SeriesEpisodeEvent>() }
-    private val episodeAdapter by lazy { SeriesEpisodeAdapter(eventVm) }
+    private val episodeAdapter by lazy { EpisodeAdapter(eventVm) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,13 +124,9 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 }
             }
             on<Events.ShortDramasEditInfoEvent> { event ->
-                if (episodeAdapter.snapshot().any { it?.dramasId == event.dramaId }) {
+                if (episodeAdapter.snapshot().any { it?.storyId == event.dramaId }) {
                     refresh()
                 }
-            }
-            on<Events.UnLockEvent> { event ->
-                episodeAdapter.snapshot().items.find { it.dramasId == event.dramasId }?.unlockInfo?.unlockStatus = 1
-                episodeAdapter.notifyDataSetChanged()
             }
         }
     }
