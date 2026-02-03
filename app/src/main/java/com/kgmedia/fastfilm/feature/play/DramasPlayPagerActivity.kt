@@ -8,7 +8,9 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.databinding.ActivityDramasPlayPagerBinding
 import com.kgmedia.fastfilm.feature.play.manger.FeedListController
 import com.kgmedia.fastfilm.feature.play.manger.FeedPlayerManager
+import com.kgmedia.fastfilm.feature.settings.report.ReportDialog
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -37,7 +39,6 @@ class DramasPlayPagerActivity :
         super.onCreate(savedInstanceState)
         val workId = intent.getStringExtra(Constants.Extra.WORK_ID)
         val initialPos = intent.getIntExtra(Constants.Extra.POSITION, 0)
-
         // 1. 初始化核心组件
         playerManager = FeedPlayerManager(this, lifecycleScope)
         binding.recyclerView.adapter = adapter
@@ -50,13 +51,27 @@ class DramasPlayPagerActivity :
 
         // 告知 Controller 初始位置 (需要在 FeedListController 中加个方法，见下文)
         listController.setInitialPosition(initialPos)
+
         // 加载数据
         // 因为 Repository 是单例且缓存了 Flow，如果列表页也用了 FeedRepository，
         // 这里会立刻拿到数据，不需要网络请求
         mRealVM.loadFeed(!workId.isNullOrEmpty(), workId)
-
+        if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) {
+            listController.onPageChanged = { workInfo, position ->
+                binding.tvTitle.text = workInfo.lastEpisodeNo
+            }
+        }
         // 3. 事件流
         setupPlayerEvents()
+
+        binding.btnMenu.setOnSingleClickListener {
+            val item = listController.getCurrentItem()
+            ReportDialog.newInstance(
+                supportFragmentManager,
+                item?.userId,
+                if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else item?.workId//剧集模式下workId是剧集id
+            )
+        }
     }
 
     private fun setupPlayerEvents() {

@@ -16,12 +16,6 @@ import kotlinx.coroutines.launch
 
 class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
 
-    val mToolbarVM = ToolbarViewModel(
-        navigationAction = { back() },
-        title = "",
-        background = Color.TRANSPARENT,
-    )
-
     enum class PlayMode { RECOMMEND, SERIES }
     var currentPlayMode = PlayMode.SERIES
 

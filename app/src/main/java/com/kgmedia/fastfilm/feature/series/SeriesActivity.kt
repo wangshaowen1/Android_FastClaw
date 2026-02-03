@@ -130,10 +130,12 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 // 复用父作品信息，包装成 WorkInfo
                 WorkInfo(
                     workId = episode.storyId ?: "", // 必须唯一
+                    userId = workInfo?.userId,
                     workTitle = workInfo?.workTitle,
                     workCoverUrl = workInfo?.workCoverUrl,
                     workDesc = workInfo?.workDesc,
                     workStoryItemList = listOf(episode), // 这一集的数据
+                    lastEpisodeNo = "第${episode.sortNo}集",
                     totalEpisodeCnt = workInfo?.totalEpisodeCnt,
                     playCount = episode.playCount
                 )

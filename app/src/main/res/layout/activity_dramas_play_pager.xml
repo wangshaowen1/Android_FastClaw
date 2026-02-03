@@ -24,9 +24,49 @@
             android:layout_height="match_parent"
             tools:listitem="@layout/item_video_feed" />
 
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/view_model_toolbar"
-            app:toolbar="@{layout.mToolbarVM}" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.kgmedia.fastfilm.widget.StatusBarView
+                android:id="@+id/statusBar1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/btnBack"
+                    singleClick="@{(v)->layout.back()}"
+                    android:layout_width="48dp"
+                    android:layout_height="@dimen/action_bar_size"
+                    android:paddingVertical="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_back_left" />
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    style="@style/Text16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="48dp"
+                    android:textColor="?attr/textColor1"
+                    tools:text="第几集" />
+
+                <ImageView
+                    android:id="@+id/btnMenu"
+                    android:layout_width="48dp"
+                    android:layout_height="@dimen/action_bar_size"
+                    android:layout_gravity="end"
+                    android:paddingVertical="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_more_h" />
+            </FrameLayout>
+        </LinearLayout>
     </FrameLayout>
 </layout>

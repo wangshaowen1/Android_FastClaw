@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.core.manager.EventManager
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.feature.play.VideoFeedAdapter
 import com.nhsd.basic.utils.Logger
 
@@ -24,6 +25,9 @@ class FeedListController(
 
     // 目标初始位置，默认为 -1 (不跳转)
     private var targetInitialPosition: Int = -1
+
+    // 页面切换回调：(当前数据, 当前位置) -> Unit
+    var onPageChanged: ((WorkInfo, Int) -> Unit)? = null
 
     init {
         recyclerView.layoutManager = layoutManager
@@ -48,6 +52,15 @@ class FeedListController(
      */
     fun setInitialPosition(position: Int) {
         this.targetInitialPosition = position
+    }
+
+    // 获取当前选中的 Item
+    fun getCurrentItem(): WorkInfo? {
+        val pos = getCurrentPosition() // 现有的方法
+        if (pos in 0 until adapter.itemCount) {
+            return adapter.peek(pos)
+        }
+        return null
     }
 
     private fun setupFirstLoadListener() {
@@ -88,6 +101,8 @@ class FeedListController(
         if (position < 0 || position >= adapter.itemCount) return
 
         val item = adapter.peek(position) ?: return
+
+        onPageChanged?.invoke(item, position)
         val holder = recyclerView.getChildViewHolder(centerView) as? VideoFeedAdapter.VideoViewHolder ?: return
         EventManager.onPlayEvent(item.userId, item.workId)
         // 调用 Manager 播放
