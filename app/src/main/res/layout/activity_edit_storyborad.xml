@@ -20,7 +20,7 @@
 
         <com.kgmedia.fastfilm.widget.LoadStateViewHolder
             displayChild="@{layout.loadState}"
-            onRetry="@{()->layout.getStoryboardInfo(false)}"
+            onRetry="@{()->layout.getStoryboardList()}"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -52,29 +52,11 @@
                     app:layout_constraintDimensionRatio="375:356"
                     app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
-                <TextView
-                    android:id="@+id/btnGenerate"
-                    singleClick="@{layout.clickHandler::onClick}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="13dp"
-                    android:background="@drawable/selector_common_button"
-                    android:drawableStart="@drawable/icon_synthesis"
-                    android:drawablePadding="4dp"
-                    android:gravity="center"
-                    android:paddingHorizontal="12dp"
-                    android:text="保存"
-                    android:textAppearance="@style/Text14"
-                    android:textColor="?attr/textColor1"
-                    app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
-                    app:layout_constraintEnd_toEndOf="@+id/tvTitle"
-                    app:layout_constraintTop_toTopOf="@+id/tvTitle" />
-
-                <ImageView
-                    android:id="@+id/image"
-                    loadUri="@{layout.currentSegment.data.image?layout.currentSegment.data.shotSegmentImageUrl:null}"
-                    setDimensionRatio="@{layout.shortDrama.videoRatioValue}"
-                    setVisible="@{layout.currentSegment.data.generated &amp;&amp; layout.currentSegment.data.image}"
+                <androidx.media3.ui.PlayerView
+                    android:id="@+id/storyboardPlayer"
+                    player="@{layout.storyboardPlayer}"
+                    setDimensionRatio="@{layout.workRatio}"
+                    setVisible="@{layout.currentStoryboard.data.videoGenerated}"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:onClick="@{(v)->layout.play()}"
@@ -83,16 +65,18 @@
                     app:layout_constraintEnd_toEndOf="@+id/previewArea"
                     app:layout_constraintStart_toStartOf="@+id/previewArea"
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
-                    tools:layout_constraintDimensionRatio="9:16" />
+                    app:use_controller="false"
+                    tools:layout_constraintDimensionRatio="9:16"
+                    tools:visibility="invisible" />
 
                 <ImageView
-                    setVisible="@{layout.currentSegment.data.generated &amp;&amp; layout.currentSegment.data.image}"
+                    setVisible="@{layout.currentStoryboard.data.videoGenerated}"
                     android:layout_width="32dp"
                     android:layout_height="16dp"
                     android:layout_margin="8dp"
                     android:src="@drawable/icon_ai_label"
-                    app:layout_constraintStart_toStartOf="@+id/image"
-                    app:layout_constraintTop_toTopOf="@+id/image"
+                    app:layout_constraintStart_toStartOf="@+id/storyboardPlayer"
+                    app:layout_constraintTop_toTopOf="@+id/storyboardPlayer"
                     tools:text="AI生成" />
 
                 <ImageView
@@ -105,12 +89,12 @@
                     app:layout_constraintStart_toStartOf="@+id/previewArea"
                     app:layout_constraintTop_toTopOf="@+id/previewArea" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    setDimensionRatio="@{layout.shortDrama.videoRatioValue}"
-                    setVisible="@{layout.currentSegment.data != null &amp;&amp; !layout.currentSegment.data.generated}"
+                <LinearLayout
+                    setDimensionRatio="@{layout.workRatio}"
+                    setVisible="@{layout.currentStoryboard.data != null &amp;&amp; !layout.currentStoryboard.data.videoGenerated}"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:background="@color/color_10_ffffff"
+                    android:background="?attr/fillColor1"
                     android:gravity="center"
                     android:onClick="@{(v)->layout.play()}"
                     android:orientation="vertical"
@@ -120,13 +104,18 @@
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
                     tools:layout_constraintDimensionRatio="9:16">
 
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginBottom="12dp"
+                        android:src="@drawable/icon_ai" />
+
                     <TextView
-                        android:id="@+id/tvStoryboardStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{layout.currentSegment.genStatusBig(layout.currentSegment.data.genStatus)}"
-                        android:textColor="?colorPrimary"
-                        android:textSize="16dp"
+                        android:text="@{layout.currentStoryboard.genStatusBig(layout.currentStoryboard.data.stepStatus)}"
+                        android:textAppearance="@style/Text12"
+                        android:textColor="@color/fixed_white_1"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -134,35 +123,23 @@
                         tools:text="图片生成排队中" />
 
                     <TextView
-                        setVisible="@{layout.currentSegment.data.generating}"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="退出后会继续生成"
-                        android:textColor="?colorAccent"
-                        android:textSize="12dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvStoryboardStatus" />
-
-                    <TextView
                         android:id="@+id/btnRetry"
-                        setVisible="@{layout.currentSegment.data.failed}"
+                        setVisible="@{layout.currentStoryboard.data.failed}"
                         singleClick="@{() -> layout.retryGenerate()}"
-                        android:layout_width="90dp"
-                        android:layout_height="32dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/btn_common_dark_normal"
+                        android:layout_width="88dp"
+                        android:layout_height="28dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/btn_theme1_r50"
                         android:gravity="center"
                         android:text="点击重试"
-                        android:textColor="?colorPrimary"
-                        android:textSize="12dp"
+                        android:textAppearance="@style/Text12"
+                        android:textColor="@color/fixed_white_1"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tvStoryboardStatus"
                         tools:visibility="visible" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvStoryboardTitle"
@@ -244,6 +221,21 @@
                     android:textColor="@color/fixed_white_1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="345:44" />
+
+                <TextView
+                    android:id="@+id/btnGenerate"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="70dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/btn_text1_r50"
+                    android:gravity="center"
+                    android:text="保存"
+                    android:textAppearance="@style/Text14"
+                    android:textColor="?attr/bgColor1"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+                    app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+                    app:layout_constraintTop_toTopOf="@+id/tvTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.kgmedia.fastfilm.widget.LoadStateViewHolder>

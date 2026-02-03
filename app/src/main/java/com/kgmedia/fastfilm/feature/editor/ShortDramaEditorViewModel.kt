@@ -9,22 +9,18 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
-import com.kgmedia.fastfilm.common.ext.formatDuration
-import com.kgmedia.fastfilm.core.Events
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaSegmentSubtitleInfo
+import com.kgmedia.fastfilm.core.network.RetrofitClient
+import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.payment.points.FirstTimeRechargeDialog
-import com.kgmedia.fastfilm.feature.payment.points.FirstTimeUnlockDialog
+import com.kgmedia.fastfilm.feature.creator.storyboard.ItemStoryboardVM
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.kgmedia.fastfilm.kit.media.setPlayUrl
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
-import com.nhsd.basic.bus.FlowEventBus
-import com.nhsd.basic.ext.showToast
+import com.kuaige.videoedit.resource.UrlResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,32 +30,23 @@ import kotlinx.coroutines.withContext
  * 短剧编辑
  */
 class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorRepository>() {
-    val dramasId by lazy { mBundle.getString(Constants.Extra.DRAMAS_ID) }
-    private var unlock = false
+    val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    val storyId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    val workRatio = "9:16"
     val loadState by lazy { ObservableInt() }
-    val shortDrama by lazy { ObservableField<ShortDramaInfo>() }
-    val currentSegment by lazy { ObservableField<ItemShortDramaSegmentVM>() }
-    val currentSegmentSubtitle by lazy { ObservableField<ShortDramaSegmentSubtitleInfo>() }
-    val currentSegmentAudioDuration by lazy { ObservableInt(0) }
+    val currentStoryboard by lazy { ObservableField<ItemStoryboardVM>() }
     val scrollToItem by lazy { MutableLiveData<Int>(-1) }
-    val adapter by lazy { QuickAdapter<ItemShortDramaSegmentVM>(R.layout.item_short_drama_editor_segment, emptyList()) }
+    val adapter by lazy { QuickAdapter<ItemStoryboardVM>(R.layout.item_short_drama_editor_segment, emptyList()) }
     val nextStepEnabled by lazy { ObservableBoolean(false) }
-    val firstGenLocked by lazy { ObservableBoolean(false) }
-    private var loopGeneratingSegmentsJob: Job? = null
+    private var loopGeneratingStoryboardJob: Job? = null
 
-    /**
-     * 字幕配音中
-     */
-    val dubbing by lazy { ObservableBoolean(false) }
-    private var loopDubbingStatusJob: Job? = null
-    val audioPlayer by lazy {
+    val storyboardPlayer by lazy {
         PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
             addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     super.onPlaybackStateChanged(playbackState)
                     when (playbackState) {
                         Player.STATE_READY -> {
-                            updateAudioDuration()
                         }
 
                         Player.STATE_ENDED -> {
@@ -71,71 +58,44 @@ class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorReposit
         }
     }
     val playing by lazy { ObservableBoolean(true) }
-    val durationText by lazy { ObservableField<String>() }
-    private var startPlay = false
-
-    private var firstTimeRechargeDialog: FirstTimeRechargeDialog? = null
-    private var firstTimeUnlockDialog: FirstTimeUnlockDialog? = null
 
     override fun onCreate() {
         super.onCreate()
-        unlock = mBundle.getBoolean(ShortDramaEditorActivity.EXTRA_UNLOCK, false)
-        getStoryboardInfo()
+        getStoryboardList()
     }
 
     override fun onCleared() {
         super.onCleared()
-        loopGeneratingSegmentsJob?.cancel()
-        audioPlayer.release()
+        loopGeneratingStoryboardJob?.cancel()
+        storyboardPlayer.release()
     }
 
-    fun getStoryboardInfo(dubbingChanged: Boolean = false) {
-        loopGeneratingSegmentsJob?.cancel()
-        if (shortDrama.get() == null) loadState.set(LoadStateViewHolder.LOADING)
+    fun getStoryboardList() {
+        loopGeneratingStoryboardJob?.cancel()
+        if (adapter.items.isEmpty()) loadState.set(LoadStateViewHolder.LOADING)
         launch(
             block = {
-                val info = withContext(Dispatchers.IO) { mRepo.shortDramasInfo(dramasId).data }
-                if (info == null) {
+                val list = withContext(Dispatchers.IO) { mRepo.api.workStoryboardList(WorkBody(workId, storyId)).data }
+                if (list.isNullOrEmpty()) {
                     updateLoadState()
                     return@launch
                 }
-                shortDrama.set(info)
-                durationText.set("${((info.actualDuration ?: 0) * 1000L).formatDuration()}(${info.shotSegmentList?.size ?: 0}个分镜)")
-                if (info.shotSegmentList?.size == adapter.items.size) {
-                    info.shotSegmentList.forEachIndexed { index, info -> adapter.getItem(index)?.data?.set(info) }
+                if (list.size == adapter.items.size) {
+                    list.forEachIndexed { index, info -> adapter.getItem(index)?.data?.set(info) }
                 } else {
-                    info.shotSegmentList?.mapIndexed { index, info ->
-                        ItemShortDramaSegmentVM(info, index, firstGenLocked, nextStepEnabled).apply {
+                    list.mapIndexed { index, info ->
+                        ItemStoryboardVM(workId, storyId, info).apply {
                             onItemClick.value = { v ->
-                                if (this != currentSegment.get()) {
+                                if (this != currentStoryboard.get()) {
                                     select()
                                 }
                             }
                         }
                     }.let { adapter.submitList(it) }
                 }
-                firstGenLocked.set(info.firstGenLocked())
-                if (currentSegment.get()?.isLocked == true) {
+                nextStepEnabled.set(allStoryboardGenerated())
+                if (currentStoryboard.get() == null) {
                     adapter.items.firstOrNull()?.select()
-                }
-                nextStepEnabled.set(allSegmentsGenerated())
-                val firstAudioUrl = adapter.items.firstOrNull()?.data?.get()?.shotSegmentSubtitleList?.firstOrNull()?.subtitleAudioUrl
-                if (!firstAudioUrl.isNullOrEmpty()) {
-                    if (!startPlay) {
-                        startPlay = true
-                        playNext()
-                    } else if (dubbingChanged) {
-                        currentSegment.get()?.select()
-                    }
-                } else if (currentSegment.get() == null) {
-                    adapter.items.firstOrNull()?.select()
-                }
-                if (unlock) {
-                    unlock = false
-                    val shortDrama = shortDrama.get()
-                    if (shortDrama?.firstGenLocked() == true) {
-                        calcCost()
-                    }
                 }
                 updateLoadState()
             },
@@ -146,38 +106,23 @@ class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorReposit
     }
 
     fun retryGenerate() {
-        val shotSegmentId = currentSegment.get()?.data?.get()?.shotSegmentId ?: return
+        val shotSegmentId = currentStoryboard.get()?.data?.get()?.storyboardId ?: return
         launchWithLoading {
-            response(mRepo.shortDramasSegmentImageGenerateRetry(dramasId, shotSegmentId)) {
-                getStoryboardInfo()
+            response(mRepo.shortDramasSegmentImageGenerateRetry(workId, shotSegmentId)) {
+                getStoryboardList()
             }
         }
     }
 
     fun synthesis() {
-        launchWithLoading {
-            val res = mRepo.shortDramasSynthesis(dramasId)
-            if (res.isSuccess) {
-                if (dubbing.get()) {
-                    "配音完成后会自动替换".showToast()
-                }
-                finish()
-                FlowEventBus.postSync(Events.ShortDramasUpdatedEvent(dramasId))
-            } else {
-                res.msg?.showToast()
-            }
-        }
     }
 
     private fun updateLoadState() {
-        if (shortDrama.get() == null) {
+        if (adapter.items.isEmpty()) {
             loadState.set(LoadStateViewHolder.RETRY)
         } else {
             loadState.set(LoadStateViewHolder.CONTENT)
             loopGeneratingSegments()
-            shortDrama.get()?.let {
-                if (it.subtitleAudioGenerating) loopDubbingStatus(it.timbreId)
-            }
         }
     }
 
@@ -185,59 +130,37 @@ class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorReposit
      * 轮询生成中片段
      */
     private fun loopGeneratingSegments() {
-        loopGeneratingSegmentsJob?.cancel()
-        if (anySegmentGenerating()) {
-            loopGeneratingSegmentsJob = launch {
+        loopGeneratingStoryboardJob?.cancel()
+        if (anyStoryboardGenerating()) {
+            loopGeneratingStoryboardJob = launch {
                 delay(3000)
-                getStoryboardInfo()
+                getStoryboardList()
             }
-        }
-    }
-
-    /**
-     * 轮询字幕配音生成状态
-     */
-    fun loopDubbingStatus(timbreId: String?) {
-        loopDubbingStatusJob?.cancel()
-        loopDubbingStatusJob = launch {
-            val generating = runCatching {
-                val genStatus = withContext(Dispatchers.IO) { mRepo.shortDramasDubbingStatus(dramasId, timbreId).data?.genStatus }
-                genStatus == 0 || genStatus == 1
-            }.getOrNull() == true
-            if (generating) {
-                delay(3000)
-                loopDubbingStatus(timbreId)
-            } else if (dubbing.get()) {
-                stopPlay()
-                getStoryboardInfo(true)
-            }
-            dubbing.set(generating)
         }
     }
 
     fun play() {
-        if (audioPlayer.isPlaying) {
-            audioPlayer.pause()
+        if (storyboardPlayer.isPlaying) {
+            storyboardPlayer.pause()
             playing.set(false)
         } else {
-            when (audioPlayer.playbackState) {
+            when (storyboardPlayer.playbackState) {
                 Player.STATE_IDLE -> {
-                    val subtitle = currentSegment.get()?.data?.get()?.shotSegmentSubtitleList?.firstOrNull()
-                    currentSegmentSubtitle.set(subtitle)
-                    if (subtitle?.subtitleAudioUrl.isNullOrEmpty().not()) {
-                        audioPlayer.play(subtitle.subtitleAudioUrl)
+                    val videoUrl = currentStoryboard.get()?.data?.get()?.videoUrl
+                    if (videoUrl.isNullOrEmpty().not()) {
+                        storyboardPlayer.play(videoUrl)
                         playing.set(true)
                     }
                 }
 
                 Player.STATE_ENDED -> {
-                    audioPlayer.seekTo(0)
-                    audioPlayer.play()
+                    storyboardPlayer.seekTo(0)
+                    storyboardPlayer.play()
                     playing.set(true)
                 }
 
                 else -> {
-                    audioPlayer.play()
+                    storyboardPlayer.play()
                     playing.set(true)
                 }
             }
@@ -245,104 +168,64 @@ class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorReposit
     }
 
     fun stopPlay() {
-        audioPlayer.stop()
+        storyboardPlayer.stop()
         playing.set(false)
     }
 
-    private fun updateAudioDuration() {
-        currentSegmentAudioDuration.set(audioPlayer.duration.toInt())
-    }
-
     private fun playNext() {
-        val current = currentSegment.get()
-        val currentSegmentNextSubtitle = current?.data?.get()?.shotSegmentSubtitleList?.indexOf(currentSegmentSubtitle.get())?.let {
-            current.data.get()?.shotSegmentSubtitleList?.getOrNull(it + 1)
-        }
-        if (currentSegmentNextSubtitle?.subtitleAudioUrl.isNullOrEmpty().not()) {
-            currentSegmentSubtitle.set(currentSegmentNextSubtitle)
-            audioPlayer.play(currentSegmentNextSubtitle.subtitleAudioUrl)
-            return
-        }
+        val current = currentStoryboard.get()
         val currentIndex = adapter.items.indexOf(current)
         val next = if (currentIndex > -1 && currentIndex < adapter.items.size - 1) adapter.getItem(currentIndex + 1) else adapter.getItem(0)
         next.select()
     }
 
-    private fun ItemShortDramaSegmentVM?.select() {
-        //首次生成、未付费、且当前分镜在第3个以后，弹窗提示首次充值
-        if (this?.isLocked == true) {
-            calcCost()
-            audioPlayer.pause()
-            playing.set(false)
-            return
-        }
-        currentSegment.get()?.selected?.set(false)
+    private fun ItemStoryboardVM?.select() {
+        currentStoryboard.get()?.selected?.set(false)
         this?.selected?.set(true)
-        currentSegment.set(this)
+        currentStoryboard.set(this)
         adapter.items.indexOf(this).takeIf { it > -1 }?.let { scrollToItem.value = it }
-        val subtitle = this?.data?.get()?.shotSegmentSubtitleList?.firstOrNull()
-        currentSegmentSubtitle.set(subtitle)
-        if (subtitle?.subtitleAudioUrl.isNullOrEmpty().not()) {
+        val videoUrl = currentStoryboard.get()?.data?.get()?.videoUrl
+        if (videoUrl.isNullOrEmpty().not()) {
             if (playing.get()) {
-                audioPlayer.play(subtitle.subtitleAudioUrl)
+                storyboardPlayer.play(videoUrl)
             } else {
-                audioPlayer.playWhenReady = false
-                audioPlayer.setPlayUrl(subtitle.subtitleAudioUrl)
-                audioPlayer.prepare()
+                storyboardPlayer.playWhenReady = false
+                storyboardPlayer.setPlayUrl(videoUrl)
+                storyboardPlayer.prepare()
             }
         } else {
-            audioPlayer.clearMediaItems()
-            audioPlayer.stop()
+            storyboardPlayer.clearMediaItems()
+            storyboardPlayer.stop()
             playing.set(false)
         }
     }
 
-    private fun firstTimeRecharge(cost: Int) {
-        if (firstTimeRechargeDialog == null) {
-            firstTimeRechargeDialog = FirstTimeRechargeDialog.show(null, dramasId, cost)?.apply {
-                setOnDismissListener { firstTimeRechargeDialog = null }
-            }
-        }
+    private fun allStoryboardGenerated(): Boolean {
+        return adapter.items.all { it.data.get()?.videoGenerated == true }
     }
 
-    private fun firstTimeUnlock(cost: Int) {
-        if (firstTimeUnlockDialog == null) {
-            firstTimeUnlockDialog = FirstTimeUnlockDialog.show(null, dramasId, cost)?.apply {
-                setOnDismissListener { firstTimeUnlockDialog = null }
-            }
-        }
+    fun anyStoryboardGenerating(): Boolean {
+        return adapter.items.any { it.data.get()?.generating == true }
     }
 
-    /**
-     * 计算解锁需要消耗的积分
-     */
-    fun calcCost() {
+    fun anyStoryboardFailed(): Boolean {
+        return adapter.items.any { it.data.get()?.failed == true }
+    }
+
+    fun download(videoUrl: String) {
         launchWithLoading {
-            response(mRepo.calculatePrice(dramasId)) {
-                val cost = data?.pointAmount ?: 0
-               // if (User.get().scoreBalance < cost) {
-               //     firstTimeRecharge(cost)
-                //} else {
-                    firstTimeUnlock(cost)
-                //}
+            UrlResource(videoUrl, RetrofitClient.httpClient).download {
+
             }
         }
     }
 
-    private fun allSegmentsGenerated(): Boolean {
-        val info = shortDrama.get()
-        if (info?.firstGenLocked() == true) {
-            //首次创作未解锁，只生成前3张
-            return info.shotSegmentList?.take(3)?.all { it.isGenerated() } == true
+    fun deleteCurrentStoryboard() {
+        launchWithLoading {
+            response(mRepo.api.workStoryboardDelete(IdsBody(null, currentStoryboard.get()?.data?.get()?.storyboardId))) {
+                playNext()
+                currentStoryboard.get()?.let { adapter.remove(it) }
+            }
         }
-        return adapter.items.all { it.data.get()?.isGenerated() == true }
-    }
-
-    fun anySegmentGenerating(): Boolean {
-        return adapter.items.any { it.data.get()?.isGenerating() == true }
-    }
-
-    fun anySegmentFailed(): Boolean {
-        return adapter.items.any { it.data.get()?.isFailed() == true }
     }
 }

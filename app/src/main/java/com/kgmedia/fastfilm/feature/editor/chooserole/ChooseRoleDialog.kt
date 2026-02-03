@@ -29,9 +29,6 @@ class ChooseRoleDialog : BaseBottomPushVMDialogFragment<DialogStoryboardChooseRo
 
     override fun onPrepareView() {
         super.onPrepareView()
-        getParentViewModel<ShortDramaEditorViewModel>()?.shortDrama?.get()?.roleList?.filterNot { existRoleIds?.contains(it.roleId) == true }?.let {
-            mRealVM.setRoleList(it)
-        }
     }
 
 }

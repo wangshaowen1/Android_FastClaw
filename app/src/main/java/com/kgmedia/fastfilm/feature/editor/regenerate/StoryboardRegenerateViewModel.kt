@@ -111,13 +111,5 @@ class StoryboardRegenerateViewModel : AppRepositoryViewModel<ShortDramaEditorRep
     }
 
     private fun updateAddItem() {
-        val existRoleSize = adapter.items.count { !it.data.get()?.roleId.isNullOrEmpty() }
-        if (existRoleSize < (parentVM?.shortDrama?.get()?.roleList?.size ?: 0)) {
-            if (!adapter.items.contains(addItem)) {
-                adapter.add(addItem)
-            }
-        } else {
-            adapter.remove(addItem)
-        }
     }
 }
