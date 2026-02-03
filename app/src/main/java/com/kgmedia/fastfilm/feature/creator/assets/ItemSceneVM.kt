@@ -33,12 +33,7 @@ class ItemSceneVM(
         launch {
             val body = SaveSceneBody(data.get()?.sceneId, data.get()?.appearanceId, workId, storyId, sceneName, scenePrompt)
             response(ApiFactory.apiService.workAssetSceneSave(body)) {
-                val scene = this@ItemSceneVM.data.get() ?: SimpleSceneInfo()
-                scene.appearanceId = data?.appearanceId
-                scene.imageUrl = data?.imageUrl
-                scene.sceneName = sceneName
-                scene.scenePrompt = scenePrompt
-                this@ItemSceneVM.data.set(scene)
+                this@ItemSceneVM.data.set(data)
             }
         }
     }

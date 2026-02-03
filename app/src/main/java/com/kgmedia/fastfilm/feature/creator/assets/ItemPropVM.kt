@@ -34,12 +34,7 @@ class ItemPropVM(
         launch {
             val body = SavePropBody(data.get()?.propId, data.get()?.appearanceId, workId, storyId, propName, propPrompt)
             response(ApiFactory.apiService.workAssetPropSave(body)) {
-                val prop = this@ItemPropVM.data.get() ?: SimplePropInfo()
-                prop.appearanceId = data?.appearanceId
-                prop.imageUrl = data?.imageUrl
-                prop.propName = propName
-                prop.propPrompt = propPrompt
-                this@ItemPropVM.data.set(prop)
+                this@ItemPropVM.data.set(data)
             }
         }
     }

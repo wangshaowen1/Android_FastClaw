@@ -19,19 +19,19 @@ data class SimpleRoleInfo(
     /**
      * 当前资产形象ID（参考图id）
      */
-    var appearanceId: String? = null,
+    val appearanceId: String? = null,
     /**
      * 角色名称
      */
-    var roleName: String? = null,
+    val roleName: String? = null,
     /**
      * 角色图片描述提示词
      */
-    var rolePrompt: String? = null,
+    val rolePrompt: String? = null,
     /**
      * 角色图片URL
      */
-    var imageUrl: String? = null,
+    val imageUrl: String? = null,
     /**
      * [枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
      */

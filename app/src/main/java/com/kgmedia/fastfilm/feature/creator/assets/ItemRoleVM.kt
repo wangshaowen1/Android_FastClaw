@@ -34,12 +34,7 @@ class ItemRoleVM(
         launch {
             val body = SaveRoleBody(data.get()?.roleId, data.get()?.appearanceId, workId, storyId, roleName, rolePrompt)
             response(ApiFactory.apiService.workAssetRoleSave(body)) {
-                val role = this@ItemRoleVM.data.get() ?: SimpleRoleInfo()
-                role.appearanceId = data?.appearanceId
-                role.imageUrl = data?.imageUrl
-                role.roleName = roleName
-                role.rolePrompt = rolePrompt
-                this@ItemRoleVM.data.set(role)
+                this@ItemRoleVM.data.set(data)
             }
         }
     }

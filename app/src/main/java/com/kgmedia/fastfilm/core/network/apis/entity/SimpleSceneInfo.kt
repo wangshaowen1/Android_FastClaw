@@ -19,19 +19,19 @@ data class SimpleSceneInfo(
     /**
      * 当前资产形象ID（参考图id）
      */
-    var appearanceId: String? = null,
+    val appearanceId: String? = null,
     /**
      * 场景名称
      */
-    var sceneName: String? = null,
+    val sceneName: String? = null,
     /**
      * 场景图片描述提示词
      */
-    var scenePrompt: String? = null,
+    val scenePrompt: String? = null,
     /**
      * 场景图片URL
      */
-    var imageUrl: String? = null,
+    val imageUrl: String? = null,
     /**
      * [枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
      */
