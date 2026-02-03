@@ -261,7 +261,7 @@
     <string name="mobile_login">手机登录</string>
 
     <string name="app_not_agree_and_quit">不同意</string>
-    <string name="app_agree_and_sign_in">同意并登录</string>
+    <string name="app_agree_and_sign_in">同意</string>
     <string name="app_user_agreement_and_privacy_policy">用户协议和隐私政策</string>
     <!--制作绘本-->
     <string name="character_avatar">主角头像</string>

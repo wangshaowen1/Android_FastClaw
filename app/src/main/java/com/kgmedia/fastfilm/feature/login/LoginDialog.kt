@@ -13,7 +13,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
 import com.kgmedia.fastfilm.databinding.DialogLoginBinding
 import com.kgmedia.fastfilm.feature.login.flash.FlashLoginDialogFragment
 import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import com.umeng.socialize.bean.SHARE_MEDIA
@@ -49,15 +48,19 @@ class LoginDialog : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(),
         super.onClick(view, data)
         when (view?.id) {
             R.id.btnClose -> {
-                //点x跳写歌界面的问题  看MineFragment-> mRealVM.noLogIn.observe这里的处理逻辑
                 finishOnly()
             }
 
             R.id.btnWechat -> {
                 if (mRealVM.checkedPolicy.get()) {
                     shareManager.login(SHARE_MEDIA.WEIXIN, this)
-                } else {
-                    R.string.please_check_policy_below.getResString().showToast()
+                    return
+                }
+                val dialog = PrivacyPolicyDialog.show(supportFragmentManager)
+                dialog.callback = callback@{ agree ->
+                    if (!agree) return@callback
+                    mRealVM.checkedPolicy.set(true)
+                    shareManager.login(SHARE_MEDIA.WEIXIN, this)
                 }
             }
 

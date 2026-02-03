@@ -43,7 +43,7 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
         super.onStart()
         dialog?.window?.let { dialogWindow ->
             dialogWindow.attributes?.let { attr ->
-                attr.width = (ScreenUtils.getScreenWidth() * 287f / 375f).toInt()
+                attr.width = (ScreenUtils.getScreenWidth() * 293 / 375f).toInt()
                 attr.gravity = Gravity.CENTER
                 dialogWindow.attributes = attr
             }
@@ -54,9 +54,6 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
     @SuppressLint("SetTextI18n")
     override fun onPrepareView() {
         super.onPrepareView()
-
-        binding.tvTitle.typeface = Typeface.DEFAULT_BOLD
-        binding.tvTitle.text = getString(R.string.app_user_agreement_and_privacy_policy)
         binding.btnAgree.typeface = Typeface.DEFAULT_BOLD
         binding.btnReject.typeface = Typeface.DEFAULT_BOLD
 
@@ -74,7 +71,7 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
                 ds.setColor(
                     ContextCompat.getColor(
                         requireActivity(),
-                        R.color.color_ff4b00
+                        R.color.text_color_1_dark
                     )
                 )
             }
@@ -92,7 +89,7 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
                 ds.setColor(
                     ContextCompat.getColor(
                         requireActivity(),
-                        R.color.color_ff4b00
+                        R.color.text_color_1_dark
                     )
                 )
             }
@@ -101,7 +98,7 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
         binding.tvContent.text = text
 
         binding.btnReject.text = "不同意"
-        binding.btnAgree.text = "同意并登录"
+        binding.btnAgree.text = "同意"
 
         binding.btnAgree.setOnSingleClickListener {
             dismiss()
