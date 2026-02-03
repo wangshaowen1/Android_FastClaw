@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.View
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.selectSinglePhotoFromAlbums
 import com.kgmedia.fastfilm.common.permissions.requestImages2VideosPermissions
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityWorkInfoEditBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.mattise.Matisse
@@ -23,8 +25,9 @@ class DramaInfoEditActivity :
         private const val REQUEST_CODE_CHOOSE = 0x14
 
         @JvmStatic
-        fun start(context: Context) {
+        fun start(context: Context, workInfo: WorkInfo?) {
             val starter = Intent(context, DramaInfoEditActivity::class.java)
+            starter.putExtra(Constants.Extra.DATA, workInfo)
             context.startActivity(starter)
         }
     }
@@ -48,6 +51,9 @@ class DramaInfoEditActivity :
         when (view?.id) {
             R.id.btnChangeCover -> {
                 requestAlbumsPermission()
+            }
+            R.id.btnConfirm -> {
+                mRealVM.saveInfo()
             }
         }
     }

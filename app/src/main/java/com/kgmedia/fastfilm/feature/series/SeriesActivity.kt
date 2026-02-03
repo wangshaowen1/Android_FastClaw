@@ -12,8 +12,8 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.PlaylistDataTransfer
 import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
+import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
-import com.kgmedia.fastfilm.feature.series.editinfo.EditInfoActivity
 import com.kgmedia.fastfilm.feature.series.more.SeriesMoreDialog
 import com.kgmedia.fastfilm.feature.series.setprice.SetPriceDialog
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
@@ -135,7 +135,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         super.onClick(view, data)
         when (view?.id) {
             R.id.btnEdit -> {
-                EditInfoActivity.start(seriesId)
+                DramaInfoEditActivity.start(this, mRealVM.workInfo.get())
             }
 
             R.id.btnMore -> {
