@@ -2,9 +2,8 @@ package com.kgmedia.fastfilm.feature.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
-import android.view.WindowManager
+import com.gyf.immersionbar.ImmersionBar
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.manager.AppEvent
@@ -13,7 +12,6 @@ import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
 import com.kgmedia.fastfilm.databinding.DialogLoginBinding
 import com.kgmedia.fastfilm.feature.login.flash.FlashLoginDialogFragment
-import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
@@ -59,7 +57,7 @@ class LoginDialog : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(),
                 if (mRealVM.checkedPolicy.get()) {
                     shareManager.login(SHARE_MEDIA.WEIXIN, this)
                 } else {
-                    binding.toast.showToast(R.string.please_check_policy_below.getResString())
+                    R.string.please_check_policy_below.getResString().showToast()
                 }
             }
 

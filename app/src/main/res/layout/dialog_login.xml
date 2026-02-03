@@ -39,30 +39,42 @@
             app:layout_constraintTop_toTopOf="@id/btnClose" />
 
         <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            android:importantForAccessibility="no"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.218579" />
+
+        <ImageView
             android:id="@+id/iv_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="160dp"
+            android:layout_height="39dp"
+            android:layout_marginTop="14dp"
             android:adjustViewBounds="true"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_log_in_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/iv_logo" />
 
         <LinearLayout
             android:id="@+id/btnWechat"
             singleClick="@{layout.clickHandler::onClick}"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginHorizontal="@dimen/spacing_xl"
             android:layout_marginTop="120dp"
             android:background="@drawable/bg_07c160_r50"
             android:gravity="center"
             android:visibility="@{SDKConfiguration.IS_SHOW_WE_CHAT?View.VISIBLE:View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_title"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.564473"
             tools:visibility="visible">
 
             <ImageView
@@ -157,13 +169,6 @@
         </LinearLayout>
 
 
-        <com.kgmedia.fastfilm.widget.NavBarView
-            android:id="@+id/nav_bar_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ll_describe" />
-
         <ImageView
             android:id="@+id/btnClose"
             singleClick="@{(v)->layout.back()}"
@@ -176,27 +181,5 @@
             android:src="@drawable/icon_close"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/statusBar" />
-
-        <com.kgmedia.fastfilm.widget.ToastView
-            android:id="@+id/toast"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0"
-            android:background="@drawable/bg_toast"
-            android:gravity="center"
-            android:lineSpacingExtra="4dp"
-            android:minHeight="40dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingVertical="10dp"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:alpha="1"
-            tools:text="toast" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
