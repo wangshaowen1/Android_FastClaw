@@ -64,14 +64,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"
             android:layout_marginBottom="@dimen/spacing_xs"
-            android:text="@{item.data.workName}"
+            android:text="@{item.data.workTitle}"
             android:textColor="?attr/textColor1"
             app:layout_constraintBottom_toTopOf="@id/tvContent"
             tools:text="代码纪元：觉醒指令" />
 
         <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
             android:id="@+id/tvContent"
-            expandContent="@{item.data.workName}"
+            expandContent="@{item.data.workTitle}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"

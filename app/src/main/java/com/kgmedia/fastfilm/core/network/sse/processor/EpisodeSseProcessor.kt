@@ -5,6 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * 故事梗概解析器
+ */
 class EpisodeSseProcessor(
     private val scope: CoroutineScope,
     private val onTitleUpdate: (String) -> Unit,

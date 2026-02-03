@@ -2,17 +2,15 @@ package com.kgmedia.fastfilm.feature.play.data
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.kgmedia.fastfilm.core.network.apis.ApiFactory
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
-import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import kotlinx.coroutines.delay
 
-class VideoFeedPagingSource : PagingSource<Int, DramaInfo>() {
-    override fun getRefreshKey(state: PagingState<Int, DramaInfo>): Int? {
+class VideoFeedPagingSource : PagingSource<Int, WorkInfo>() {
+    override fun getRefreshKey(state: PagingState<Int, WorkInfo>): Int? {
         return null
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, DramaInfo> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, WorkInfo> {
         return try {
             val pageNum = params.key ?: 1
 

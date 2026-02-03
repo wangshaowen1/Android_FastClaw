@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.kgmedia.fastfilm.common.ext.getVm
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ItemVideoFeedBinding
 import com.kgmedia.fastfilm.widget.PlayerSeekbar
 import com.nhsd.basic.item.BindingViewHolder
 
 class VideoFeedAdapter(private val interactionListener: InteractionListener) :
-    PagingDataAdapter<DramaInfo, VideoFeedAdapter.VideoViewHolder>(DIFF_CALLBACK) {
+    PagingDataAdapter<WorkInfo, VideoFeedAdapter.VideoViewHolder>(DIFF_CALLBACK) {
 
     // 定义交互回调
     interface InteractionListener {
@@ -93,9 +93,9 @@ class VideoFeedAdapter(private val interactionListener: InteractionListener) :
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DramaInfo>() {
-            override fun areItemsTheSame(oldItem: DramaInfo, newItem: DramaInfo) = oldItem.id == newItem.id
-            override fun areContentsTheSame(oldItem: DramaInfo, newItem: DramaInfo) = oldItem == newItem
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<WorkInfo>() {
+            override fun areItemsTheSame(oldItem: WorkInfo, newItem: WorkInfo) = oldItem.workId == newItem.workId
+            override fun areContentsTheSame(oldItem: WorkInfo, newItem: WorkInfo) = oldItem == newItem
         }
     }
 }

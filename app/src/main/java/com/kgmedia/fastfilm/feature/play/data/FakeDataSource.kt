@@ -1,11 +1,11 @@
 package com.kgmedia.fastfilm.feature.play.data
 
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaEpisodeInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 
 object FakeDataSource {
 
-    fun getFakeData(pageNum: Int): List<DramaInfo> {
+    fun getFakeData(pageNum: Int): List<WorkInfo> {
         if (pageNum > 3) return emptyList()
 
         return listOf(
@@ -56,18 +56,18 @@ object FakeDataSource {
         url: String,
         cover: String,
         duration: Long
-    ): DramaInfo {
-        return DramaInfo(
-            id = id,
-            workName = name,
-            coverUrl = cover,
-            intro = "这是 $name 的作品简介...",
+    ): WorkInfo {
+        return WorkInfo(
+            workId = id,
+            workTitle = name,
+            workCoverUrl = cover,
+            workDesc = "这是 $name 的作品简介...",
             workRatio = "9:16",
-            episodeCount = 1,
+            totalEpisodeCnt = 1,
             playCount = (1000..10000).random(),
             workStoryItemList = listOf(
-                DramaEpisodeInfo(
-                    id = "ep_$id",
+                EpisodeInfo(
+                    storyId = "ep_$id",
                     videoUrl = url,
                     duration = duration,
                     workRatio = "9:16",

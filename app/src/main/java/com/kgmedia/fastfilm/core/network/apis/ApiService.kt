@@ -6,7 +6,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.CharacterInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ContentInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DanmakuItem
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasSeriesInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasTimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DubbingGenStatusInfo
@@ -1037,7 +1037,7 @@ interface ApiService {
      * 首页作品列表
      */
     @POST(ApiConstants.RECOMMEND_DRAMA_LIST)
-    suspend fun recommendDramaList(@Body body: PagedBody): ApiResponse<PagedList<DramaInfo>?>
+    suspend fun recommendDramaList(@Body body: PagedBody): ApiResponse<PagedList<WorkInfo>?>
 
     /**
      * 获取集数/视频比例/视频风格配置

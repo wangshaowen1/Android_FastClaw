@@ -25,19 +25,12 @@ class DramaInfoEditActivity :
         @JvmStatic
         fun start(context: Context) {
             val starter = Intent(context, DramaInfoEditActivity::class.java)
-//            albumInfo?.let {
-//                starter.putExtra(Constants.Extra.DATA, it)
-//            }
             context.startActivity(starter)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        mRealVM.mAlbumInfo?.apply {
-//            binding.nameInputer.setText(albumName)
-//            binding.descInputer.setText(albumRemark)
-//        }
         binding.nameInputer.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 mRealVM.name.value = s.toString()

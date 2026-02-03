@@ -1,33 +1,33 @@
 package com.kgmedia.fastfilm.kit.media
 
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.kit.media.PlaylistPlayer.PlayMode
 
 /** Playlist class that holds a mutable list of TrackInfo objects*/
-class Playlist(val playList: MutableList<DramaInfo>) {
+class Playlist(val playList: MutableList<WorkInfo>) {
     // Private variable to keep track of the current track index
     private var currentTrackIndex = 0
 
     // Returns the current track or null if the index is out of bounds
-    fun current(): DramaInfo? {
+    fun current(): WorkInfo? {
         return playList.getOrNull(currentTrackIndex)
     }
 
     // Skips to a specific track by index and returns the selected track or null
-    fun skipTo(index: Int): DramaInfo? {
+    fun skipTo(index: Int): WorkInfo? {
         currentTrackIndex = index
         return playList.getOrNull(currentTrackIndex)
     }
 
     // Moves to the next track in the playlist and returns the next track or null
-    fun next(): DramaInfo? {
+    fun next(): WorkInfo? {
         if (playList.isEmpty()) return null
         currentTrackIndex = (currentTrackIndex + 1) % playList.size
         return playList.getOrNull(currentTrackIndex)
     }
 
     // Moves to the previous track in the playlist and returns the previous track or null
-    fun prev(): DramaInfo? {
+    fun prev(): WorkInfo? {
         val size = playList.size
         if (size == 0) {
             return null
@@ -67,8 +67,8 @@ class Playlist(val playList: MutableList<DramaInfo>) {
     }
 
     // Automatically selects the next track based on the play mode
-    fun autoNext(playMode: PlayMode?): DramaInfo? {
-        var next: DramaInfo? = null
+    fun autoNext(playMode: PlayMode?): WorkInfo? {
+        var next: WorkInfo? = null
         when (playMode) {
             PlayMode.PLAY_LIST_LOOP -> {
                 // Moves to the next track in the playlist
@@ -102,8 +102,8 @@ class Playlist(val playList: MutableList<DramaInfo>) {
     }
 
     // Automatically selects the previous track based on the play mode
-    fun autoPrev(playMode: PlayMode): DramaInfo? {
-        var next: DramaInfo? = null
+    fun autoPrev(playMode: PlayMode): WorkInfo? {
+        var next: WorkInfo? = null
         when (playMode) {
             PlayMode.PLAY_LIST_LOOP -> {
                 // Moves to the previous track in the playlist

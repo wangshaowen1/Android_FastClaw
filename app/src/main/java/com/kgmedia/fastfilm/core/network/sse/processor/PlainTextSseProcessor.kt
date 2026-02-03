@@ -2,6 +2,9 @@ package com.kgmedia.fastfilm.core.network.sse.processor
 
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * 通用解析器
+ */
 class PlainTextSseProcessor(
     scope: CoroutineScope,
     throttleMs: Long = 50L,

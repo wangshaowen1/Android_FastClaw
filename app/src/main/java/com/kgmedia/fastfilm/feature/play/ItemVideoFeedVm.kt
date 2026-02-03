@@ -3,11 +3,11 @@ package com.kgmedia.fastfilm.feature.play
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableLong
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 
 
-class ItemVideoFeedVm(info: DramaInfo?) :
-    AppItemViewModel<DramaInfo>(info) {
+class ItemVideoFeedVm(info: WorkInfo?) :
+    AppItemViewModel<WorkInfo>(info) {
 
     companion object{
         const val LOG_TAG = "ItemVideoFeedVm"

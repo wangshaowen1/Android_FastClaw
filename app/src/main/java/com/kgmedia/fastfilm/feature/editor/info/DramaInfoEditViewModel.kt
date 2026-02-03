@@ -17,19 +17,14 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val mToolbarVM by lazy {
         ToolbarViewModel(
-            
             navigationAction = { back() },
             title = "编辑专辑信息",
             menuText = "保存",
             background = Color.TRANSPARENT,
             menuAction = {
-//                saveAlbumInfo()
             }
         )
     }
-//    val mAlbumInfo: AlbumInfo? by lazy {
-//        mBundle.getParcelable(Constants.Extra.DATA)
-//    }
 
     private var mCoverPath: String? = null
     var isUploading = false
@@ -40,11 +35,6 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-//        mAlbumInfo?.apply {
-//            cover.set(albumCoverUrl)
-//            name.value = albumName ?: ""
-//            desc.value = albumRemark ?: ""
-//        }
     }
 
     private fun saveInfo() {

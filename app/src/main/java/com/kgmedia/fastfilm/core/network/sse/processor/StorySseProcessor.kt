@@ -5,6 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * 故事内容解析器
+ */
 class StorySseProcessor(
     private val scope: CoroutineScope,
     private val onStoryUpdate: (String) -> Unit, // 只关注 story 内容

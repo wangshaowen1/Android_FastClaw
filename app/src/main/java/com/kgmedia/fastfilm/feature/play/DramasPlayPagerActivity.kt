@@ -94,7 +94,7 @@ class DramasPlayPagerActivity :
             val item = adapter.peek(pos)
 
             // [关键] 只有当 ViewHolder 当前展示的数据 ID 与 播放器正在播的 ID 一致时，才允许更新 UI
-            if (holder != null && item?.id == playerManager.currentPlayingId) {
+            if (holder != null && item?.workId == playerManager.currentPlayingId) {
                 action(holder)
             }
         }
