@@ -17,7 +17,6 @@ import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import com.kgmedia.fastfilm.feature.series.more.SeriesMoreDialog
-import com.kgmedia.fastfilm.feature.series.setprice.SetPriceDialog
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelActivity
@@ -87,12 +86,6 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
     }
 
     private fun observeData() {
-        mRealVM.autoSetPrice.observe(this) {
-            if (it == 2) {
-                mRealVM.autoSetPrice.value = 1
-                SetPriceDialog.show(supportFragmentManager, seriesId, true)
-            }
-        }
         lifecycleScope.launch {
             eventVm.events.collect { event ->
                 when (event) {

@@ -1,9 +1,7 @@
 package com.kgmedia.fastfilm.feature.series
 
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -12,14 +10,10 @@ import androidx.paging.cachedIn
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.PagedProxy
-import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
-import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
-import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
-import com.nhsd.basic.bus.FlowEventBus
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -27,15 +21,8 @@ import kotlinx.coroutines.flow.Flow
  */
 class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
     private val workId by lazy { mBundle.getString(Constants.Extra.ID) }
-    private val newlyPublish by lazy { mBundle.getBoolean(Constants.Extra.NEWLY_PUBLISH) }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
     val workInfo by lazy { ObservableField<WorkInfo>() }
-    val subscribed by lazy { ObservableBoolean() }
-
-    /**
-     * 0 默认状态 1 已处理 2 需要弹上架弹窗
-     */
-    val autoSetPrice by lazy { MutableLiveData(0) }
     override fun onCreate() {
         super.onCreate()
         getWorkDtl()
@@ -63,15 +50,6 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
             loadState.set(LoadStateViewHolder.RETRY)
         } else {
             loadState.set(LoadStateViewHolder.CONTENT)
-        }
-    }
-
-    fun subscribe() {
-        launchWithLoading {
-            response(mRepo.seriesFollow(workId, if (subscribed.get()) 0 else 1)) {
-                subscribed.set(!subscribed.get())
-                FlowEventBus.postSync(Events.SeriesWatchingEvent(workId, data.watchingStatus ?: 0, data.watchingNumStr ?: "0"))
-            }
         }
     }
 

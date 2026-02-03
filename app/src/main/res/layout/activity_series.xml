@@ -106,12 +106,13 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
-                                    android:text="已创作 N 集 / 共M集"
+                                    android:text="@{`已创作 `+layout.workInfo.lastEpisodeNo+` 集 / 共`+layout.workInfo.totalEpisodeCnt+`集`}"
                                     android:textAppearance="@style/Text12"
                                     android:textColor="?attr/textColor3"
                                     app:layout_constraintEnd_toEndOf="@+id/tvTitle"
                                     app:layout_constraintStart_toStartOf="@+id/tvTitle"
-                                    app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+                                    app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+                                    tools:text="已创作 N 集 / 共M集" />
 
                                 <TextView
                                     android:id="@+id/tvSeriesIntro"
