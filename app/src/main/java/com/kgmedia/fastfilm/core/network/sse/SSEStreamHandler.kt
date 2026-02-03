@@ -15,39 +15,54 @@ class SSEStreamHandler(
 
     private var job: Job? = null
 
+    // 新增：防止重复调用 onComplete
+    private var isCompleted = false
+
     fun start(flow: Flow<SSEvent>) {
         cancel()
+        isCompleted = false // 重置标志位
 
         job = scope.launch {
             try {
                 flow.collect { event ->
+                    // 如果已经完成就不再处理后续消息（防御性编程）
+                    if (isCompleted) return@collect
+
                     when (event) {
                         is SSEvent.Open -> {
                             processor.onStart()
                         }
+
                         is SSEvent.Message -> {
-                            // 将原始的 data 丢给 processor
-                            // processor 内部会处理 Json 解析和业务逻辑
                             processor.onChunk(event.data)
                         }
+
                         is SSEvent.Error -> {
                             processor.onError(event.throwable)
                         }
+
                         is SSEvent.Close -> {
-                            processor.onComplete()
+                            handleComplete()
                         }
                     }
                 }
             } catch (e: CancellationException) {
-                // 正常取消
+                // 正常取消，不作为错误处理
             } catch (e: Exception) {
                 processor.onError(e)
             } finally {
-                // 确保流结束时回调 complete
-                if (isActive) {
-                    processor.onComplete()
+                // 确保流自然结束时（非 Close 事件触发）也能回调 complete
+                if (isActive && !isCompleted) {
+                    handleComplete()
                 }
             }
+        }
+    }
+
+    private fun handleComplete() {
+        if (!isCompleted) {
+            isCompleted = true
+            processor.onComplete()
         }
     }
 

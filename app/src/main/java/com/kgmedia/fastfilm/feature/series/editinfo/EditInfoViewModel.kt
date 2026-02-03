@@ -10,6 +10,7 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasSeriesInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.series.SeriesRepository
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
@@ -32,7 +33,7 @@ class EditInfoViewModel : AppRepositoryViewModel<SeriesRepository>() {
     }
     private val seriesId by lazy { mBundle.getString(Constants.Extra.ID) }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
-    val series by lazy { ObservableField<DramasSeriesInfo>() }
+    val series by lazy { ObservableField<WorkInfo>() }
     val cover by lazy { ObservableField<MediaItem>() }
     val title by lazy { MutableLiveData<String>() }
     val description by lazy { MutableLiveData<String>() }
@@ -48,11 +49,11 @@ class EditInfoViewModel : AppRepositoryViewModel<SeriesRepository>() {
         if (series.get() == null) loadState.set(LoadStateViewHolder.LOADING)
         launch(
             block = {
-                mRepo.seriesDetail(seriesId).data?.let {
+                mRepo.getWorkInfo(seriesId).data?.let {
                     series.set(it)
-                    cover.set(it.seriesCoverUrl?.let { MediaItem(remoteUrl = it) })
-                    title.value = it.seriesName
-                    description.value = it.seriesIntro
+                    cover.set(it.workCoverUrl?.let { MediaItem(remoteUrl = it) })
+                    title.value = it.workTitle
+                    description.value = it.workDesc
                 }
                 updateLoadState()
             },

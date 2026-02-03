@@ -26,6 +26,7 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
 
         //自定义集数
         const val CUSTOM_EPISODE_COUNT = "customEpisodeCount"
+
         /**
          * 从头开始生成
          * @param content 故事内容
@@ -129,6 +130,7 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
         super.onClick(view, data)
         when (view?.id) {
             R.id.tvWorkName, R.id.btnModify -> {
+                if ((mRealVM.step.value ?: 0) > 1) return
                 val dialog = DramaTitleEditDialog.newInstance(mRealVM.title.value)
                 dialog.onSave = {
                     mRealVM.title.value = it

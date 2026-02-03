@@ -1,8 +1,6 @@
 package com.kgmedia.fastfilm.core.manager
 
-import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.common.ext.ioScope
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
 import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
@@ -10,7 +8,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBo
 import com.kgmedia.fastfilm.core.network.apis.request.ShareReportBody
 import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.utils.Logger
-import com.umeng.analytics.MobclickAgent
 
 
 /**
@@ -70,9 +67,9 @@ object EventManager {
     /**
      * 作品播放量计数
      */
-    fun onPlayEvent(userId: String?, dramasId: String?) {
+    fun onPlayEvent(userId: String?, workId: String?) {
         ioScope.launchNoCrash {
-            ApiFactory.apiService.playEventReport(PlayEventBody(userId, dramasId))
+            ApiFactory.apiService.playEventReport(PlayEventBody(userId, workId))
         }
     }
 

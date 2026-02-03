@@ -15,8 +15,8 @@ import com.kgmedia.fastfilm.common.PagedProxy
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.network.apis.entity.DramasSeriesInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.bus.FlowEventBus
@@ -26,10 +26,10 @@ import kotlinx.coroutines.flow.Flow
  * 剧集详情页
  */
 class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
-    private val seriesId by lazy { mBundle.getString(Constants.Extra.ID) }
+    private val workId by lazy { mBundle.getString(Constants.Extra.ID) }
     private val newlyPublish by lazy { mBundle.getBoolean(Constants.Extra.NEWLY_PUBLISH) }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
-    val series by lazy { ObservableField<DramasSeriesInfo>() }
+    val workInfo by lazy { ObservableField<WorkInfo>() }
     val subscribed by lazy { ObservableBoolean() }
 
     /**
@@ -38,23 +38,16 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
     val autoSetPrice by lazy { MutableLiveData(0) }
     override fun onCreate() {
         super.onCreate()
-        getSeriesInfo()
+        getWorkDtl()
     }
 
-    fun getSeriesInfo() {
+    fun getWorkDtl() {
         loadState.set(LoadStateViewHolder.LOADING)
-        if (series.get() == null) loadState.set(LoadStateViewHolder.LOADING)
+        if (workInfo.get() == null) loadState.set(LoadStateViewHolder.LOADING)
         launch(
             block = {
-                mRepo.seriesDetail(seriesId).data?.let {
-                    series.set(it)
-                    subscribed.set(it.followStatus == 1)
-                    if (autoSetPrice.value == 0) {
-                        autoSetPrice.value = 1
-                        if (newlyPublish && it.launchStatus != 1) {
-                            autoSetPrice.value = 2
-                        }
-                    }
+                mRepo.getWorkInfo(workId).data?.let {
+                    workInfo.set(it)
                 }
                 updateLoadState()
             },
@@ -66,7 +59,7 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
 
     private fun updateLoadState() {
         loadState.set(LoadStateViewHolder.CONTENT)
-        if (series.get() == null) {
+        if (workInfo.get() == null) {
             loadState.set(LoadStateViewHolder.RETRY)
         } else {
             loadState.set(LoadStateViewHolder.CONTENT)
@@ -75,21 +68,21 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
 
     fun subscribe() {
         launchWithLoading {
-            response(mRepo.seriesFollow(seriesId, if (subscribed.get()) 0 else 1)) {
+            response(mRepo.seriesFollow(workId, if (subscribed.get()) 0 else 1)) {
                 subscribed.set(!subscribed.get())
-                FlowEventBus.postSync(Events.SeriesWatchingEvent(seriesId, data.watchingStatus ?: 0, data.watchingNumStr ?: "0"))
+                FlowEventBus.postSync(Events.SeriesWatchingEvent(workId, data.watchingStatus ?: 0, data.watchingNumStr ?: "0"))
             }
         }
     }
 
-    fun episodeList(): Flow<PagingData<ShortDramaInfo>> {
+    fun episodeList(): Flow<PagingData<EpisodeInfo>> {
         return Pager(
             config = PagingConfig(
                 initialLoadSize = PagedProxy.DEFAULT_PAGE_SIZE * 3,
                 pageSize = PagedProxy.DEFAULT_PAGE_SIZE
             ),
             pagingSourceFactory = {
-                SeriesEpisodePagingSource(seriesId)
+                EpisodePagingSource(workId)
             }
         ).flow.cachedIn(viewModelScope)
     }

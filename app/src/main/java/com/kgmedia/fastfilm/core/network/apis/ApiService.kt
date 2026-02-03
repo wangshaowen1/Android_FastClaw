@@ -6,10 +6,11 @@ import com.kgmedia.fastfilm.core.network.apis.entity.CharacterInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ContentInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DanmakuItem
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasSeriesInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasTimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DubbingGenStatusInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.GuideBarStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.HitTabInfo
@@ -54,6 +55,8 @@ import com.kgmedia.fastfilm.core.network.apis.request.BindWithdrawAccountBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindZfbBody
 import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
 import com.kgmedia.fastfilm.core.network.apis.request.ContinueGenerateBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DanmakuBody
 import com.kgmedia.fastfilm.core.network.apis.request.DownloadReportBody
@@ -62,7 +65,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesId
-import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesIdPagedBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbrePagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.EditDramaBody
@@ -95,6 +98,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
@@ -134,8 +138,6 @@ import com.kgmedia.fastfilm.core.network.apis.response.DramasSeriesIdData
 import com.kgmedia.fastfilm.core.network.apis.response.FollowingData
 import com.kgmedia.fastfilm.core.network.apis.response.InviteIncomePageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.InviteUserPageInfo
-import com.kgmedia.fastfilm.core.network.apis.response.LastEpisodeData
-import com.kgmedia.fastfilm.core.network.apis.response.LastStoryData
 import com.kgmedia.fastfilm.core.network.apis.response.MessageSummaryData
 import com.kgmedia.fastfilm.core.network.apis.response.MessagesUnreadNumData
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBook
@@ -150,6 +152,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.TimbreIdData
 import com.kgmedia.fastfilm.core.network.apis.response.UpgradeData
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
 import com.kgmedia.fastfilm.core.network.apis.response.WithdrawalRecordInfo
+import com.kgmedia.fastfilm.core.network.apis.response.WorkIdData
 import com.kgmedia.fastfilm.core.network.apis.response.WxPayData
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
@@ -362,15 +365,26 @@ interface ApiService {
     fun sseContentRandom(@Body body: UserTokenBody): Flow<SSEvent>
 
     /**
-     *故事剧本（基于灵感写剧本/灵感续写）
+     *灵感故事剧本（基于灵感写剧本/灵感续写/小说续写）
      */
     @Headers(
         "Accept: text/event-stream",  // 声明 SSE 媒体类型
         "Cache-Control: no-cache",     // 禁用缓存
         "Connection: keep-alive"       // 保持长连接
     )
-    @POST(ApiConstants.SSE_CONTENT_EXPANDING_DRAMA_SCRIPT)
-    fun sseContentExpandingDramaScript(@Body body: AIExpandBody): Flow<SSEvent>
+    @POST(ApiConstants.SSE_SCRIPT_FROM_IDEA)
+    fun sseScriptFromIdea(@Body body: AIExpandBody): Flow<SSEvent>
+
+    /**
+     *小说直接生成剧集剧本
+     */
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SSE_SCRIPT_FROM_STORY)
+    fun sseScriptFromStory(@Body body: AISynopsisBody): Flow<SSEvent>
 
     /**
      *扩写剧集剧本（小说）
@@ -393,6 +407,24 @@ interface ApiService {
     )
     @POST(ApiConstants.SSE_CONTENT_SYNOPSIS)
     fun sseContentSynopsis(@Body body: AISynopsisBody): Flow<SSEvent>
+
+    /**
+     * 灵感保存故事梗概（下一步创建剧本）
+     */
+    @POST(ApiConstants.SAVE_WORK_SUMMARY)
+    suspend fun saveWorkSummary(@Body body: CreateWorkBody): ApiResponse<WorkIdData?>
+
+    /**
+     * 小说保存故事剧集剧本（首次创建）
+     */
+    @POST(ApiConstants.SAVE_STORY_EPISODE_SCRIPT)
+    suspend fun saveStoryEpisodeScript(@Body body: CreateStoryWorkBody): ApiResponse<WorkIdData?>
+
+    /**
+     *保存故事剧集剧本（灵感首创/灵感续集/小说续集）
+     */
+    @POST(ApiConstants.SAVE_EPISODE_SCRIPT)
+    suspend fun saveEpisodeScript(@Body body: SaveEpisodeScriptBody): ApiResponse<WorkIdData?>
 
     /**
      * 轮询剧本分镜大纲
@@ -768,13 +800,13 @@ interface ApiService {
      * 获取剧集最新一集剧本详情
      */
     @POST(ApiConstants.LATEST_DRAMAS_WORK_DETAIL)
-    suspend fun latestDramasWorkDetail(@Body body: WorkIdBody): ApiResponse<LastStoryData?>
+    suspend fun latestEpisode(@Body body: WorkIdBody): ApiResponse<EpisodeInfo?>
 
     /**
      * 查询我的作品详情
      */
-    @POST(ApiConstants.DRAMA_INFO)
-    suspend fun dramaInfo(@Body body: WorkIdBody): ApiResponse<LastEpisodeData?>
+    @POST(ApiConstants.WORK_INFO)
+    suspend fun getWorkInfo(@Body body: WorkIdBody): ApiResponse<WorkInfo?>
 
     /**
      *流式生成帮我续写(生成续写的用户输出内容)
@@ -830,16 +862,10 @@ interface ApiService {
     suspend fun seriesPublish(@Body body: SeriesSetPriceBody): ApiResponse<Any>
 
     /**
-     * 获取剧集详情看自己看别人都用这个
+     *分页查看作品剧集列表
      */
-    @POST(ApiConstants.SERIES_DETAIL)
-    suspend fun seriesDetail(@Body body: WorkIdBody): ApiResponse<DramasSeriesInfo?>
-
-    /**
-     * 获取剧集详情看自己看别人都用这个
-     */
-    @POST(ApiConstants.SERIES_SHORT_LIST)
-    suspend fun seriesShortList(@Body body: DramasSeriesIdPagedBody): ApiResponse<PagedList<ShortDramaInfo>?>
+    @POST(ApiConstants.EPISODE_LIST)
+    suspend fun episodeList(@Body body: WorkIdPagedBody): ApiResponse<PagedList<EpisodeInfo>?>
 
     /**
      * 新用户创作体验引导条
@@ -1004,7 +1030,7 @@ interface ApiService {
      * 首页作品列表
      */
     @POST(ApiConstants.RECOMMEND_DRAMA_LIST)
-    suspend fun recommendDramaList(@Body body: PagedBody): ApiResponse<PagedList<DramaInfo>?>
+    suspend fun recommendDramaList(@Body body: PagedBody): ApiResponse<PagedList<WorkInfo>?>
 
     /**
      * 获取集数/视频比例/视频风格配置

@@ -39,6 +39,7 @@ class DramaTitleEditDialog() :
                 return@setOnClickListener
             }
             onSave?.invoke(binding.nameInputer.text.trim())
+            dismissAllowingStateLoss()
         }
     }
 

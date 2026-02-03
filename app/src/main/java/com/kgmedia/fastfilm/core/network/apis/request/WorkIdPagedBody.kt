@@ -1,10 +1,10 @@
 package com.kgmedia.fastfilm.core.network.apis.request
 
-class DramasSeriesIdPagedBody(
+class WorkIdPagedBody(
     /**
-     * 剧集Id，接受Long和String类型
+     * 作品Id，接受Long和String类型
      */
-    val dramasSeriesId: String?,
+    val workId: String?,
     pageNum: Int,
     pageSize: Int,
 ) : PagedBody(pageNum, pageSize)

@@ -21,7 +21,7 @@
         <!-- 左侧头像区域 -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCover"
-            loadHQThumbnailUri="@{item.data.coverUrl}"
+            loadHQThumbnailUri="@{item.data.workCoverUrl}"
             placeHolder="@{@drawable/ic_default_cover}"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -79,7 +79,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:paddingBottom="10dp"
-            android:text="@{item.data.workName}"
+            android:text="@{item.data.workTitle}"
             android:textColor="?attr/textColor1"
             app:layout_constraintEnd_toEndOf="@id/ivCover"
             app:layout_constraintStart_toStartOf="@id/ivCover"

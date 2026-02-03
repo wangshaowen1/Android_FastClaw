@@ -1651,7 +1651,7 @@ fun blurWith(blurView: BlurView, targetId: Int) {
 @BindingAdapter("foregroundLevel")
 fun foregroundLevel(view: View, level: Int?) {
     if (level != null) {
-        view.foreground.level = level
+        view.foreground?.level = level
     }
 }
 

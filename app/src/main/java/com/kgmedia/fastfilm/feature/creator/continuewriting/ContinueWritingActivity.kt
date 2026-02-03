@@ -115,8 +115,8 @@ class ContinueWritingActivity :
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
                 }
-                if (mRealVM.info.value == null) {
-                    mRealVM.getDramaWorkInfo {
+                if (mRealVM.episodeInfo.value == null) {
+                    mRealVM.getEpisodeInfo {
                         toGenerate()
                     }
                     return
@@ -133,7 +133,7 @@ class ContinueWritingActivity :
             this,
             mRealVM.input.value,
             mRealVM.workId,
-            mRealVM.episodeInfo.value?.id,
+            mRealVM.workInfo.value?.workId,
             DramaGenerateConstants.MODEL_CONTINUE_STORY,
         )
 //        Global.clearContinueInputContent(mRealVM.dramasSeriesId)

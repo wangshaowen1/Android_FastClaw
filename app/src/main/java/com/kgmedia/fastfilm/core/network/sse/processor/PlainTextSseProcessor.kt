@@ -2,13 +2,16 @@ package com.kgmedia.fastfilm.core.network.sse.processor
 
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * 通用解析器
+ */
 class PlainTextSseProcessor(
     scope: CoroutineScope,
     throttleMs: Long = 50L,
     private val onStart: () -> Unit,
     private val onUpdate: (String) -> Unit,
     private val onComplete: () -> Unit,
-    private val onError: (Throwable?) -> Unit
+    private val onErrorCallback: (Throwable?) -> Unit
 ) : BaseThrottleSseProcessor(scope, throttleMs) {
 
     private val buffer = StringBuilder(1024)
@@ -34,7 +37,7 @@ class PlainTextSseProcessor(
     }
 
     override fun onError(e: Throwable?) {
-        onError(e)
+        onErrorCallback(e)
     }
 }
 

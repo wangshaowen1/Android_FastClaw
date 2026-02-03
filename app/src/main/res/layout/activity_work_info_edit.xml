@@ -119,7 +119,7 @@
             app:inputMaxLength="5000" />
 
         <Button
-            android:id="@+id/btnNext"
+            android:id="@+id/btnConfirm"
             style="@style/Button.Bold"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"

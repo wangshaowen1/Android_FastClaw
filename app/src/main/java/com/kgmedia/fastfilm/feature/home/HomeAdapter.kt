@@ -6,12 +6,12 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.getVm
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ItemHomeDramaBinding
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.nhsd.basic.item.BindingViewHolder
 
-class HomeAdapter() : PagingDataAdapter<DramaInfo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+class HomeAdapter() : PagingDataAdapter<WorkInfo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -48,17 +48,17 @@ class HomeAdapter() : PagingDataAdapter<DramaInfo, RecyclerView.ViewHolder>(DIFF
 
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DramaInfo>() {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<WorkInfo>() {
             override fun areItemsTheSame(
-                oldItem: DramaInfo,
-                newItem: DramaInfo
+                oldItem: WorkInfo,
+                newItem: WorkInfo
             ): Boolean {
                 return oldItem.hashCode() == newItem.hashCode()
             }
 
             override fun areContentsTheSame(
-                oldItem: DramaInfo,
-                newItem: DramaInfo
+                oldItem: WorkInfo,
+                newItem: WorkInfo
             ): Boolean {
                 return oldItem == newItem
             }

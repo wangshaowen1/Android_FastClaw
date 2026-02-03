@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.manager.GrowingIO
@@ -65,7 +64,7 @@ class StoryBoardFragment :
         }
         mRealVM.dramaId.observe(this) {
             hostVm?.backWarning = false
-            hostVm?.dramaId = it
+            hostVm?.workId = it
         }
         mRealVM.mDramaName.observe(this) {
             hostVm?.title?.value = it

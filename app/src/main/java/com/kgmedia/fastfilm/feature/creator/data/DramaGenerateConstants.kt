@@ -5,18 +5,21 @@ class DramaGenerateConstants {
         /**
          * 继续创作(灵感)
          */
-        const val MODEL_CONTINUE_INSPIRATION = 1
+        const val MODEL_CONTINUE_INSPIRATION = 33
+
         /**
          * 继续创作(小说)
          */
-        const val MODEL_CONTINUE_STORY = 2
+        const val MODEL_CONTINUE_STORY = 35
+
         /**
          * 第一集创作(灵感)
          */
-        const val MODEL_INSPIRATION = 3
+        const val MODEL_INSPIRATION = 30
+
         /**
          * 第一集创作(小说)
          */
-        const val MODEL_STORY = 4
+        const val MODEL_STORY = 1
     }
 }

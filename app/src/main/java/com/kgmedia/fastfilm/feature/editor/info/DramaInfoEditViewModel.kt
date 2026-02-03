@@ -6,30 +6,27 @@ import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
+import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.showToast
 
 class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val mToolbarVM by lazy {
         ToolbarViewModel(
-            
             navigationAction = { back() },
-            title = "编辑专辑信息",
-            menuText = "保存",
-            background = Color.TRANSPARENT,
-            menuAction = {
-//                saveAlbumInfo()
-            }
+            title = "编辑作品",
+            background = Color.TRANSPARENT
         )
     }
-//    val mAlbumInfo: AlbumInfo? by lazy {
-//        mBundle.getParcelable(Constants.Extra.DATA)
-//    }
+
+    val workInfo by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, WorkInfo::class.java) }
 
     private var mCoverPath: String? = null
     var isUploading = false
@@ -40,29 +37,28 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-//        mAlbumInfo?.apply {
-//            cover.set(albumCoverUrl)
-//            name.value = albumName ?: ""
-//            desc.value = albumRemark ?: ""
-//        }
+        workInfo?.apply {
+            cover.set(workCoverUrl)
+            name.value = workTitle ?: ""
+            desc.value = workDesc ?: ""
+        }
     }
 
-    private fun saveInfo() {
+    fun saveInfo() {
         if (name.value?.isEmpty() == true) {
             "请完善作品名称".showToast()
+            return
+        }
+        if (name.value?.isEmpty() == true) {
+            "请完善作品简介".showToast()
             return
         }
         if (isUploading && !mCoverPath.isNullOrEmpty()) {
             "封面上传中,请稍等~".showToast()
             return
         }
-        requestWithLoading({mRepo.api.updateWorkInfo(WorkInfoUpdateBody( "",cover.get(), name.value, desc.value))}) {
-//                mAlbumInfo?.albumRemark = desc.value
-//                mAlbumInfo?.albumName = name.value
-//                mAlbumInfo?.albumCoverUrl = cover.get()
-//                Global.albumInfoMap[mAlbumInfo?.albumId] = mAlbumInfo
-//                FlowEventBus.postSync(AlbumChangeEvent(mAlbumInfo?.albumId, AlbumChangeEvent.EVENT_INFO_CHANGE, mAlbumInfo))
-                finish()
+        requestWithLoading({ mRepo.api.updateWorkInfo(WorkInfoUpdateBody(workInfo?.workId, cover.get(), name.value, desc.value)) }) {
+            finish()
         }
     }
 

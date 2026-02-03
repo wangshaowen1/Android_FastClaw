@@ -2,7 +2,7 @@ package com.kgmedia.fastfilm.kit.media.source
 
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.PagedList
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 
 /**
  * Interface defining the contract for a paginated data source of tracks.
@@ -15,10 +15,10 @@ interface TracksPageSource {
      *
      * @param page The page number to load. Page numbers start at 1.
      * @param pageSize The number of items to load per page.
-     * @return An [ApiResponse] containing a [PagedList] of [DramaInfo] or null if the data is not available.
+     * @return An [ApiResponse] containing a [PagedList] of [WorkInfo] or null if the data is not available.
      *         The [ApiResponse] will also indicate whether the request was successful or if an error occurred.
      */
-    suspend fun nextPage(page: Int, pageSize: Int): ApiResponse<PagedList<DramaInfo?>?>
+    suspend fun nextPage(page: Int, pageSize: Int): ApiResponse<PagedList<WorkInfo?>?>
 
     val sourceId: String get() = this.javaClass.simpleName
 

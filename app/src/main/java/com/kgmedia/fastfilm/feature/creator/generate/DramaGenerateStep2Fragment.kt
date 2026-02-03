@@ -1,19 +1,19 @@
 package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.os.Bundle
-import android.view.View
-import androidx.core.widget.doAfterTextChanged
+import android.text.Editable
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
-import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
-import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
-import com.kgmedia.fastfilm.feature.creator.generate.edit.StoryOutlineEditorDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 
+/**
+ *  故事剧本生成
+ */
 class DramaGenerateStep2Fragment :
     BaseViewModelFragment<FragmentDramaGenerateStep2Binding, DramaGenerateStep2ViewModel>() {
 
@@ -32,34 +32,42 @@ class DramaGenerateStep2Fragment :
         super.onPrepareView()
         EventManager.onAppTrack(AppEvent.JG_VIEW_GENERATE_STORYBOARD_PAGE)
         activity?.intent?.let {
-            val dramasId = it.getStringExtra(Constants.Extra.ID)
-            if (dramasId.isNullOrEmpty()) {
-                mRealVM.otherExtraId = it.getStringExtra(Constants.Extra.EXTRA_ID)
-                mRealVM.content = it.getStringExtra(Constants.Extra.CONTENT)
-                mRealVM.model = it.getIntExtra(Constants.Extra.MODE, DramaGenerateBody.GEN_WAY_INSPIRATION)
-                mRealVM.dramaStyleId = it.getStringExtra(Constants.Extra.STYLE_ID)
-                mRealVM.videoRatio = it.getIntExtra(Constants.Extra.VIDEO_RATIO, 0)
-                mRealVM.sseGenerate()
-                hostVm?.backWarning = true
-                return@let
-            } else {// 有dramasId的情况下走恢复生成（目前只有恢复生成会在步骤1传入dramasId）
-                mRealVM.dramaId.value = dramasId
-                mRealVM.mContent.set(it.getStringExtra(Constants.Extra.CONTENT))
+            mRealVM.workId.value = hostVm?.workId
+            mRealVM.episodeId = hostVm?.episodeId
+            mRealVM.inspiration = it.getStringExtra(Constants.Extra.CONTENT)
+            mRealVM.model = it.getIntExtra(Constants.Extra.MODE, 0)
+            mRealVM.customEpisodeCount = it.getStringExtra(StoryEditorActivity.CUSTOM_EPISODE_COUNT)
+            mRealVM.episodeRangeCode = it.getStringExtra(StoryEditorActivity.EPISODE_RANGE_CODE)
+            mRealVM.videoStyleId = it.getStringExtra(Constants.Extra.STYLE_ID)
+            mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
+            mRealVM.sseGenerate()
+            hostVm?.backWarning = true
+        }
+        mRealVM.input.observe(this) {
+            if (mRealVM.input.value != binding.inputView.text) {
+                binding.inputView.setText(mRealVM.input.value)
             }
         }
-        // 在文本更新时自动滚动到底部
-//        binding.tvSSEContent.doAfterTextChanged {
-//            binding.nsv.postDelayed({
-//                bindingNullable?.nsv?.fullScroll(View.FOCUS_DOWN)
-//            }, 100)
-//        }
-
-        mRealVM.dramaId.observe(this) {
+        binding.inputView.addTextChangedListener(object : SimpleTextWatcher() {
+            override fun afterTextChanged(s: Editable?) {
+                mRealVM.input.value = s.toString()
+            }
+        })
+        mRealVM.workId.observe(this) {
             hostVm?.backWarning = false
-            hostVm?.dramaId = it
+            hostVm?.workId = it
         }
-        mRealVM.mDramaName.observe(this) {
-            hostVm?.title?.value = it
+
+        binding.btnRegenerate.setOnSingleClickListener {
+            mRealVM.sseGenerate()
+        }
+        binding.btnDelete.setOnClickListener {
+            mRealVM.input.value = ""
+        }
+        binding.btnNext.setOnSingleClickListener {
+            mRealVM.confirmGenerate { workId, episodeId ->
+                hostVm?.nextStep(3, workId, episodeId)
+            }
         }
     }
 }

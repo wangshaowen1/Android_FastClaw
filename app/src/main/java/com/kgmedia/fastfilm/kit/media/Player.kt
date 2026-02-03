@@ -5,7 +5,7 @@ package com.kgmedia.fastfilm.kit.media
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.kit.media.source.MediaSourceManager
 import com.nhsd.basic.utils.Logger
 
@@ -25,7 +25,7 @@ fun PlaylistPlayer.setupMediaSourceManager(initialMediasIsCache: Boolean = false
 fun PlaylistPlayer.getMediaSourceManager(): MediaSourceManager? {
     return MediaSourceManager.get(this)
 }
-fun PlaylistPlayer.resumePlay(tracks: List<DramaInfo?>?) {
+fun PlaylistPlayer.resumePlay(tracks: List<WorkInfo?>?) {
     if (tracks.isNullOrEmpty()) {
         return
     }
@@ -34,7 +34,7 @@ fun PlaylistPlayer.resumePlay(tracks: List<DramaInfo?>?) {
 }
 
 fun PlaylistPlayer.resumePlay(
-    tracks: List<DramaInfo>?,
+    tracks: List<WorkInfo>?,
     playPosition: Int,
     positionMs: Long? = null
 ) {
@@ -91,7 +91,7 @@ fun PlaylistPlayer.resumePlay(
     resumePlay(null, playPosition, positionMs)
 }
 
-fun PlaylistPlayer.resumePlay(tracks: List<DramaInfo>?, played: DramaInfo?) {
+fun PlaylistPlayer.resumePlay(tracks: List<WorkInfo>?, played: WorkInfo?) {
     if (tracks.isNullOrEmpty() || played == null) {
         return
     }
@@ -125,7 +125,7 @@ fun ExoPlayer.startPlay(url: String) {
 //}
 
 
-fun TrackPlayer.play(track: DramaInfo?, skipIntro: Boolean = true): Boolean {
+fun TrackPlayer.play(track: WorkInfo?, skipIntro: Boolean = true): Boolean {
     Logger.i("play track:${track?.stripedTrickTitle} current =" + this.currentTrack()?.stripedTrickTitle)
     setTrack(track)
     if (track != null) {

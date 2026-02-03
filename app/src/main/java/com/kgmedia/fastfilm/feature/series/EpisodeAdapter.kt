@@ -6,18 +6,19 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import com.kgmedia.fastfilm.common.ext.getVm
 import com.kgmedia.fastfilm.common.ext.putVm
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.databinding.ItemSeriesEpisodeBinding
 import com.nhsd.basic.item.BindingViewHolder
 import com.nhsd.basic.item.ItemEventsViewModel
 
-class SeriesEpisodeAdapter(private val eventVm: ItemEventsViewModel<SeriesEpisodeEvent>) : PagingDataAdapter<ShortDramaInfo, SeriesEpisodeAdapter.ViewHolder>(DIFF_CALLBACK) {
+class EpisodeAdapter(private val eventVm: ItemEventsViewModel<SeriesEpisodeEvent>) :
+    PagingDataAdapter<EpisodeInfo, EpisodeAdapter.ViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(ItemSeriesEpisodeBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun onBindViewHolder(holder: SeriesEpisodeAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: EpisodeAdapter.ViewHolder, position: Int) {
         holder.bind(position)
     }
 
@@ -33,17 +34,17 @@ class SeriesEpisodeAdapter(private val eventVm: ItemEventsViewModel<SeriesEpisod
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ShortDramaInfo>() {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<EpisodeInfo>() {
             override fun areItemsTheSame(
-                oldItem: ShortDramaInfo,
-                newItem: ShortDramaInfo
+                oldItem: EpisodeInfo,
+                newItem: EpisodeInfo
             ): Boolean {
-                return oldItem.dramasId == newItem.dramasId
+                return oldItem.storyId == newItem.storyId
             }
 
             override fun areContentsTheSame(
-                oldItem: ShortDramaInfo,
-                newItem: ShortDramaInfo
+                oldItem: EpisodeInfo,
+                newItem: EpisodeInfo
             ): Boolean {
                 return oldItem == newItem
             }

@@ -1,7 +1,7 @@
 package com.kgmedia.fastfilm.kit.media
 
 import androidx.media3.common.Player
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 
 /**
  * Defines a TrackPlayer interface that extends the Player interface.
@@ -17,9 +17,9 @@ interface TrackPlayer: Player {
         /**
          * This method is called when the track changes.
          * @param lastState The state of the player before the change.
-         * @param dramaInfo The information of the track after the change.
+         * @param workInfo The information of the track after the change.
          */
-        fun onTrackChanged(lastState: State?, dramaInfo: DramaInfo?)
+        fun onTrackChanged(lastState: State?, workInfo: WorkInfo?)
     }
 
     /**
@@ -36,13 +36,13 @@ interface TrackPlayer: Player {
 
     /**
      * Sets the track information to be played.
-     * @param dramaInfo The track information to set for the current playback
+     * @param workInfo The track information to set for the current playback
      */
-    fun setTrack(dramaInfo: DramaInfo?)
+    fun setTrack(workInfo: WorkInfo?)
 
     /**
      * Gets the information of the currently playing track.
      * @return The information of the currently playing track, or null if no track is playing.
      */
-    fun currentTrack(): DramaInfo?
+    fun currentTrack(): WorkInfo?
 }

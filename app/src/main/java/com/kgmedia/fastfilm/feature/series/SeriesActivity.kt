@@ -12,8 +12,8 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.PlaylistDataTransfer
 import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
+import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
-import com.kgmedia.fastfilm.feature.series.editinfo.EditInfoActivity
 import com.kgmedia.fastfilm.feature.series.more.SeriesMoreDialog
 import com.kgmedia.fastfilm.feature.series.setprice.SetPriceDialog
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
@@ -43,7 +43,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
     private val seriesId by lazy { intent.getStringExtra(Constants.Extra.ID) }
     private val eventVm by lazy { ItemEventsViewModel<SeriesEpisodeEvent>() }
-    private val episodeAdapter by lazy { SeriesEpisodeAdapter(eventVm) }
+    private val episodeAdapter by lazy { EpisodeAdapter(eventVm) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,17 +120,13 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         observeEvents {
             on<Events.SeriesUpdatedEvent> { event ->
                 if (isActive && event.seriesId == seriesId) {
-                    mRealVM.getSeriesInfo()
+                    mRealVM.getWorkDtl()
                 }
             }
             on<Events.ShortDramasEditInfoEvent> { event ->
-                if (episodeAdapter.snapshot().any { it?.dramasId == event.dramaId }) {
+                if (episodeAdapter.snapshot().any { it?.storyId == event.dramaId }) {
                     refresh()
                 }
-            }
-            on<Events.UnLockEvent> { event ->
-                episodeAdapter.snapshot().items.find { it.dramasId == event.dramasId }?.unlockInfo?.unlockStatus = 1
-                episodeAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -139,17 +135,17 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         super.onClick(view, data)
         when (view?.id) {
             R.id.btnEdit -> {
-                EditInfoActivity.start(seriesId)
+                DramaInfoEditActivity.start(this, mRealVM.workInfo.get())
             }
 
             R.id.btnMore -> {
-                val series = mRealVM.series.get() ?: return
-                SeriesMoreDialog.show(null, seriesId, series.launchStatus == 1)
+                val series = mRealVM.workInfo.get() ?: return
+                SeriesMoreDialog.show(null, seriesId, series.workStatus == 60)
             }
 
             R.id.btnContinue -> {
-                mRealVM.series.get()?.let {
-                    ContinueWritingActivity.start(this, seriesId, it.seriesName)
+                mRealVM.workInfo.get()?.let {
+                    ContinueWritingActivity.start(this, seriesId, it.workTitle)
                 }
             }
         }

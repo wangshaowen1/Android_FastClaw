@@ -2,16 +2,12 @@ package com.kgmedia.fastfilm.feature.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.DramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
@@ -63,8 +59,8 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     // 1. 定义 UI 需要观察的数据流
-    private val _feedFlow = MutableStateFlow<PagingData<DramaInfo>>(PagingData.empty())
-    val feedFlow: Flow<PagingData<DramaInfo>> = _feedFlow
+    private val _feedFlow = MutableStateFlow<PagingData<WorkInfo>>(PagingData.empty())
+    val feedFlow: Flow<PagingData<WorkInfo>> = _feedFlow
 
     init {
         loadData("")

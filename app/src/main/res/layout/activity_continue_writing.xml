@@ -42,7 +42,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_avatar"
-                loadHQThumbnailUri="@{layout.episodeInfo.workCoverUrl}"
+                loadHQThumbnailUri="@{layout.workInfo.workCoverUrl}"
                 android:layout_width="78dp"
                 android:layout_height="104dp"
                 android:scaleType="centerCrop"
@@ -58,7 +58,7 @@
                 android:layout_marginStart="@dimen/spacing_m"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{`第`+layout.info.sortNo+`集 | `+layout.info.storyTitle}"
+                android:text="@{`第`+layout.episodeInfo.sortNo+`集 | `+layout.episodeInfo.storyTitle}"
                 android:textColor="?attr/textColor1"
                 app:layout_constraintBottom_toTopOf="@id/tv_desc"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -76,7 +76,7 @@
                 android:layout_marginTop="@dimen/spacing_s"
                 android:ellipsize="end"
                 android:maxLines="4"
-                android:text="@{layout.info.storySummary}"
+                android:text="@{layout.episodeInfo.storySummary}"
                 android:textColor="?attr/textColor4"
                 app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
                 app:layout_constraintEnd_toEndOf="parent"
