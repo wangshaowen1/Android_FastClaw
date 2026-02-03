@@ -23,9 +23,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     companion object {
         const val TAG = "DramaGenerateStep1ViewModel"
-        const val DISPLAY_LOADING = 0
         const val DISPLAY_FAIL = 1
-        const val DISPLAY_CONTENT = 2
+        const val DISPLAY_CONTENT = 0
     }
 
     var inspiration: String? = null
@@ -39,7 +38,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     var mContent = ObservableField<String>()
     var mWorkName = MutableLiveData<String>()
 
-    val displayChild = ObservableInt(DISPLAY_LOADING)
+    val displayChild = ObservableInt(DISPLAY_CONTENT)
     val nextStepEnabled by lazy { ObservableBoolean(false) }
 
     var onSSECompleted: (() -> Unit)? = null
@@ -52,7 +51,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         nextStepEnabled.set(false)
         // 1. 准备请求 Flow
         val sseFlow = mRepo.api.sseContentSynopsis(AISynopsisBody(inspiration, episodeRangeCode, customEpisodeCount))
-
+        displayChild.set(DISPLAY_CONTENT)
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
@@ -61,10 +60,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 scope = viewModelScope,
                 onStart = {
                     originalJson = ""
-                    displayChild.set(DISPLAY_CONTENT)
                     mSSEContent.value = ""
                     mContent.set("")
-
                     Logger.d("[SSE]", "Open")
                 },
                 onTitleUpdate = { title ->

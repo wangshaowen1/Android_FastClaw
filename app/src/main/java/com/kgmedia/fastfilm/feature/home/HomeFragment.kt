@@ -6,6 +6,7 @@ import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
+import com.kgmedia.fastfilm.core.databinding.loadUri
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
@@ -67,8 +68,7 @@ class HomeFragment :
             ) {
                 holder?.apply {
                     val image = findViewById<ImageView>(R.id.image)
-                    GlideImageLoader.with(image).load(data.imageUrl)
-                        .into(image)
+                    loadUri(image,data.imageUrl)
                     image.setOnSingleClickListener {
                         AppRouter.jump(data.jumpCode)
                     }

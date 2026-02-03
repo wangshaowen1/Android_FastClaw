@@ -9,12 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.Global
-import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
-import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
@@ -48,6 +45,8 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     override fun onCreate() {
         super.onCreate()
+        hint.set(if (inspirationModel()) "写下你的故事灵感，AI将帮你扩展成完整剧情" else "请粘贴一章完整的原创或已授权小说内容，用于改编创作")
+        maxInputLength.set(if(inspirationModel()) 1000 else 5000)
         input.value = if (inspirationModel()) Global.inspirationContent else Global.customizedContent
         if (inspirationModel()) {
             randomInspirations()
@@ -195,26 +194,5 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         requestWithLoading({ mRepo.getInspirationQuickList() }, showLoading = showLoading) {
             inspirationPrompts.value = data?.items
         }
-    }
-
-    fun nextStep(callback: (String?) -> Unit) {
-        launchWithLoading(showLoading = true, {
-            val promptResponse =
-                mRepo.creationGeneratePre(
-                    CreationGeneratePreBody(
-                        if (inspirationModel()) CreationGeneratePreBody.GEN_WAY_INSPIRATION else CreationGeneratePreBody.GEN_WAY_CUSTOMIZED,
-                        input.value,
-                        null,
-                        null,
-                    )
-                )
-            if (promptResponse.isSuccess) {
-                callback.invoke(promptResponse.data?.dramasId)
-            } else {
-                promptResponse.msg?.showToast()
-            }
-        }, onError = {
-            parseMessage(it)?.showToast()
-        })
     }
 }

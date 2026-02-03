@@ -44,11 +44,23 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:drawableTop="@drawable/ic_loading_fail"
-                    android:drawablePadding="@dimen/spacing_l"
                     android:gravity="center"
                     android:text="生成失败"
                     android:textColor="?attr/textColor4"
                     android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/btnRegenerate"
+                    style="@style/Button.Bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:gravity="center"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="6dp"
+                    android:text="重新生成"
+                    android:textSize="12sp" />
             </LinearLayout>
         </ViewAnimator>
 
@@ -62,8 +74,8 @@
             <Button
                 android:id="@+id/btnNext"
                 style="@style/Button.Bold"
-                android:enabled="@{layout.nextStepEnabled}"
                 android:layout_width="match_parent"
+                android:enabled="@{layout.nextStepEnabled}"
                 android:text="下一步：创建剧本" />
         </FrameLayout>
     </LinearLayout>

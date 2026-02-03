@@ -45,8 +45,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     var workId = MutableLiveData<String>()
     var episodeId: String? = null
 
-    val displayChild = ObservableInt(DISPLAY_LOADING)
     val nextStepEnabled by lazy { ObservableBoolean(false) }
+    val sseOutputComplete by lazy { ObservableBoolean(false) }
+    val sseOutputFail by lazy { ObservableBoolean(false) }
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
@@ -59,6 +60,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             mRepo.api.sseScriptFromIdea(AIExpandBody(episodeId, workId.value, model))
         }
         nextStepEnabled.set(false)
+        sseOutputComplete.set(false)
+        sseOutputFail.set(false)
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
@@ -66,7 +69,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             processor = StorySseProcessor(
                 scope = viewModelScope,
                 onStart = {
-                    displayChild.set(DISPLAY_LOADING)
                     input.value = ""
                     originalJson = ""
                     Logger.d("[SSE]", "Open")
@@ -77,13 +79,15 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 onComplete = { originalContent ->
                     nextStepEnabled.set(true)
+                    sseOutputComplete.set(true)
                     originalJson = originalContent
                     Logger.d("[SSE]", "Finished")
                     // 触发原本结束后的逻辑
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
-                    displayChild.set(DISPLAY_FAIL)
+                    sseOutputComplete.set(true)
+                    sseOutputFail.set(true)
                     // 根据需要处理特定错误
                 })
         )

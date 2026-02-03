@@ -49,6 +49,10 @@ class WorkInfo(
         return playCount?.toUnitText()
     }
 
+    fun getEpisodeId(index: Int = 0): String? {
+        return workStoryItemList?.getOrNull(index)?.storyId
+    }
+
     override fun toString(): String {
         return "DramaInfo(id=$workId, name=$workTitle, playUrl=${getPlayUrl()} })"
     }

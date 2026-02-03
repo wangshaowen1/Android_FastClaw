@@ -85,6 +85,10 @@ class DramaGenerateStep1Fragment :
                 mRealVM.mWorkName.value = it
             }
         }
+        binding.btnRegenerate.setOnSingleClickListener {
+            mRealVM.sseGenerate()
+            hostVm?.backWarning = true
+        }
         binding.btnNext.setOnSingleClickListener {
             mRealVM.confirmGenerate { workId, storyId ->
                 hostVm?.nextStep(2, workId, storyId)
