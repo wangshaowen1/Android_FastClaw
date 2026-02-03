@@ -1,7 +1,6 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import com.kgmedia.fastfilm.core.AppRepository
-import com.kgmedia.fastfilm.core.network.apis.ApiConstants
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
@@ -10,7 +9,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.http.POST
 
 /**
  * 资产管理
@@ -53,7 +51,6 @@ class AssetManagementRepository : AppRepository() {
      * @param appearanceId 当前资产形象ID 查询单个时入参
      * @param workId 作品 ID
      * @param storyId 剧集 id
-     * @param creationSource [枚举]创建来源 [1=AI生成 2=用户创建]
      * @param sceneName 场景名称
      * @param scenePrompt 场景图片描述提示词
      */
@@ -62,11 +59,10 @@ class AssetManagementRepository : AppRepository() {
         appearanceId: String?,
         workId: String?,
         storyId: String?,
-        creationSource: Int?,
         sceneName: String?,
         scenePrompt: String?
     ) = withContext(Dispatchers.IO) {
-        api.workAssetSceneSave(SaveSceneBody(sceneId, appearanceId, workId, storyId, creationSource, sceneName, scenePrompt))
+        api.workAssetSceneSave(SaveSceneBody(sceneId, appearanceId, workId, storyId, sceneName, scenePrompt))
     }
 
     /**
@@ -136,7 +132,6 @@ class AssetManagementRepository : AppRepository() {
     /**
      * 道具单个删除
      */
-    @POST(ApiConstants.WORK_ASSET_PROP_DELETE)
     suspend fun workAssetPropDelete(ids: List<String>?, id: String?) = withContext(Dispatchers.IO) {
         api.workAssetPropDelete(IdsBody(ids, id))
     }

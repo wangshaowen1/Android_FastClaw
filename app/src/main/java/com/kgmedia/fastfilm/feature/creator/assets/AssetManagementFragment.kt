@@ -57,12 +57,8 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
                 scrollToProps()
             }
 
-            R.id.btnOneKeyGenerate -> {
-
-            }
-
             R.id.btnNext -> {
-
+                // TODO: 分镜管理
             }
         }
     }

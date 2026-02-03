@@ -15,32 +15,34 @@ data class SimpleSceneInfo(
     /**
      * 场景主键id
      */
-    val sceneId: String?,
+    val sceneId: String? = null,
     /**
      * 当前资产形象ID（参考图id）
      */
-    val appearanceId: String?,
+    var appearanceId: String? = null,
     /**
      * 场景名称
      */
-    val sceneName: String?,
+    var sceneName: String? = null,
     /**
      * 场景图片描述提示词
      */
-    val scenePrompt: String?,
+    var scenePrompt: String? = null,
     /**
      * 场景图片URL
      */
-    val imageUrl: String?,
+    var imageUrl: String? = null,
     /**
      * [枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
      */
-    val genStatus: Int?,
+    var genStatus: Int? = null,
     /**
      * 任务ID (雪花算法)
      */
-    val taskId: String?
+    var taskId: String? = null
 ) : SimpleAsset {
+    override val status: Int?
+        get() = genStatus
     override val assetDesc: String?
         get() = scenePrompt
     override val assetName: String?

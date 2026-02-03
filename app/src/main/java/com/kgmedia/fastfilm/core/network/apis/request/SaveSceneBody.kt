@@ -29,10 +29,6 @@ data class SaveSceneBody(
      */
     val storyId: String?,
     /**
-     * [枚举]创建来源 [1=AI生成 2=用户创建]
-     */
-    val creationSource: Int?,
-    /**
      * 场景名称
      */
     val sceneName: String?,

@@ -25,7 +25,7 @@
             android:layout_marginStart="15dp"
             android:scaleType="centerCrop"
             android:src="?attr/fillColor1"
-            android:visibility="@{item.status == 3 ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{item.status == 2 ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintDimensionRatio="108:152"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -33,7 +33,7 @@
             app:riv_corner_radius="8dp" />
 
         <ImageView
-            setVisible="@{item.status == 3}"
+            setVisible="@{item.status == 2}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
@@ -43,7 +43,7 @@
 
         <ImageView
             android:id="@+id/btnPreview"
-            setVisible="@{item.status == 3}"
+            setVisible="@{item.status == 2}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="36dp"
             android:layout_height="36dp"
@@ -63,7 +63,7 @@
 
         <LinearLayout
             android:id="@+id/btnAddImg"
-            setVisible="@{item.status == 0}"
+            setVisible="@{item.status &lt; 1}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -179,7 +179,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@{item.status == 0 ? `生成角色` : `重新生成`}"
+                android:text="@{item.status &lt; 1 ? `生成角色` : `重新生成`}"
                 android:textAppearance="@style/Text13"
                 android:textColor="@android:color/white"
                 app:endColor="#8F83FF"

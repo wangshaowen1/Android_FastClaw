@@ -70,6 +70,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbrePagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.EditDramaBody
 import com.kgmedia.fastfilm.core.network.apis.request.FeedbackBody
+import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.HitRecommendPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImageUrlBody
@@ -1078,7 +1079,7 @@ interface ApiService {
      * 场景保存
      */
     @POST(ApiConstants.WORK_ASSET_SCENE_SAVE)
-    suspend fun workAssetSceneSave(@Body body: SaveSceneBody): ApiResponse<Any>
+    suspend fun workAssetSceneSave(@Body body: SaveSceneBody): ApiResponse<SimpleSceneInfo?>
 
     /**
      * 场景单个删除
@@ -1096,7 +1097,7 @@ interface ApiService {
      * 角色保存
      */
     @POST(ApiConstants.WORK_ASSET_ROLE_SAVE)
-    suspend fun workAssetRoleSave(@Body body: SaveRoleBody): ApiResponse<Any>
+    suspend fun workAssetRoleSave(@Body body: SaveRoleBody): ApiResponse<SimpleRoleInfo?>
 
     /**
      * 角色单个删除
@@ -1114,13 +1115,19 @@ interface ApiService {
      * 道具保存
      */
     @POST(ApiConstants.WORK_ASSET_PROP_SAVE)
-    suspend fun workAssetPropSave(@Body body: SavePropBody): ApiResponse<Any>
+    suspend fun workAssetPropSave(@Body body: SavePropBody): ApiResponse<SimplePropInfo?>
 
     /**
      * 道具单个删除
      */
     @POST(ApiConstants.WORK_ASSET_PROP_DELETE)
     suspend fun workAssetPropDelete(@Body body: IdsBody): ApiResponse<Any>
+
+    /**
+     * 生成单个资产图片（重新生成/生成）
+     */
+    @POST(ApiConstants.WORK_ASSET_SINGLE_GENERATE)
+    suspend fun workAssetSingleGenerate(@Body body: GenerateAssetBody): ApiResponse<TaskStatusInfo?>
 
     /**
      * 举报提交

@@ -15,32 +15,34 @@ data class SimplePropInfo(
     /**
      * 道具主键 id
      */
-    val propId: String?,
+    val propId: String? = null,
     /**
      * 当前资产形象ID（参考图id）
      */
-    val appearanceId: String?,
+    var appearanceId: String? = null,
     /**
      * 道具名称
      */
-    val propName: String?,
+    var propName: String? = null,
     /**
      * 道具图片描述提示词
      */
-    val propPrompt: String?,
+    var propPrompt: String? = null,
     /**
      * 道具图片URL
      */
-    val imageUrl: String?,
+    var imageUrl: String? = null,
     /**
      * [枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
      */
-    val genStatus: Int?,
+    var genStatus: Int? = null,
     /**
      * 任务ID (雪花算法)
      */
-    val taskId: String?
+    var taskId: String? = null
 ) : SimpleAsset {
+    override val status: Int?
+        get() = genStatus
     override val assetDesc: String?
         get() = propPrompt
     override val assetName: String?

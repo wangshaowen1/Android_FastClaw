@@ -777,6 +777,10 @@ object ApiConstants {
      */
     const val WORK_ASSET_PROP_DELETE = "/work/asset/prop/delete"
 
+    /**
+     * 生成单个资产图片（重新生成/生成）
+     */
+    const val WORK_ASSET_SINGLE_GENERATE = "ai/asset/generation/single/image"
 
     /**
      * 举报提交

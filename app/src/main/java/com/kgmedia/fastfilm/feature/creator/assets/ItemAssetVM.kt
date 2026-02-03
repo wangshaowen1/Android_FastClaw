@@ -7,11 +7,21 @@ import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 
-abstract class ItemAssetVM<Item : SimpleAsset>(data: Item?, create: Boolean = false) : AppItemViewModel<Item>(data) {
+abstract class ItemAssetVM<Item : SimpleAsset>(
     /**
-     * 0 新创建 1 生成中 2 上传失败 3 已生成
+     * 作品 ID
      */
-    val status by lazy { ObservableInt(if (create) 0 else 3) }
+    val workId: String?,
+    /**
+     * 剧集 id
+     */
+    val storyId: String?,
+    data: Item?
+) : AppItemViewModel<Item>(data) {
+    /**
+     * -1=新创建 0=待生成 1=生成中 2=成功 3=失败
+     */
+    val status by lazy { ObservableInt(data?.status ?: -1) }
 
     /**
      * 当前应用的资源描述
@@ -47,7 +57,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(data: Item?, create: Boolean = fa
         editingAssetDescText = assetDesc.get()
     }
 
-    fun exitEditAssetDesc() {
+    open fun exitEditAssetDesc() {
         assetDescInputListener.set(null)
         editingAssetDesc.set(false)
         assetDesc.set(editingAssetDescText)
@@ -63,11 +73,13 @@ abstract class ItemAssetVM<Item : SimpleAsset>(data: Item?, create: Boolean = fa
         editingAssetNameText = assetName.get()
     }
 
-    fun exitEditAssetName() {
+    open fun exitEditAssetName() {
         assetNameInputListener.set(null)
         editingAssetName.set(false)
         assetName.set(editingAssetNameText)
     }
 
     abstract fun generate()
+
+    abstract fun deleteAsset()
 }

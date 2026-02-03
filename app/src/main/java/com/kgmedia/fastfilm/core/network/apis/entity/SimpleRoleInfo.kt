@@ -1,7 +1,5 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
-import com.xingin.xhssharesdk.b.r
-
 /**
  * {
  *     "roleId": "角色主键id",
@@ -17,32 +15,34 @@ data class SimpleRoleInfo(
     /**
      * 角色主键id
      */
-    val roleId: String?,
+    val roleId: String? = null,
     /**
      * 当前资产形象ID（参考图id）
      */
-    val appearanceId: String?,
+    var appearanceId: String? = null,
     /**
      * 角色名称
      */
-    val roleName: String?,
+    var roleName: String? = null,
     /**
      * 角色图片描述提示词
      */
-    val rolePrompt: String?,
+    var rolePrompt: String? = null,
     /**
      * 角色图片URL
      */
-    val imageUrl: String?,
+    var imageUrl: String? = null,
     /**
      * [枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
      */
-    val genStatus: Int?,
+    var genStatus: Int? = null,
     /**
      * 任务ID (雪花算法)
      */
-    val taskId: String?
+    var taskId: String? = null
 ) : SimpleAsset {
+    override val status: Int?
+        get() = genStatus
     override val assetDesc: String?
         get() = rolePrompt
     override val assetName: String?
