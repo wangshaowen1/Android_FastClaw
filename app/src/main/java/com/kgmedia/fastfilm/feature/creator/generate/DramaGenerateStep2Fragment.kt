@@ -48,17 +48,16 @@ class DramaGenerateStep2Fragment :
                 binding.inputView.setText(mRealVM.input.value)
             }
         }
+        mRealVM.sseOutputComplete.observe(this) {
+            hostVm?.backWarning = false
+        }
         binding.inputView.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 mRealVM.input.value = s.toString()
             }
         })
-        mRealVM.workId.observe(this) {
-            hostVm?.backWarning = false
-            hostVm?.workId = it
-        }
-
         binding.btnRegenerate.setOnSingleClickListener {
+            hostVm?.backWarning = true
             mRealVM.sseGenerate()
         }
         binding.btnDelete.setOnClickListener {

@@ -34,7 +34,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     var videoStyleId: String? = null
 
     var mSSEContent = MutableLiveData<String>()
-    var workId = MutableLiveData<String>()
     var mContent = ObservableField<String>()
     var mWorkName = MutableLiveData<String>()
 
