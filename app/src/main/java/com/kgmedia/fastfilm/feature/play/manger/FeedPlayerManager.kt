@@ -94,7 +94,7 @@ class FeedPlayerManager(
 
         isSeeking = false
         isUserPaused = false // 切视频重置暂停状态
-        currentPlayingId = track.id
+        currentPlayingId = track.workId
 
         // 解绑旧 View
         if (currentCoverPlayerView != null && currentCoverPlayerView != coverPlayerView) {
