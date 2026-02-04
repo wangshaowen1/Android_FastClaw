@@ -72,6 +72,14 @@ class DramaInfoEditActivity :
             R.id.btnConfirm -> {
                 mRealVM.saveInfo()
             }
+
+            R.id.btnOptimize -> {
+                mRealVM.sseGenerate()
+            }
+
+            R.id.btnDelete -> {
+                mRealVM.desc.value = ""
+            }
         }
     }
 

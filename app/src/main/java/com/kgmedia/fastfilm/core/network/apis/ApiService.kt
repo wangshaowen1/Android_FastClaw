@@ -360,7 +360,7 @@ interface ApiService {
     fun sseContentOptimize(@Body body: SSEContentBody): Flow<SSEvent>
 
     /**
-     * SSE流式输出：业务类型枚举10=随机灵感 11=AI优化灵感 20=剧集梗概 30=梗概剧集剧本 31=小说剧集剧本 32=扩写剧集剧本 33=优化作品简介
+     * 随机灵感
      */
     @Headers(
         "Accept: text/event-stream",  // 声明 SSE 媒体类型
@@ -369,6 +369,17 @@ interface ApiService {
     )
     @POST(ApiConstants.SSE_CONTENT_RANDOM)
     fun sseContentRandom(@Body body: UserTokenBody): Flow<SSEvent>
+
+    /**
+     * 作品简介优化
+     */
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SSE_WORK_DESC_OPTIMIZE)
+    fun sseWorkDescOptimize(@Body body: SSEContentBody): Flow<SSEvent>
 
     /**
      *灵感故事剧本（基于灵感写剧本/灵感续写/小说续写）

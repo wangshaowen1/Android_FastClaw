@@ -1,8 +1,10 @@
 package com.kgmedia.fastfilm.feature.editor.info
 
 import android.graphics.Color
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
@@ -12,11 +14,15 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
+import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
+import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
+import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.utils.Logger
 
 class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
@@ -78,6 +84,47 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
         requestWithLoading({ mRepo.api.updateWorkInfo(WorkInfoUpdateBody(workInfo?.workId, cover.get(), name.value, desc.value)) }) {
             finish()
         }
+    }
+
+    private var sseHandler: SSEStreamHandler? = null
+
+    fun sseGenerate() {
+        val sseFlow = mRepo.api.sseWorkDescOptimize(SSEContentBody(desc.value, 34))
+        // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
+        sseHandler?.cancel()
+        sseHandler = SSEStreamHandler(
+            scope = viewModelScope, // 传入协程作用域
+            processor = PlainTextSseProcessor(
+                scope = viewModelScope,
+                onStart = {
+                    Logger.d("[SSE]", "Open")
+                    desc.value = ""
+                },
+                onUpdate = { fullContent ->
+                    // 这里自动包含了 50ms 的节流逻辑，直接设置即可
+                    desc.value = fullContent
+                },
+                onComplete = {
+                    Logger.d("[SSE]", "Finished")
+                    // 触发原本结束后的逻辑
+                },
+                onErrorCallback = { e ->
+                    Log.e("[SSE]", "Error: $e")
+                    // 根据需要处理特定错误
+                    e?.message?.showToast()
+                })
+        )
+        // 3. 启动
+        Logger.d("[SSE]", "Starting with content body = $desc")
+        sseHandler?.start(sseFlow)
+    }
+
+    /**
+     * 页面销毁或需要重置时调用
+     */
+    override fun onCleared() {
+        super.onCleared()
+        sseHandler?.cancel()
     }
 
     /**

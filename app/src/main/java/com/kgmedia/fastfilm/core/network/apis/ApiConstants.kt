@@ -206,6 +206,11 @@ object ApiConstants {
     const val SSE_CONTENT_RANDOM = "ai/stream/inspiration/random"
 
     /**
+     * 作品简介优化
+     */
+    const val SSE_WORK_DESC_OPTIMIZE = "/ai/stream/intro/refine"
+
+    /**
      * 灵感故事剧本（基于灵感写剧本/灵感续写/小说续写）
      */
     const val SSE_SCRIPT_FROM_IDEA = "ai/stream/script/from-idea"
