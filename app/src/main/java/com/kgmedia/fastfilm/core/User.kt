@@ -91,17 +91,23 @@ class User : IUser {
 
     fun updateFrom(userData: UserHomeData?) {
         if (userData == null) return
-        storeUserId(userData.userId)
+        userData.userId?.apply {
+            storeUserId(this)
+        }
         storePhoneNum(userData.phoneNum)
         storeUserName(userData.userName)
         storeNickname(userData.nickName)
         storeNickname(userData.gender)
         storeAvatar(userData.avatarUrl)
         storeUserSource(userData.userSource)
-        storeRegisterWay( userData.registerWay)
+        storeRegisterWay(userData.registerWay)
         storeLastLoginTime(userData.lastLoginTime)
-        storeRegisterStatus( userData.registerStatus)
-        storeToken(userData.token)
+        userData.registerStatus?.apply {
+            storeRegisterStatus(this)
+        }
+        userData.token?.apply {
+            storeToken(this)
+        }
         notifyChange()
 
         if (id.isNullOrEmpty()) {
@@ -109,13 +115,7 @@ class User : IUser {
         }
         GrowingAutotracker.get().setLoginUserId(id)
         val mutableMap = mutableMapOf(
-//            "jg_user_jingguo_registratio_time" to get().creationTime.toString(),//用户在金果上注册账户的时间，用户成功注册时更新，或用户登录到新版本后上初始化上传数据时候更新
             "jg_user_jinguo_id" to get().userId,//用户金果唯一 Id，用户成功注册时更新，或用户登录到新版本后上初始化上传数据时候更新
-//            "jg_vip_type" to get().vipType.toString(),//0=非会员，未购买会员服务 1=初级会员 2=中级会员 3=高级会员/高级会员 当前会员的状态，当用户购买会员或会员过期的时候需要更新
-//            "xy_user_age_bracket" to ageMsg,//用户选择的年龄段；用户更新该数据的时候更新
-
-//            "\$basic_createdAt" to creationTime.toString(),//注册时间
-//            "\$basic_birthday" to birthday,//出生年月日
             "\$basic_mobile" to get().phoneNum,//手机号
             "\$basic_gender" to if (gender == FEMALE) "FEMALE" else "MALE",//性别
             "\$basic_name" to nickName,//姓名
@@ -178,7 +178,7 @@ class User : IUser {
 
 
     override fun getId(): String? {
-        return "ZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKSVV6STFOaUo5LmV5SndhRzl1WlU1MWJTSTZJakUzTXpZek9ERXlPVFUySWl3aWRYTmxja2xrSWpvek5UZzBOVEV3T1RnMU9EVTNOVE0zTENKbGVIQWlPakUzTnpFek9UTXdNalI5LmlEZDNNN2dzTDU1MXBzSmx5aVJIQmItdldhUk0zMFNTS1VZeDQ1dS1CY3M="//token
+        return token
     }
 
     /**
@@ -245,6 +245,7 @@ class User : IUser {
         this.userSource = userSource ?: 0
         sp.putInt(USER_SOURCE, userSource ?: 0)
     }
+
     /**
      * 注册方式
      * @param registerWay 1-短信验证码 2-闪验 3-微信登录 4-qq登录 5-苹果登录 6-微信小程序 7-账号密码
@@ -260,7 +261,7 @@ class User : IUser {
      */
     fun storeLastLoginTime(lastLoginTime: String?) {
         this.lastLoginTime = lastLoginTime
-        sp.putString(LAST_LOGIN_TIME, lastLoginTime )
+        sp.putString(LAST_LOGIN_TIME, lastLoginTime)
     }
 
     /**
@@ -278,7 +279,7 @@ class User : IUser {
      */
     fun storeToken(token: String?) {
         this.token = token
-        sp.putString(TOKEN, token )
+        sp.putString(TOKEN, token)
     }
 
 
