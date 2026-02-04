@@ -9,7 +9,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.DanmakuItem
 import com.kgmedia.fastfilm.core.network.apis.entity.DramasTimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DubbingGenStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.GuideBarStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.HitTabInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
@@ -883,11 +882,6 @@ interface ApiService {
     @POST(ApiConstants.EPISODE_LIST)
     suspend fun episodeList(@Body body: WorkIdPagedBody): ApiResponse<PagedList<EpisodeInfo>?>
 
-    /**
-     * 新用户创作体验引导条
-     */
-    @POST(ApiConstants.NEW_USER_CREATION_GUIDE_BAR)
-    suspend fun newUserCreationGuideBar(@Body body: UserTokenBody): ApiResponse<GuideBarStatusInfo?>
 
     /**
      * 分页查询我追的剧集列表

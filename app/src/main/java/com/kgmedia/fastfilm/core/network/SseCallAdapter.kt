@@ -52,36 +52,7 @@ class SseCallAdapter(private val responseType: Type) :
         }
     }
 
-    //if (RetrofitClient.mSseOkHttpClient == null) {
-    //            RetrofitClient.mSseOkHttpClient = OkHttpClient.Builder()
-    //                .addInterceptor(object : Interceptor {
-    //                    @Throws(IOException::class)
-    //                    override fun intercept(chain: Interceptor.Chain): Response {
-    //                        val original = chain.request()
-    //                        if ("GET" == original.method) {
-    //                            return chain.proceed(original)
-    //                        }
-    //                        val requestBuilder = original.newBuilder()
-    //                            .header("Cache-Control", "no-cache")
-    //                            .header("Content-Type", "application/json")
-    //                            .header("Accept", "text/event-stream;charset=UTF-8")
-    //                            .header("userToken", if (User.get() == null || User.get().id == null) "" else User.get().id)
-    //                            .header("appHeader", Gson().toJson(AppHeader()))
-    //                        try {
-    //                            //encryptRequestBody(requestBuilder, original.method, original.body)
-    //                        } catch (e: java.lang.Exception) {
-    //                            e.printStackTrace()
-    //                        }
-    //                        val request = requestBuilder.build()
-    //                        return chain.proceed(request)
-    //                    }
-    //                })
-    //                .protocols(listOf(Protocol.HTTP_1_1))
-    //                .readTimeout(0, TimeUnit.SECONDS) // 禁用读超时
-    //                .connectTimeout(10, TimeUnit.SECONDS)
-    //                .connectionPool(ConnectionPool(0, 1, TimeUnit.MILLISECONDS))
-    //                .build()
-    //        }
+
     override fun adapt(call: Call<EventSource>): Flow<SSEvent> = callbackFlow {
         val factory = RetrofitClient.sseEventFactory
         var eventSource: EventSource? = null

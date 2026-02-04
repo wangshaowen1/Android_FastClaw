@@ -8,15 +8,10 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
-import com.kgmedia.fastfilm.core.network.apis.entity.GuideBarStatusInfo
-import com.kgmedia.fastfilm.core.network.apis.request.AppFloatWindowsBody
-import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
-import com.kgmedia.fastfilm.core.network.apis.response.AppFloatWindowsInfo
 import com.kgmedia.fastfilm.core.network.apis.response.DramasInfoData
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.play.more.ShareShortDramaViewModel
-import com.kgmedia.fastfilm.router.AppRouter
 
 /**
  * *****************************************
@@ -43,18 +38,9 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
     //去创作
     val startCreating = MutableLiveData<Boolean>()
 
-    //悬浮球信息
-    val appFloatWindows = ObservableField<AppFloatWindowsInfo?>()
-
     //val generating get() = GeneratingViewModel
     val generating = ObservableField<DramasInfoData>()
     val unreadNum by lazy { ObservableInt() }
-
-    //第一个作品引导条
-    val firstWorkGuideBar = ObservableField<GuideBarStatusInfo>()
-
-    //是否强制关闭第一个作品引导条
-    var forceCloseFirstWorkGuideBar = false
 
     fun initialization() {
         //获取用户主页信息接口
@@ -70,10 +56,6 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
             messagesUnreadNum()
         } else {
             unreadNum.set(0)
-        }
-        if (User.get().isLogged) {
-            getFirstWorkGuideBarInfo()
-            getGeneratingInfo()
         }
     }
 
@@ -101,16 +83,6 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
         )
     }
 
-    fun getAppFloatWindowsInfo() {
-        launch {
-            response(
-                bean = mRepo.api.getAppFloatWindows(AppFloatWindowsBody()),
-                result = {
-                    appFloatWindows.set(data?.items?.firstOrNull { windowsInfo -> windowsInfo.floatIconCode == AppFloatWindowsInfo.FLOAT_ICON_CODE_HOME })
-                }
-            )
-        }
-    }
 
     /**
      * 用户日活记录
@@ -139,48 +111,5 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
         return if (showTab == 0) R.color.main_tab_txt_color_dark else R.color.main_tab_txt_color
     }
 
-    private fun getFirstWorkGuideBarInfo() {
-        if (forceCloseFirstWorkGuideBar) {
-            firstWorkGuideBar.set(null)
-            return
-        }
-        launch {
-            response(
-                bean = mRepo.api.newUserCreationGuideBar(UserTokenBody()),
-                result = {
-                    firstWorkGuideBar.set(if (forceCloseFirstWorkGuideBar) null else data)
-                })
-        }
-    }
 
-    fun clickFirstWorkGuideBar() {
-        firstWorkGuideBar.get()?.dramasId?.let {
-            AppRouter.startShortDrama(it)
-        }
-    }
-
-    fun forceCloseFirstWorkGuideBar() {
-        forceCloseFirstWorkGuideBar = true
-        firstWorkGuideBar.set(null)
-    }
-
-    private fun getGeneratingInfo() {
-        launch {
-            response(
-                bean = mRepo.api.getGeneratingInfo(UserTokenBody()),
-                result = {
-                    generating.set(data)
-                })
-        }
-    }
-
-    fun closeGeneratingDramas() {
-        val dramasId = generating.get()?.dramasId
-        generating.set(null)
-        launch {
-            response(
-                mRepo.api.closeGeneratingDramas(DramasIdBody(dramasId)),
-            ) {}
-        }
-    }
 }

@@ -60,7 +60,7 @@ object ApiConstants {
     /**
      * 提交用户的反馈数据
      */
-    const val FEED_BACK = "user/feedback/submit"
+    const val FEED_BACK = "app/feedback/save"
 
     /**
      * 分页查询生成中状态的歌曲列表-轮询使用
@@ -580,10 +580,6 @@ object ApiConstants {
      */
     const val EPISODE_LIST = "work/storyPage"
 
-    /**
-     * 新用户创作体验引导条
-     */
-    const val NEW_USER_CREATION_GUIDE_BAR = "user/newUserCreationGuideBar"
 
     /**
      * 分页查询我追的剧集列表

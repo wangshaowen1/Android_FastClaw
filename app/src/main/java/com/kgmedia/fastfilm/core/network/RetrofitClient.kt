@@ -45,38 +45,11 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
 object RetrofitClient {
-    private val noDuplicatedRequestUrls = CollectionUtils.newHashSet<String>()
     private val debug = App.instance.isDebug
 
     private val mRetrofits = HashMap<String, Retrofit>()
     private val gson: Gson by lazy {
         GsonBuilder().registerTypeAdapter(Any::class.java, ObjectTypeAdapter()).create()
-    }
-
-    // 请求配置 - 使用lazy初始化避免重复创建
-    private val requestConfig by lazy {
-        object : DuplicatedRequestFilterInterceptor.RequestConfig {
-            override fun shouldFilter(url: String): Boolean {
-                val api = url.replaceFirst("${ApiConstants.BASE_URL}/", "")
-                return !noDuplicatedRequestUrls.contains(api)
-            }
-
-            override fun shouldCache(url: String): Boolean = false
-
-            override fun generateCacheKey(request: Request): String {
-                Buffer().use { buffer ->
-                    try {
-                        request.body?.writeTo(buffer)
-                    } catch (e: IOException) {
-                        // Ignore
-                    }
-                    val bodyString = buffer.readString(StandardCharsets.UTF_8)
-                    return EncryptUtils.md5(request.url.toString(), bodyString)
-                }
-            }
-
-            override fun responseCacheTimeInMills(): Long = 60 * 1000 // 1 minute
-        }
     }
 
     // OkHttpClient实例 - 使用lazy确保线程安全初始化
@@ -134,7 +107,8 @@ object RetrofitClient {
                     .header("appHeader", gson.toJson(AppHeader()))
 
                 try {
-                    encryptRequestBody(requestBuilder, original.method, original.body)
+                    //TODO 请求提加密,先调试的时候先关闭
+                    //encryptRequestBody(requestBuilder, original.method, original.body)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -230,7 +204,6 @@ object RetrofitClient {
             .baseUrl(baseUrl)
             .client(httpClient)
             .addCallAdapterFactory(SseCallAdapterFactory())
-//            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson)) // 使用自定义Gson
             .build()
     }

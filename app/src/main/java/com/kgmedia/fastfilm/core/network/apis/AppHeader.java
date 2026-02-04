@@ -19,8 +19,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AppHeader {
     public static final String DEFAULT_CHANNEL_ID = "1";
     private int emulatorStatus;
-    //当前接口调用者用户ID
-//    private String userId;
     //APP版本
     private String appVersion;
     // 手机类型 0 iphone 1 安卓
@@ -69,17 +67,7 @@ public class AppHeader {
             this.mobileCtSys = Session.getInstance().getDeviceBrand();
             this.mobileSys = Session.getInstance().getOsVersion();
             this.opid = Config.get().getOpid();
-//            this.emulatorStatus = EmulatorCheckUtils.isEmulator() ? 1 : 0;
 
-
-//            this.macAddress = Session.getInstance().getMac();
-//            this.androidId = Session.getInstance().getAndroidId();
-//            this.mobileDeviceId = DeviceID.getClientId();
-//            this.oaidCode = Oaid.getOaid();
-//            //穿山甲字段 https://bytedance.larkoffice.com/wiki/CuDiw6gMri3UkkknWCscEAGznMc
-//            this.bdDid = AppLog.getDid();
-//            this.imei = Session.getInstance().getIMEI();
-//            this.deviceFingerprint = Config.get().getMlToken();
 
             String mac = Session.getInstance().getMac();
             String oaid = Oaid.getOaid();
@@ -98,7 +86,6 @@ public class AppHeader {
             this.riskKey = getRandomLowerCaseLetter() + keyString;
         }
         this.mobileType = String.valueOf(1);
-//        this.channel_id = Utils.getMetaDataValue("DATE_CHANNEL", "0");
         this.channelId = AdStrategyManager.getDefaultObjectId();//取本地objectId，默认1
         this.channelCode = Session.getInstance().getChannel();
     }
@@ -107,14 +94,6 @@ public class AppHeader {
         // 生成 a-z 之间的随机字母
         return (char) ThreadLocalRandom.current().nextInt('a', 'z' + 1);
     }
-//
-//    public String getUserId() {
-//        return userId;
-//    }
-//
-//    public void setUserId(String userId) {
-//        this.userId = userId;
-//    }
 
     public String getChannelId() {
         return channelId;

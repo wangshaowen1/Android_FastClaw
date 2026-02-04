@@ -390,9 +390,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     }
 
 
-
-
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
             if (System.currentTimeMillis() - exitTime > 2000) {
