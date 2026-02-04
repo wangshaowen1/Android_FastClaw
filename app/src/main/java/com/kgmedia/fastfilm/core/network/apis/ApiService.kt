@@ -990,7 +990,7 @@ interface ApiService {
      * 获取banner信息
      */
     @POST(ApiConstants.APP_BANNERS)
-    suspend fun getAppBanner(@Body body: BannerBody): ApiResponse<ListData<BannerInfo>?>
+    suspend fun getAppBanner(@Body body: BannerBody): ApiResponse<List<BannerInfo>?>
 
     /**
      * 获取快捷灵感(2条)

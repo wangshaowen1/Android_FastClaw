@@ -15,7 +15,6 @@ import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
-import com.kuaige.imageloader.GlideImageLoader
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor

@@ -154,7 +154,7 @@ class MessageViewModel : AppRepositoryViewModel<MessagesRepository>() {
             response(
                 bean = mRepo.appBanner(BannerBody(BannerBody.LOCATION_HOME)),
                 result = {
-                    bannerList.value = data?.items
+                    bannerList.value = data
                     //判断是否显示轮播图
                     displayCarouselImage()
                 })

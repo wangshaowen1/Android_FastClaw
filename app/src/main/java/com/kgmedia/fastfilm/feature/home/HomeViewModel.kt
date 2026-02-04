@@ -28,32 +28,8 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun getData() {
         launch {
-            val mockBanners = listOf(
-                BannerInfo(
-                    title = "热点话题：我的2026",
-                    imageUrl = "https://picsum.photos/id/10/720/360",
-                    jumpType = 1,
-                    jumpCode = "page_hot_topic",
-                    sortNo = 1
-                ),
-                BannerInfo(
-                    title = "AI 智能剧本助手体验",
-                    imageUrl = "https://picsum.photos/id/20/720/360",
-                    jumpType = 2,
-                    jumpCode = "https://ai.kgmedia.com/helper",
-                    sortNo = 5
-                ),
-                BannerInfo(
-                    title = "第三方合作活动",
-                    imageUrl = "https://picsum.photos/id/30/720/360",
-                    jumpType = 3,
-                    jumpCode = "https://www.partner-site.com",
-                    sortNo = 10
-                )
-            )
-            bannerData.value = mockBanners
             response(mRepo.api.getAppBanner(BannerBody(BannerBody.LOCATION_HOME))) {
-                bannerData.value = this.data?.items
+                bannerData.value = this.data
             }
         }
     }
