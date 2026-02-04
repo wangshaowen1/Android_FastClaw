@@ -82,9 +82,12 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 }
             }
         }
-
+        getViewModelOfActivity<MainViewModel>()?.setIsEditing = { status ->
+            mRealVM.isView.value = true
+        }
         mRealVM.isView.observe(this) {
             eventVm.switchStatus(it)
+            getViewModelOfActivity<MainViewModel>()?.isEditing?.set(!it)
             if (it) {
                 //是否启用下拉刷新
                 binding.srl.setEnableRefresh(true)
@@ -154,4 +157,5 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             }
         }
     }
+
 }

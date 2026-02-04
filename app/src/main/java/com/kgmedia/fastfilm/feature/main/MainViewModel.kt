@@ -33,7 +33,13 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
     private var fetchingUserInfo = false
 
     //当前显示的tab是第几个
-    val showTab = ObservableInt(1)
+    val showTab = ObservableInt(0)
+
+    //作品中是否是编辑状态
+    val isEditing = ObservableBoolean(false)
+
+    //设置编辑的回调
+    var setIsEditing: ((Boolean) -> Unit)? = null
 
     //去创作
     val startCreating = MutableLiveData<Boolean>()
@@ -43,8 +49,6 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
     fun initialization() {
         //获取用户主页信息接口
         fetchUserInfo()
-        //获取用户主页信息接口
-        //getAppFloatWindowsInfo()
     }
 
     override fun onResume() {

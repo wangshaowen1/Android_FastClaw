@@ -105,7 +105,6 @@ class AboutUsActivity : BaseViewModelActivity<ActivityAboutUsBinding, AboutUsVie
                     "第三方信息共享清单"
                 )
             }
-
         }
     }
 }

@@ -184,7 +184,10 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     EventManager.onAppTrack(AppEvent.JG_VIEW_FADDISH_TAB_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(1)
-                    supportFragmentManager.switchFragment(R.id.fragment, MyWorksFragment::class.java)
+                    supportFragmentManager.switchFragment(
+                        R.id.fragment,
+                        MyWorksFragment::class.java
+                    )
                 }
 
 
@@ -391,6 +394,11 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
+            if (mRealVM.showTab.get() == 1 && mRealVM.isEditing.get()) {
+                //在我的页面如果是编辑状态，返回应该是修改状态
+                mRealVM.setIsEditing?.invoke(true)
+                return true
+            }
             if (System.currentTimeMillis() - exitTime > 2000) {
                 getString(R.string.press_again_to_exit).showToast()
                 exitTime = System.currentTimeMillis()
