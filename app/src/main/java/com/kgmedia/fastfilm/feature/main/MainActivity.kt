@@ -29,7 +29,6 @@ import com.kgmedia.fastfilm.databinding.ActivityMainBinding
 import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
 import com.kgmedia.fastfilm.feature.home.HomeFragment
 import com.kgmedia.fastfilm.feature.login.SimpleProfileDialog
-import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.kgmedia.fastfilm.feature.mine.MineFragment
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.kgmedia.fastfilm.router.AppNavigator

@@ -23,13 +23,18 @@ import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.utils.Logger
 
 class CreationFragment :
     BaseViewModelFragment<FragmentCreationBinding, CreationViewModel>() {
 
     companion object {
         const val KEY_MODEL = "model"
+
+        //灵感模式
         const val MODEL_INSPIRATION = 1
+
+        //小说改编
         const val MODEL_CUSTOM = 2
         fun newInstance(model: Int? = null): CreationFragment {
             val fragment = CreationFragment()
@@ -66,7 +71,8 @@ class CreationFragment :
             if (mRealVM.input.value != binding.inputView.text) {
                 binding.inputView.setText(mRealVM.input.value)
             }
-            if (mRealVM.inspirationModel()) Global.inspirationContent = it else Global.customizedContent = it
+            if (mRealVM.inspirationModel()) Global.inspirationContent =
+                it else Global.customizedContent = it
         }
 //        binding.inputView.setOnTextOutOfBondsListener {
 //            mRealVM.maxInputLength.get().takeIf { it > 0 }.let {

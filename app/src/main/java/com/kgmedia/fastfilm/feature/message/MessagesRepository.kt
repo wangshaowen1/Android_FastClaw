@@ -24,12 +24,6 @@ class MessagesRepository : AppRepository() {
         api.messagesMarkRead(MessagesTypeBody(messagesType))
     }
 
-    /**
-     * 查询用户未读消息数量
-     */
-    suspend fun messagesUnreadNum() = withContext(Dispatchers.IO) {
-        api.messagesUnreadNum(UserTokenBody())
-    }
 
     /**
      * 获取banner信息

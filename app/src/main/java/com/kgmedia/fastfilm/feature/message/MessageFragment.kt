@@ -67,9 +67,6 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
     }
 
     private fun dataUpdate() {
-        mRealVM.unreadNum.observe(this) {
-            getParentViewModel<MainViewModel>()?.unreadNum?.set(it ?: 0)
-        }
         observeEvents {
             on<Events.MainTabDoubleClickEvent> { event ->
                 if (event.tabType == Events.MainTabDoubleClickEvent.TAB_MESSAGE) {

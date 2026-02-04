@@ -47,7 +47,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawSuccessInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
-import com.kgmedia.fastfilm.core.network.apis.request.AppFloatWindowsBody
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindWithdrawAccountBody
@@ -58,7 +57,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DanmakuBody
-import com.kgmedia.fastfilm.core.network.apis.request.DownloadReportBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportBody
@@ -133,7 +131,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.apis.response.AlipayData
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
-import com.kgmedia.fastfilm.core.network.apis.response.AppFloatWindowsInfo
 import com.kgmedia.fastfilm.core.network.apis.response.BalanceData
 import com.kgmedia.fastfilm.core.network.apis.response.CharacterListData
 import com.kgmedia.fastfilm.core.network.apis.response.DramasIdData
@@ -143,7 +140,6 @@ import com.kgmedia.fastfilm.core.network.apis.response.FollowingData
 import com.kgmedia.fastfilm.core.network.apis.response.InviteIncomePageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.InviteUserPageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.MessageSummaryData
-import com.kgmedia.fastfilm.core.network.apis.response.MessagesUnreadNumData
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBook
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBookGenerateStatusData
 import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
@@ -539,18 +535,11 @@ interface ApiService {
     @POST(ApiConstants.ALIPAY_ORDERING_POINTS)
     suspend fun alipayOrderingPoints(@Body body: OrderingPointsBody): ApiResponse<AlipayData?>
 
-
     /**
      * 场景扣费
      */
     @POST(ApiConstants.SCENE_COST)
     suspend fun sceneCost(@Body body: SceneCostBody): ApiResponse<SceneCostData>
-
-    /**
-     * 获取APP浮动窗口
-     */
-    @POST(ApiConstants.GET_APP_FLOAT_WINDOWS)
-    suspend fun getAppFloatWindows(@Body body: AppFloatWindowsBody): ApiResponse<ListData<AppFloatWindowsInfo>?>
 
     /**
      * 邀请收益信息
@@ -678,11 +667,6 @@ interface ApiService {
     @POST(ApiConstants.GENERATING_SEGMENT_IMAGE)
     suspend fun generatingSegmentImage(@Body body: DramasIdBody): ApiResponse<DramasIdData?>
 
-    /**
-     * 下载短剧视频（合成后回传给后端）
-     */
-    @POST(ApiConstants.SHORT_DRAMAS_DOWNLOAD)
-    suspend fun shortDramasDownload(@Body body: DownloadReportBody): ApiResponse<Any?>
 
     /**
      * 修改剧本信息
@@ -696,11 +680,6 @@ interface ApiService {
     @POST(ApiConstants.DELETE_DRAMA_INFO)
     suspend fun deleteDramaInfo(@Body body: DramasIdBody): ApiResponse<Any?>
 
-    /**
-     * 分页查询我的剧本草稿列表
-     */
-    @POST(ApiConstants.USER_SHORT_DRAMS)
-    suspend fun userShortDramaDrafts(@Body body: PagedBody): ApiResponse<PagedList<ShortDramaInfo>?>
 
     /**
      * 获取支付宝信息(并绑定)
@@ -762,11 +741,6 @@ interface ApiService {
     @POST(ApiConstants.MESSAGES_MARK_READ)
     suspend fun messagesMarkRead(@Body body: MessagesTypeBody): ApiResponse<Any>
 
-    /**
-     * 查询用户未读消息数量
-     */
-    @POST(ApiConstants.MESSAGES_UNREAD_NUM)
-    suspend fun messagesUnreadNum(@Body body: UserTokenBody): ApiResponse<MessagesUnreadNumData?>
 
     /** 爆款推荐列表
      */
@@ -1022,7 +996,7 @@ interface ApiService {
      * 获取快捷灵感(2条)
      */
     @POST(ApiConstants.INSPIRATION_QUICK_LIST)
-    suspend fun getInspirationQuickList(@Body body: UserTokenBody): ApiResponse<ListData<InspirationInfo>?>
+    suspend fun getInspirationQuickList(@Body body: UserTokenBody): ApiResponse<List<InspirationInfo>?>
 
     /**
      * 查询历史角色

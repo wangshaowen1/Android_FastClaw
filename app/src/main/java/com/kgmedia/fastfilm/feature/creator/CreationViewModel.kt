@@ -6,7 +6,6 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.blankj.utilcode.util.GsonUtils
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
@@ -46,8 +45,9 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     override fun onCreate() {
         super.onCreate()
         hint.set(if (inspirationModel()) "写下你的故事灵感，AI将帮你扩展成完整剧情" else "请粘贴一章完整的原创或已授权小说内容，用于改编创作")
-        maxInputLength.set(if(inspirationModel()) 1000 else 5000)
-        input.value = if (inspirationModel()) Global.inspirationContent else Global.customizedContent
+        maxInputLength.set(if (inspirationModel()) 1000 else 5000)
+        input.value =
+            if (inspirationModel()) Global.inspirationContent else Global.customizedContent
         if (inspirationModel()) {
             randomInspirations()
         }
@@ -66,7 +66,9 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     fun sseGenerate(bizType: Int? = null, promptGeneratingContent: String?) {
         promptGenerating.value = true to (promptGeneratingContent ?: "")
         val sseFlow =
-            if (bizType == SSEContentBody.TYPE_RANDOM_INSPIRATION) mRepo.api.sseContentRandom(UserTokenBody()) else mRepo.api.sseContentOptimize(
+            if (bizType == SSEContentBody.TYPE_RANDOM_INSPIRATION) mRepo.api.sseContentRandom(
+                UserTokenBody()
+            ) else mRepo.api.sseContentOptimize(
                 SSEContentBody(input.value, bizType)
             )
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
@@ -124,75 +126,21 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
             function?.invoke()
             return
         }
-        val ss = "{\n" +
-                "  \"totalEpisodeCntItemVoList\": [\n" +
-                "    {\n" +
-                "      \"configCode\": \"ep_15\",\n" +
-                "      \"configValue\": \"15集以内\",\n" +
-                "      \"sortNo\": 1\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"configCode\": \"ep_30\",\n" +
-                "      \"configValue\": \"15~30集\",\n" +
-                "      \"sortNo\": 2\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"configCode\": \"ep_custom\",\n" +
-                "      \"configValue\": \"自定义数量\",\n" +
-                "      \"sortNo\": 3\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"ratioItemVoList\": [\n" +
-                "    {\n" +
-                "      \"configCode\": \"ratio_16_9\",\n" +
-                "      \"configValue\": \"16:9 横屏\",\n" +
-                "      \"extraConfig\": \"https://cdn.example.com/assets/ratio_16_9.png\",\n" +
-                "      \"sortNo\": 1\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"configCode\": \"ratio_9_16\",\n" +
-                "      \"configValue\": \"9:16 竖屏\",\n" +
-                "      \"extraConfig\": \"https://cdn.example.com/assets/ratio_9_16.png\",\n" +
-                "      \"sortNo\": 2\n" +
-                "    }\n" +
-                "  ],\n" +
-                "  \"list\": [\n" +
-                "    {\n" +
-                "      \"styleCode\": \"cyberpunk_2077\",\n" +
-                "      \"styleName\": \"赛博朋克\",\n" +
-                "      \"styleCoverUrl\": \"https://cdn.example.com/covers/cyberpunk.jpg\",\n" +
-                "      \"stylePrompt\": \"Neon lights, rainy streets, futuristic city, high contrast, blue and pink lighting\",\n" +
-                "      \"sortNo\": 1\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"styleCode\": \"ghibli_art\",\n" +
-                "      \"styleName\": \"吉卜力动漫\",\n" +
-                "      \"styleCoverUrl\": \"https://cdn.example.com/covers/ghibli.jpg\",\n" +
-                "      \"stylePrompt\": \"Studio Ghibli style, lush landscapes, soft watercolor textures, nostalgic atmosphere\",\n" +
-                "      \"sortNo\": 2\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"styleCode\": \"cinematic_realism\",\n" +
-                "      \"styleName\": \"电影写实\",\n" +
-                "      \"styleCoverUrl\": \"https://cdn.example.com/covers/cinema.jpg\",\n" +
-                "      \"stylePrompt\": \"8k resolution, highly detailed, cinematic lighting, shallow depth of field, realistic textures\",\n" +
-                "      \"sortNo\": 3\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}"
-
-        val fromJson = GsonUtils.fromJson(ss, VideoConfigData::class.java)
-        videoSetConfig.value = fromJson
-        function?.invoke()
-        requestWithLoading({ mRepo.videoSetConfig() }, showLoading = showLoading) {
+        requestWithLoading(
+            apiBlock = { mRepo.videoSetConfig() },
+            showLoading = showLoading
+        ) {
             videoSetConfig.value = data
             function?.invoke()
         }
     }
 
     fun randomInspirations(showLoading: Boolean = false) {
-        requestWithLoading({ mRepo.getInspirationQuickList() }, showLoading = showLoading) {
-            inspirationPrompts.value = data?.items
+        requestWithLoading(
+            apiBlock = { mRepo.getInspirationQuickList() },
+            showLoading = showLoading
+        ) {
+            inspirationPrompts.value = data
         }
     }
 }

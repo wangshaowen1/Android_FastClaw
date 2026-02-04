@@ -420,10 +420,6 @@ object ApiConstants {
      */
     const val CHARACTER_LIST = "shortDramas/script/role/list"
 
-    /**
-     * 分页查询我的剧本草稿列表
-     */
-    const val USER_SHORT_DRAMS = "user/shortDramas/script/page"
 
     /**
      * 获取支付宝信息(并绑定)
@@ -474,11 +470,6 @@ object ApiConstants {
      * 消息全部设置成已读
      */
     const val MESSAGES_MARK_READ = "messages/markAllAsRead"
-
-    /**
-     * 查询用户未读消息数量
-     */
-    const val MESSAGES_UNREAD_NUM = "messages/unread/num"
 
     /**
      * 爆款推荐列表
@@ -706,7 +697,7 @@ object ApiConstants {
     /**
      * 获取集数/视频比例/视频风格配置
      */
-    const val VIDEO_SET_CONFIG = "work/config/list"
+    const val VIDEO_SET_CONFIG = "work/config/getWorkSetUpConfig"
 
     /**
      * 查询资产参考图列表

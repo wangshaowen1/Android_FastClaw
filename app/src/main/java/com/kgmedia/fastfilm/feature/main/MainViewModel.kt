@@ -38,9 +38,7 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
     //去创作
     val startCreating = MutableLiveData<Boolean>()
 
-    //val generating get() = GeneratingViewModel
     val generating = ObservableField<DramasInfoData>()
-    val unreadNum by lazy { ObservableInt() }
 
     fun initialization() {
         //获取用户主页信息接口
@@ -52,11 +50,6 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
     override fun onResume() {
         super.onResume()
         isLogin.set(User.get().isLogged)
-        if (isLogin.get()) {
-            messagesUnreadNum()
-        } else {
-            unreadNum.set(0)
-        }
     }
 
     /**
@@ -96,20 +89,8 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
         }
     }
 
-    /**
-     * 获取消息未读数量
-     */
-    fun messagesUnreadNum() {
-        launch {
-            response(mRepo.api.messagesUnreadNum(UserTokenBody())) {
-                unreadNum.set(data?.unreadNumTotal ?: 0)
-            }
-        }
-    }
 
     fun getTabColorSelector(showTab: Int): Int {
         return if (showTab == 0) R.color.main_tab_txt_color_dark else R.color.main_tab_txt_color
     }
-
-
 }
