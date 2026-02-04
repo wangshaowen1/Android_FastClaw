@@ -2,12 +2,12 @@ package com.kgmedia.fastfilm.core.network.apis.request
 
 data class BannerBody(
     /**
-     * banner位置 1-消息页
+     * 展示位置code（首页=banner_home）
      */
-    val bannerLocation: Int?
-){
-    companion object{
+    val code: String?
+) : UserTokenBody() {
+    companion object {
         //消息页
-        const val LOCATION_MESSAGE = 1
+        const val LOCATION_HOME = "banner_home"
     }
 }

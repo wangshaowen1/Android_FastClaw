@@ -108,7 +108,7 @@ object ApiConstants {
     /**
      * 手机登录接口--验证码方式
      */
-    const val LOGIN_BY_PHONE = "/auth/register"
+    const val LOGIN_BY_PHONE = "auth/register"
 
     /**
      * 取消注销
@@ -198,47 +198,47 @@ object ApiConstants {
     /**
      * 灵感内容优化（AI优化灵感）
      */
-    const val SSE_CONTENT_OPTIMIZE = "/ai/stream/inspiration/refine"
+    const val SSE_CONTENT_OPTIMIZE = "ai/stream/inspiration/refine"
 
     /**
      * 随机灵感（无入参）
      */
-    const val SSE_CONTENT_RANDOM = "/ai/stream/inspiration/random"
+    const val SSE_CONTENT_RANDOM = "ai/stream/inspiration/random"
 
     /**
      * 灵感故事剧本（基于灵感写剧本/灵感续写/小说续写）
      */
-    const val SSE_SCRIPT_FROM_IDEA = "/ai/stream/script/from-idea"
+    const val SSE_SCRIPT_FROM_IDEA = "ai/stream/script/from-idea"
 
     /**
      * 小说直接生成剧集剧本
      */
-    const val SSE_SCRIPT_FROM_STORY = "/ai/stream/script/from-novel"
+    const val SSE_SCRIPT_FROM_STORY = "ai/stream/script/from-novel"
 
     /**
      * 扩写剧集剧本（小说）
      */
-    const val SSE_CONTENT_AI_EXPAND = "/ai/stream/script/expand"
+    const val SSE_CONTENT_AI_EXPAND = "ai/stream/script/expand"
 
     /**
      * 故事梗概生成（灵感）
      */
-    const val SSE_CONTENT_SYNOPSIS = "/ai/stream/script/synopsis"
+    const val SSE_CONTENT_SYNOPSIS = "ai/stream/script/synopsis"
 
     /**
      *灵感保存故事梗概（下一步创建剧本）
      */
-    const val SAVE_WORK_SUMMARY = "/work/production/new/saveStorySummary"
+    const val SAVE_WORK_SUMMARY = "work/production/new/saveStorySummary"
 
     /**
      *小说保存故事剧集剧本（首次创建）
      */
-    const val SAVE_STORY_EPISODE_SCRIPT = "/work/production/new/novel/saveStoryContent"
+    const val SAVE_STORY_EPISODE_SCRIPT = "work/production/new/novel/saveStoryContent"
 
     /**
      *保存故事剧集剧本（灵感首创/灵感续集/小说续集）
      */
-    const val SAVE_EPISODE_SCRIPT = "/work/production/new/saveStoryContent"
+    const val SAVE_EPISODE_SCRIPT = "work/production/new/saveStoryContent"
 
     /**
      *轮询剧本分镜大纲
@@ -538,12 +538,12 @@ object ApiConstants {
     /**
      * 续创时查询上一集内容详情
      */
-    const val LATEST_DRAMAS_WORK_DETAIL = "/work/production/sequel/sequelDetail"
+    const val LATEST_DRAMAS_WORK_DETAIL = "work/production/sequel/sequelDetail"
 
     /**
      * 查询我的作品详情
      */
-    const val WORK_INFO = "/work/detail"
+    const val WORK_INFO = "work/detail"
 
     /**
      * 流式生成帮我续写(生成续写的用户输出内容)
@@ -573,7 +573,7 @@ object ApiConstants {
     /**
      * 分页查看作品剧集列表
      */
-    const val EPISODE_LIST = "/work/storyPage"
+    const val EPISODE_LIST = "work/storyPage"
 
     /**
      * 新用户创作体验引导条
@@ -673,109 +673,109 @@ object ApiConstants {
     /**
      * 新增剧本的角色
      */
-    const val DRAMAS_ADD_ROLE = "/shortDramas/script/role/create"
+    const val DRAMAS_ADD_ROLE = "shortDramas/script/role/create"
 
     /**
      * 删除剧本的角色
      */
-    const val DRAMAS_DEL_ROLE = "/shortDramas/script/role/remove"
+    const val DRAMAS_DEL_ROLE = "shortDramas/script/role/remove"
 
-    const val APP_BANNERS = "/app/home/banner/list"
+    const val APP_BANNERS = "app/home/banner/list"
 
     /**
      * 获取随机灵感示例
      */
-    const val INSPIRATION_QUICK_LIST = "/work/config/getInspirationExamples"
+    const val INSPIRATION_QUICK_LIST = "work/config/getInspirationExamples"
 
     /**
      * 使用历史角色
      */
-    const val HISTORY_ROLE_SWITCH = "/shortDramas/script/role/history/use"
+    const val HISTORY_ROLE_SWITCH = "shortDramas/script/role/history/use"
 
     /**
      * 查询历史角色
      */
-    const val GET_HISTORY_ROLES = "/shortDramas/script/role/history"
+    const val GET_HISTORY_ROLES = "shortDramas/script/role/history"
 
     /**
      * 首页作品列表
      */
-    const val RECOMMEND_DRAMA_LIST = "/app/home/work/page"
+    const val RECOMMEND_DRAMA_LIST = "app/home/work/page"
 
     /**
      * 获取集数/视频比例/视频风格配置
      */
-    const val VIDEO_SET_CONFIG = "/work/config/list"
+    const val VIDEO_SET_CONFIG = "work/config/list"
 
     /**
      * 查询资产参考图列表
      */
-    const val GET_HISTORY_REFERENCE_IMAGE = "/work/asset/getReferenceImage"
+    const val GET_HISTORY_REFERENCE_IMAGE = "work/asset/getReferenceImage"
 
     /**
      * 编辑我的作品信息
      */
-    const val UPDATE_WORK_INFO = "/work/update"
+    const val UPDATE_WORK_INFO = "work/update"
 
     /**
      * 作品播放量计数
      */
-    const val PLAY_EVENT_REPORT = "/app/home/work/playCount"
+    const val PLAY_EVENT_REPORT = "app/home/work/playCount"
 
     /**
      * 轮询查询全部资产
      */
-    const val WORK_ASSET_ALL_STATUS = "/ai/task/query/asset/all"
+    const val WORK_ASSET_ALL_STATUS = "ai/task/query/asset/all"
 
     /**
      * 轮询查询单个资产
      */
-    const val WORK_ASSET_SINGLE_STATUS = "/ai/task/query/asset/single"
+    const val WORK_ASSET_SINGLE_STATUS = "ai/task/query/asset/single"
 
     /**
      * 场景列表
      */
-    const val WORK_ASSET_SCENE_LIST = "/work/asset/scene/list"
+    const val WORK_ASSET_SCENE_LIST = "work/asset/scene/list"
 
     /**
      * 场景保存
      */
-    const val WORK_ASSET_SCENE_SAVE = "/work/asset/scene/save"
+    const val WORK_ASSET_SCENE_SAVE = "work/asset/scene/save"
 
     /**
      * 场景单个删除
      */
-    const val WORK_ASSET_SCENE_DELETE = "/work/asset/scene/delete"
+    const val WORK_ASSET_SCENE_DELETE = "work/asset/scene/delete"
 
     /**
      * 角色列表
      */
-    const val WORK_ASSET_ROLE_LIST = "/work/asset/role/list"
+    const val WORK_ASSET_ROLE_LIST = "work/asset/role/list"
 
     /**
      * 角色保存
      */
-    const val WORK_ASSET_ROLE_SAVE = "/work/asset/role/save"
+    const val WORK_ASSET_ROLE_SAVE = "work/asset/role/save"
 
     /**
      * 角色单个删除
      */
-    const val WORK_ASSET_ROLE_DELETE = "/work/asset/role/delete"
+    const val WORK_ASSET_ROLE_DELETE = "work/asset/role/delete"
 
     /**
      * 道具列表
      */
-    const val WORK_ASSET_PROP_LIST = "/work/asset/prop/list"
+    const val WORK_ASSET_PROP_LIST = "work/asset/prop/list"
 
     /**
      * 道具保存
      */
-    const val WORK_ASSET_PROP_SAVE = "/work/asset/prop/save"
+    const val WORK_ASSET_PROP_SAVE = "work/asset/prop/save"
 
     /**
      * 道具单个删除
      */
-    const val WORK_ASSET_PROP_DELETE = "/work/asset/prop/delete"
+    const val WORK_ASSET_PROP_DELETE = "work/asset/prop/delete"
 
     /**
      * 生成单个资产图片（重新生成/生成）
@@ -785,32 +785,32 @@ object ApiConstants {
     /**
      * 轮询查询单个分镜图片
      */
-    const val WORK_STORYBOARD_SINGLE_STATUS = "/ai/task/query/storyboard/single"
+    const val WORK_STORYBOARD_SINGLE_STATUS = "ai/task/query/storyboard/single"
 
     /**
      * 分镜设计列表
      */
-    const val WORK_STORYBOARD_LIST = "/work/storyboard/designList"
+    const val WORK_STORYBOARD_LIST = "work/storyboard/designList"
 
     /**
      * 分镜保存
      */
-    const val WORK_STORYBOARD_SAVE = "/work/storyboard/save"
+    const val WORK_STORYBOARD_SAVE = "work/storyboard/save"
 
     /**
      * 分镜单个删除
      */
-    const val WORK_STORYBOARD_DELETE = "/work/storyboard/delete"
+    const val WORK_STORYBOARD_DELETE = "work/storyboard/delete"
 
     /**
      * 生成单个分镜图片（重新生成/点击生成）
      */
-    const val WORK_STORYBOARD_SINGLE_GENERATE = "/ai/storyboard/generation/image"
+    const val WORK_STORYBOARD_SINGLE_GENERATE = "ai/storyboard/generation/image"
 
     /**
      * 生成分镜视频
      */
-    const val WORK_STORYBOARD_VIDEO_GENERATE = "/ai/storyboard/generation/video"
+    const val WORK_STORYBOARD_VIDEO_GENERATE = "ai/storyboard/generation/video"
 
     /**
      * 举报提交

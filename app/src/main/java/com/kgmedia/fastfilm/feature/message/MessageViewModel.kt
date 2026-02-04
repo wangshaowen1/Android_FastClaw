@@ -152,7 +152,7 @@ class MessageViewModel : AppRepositoryViewModel<MessagesRepository>() {
     fun getAppBannerInfo() {
         launch {
             response(
-                bean = mRepo.appBanner(BannerBody(BannerBody.LOCATION_MESSAGE)),
+                bean = mRepo.appBanner(BannerBody(BannerBody.LOCATION_HOME)),
                 result = {
                     bannerList.value = data?.items
                     //判断是否显示轮播图

@@ -52,7 +52,7 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
                 )
             )
             bannerData.value = mockBanners
-            response(mRepo.api.getAppBanner(BannerBody(1))) {
+            response(mRepo.api.getAppBanner(BannerBody(BannerBody.LOCATION_HOME))) {
                 bannerData.value = this.data?.items
             }
         }
