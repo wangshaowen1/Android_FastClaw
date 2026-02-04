@@ -119,6 +119,7 @@ open class MultiStateAdapter(
                 holder.multiStateAdapterViewBinding.llLoadMoreLoadFailSmall.visibility = View.GONE
                 holder.multiStateAdapterViewBinding.llNullView.visibility = View.GONE
                 holder.multiStateAdapterViewBinding.llNullView.visibility = View.GONE
+                holder.multiStateAdapterViewBinding.tvNetworkAnomaly.visibility=View.GONE
                 if (loadState.endOfPaginationReached) {
                     //没有更多了
                     holder.multiStateAdapterViewBinding.loadMoreLoadEnd.visibility =
@@ -146,6 +147,7 @@ open class MultiStateAdapter(
                 holder.multiStateAdapterViewBinding.llLoadMoreLoadFailSmall.visibility = View.GONE
                 holder.multiStateAdapterViewBinding.loadMoreLoadEnd.visibility = View.GONE
                 holder.multiStateAdapterViewBinding.llNullView.visibility = View.GONE
+                holder.multiStateAdapterViewBinding.tvNetworkAnomaly.visibility=View.GONE
             }
 
             is LoadState.Error -> {
@@ -183,6 +185,7 @@ open class MultiStateAdapter(
 
                         holder.multiStateAdapterViewBinding.loadMoreLoadEnd.visibility = View.GONE
                         holder.multiStateAdapterViewBinding.llNullView.visibility = View.VISIBLE
+                        holder.multiStateAdapterViewBinding.tvNetworkAnomaly.visibility=View.GONE
                     }
 
                     is NoDataFailException -> {
@@ -216,6 +219,7 @@ open class MultiStateAdapter(
                             }
                             holder.multiStateAdapterViewBinding.tvAsv.text =
                                 (error.error as? ApiException)?.message ?: requestException
+                            holder.multiStateAdapterViewBinding.tvNetworkAnomaly.visibility=View.VISIBLE
                         } else {
                             requestExceptionSrc?.let {
                                 holder.multiStateAdapterViewBinding.ivAsv.setImageResource(
@@ -223,6 +227,7 @@ open class MultiStateAdapter(
                                 )
                             }
                             holder.multiStateAdapterViewBinding.tvAsv.text = networkAnomaly
+                            holder.multiStateAdapterViewBinding.tvNetworkAnomaly.visibility=View.GONE
                         }
 
                         holder.multiStateAdapterViewBinding.loadMoreLoadEnd.visibility = View.GONE
@@ -231,10 +236,10 @@ open class MultiStateAdapter(
 
                     else -> {
                         holder.multiStateAdapterViewBinding.llLoadMoreLoading.visibility = View.GONE
-                        holder.multiStateAdapterViewBinding.llLoadMoreLoadFailSmall.visibility =
-                            View.GONE
+                        holder.multiStateAdapterViewBinding.llLoadMoreLoadFailSmall.visibility = View.GONE
                         holder.multiStateAdapterViewBinding.loadMoreLoadEnd.visibility = View.GONE
                         holder.multiStateAdapterViewBinding.llNullView.visibility = View.GONE
+                        holder.multiStateAdapterViewBinding.tvNetworkAnomaly.visibility=View.GONE
                     }
                 }
             }

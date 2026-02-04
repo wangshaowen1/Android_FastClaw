@@ -16,7 +16,7 @@
     <string name="page_loading">正在为你全力加载中…</string>
     <string name="page_empty">暂无内容</string>
     <string name="no_more_data">已经到底了...</string>
-    <string name="page_network_error">诶哎，怎么没网了！</string>
+    <string name="page_network_error">请检查网络连接后重试</string>
     <string name="refresh">刷新</string>
     <string name="download_failed">下载失败</string>
     <string name="file_download_success_view_path">文件下载成功！查看下载路径</string>

@@ -12,6 +12,12 @@
         android:gravity="center"
         android:orientation="vertical">
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="230" />
+
+
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/loadingView"
             android:layout_width="48dp"
@@ -24,13 +30,17 @@
 
         <TextView
             android:id="@+id/loadingText"
+            style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/page_loading"
-            android:textColor="@color/color_8f8f8f"
-            android:textSize="14sp" />
+            android:textColor="?attr/textColor4" />
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="344" />
     </LinearLayout>
 
     <LinearLayout
@@ -40,37 +50,53 @@
         android:gravity="center"
         android:orientation="vertical">
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="230" />
+
         <ImageView
             android:id="@+id/icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
             android:src="@drawable/empty_network" />
 
         <TextView
-            android:id="@+id/error_prompt_view"
+            style="@style/Text16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:text="网络错误"
+            android:textColor="?attr/textColor2" />
+
+        <TextView
+            android:id="@+id/error_prompt_view"
+            style="@style/Text14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:lineSpacingExtra="@dimen/lineSpacingExtra"
             android:text="@string/page_network_error"
-            android:textColor="@color/color_8f8f8f"
-            android:textSize="14sp" />
+            android:textColor="?attr/textColor4" />
 
         <TextView
             android:id="@+id/retry_btn"
             style="@style/Button.Bold"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/gradient_left_ff4332_right_ffa029_r50"
+            android:layout_height="36dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/btn_theme1_r50"
             android:gravity="center"
             android:paddingHorizontal="40dp"
             android:text="@string/refresh"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="344" />
     </LinearLayout>
 
     <LinearLayout
@@ -78,8 +104,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical"
-        android:paddingBottom="30dp">
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="230" />
 
         <ImageView
             android:id="@+id/no_data_icon"
@@ -90,27 +120,31 @@
 
         <TextView
             android:id="@+id/no_data"
+            style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:lineSpacingExtra="@dimen/lineSpacingExtra"
             android:text="@string/page_empty"
-            android:textColor="@color/color_8f8f8f"
-            android:textSize="14sp" />
+            android:textColor="?attr/textColor4" />
 
         <TextView
             android:id="@+id/no_data_btn"
-            style="@style/Button.Bold"
+            style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginTop="20dp"
-            android:background="@drawable/gradient_left_ff4332_right_ffa029_r50"
+            android:background="@drawable/btn_theme1_r50"
             android:gravity="center"
             android:paddingHorizontal="40dp"
             android:text="@string/refresh"
             android:textColor="@color/white"
-            android:textSize="14sp"
             android:visibility="gone" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="344" />
     </LinearLayout>
 </merge>

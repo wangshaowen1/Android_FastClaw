@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginBottom="30dp"
         android:orientation="horizontal"
         android:paddingVertical="15dp">
 
@@ -24,12 +25,11 @@
 
         <TextView
             android:id="@+id/tv_load_more_loading"
-            style="@style/Text.Common"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/page_loading"
-            android:textColor="@color/color_8f8f8f"
-            android:textSize="14sp" />
+            android:textColor="?attr/textColor4"
+            style="@style/Text14" />
     </LinearLayout>
     <!--加载失败，点击重新加载-->
     <LinearLayout
@@ -42,12 +42,11 @@
 
         <TextView
             android:id="@+id/tv_load_more_load_fail_small"
-            style="@style/Text.Common"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/page_load_error"
-            android:textColor="@color/color_8f8f8f"
-            android:textSize="14sp" />
+            android:textColor="?attr/textColor4"
+            style="@style/Text14" />
     </LinearLayout>
     <!--没有更多了-->
     <LinearLayout
@@ -60,13 +59,12 @@
 
         <TextView
             android:id="@+id/load_more_load_complete"
-            style="@style/Text.Common"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/no_more_data"
-            android:textColor="@color/color_8f8f8f"
-            android:textSize="14sp" />
+            android:textColor="?attr/textColor4"
+            style="@style/Text14" />
     </LinearLayout>
 
     <!--没有数据或者数据异常-->
@@ -88,39 +86,49 @@
             android:src="@drawable/ic_not_song" />
 
         <TextView
-            android:id="@+id/tv_asv"
-            style="@style/Text.Common"
+            android:id="@+id/tv_network_anomaly"
+            style="@style/Text16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:text="网络错误"
+            android:textColor="?attr/textColor2" />
+
+        <TextView
+            android:id="@+id/tv_asv"
+            style="@style/Text14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:lineSpacingExtra="@dimen/lineSpacingExtra"
-            android:text="@string/page_empty"
-            android:textColor="@color/color_8f8f8f"
-            android:textSize="14sp" />
+            android:textColor="?attr/textColor4"
+            android:text="@string/page_empty"/>
 
         <ImageView
             android:id="@+id/iv_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            tools:visibility="visible"
             android:importantForAccessibility="no"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_refresh"
-            style="@style/Text.Common"
+            style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginTop="20dp"
-            android:background="@drawable/gradient_left_ff4332_right_ffa029_r50"
+            android:background="@drawable/btn_theme1_r50"
             android:gravity="center"
             android:minWidth="74dp"
             android:paddingHorizontal="40dp"
             android:text="@string/refresh"
             android:textColor="@color/white"
-            android:textSize="14sp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            tools:visibility="visible" />
     </LinearLayout>
 </FrameLayout>
 
