@@ -692,7 +692,7 @@ object ApiConstants {
     /**
      * 首页作品列表
      */
-    const val RECOMMEND_DRAMA_LIST = "app/home/work/page"
+    const val RECOMMEND_WORK_LIST = "app/home/work/page"
 
     /**
      * 获取集数/视频比例/视频风格配置

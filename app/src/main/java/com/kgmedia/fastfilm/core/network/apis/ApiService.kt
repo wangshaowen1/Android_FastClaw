@@ -1013,8 +1013,8 @@ interface ApiService {
     /**
      * 首页作品列表
      */
-    @POST(ApiConstants.RECOMMEND_DRAMA_LIST)
-    suspend fun recommendDramaList(@Body body: PagedBody): ApiResponse<PagedList<WorkInfo>?>
+    @POST(ApiConstants.RECOMMEND_WORK_LIST)
+    suspend fun recommendWorkList(@Body body: PagedBody): ApiResponse<PagedList<WorkInfo>?>
 
     /**
      * 获取集数/视频比例/视频风格配置
