@@ -57,6 +57,7 @@
 
             <ImageView
                 android:id="@+id/btnModify"
+                android:importantForAccessibility="no"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -35,6 +35,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     var mSSEContent = MutableLiveData<String>()
     var mContent = ObservableField<String>()
+    // 作品名称
     var mWorkName = MutableLiveData<String>()
 
     val displayChild = ObservableInt(DISPLAY_CONTENT)
