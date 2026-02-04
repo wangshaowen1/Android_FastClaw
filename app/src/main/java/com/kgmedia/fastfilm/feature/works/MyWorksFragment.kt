@@ -127,7 +127,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 //全选
                 val ids = hashSetOf<String>()
                 val items: List<WorkInformationInfo> = myWorksAdapter.snapshot().items
-                items.forEach { w -> ids.add(w.work.id ?: "") }
+                items.forEach { w -> ids.add(w.work.workId ?: "") }
                 eventVm.setSelectedItems(ids)
                 mRealVM.selectedCount.value = ids.size
             }

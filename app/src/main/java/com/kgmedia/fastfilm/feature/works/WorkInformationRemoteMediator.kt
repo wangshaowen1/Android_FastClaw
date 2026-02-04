@@ -7,7 +7,9 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.kgmedia.fastfilm.core.db.AppDatabase
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
-import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
+import com.kgmedia.fastfilm.core.network.apis.ApiException
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
 
 /**
  * *****************************************
@@ -58,34 +60,26 @@ class WorkInformationRemoteMediator(
                 }
             }
 
-//            val body = ComplaintDetailListBody(
-//                userComplaintId = complaintWorkOrderID,
-//                pageNum = page,
-//                pageSize = state.config.pageSize
-//            )
-//            val response = ApiFactory.apiService.complaintDetailList(body)
-//            if (response.isSuccess.not()) {
-//                return MediatorResult.Error(ApiException(response.code, response.msg))
-//            }
-            // 从网络获取数据
-            val workInformation = mutableListOf<WorkInformationInfo>()
-            for (index in 0..15) {
-                val id = (System.currentTimeMillis() + index).toString()
-                workInformation.add(
-                    WorkInformationInfo(
-                        workId = id,
-                        work = WorkInformationData(id = id)
-                    )
-                )
+            val body = MyWorkBody(
+                workId = null,
+                pageNum = page,
+                pageSize = state.config.pageSize
+            )
+            val response = ApiFactory.apiService.getMyWork(body)
+            if (response.isSuccess.not()) {
+                return MediatorResult.Error(ApiException(response.code, response.msg))
             }
-//            val data = response.data?.items
 
-//            data?.map { complaintDetails ->
-//                ComplaintMessageDetailsInfo(
-//                    complaintWorkOrderID = complaintWorkOrderID,
-//                    complaintDetails = complaintDetails
-//                )
-//            }?.let { complaintMessageDetailsInfo.addAll(it) }
+            val workInformation = mutableListOf<WorkInformationInfo>()
+            // 从网络获取数据
+            val data = response.data?.items
+
+            data?.map { workInformationData ->
+                WorkInformationInfo(
+                    workId = workInformationData.workId ?: "",
+                    work = workInformationData
+                )
+            }?.let { workInformation.addAll(it) }
             // 在数据库事务中处理数据
             database.withTransaction {
                 if (page <= 1) {
@@ -95,11 +89,9 @@ class WorkInformationRemoteMediator(
                 // 插入新数据
                 complaintDetailsDao.insertAll(workInformation.toList())
             }
-            return MediatorResult.Success(endOfPaginationReached = true)
-
-//            // 加载下一页的键（为 null 表示没有下一页） true 表示没有更多数据了
-//            val endOfPaginationReached = data.isNullOrEmpty() || data.size < state.config.pageSize
-//            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+            // 加载下一页的键（为 null 表示没有下一页） true 表示没有更多数据了
+            val endOfPaginationReached = data.isNullOrEmpty() || data.size < state.config.pageSize
+            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: Exception) {
             MediatorResult.Error(e)
         }

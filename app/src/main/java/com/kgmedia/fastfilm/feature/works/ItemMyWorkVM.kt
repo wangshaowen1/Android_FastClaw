@@ -5,7 +5,6 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
-import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.launch
 
 class ItemMyWorkVM(
@@ -30,10 +29,10 @@ class ItemMyWorkVM(
         }
         if (isSelected.get()) {
             isSelected.set(false)
-            eventVm.removeSelectedItem(workInformation?.id?:"")
+            eventVm.removeSelectedItem(workInformation?.workId?:"")
         } else {
             isSelected.set(true)
-            eventVm.addSelectedItem(workInformation?.id?:"")
+            eventVm.addSelectedItem(workInformation?.workId?:"")
         }
         eventVm.postEvent(MyWorksEvent.ComposeState(isSelected.get(), workInformation))
     }
@@ -47,7 +46,7 @@ class ItemMyWorkVM(
 
         viewModelScope.launch {
             eventVm.selectedItemIds.collect { selectedIds ->
-                isSelected.set(selectedIds.contains(workInformation?.id))
+                isSelected.set(selectedIds.contains(workInformation?.workId))
             }
         }
     }

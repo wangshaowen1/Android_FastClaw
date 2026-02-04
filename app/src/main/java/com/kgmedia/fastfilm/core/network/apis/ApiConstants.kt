@@ -816,4 +816,9 @@ object ApiConstants {
      * 举报提交
      */
     const val REPORT_SUBMISSION="app/report/save"
+
+    /**
+     * 分页查询我的作品列表
+     */
+    const val MY_WORK="work/page"
 }

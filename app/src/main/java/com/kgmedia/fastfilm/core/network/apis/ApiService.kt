@@ -82,6 +82,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.MemberPaymentBody
 import com.kgmedia.fastfilm.core.network.apis.request.MessagesTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
 import com.kgmedia.fastfilm.core.network.apis.request.MyTvSeriesBody
+import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeContentData
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeRoleImageDescBody
 import com.kgmedia.fastfilm.core.network.apis.request.OrderStatusBody
@@ -157,6 +158,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.UpgradeData
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
 import com.kgmedia.fastfilm.core.network.apis.response.WithdrawalRecordInfo
 import com.kgmedia.fastfilm.core.network.apis.response.WorkIdData
+import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
 import com.kgmedia.fastfilm.core.network.apis.response.WxPayData
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
@@ -1173,4 +1175,11 @@ interface ApiService {
      */
     @POST(ApiConstants.REPORT_SUBMISSION)
     suspend fun reportSubmission(@Body body: ReportSubmissionBody): ApiResponse<Any>
+
+
+    /**
+     * 分页查询我的作品列表
+     */
+    @POST(ApiConstants.MY_WORK)
+    suspend fun getMyWork(@Body body: MyWorkBody): ApiResponse<PagedList<WorkInformationData>>
 }
