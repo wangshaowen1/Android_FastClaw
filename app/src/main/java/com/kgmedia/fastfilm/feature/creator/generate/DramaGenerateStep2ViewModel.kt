@@ -90,6 +90,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     Log.e("[SSE]", "Error: $e")
                     sseOutputComplete.value = true
                     sseOutputFail.set(true)
+                    promptGenerating.value = false to ""
                     // 根据需要处理特定错误
                 })
         )

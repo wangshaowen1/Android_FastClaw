@@ -116,6 +116,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     // 根据需要处理特定错误
+                    promptGenerating.value = false to ""
                     e?.message?.showToast()
                     isSSEStreaming.set(false)
                 })

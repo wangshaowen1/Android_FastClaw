@@ -94,6 +94,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
                     Log.e("[SSE]", "Error: $e")
                     // 根据需要处理特定错误
                     e?.message?.showToast()
+                    promptGenerating.value = false to ""
                 })
         )
         // 3. 启动

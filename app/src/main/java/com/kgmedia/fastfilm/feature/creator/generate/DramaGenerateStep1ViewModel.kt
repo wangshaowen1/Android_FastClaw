@@ -83,6 +83,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     Log.e("[SSE]", "Error: $e")
                     displayChild.set(DISPLAY_FAIL)
                     onSSECompleted?.invoke()
+                    promptGenerating.value = false to ""
                 })
         )
 
