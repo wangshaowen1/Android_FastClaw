@@ -107,7 +107,7 @@
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:lines="1"
-            android:text="@{item.data.workDesc}"
+            android:text="@{item.data.workTitle}"
             tools:text="玄幻：开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇"
             android:textAppearance="@style/Text12"
             android:textColor="?textColor2"
