@@ -29,7 +29,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         const val DISPLAY_FAIL = 1
         const val DISPLAY_CONTENT = 2
     }
-
+    val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
     val minInputLength = 10
     val maxInputLength by lazy {
         ObservableInt(1000)
@@ -59,6 +59,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         } else {
             mRepo.api.sseScriptFromIdea(AIExpandBody(episodeId, workId.value, model))
         }
+        promptGenerating.value = true to "内容生成中..."
         nextStepEnabled.set(false)
         sseOutputComplete.value = false
         sseOutputFail.set(false)
@@ -69,6 +70,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             processor = StorySseProcessor(
                 scope = viewModelScope,
                 onStart = {
+                    promptGenerating.value = false to ""
                     input.value = ""
                     originalJson = ""
                     Logger.d("[SSE]", "Open")

@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
+import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -27,6 +28,7 @@ class DramaGenerateStep2Fragment :
     }
 
     val hostVm by lazy { getViewModelOfActivity<StoryEditorViewModel>() }
+    var dialog: GeneratingDialog? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -42,6 +44,15 @@ class DramaGenerateStep2Fragment :
             mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
             mRealVM.sseGenerate()
             hostVm?.backWarning = true
+        }
+        mRealVM.promptGenerating.observe(this) {
+            if (it.first) {
+                dialog?.dismiss()
+                dialog = activity?.let { it1 -> GeneratingDialog(it1, it.second) }
+                dialog?.show()
+            } else {
+                dialog?.dismiss()
+            }
         }
         mRealVM.input.observe(this) {
             if (mRealVM.input.value != binding.inputView.text) {

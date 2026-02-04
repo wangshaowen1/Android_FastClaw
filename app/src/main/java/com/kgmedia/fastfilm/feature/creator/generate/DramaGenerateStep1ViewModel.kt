@@ -26,7 +26,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         const val DISPLAY_FAIL = 1
         const val DISPLAY_CONTENT = 0
     }
-
+    val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
     var inspiration: String? = null
     var episodeRangeCode: String? = null
     var customEpisodeCount: String? = null
@@ -51,6 +51,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         // 1. 准备请求 Flow
         val sseFlow = mRepo.api.sseContentSynopsis(AISynopsisBody(inspiration, episodeRangeCode, customEpisodeCount))
         displayChild.set(DISPLAY_CONTENT)
+        promptGenerating.value = true to "故事生成中..."
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
@@ -58,6 +59,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             processor = EpisodeSseProcessor(
                 scope = viewModelScope,
                 onStart = {
+                    promptGenerating.value = false to ""
                     originalJson = ""
                     mSSEContent.value = ""
                     mContent.set("")

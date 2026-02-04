@@ -1,5 +1,7 @@
 package com.kgmedia.fastfilm.core.network.sse.processor
 
+import com.nhsd.basic.utils.Logger
+
 class JsonSseFieldStreamer(
     // 1. 改为可空参数，默认 null，这样不同场景可以按需传参
     private val onTitleUpdate: ((String) -> Unit)? = null,
@@ -28,6 +30,9 @@ class JsonSseFieldStreamer(
     private var escape = false
     private var braceLevel = 0
 
+    // === 新增变量，记录上次发送的长度 ===
+    private var lastMdEmittedLength = 0
+
     // Markdown 节流
     private var lastMdEmitTime = 0L
     private val MD_THROTTLE_MS = 80L
@@ -39,6 +44,7 @@ class JsonSseFieldStreamer(
     }
 
     private fun feed(c: Char) {
+        Logger.d("JsonSseFieldStreamer", "Char: $c, State: $state, Level: $braceLevel")
         // 维护 JSON 层级（只在非字符串状态下）
         if (state != State.IN_VALUE && state != State.IN_KEY) {
             when (c) {
@@ -82,6 +88,8 @@ class JsonSseFieldStreamer(
                             else -> Target.NONE
                         }
                         valueBuf.setLength(0)
+                        // === 修改点 2: 开始新字段时，重置发送游标 ===
+                        lastMdEmittedLength = 0
                         escape = false
                         state = State.IN_VALUE
                     }
@@ -141,8 +149,14 @@ class JsonSseFieldStreamer(
             }
             Target.MD -> {
                 val now = System.currentTimeMillis()
-                if (isFinal || now - lastMdEmitTime >= MD_THROTTLE_MS) {
-                    onMdUpdate?.invoke(valueBuf.toString())
+                if ((isFinal || now - lastMdEmitTime >= MD_THROTTLE_MS) && valueBuf.length > lastMdEmittedLength) {
+
+                    // 截取增量部分：从 lastIndex 到 currentLength
+                    val delta = valueBuf.substring(lastMdEmittedLength)
+                    onMdUpdate?.invoke(delta)
+
+                    // 更新游标和时间
+                    lastMdEmittedLength = valueBuf.length
                     lastMdEmitTime = now
                 }
             }
@@ -160,5 +174,17 @@ class JsonSseFieldStreamer(
         if (isFinal) {
             valueBuf.setLength(0)
         }
+    }
+
+    fun reset() {
+        state = State.SEEK_KEY
+        target = Target.NONE
+        keyBuf.setLength(0)
+        valueBuf.setLength(0)
+        escape = false
+        braceLevel = 0 // <--- 关键！必须归零
+        lastMdEmitTime = 0L
+
+        lastMdEmittedLength = 0
     }
 }

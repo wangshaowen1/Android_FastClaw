@@ -48,7 +48,7 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
         configsData?.ratioItemVoList?.forEach {
             ratioVms.add(initRatioVm(it))
         }
-        configsData?.list?.forEach {
+        configsData?.styleItemVOList?.forEach {
             styleVms.add(initStyleVm(it))
         }
     }

@@ -44,5 +44,5 @@ data class VideoStyleConfigInfo(
 data class VideoConfigData(
     val totalEpisodeCntItemVoList: List<VideoConfigInfo>?,
     val ratioItemVoList: List<VideoConfigInfo>?,
-    val list: List<VideoStyleConfigInfo>?
+    val styleItemVOList: List<VideoStyleConfigInfo>?
 ) : Parcelable

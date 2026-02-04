@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.core.network.sse.processor
 
 import com.kgmedia.fastfilm.core.network.sse.SseChunkProcessor
+import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,10 +33,12 @@ class EpisodeSseProcessor(
 
     override fun onSSEStart() {
         fullSourceAccumulator.setLength(0)
+        parser.reset()
         scope.launch(Dispatchers.Main) { onStart() }
     }
 
     override fun onSSEChunk(chunk: String) {
+        Logger.d("[SSE]", "onSSEChunk $chunk")
         fullSourceAccumulator.append(chunk)
         parser.onChunk(chunk)
     }
