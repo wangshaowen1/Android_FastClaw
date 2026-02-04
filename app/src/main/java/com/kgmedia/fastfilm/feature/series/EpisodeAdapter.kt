@@ -7,26 +7,29 @@ import androidx.recyclerview.widget.DiffUtil
 import com.kgmedia.fastfilm.common.ext.getVm
 import com.kgmedia.fastfilm.common.ext.putVm
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
-import com.kgmedia.fastfilm.databinding.ItemSeriesEpisodeBinding
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
+import com.kgmedia.fastfilm.databinding.ItemMyEpisodeInfoBinding
+import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
 import com.nhsd.basic.item.BindingViewHolder
-import com.nhsd.basic.item.ItemEventsViewModel
 
-class EpisodeAdapter(private val eventVm: ItemEventsViewModel<SeriesEpisodeEvent>) :
+class EpisodeAdapter(private val eventVm: ItemMultipleChoiceEventsViewModel<SeriesEpisodeEvent, String>) :
     PagingDataAdapter<EpisodeInfo, EpisodeAdapter.ViewHolder>(DIFF_CALLBACK) {
 
+    var workInfo: WorkInfo? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemSeriesEpisodeBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(ItemMyEpisodeInfoBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: EpisodeAdapter.ViewHolder, position: Int) {
         holder.bind(position)
     }
 
-    inner class ViewHolder(binding: ItemSeriesEpisodeBinding) : BindingViewHolder<ItemSeriesEpisodeBinding>(binding) {
+    inner class ViewHolder(binding: ItemMyEpisodeInfoBinding) : BindingViewHolder<ItemMyEpisodeInfoBinding>(binding) {
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
                 val viewModel = binding.getVm<ItemSeriesEpisodeVM>(position)?.also { it.updateData(item) }
-                    ?: ItemSeriesEpisodeVM(eventVm, position, item).also { binding.putVm(position, it) }
+                    ?: ItemSeriesEpisodeVM(eventVm, position, item, workInfo).also { binding.putVm(position, it) }
                 binding.item = viewModel
                 binding.executePendingBindings()
             }

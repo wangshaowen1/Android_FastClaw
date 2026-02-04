@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.Flow
  * 剧集详情页
  */
 class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
-    private val workId by lazy { mBundle.getString(Constants.Extra.ID) }
+    val workId by lazy { mBundle.getString(Constants.Extra.ID) }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
     val workInfo by lazy { ObservableField<WorkInfo>() }
     override fun onCreate() {

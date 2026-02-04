@@ -192,7 +192,7 @@
                                 android:scrollbars="none"
                                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                                 app:spanCount="3"
-                                tools:listitem="@layout/item_my_work" />
+                                tools:listitem="@layout/item_my_episode_info" />
 
                         </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
 

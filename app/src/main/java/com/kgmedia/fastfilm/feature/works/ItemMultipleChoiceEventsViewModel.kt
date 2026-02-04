@@ -36,12 +36,12 @@ class ItemMultipleChoiceEventsViewModel<T, S>() : BaseItemEventsViewModel<T, Str
 
     /** 增加选中 */
     fun addSelectedItem(id: S) {
-        _selectedItemIds.value = _selectedItemIds.value + id
+        _selectedItemIds.value += id
     }
 
     /** 移除选中 */
     fun removeSelectedItem(id: S) {
-        _selectedItemIds.value = _selectedItemIds.value - id
+        _selectedItemIds.value -= id
     }
 
     /** 是否选中 */

@@ -50,7 +50,7 @@
                 android:drawableTop="@drawable/icon_ai"
                 android:drawablePadding="12dp"
                 android:gravity="center"
-                android:text="视频生成中 60%"
+                android:text="视频生成中..."
                 android:textAppearance="@style/Text12"
                 android:textColor="@color/fixed_white_1"
                 app:layout_constraintBottom_toBottomOf="parent"

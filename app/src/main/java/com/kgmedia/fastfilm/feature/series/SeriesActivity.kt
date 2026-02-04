@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import com.kgmedia.fastfilm.feature.series.more.SeriesMoreDialog
+import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelActivity
@@ -31,19 +32,18 @@ import kotlinx.coroutines.launch
  */
 class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewModel>() {
     companion object {
-        fun start(seriesId: String?, newlyPublish: Boolean = false) {
+        fun start(workId: String?, newlyPublish: Boolean = false) {
             val activity = topActivity ?: return
             activity.startActivity(
                 Intent(activity, SeriesActivity::class.java).apply {
-                    putExtra(Constants.Extra.ID, seriesId)
+                    putExtra(Constants.Extra.ID, workId)
                     putExtra(Constants.Extra.NEWLY_PUBLISH, newlyPublish)
                 }
             )
         }
     }
 
-    private val seriesId by lazy { intent.getStringExtra(Constants.Extra.ID) }
-    private val eventVm by lazy { ItemEventsViewModel<SeriesEpisodeEvent>() }
+    private val eventVm by lazy { ItemMultipleChoiceEventsViewModel<SeriesEpisodeEvent,String>() }
     private val episodeAdapter by lazy { EpisodeAdapter(eventVm) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,6 +79,9 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             setNoDataPrompt(noDataAs)
         }
         binding.swipeRefreshLayout.startRefreshWithAdapter(episodeAdapter)
+
+
+        eventVm.switchStatus
     }
 
     private fun refresh() {
@@ -103,7 +106,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         }
         observeEvents {
             on<Events.SeriesUpdatedEvent> { event ->
-                if (isActive && event.seriesId == seriesId) {
+                if (isActive && event.seriesId == mRealVM.workId) {
                     mRealVM.getWorkDtl()
                 }
             }
@@ -128,9 +131,9 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     workCoverUrl = workInfo?.workCoverUrl,
                     workDesc = workInfo?.workDesc,
                     workStoryItemList = listOf(episode), // 这一集的数据
-                    lastEpisodeNo = "第${episode.sortNo}集",
+                    lastEpisodeNo = episode.sortNo,
                     totalEpisodeCnt = workInfo?.totalEpisodeCnt,
-                    playCount = episode.playCount
+                    playCount = episode.playCount,
                 )
             }
 
@@ -158,12 +161,12 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
             R.id.btnMore -> {
                 val series = mRealVM.workInfo.get() ?: return
-                SeriesMoreDialog.show(null, seriesId, series.workStatus == 60)
+                SeriesMoreDialog.show(null, mRealVM.workId, series.workStatus == 60)
             }
 
             R.id.btnContinue -> {
                 mRealVM.workInfo.get()?.let {
-                    ContinueWritingActivity.start(this, seriesId, it.workTitle)
+                    ContinueWritingActivity.start(this, mRealVM.workId, it.workTitle)
                 }
             }
         }

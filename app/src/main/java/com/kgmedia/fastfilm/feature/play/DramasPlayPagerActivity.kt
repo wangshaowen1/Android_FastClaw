@@ -60,7 +60,7 @@ class DramasPlayPagerActivity :
 
         listController.onPageChanged = { workInfo, position ->
             if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) {
-                binding.tvTitle.text = workInfo.lastEpisodeNo
+                binding.tvTitle.text = "第${workInfo.lastEpisodeNo}集"
             }
             val realWorkId = if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else workInfo.workId
             EventManager.onPlayEvent(workInfo.userId, realWorkId, workInfo.getEpisodeId())
