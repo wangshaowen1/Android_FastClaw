@@ -190,9 +190,11 @@ open class MultiStatePagingFooterAdapter(
                 if (NetworkUtil.isNetworkAvailable()) {
                     requestExceptionSrc?.let { ivAsv.setImageResource(it) }
                     tvAsv.text = requestException
+                    tvNetworkAnomaly.visibility = View.VISIBLE
                 } else {
                     networkAnomalySrc?.let { ivAsv.setImageResource(it) }
                     tvAsv.text = (loadState as? LoadState.Error)?.error?.message ?: networkAnomaly
+                    tvNetworkAnomaly.visibility = View.GONE
                 }
             } else {
                 if (noDataButtonDisplay) {
@@ -213,6 +215,7 @@ open class MultiStatePagingFooterAdapter(
                 }
                 noDataSrc?.let { ivAsv.setImageResource(it) }
                 tvAsv.text = noData
+                tvNetworkAnomaly.visibility = View.GONE
             }
 
             loadMoreLoadEnd.visibility = View.GONE

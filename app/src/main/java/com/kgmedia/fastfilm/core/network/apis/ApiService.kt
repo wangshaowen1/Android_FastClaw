@@ -57,6 +57,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DanmakuBody
+import com.kgmedia.fastfilm.core.network.apis.request.DeleteWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportBody
@@ -1160,4 +1161,11 @@ interface ApiService {
      */
     @POST(ApiConstants.MY_WORK)
     suspend fun getMyWork(@Body body: MyWorkBody): ApiResponse<PagedList<WorkInfo>>
+
+
+    /**
+     * 批量删除我的作品
+     */
+    @POST(ApiConstants.BATCH_DELETE_WORK)
+    suspend fun batchDeleteWork(@Body body: DeleteWorkBody): ApiResponse<Any>
 }

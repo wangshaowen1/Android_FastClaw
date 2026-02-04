@@ -11,7 +11,10 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constant
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
+import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.network.apis.request.DeleteWorkBody
+import com.kgmedia.fastfilm.core.response
 import kotlinx.coroutines.flow.Flow
 
 class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
@@ -41,11 +44,21 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
         }.flow.cachedIn(viewModelScope)
     }
 
+
+    /**
+     * 删除作品
+     */
     fun delete(workIds: List<String>) {
         if (workIds.isEmpty()) return
         launchWithLoading {
-            //删除数据库中的
-            mRepo.appDatabase.workInformationDao().deleteByWorkIds(workIds)
+            response(
+                bean = mRepo.api.batchDeleteWork(DeleteWorkBody(ids = workIds)),
+                result = {
+                    launch {
+                        //删除数据库中的
+                        mRepo.appDatabase.workInformationDao().deleteByWorkIds(workIds)
+                    }
+                })
         }
     }
 }

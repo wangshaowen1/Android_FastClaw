@@ -813,4 +813,10 @@ object ApiConstants {
      * 分页查询我的作品列表
      */
     const val MY_WORK="work/page"
+
+
+    /**
+     * 批量删除我的作品
+     */
+    const val BATCH_DELETE_WORK="work/batchDeleteIds"
 }

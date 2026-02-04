@@ -119,7 +119,6 @@ open class MultiStateAdapter(
                 holder.multiStateAdapterViewBinding.llLoadMoreLoadFailSmall.visibility = View.GONE
                 holder.multiStateAdapterViewBinding.llNullView.visibility = View.GONE
                 holder.multiStateAdapterViewBinding.llNullView.visibility = View.GONE
-                holder.multiStateAdapterViewBinding.tvNetworkAnomaly.visibility=View.GONE
                 if (loadState.endOfPaginationReached) {
                     //没有更多了
                     holder.multiStateAdapterViewBinding.loadMoreLoadEnd.visibility =
