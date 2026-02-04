@@ -76,7 +76,6 @@ class WorkInformationRemoteMediator(
 
             data?.map { workInformationData ->
                 WorkInformationInfo(
-                    workId = workInformationData.workId ?: "",
                     work = workInformationData
                 )
             }?.let { workInformation.addAll(it) }

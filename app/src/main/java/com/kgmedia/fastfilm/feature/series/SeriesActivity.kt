@@ -168,5 +168,4 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
         }
     }
-
 }

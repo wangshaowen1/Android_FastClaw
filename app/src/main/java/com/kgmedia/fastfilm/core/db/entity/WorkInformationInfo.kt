@@ -21,8 +21,6 @@ import kotlinx.parcelize.Parcelize
 data class WorkInformationInfo(
     @PrimaryKey(autoGenerate = true)
     var workInformationID: Long = 0,
-    //作品id
-    val workId: String,
     //作品本身的信息
     @Embedded
     val work: WorkInformationData,
