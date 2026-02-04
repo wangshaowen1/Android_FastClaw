@@ -28,7 +28,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:clipToPadding="false"
                 android:paddingHorizontal="@dimen/spacing_l"
                 android:paddingTop="20dp"
@@ -79,6 +79,13 @@
                 android:enabled="@{layout.nextStepEnabled}"
                 android:text="下一步：创建剧本"
                 tools:enabled="false" />
+
+            <Button
+                android:id="@+id/btnNextDisable"
+                style="@style/Button.Bold"
+                android:layout_width="match_parent"
+                android:background="@color/transparent"
+                android:visibility="@{layout.nextStepEnabled?View.GONE:View.VISIBLE}" />
         </FrameLayout>
     </LinearLayout>
 

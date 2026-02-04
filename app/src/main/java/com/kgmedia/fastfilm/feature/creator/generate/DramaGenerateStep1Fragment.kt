@@ -20,6 +20,7 @@ import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 
 
 /**
@@ -106,6 +107,9 @@ class DramaGenerateStep1Fragment :
         binding.btnRegenerate.setOnSingleClickListener {
             mRealVM.sseGenerate()
             hostVm?.backWarning = true
+        }
+        binding.btnNextDisable.setOnSingleClickListener {
+            "故事生成中，请稍候".showToast()
         }
         binding.btnNext.setOnSingleClickListener {
             mRealVM.confirmGenerate { workId, storyId ->
