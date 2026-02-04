@@ -82,7 +82,7 @@
             android:saveEnabled="false"
             android:textColor="?attr/textColor3"
             android:textSize="14dp"
-            app:collapseLines="2"
+            app:collapseLines="3"
             app:collapseTipLabel="收起"
             app:expandTipLabel="展开"
             app:expandable="false"
