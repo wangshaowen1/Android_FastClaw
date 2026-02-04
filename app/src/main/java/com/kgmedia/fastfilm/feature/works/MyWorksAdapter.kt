@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.getVm
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
-import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ItemMyWorkBinding
 import com.nhsd.basic.item.BindingViewHolder
 
@@ -46,7 +46,7 @@ class MyWorksAdapter(
 
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
-                val viewModel = binding.getVm<ItemMyWorkVM, WorkInformationData>(
+                val viewModel = binding.getVm<ItemMyWorkVM, WorkInfo>(
                     key = item.workInformationID,
                     item = item.work,
                     viewModelFactory = {

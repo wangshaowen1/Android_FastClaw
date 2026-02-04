@@ -17,11 +17,14 @@ import kotlinx.coroutines.withContext
  */
 class PhoneLoginRepository : AppRepository() {
 
-    suspend fun sendSmsValidateCode(phoneNumber: String?,bizType: Int=SendSmsValidateCodeBody.BIZ_TYPE_LOGIN) = withContext(Dispatchers.IO) {
+    suspend fun sendSmsValidateCode(
+        phoneNumber: String?,
+        bizType: Int = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN
+    ) = withContext(Dispatchers.IO) {
         api.sendSmsValidateCode(
             SendSmsValidateCodeBody(
                 phoneNumber,
-                bizType=bizType
+                bizType = bizType
             )
         )
     }
@@ -30,9 +33,10 @@ class PhoneLoginRepository : AppRepository() {
         withContext(Dispatchers.IO) {
             api.loginByPhone(
                 LoginByPhoneBody(
-                    phoneNumber,
-                    validationCode,
-                    Config.get().installData
+                    telNum=phoneNumber,
+                    smsValidateCode=validationCode,
+                    bizType = LoginByPhoneBody.BIZ_TYPE_LOGIN,
+                    Config.get().installData,
                 )
             ).apply {
                 val isNewRegister = data?.isNewRegistration() == true
@@ -41,7 +45,10 @@ class PhoneLoginRepository : AppRepository() {
                 }
                 EventManager.onAppTrack(
                     AppEvent.JG_ACTION_USER_LOGIN,
-                    mapOf(GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no", GrowingIO.KEY_ALL_LOGIN_TYPE to "phone")
+                    mapOf(
+                        GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no",
+                        GrowingIO.KEY_ALL_LOGIN_TYPE to "phone"
+                    )
                 )
             }
         }

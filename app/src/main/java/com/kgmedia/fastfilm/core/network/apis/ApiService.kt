@@ -158,7 +158,6 @@ import com.kgmedia.fastfilm.core.network.apis.response.UpgradeData
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
 import com.kgmedia.fastfilm.core.network.apis.response.WithdrawalRecordInfo
 import com.kgmedia.fastfilm.core.network.apis.response.WorkIdData
-import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
 import com.kgmedia.fastfilm.core.network.apis.response.WxPayData
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
@@ -1192,5 +1191,5 @@ interface ApiService {
      * 分页查询我的作品列表
      */
     @POST(ApiConstants.MY_WORK)
-    suspend fun getMyWork(@Body body: MyWorkBody): ApiResponse<PagedList<WorkInformationData>>
+    suspend fun getMyWork(@Body body: MyWorkBody): ApiResponse<PagedList<WorkInfo>>
 }

@@ -4,7 +4,7 @@ import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -23,5 +23,5 @@ data class WorkInformationInfo(
     var workInformationID: Long = 0,
     //作品本身的信息
     @Embedded
-    val work: WorkInformationData,
+    val work: WorkInfo,
 ) : Parcelable

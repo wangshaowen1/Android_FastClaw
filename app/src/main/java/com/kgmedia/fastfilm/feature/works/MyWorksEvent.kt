@@ -1,6 +1,6 @@
 package com.kgmedia.fastfilm.feature.works
 
-import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 
 /**
  * *****************************************
@@ -13,7 +13,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.WorkInformationData
  */
 sealed class MyWorksEvent {
     //查看详情
-    class ViewDetails(val workInformation: WorkInformationData?):MyWorksEvent()
+    class ViewDetails(val workInfo: WorkInfo?):MyWorksEvent()
     //编制状态下 status是已经改变后的状态
-    class ComposeState(status: Boolean,val workInformation: WorkInformationData?):MyWorksEvent()
+    class ComposeState(status: Boolean,val workInfo: WorkInfo?):MyWorksEvent()
 }

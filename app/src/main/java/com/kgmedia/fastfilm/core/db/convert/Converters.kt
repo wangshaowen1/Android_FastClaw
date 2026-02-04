@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.core.db.convert
 import androidx.room.TypeConverter
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 
 /**
  * *****************************************
@@ -23,5 +24,18 @@ class Converters {
     fun toStringList(value: String?): List<String> {
         val listType = object : TypeToken<List<String>>() {}.type
         return Gson().fromJson(value, listType) ?: emptyList()
+    }
+
+    @TypeConverter
+    fun fromEpisodeInfoList(value: List<EpisodeInfo>?): String? {
+        return value?.let {  Gson().toJson(it) }
+    }
+
+    @TypeConverter
+    fun toEpisodeInfoList(value: String?): List<EpisodeInfo>? {
+        return value?.let {
+            val listType = object : TypeToken<List<EpisodeInfo>>() {}.type
+            Gson().fromJson(value, listType)
+        }
     }
 }
