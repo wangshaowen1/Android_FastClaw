@@ -16,7 +16,7 @@ import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.CharacterInfo
 import com.kgmedia.fastfilm.databinding.FragmentConfirmDramaCharacterBinding
 import com.kgmedia.fastfilm.feature.creator.generate.edit.CharacterRegenerateDialog
-import com.kgmedia.fastfilm.feature.editor.ShortDramaEditorActivity
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.nhsd.basic.BaseViewModelFragment
@@ -105,7 +105,7 @@ class CharacterFragment :
                 EventManager.onAppTrack(AppEvent.JG_CLICK_CHARACTER_CONFIRM_PAGE_GENERATE_IMAGE_BUTTON)
                 mRealVM.generatingSegmentImage {
                     mActivity.finish()
-                    ShortDramaEditorActivity.start(it)
+                    EditStoryboardVideoActivity.start(it)
                 }
             }
 

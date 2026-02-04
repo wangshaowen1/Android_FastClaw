@@ -27,9 +27,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 /**
- * 短剧编辑
+ * 编辑分镜视频
  */
-class ShortDramaEditorViewModel : AppRepositoryViewModel<ShortDramaEditorRepository>() {
+class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
     val storyId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
     val workRatio = "9:16"

@@ -1,0 +1,231 @@
+package com.kgmedia.fastfilm.feature.editor
+
+import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
+import androidx.lifecycle.MutableLiveData
+import androidx.media3.common.Player
+import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
+import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.adapter.QuickAdapter
+import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.network.RetrofitClient
+import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
+import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.feature.creator.storyboard.ItemStoryboardVM
+import com.kgmedia.fastfilm.kit.media.PlayerFactory
+import com.kgmedia.fastfilm.kit.media.play
+import com.kgmedia.fastfilm.kit.media.setPlayUrl
+import com.kgmedia.fastfilm.widget.LoadStateViewHolder
+import com.kuaige.videoedit.resource.UrlResource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+
+/**
+ * 编辑分镜视频
+ */
+class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
+    val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    val storyId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    val workRatio = "9:16"
+    val loadState by lazy { ObservableInt() }
+    val currentStoryboard by lazy { ObservableField<ItemStoryboardVM>() }
+    val scrollToItem by lazy { MutableLiveData<Int>(-1) }
+    val adapter by lazy { QuickAdapter<ItemStoryboardVM>(R.layout.item_short_drama_editor_segment, emptyList()) }
+    val nextStepEnabled by lazy { ObservableBoolean(false) }
+    private var loopGeneratingStoryboardJob: Job? = null
+
+    val storyboardPlayer by lazy {
+        PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
+            addListener(object : Player.Listener {
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    super.onPlaybackStateChanged(playbackState)
+                    when (playbackState) {
+                        Player.STATE_READY -> {
+                        }
+
+                        Player.STATE_ENDED -> {
+                            playNext()
+                        }
+                    }
+                }
+            })
+        }
+    }
+    val playing by lazy { ObservableBoolean(true) }
+
+    override fun onCreate() {
+        super.onCreate()
+        getStoryboardList()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        loopGeneratingStoryboardJob?.cancel()
+        storyboardPlayer.release()
+    }
+
+    fun getStoryboardList() {
+        loopGeneratingStoryboardJob?.cancel()
+        if (adapter.items.isEmpty()) loadState.set(LoadStateViewHolder.LOADING)
+        launch(
+            block = {
+                val list = withContext(Dispatchers.IO) { mRepo.api.workStoryboardList(WorkBody(workId, storyId)).data }
+                if (list.isNullOrEmpty()) {
+                    updateLoadState()
+                    return@launch
+                }
+                if (list.size == adapter.items.size) {
+                    list.forEachIndexed { index, info -> adapter.getItem(index)?.data?.set(info) }
+                } else {
+                    list.mapIndexed { index, info ->
+                        ItemStoryboardVM(workId, storyId, info).apply {
+                            onItemClick.value = { v ->
+                                if (this != currentStoryboard.get()) {
+                                    select()
+                                }
+                            }
+                        }
+                    }.let { adapter.submitList(it) }
+                }
+                nextStepEnabled.set(allStoryboardGenerated())
+                if (currentStoryboard.get() == null) {
+                    adapter.items.firstOrNull()?.select()
+                }
+                updateLoadState()
+            },
+            onError = {
+                updateLoadState()
+            }
+        )
+    }
+
+    fun retryGenerate() {
+        val shotSegmentId = currentStoryboard.get()?.data?.get()?.storyboardId ?: return
+        launchWithLoading {
+            response(mRepo.shortDramasSegmentImageGenerateRetry(workId, shotSegmentId)) {
+                getStoryboardList()
+            }
+        }
+    }
+
+    fun synthesis() {
+    }
+
+    private fun updateLoadState() {
+        if (adapter.items.isEmpty()) {
+            loadState.set(LoadStateViewHolder.RETRY)
+        } else {
+            loadState.set(LoadStateViewHolder.CONTENT)
+            loopGeneratingSegments()
+        }
+    }
+
+    /**
+     * 轮询生成中片段
+     */
+    private fun loopGeneratingSegments() {
+        loopGeneratingStoryboardJob?.cancel()
+        if (anyStoryboardGenerating()) {
+            loopGeneratingStoryboardJob = launch {
+                delay(3000)
+                getStoryboardList()
+            }
+        }
+    }
+
+    fun play() {
+        if (storyboardPlayer.isPlaying) {
+            storyboardPlayer.pause()
+            playing.set(false)
+        } else {
+            when (storyboardPlayer.playbackState) {
+                Player.STATE_IDLE -> {
+                    val videoUrl = currentStoryboard.get()?.data?.get()?.videoUrl
+                    if (videoUrl.isNullOrEmpty().not()) {
+                        storyboardPlayer.play(videoUrl)
+                        playing.set(true)
+                    }
+                }
+
+                Player.STATE_ENDED -> {
+                    storyboardPlayer.seekTo(0)
+                    storyboardPlayer.play()
+                    playing.set(true)
+                }
+
+                else -> {
+                    storyboardPlayer.play()
+                    playing.set(true)
+                }
+            }
+        }
+    }
+
+    fun stopPlay() {
+        storyboardPlayer.stop()
+        playing.set(false)
+    }
+
+    private fun playNext() {
+        val current = currentStoryboard.get()
+        val currentIndex = adapter.items.indexOf(current)
+        val next = if (currentIndex > -1 && currentIndex < adapter.items.size - 1) adapter.getItem(currentIndex + 1) else adapter.getItem(0)
+        next.select()
+    }
+
+    private fun ItemStoryboardVM?.select() {
+        currentStoryboard.get()?.selected?.set(false)
+        this?.selected?.set(true)
+        currentStoryboard.set(this)
+        adapter.items.indexOf(this).takeIf { it > -1 }?.let { scrollToItem.value = it }
+        val videoUrl = currentStoryboard.get()?.data?.get()?.videoUrl
+        if (videoUrl.isNullOrEmpty().not()) {
+            if (playing.get()) {
+                storyboardPlayer.play(videoUrl)
+            } else {
+                storyboardPlayer.playWhenReady = false
+                storyboardPlayer.setPlayUrl(videoUrl)
+                storyboardPlayer.prepare()
+            }
+        } else {
+            storyboardPlayer.clearMediaItems()
+            storyboardPlayer.stop()
+            playing.set(false)
+        }
+    }
+
+    private fun allStoryboardGenerated(): Boolean {
+        return adapter.items.all { it.data.get()?.videoGenerated == true }
+    }
+
+    fun anyStoryboardGenerating(): Boolean {
+        return adapter.items.any { it.data.get()?.generating == true }
+    }
+
+    fun anyStoryboardFailed(): Boolean {
+        return adapter.items.any { it.data.get()?.failed == true }
+    }
+
+    fun download(videoUrl: String) {
+        launchWithLoading {
+            UrlResource(videoUrl, RetrofitClient.httpClient).download {
+
+            }
+        }
+    }
+
+    fun deleteCurrentStoryboard() {
+        launchWithLoading {
+            response(mRepo.api.workStoryboardDelete(IdsBody(null, currentStoryboard.get()?.data?.get()?.storyboardId))) {
+                playNext()
+                currentStoryboard.get()?.let { adapter.remove(it) }
+            }
+        }
+    }
+}

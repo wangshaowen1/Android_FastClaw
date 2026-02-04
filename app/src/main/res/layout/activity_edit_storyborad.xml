@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.editor.ShortDramaEditorViewModel" />
+            type="com.kgmedia.fastfilm.feature.editor.EditStoryboardViewModel" />
 
         <import type="android.text.TextUtils" />
 

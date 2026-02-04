@@ -20,7 +20,7 @@ import com.kgmedia.fastfilm.core.manager.IRouter
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
-import com.kgmedia.fastfilm.feature.editor.ShortDramaEditorActivity
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity.Companion.launch
 import com.kgmedia.fastfilm.widget.LoadingDialog2
@@ -163,7 +163,7 @@ object AppRouter : IRouter {
                     //作品状态 [0=预生成中(剧本大纲和分镜在生成中) 1=画面生成中 2=画面全部生成失败 3=画面部分生成失败 4=待选择角色 5=画面生成成功(未合成短剧) 6=已合成短剧 7=预生成成功(剧本大纲和分镜在生成成功)]
                     when (info?.workStatus) {
                         1, 2, 3, 5 -> {
-                            ShortDramaEditorActivity.start(dramasId)
+                            EditStoryboardVideoActivity.start(dramasId)
                         }
 
                         4 -> {

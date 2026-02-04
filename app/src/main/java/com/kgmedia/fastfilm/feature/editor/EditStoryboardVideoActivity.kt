@@ -7,19 +7,19 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.databinding.ActivityShortDramaEditorBinding
+import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardVideoBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.showToast
 
 /**
- * 短剧编辑
+ * 编辑分镜视频
  */
-class ShortDramaEditorActivity : BaseViewModelActivity<ActivityShortDramaEditorBinding, ShortDramaEditorViewModel>() {
+class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboardVideoBinding, EditStoryboardVideoViewModel>() {
     companion object {
 
         @JvmStatic
         fun launchIntent(activity: Activity, workId: String?): Intent {
-            val intent = Intent(activity, ShortDramaEditorActivity::class.java)
+            val intent = Intent(activity, EditStoryboardVideoActivity::class.java)
             intent.putExtra(Constants.Extra.WORK_ID, workId)
             return intent
         }

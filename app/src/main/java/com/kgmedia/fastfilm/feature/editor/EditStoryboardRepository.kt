@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 /**
  * 短剧编辑-仓库
  */
-class ShortDramaEditorRepository : CommonRepository() {
+class EditStoryboardRepository : CommonRepository() {
 
     /**
      * 合成短剧

@@ -318,7 +318,7 @@
         <activity android:name=".feature.timbre.MyTimbresActivity" />
         <activity android:name=".feature.creator.generate.StoryEditorActivity" />
         <activity
-            android:name=".feature.editor.ShortDramaEditorActivity"
+            android:name=".feature.editor.EditStoryboardVideoActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".feature.mine.PhoneShowActivity" />
         <activity
