@@ -144,20 +144,39 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 )
             }
 
-            R.id.ll_terms_service -> {
-                //服务协议
+            R.id.ll_information_collection -> {
+                //个人信息收集清单
                 SimpleBrowserActivity.launch(
                     this,
-                    Config.get().privacyUrl,
-                    "服务协议"
+                    Config.get().appConfig.personalInfoCollectionListUrl,
+                    "个人信息收集清单"
                 )
             }
+
             R.id.sll_filing_number -> {
                 //备案号
                 SimpleBrowserActivity.launch(
                     this,
                     Config.get().appConfig.beianNoJumpUrl,
                     "备案号"
+                )
+            }
+
+            R.id.ll_shared_list -> {
+                //第三方信息共享清单
+                SimpleBrowserActivity.launch(
+                    this,
+                    Config.get().appConfig.thirdPartyInfoShareListUrl,
+                    "第三方信息共享清单"
+                )
+            }
+
+            R.id.ll_algorithm_formula -> {
+                //算法公示
+                SimpleBrowserActivity.launch(
+                    this,
+                    Config.get().algorithmUrl,
+                    "算法公示"
                 )
             }
         }

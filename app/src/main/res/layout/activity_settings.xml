@@ -240,7 +240,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/ll_terms_service"
+                        android:id="@+id/ll_information_collection"
                         singleClick="@{layout.clickHandler::onClick}"
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
@@ -253,7 +253,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/terms_of_service"
+                            android:text="@string/app_information_collection"
                             android:textColor="?attr/textColor3" />
 
                         <ImageView
@@ -264,7 +264,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/sll_cancel_the_account"
+                        android:id="@+id/ll_shared_list"
                         singleClick="@{layout.clickHandler::onClick}"
                         android:layout_width="match_parent"
                         android:layout_height="52dp"
@@ -277,7 +277,31 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/app_cancel_the_account"
+                            android:text="@string/app_shared_list"
+                            android:textColor="?attr/textColor3" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/arrow_right_gray36" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_algorithm_formula"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/spacing_l">
+
+                        <TextView
+                            style="@style/Text14"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/app_algorithm_formula"
                             android:textColor="?attr/textColor3" />
 
                         <ImageView
@@ -308,9 +332,33 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@{layout.beiAn}"
-                            android:textColor="?attr/textColor3"
-                            style="@style/Text12"
+                            android:textColor="?attr/textColor4"
+                            style="@style/Text14"
                             tools:text="粤ICP备2020100243号-19A" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/sll_cancel_the_account"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="@dimen/spacing_l">
+
+                        <TextView
+                            style="@style/Text14"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/app_cancel_the_account"
+                            android:textColor="?attr/textColor3" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/arrow_right_gray36" />
                     </LinearLayout>
                 </LinearLayout>
 

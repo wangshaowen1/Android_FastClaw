@@ -40,6 +40,18 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         dataUpdate()
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) return
+        //更新必要信息
+        myWorksAdapter.refresh()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //更新必要信息
+        myWorksAdapter.refresh()
+    }
 
     private fun initView() {
         binding.recyclerView.apply {
@@ -157,5 +169,4 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             }
         }
     }
-
 }
