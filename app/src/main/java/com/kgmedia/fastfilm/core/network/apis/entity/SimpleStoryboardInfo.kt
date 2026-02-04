@@ -51,7 +51,7 @@ data class SimpleStoryboardInfo(
      * 视频生成提示词
      */
     val genVideoPrompt: String? = null,
-     /**
+    /**
      * 当前图片url
      */
     val imageUrl: String? = null,
@@ -75,4 +75,12 @@ data class SimpleStoryboardInfo(
      * [枚举]任务类型 [1=文生文 2=文生图 3=图生图 4=图生视频]
      */
     val taskType: Int? = null,
-)
+) {
+    val generating get() = stepStatus == 1
+
+    val imageGenerated get() = stepStatus == 2
+
+    val failed get() = stepStatus == 3
+
+    val videoGenerated get() = stepStatus == 4
+}

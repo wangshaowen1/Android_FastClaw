@@ -25,6 +25,8 @@ class ItemStoryboardVM(
     val storyId: String?,
     data: SimpleStoryboardInfo?
 ) : AppItemViewModel<SimpleStoryboardInfo>(data) {
+    val selected by lazy { ObservableBoolean(false) }
+
     /**
      * -1=新创建 0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成
      */
@@ -41,6 +43,16 @@ class ItemStoryboardVM(
     var editingStoryboardDescText: String? = data?.storyBoardDesc
     val editingStoryboardDesc by lazy { ObservableBoolean(false) }
     val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
+
+    /**
+     * [枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
+     */
+    fun genStatusBig(status: Int?) =
+        when (status) {
+            0, 1, 2 -> "视频生成中"
+            3 -> "视频生成失败"
+            else -> null
+        }
 
     fun editAssetDesc() {
         storyboardDescInputListener.set(object : RecyclerEditText.OnTextInputListener {

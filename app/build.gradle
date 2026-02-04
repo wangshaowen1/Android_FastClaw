@@ -226,8 +226,8 @@ android {
         develop {
             dimension 'env'
             //buildConfigField 'String', 'SERVER_URL', '"http://192.168.0.100:5010/"'//高俊毅
-            //buildConfigField 'String', 'SERVER_URL', '"http://192.168.0.8:5010/"'//志才
-            buildConfigField 'String', 'SERVER_URL', '"https://short-api.mynatapp.cc"'//测试外网
+            //buildConfigField 'String', 'SERVER_URL', '"http://192.168.10.31:8088/"'//义明
+            buildConfigField 'String', 'SERVER_URL', '"https://192.168.10.31:8088/"'//测试外网
             //buildConfigField 'String', 'SERVER_URL', '"http://192.168.0.40:5010/"'//陆
             //buildConfigField 'String', 'SERVER_URL', '"http://43.153.117.92:5010/"'//国庆
             //buildConfigField 'String', 'SERVER_URL', '"http://192.168.0.4:5010/"'//富强

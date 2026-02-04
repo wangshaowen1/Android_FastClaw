@@ -7,21 +7,25 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.editor.ItemShortDramaSegmentVM" />
-
+            type="com.kgmedia.fastfilm.feature.creator.storyboard.ItemStoryboardVM" />
 
         <import type="android.view.View" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        showBorder="@{item.selected}"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="5dp"
-        android:onClick="@{(v)->item.onItemClick.invoke(v)}">
+        android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+        app:backgroundStartColor="?attr/fillColor4"
+        app:borderStartColor="@color/fixed_white_1"
+        app:borderWidth="1.5dp"
+        app:roundCornerRadius="8dp">
 
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
-            loadThumbnailUri="@{item.data.shotSegmentImageUrl}"
+            loadThumbnailUri="@{item.data.imageUrl}"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -29,17 +33,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="100:75"
             app:layout_constraintStart_toStartOf="parent"
-            app:riv_border_color="@color/fixed_white_1"
-            app:riv_border_width="1.5dp"
-            app:riv_corner_radius="8dp"
-            tools:src="?attr/funcColorSuccess" />
+            app:riv_corner_radius="8dp" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/mask_opacity_60_dark"
             android:gravity="center"
-            android:text="@{`分镜`+item.data.sequenceNumber}"
+            android:text="@{item.data.generating ? `制作中` : (`分镜`+item.data.sortNo)}"
             android:textAppearance="@style/Text12"
             android:textColor="?attr/textColor1"
             android:textSize="10dp"
@@ -49,5 +50,16 @@
             app:layout_constraintStart_toStartOf="@+id/ivCover"
             tools:text="分镜1" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            setVisible="@{item.data.generating}"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/icon_ai"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:layout_constraintVertical_bias="0.4" />
+
+    </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 </layout>
