@@ -22,7 +22,7 @@ abstract class BaseThrottleSseProcessor(
     protected open fun onStartInternal() {}
     protected open fun onCompleteInternal() {}
 
-    override fun onStart() {
+    override fun onSSEStart() {
         completed = false
         lastEmitTime = 0L
         scope.launch(Dispatchers.Main) {
@@ -44,7 +44,7 @@ abstract class BaseThrottleSseProcessor(
         }
     }
 
-    override fun onComplete() {
+    override fun onSSEComplete() {
         completed = true
         tryEmit(force = true)
         scope.launch(Dispatchers.Main) {
@@ -52,7 +52,7 @@ abstract class BaseThrottleSseProcessor(
         }
     }
 
-    override fun onError(e: Throwable?) {
+    override fun onSSEError(e: Throwable?) {
         // 默认不处理
     }
 }

@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.core.network.sse.processor
 
+import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -21,7 +22,7 @@ class PlainTextSseProcessor(
         onStart()
     }
 
-    override fun onChunk(chunk: String) {
+    override fun onSSEChunk(chunk: String) {
         buffer.append(chunk)
         tryEmit()
     }
@@ -36,7 +37,7 @@ class PlainTextSseProcessor(
         onComplete()
     }
 
-    override fun onError(e: Throwable?) {
+    override fun onSSEError(e: Throwable?) {
         onErrorCallback(e)
     }
 }

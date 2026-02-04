@@ -30,17 +30,17 @@ class EpisodeSseProcessor(
         }
     )
 
-    override fun onStart() {
+    override fun onSSEStart() {
         fullSourceAccumulator.setLength(0)
         scope.launch(Dispatchers.Main) { onStart() }
     }
 
-    override fun onChunk(chunk: String) {
+    override fun onSSEChunk(chunk: String) {
         fullSourceAccumulator.append(chunk)
         parser.onChunk(chunk)
     }
 
-    override fun onComplete() {
+    override fun onSSEComplete() {
         val fullSource = fullSourceAccumulator.toString()
         scope.launch(Dispatchers.Main) {
             // 4. 传给回调
@@ -48,7 +48,7 @@ class EpisodeSseProcessor(
         }
     }
 
-    override fun onError(e: Throwable?) {
+    override fun onSSEError(e: Throwable?) {
         scope.launch(Dispatchers.Main) { onErrorCallback(e) }
     }
 }

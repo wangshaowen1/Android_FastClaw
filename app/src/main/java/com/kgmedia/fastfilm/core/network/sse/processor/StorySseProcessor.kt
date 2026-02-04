@@ -26,22 +26,22 @@ class StorySseProcessor(
         }
     )
 
-    override fun onStart() {
+    override fun onSSEStart() {
         fullSourceAccumulator.setLength(0)
         scope.launch(Dispatchers.Main) { onStart() }
     }
 
-    override fun onChunk(chunk: String) {
+    override fun onSSEChunk(chunk: String) {
         fullSourceAccumulator.append(chunk) // 记录原始数据
         parser.onChunk(chunk)               // 解析字段
     }
 
-    override fun onComplete() {
+    override fun onSSEComplete() {
         val fullSource = fullSourceAccumulator.toString()
         scope.launch(Dispatchers.Main) { onComplete(fullSource) }
     }
 
-    override fun onError(e: Throwable?) {
+    override fun onSSEError(e: Throwable?) {
         scope.launch(Dispatchers.Main) { onErrorCallback(e) }
     }
 }

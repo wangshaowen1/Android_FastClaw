@@ -6,14 +6,14 @@ package com.kgmedia.fastfilm.core.network.sse
 interface SseChunkProcessor {
 
     /** SSE 开始 */
-    fun onStart()
+    fun onSSEStart()
 
     /** 每一段 SSE data */
-    fun onChunk(chunk: String)
+    fun onSSEChunk(chunk: String)
 
     /** SSE 正常结束 */
-    fun onComplete()
+    fun onSSEComplete()
 
     /** SSE 发生错误 */
-    fun onError(e: Throwable?)
+    fun onSSEError(e: Throwable?)
 }

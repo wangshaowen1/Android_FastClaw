@@ -1,5 +1,7 @@
 package com.kgmedia.fastfilm.core.network.sse
 
+import android.util.Log
+import com.kgmedia.fastfilm.core.db.entity.SSEMessage
 import com.kgmedia.fastfilm.core.network.SSEvent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -7,6 +9,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 class SSEStreamHandler(
     private val scope: CoroutineScope,
@@ -30,15 +33,31 @@ class SSEStreamHandler(
 
                     when (event) {
                         is SSEvent.Open -> {
-                            processor.onStart()
+                            processor.onSSEStart()
                         }
 
                         is SSEvent.Message -> {
-                            processor.onChunk(event.data)
+                            val data = event.data
+                            try {
+                                val sseMessage = Json.decodeFromString<SSEMessage>(data)
+                                if (sseMessage.code == SSEMessage.TYPE_ERROR) {
+                                    Log.e("[SSE]", "receive msg: parsing error for ${sseMessage.content ?: ""}")
+                                    processor.onSSEError(RuntimeException(sseMessage.content))
+                                } else {
+                                    if (sseMessage.isOver()) {
+                                        handleComplete()
+                                        return@collect
+                                    }
+                                    processor.onSSEChunk(sseMessage.content ?: "")
+                                }
+                            } catch (e: Exception) {
+                                Log.e("[SSE]", "receive msg: parsing error for $data", e)
+                                processor.onSSEError(e)
+                            }
                         }
 
                         is SSEvent.Error -> {
-                            processor.onError(event.throwable)
+                            processor.onSSEError(event.throwable)
                         }
 
                         is SSEvent.Close -> {
@@ -49,7 +68,7 @@ class SSEStreamHandler(
             } catch (e: CancellationException) {
                 // 正常取消，不作为错误处理
             } catch (e: Exception) {
-                processor.onError(e)
+                processor.onSSEError(e)
             } finally {
                 // 确保流自然结束时（非 Close 事件触发）也能回调 complete
                 if (isActive && !isCompleted) {
@@ -62,7 +81,7 @@ class SSEStreamHandler(
     private fun handleComplete() {
         if (!isCompleted) {
             isCompleted = true
-            processor.onComplete()
+            processor.onSSEComplete()
         }
     }
 
