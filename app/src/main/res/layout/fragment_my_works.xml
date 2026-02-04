@@ -33,8 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            tools:visibility="visible"
-            app:constraint_referenced_ids="tvSelectCount,btnSelectAll,btnComplete,btnDelete" />
+            app:constraint_referenced_ids="tvSelectCount,btnSelectAll,btnComplete,btnDelete"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -111,7 +111,8 @@
             <com.kgmedia.fastfilm.widget.LoadStateViewHolder
                 android:id="@+id/lsv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:noData="暂无作品记录，快去创作你的作品吧">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view"

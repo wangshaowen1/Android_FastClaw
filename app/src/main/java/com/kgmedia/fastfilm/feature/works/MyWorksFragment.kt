@@ -13,13 +13,13 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
 import com.kgmedia.fastfilm.feature.main.MainViewModel
+import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getViewModelOfActivity
-import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.launch
 
 class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksViewModel>() {
@@ -48,6 +48,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             itemAnimator = null
             val myMultiStatePagingFooterAdapter = MyMultiStatePagingFooterAdapter(
                 myWorksAdapter,
+                noData = "暂无作品记录，快去创作你的作品吧",
             ) {
                 myWorksAdapter.retry()
             }
@@ -71,7 +72,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 when (event) {
                     is MyWorksEvent.ViewDetails -> {
                         //查看详情
-                        "查看详情，功能开发中".showToast()
+                        SeriesActivity.start(workId = event.workInfo?.workId)
                     }
 
                     is MyWorksEvent.ComposeState -> {
