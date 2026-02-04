@@ -93,6 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="6dp"
+            android:visibility="@{(item.data.finishedEpisodeCnt>0)?View.VISIBLE:View.GONE}"
             android:text="@{`共`+item.data.finishedEpisodeCnt+`集`}"
             tools:text="共1集"
             android:textAppearance="@style/Text12"

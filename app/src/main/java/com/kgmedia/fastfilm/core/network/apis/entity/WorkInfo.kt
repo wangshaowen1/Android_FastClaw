@@ -42,8 +42,7 @@ data class WorkInfo(
     var userId: String? = null,
     //剧集
     var workStoryItemList: List<EpisodeInfo>? = null,
-
-    ) : Parcelable {
+) : Parcelable {
 
     companion object {
         //草稿状态
@@ -208,7 +207,6 @@ data class EpisodeInfo(
     fun isDraft(): Boolean {
         return stepProgress == PROGRESS_DRAFT
     }
-
 
 
     companion object {
