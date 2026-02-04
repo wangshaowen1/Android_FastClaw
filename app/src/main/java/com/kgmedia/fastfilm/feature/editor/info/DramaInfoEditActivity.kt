@@ -34,15 +34,29 @@ class DramaInfoEditActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mRealVM.name.observe(this) {
+            if (it != binding.nameInputer.text) {
+                binding.nameInputer.setText(it)
+            }
+        }
+        mRealVM.desc.observe(this) {
+            if (it != binding.descInputer.text) {
+                binding.descInputer.setText(it)
+            }
+        }
         binding.nameInputer.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
-                mRealVM.isModify = true
+                if (s.toString() != mRealVM.name.value) {
+                    mRealVM.isModify = true
+                }
                 mRealVM.name.value = s.toString()
             }
         })
         binding.descInputer.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
-                mRealVM.isModify = true
+                if (s.toString() != mRealVM.desc.value) {
+                    mRealVM.isModify = true
+                }
                 mRealVM.desc.value = s.toString()
             }
         })
@@ -54,6 +68,7 @@ class DramaInfoEditActivity :
             R.id.btnChangeCover -> {
                 requestAlbumsPermission()
             }
+
             R.id.btnConfirm -> {
                 mRealVM.saveInfo()
             }
