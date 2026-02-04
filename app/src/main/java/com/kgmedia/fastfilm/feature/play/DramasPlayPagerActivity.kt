@@ -120,14 +120,18 @@ class DramasPlayPagerActivity :
     }
 
     private fun handlePlayEnded() {
-        if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) {
-            if (!listController.smoothScrollToNext()) {
-                "已经是最后一集了".showToast()
-                playerManager.replay()
-            }
-        } else {
+        if (!listController.smoothScrollToNext()) {
+            "已经是最后一集了".showToast()
             playerManager.replay()
         }
+//        if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.RECOMMEND) {
+//            if (!listController.smoothScrollToNext()) {
+//                "已经是最后一集了".showToast()
+//                playerManager.replay()
+//            }
+//        } else {
+//            playerManager.replay()
+//        }
     }
 
     // --- 交互回调 ---

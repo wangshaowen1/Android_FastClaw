@@ -61,7 +61,7 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
         @JvmStatic
         fun startContinue(
             context: Context?,
-            content: String?,
+            content: String?=null,
             workId: String? = null,
             lastEpisodeId: String? = null,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,

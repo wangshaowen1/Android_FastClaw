@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.core.network.sse.processor
 
 import com.kgmedia.fastfilm.core.network.sse.SseChunkProcessor
+import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ class StorySseProcessor(
     private val parser = JsonSseFieldStreamer(
         onStoryUpdate = { content ->
             scope.launch(Dispatchers.Main) {
+                Logger.d("StorySseProcessor", "content: $content")
                 onStoryUpdate(content)
             }
         }
@@ -32,6 +34,7 @@ class StorySseProcessor(
     }
 
     override fun onSSEChunk(chunk: String) {
+        Logger.d("StorySseProcessor", "Chunk: $chunk")
         fullSourceAccumulator.append(chunk) // 记录原始数据
         parser.onChunk(chunk)               // 解析字段
     }

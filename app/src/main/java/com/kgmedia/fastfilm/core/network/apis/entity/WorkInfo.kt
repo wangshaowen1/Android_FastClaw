@@ -68,6 +68,10 @@ data class WorkInfo(
         const val FAILED_STATE = 70
     }
 
+    fun isInspirationGenerated(): Boolean {
+        return workType == 1
+    }
+
     fun isMine(): Boolean {
         return User.get().isSameId(userId)
     }

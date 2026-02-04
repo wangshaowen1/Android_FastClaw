@@ -13,6 +13,8 @@ import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
@@ -24,7 +26,6 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isActive
-import com.nhsd.basic.item.ItemEventsViewModel
 import kotlinx.coroutines.launch
 
 /**
@@ -43,7 +44,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         }
     }
 
-    private val eventVm by lazy { ItemMultipleChoiceEventsViewModel<SeriesEpisodeEvent,String>() }
+    private val eventVm by lazy { ItemMultipleChoiceEventsViewModel<SeriesEpisodeEvent, String>() }
     private val episodeAdapter by lazy { EpisodeAdapter(eventVm) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -166,7 +167,11 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
             R.id.btnContinue -> {
                 mRealVM.workInfo.get()?.let {
-                    ContinueWritingActivity.start(this, mRealVM.workId, it.workTitle)
+                    if (it.isInspirationGenerated()) {
+                        StoryEditorActivity.startContinue(this, workId = mRealVM.workId, model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION)
+                    } else {
+                        ContinueWritingActivity.start(this, mRealVM.workId, it.workTitle)
+                    }
                 }
             }
         }
