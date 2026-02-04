@@ -18,14 +18,16 @@ import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
-import com.kgmedia.fastfilm.feature.series.more.SeriesMoreDialog
 import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
+import com.kgmedia.fastfilm.widget.Popup
+import com.kgmedia.fastfilm.widget.SeriesMorePopupView
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isActive
+import com.nhsd.basic.ext.setOnSingleClickListener
 import kotlinx.coroutines.launch
 
 /**
@@ -156,13 +158,19 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
-            R.id.btnEdit -> {
-                DramaInfoEditActivity.start(this, mRealVM.workInfo.get())
-            }
-
             R.id.btnMore -> {
                 val series = mRealVM.workInfo.get() ?: return
-                SeriesMoreDialog.show(null, mRealVM.workId, series.workStatus == 60)
+                val popupView = SeriesMorePopupView()
+                val popup = Popup(popupView)
+                popupView.binding.btnEdit.setOnSingleClickListener {
+                    popup.dismiss()
+                    DramaInfoEditActivity.start(this, mRealVM.workInfo.get())
+                }
+                popupView.binding.btnManage.setOnSingleClickListener {
+                    popup.dismiss()
+                    // TODO: 剧集管理
+                }
+                popup.showUnder(view)
             }
 
             R.id.btnContinue -> {
