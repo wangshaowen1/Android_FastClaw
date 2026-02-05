@@ -18,15 +18,16 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
     companion object {
 
         @JvmStatic
-        fun launchIntent(activity: Activity, workId: String?): Intent {
+        fun launchIntent(activity: Activity, workId: String?, storyId: String?): Intent {
             val intent = Intent(activity, EditStoryboardVideoActivity::class.java)
             intent.putExtra(Constants.Extra.WORK_ID, workId)
+            intent.putExtra(Constants.Extra.STORY_ID, storyId)
             return intent
         }
 
         @JvmStatic
-        fun start(workId: String?) {
-            topActivity?.let { it.startActivity(launchIntent(it, workId)) }
+        fun start(workId: String?, storyId: String?) {
+            topActivity?.let { it.startActivity(launchIntent(it, workId, storyId)) }
         }
     }
 

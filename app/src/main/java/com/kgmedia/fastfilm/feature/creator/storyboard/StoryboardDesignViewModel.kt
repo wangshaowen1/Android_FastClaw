@@ -195,7 +195,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     fun next() {
         launchWithLoading {
             response(mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId))) {
-                EditStoryboardVideoActivity.start(workId)
+                EditStoryboardVideoActivity.start(workId, storyId)
             }
         }
     }

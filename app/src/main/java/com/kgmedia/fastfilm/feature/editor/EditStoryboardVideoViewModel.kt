@@ -31,7 +31,7 @@ import kotlinx.coroutines.withContext
  */
 class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
-    val storyId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
     val workRatio = "9:16"
     val loadState by lazy { ObservableInt() }
     val currentStoryboard by lazy { ObservableField<ItemStoryboardVM>() }

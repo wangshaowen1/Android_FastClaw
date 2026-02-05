@@ -163,7 +163,6 @@ object AppRouter : IRouter {
                     //作品状态 [0=预生成中(剧本大纲和分镜在生成中) 1=画面生成中 2=画面全部生成失败 3=画面部分生成失败 4=待选择角色 5=画面生成成功(未合成短剧) 6=已合成短剧 7=预生成成功(剧本大纲和分镜在生成成功)]
                     when (info?.workStatus) {
                         1, 2, 3, 5 -> {
-                            EditStoryboardVideoActivity.start(dramasId)
                         }
 
                         else -> {}

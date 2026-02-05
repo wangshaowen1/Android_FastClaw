@@ -105,7 +105,6 @@ class CharacterFragment :
                 EventManager.onAppTrack(AppEvent.JG_CLICK_CHARACTER_CONFIRM_PAGE_GENERATE_IMAGE_BUTTON)
                 mRealVM.generatingSegmentImage {
                     mActivity.finish()
-                    EditStoryboardVideoActivity.start(it)
                 }
             }
 
