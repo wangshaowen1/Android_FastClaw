@@ -20,6 +20,7 @@ class StoryboardDesignFragment : BaseViewModelFragment<FragmentStoryboardDesignB
         super.onPrepareView()
         mRealVM.workId = hostVm?.workId
         mRealVM.storyId = hostVm?.storyId
+        mRealVM.retry()
     }
 
 }

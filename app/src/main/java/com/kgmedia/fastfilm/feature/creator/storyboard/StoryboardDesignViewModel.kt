@@ -6,21 +6,23 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
-import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
+import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
-import com.kgmedia.fastfilm.feature.creator.assets.ItemAssetVM
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /**
  * 分镜设计
@@ -33,12 +35,13 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private val addStoryboardItem by lazy { ItemAddVM("添加分镜").apply { onItemClick.value = { addStoryboard(this) } } }
     private var editingStoryboardDescVM: ItemStoryboardVM? = null
     private var loopNextEnabledJob: Job? = null
-    val nextEnabled by lazy { ObservableBoolean(false) }
 
-    override fun onCreate() {
-        super.onCreate()
-        getStoryboards()
-    }
+    /**
+     * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
+     */
+    private var step = 0
+    private var taskId: String? = null
+    val nextEnabled by lazy { ObservableBoolean(false) }
 
     override fun onResume() {
         super.onResume()
@@ -52,9 +55,18 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
         loopNextEnabledJob = launch {
             while (true) {
-                nextEnabled.set(adapter.items.all { if (it is ItemAssetVM<*>) it.status.get() == 2 else true })
+                val containStoryboard = adapter.items.any { it is ItemStoryboardVM }
+                nextEnabled.set(containStoryboard && adapter.items.all { if (it is ItemStoryboardVM) it.data.get()?.imageGenerated == true else true })
                 delay(1000)
             }
+        }
+    }
+
+    fun retry() {
+        when (step) {
+            0 -> generateAllStoryboardDescription()
+            1 -> loopAllStoryboardDescriptionStatus()
+            2 -> getStoryboards()
         }
     }
 
@@ -62,6 +74,45 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         loopNextEnabledJob?.cancel()
         topActivity?.window?.let { KeyboardUtils.unregisterSoftInputChangedListener(it) }
         super.onPause()
+    }
+
+    private fun generateAllStoryboardDescription() {
+        loadState.set(LoadStateViewHolder.LOADING)
+        launch(block = {
+            val allStoryboardDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId)).data }
+            taskId = allStoryboardDescriptionStatus?.taskId
+            if (allStoryboardDescriptionStatus?.genStatus == 1 || allStoryboardDescriptionStatus?.genStatus == 2) {
+                step = 1
+                loopAllStoryboardDescriptionStatus()
+            } else {
+                loadState.set(LoadStateViewHolder.RETRY)
+            }
+        }, onError = {
+            loadState.set(LoadStateViewHolder.RETRY)
+        })
+    }
+
+    private fun loopAllStoryboardDescriptionStatus() {
+        loadState.set(LoadStateViewHolder.LOADING)
+        launch(block = {
+            var genStatus: Int? = 1
+            while (genStatus == 1) {
+                runCatching {
+                    val status = withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescriptionStatus(TaskIdBody(taskId, null)).data?.genStatus }
+                    genStatus = status
+                }
+                delay(3000)
+            }
+            //生成状态 [0=待生成 1=生成中 2=成功 3=失败]
+            if (genStatus == 2) {
+                step = 2
+                getStoryboards()
+            } else {
+                loadState.set(LoadStateViewHolder.RETRY)
+            }
+        }, onError = {
+            loadState.set(LoadStateViewHolder.RETRY)
+        })
     }
 
     fun getStoryboards() {
@@ -95,10 +146,17 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
 
                 R.id.etStoryboardDescCover -> {
-                    topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
+                    val edit = {
                         editingStoryboardDescVM?.exitEditAssetDesc()
                         editingStoryboardDescVM = this
                         editAssetDesc()
+                    }
+                    if (storyboardDesc.get().isNullOrEmpty()) {
+                        edit.invoke()
+                    } else {
+                        topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
+                            edit.invoke()
+                        }
                     }
                 }
 
@@ -137,7 +195,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     fun next() {
         launchWithLoading {
             response(mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId))) {
-
+                EditStoryboardVideoActivity.start(workId)
             }
         }
     }

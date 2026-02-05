@@ -10,9 +10,13 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
+import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 class ItemStoryboardVM(
     /**
@@ -43,6 +47,12 @@ class ItemStoryboardVM(
     var editingStoryboardDescText: String? = data?.storyBoardDesc
     val editingStoryboardDesc by lazy { ObservableBoolean(false) }
     val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
+
+    init {
+        if (status.get() == 1) {
+            loopGenStatus()
+        }
+    }
 
     /**
      * [枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
@@ -86,19 +96,28 @@ class ItemStoryboardVM(
 
     fun generate() {
         if (status.get() == 1) return
-        val storyboardPrompt = if (editingStoryboardDesc.get()) editingStoryboardDescText else storyboardDesc.get()
-        if (storyboardPrompt.isNullOrEmpty()) {
+        val storyBoardDesc = if (editingStoryboardDesc.get()) editingStoryboardDescText else storyboardDesc.get()
+        if (storyBoardDesc.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
             return
         }
         status.set(1)
         launch {
-            val body = GenerateStoryboardBody(data.get()?.storyboardId, storyboardPrompt, null, null, workId, storyId)
+            val body = GenerateStoryboardBody(
+                storyboardId = data.get()?.storyboardId,
+                storyBoardDesc = storyBoardDesc,
+                genImagePrompt = data.get()?.genImagePrompt,
+                genVideoPrompt = null,
+                workId = workId,
+                storyId = storyId
+            )
             response(ApiFactory.apiService.workStoryboardSingleGenerate(body)) {
-                val role = this@ItemStoryboardVM.data.get() ?: SimpleStoryboardInfo()
-                role.taskId = data?.taskId
-                role.stepStatus = data?.genStatus
-                this@ItemStoryboardVM.data.set(role)
+                val storyboard = this@ItemStoryboardVM.data.get() ?: SimpleStoryboardInfo()
+                storyboard.taskId = data?.taskId
+                storyboard.stepStatus = data?.genStatus
+                data?.genStatus?.let { status.set(it) }
+                this@ItemStoryboardVM.data.set(storyboard)
+                loopGenStatus()
             }
         }
     }
@@ -106,6 +125,28 @@ class ItemStoryboardVM(
     fun deleteAsset() {
         launch {
             response(ApiFactory.apiService.workStoryboardDelete(IdsBody(null, data.get()?.storyboardId))) {
+            }
+        }
+    }
+
+    private fun loopGenStatus() {
+        val taskId = data.get()?.taskId
+        if (taskId.isNullOrEmpty()) return
+        launch {
+            loop@ while (status.get() == 1) {
+                runCatching {
+                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(taskId, 71)).data }
+                    data.get()?.let {
+                        it.stepStatus = taskStatus?.genStatus
+                        it.imageUrl = taskStatus?.result
+                    }
+                    data.notifyChange()
+                    taskStatus?.genStatus?.let { status.set(it) }
+                }
+                if (status.get() != 1) {
+                    break@loop
+                }
+                delay(3000)
             }
         }
     }

@@ -57,7 +57,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
         loopNextEnabledJob = launch {
             while (true) {
-                nextEnabled.set(adapter.items.all { if (it is ItemAssetVM<*>) it.status.get() == 2 else false })
+                val containAssets = adapter.items.any { it is ItemAssetVM<*> }
+                nextEnabled.set(containAssets && adapter.items.all { if (it is ItemAssetVM<*>) it.status.get() == 2 else true })
                 delay(1000)
             }
         }

@@ -14,25 +14,25 @@ data class GenerateStoryboardBody(
     /**
      * 分镜id
      */
-    val storyboardId: String?,
+    val storyboardId: String? = null,
     /**
      * 分镜描述
      */
-    val storyBoardDesc: String?,
+    val storyBoardDesc: String? = null,
     /**
      * 图片生成提示词
      */
-    val genImagePrompt: String?,
+    val genImagePrompt: String? = null,
     /**
      * 视频生成提示词
      */
-    val genVideoPrompt: String?,
+    val genVideoPrompt: String? = null,
     /**
      * 作品 ID
      */
-    val workId: String?,
+    val workId: String? = null,
     /**
      * 剧集 id
      */
-    val storyId: String?
+    val storyId: String? = null
 )

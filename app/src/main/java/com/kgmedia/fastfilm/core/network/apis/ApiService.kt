@@ -1120,6 +1120,17 @@ interface ApiService {
     suspend fun workAssetSingleGenerate(@Body body: GenerateAssetBody): ApiResponse<TaskStatusInfo?>
 
     /**
+     * 生成全部分镜描述
+     */
+    @POST(ApiConstants.GENERATE_ALL_STORYBOARD_DESCRIPTION)
+    suspend fun generateAllStoryboardDescription(@Body body: WorkBody): ApiResponse<TaskStatusInfo?>
+    /**
+     * 轮询查询全部分镜描述
+     */
+    @POST(ApiConstants.GENERATE_ALL_STORYBOARD_DESCRIPTION_STATUS)
+    suspend fun generateAllStoryboardDescriptionStatus(@Body body: TaskIdBody): ApiResponse<TaskStatusInfo?>
+
+    /**
      * 轮询查询单个分镜图片
      */
     @POST(ApiConstants.WORK_STORYBOARD_SINGLE_STATUS)

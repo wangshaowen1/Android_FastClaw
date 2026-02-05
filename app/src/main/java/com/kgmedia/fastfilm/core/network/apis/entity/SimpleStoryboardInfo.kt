@@ -54,7 +54,7 @@ data class SimpleStoryboardInfo(
     /**
      * 当前图片url
      */
-    val imageUrl: String? = null,
+    var imageUrl: String? = null,
     /**
      * 当前视频url
      */
@@ -78,7 +78,11 @@ data class SimpleStoryboardInfo(
 ) {
     val generating get() = stepStatus == 1
 
-    val imageGenerated get() = stepStatus == 2
+    val imageGenerated
+        get() = when (creationMode) {
+            3 -> true
+            else -> stepStatus == 2
+        }
 
     val failed get() = stepStatus == 3
 

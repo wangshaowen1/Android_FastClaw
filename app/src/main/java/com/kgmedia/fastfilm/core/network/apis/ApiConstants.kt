@@ -780,6 +780,16 @@ object ApiConstants {
     const val WORK_ASSET_SINGLE_GENERATE = "ai/asset/generation/single/image"
 
     /**
+     * 生成全部分镜描述
+     */
+    const val GENERATE_ALL_STORYBOARD_DESCRIPTION = "ai/storyboard/generation/description"
+
+    /**
+     * 轮询查询全部分镜描述
+     */
+    const val GENERATE_ALL_STORYBOARD_DESCRIPTION_STATUS = "ai/task/query/storyboard/all"
+
+    /**
      * 轮询查询单个分镜图片
      */
     const val WORK_STORYBOARD_SINGLE_STATUS = "ai/task/query/storyboard/single"
