@@ -61,4 +61,14 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
                 })
         }
     }
+
+    /**
+     * 删除全部作品
+     */
+    fun deleteAll() {
+        launch {
+            //删除数据库中的
+            mRepo.appDatabase.workInformationDao().clearAll()
+        }
+    }
 }

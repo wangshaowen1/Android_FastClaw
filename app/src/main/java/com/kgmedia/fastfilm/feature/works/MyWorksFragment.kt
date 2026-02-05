@@ -10,7 +10,10 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Events
+import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
+import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
@@ -18,12 +21,16 @@ import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getViewModelOfActivity
 import kotlinx.coroutines.launch
 
 class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksViewModel>() {
 
+
+    //上一个的登录id
+    private var userId : String?=null
 
     private val myWorksAdapter by lazy {
         MyWorksAdapter(eventVm = eventVm)
@@ -73,6 +80,19 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
     }
 
     private fun dataUpdate() {
+        observeEvents {
+            //登录状态变化
+            onUserStatusChanged {
+                if (userId == User.get().id) return@onUserStatusChanged
+                userId = User.get().id
+                if (userId.isNullOrEmpty()){
+                    mRealVM.deleteAll()
+                }else{
+                    myWorksAdapter.refresh()
+                }
+            }
+        }
+
         lifecycleScope.launch {
             mRealVM.getWorkInformation().collect {
                 myWorksAdapter.submitData(it)

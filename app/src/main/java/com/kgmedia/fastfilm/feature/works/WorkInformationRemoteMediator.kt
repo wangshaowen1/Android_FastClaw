@@ -5,6 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.AppDatabase
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.network.apis.ApiException
@@ -58,6 +59,16 @@ class WorkInformationRemoteMediator(
                         state.pages.size + 1
                     }
                 }
+            }
+
+            if (User.get().isVisitor) {
+                //没有登录，是游客
+                database.withTransaction {
+                    // 刷新时清空旧数据
+                    complaintDetailsDao.clearAll()
+                }
+                val throwable = ApiException(ApiException.AUTHORIZATION_ERROR, "请先登录")
+                return MediatorResult.Error(throwable)
             }
 
             val body = MyWorkBody(
