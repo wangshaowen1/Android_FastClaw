@@ -1,15 +1,15 @@
 package com.kgmedia.fastfilm.widget
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.databinding.PopupSeriesMoreBinding
 
 /**
  * 剧集更多
  */
-class SeriesMorePopupView : IPopupView {
-    val binding by lazy { PopupSeriesMoreBinding.inflate(LayoutInflater.from(App.instance)) }
+class SeriesMorePopupView(context: Context) : IPopupView {
+    val binding by lazy { PopupSeriesMoreBinding.inflate(LayoutInflater.from(context), null, false) }
 
     override val root: View
         get() = binding.root

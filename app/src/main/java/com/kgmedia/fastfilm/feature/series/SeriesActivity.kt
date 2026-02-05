@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
@@ -98,7 +99,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     is SeriesEpisodeEvent.Click -> {
 //                        val snapshot = episodeAdapter.snapshot().items
 //                        onPlayEpisodeClicked(mRealVM.workInfo.get(), snapshot, event.position)
-                        StoryEditorActivity.start(this@SeriesActivity, 3, mRealVM.workId, event.item.data.get()?.storyId)
+                        EditStoryboardVideoActivity.start(mRealVM.workId, event.item.data.get()?.storyId)
                     }
                 }
             }
@@ -161,7 +162,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         when (view?.id) {
             R.id.btnMore -> {
                 val series = mRealVM.workInfo.get() ?: return
-                val popupView = SeriesMorePopupView()
+                val popupView = SeriesMorePopupView(this)
                 val popup = Popup(popupView)
                 popupView.binding.btnEdit.setOnSingleClickListener {
                     popup.dismiss()
