@@ -2,15 +2,22 @@ package com.kgmedia.fastfilm.feature.play
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import androidx.lifecycle.lifecycleScope
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.manager.EventManager
+import com.kgmedia.fastfilm.core.network.apis.response.PlayMenuInfo
 import com.kgmedia.fastfilm.databinding.ActivityDramasPlayPagerBinding
 import com.kgmedia.fastfilm.feature.play.manger.FeedListController
 import com.kgmedia.fastfilm.feature.play.manger.FeedPlayerManager
+import com.kgmedia.fastfilm.feature.play.menu.ListPopupWindow
+import com.kgmedia.fastfilm.feature.play.menu.OnItemSelectedListener
 import com.kgmedia.fastfilm.feature.settings.report.ReportDialog
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.flow.collectLatest
@@ -35,11 +42,17 @@ class DramasPlayPagerActivity :
     private val adapter = VideoFeedAdapter(this)
     private lateinit var playerManager: FeedPlayerManager
     private lateinit var listController: FeedListController
+    private var listPopupWindow: ListPopupWindow<PlayMenuInfo>? = null
+
+    private var workId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val workId = intent.getStringExtra(Constants.Extra.WORK_ID)
+        workId = intent.getStringExtra(Constants.Extra.WORK_ID)
         val initialPos = intent.getIntExtra(Constants.Extra.POSITION, 0)
+
+        initView()
+
         // 1. 初始化核心组件
         playerManager = FeedPlayerManager(this, lifecycleScope)
         binding.recyclerView.adapter = adapter
@@ -69,15 +82,59 @@ class DramasPlayPagerActivity :
         // 3. 事件流
         setupPlayerEvents()
 
+
+    }
+
+    private fun initView(){
         binding.btnMenu.setOnSingleClickListener {
-            val item = listController.getCurrentItem()
-            ReportDialog.newInstance(
-                supportFragmentManager,
-                item?.userId,
-                if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else item?.workId//剧集模式下workId是剧集id
-            )
+            showPopupWindow()
         }
     }
+
+    private fun showPopupWindow() {
+        if (listPopupWindow == null) {
+            listPopupWindow = ListPopupWindow(
+                context = this,
+                dataList = arrayListOf(
+                    PlayMenuInfo(
+                        reportTypeId = PlayMenuInfo.REPORT,
+                        reportText = "举报",
+                        reportIcon = R.drawable.ic_report
+                    )
+                ),
+                selectedItemId = PlayMenuInfo.REPORT
+            )
+
+            listPopupWindow?.setStatus(
+                normalBackgroundColor = R.color.bg_color_3_dark.getResColor(),
+                selectedBackgroundColor = R.color.bg_color_3_dark.getResColor(),
+                normalColor = R.color.text_color_3_dark.getResColor(),
+                selectedColor = R.color.text_color_3_dark.getResColor(),
+                isSelectBold = false
+            )
+            listPopupWindow?.setAdapter()
+            listPopupWindow?.setOnItemSelectedListener(object :
+                OnItemSelectedListener<PlayMenuInfo> {
+                override fun onItemSelected(selectedItem: PlayMenuInfo, position: Int) {
+                    listPopupWindow?.dismiss()
+                    when (selectedItem.getItemId()) {
+                        PlayMenuInfo.REPORT -> {
+                            //举报
+                            val item = listController.getCurrentItem()
+                            ReportDialog.newInstance(
+                                supportFragmentManager,
+                                item?.userId,
+                                if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else item?.workId//剧集模式下workId是剧集id
+                            )
+                        }
+                    }
+                }
+            })
+        }
+        val gravity = Gravity.END or Gravity.TOP
+        listPopupWindow?.showAtLocation(binding.btnMenu, gravity, 32, 80.dp)
+    }
+
 
     private fun setupPlayerEvents() {
         // 进度同步 (幽灵进度问题)
