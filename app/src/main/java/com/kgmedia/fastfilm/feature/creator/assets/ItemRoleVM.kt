@@ -58,7 +58,7 @@ class ItemRoleVM(
         }
         status.set(1)
         launch {
-            val body = GenerateAssetBody(41, rolePrompt, data.get()?.appearanceId, null, null, null, workId, storyId)
+            val body = GenerateAssetBody(41, rolePrompt, data.get()?.appearanceId, null, 0, null, workId, storyId)
             response(ApiFactory.apiService.workAssetSingleGenerate(body)) {
                 val role = this@ItemRoleVM.data.get() ?: SimpleRoleInfo()
                 role.taskId = data?.taskId
