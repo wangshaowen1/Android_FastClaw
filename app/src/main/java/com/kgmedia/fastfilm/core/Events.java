@@ -392,6 +392,17 @@ public class Events {
     }
 
     /**
+     * 删除剧集
+     */
+    public static class DeleteTVSeriesEvent implements AppEvent {
+        public final String workId;
+
+        public DeleteTVSeriesEvent(String workId) {
+            this.workId = workId;
+        }
+    }
+
+    /**
      * 字幕配音事件
      */
     public static class DubbingEvent implements AppEvent {

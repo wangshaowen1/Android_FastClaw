@@ -16,31 +16,30 @@ import kotlinx.coroutines.launch
 class ItemSeriesEpisodeVM(
     private val eventVm: ItemMultipleChoiceEventsViewModel<SeriesEpisodeEvent, String>,
     private val position: Int,
-    data: EpisodeInfo?,
+    private val episodeInfo: EpisodeInfo?,
     val workInfo: WorkInfo?
-) : AppItemViewModel<EpisodeInfo>(data) {
+) : AppItemViewModel<EpisodeInfo>(episodeInfo) {
 
     //当前显示状态是查看(true)还是编辑(false)
     var isView = ObservableBoolean(true)
 
     //当前合成状态
-    val generateStatus = ObservableField(data?.stepProgress)
+    val generateStatus = ObservableField(episodeInfo?.stepProgress)
 
     //是否选中
     val isSelected = ObservableBoolean(false)
 
     fun onClick() {
-
         if (isView.get()) {
             eventVm.postEvent(SeriesEpisodeEvent.Click(position, this))
             return
         }
         if (isSelected.get()) {
             isSelected.set(false)
-            eventVm.removeSelectedItem(workInfo?.workId ?: "")
+            eventVm.removeSelectedItem(episodeInfo?.storyId ?: "")
         } else {
             isSelected.set(true)
-            eventVm.addSelectedItem(workInfo?.workId ?: "")
+            eventVm.addSelectedItem(episodeInfo?.storyId ?: "")
         }
         eventVm.postEvent(SeriesEpisodeEvent.ComposeState(isSelected.get(), this))
     }
@@ -54,7 +53,7 @@ class ItemSeriesEpisodeVM(
 
         viewModelScope.launch {
             eventVm.selectedItemIds.collect { selectedIds ->
-                isSelected.set(selectedIds.contains(data?.storyId))
+                isSelected.set(selectedIds.contains(episodeInfo?.storyId))
             }
         }
     }

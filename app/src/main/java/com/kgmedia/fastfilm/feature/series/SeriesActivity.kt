@@ -118,6 +118,11 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     refresh()
                 }
             }
+            on<Events.DeleteTVSeriesEvent> { event ->
+                if (isActive && event.workId == mRealVM.workId) {
+                    refresh()
+                }
+            }
         }
     }
 
@@ -217,8 +222,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         super.onClick(view, data)
         when (view?.id) {
             R.id.btnMore -> {
-                val series = mRealVM.workInfo.get() ?: return
-                val popupView = SeriesMorePopupView()
+                mRealVM.workInfo.get() ?: return
+                val popupView = SeriesMorePopupView(this)
                 val popup = Popup(popupView)
                 popupView.binding.btnEdit.setOnSingleClickListener {
                     popup.dismiss()

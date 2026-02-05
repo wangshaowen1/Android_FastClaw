@@ -37,7 +37,7 @@ class WorksManagementViewModel : AppRepositoryViewModel<SeriesRepository>() {
     )
 
 
-    private val workId by lazy { mBundle.getString(WorksManagementActivity.WORK_ID) }
+     val workId by lazy { mBundle.getString(WorksManagementActivity.WORK_ID) }
 
     //删除完成
      val deleteCompleted = MutableLiveData(false)

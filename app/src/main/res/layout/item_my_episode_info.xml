@@ -23,7 +23,7 @@
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
             loadUri="@{item.workInfo.workCoverUrl}"
-            placeHolder="@{@drawable/ic_default_cover}"
+            placeHolder="@{@color/fill_color_1_dark}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
@@ -31,7 +31,7 @@
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
             app:riv_corner_radius="@dimen/radius_m"
-            tools:src="@drawable/ic_default_cover" />
+            tools:src="@color/fill_color_1_dark" />
 
         <com.kgmedia.fastfilm.widget.BorderConstraintLayout
             android:layout_width="0dp"
@@ -78,12 +78,12 @@
             android:layout_width="wrap_content"
             android:layout_height="16dp"
             android:layout_margin="4dp"
-            android:background="@drawable/gradient_left_ff6e25_right_ffe261_round"
+            android:background="@drawable/bg_60_000000_round"
             android:gravity="center"
             android:paddingHorizontal="6dp"
             android:text="待合成"
             android:textAppearance="@style/Text10"
-            android:textColor="@color/fixed_white_1"
+            android:textColor="@color/func_special_dark"
             android:visibility="@{(item.data.waitingComposing&amp;&amp;item.isView())?View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />

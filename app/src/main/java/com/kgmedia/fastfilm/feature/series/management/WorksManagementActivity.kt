@@ -8,6 +8,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.databinding.ActivityWorksManagementBinding
 import com.kgmedia.fastfilm.feature.series.EpisodeAdapter
 import com.kgmedia.fastfilm.feature.series.SeriesEpisodeEvent
@@ -15,8 +16,10 @@ import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.dp
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 /**
  * *****************************************
@@ -95,6 +98,7 @@ class WorksManagementActivity :
             if (!it) return@observe
             mRealVM.deleteCompleted.value = false
             eventVm.clearAllSelection()
+            FlowEventBus.postSync(Events.DeleteTVSeriesEvent(mRealVM.workId))
             refresh()
         }
     }
