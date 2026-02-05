@@ -1,15 +1,9 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.R
-import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
-import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.databinding.FragmentAssetManagementBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.nhsd.basic.BaseViewModelFragment
@@ -21,18 +15,16 @@ import com.nhsd.basic.ext.getParentViewModel
 class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBinding, AssetManagementViewModel>() {
 
     companion object {
-        fun newInstance(workId: String?, storyId: String?) = AssetManagementFragment().also {
-            it.arguments = bundleOf(Constants.Extra.WORK_ID to workId, Constants.Extra.STORY_ID to storyId)
-        }
+        fun newInstance() = AssetManagementFragment()
     }
 
-    private var firstItem: SimpleAsset? = null
+    private var firstItem: Any? = null
         set(value) {
             field = value
             when (value) {
-                is SimpleRoleInfo -> bindingNullable?.rgAssetType?.check(R.id.rbRoles)
-                is SimpleSceneInfo -> bindingNullable?.rgAssetType?.check(R.id.rbScenes)
-                is SimplePropInfo -> bindingNullable?.rgAssetType?.check(R.id.rbProps)
+                is ItemRoleVM -> bindingNullable?.rgAssetType?.check(R.id.rbRoles)
+                is ItemSceneVM -> bindingNullable?.rgAssetType?.check(R.id.rbScenes)
+                is ItemPropVM -> bindingNullable?.rgAssetType?.check(R.id.rbProps)
             }
         }
     private val layoutManager get() = bindingNullable?.rvAssets?.layoutManager as? LinearLayoutManager
@@ -40,12 +32,15 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
 
     override fun onPrepareView() {
         super.onPrepareView()
+        mRealVM.workId = hostVm?.workId
+        mRealVM.storyId = hostVm?.storyId
+        mRealVM.retry()
         binding.rvAssets.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 layoutManager?.findFirstVisibleItemPosition()?.let { position ->
-                    val item = mRealVM.adapter.getItem(position)?.data?.get()
-                    if (item is SimpleAsset && item.javaClass != firstItem?.javaClass) {
+                    val item = mRealVM.adapter.getItem(position)
+                    if (item?.javaClass != firstItem?.javaClass) {
                         firstItem = item
                     }
                 }
@@ -75,19 +70,19 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
     }
 
     private fun scrollToRoles() {
-        mRealVM.adapter.items.indexOfFirst { it.data.get() is SimpleRoleInfo }.takeIf { it > -1 }?.let {
+        mRealVM.adapter.items.indexOfFirst { it is ItemRoleVM }.takeIf { it > -1 }?.let {
             layoutManager?.scrollToPositionWithOffset(it, 0)
         }
     }
 
     private fun scrollToScenes() {
-        mRealVM.adapter.items.indexOfFirst { it.data.get() is SimpleSceneInfo }.takeIf { it > -1 }?.let {
+        mRealVM.adapter.items.indexOfFirst { it is ItemSceneVM }.takeIf { it > -1 }?.let {
             layoutManager?.scrollToPositionWithOffset(it, 0)
         }
     }
 
     private fun scrollToProps() {
-        mRealVM.adapter.items.indexOfFirst { it.data.get() is SimplePropInfo }.takeIf { it > -1 }?.let {
+        mRealVM.adapter.items.indexOfFirst { it is ItemPropVM }.takeIf { it > -1 }?.let {
             layoutManager?.scrollToPositionWithOffset(it, 0)
         }
     }

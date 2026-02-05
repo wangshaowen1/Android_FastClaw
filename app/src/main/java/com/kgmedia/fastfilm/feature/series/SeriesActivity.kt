@@ -96,8 +96,9 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             eventVm.events.collect { event ->
                 when (event) {
                     is SeriesEpisodeEvent.Click -> {
-                        val snapshot = episodeAdapter.snapshot().items
-                        onPlayEpisodeClicked(mRealVM.workInfo.get(), snapshot, event.position)
+//                        val snapshot = episodeAdapter.snapshot().items
+//                        onPlayEpisodeClicked(mRealVM.workInfo.get(), snapshot, event.position)
+                        StoryEditorActivity.start(this@SeriesActivity, 3, mRealVM.workId, event.item.data.get()?.storyId)
                     }
                 }
             }

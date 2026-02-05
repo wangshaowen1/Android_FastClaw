@@ -6,7 +6,6 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
-import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
@@ -26,8 +25,8 @@ import kotlinx.coroutines.withContext
  * 资产管理
  */
 class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepository>() {
-    private val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
-    private val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
+    var workId: String? = null
+    var storyId: String? = null
     val loadState by lazy { ObservableInt() }
     val adapter by lazy { AssetManagementAdapter() }
     private val addRoleItem by lazy { ItemAddVM("添加角色").apply { onItemClick.value = { addRole(this) } } }
@@ -43,11 +42,6 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private var step = 0
     private var taskId: String? = null
     val nextEnabled by lazy { ObservableBoolean(false) }
-
-    override fun onCreate() {
-        super.onCreate()
-        generateAllAssetDescription()
-    }
 
     override fun onResume() {
         super.onResume()

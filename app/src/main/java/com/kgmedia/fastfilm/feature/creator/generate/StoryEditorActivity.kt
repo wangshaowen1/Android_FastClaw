@@ -78,25 +78,18 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
         }
 
         /**
-         * @param dramaId 创作ID
-         * @param title 故事标题，直接进步骤2要传
-         * @param scriptContent 故事大纲 步骤1给
-         * @param step 步骤几  1，恢复生成  2，跳到角色列表界面
+         * @param step 步骤几  1 故事梗概 2 故事剧本 3 资产管理 4 分镜设计
          */
         @JvmStatic
-        fun start(context: Context?, step: Int? = 2, dramaId: String?, title: String? = null, scriptContent: String? = null) {
+        fun start(context: Context?, step: Int? = 2, workId: String?, storyId: String? = null) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
-            starter.putExtra(Constants.Extra.ID, dramaId)
-            if (title != null) {
-                starter.putExtra(Constants.Extra.TITLE, title)
-            }
-            starter.putExtra(Constants.Extra.CONTENT, scriptContent)
             starter.putExtra(KEY_STEP, step)
+            starter.putExtra(Constants.Extra.WORK_ID, workId)
+            starter.putExtra(Constants.Extra.STORY_ID, storyId)
             context.startActivity(starter)
         }
     }
-
 
     override fun onBackPressed() {
         if (mRealVM.step.value == 1 && mRealVM.backWarning) {//因为步骤1流式输出的时候 不会保存生成的内容
@@ -126,12 +119,12 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
                 }
 
                 3 -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, AssetManagementFragment.newInstance(mRealVM.workId, mRealVM.storyId))
+                    supportFragmentManager.beginTransaction().replace(R.id.container, AssetManagementFragment.newInstance())
                         .commitAllowingStateLoss()
                 }
 
                 4 -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, StoryboardDesignFragment.newInstance(mRealVM.workId, mRealVM.storyId))
+                    supportFragmentManager.beginTransaction().replace(R.id.container, StoryboardDesignFragment.newInstance())
                         .commitAllowingStateLoss()
                 }
             }

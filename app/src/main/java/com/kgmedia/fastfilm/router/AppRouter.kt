@@ -166,10 +166,6 @@ object AppRouter : IRouter {
                             EditStoryboardVideoActivity.start(dramasId)
                         }
 
-                        4 -> {
-                            StoryEditorActivity.start(topActivity, 2, dramasId, null)
-                        }
-
                         else -> {}
                     }
                 }
