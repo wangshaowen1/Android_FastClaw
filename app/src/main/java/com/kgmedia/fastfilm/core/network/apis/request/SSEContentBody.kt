@@ -67,8 +67,11 @@ data class OptimizeContentData(
  * }
  */
 data class AIExpandBody(
+    //上一集 剧集id
     val storyId: String? = null,
+    //作品ID
     val workId: String? = null,
+    //业务类型枚举30=灵感剧集剧本  33=灵感续集剧本
     val bizType: Int? = null,
 )
 

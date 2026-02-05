@@ -29,6 +29,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         const val DISPLAY_FAIL = 1
         const val DISPLAY_CONTENT = 2
     }
+
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
     val minInputLength = 10
     val maxInputLength by lazy {
@@ -36,13 +37,17 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     }
     val input by lazy { MutableLiveData<String?>() }
 
+    //业务类型
     var model: Int? = null
     var inspiration: String? = null
     var episodeRangeCode: String? = null
     var customEpisodeCount: String? = null
     var videoRatio: String? = null
     var videoStyleId: String? = null
+
+    //作品ID
     var workId = MutableLiveData<String>()
+    //上一集 剧集id
     var episodeId: String? = null
 
     val nextStepEnabled by lazy { ObservableBoolean(false) }
@@ -55,9 +60,22 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     fun sseGenerate() {
         val sseFlow = if (model == DramaGenerateConstants.MODEL_STORY) {
-            mRepo.api.sseScriptFromStory(AISynopsisBody(inspiration, episodeRangeCode, customEpisodeCount))
+            mRepo.api.sseScriptFromStory(
+                AISynopsisBody(
+                    inspiration,
+                    episodeRangeCode,
+                    customEpisodeCount
+                )
+            )
         } else {
-            mRepo.api.sseScriptFromIdea(AIExpandBody(episodeId, workId.value, model))
+            mRepo.api.sseScriptFromIdea(
+                AIExpandBody(
+                    workId = workId.value,
+                    storyId=episodeId,
+                    bizType=model,
+                    episodeManifest="",
+                )
+            )
         }
         promptGenerating.value = true to "内容生成中..."
         nextStepEnabled.set(false)
