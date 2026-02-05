@@ -824,4 +824,9 @@ object ApiConstants {
      * 批量删除我的作品
      */
     const val BATCH_DELETE_WORK = "work/batchDeleteIds"
+
+    /**
+     * 轮询查询我的作品状态列表
+     */
+    const val GET_WORK_STATUS_LIST = "work/getWorkStatusList"
 }

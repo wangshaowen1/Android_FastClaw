@@ -5,6 +5,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 
 /**
@@ -43,4 +45,37 @@ interface WorkInformationDao {
      */
     @Query("DELETE FROM WorkInformationInfo WHERE workId IN (:workIds)")
     suspend fun deleteByWorkIds(workIds: List<String>): Int
+
+
+    /**
+     * 根据 workId，如果存在则更新，不存在则添加。
+     * 整个操作在一个事务中完成，以保证数据一致性。
+     * @param list 要处理的数据列表
+     */
+    @Transaction
+    suspend fun upsertWorkInformationDao(list: List<WorkInformationInfo>) {
+        for (item in list) {
+            // 尝试根据 pictureBookId 和 type 查询是否已存在记录
+            val existingItem: WorkInformationInfo? = getWorkInformationDao(item.work.workId)
+            if (existingItem == null) {
+                // 不存在，则插入新记录
+                insert(item)
+            } else {
+                // 已存在，则更新记录
+                // 注意：这里假设 update 方法是通过主键来更新的。
+                // 如果你的 PictureBookRoomInfo 有使用 @PrimaryKey 标注的主键（例如一个自增id），并且希望更新所有字段，可以直接使用 @Update 方法。
+                // 如果更新逻辑更复杂，可以使用 @Query 进行指定字段的更新。
+                item.workInformationID = existingItem.workInformationID
+                update(item)
+            }
+        }
+    }
+
+    // 新增：根据 type 和 pictureBookId 查询单个条目
+    @Query("SELECT * FROM WorkInformationInfo WHERE  workId = :workId")
+    suspend fun getWorkInformationDao(workId: String?): WorkInformationInfo?
+
+    // 新增：更新单个条目（假设通过主键更新）
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(item: WorkInformationInfo): Int
 }

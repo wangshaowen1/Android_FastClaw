@@ -1174,4 +1174,10 @@ interface ApiService {
      */
     @POST(ApiConstants.BATCH_DELETE_WORK)
     suspend fun batchDeleteWork(@Body body: DeleteWorkBody): ApiResponse<Any>
+
+    /**
+     * 批量删除我的作品
+     */
+    @POST(ApiConstants.GET_WORK_STATUS_LIST)
+    suspend fun getWorkStatusList(@Body body: UserTokenBody): ApiResponse<List<WorkInfo>>
 }

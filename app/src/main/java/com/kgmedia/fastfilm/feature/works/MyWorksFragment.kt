@@ -10,7 +10,6 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
@@ -30,7 +29,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
 
 
     //上一个的登录id
-    private var userId : String?=null
+    private var userId: String? = null
 
     private val myWorksAdapter by lazy {
         MyWorksAdapter(eventVm = eventVm)
@@ -47,16 +46,32 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         dataUpdate()
     }
 
+    override fun onStart() {
+        super.onStart()
+        mRealVM.isShow.set(true)
+        mRealVM.startChecking()
+        refresh()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mRealVM.isShow.set(false)
+    }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (hidden) return
-        //更新必要信息
-        myWorksAdapter.refresh()
+        if (isShowReception()) {
+            mRealVM.isShow.set(true)
+            mRealVM.startChecking()
+            //更新必要信息
+            refresh()
+        } else {
+            mRealVM.isShow.set(false)
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        //更新必要信息
+    private fun refresh() {
         myWorksAdapter.refresh()
     }
 
@@ -76,6 +91,9 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         binding.srl.startRefreshWithAdapter(
             pagingDataAdapter = myWorksAdapter,
             loadStateHolder = binding.lsv,
+            onRefreshListener = {
+                mRealVM.startChecking()
+            }
         )
     }
 
@@ -85,9 +103,9 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             onUserStatusChanged {
                 if (userId == User.get().id) return@onUserStatusChanged
                 userId = User.get().id
-                if (userId.isNullOrEmpty()){
+                if (userId.isNullOrEmpty()) {
                     mRealVM.deleteAll()
-                }else{
+                } else {
                     myWorksAdapter.refresh()
                 }
             }
