@@ -15,7 +15,6 @@ import com.kgmedia.fastfilm.core.network.RetrofitClient
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.creator.storyboard.ItemStoryboardVM
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.kgmedia.fastfilm.kit.media.setPlayUrl
@@ -32,6 +31,7 @@ import kotlinx.coroutines.withContext
 class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
     val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
+    val taskId by lazy { mBundle.getString(Constants.Extra.TASK_ID) }
     val workRatio = "9:16"
     val loadState by lazy { ObservableInt() }
     val currentStoryboard by lazy { ObservableField<ItemStoryboardVM>() }
@@ -103,15 +103,6 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                 updateLoadState()
             }
         )
-    }
-
-    fun retryGenerate() {
-        val shotSegmentId = currentStoryboard.get()?.data?.get()?.storyboardId ?: return
-        launchWithLoading {
-            response(mRepo.shortDramasSegmentImageGenerateRetry(workId, shotSegmentId)) {
-                getStoryboardList()
-            }
-        }
     }
 
     fun synthesis() {
@@ -205,7 +196,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     }
 
     fun anyStoryboardGenerating(): Boolean {
-        return adapter.items.any { it.data.get()?.generating == true }
+        return adapter.items.any { it.data.get()?.videoGenerating == true }
     }
 
     fun anyStoryboardFailed(): Boolean {

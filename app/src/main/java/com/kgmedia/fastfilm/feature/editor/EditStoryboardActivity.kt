@@ -35,7 +35,7 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardVideo
         when (view?.id) {
             R.id.btnRegenerate -> {
                 val current = mRealVM.currentStoryboard.get()?.data?.get() ?: return
-                if (current.generating) {
+                if (current.videoGenerating) {
                     "视频正在生成中，请稍后再试".showToast()
                     return
                 }
@@ -43,7 +43,7 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardVideo
 
             R.id.btnDownload -> {
                 val current = mRealVM.currentStoryboard.get()?.data?.get() ?: return
-                if (current.generating) {
+                if (current.videoGenerating) {
                     "视频正在生成中，请稍后再试".showToast()
                     return
                 }

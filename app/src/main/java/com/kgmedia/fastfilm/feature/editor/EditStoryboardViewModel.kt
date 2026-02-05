@@ -15,7 +15,6 @@ import com.kgmedia.fastfilm.core.network.RetrofitClient
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.creator.storyboard.ItemStoryboardVM
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.kgmedia.fastfilm.kit.media.setPlayUrl
@@ -205,7 +204,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     }
 
     fun anyStoryboardGenerating(): Boolean {
-        return adapter.items.any { it.data.get()?.generating == true }
+        return adapter.items.any { it.data.get()?.videoGenerating == true }
     }
 
     fun anyStoryboardFailed(): Boolean {

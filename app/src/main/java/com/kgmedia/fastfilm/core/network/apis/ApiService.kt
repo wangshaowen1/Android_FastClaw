@@ -1161,10 +1161,16 @@ interface ApiService {
     suspend fun workStoryboardSingleGenerate(@Body body: GenerateStoryboardBody): ApiResponse<TaskStatusInfo?>
 
     /**
-     * 生成分镜视频
+     * 生成全部分镜视频
      */
     @POST(ApiConstants.WORK_STORYBOARD_VIDEO_GENERATE)
-    suspend fun workStoryboardVideoGenerate(@Body body: WorkBody): ApiResponse<Any>
+    suspend fun workStoryboardVideoGenerate(@Body body: WorkBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 生成单个分镜视频
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_VIDEO_SINGLE_GENERATE)
+    suspend fun workStoryboardVideoSingleGenerate(@Body body: GenerateStoryboardBody): ApiResponse<TaskStatusInfo?>
 
     /**
      * 举报提交

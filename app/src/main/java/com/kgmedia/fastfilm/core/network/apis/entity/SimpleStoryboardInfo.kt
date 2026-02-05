@@ -58,7 +58,7 @@ data class SimpleStoryboardInfo(
     /**
      * 当前视频url
      */
-    val videoUrl: String? = null,
+    var videoUrl: String? = null,
     /**
      * [枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
      */
@@ -72,19 +72,38 @@ data class SimpleStoryboardInfo(
      */
     var taskId: String? = null,
     /**
-     * [枚举]任务类型 [1=文生文 2=文生图 3=图生图 4=图生视频]
+     * [枚举]任务类型 [1=文生文 2=文生图 3=图生图 4=文生视频 5图生视频 6-视频生视频]
      */
     val taskType: Int? = null,
 ) {
-    val generating get() = stepStatus == 1
+    val imageGenerating
+        get() = when (creationMode) {
+            3 -> true
+            else -> when (taskType) {
+                1, 2, 3 -> stepStatus == 1
+                else -> false
+            }
+        }
 
     val imageGenerated
         get() = when (creationMode) {
             3 -> true
-            else -> stepStatus == 2
+            else -> when (taskType) {
+                1, 2, 3 -> stepStatus == 2
+                else -> false
+            }
         }
 
     val failed get() = stepStatus == 3
 
-    val videoGenerated get() = stepStatus == 4
+    val videoGenerating
+        get() = when (taskType) {
+            4, 5, 6 -> stepStatus == 1
+            else -> false
+        }
+    val videoGenerated
+        get() = when (taskType) {
+            4, 5, 6 -> stepStatus == 2
+            else -> false
+        }
 }

@@ -81,7 +81,7 @@
                     tools:text="AI生成" />
 
                 <ImageView
-                    setVisible="@{!layout.playing}"
+                    setVisible="@{layout.currentStoryboard.data.videoGenerated &amp;&amp; !layout.playing}"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_short_drama_editor_play"
@@ -97,7 +97,6 @@
                     android:layout_height="0dp"
                     android:background="?attr/fillColor1"
                     android:gravity="center"
-                    android:onClick="@{(v)->layout.play()}"
                     android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="@+id/previewArea"
                     app:layout_constraintEnd_toEndOf="@+id/previewArea"
@@ -126,7 +125,7 @@
                     <TextView
                         android:id="@+id/btnRetry"
                         setVisible="@{layout.currentStoryboard.data.failed}"
-                        singleClick="@{() -> layout.retryGenerate()}"
+                        singleClick="@{() -> layout.currentStoryboard.generate()}"
                         android:layout_width="88dp"
                         android:layout_height="28dp"
                         android:layout_marginTop="12dp"

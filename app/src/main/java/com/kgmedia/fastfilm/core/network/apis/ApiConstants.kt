@@ -815,9 +815,14 @@ object ApiConstants {
     const val WORK_STORYBOARD_SINGLE_GENERATE = "ai/storyboard/generation/image"
 
     /**
-     * 生成分镜视频
+     * 生成全部分镜视频
      */
     const val WORK_STORYBOARD_VIDEO_GENERATE = "ai/storyboard/generation/video"
+
+    /**
+     * 生成单个分镜视频
+     */
+    const val WORK_STORYBOARD_VIDEO_SINGLE_GENERATE = "ai/storyboard/generation/single/video"
 
     /**
      * 举报提交
