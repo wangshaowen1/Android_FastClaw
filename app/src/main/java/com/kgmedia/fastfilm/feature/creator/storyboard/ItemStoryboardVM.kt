@@ -135,7 +135,7 @@ class ItemStoryboardVM(
         launch {
             loop@ while (status.get() == 1) {
                 runCatching {
-                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(taskId, 71)).data }
+                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 71)).data }
                     data.get()?.let {
                         it.stepStatus = taskStatus?.genStatus
                         it.imageUrl = taskStatus?.result
