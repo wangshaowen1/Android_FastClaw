@@ -72,7 +72,7 @@ data class WorkInfo(
     }
 
     fun isMine(): Boolean {
-        return User.get().isSameId(userId)
+        return true//User.get().isSameId(userId)
     }
 
     val stripedTrickTitle
