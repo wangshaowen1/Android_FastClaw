@@ -1,20 +1,30 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.databinding.FragmentAssetManagementBinding
+import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.ext.getParentViewModel
 
 /**
  * 资产管理
  */
 class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBinding, AssetManagementViewModel>() {
+
+    companion object {
+        fun newInstance(workId: String?) = AssetManagementFragment().also {
+            it.arguments = bundleOf(Constants.Extra.WORK_ID to workId)
+        }
+    }
 
     private var firstItem: SimpleAsset? = null
         set(value) {
@@ -26,6 +36,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
             }
         }
     private val layoutManager get() = bindingNullable?.rvAssets?.layoutManager as? LinearLayoutManager
+    val hostVm by lazy { getParentViewModel<StoryEditorViewModel>() }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -58,7 +69,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
             }
 
             R.id.btnNext -> {
-                // TODO: 分镜管理
+                hostVm?.nextStep(4)
             }
         }
     }

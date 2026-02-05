@@ -8,7 +8,9 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.databinding.ActivityStoryEditorBinding
+import com.kgmedia.fastfilm.feature.creator.assets.AssetManagementFragment
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.kgmedia.fastfilm.feature.creator.storyboard.StoryboardDesignFragment
 import com.kgmedia.fastfilm.feature.editor.info.DramaTitleEditDialog
 import com.nhsd.basic.BaseViewModelActivity
 
@@ -61,7 +63,7 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
         @JvmStatic
         fun startContinue(
             context: Context?,
-            content: String?=null,
+            content: String? = null,
             workId: String? = null,
             lastEpisodeId: String? = null,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
@@ -120,6 +122,16 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
 
                 2 -> {
                     supportFragmentManager.beginTransaction().replace(R.id.container, DramaGenerateStep2Fragment.newInstance())
+                        .commitAllowingStateLoss()
+                }
+
+                3 -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.container, AssetManagementFragment.newInstance(mRealVM.workId))
+                        .commitAllowingStateLoss()
+                }
+
+                4 -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.container, StoryboardDesignFragment.newInstance(mRealVM.workId))
                         .commitAllowingStateLoss()
                 }
             }

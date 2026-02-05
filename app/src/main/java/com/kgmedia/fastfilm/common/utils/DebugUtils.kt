@@ -7,7 +7,7 @@ object DebugUtils {
         arrayOf(
             "陆大佬：192.168.10.58",
             "俊毅：192.168.10.100",
-            "郭义明：192.168.10.31",
+            "郭义明：192.168.10.44",
             "测试外网：https://short-api.mynatapp.cc",
             "预发布：120.24.240.28:9010",
             "正式环境：jk.jinguomanju.com"
@@ -17,7 +17,7 @@ object DebugUtils {
         arrayOf(
             "http://192.168.10.58:5010",
             "http://192.168.10.100:5010",
-            "http://192.168.10.31:8088",
+            "http://192.168.10.44:8088",
             "https://short-api.mynatapp.cc",
             "http://120.24.240.28:7010",
             "https://jk.jinguomanju.com"
