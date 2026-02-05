@@ -31,7 +31,7 @@ data class SimpleRoleInfo(
     /**
      * 角色图片URL
      */
-    val imageUrl: String? = null,
+    var imageUrl: String? = null,
     /**
      * [枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
      */
@@ -47,4 +47,6 @@ data class SimpleRoleInfo(
         get() = rolePrompt
     override val assetName: String?
         get() = roleName
+    override val assetImage: String?
+        get() = imageUrl
 }

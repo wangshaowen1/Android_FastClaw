@@ -29,6 +29,11 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     val assetDesc by lazy { ObservableField(data?.assetDesc) }
 
     /**
+     * 当前应用的资源图片URL
+     */
+    val assetImage by lazy { ObservableField(data?.assetImage) }
+
+    /**
      * 编辑中的资源描述
      */
     var editingAssetDescText: String? = data?.assetDesc

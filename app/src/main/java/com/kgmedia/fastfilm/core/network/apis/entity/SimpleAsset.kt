@@ -4,4 +4,5 @@ interface SimpleAsset {
     val status: Int?
     val assetDesc: String?
     val assetName: String?
+    val assetImage: String?
 }

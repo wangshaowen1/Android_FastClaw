@@ -31,7 +31,7 @@ data class SimplePropInfo(
     /**
      * 道具图片URL
      */
-    val imageUrl: String? = null,
+    var imageUrl: String? = null,
     /**
      * [枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
      */
@@ -47,4 +47,6 @@ data class SimplePropInfo(
         get() = propPrompt
     override val assetName: String?
         get() = propName
+    override val assetImage: String?
+        get() = imageUrl
 }

@@ -58,12 +58,23 @@ class ItemPropVM(
         }
         status.set(1)
         launch {
-            val body = GenerateAssetBody(51, propPrompt, data.get()?.appearanceId, null, null, null, workId, storyId)
+            val body = GenerateAssetBody(
+                assetId = data.get()?.propId,
+                appearanceId = data.get()?.appearanceId,
+                bizType = 51,
+                prompt = propPrompt,
+                referenceImageId = null,
+                referenceImageInStatus = 0,
+                referenceImageUrl = null,
+                storyId = storyId,
+                workId = workId,
+            )
             response(ApiFactory.apiService.workAssetSingleGenerate(body)) {
                 val prop = this@ItemPropVM.data.get() ?: SimplePropInfo()
                 prop.taskId = data?.taskId
                 prop.genStatus = data?.genStatus
                 this@ItemPropVM.data.set(prop)
+                loopGenStatus()
             }
         }
     }
@@ -76,31 +87,25 @@ class ItemPropVM(
     }
 
     override fun loopGenStatus() {
+        val taskId = data.get()?.taskId
+        if (taskId.isNullOrEmpty()) return
         launch {
             loop@ while (status.get() == 1) {
                 runCatching {
-                    val genStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(data.get()?.taskId, 51)).data?.genStatus }
-                    genStatus?.let { status.set(it) }
-                    if (genStatus == 2) {
-                        val body = QueryAssetBody(
-                            data.get()?.propId,
-                            data.get()?.appearanceId,
-                            51,
-                            storyId,
-                            workId
-                        )
-                        val role = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetPropList(body).data?.firstOrNull { it.propId == data.get()?.propId } }
-                        if (role != null) {
-                            this@ItemPropVM.data.set(role)
-                            role.genStatus?.let { status.set(it) }
-                        }
+                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(taskId, 51)).data }
+                    data.get()?.let {
+                        it.genStatus = taskStatus?.genStatus
+                        it.imageUrl = taskStatus?.result
+                        assetImage.set(taskStatus?.result)
                     }
+                    data.notifyChange()
+                    taskStatus?.genStatus?.let { status.set(it) }
                 }
                 if (status.get() != 1) {
                     break@loop
                 }
+                delay(3000)
             }
-            delay(3000)
         }
     }
 }

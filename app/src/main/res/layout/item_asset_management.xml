@@ -20,6 +20,7 @@
 
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
+            loadHQThumbnailUri="@{item.assetImage}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="15dp"

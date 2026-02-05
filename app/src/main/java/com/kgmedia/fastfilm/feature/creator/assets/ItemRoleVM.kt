@@ -5,7 +5,6 @@ import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
-import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
@@ -58,13 +57,24 @@ class ItemRoleVM(
         }
         status.set(1)
         launch {
-            val body = GenerateAssetBody(41, rolePrompt, data.get()?.appearanceId, null, 0, null, workId, storyId)
+            val body = GenerateAssetBody(
+                assetId = data.get()?.roleId,
+                appearanceId = data.get()?.appearanceId,
+                bizType = 41,
+                prompt = rolePrompt,
+                referenceImageId = null,
+                referenceImageInStatus = 0,
+                referenceImageUrl = null,
+                storyId = storyId,
+                workId = workId,
+            )
             response(ApiFactory.apiService.workAssetSingleGenerate(body)) {
                 val role = this@ItemRoleVM.data.get() ?: SimpleRoleInfo()
                 role.taskId = data?.taskId
                 role.genStatus = data?.genStatus
                 data?.genStatus?.let { status.set(it) }
                 this@ItemRoleVM.data.set(role)
+                loopGenStatus()
             }
         }
     }
@@ -77,31 +87,25 @@ class ItemRoleVM(
     }
 
     override fun loopGenStatus() {
+        val taskId = data.get()?.taskId
+        if (taskId.isNullOrEmpty()) return
         launch {
             loop@ while (status.get() == 1) {
                 runCatching {
-                    val genStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(data.get()?.taskId, 41)).data?.genStatus }
-                    genStatus?.let { status.set(it) }
-                    if (genStatus == 2) {
-                        val body = QueryAssetBody(
-                            data.get()?.roleId,
-                            data.get()?.appearanceId,
-                            41,
-                            storyId,
-                            workId
-                        )
-                        val role = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetRoleList(body).data?.firstOrNull { it.roleId == data.get()?.roleId } }
-                        if (role != null) {
-                            this@ItemRoleVM.data.set(role)
-                            role.genStatus?.let { status.set(it) }
-                        }
+                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(taskId, 41)).data }
+                    data.get()?.let {
+                        it.genStatus = taskStatus?.genStatus
+                        it.imageUrl = taskStatus?.result
+                        assetImage.set(taskStatus?.result)
                     }
+                    data.notifyChange()
+                    taskStatus?.genStatus?.let { status.set(it) }
                 }
                 if (status.get() != 1) {
                     break@loop
                 }
+                delay(3000)
             }
-            delay(3000)
         }
     }
 }
