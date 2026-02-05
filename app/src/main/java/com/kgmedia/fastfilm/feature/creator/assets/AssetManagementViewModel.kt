@@ -13,18 +13,21 @@ import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
+import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /**
  * 资产管理
  */
 class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepository>() {
     private val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
-    private val storyId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    private val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
     val loadState by lazy { ObservableInt() }
     val adapter by lazy { AssetManagementAdapter() }
     private val addRoleItem by lazy { ItemAddVM("添加角色").apply { onItemClick.value = { addRole(this) } } }
@@ -33,11 +36,17 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private var editingAssetDescVM: ItemAssetVM<*>? = null
     private var editingAssetNameVM: ItemAssetVM<*>? = null
     private var loopNextEnabledJob: Job? = null
+
+    /**
+     * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
+     */
+    private var step = 0
+    private var taskId: String? = null
     val nextEnabled by lazy { ObservableBoolean(false) }
 
     override fun onCreate() {
         super.onCreate()
-        getAssets()
+        generateAllAssetDescription()
     }
 
     override fun onResume() {
@@ -54,9 +63,17 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
         loopNextEnabledJob = launch {
             while (true) {
-                nextEnabled.set(adapter.items.all { if (it is ItemAssetVM<*>) it.status.get() == 2 else true })
+                nextEnabled.set(adapter.items.all { if (it is ItemAssetVM<*>) it.status.get() == 2 else false })
                 delay(1000)
             }
+        }
+    }
+
+    fun retry() {
+        when (step) {
+            0 -> generateAllAssetDescription()
+            1 -> loopAllAssetDescriptionStatus()
+            2 -> getAssets()
         }
     }
 
@@ -66,13 +83,52 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         super.onPause()
     }
 
+    private fun generateAllAssetDescription() {
+        loadState.set(LoadStateViewHolder.LOADING)
+        launch(block = {
+            val allAssetDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)).data }
+            taskId = allAssetDescriptionStatus?.taskId
+            if (allAssetDescriptionStatus?.genStatus == 1 || allAssetDescriptionStatus?.genStatus == 2) {
+                step = 1
+                loopAllAssetDescriptionStatus()
+            } else {
+                loadState.set(LoadStateViewHolder.RETRY)
+            }
+        }, onError = {
+            loadState.set(LoadStateViewHolder.RETRY)
+        })
+    }
+
+    private fun loopAllAssetDescriptionStatus() {
+        loadState.set(LoadStateViewHolder.LOADING)
+        launch(block = {
+            var genStatus: Int? = 1
+            while (genStatus == 1) {
+                runCatching {
+                    val status = withContext(Dispatchers.IO) { mRepo.workAssetAllStatus(taskId, null).data?.genStatus }
+                    genStatus = status
+                }
+                delay(3000)
+            }
+            //生成状态 [0=待生成 1=生成中 2=成功 3=失败]
+            if (genStatus == 2) {
+                step = 2
+                getAssets()
+            } else {
+                loadState.set(LoadStateViewHolder.RETRY)
+            }
+        }, onError = {
+            loadState.set(LoadStateViewHolder.RETRY)
+        })
+    }
+
     fun getAssets() {
         loadState.set(LoadStateViewHolder.LOADING)
         launch(
             block = {
-                val rolesDeferred = async { mRepo.workAssetRoleList(null, null, null, null, null).data }
-                val scenesDeferred = async { mRepo.workAssetSceneList(null, null, null, null, null).data }
-                val propsDeferred = async { mRepo.workAssetPropList(null, null, null, null, null).data }
+                val rolesDeferred = async { mRepo.workAssetRoleList(null, null, null, storyId, workId).data }
+                val scenesDeferred = async { mRepo.workAssetSceneList(null, null, null, storyId, workId).data }
+                val propsDeferred = async { mRepo.workAssetPropList(null, null, null, storyId, workId).data }
                 val roles = rolesDeferred.await()
                 val scenes = scenesDeferred.await()
                 val props = propsDeferred.await()
@@ -120,12 +176,19 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 R.id.etAssetDescCover -> {
-                    topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
+                    val edit = {
                         editingAssetDescVM?.exitEditAssetDesc()
                         editingAssetNameVM?.exitEditAssetName()
                         editingAssetDescVM = this
                         editingAssetNameVM = null
                         editAssetDesc()
+                    }
+                    if (assetDesc.get().isNullOrEmpty()) {
+                        edit.invoke()
+                    } else {
+                        topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
+                            edit.invoke()
+                        }
                     }
                 }
 

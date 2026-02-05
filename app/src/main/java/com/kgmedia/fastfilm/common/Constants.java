@@ -155,6 +155,7 @@ public class Constants {
         String IMAGE_ID = "imageId";
         String UNRELEASED = "unreleased";
         String WORK_ID = "workId";
+        String STORY_ID = "storyId";
         String PLAYER_IN_SERIES = "playerInSeries";
         String NEWLY_PUBLISH = "newlyPublish";
     }

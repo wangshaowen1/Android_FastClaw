@@ -47,6 +47,12 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     val editingAssetName by lazy { ObservableBoolean(false) }
     val assetNameInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
 
+    init {
+        if (status.get() == 1) {
+            loopGenStatus()
+        }
+    }
+
     fun editAssetDesc() {
         assetDescInputListener.set(object : RecyclerEditText.OnTextInputListener {
             override fun onTextInput(text: String) {
@@ -82,4 +88,6 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     abstract fun generate()
 
     abstract fun deleteAsset()
+
+    abstract fun loopGenStatus()
 }

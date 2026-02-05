@@ -1042,7 +1042,13 @@ interface ApiService {
     suspend fun playEventReport(@Body body: PlayEventBody): ApiResponse<Any>
 
     /**
-     * 轮询查询全部资产
+     * 生成所有对应资产描述
+     */
+    @POST(ApiConstants.GENERATE_ALL_ASSET_DESCRIPTION)
+    suspend fun generateAllAssetDescription(@Body body: WorkBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 轮询查询全部资产描述
      */
     @POST(ApiConstants.WORK_ASSET_ALL_STATUS)
     suspend fun workAssetAllStatus(@Body body: TaskIdBody): ApiResponse<TaskStatusInfo?>

@@ -35,7 +35,7 @@ class DramaGenerateStep2Fragment :
         EventManager.onAppTrack(AppEvent.JG_VIEW_GENERATE_STORYBOARD_PAGE)
         activity?.intent?.let {
             mRealVM.workId.value = hostVm?.workId
-            mRealVM.episodeId = hostVm?.episodeId
+            mRealVM.episodeId = hostVm?.storyId
             mRealVM.inspiration = it.getStringExtra(Constants.Extra.CONTENT)
             mRealVM.model = it.getIntExtra(Constants.Extra.MODE, 0)
             mRealVM.customEpisodeCount = it.getStringExtra(StoryEditorActivity.CUSTOM_EPISODE_COUNT)
@@ -75,8 +75,8 @@ class DramaGenerateStep2Fragment :
             mRealVM.input.value = ""
         }
         binding.btnNext.setOnSingleClickListener {
-            mRealVM.confirmGenerate { workId, episodeId ->
-                hostVm?.nextStep(3, workId, episodeId)
+            mRealVM.confirmGenerate { workId, storyId ->
+                hostVm?.nextStep(3, workId, storyId)
             }
         }
     }

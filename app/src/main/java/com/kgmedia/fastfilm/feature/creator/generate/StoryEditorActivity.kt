@@ -126,12 +126,12 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
                 }
 
                 3 -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, AssetManagementFragment.newInstance(mRealVM.workId))
+                    supportFragmentManager.beginTransaction().replace(R.id.container, AssetManagementFragment.newInstance(mRealVM.workId, mRealVM.storyId))
                         .commitAllowingStateLoss()
                 }
 
                 4 -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, StoryboardDesignFragment.newInstance(mRealVM.workId))
+                    supportFragmentManager.beginTransaction().replace(R.id.container, StoryboardDesignFragment.newInstance(mRealVM.workId, mRealVM.storyId))
                         .commitAllowingStateLoss()
                 }
             }

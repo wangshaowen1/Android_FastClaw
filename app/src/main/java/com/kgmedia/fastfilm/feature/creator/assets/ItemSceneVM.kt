@@ -5,9 +5,14 @@ import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
+import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
+import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 class ItemSceneVM(
     workId: String?,
@@ -66,6 +71,35 @@ class ItemSceneVM(
         launch {
             response(ApiFactory.apiService.workAssetSceneDelete(IdsBody(null, data.get()?.sceneId))) {
             }
+        }
+    }
+
+    override fun loopGenStatus() {
+        launch {
+            loop@ while (status.get() == 1) {
+                runCatching {
+                    val genStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(data.get()?.taskId, 61)).data?.genStatus }
+                    genStatus?.let { status.set(it) }
+                    if (genStatus == 2) {
+                        val body = QueryAssetBody(
+                            data.get()?.sceneId,
+                            data.get()?.appearanceId,
+                            61,
+                            storyId,
+                            workId
+                        )
+                        val role = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSceneList(body).data?.firstOrNull { it.sceneId == data.get()?.sceneId } }
+                        if (role != null) {
+                            this@ItemSceneVM.data.set(role)
+                            role.genStatus?.let { status.set(it) }
+                        }
+                    }
+                }
+                if (status.get() != 1) {
+                    break@loop
+                }
+            }
+            delay(3000)
         }
     }
 }

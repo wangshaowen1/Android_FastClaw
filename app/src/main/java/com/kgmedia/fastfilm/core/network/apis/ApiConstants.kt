@@ -208,7 +208,7 @@ object ApiConstants {
     /**
      * 作品简介优化
      */
-    const val SSE_WORK_DESC_OPTIMIZE = "/ai/stream/intro/refine"
+    const val SSE_WORK_DESC_OPTIMIZE = "ai/stream/intro/refine"
 
     /**
      * 灵感故事剧本（基于灵感写剧本/灵感续写/小说续写）
@@ -715,7 +715,12 @@ object ApiConstants {
     const val PLAY_EVENT_REPORT = "app/home/work/playCount"
 
     /**
-     * 轮询查询全部资产
+     * 生成所有对应资产描述
+     */
+    const val GENERATE_ALL_ASSET_DESCRIPTION = "ai/asset/generation/description"
+
+    /**
+     * 轮询查询全部资产描述
      */
     const val WORK_ASSET_ALL_STATUS = "ai/task/query/asset/all"
 
@@ -807,16 +812,16 @@ object ApiConstants {
     /**
      * 举报提交
      */
-    const val REPORT_SUBMISSION="app/report/save"
+    const val REPORT_SUBMISSION = "app/report/save"
 
     /**
      * 分页查询我的作品列表
      */
-    const val MY_WORK="work/page"
+    const val MY_WORK = "work/page"
 
 
     /**
      * 批量删除我的作品
      */
-    const val BATCH_DELETE_WORK="work/batchDeleteIds"
+    const val BATCH_DELETE_WORK = "work/batchDeleteIds"
 }

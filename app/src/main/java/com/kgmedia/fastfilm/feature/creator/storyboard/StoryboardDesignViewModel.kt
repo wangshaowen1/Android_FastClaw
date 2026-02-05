@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
  */
 class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
-    private val storyId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    private val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
     val loadState by lazy { ObservableInt() }
     val adapter by lazy { StoryboardDesignAdapter() }
     private val addStoryboardItem by lazy { ItemAddVM("添加分镜").apply { onItemClick.value = { addStoryboard(this) } } }

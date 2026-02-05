@@ -17,7 +17,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
     )
 
     var workId: String? = null//作品id
-    var episodeId: String? = null//当前正在创作的剧集id
+    var storyId: String? = null//当前正在创作的剧集id
     val title = MutableLiveData(mBundle.getString(Constants.Extra.TITLE, "未命名标题"))
     val step = MutableLiveData<Int>()//当前处于的步骤序号1-5
     val startFrom = MutableLiveData<Int>()//从1还是从2开始，从2开始就是4步创作流程
@@ -53,12 +53,12 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
-    fun nextStep(step: Int, workId: String? = null, episodeId: String? = null) {
+    fun nextStep(step: Int, workId: String? = null, storyId: String? = null) {
         workId?.let {
             this.workId = it
         }
-        episodeId?.let {
-            this.episodeId = it
+        storyId?.let {
+            this.storyId = it
         }
         this.step.value = step
     }

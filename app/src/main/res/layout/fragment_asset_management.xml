@@ -12,7 +12,7 @@
 
     <com.kgmedia.fastfilm.widget.LoadStateViewHolder
         displayChild="@{layout.loadState}"
-        onRetry="@{layout::getAssets}"
+        onRetry="@{layout::retry}"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

@@ -21,8 +21,8 @@ import com.nhsd.basic.ext.getParentViewModel
 class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBinding, AssetManagementViewModel>() {
 
     companion object {
-        fun newInstance(workId: String?) = AssetManagementFragment().also {
-            it.arguments = bundleOf(Constants.Extra.WORK_ID to workId)
+        fun newInstance(workId: String?, storyId: String?) = AssetManagementFragment().also {
+            it.arguments = bundleOf(Constants.Extra.WORK_ID to workId, Constants.Extra.STORY_ID to storyId)
         }
     }
 

@@ -11,8 +11,9 @@ import com.nhsd.basic.BaseViewModelFragment
 class StoryboardDesignFragment : BaseViewModelFragment<FragmentStoryboardDesignBinding, StoryboardDesignViewModel>() {
 
     companion object {
-        fun newInstance(workId: String?) = StoryboardDesignFragment().also {
-            it.arguments = bundleOf(Constants.Extra.WORK_ID to workId)
+        fun newInstance(workId: String?, storyId: String?) = StoryboardDesignFragment().also {
+            it.arguments = bundleOf(Constants.Extra.WORK_ID to workId, Constants.Extra.STORY_ID to storyId)
         }
     }
+
 }

@@ -1691,7 +1691,7 @@ fun setCoverUrl(
 }
 
 @BindingAdapter(value = ["setEditing", "text"], requireAll = true)
-fun setEditing(view: RecyclerEditText, editing: Boolean, text: String) {
+fun setEditing(view: RecyclerEditText, editing: Boolean, text: String?) {
     if (editing) {
         view.setText(text)
         KeyboardUtils.showSoftInput(view)
