@@ -22,9 +22,9 @@
 
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
-            android:layout_width="match_parent"
             loadUri="@{item.data.workCoverUrl}"
             placeHolder="@{@color/fill_color_1_dark}"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="107:142"
@@ -71,18 +71,20 @@
             android:textColor="@color/fixed_black_1"
             android:visibility="@{(item.workState==WorkInfo.DRAFT_STATE&amp;&amp;item.isView())?View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
-            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            tools:visibility="gone" />
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="16dp"
+            android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:background="@drawable/gradient_left_ff6e25_right_ffe261_round"
+            android:background="@drawable/bg_60_000000_round"
             android:gravity="center"
             android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
             android:text="待合成"
             android:textAppearance="@style/Text10"
-            android:textColor="@color/fixed_white_1"
+            android:textColor="@color/func_special_dark"
             android:visibility="@{(item.workState==WorkInfo.WAIT_STATE&amp;&amp;item.isView())?View.VISIBLE:View.GONE}"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
@@ -92,13 +94,13 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="6dp"
-            android:visibility="@{(item.data.finishedEpisodeCnt>0)?View.VISIBLE:View.GONE}"
             android:text="@{`共`+item.data.finishedEpisodeCnt+`集`}"
-            tools:text="共1集"
             android:textAppearance="@style/Text12"
             android:textColor="@{(item.workState==WorkInfo.COMPOSING_STATE&amp;&amp;item.isView())?@color/fixed_white_3:@color/fixed_white_1}"
+            android:visibility="@{(item.data.finishedEpisodeCnt>0)?View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toBottomOf="@id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            tools:text="共1集"
             tools:textColor="@color/fixed_white_1" />
 
         <TextView
@@ -108,23 +110,24 @@
             android:ellipsize="end"
             android:lines="1"
             android:text="@{item.data.workTitle}"
-            tools:text="玄幻：开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇"
             android:textAppearance="@style/Text12"
             android:textColor="?textColor2"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
-            app:layout_constraintTop_toBottomOf="@+id/ivCover" />
+            app:layout_constraintTop_toBottomOf="@+id/ivCover"
+            tools:text="玄幻：开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇开局一条蛇" />
 
         <ImageView
             android:layout_width="16dp"
-            android:importantForAccessibility="no"
-            android:src="@{item.isSelected()?@drawable/ic_my_work_selected:@drawable/ic_my_work_not_selected}"
-            tools:src="@drawable/ic_my_work_selected"
-            android:visibility="@{item.isView()?View.GONE:View.VISIBLE}"
-            app:layout_constraintTop_toTopOf="@id/ivCover"
-            app:layout_constraintEnd_toEndOf="@id/ivCover"
+            android:layout_height="16dp"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="8dp"
-            android:layout_height="16dp"/>
+            android:importantForAccessibility="no"
+            android:src="@{item.isSelected()?@drawable/ic_my_work_selected:@drawable/ic_my_work_not_selected}"
+            android:visibility="@{item.isView()?View.GONE:View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="@id/ivCover"
+            app:layout_constraintTop_toTopOf="@id/ivCover"
+            tools:src="@drawable/ic_my_work_selected"
+            tools:visibility="gone" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
