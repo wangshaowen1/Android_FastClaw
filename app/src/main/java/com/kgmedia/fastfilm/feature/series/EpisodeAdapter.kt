@@ -18,18 +18,30 @@ class EpisodeAdapter(private val eventVm: ItemMultipleChoiceEventsViewModel<Seri
     var workInfo: WorkInfo? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemMyEpisodeInfoBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(
+            ItemMyEpisodeInfoBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
-    override fun onBindViewHolder(holder: EpisodeAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(position)
     }
 
-    inner class ViewHolder(binding: ItemMyEpisodeInfoBinding) : BindingViewHolder<ItemMyEpisodeInfoBinding>(binding) {
+    inner class ViewHolder(binding: ItemMyEpisodeInfoBinding) :
+        BindingViewHolder<ItemMyEpisodeInfoBinding>(binding) {
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
                 val viewModel = binding.getVm<ItemSeriesEpisodeVM>(position)?.also { it.updateData(item) }
-                    ?: ItemSeriesEpisodeVM(eventVm, position, item, workInfo).also { binding.putVm(position, it) }
+                        ?: ItemSeriesEpisodeVM(
+                            eventVm,
+                            position,
+                            item,
+                            workInfo
+                        ).also { binding.putVm(position, it) }
                 binding.item = viewModel
                 binding.executePendingBindings()
             }

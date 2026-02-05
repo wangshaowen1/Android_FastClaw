@@ -1192,6 +1192,14 @@ interface ApiService {
     @POST(ApiConstants.BATCH_DELETE_WORK)
     suspend fun batchDeleteWork(@Body body: DeleteWorkBody): ApiResponse<Any>
 
+
+    /**
+     * 批量删除我的作品剧集
+     */
+    @POST(ApiConstants.BATCH_DELETE_WORK_EPISODE)
+    suspend fun batchDeleteWorkEpisode(@Body body: DeleteWorkBody): ApiResponse<Any>
+
+
     /**
      * 批量删除我的作品
      */

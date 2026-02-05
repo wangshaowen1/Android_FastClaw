@@ -177,6 +177,7 @@
                         <com.kgmedia.fastfilm.widget.LoadStateViewHolder
                             android:id="@+id/loadStateViewHolder"
                             android:layout_width="match_parent"
+                            app:scrollable="true"
                             android:layout_height="match_parent">
 
                             <androidx.recyclerview.widget.RecyclerView

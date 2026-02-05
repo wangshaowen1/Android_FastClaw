@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
+import com.kgmedia.fastfilm.feature.works.MyWorksEvent
 import kotlinx.coroutines.launch
 
 /**
@@ -29,7 +30,19 @@ class ItemSeriesEpisodeVM(
     val isSelected = ObservableBoolean(false)
 
     fun onClick() {
-        eventVm.postEvent(SeriesEpisodeEvent.Click(position, this))
+
+        if (isView.get()) {
+            eventVm.postEvent(SeriesEpisodeEvent.Click(position, this))
+            return
+        }
+        if (isSelected.get()) {
+            isSelected.set(false)
+            eventVm.removeSelectedItem(workInfo?.workId ?: "")
+        } else {
+            isSelected.set(true)
+            eventVm.addSelectedItem(workInfo?.workId ?: "")
+        }
+        eventVm.postEvent(SeriesEpisodeEvent.ComposeState(isSelected.get(), this))
     }
 
     init {

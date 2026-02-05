@@ -15,10 +15,10 @@ import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
-import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
+import com.kgmedia.fastfilm.feature.series.management.WorksManagementActivity
 import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
 import com.kgmedia.fastfilm.widget.Popup
 import com.kgmedia.fastfilm.widget.SeriesMorePopupView
@@ -83,9 +83,6 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             setNoDataPrompt(noDataAs)
         }
         binding.swipeRefreshLayout.startRefreshWithAdapter(episodeAdapter)
-
-
-        eventVm.switchStatus
     }
 
     private fun refresh() {
@@ -97,10 +94,11 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             eventVm.events.collect { event ->
                 when (event) {
                     is SeriesEpisodeEvent.Click -> {
-//                        val snapshot = episodeAdapter.snapshot().items
-//                        onPlayEpisodeClicked(mRealVM.workInfo.get(), snapshot, event.position)
-                        EditStoryboardVideoActivity.start(mRealVM.workId, event.item.data.get()?.storyId)
+                        //点击查看
+                        clickToView(event.item.data.get(), event.position)
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -119,6 +117,63 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 if (episodeAdapter.snapshot().any { it?.storyId == event.dramaId }) {
                     refresh()
                 }
+            }
+        }
+    }
+
+    /**
+     * 点击查看
+     */
+    private fun clickToView(episodeInfo: EpisodeInfo?, position: Int) {
+        if (episodeInfo == null) return
+        when (episodeInfo.stepProgress) {
+            EpisodeInfo.PROGRESS_DRAFT -> {
+                //10=剧本输入 20=资产生成中 30=分镜生成中 35=待合成 40=已完成
+                StoryEditorActivity.start(
+                    this@SeriesActivity,
+                    2,
+                    mRealVM.workId,
+                    episodeInfo.storyId
+                )
+            }
+
+            EpisodeInfo.PROGRESS_ASSET_GENERATING -> {
+                //20=资产生成中
+                StoryEditorActivity.start(
+                    this@SeriesActivity,
+                    3,
+                    mRealVM.workId,
+                    episodeInfo.storyId
+                )
+            }
+
+            EpisodeInfo.PROGRESS_STORYBOARD_GENERATING -> {
+                //30=分镜生成中
+                StoryEditorActivity.start(
+                    this@SeriesActivity,
+                    4,
+                    mRealVM.workId,
+                    episodeInfo.storyId
+                )
+            }
+
+            EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
+                //35=待合成
+                StoryEditorActivity.start(
+                    this@SeriesActivity,
+                    5,
+                    mRealVM.workId,
+                    episodeInfo.storyId
+                )
+            }
+
+            else -> {
+                val snapshot = episodeAdapter.snapshot().items
+                onPlayEpisodeClicked(
+                    mRealVM.workInfo.get(),
+                    snapshot,
+                    position
+                )
             }
         }
     }
@@ -145,7 +200,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         // 2. 计算修正后的点击位置
         // 因为过滤了数据，原来的 position 可能变了，需要找到点击的那个 episode 在新列表里的位置
         val clickedEpisodeId = episodes[clickPosition].storyId
-        val newPosition = validPlayList.indexOfFirst { it.workId == clickedEpisodeId }.coerceAtLeast(0)
+        val newPosition =
+            validPlayList.indexOfFirst { it.workId == clickedEpisodeId }.coerceAtLeast(0)
 
         // 3. 存入 Repository
         FeedRepository.setPreloadedSeries(workInfo?.workId ?: "", validPlayList)
@@ -162,7 +218,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         when (view?.id) {
             R.id.btnMore -> {
                 val series = mRealVM.workInfo.get() ?: return
-                val popupView = SeriesMorePopupView(this)
+                val popupView = SeriesMorePopupView()
                 val popup = Popup(popupView)
                 popupView.binding.btnEdit.setOnSingleClickListener {
                     popup.dismiss()
@@ -170,7 +226,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 }
                 popupView.binding.btnManage.setOnSingleClickListener {
                     popup.dismiss()
-                    // TODO: 剧集管理
+                    WorksManagementActivity.start(this, workId = mRealVM.workId)
                 }
                 popup.showUnder(view)
             }
@@ -178,7 +234,11 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             R.id.btnContinue -> {
                 mRealVM.workInfo.get()?.let {
                     if (it.isInspirationGenerated()) {
-                        StoryEditorActivity.startContinue(this, workId = mRealVM.workId, model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION)
+                        StoryEditorActivity.startContinue(
+                            this,
+                            workId = mRealVM.workId,
+                            model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
+                        )
                     } else {
                         ContinueWritingActivity.start(this, mRealVM.workId, it.workTitle)
                     }

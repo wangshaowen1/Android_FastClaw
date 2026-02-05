@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.series.management.WorksManagementViewModel" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:overScrollMode="never"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintDimensionRatio="375:324"
+            app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
+            app:srlAccentColor="@color/color_121212"
+            app:srlEnablePreviewInEditMode="true"
+            app:srlPrimaryColor="@color/transparent">
+
+            <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+                android:id="@+id/loadStateViewHolder"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingHorizontal="9dp"
+                    android:paddingVertical="6dp"
+                    android:scrollbars="none"
+                    app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+                    app:spanCount="3"
+                    tools:listitem="@layout/item_my_episode_info" />
+            </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_delete"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/main_bottom_nav_height"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/icon_delete_red"
+                android:drawablePadding="8dp"
+                android:text="删除"
+                android:textAppearance="@style/Text14"
+                android:textColor="?attr/funcColorFailure" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

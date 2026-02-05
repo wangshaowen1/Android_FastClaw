@@ -229,7 +229,7 @@
             android:name=".feature.login.LoginDialog"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
-<!--          android:theme="@style/Theme.ActivityBottomDialogStyle"-->
+        <!--          android:theme="@style/Theme.ActivityBottomDialogStyle"-->
         <!--积分充值-->
         <activity
             android:name=".feature.payment.points.PointsRechargeActivity"
@@ -252,6 +252,12 @@
         <!--创造收益-->
         <activity
             android:name=".feature.revenue.CreateRevenueActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <!--作品管理-->
+        <activity
+            android:name=".feature.series.management.WorksManagementActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--闪验-->
@@ -334,7 +340,9 @@
         <activity
             android:name=".feature.creator.character.CharacterHistoryActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".feature.play.DramasPlayPagerActivity" android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.play.DramasPlayPagerActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".feature.editor.info.DramaInfoEditActivity" />
     </application>
     <queries>

@@ -840,6 +840,13 @@ object ApiConstants {
      */
     const val BATCH_DELETE_WORK = "work/batchDeleteIds"
 
+
+    /**
+     * 批量删除我的作品剧集
+     */
+    const val BATCH_DELETE_WORK_EPISODE = "work/batchDeleteStoryByIds"
+
+
     /**
      * 轮询查询我的作品状态列表
      */
