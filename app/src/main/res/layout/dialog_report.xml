@@ -51,18 +51,19 @@
 
         <com.kgmedia.fastfilm.widget.XEditText
             android:id="@+id/xet"
+            style="@style/Text14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="120dp"
-            android:background="@drawable/bg_06_ffffff_r8"
-            android:hint="请描述具体原因，我们回尽快处理"
-            android:gravity="top"
-            android:maxLength="500"
-            android:padding="@dimen/spacing_m"
             android:layout_marginTop="@dimen/spacing_xl"
+            android:background="@drawable/bg_06_ffffff_r8"
+            android:gravity="top"
+            android:hint="请描述具体原因，我们回尽快处理"
+            android:maxLength="500"
+            android:maxLines="500"
+            android:minHeight="120dp"
+            android:padding="@dimen/spacing_m"
             android:textColor="?attr/textColor2"
-            android:textColorHint="?attr/textColor4"
-            style="@style/Text14"/>
+            android:textColorHint="?attr/textColor4" />
 
         <TextView
             style="@style/Text14"
@@ -91,12 +92,12 @@
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:alpha="0.5"
-            android:textColor="?attr/textColor1"
-            android:layout_marginBottom="34dp"
             android:layout_gravity="bottom"
             android:layout_marginTop="34dp"
+            android:layout_marginBottom="34dp"
+            android:alpha="0.5"
             android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
-            android:text="提交" />
+            android:text="提交"
+            android:textColor="?attr/textColor1" />
     </LinearLayout>
 </layout>

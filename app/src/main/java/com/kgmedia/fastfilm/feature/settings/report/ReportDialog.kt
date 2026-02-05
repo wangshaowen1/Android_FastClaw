@@ -88,6 +88,7 @@ class ReportDialog : BaseBottomPushVMDialogFragment<DialogReportBinding, ReportD
     private fun dataUpdate() {
         mRealVM.isSubmit.observe(this) {
             if (!it) return@observe
+            "举报成功".showToast()
             dismissAllowingStateLoss()
         }
     }
