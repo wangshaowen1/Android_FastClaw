@@ -73,7 +73,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     workId = workId.value,
                     storyId=episodeId,
                     bizType=model,
-                    episodeManifest="",
                 )
             )
         }
