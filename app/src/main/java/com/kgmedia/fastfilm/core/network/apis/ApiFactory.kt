@@ -7,7 +7,7 @@ import com.nhsd.basic.ext.contain
 
 object ApiFactory {
     val apiService: ApiService by lazy {
-        val baseUrl = ((Config.get().baseUrlCustom ?: ApiConstants.BASE_URL) + "snap-film/api/")
+        val baseUrl = ((Config.get().baseUrlCustom ?: ApiConstants.BASE_URL) + "/snap-film/api/")
         RetrofitClient.create(baseUrl, ApiService::class.java)
     }
 

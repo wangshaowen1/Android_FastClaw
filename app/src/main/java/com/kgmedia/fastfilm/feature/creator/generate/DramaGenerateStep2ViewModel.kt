@@ -157,7 +157,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             } else {
                 val body = SaveEpisodeScriptBody(
                     workTitle = workTitle,
-                    workDesc = "",
                     storyContentComplete = originalJson,
                     workId = workId.value,
                     storyId = episodeId,
