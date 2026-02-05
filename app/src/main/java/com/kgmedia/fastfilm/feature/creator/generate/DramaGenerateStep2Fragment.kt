@@ -71,13 +71,13 @@ class DramaGenerateStep2Fragment :
             hostVm?.backWarning = true
             mRealVM.sseGenerate()
         }
-        binding.btnDelete.setOnClickListener {
-            mRealVM.input.value = ""
-        }
         binding.btnNext.setOnSingleClickListener {
-            mRealVM.confirmGenerate { workId, storyId ->
+            mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId ->
                 hostVm?.nextStep(3, workId, storyId)
             }
+        }
+        binding.btnDelete.setOnSingleClickListener {
+            mRealVM.input.value = ""
         }
     }
 }

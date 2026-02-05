@@ -69,6 +69,13 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
         }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        if (User.get().isVisitor) {
+            finish()
+        }
+    }
+
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {

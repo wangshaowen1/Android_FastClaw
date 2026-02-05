@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.LogOffStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.kit.SignUtils
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -98,6 +99,7 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
     fun commitLogoff() {
         launchWithLoading {
             response(mRepo.api.logOff(UserTokenBody())) {
+                SignUtils.signOut()
                 finish()
             }
         }

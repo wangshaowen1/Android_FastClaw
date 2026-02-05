@@ -62,7 +62,8 @@ class DramasPlayPagerActivity :
             if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) {
                 binding.tvTitle.text = "第${workInfo.lastEpisodeNo}集"
             }
-            val realWorkId = if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else workInfo.workId
+            val realWorkId =
+                if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else workInfo.workId
             EventManager.onPlayEvent(workInfo.userId, realWorkId, workInfo.getEpisodeId())
         }
         // 3. 事件流
@@ -109,7 +110,8 @@ class DramasPlayPagerActivity :
     private fun updateViewHolderSafely(action: (VideoFeedAdapter.VideoViewHolder) -> Unit) {
         val pos = listController.getCurrentPosition()
         if (pos >= 0) {
-            val holder = binding.recyclerView.findViewHolderForAdapterPosition(pos) as? VideoFeedAdapter.VideoViewHolder
+            val holder =
+                binding.recyclerView.findViewHolderForAdapterPosition(pos) as? VideoFeedAdapter.VideoViewHolder
             val item = adapter.peek(pos)
 
             // [关键] 只有当 ViewHolder 当前展示的数据 ID 与 播放器正在播的 ID 一致时，才允许更新 UI

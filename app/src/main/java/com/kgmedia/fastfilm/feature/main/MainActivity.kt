@@ -259,6 +259,9 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
 
             R.id.tabWorks -> {
+                if (AppNavigator.checkLoginIntercepted(true)) {
+                    return
+                }
                 binding.mrg.check(R.id.rbWorks)
                 clickTab(tabId = R.id.tabWorks) { diff ->
                     if (diff < CLICK_INTERVAL_TIME) {
@@ -373,7 +376,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             MainBulletFrameEnum.DEFAULT -> return
 
             MainBulletFrameEnum.COMPLETE_PERSONAL_INFO -> {
-                completePersonalInfo()
             }
 
             MainBulletFrameEnum.BIND_PHONE_NUMBER_POP_UP_BOX -> {
@@ -382,14 +384,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         }
     }
 
-    private fun completePersonalInfo(
-        nextStep: Boolean = true,
-        start: Boolean = false
-    ) {
-        SimpleProfileDialog.requireShow {
-            "登录成功，开始创作吧~".showToast()
-        }
-    }
+
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

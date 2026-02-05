@@ -40,13 +40,22 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     //业务类型
     var model: Int? = null
     var inspiration: String? = null
+
+    //剧集集数code
     var episodeRangeCode: String? = null
+
+    //自定义集数
     var customEpisodeCount: String? = null
+
+    //视频比例code
     var videoRatio: String? = null
+
+    //作品风格
     var videoStyleId: String? = null
 
     //作品ID
     var workId = MutableLiveData<String>()
+
     //上一集 剧集id
     var episodeId: String? = null
 
@@ -56,6 +65,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
+
+    //剧集剧本内容
     var originalJson: String? = null
 
     fun sseGenerate() {
@@ -68,13 +79,12 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 )
             )
         } else {
-            mRepo.api.sseScriptFromIdea(
-                AIExpandBody(
-                    workId = workId.value,
-                    storyId=episodeId,
-                    bizType=model,
-                )
+            val body = AIExpandBody(
+                workId = workId.value,
+                storyId = episodeId,
+                bizType = model,
             )
+            mRepo.api.sseScriptFromIdea(body)
         }
         promptGenerating.value = true to "内容生成中..."
         nextStepEnabled.set(false)
@@ -129,13 +139,15 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
      * 确认生成
      * @param onSuccess 成功回调，返回作品ID
      */
-    fun confirmGenerate(onSuccess: ((String?, String?) -> Unit)? = null) {
+    fun confirmGenerate(workTitle: String?, onSuccess: ((String?, String?) -> Unit)? = null) {
         launchWithLoading {
+            //作品类型：1-灵感创作 2-小说
             if (model == DramaGenerateConstants.MODEL_STORY) {
                 val body = CreateStoryWorkBody(
-                    storyContent = originalJson,
+                    workTitle = workTitle,
                     workStyleCode = videoStyleId,
                     workRatio = videoRatio,
+                    storyContentComplete = originalJson,
                     totalEpisodeCnt = customEpisodeCount,
                     totalEpisodeCntCode = episodeRangeCode
                 )
@@ -143,9 +155,10 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     onSuccess?.invoke(data?.workId, data?.storyId)
                 }
             } else {
-                //作品类型：1-灵感创作 2-小说
                 val body = SaveEpisodeScriptBody(
-                    storyContent = originalJson,
+                    workTitle = workTitle,
+                    workDesc = "",
+                    storyContentComplete = originalJson,
                     workId = workId.value,
                     storyId = episodeId,
                     workType = if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) 2 else 1

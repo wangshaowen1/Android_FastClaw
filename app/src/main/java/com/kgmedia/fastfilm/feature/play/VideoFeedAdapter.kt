@@ -10,6 +10,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ItemVideoFeedBinding
 import com.kgmedia.fastfilm.widget.PlayerSeekbar
 import com.nhsd.basic.item.BindingViewHolder
+import com.nhsd.basic.utils.Logger
 
 class VideoFeedAdapter(private val interactionListener: InteractionListener) :
     PagingDataAdapter<WorkInfo, VideoFeedAdapter.VideoViewHolder>(DIFF_CALLBACK) {
@@ -56,11 +57,15 @@ class VideoFeedAdapter(private val interactionListener: InteractionListener) :
                     // 拖拽开始：PlayerSeekbar 内部会自动处理 dragging 状态，
                     // 此时即使 updateProgress 被调用，PlayerSeekbar 也会优先显示 dragValue
                     // 所以这里可以不用做特殊逻辑，或者用于暂停自动隐藏控件的计时器
+                    binding.tvTitle.visibility = View.INVISIBLE
+                    binding.tvContent.visibility =  View.INVISIBLE
                 }
 
                 override fun onDragEnd(position: Long) {
                     // 拖拽结束：执行 Seek 操作
                     interactionListener.onSeek(bindingAdapterPosition, position)
+                    binding.tvTitle.visibility = View.VISIBLE
+                    binding.tvContent.visibility =  View.VISIBLE
                 }
             }
         }

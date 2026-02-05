@@ -88,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_s"
-                android:text="@{`ID:`+layout.userInfo[`city`]}"
+                android:text="@{`ID:`+layout.userInfo[`id`]}"
                 android:textColor="?attr/textColor3"
                 app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
                 app:layout_constraintStart_toStartOf="@id/tv_name"

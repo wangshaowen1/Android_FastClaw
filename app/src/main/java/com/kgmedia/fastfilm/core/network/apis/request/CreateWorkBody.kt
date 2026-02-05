@@ -20,13 +20,22 @@ data class CreateWorkBody(
 ) : UserTokenBody()
 
 data class CreateStoryWorkBody(
+    //作品名称
     val workTitle: String? = null,
-    val storyContent: String? = null,//剧集剧本内容
-    val totalEpisodeCntCode: String? = null,
-    val totalEpisodeCnt: String? = null,
-    val workRatio: String? = null,
+    //作品简介-第一个版先不搞
+    val workDesc: String? = null,
+    //作品风格 code
     val workStyleCode: String? = null,
+    //视频比例code：16:9、4:3、1:1、3:4、9:16、21:9、adaptive(自动)
+    val workRatio: String? = null,
+    //剧集集数code：1-15=RANGE_1_15 15-30=RANGE_15_30 自定义=CUSTOM_EXACT
+    val totalEpisodeCntCode: String? = null,
+    //自定义集数
+    val totalEpisodeCnt: String? = null,
+    //剧集剧本内容
+    val storyContentComplete: String? = null,
 ) : UserTokenBody()
+
 
 /**
  * {
@@ -39,8 +48,16 @@ data class CreateStoryWorkBody(
  * }
  */
 data class SaveEpisodeScriptBody(
-    val storyContent: String? = null,
+    //作品名称
+    val workTitle: String? = null,
+    //作品简介
+    val workDesc: String? = null,
+    //作品类型：1-灵感创作 2-小说
+    val workType: Int? = null,
+    //剧集剧本内容完整 json
+    val storyContentComplete: String? = null,
+    //作品 ID
     val workId: String? = null,
+    //剧集 id
     val storyId: String? = null,
-    val workType: Int? = null
 )

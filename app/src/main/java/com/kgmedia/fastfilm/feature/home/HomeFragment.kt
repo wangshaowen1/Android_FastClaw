@@ -12,6 +12,7 @@ import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.databinding.FragmentHomeBinding
 import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
+import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
@@ -46,11 +47,7 @@ class HomeFragment :
         initView()
         //数据更新
         dataUpdate()
-        binding.btnCreation.setOnSingleClickListener {
-            //if (AppNavigator.checkLoginIntercepted()) return@setOnSingleClickListener
-            EventManager.onAppTrack(AppEvent.JG_CLICK_FADDISH_PAGE_CREATE_NOW_BUTTON)
-            CreationRootActivity.start(activity)
-        }
+
     }
 
     private fun initView() {
@@ -123,6 +120,12 @@ class HomeFragment :
                 }
                 homeAdapter.refresh()
             }
+        }
+
+        binding.btnCreation.setOnSingleClickListener {
+            if (AppNavigator.checkLoginIntercepted()) return@setOnSingleClickListener
+            EventManager.onAppTrack(AppEvent.JG_CLICK_FADDISH_PAGE_CREATE_NOW_BUTTON)
+            CreationRootActivity.start(activity)
         }
     }
 

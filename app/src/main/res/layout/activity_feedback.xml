@@ -154,7 +154,7 @@
                     android:text="@={layout.phoneNumber}"
                     android:textColor="?attr/textColor2"
                     android:textColorHint="?attr/textColor4"
-                    android:textCursorDrawable="@null" />
+                    android:textCursorDrawable="@drawable/edittext_cursor" />
 
                 <Button
                     android:id="@+id/commit"

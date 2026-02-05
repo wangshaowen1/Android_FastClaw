@@ -15,7 +15,7 @@
         android:gravity="top|left"
         android:lineSpacingExtra="6dp"
         android:scrollbarSize="2dp"
-        android:textCursorDrawable="@null"
+        android:textCursorDrawable="@drawable/edittext_cursor"
         android:scrollbarThumbVertical="@color/color_50_ffffff"
         android:scrollbarTrackVertical="@color/color_30_ffffff"
         android:scrollbars="none"
