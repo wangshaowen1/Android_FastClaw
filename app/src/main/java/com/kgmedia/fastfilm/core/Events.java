@@ -9,13 +9,13 @@ import com.nhsd.basic.bus.AppEvent;
 /**
  * Created by ymh on 2016/7/1 0001.
  */
-public class Events{
+public class Events {
 
 
     /**
      * 关闭
      */
-    public static class CloseEvent  implements AppEvent {
+    public static class CloseEvent implements AppEvent {
         public static final String FINISH_ALL = "finishAll";
         public String eventType;
         public final String[] ignoreClass;
@@ -26,7 +26,7 @@ public class Events{
         }
     }
 
-    public static class PurchaseEvent  implements AppEvent {
+    public static class PurchaseEvent implements AppEvent {
         //购买类型会员
         public static int VIP = 1;
         //购买积分
@@ -50,7 +50,7 @@ public class Events{
         }
     }
 
-    public static class UserDataEvent  implements AppEvent {
+    public static class UserDataEvent implements AppEvent {
         public final String[] keys;
         public String data;
 
@@ -100,7 +100,7 @@ public class Events{
     }
 
 
-    public static class UserChangedEvent  implements AppEvent {
+    public static class UserChangedEvent implements AppEvent {
         public static final int SIGN_IN = 0;
         public static final int SIGN_OUT = 1;
         // 新增：区分是用户主动退出，还是被系统踢出/过期
@@ -112,7 +112,7 @@ public class Events{
         }
     }
 
-    public static class DownloadContractEvent  implements AppEvent {
+    public static class DownloadContractEvent implements AppEvent {
 
         public String pdfFileName;
 
@@ -132,7 +132,7 @@ public class Events{
     /**
      * 配置更改
      */
-    public static class ConfigChangeEvent  implements AppEvent {
+    public static class ConfigChangeEvent implements AppEvent {
         public ConfigChangeEvent(String[] changedKeys) {
             this.changedKeys = changedKeys;
         }
@@ -167,7 +167,7 @@ public class Events{
         }
     }
 
-    public static class PushEvent  implements AppEvent {
+    public static class PushEvent implements AppEvent {
         public static final String MSG_CENTER = "push_msg_center";
         public static final String MSG_WARNING = "msg_warning";
         public final String eventType;
@@ -185,7 +185,7 @@ public class Events{
     /**
      * 歌曲创建事件
      */
-    public static class TrackCreatedEvent  implements AppEvent {
+    public static class TrackCreatedEvent implements AppEvent {
         public final String musicId;
 
         public TrackCreatedEvent(String musicId) {
@@ -201,7 +201,7 @@ public class Events{
     /**
      * 绘本删除事件
      */
-    public static class ShortDeletionEvent  implements AppEvent {
+    public static class ShortDeletionEvent implements AppEvent {
         @NonNull
         public final ShortDramaInfo shortDramaInfo;
 
@@ -213,7 +213,7 @@ public class Events{
     /**
      * 绘本信息改变
      */
-    public static class ShortChangeEvent  implements AppEvent {
+    public static class ShortChangeEvent implements AppEvent {
         @NonNull
         public final ShortDramaInfo shortDramaInfo;
 
@@ -225,7 +225,7 @@ public class Events{
     /**
      * track喜欢事件
      */
-    public static class TrackLikeEvent  implements AppEvent {
+    public static class TrackLikeEvent implements AppEvent {
         public final String trackId;
         public final int likeStatus;
         public final int likeNum;
@@ -240,7 +240,7 @@ public class Events{
     }
 
 
-    public static class DownloadProgressEvent  implements AppEvent {
+    public static class DownloadProgressEvent implements AppEvent {
         public final int percent;
         public final String url;
         public final String path;
@@ -255,7 +255,7 @@ public class Events{
     /**
      * 生成歌的AI有变化
      */
-    public static class ComposeConfigChangeEvent  implements AppEvent {
+    public static class ComposeConfigChangeEvent implements AppEvent {
         public int way;
 
         public ComposeConfigChangeEvent(int way) {
@@ -265,7 +265,7 @@ public class Events{
 
 
     //apk更新
-    public static class ApkRenewal  implements AppEvent {
+    public static class ApkRenewal implements AppEvent {
 
         public Boolean apkRenewal;
 
@@ -278,7 +278,7 @@ public class Events{
     /**
      * 灵感
      */
-    public static class InspirationEvent  implements AppEvent {
+    public static class InspirationEvent implements AppEvent {
         public final String inspiration;
 
         public InspirationEvent(String inspiration) {
@@ -290,13 +290,13 @@ public class Events{
     /**
      * 手机号绑定成功
      */
-    public static class BindingSuccessfulEvent  implements AppEvent {
+    public static class BindingSuccessfulEvent implements AppEvent {
 
         public BindingSuccessfulEvent() {
         }
     }
 
-    public static class TimbreGeneratedEvent  implements AppEvent {
+    public static class TimbreGeneratedEvent implements AppEvent {
 
         public final String timbreId;
 
@@ -305,7 +305,7 @@ public class Events{
         }
     }
 
-    public static class PictureBookGeneratedEvent  implements AppEvent {
+    public static class PictureBookGeneratedEvent implements AppEvent {
 
         public final String pictureBookTemplateId;
 
@@ -314,7 +314,7 @@ public class Events{
         }
     }
 
-    public static class PictureBookStartGenerateEvent  implements AppEvent {
+    public static class PictureBookStartGenerateEvent implements AppEvent {
 
         public PictureBookStartGenerateEvent() {
         }
@@ -322,7 +322,7 @@ public class Events{
         ;
     }
 
-    public static class PictureBookPublishEvent  implements AppEvent {
+    public static class PictureBookPublishEvent implements AppEvent {
 
         public final String pictureBookId;
 
@@ -331,7 +331,7 @@ public class Events{
         }
     }
 
-    public static class AgreePolicyEvent  implements AppEvent {
+    public static class AgreePolicyEvent implements AppEvent {
         /**
          * type 11/21:手机号 12/22:QQ 13/23:微信
          */
@@ -342,7 +342,7 @@ public class Events{
         }
     }
 
-    public static class MainTabDoubleClickEvent  implements AppEvent {
+    public static class MainTabDoubleClickEvent implements AppEvent {
 
         public static final int TAB_HOME = 0;
         public static final int TAB_WORKS = 1;
@@ -357,7 +357,7 @@ public class Events{
     }
 
 
-    public static class InvitationIncomeEvent  implements AppEvent {
+    public static class InvitationIncomeEvent implements AppEvent {
         public final int amountOfMoney;
 
         public InvitationIncomeEvent(int amountOfMoney) {
@@ -368,7 +368,7 @@ public class Events{
     /**
      * 短剧更新事件
      */
-    public static class ShortDramasUpdatedEvent  implements AppEvent {
+    public static class ShortDramasUpdatedEvent implements AppEvent {
         public final String dramasId;
 
         public ShortDramasUpdatedEvent(String dramasId) {
@@ -379,7 +379,7 @@ public class Events{
     /**
      * 修改视频信息
      */
-    public static class ShortDramasEditInfoEvent  implements AppEvent {
+    public static class ShortDramasEditInfoEvent implements AppEvent {
         public final String dramaId;
         public final String dramaName;
         public final String dramaIntro;
@@ -394,7 +394,7 @@ public class Events{
     /**
      * 字幕配音事件
      */
-    public static class DubbingEvent  implements AppEvent {
+    public static class DubbingEvent implements AppEvent {
         public final String dramasId;
         public final String timbreId;
 
@@ -407,7 +407,7 @@ public class Events{
     /**
      * 字幕配音事件
      */
-    public static class UseDubbingEvent  implements AppEvent {
+    public static class UseDubbingEvent implements AppEvent {
         public final String dramasId;
         public final String timbreId;
 
@@ -420,8 +420,9 @@ public class Events{
     /**
      * 剧集更新事件
      */
-    public static class SeriesUpdatedEvent  implements AppEvent {
+    public static class SeriesUpdatedEvent implements AppEvent {
         public final String seriesId;
+
         public SeriesUpdatedEvent(String seriesId) {
             this.seriesId = seriesId;
         }

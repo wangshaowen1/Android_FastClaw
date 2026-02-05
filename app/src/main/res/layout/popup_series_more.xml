@@ -23,12 +23,13 @@
             android:layout_height="6dp"
             android:layout_gravity="end"
             android:layout_marginEnd="16dp"
+            android:importantForAccessibility="no"
             android:src="@drawable/ic_popup_anchor" />
 
         <LinearLayout
             android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_color3_r8"
+            android:background="@drawable/bg_2a2a2b_r8"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -42,7 +43,7 @@
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
                 android:text="编辑"
-                android:textColor="?attr/textColor3" />
+                android:textColor="@color/text_color_3_dark" />
 
             <TextView
                 android:id="@+id/btnManage"
@@ -53,7 +54,7 @@
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
                 android:text="管理"
-                android:textColor="?attr/textColor3" />
+                android:textColor="@color/text_color_3_dark" />
 
         </LinearLayout>
     </LinearLayout>

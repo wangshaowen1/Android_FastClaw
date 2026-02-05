@@ -14,7 +14,7 @@
     用于高亮关键交互元素和状态的鲜亮颜色。
     常见应用位置：文本输入框的光标颜色，按钮高亮状态
     -->
-    <color name="colorAccent">@color/color_121212</color>
+    <color name="colorAccent">@color/white</color>
     <color name="windowBackground">@color/color_f6f7fb</color>
     <!--  textColorPrimary	（易读性强）	标题、核心内容、关键操作-->
     <color name="textColorPrimary">@color/color_121212</color>

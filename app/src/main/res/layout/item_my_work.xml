@@ -24,14 +24,13 @@
             android:id="@+id/ivCover"
             android:layout_width="match_parent"
             loadUri="@{item.data.workCoverUrl}"
-            placeHolder="@{@drawable/ic_default_cover}"
+            placeHolder="@{@color/fill_color_1_dark}"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
             app:riv_corner_radius="@dimen/radius_m"
-            android:src="@drawable/ic_default_cover"
-            tools:src="@drawable/ic_default_cover" />
+            tools:src="@color/fill_color_1_dark" />
 
         <com.kgmedia.fastfilm.widget.BorderConstraintLayout
             android:layout_width="0dp"

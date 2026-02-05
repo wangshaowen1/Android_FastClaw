@@ -82,7 +82,7 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
 
     override fun setTranslucentStatus() {
         ImmersionBar.with(this)
-            .statusBarDarkFont(true)
+            .statusBarDarkFont(false)
             .transparentStatusBar()
             .transparentNavigationBar()
             .init()

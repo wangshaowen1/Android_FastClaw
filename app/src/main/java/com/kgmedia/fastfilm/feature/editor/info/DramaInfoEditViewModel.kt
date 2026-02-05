@@ -59,6 +59,9 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
     val name = MutableLiveData<String>()
     val desc = MutableLiveData<String>()
 
+    //编辑修改成功
+    val editAndModify = MutableLiveData<Boolean>(false)
+
     override fun onCreate() {
         super.onCreate()
         workInfo?.apply {
@@ -81,8 +84,17 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
             "封面上传中,请稍等~".showToast()
             return
         }
-        requestWithLoading({ mRepo.api.updateWorkInfo(WorkInfoUpdateBody(workInfo?.workId, cover.get(), name.value, desc.value)) }) {
-            finish()
+        requestWithLoading({
+            mRepo.api.updateWorkInfo(
+                WorkInfoUpdateBody(
+                    workInfo?.workId,
+                    cover.get(),
+                    name.value,
+                    desc.value
+                )
+            )
+        }) {
+            editAndModify.value=true
         }
     }
 

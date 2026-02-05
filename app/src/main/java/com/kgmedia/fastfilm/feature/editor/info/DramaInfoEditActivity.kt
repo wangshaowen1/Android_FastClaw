@@ -10,9 +10,11 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.selectSinglePhotoFromAlbums
 import com.kgmedia.fastfilm.common.permissions.requestImages2VideosPermissions
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityWorkInfoEditBinding
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.mattise.Matisse
 
 /**
@@ -32,18 +34,14 @@ class DramaInfoEditActivity :
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mRealVM.name.observe(this) {
-            if (it != binding.nameInputer.text) {
-                binding.nameInputer.setText(it)
-            }
-        }
-        mRealVM.desc.observe(this) {
-            if (it != binding.descInputer.text) {
-                binding.descInputer.setText(it)
-            }
-        }
+    override fun onViewModelCreated() {
+        super.onViewModelCreated()
+        initView()
+        //数据更新
+        dataUpdate()
+    }
+
+    private fun initView(){
         binding.nameInputer.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() != mRealVM.name.value) {
@@ -61,6 +59,27 @@ class DramaInfoEditActivity :
             }
         })
     }
+
+    private fun dataUpdate() {
+        mRealVM.name.observe(this) {
+            if (it != binding.nameInputer.text) {
+                binding.nameInputer.setText(it)
+            }
+        }
+        mRealVM.desc.observe(this) {
+            if (it != binding.descInputer.text) {
+                binding.descInputer.setText(it)
+            }
+        }
+
+
+        mRealVM.editAndModify.observe(this){
+            if (!it)return@observe
+            FlowEventBus.postSync(Events.SeriesUpdatedEvent(mRealVM.workInfo?.workId?:""))
+            finish()
+        }
+    }
+
 
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
