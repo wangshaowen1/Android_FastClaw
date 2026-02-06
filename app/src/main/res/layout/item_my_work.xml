@@ -35,7 +35,7 @@
         <com.kgmedia.fastfilm.widget.BorderConstraintLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="@{item.workState==WorkInfo.COMPOSING_STATE?View.VISIBLE:View.GONE}"
+            android:visibility="@{item.data.isGenerating()?View.VISIBLE:View.GONE}"
             app:backgroundStartColor="@color/mask_opacity_60_dark"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"

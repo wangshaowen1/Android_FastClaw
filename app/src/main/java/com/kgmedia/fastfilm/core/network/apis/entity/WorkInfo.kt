@@ -67,6 +67,12 @@ data class WorkInfo(
         const val FAILED_STATE = 70
     }
 
+    //是否是生成中状态
+    fun isGenerating(): Boolean {
+        return workStatus in listOf(GEN_MUSIC_BASE, GEN_MUSIC_VIDEO, COMPOSING_STATE)
+    }
+
+
     fun isInspirationGenerated(): Boolean {
         return workType == 1
     }
