@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
@@ -173,23 +174,13 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 )
             }
 
-            EpisodeInfo.PROGRESS_STORYBOARD_GENERATING -> {
-                //30=分镜生成中
-                StoryEditorActivity.start(
-                    this@SeriesActivity,
-                    4,
-                    mRealVM.workId,
-                    episodeInfo.storyId
-                )
-            }
-
+            EpisodeInfo.PROGRESS_STORYBOARD_GENERATING,
             EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
+                //30=分镜生成中
                 //35=待合成
-                StoryEditorActivity.start(
-                    this@SeriesActivity,
-                    5,
-                    mRealVM.workId,
-                    episodeInfo.storyId
+                EditStoryboardVideoActivity.start(
+                    workId = mRealVM.workId,
+                    storyId = episodeInfo.storyId
                 )
             }
 

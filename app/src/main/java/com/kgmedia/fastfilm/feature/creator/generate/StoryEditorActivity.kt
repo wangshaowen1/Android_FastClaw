@@ -18,7 +18,8 @@ import com.nhsd.basic.BaseViewModelActivity
  * 作品生成根界面（灵感模式有5步，小说模式只有4步，从剧本生成开始）
  * 灵感模式，小说续创也是4步 从剧本生成开始
  */
-class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, StoryEditorViewModel>() {
+class StoryEditorActivity :
+    BaseViewModelActivity<ActivityStoryEditorBinding, StoryEditorViewModel>() {
 
     companion object {
         const val KEY_STEP = "step"
@@ -115,22 +116,26 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
         mRealVM.step.observe(this) {
             when (it) {
                 1 -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, DramaGenerateStep1Fragment.newInstance())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, DramaGenerateStep1Fragment.newInstance())
                         .commitAllowingStateLoss()
                 }
 
                 2 -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, DramaGenerateStep2Fragment.newInstance())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, DramaGenerateStep2Fragment.newInstance())
                         .commitAllowingStateLoss()
                 }
 
                 3 -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, AssetManagementFragment.newInstance())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, AssetManagementFragment.newInstance())
                         .commitAllowingStateLoss()
                 }
 
                 4 -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.container, StoryboardDesignFragment.newInstance())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, StoryboardDesignFragment.newInstance())
                         .commitAllowingStateLoss()
                 }
             }
@@ -141,7 +146,9 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
         super.onClick(view, data)
         when (view?.id) {
             R.id.tvWorkName, R.id.btnModify -> {
-                if ((mRealVM.step.value ?: 0) > 1) return
+                val isEdit =
+                    (mRealVM.step.value == 1 || (mRealVM.step.value == 2 && mRealVM.model == DramaGenerateConstants.MODEL_STORY))
+                if (!isEdit) return
                 val dialog = DramaTitleEditDialog.newInstance(mRealVM.title.value)
                 dialog.onSave = {
                     mRealVM.title.value = it
