@@ -35,7 +35,7 @@ data class WorkInfo(
     //最近生成的集数编号
     val lastEpisodeNo: Int? = null,
     //最近一次生成时间
-    val lastGenerateTime: Int? = null,
+    val lastGenerateTime: String? = null,
     //播放量(初始化1000-10000)
     val playCount: Int? = null,
     //作者用户ID
@@ -145,7 +145,6 @@ data class WorkInfo(
         result = 31 * result + (workStatus ?: 0)
         result = 31 * result + (totalEpisodeCnt ?: 0)
         result = 31 * result + (finishedEpisodeCnt ?: 0)
-        result = 31 * result + (lastGenerateTime ?: 0)
         result = 31 * result + (playCount ?: 0)
         result = 31 * result + (workId?.hashCode() ?: 0)
         result = 31 * result + (workTitle?.hashCode() ?: 0)
