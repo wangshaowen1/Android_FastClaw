@@ -157,17 +157,17 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         when (episodeInfo.stepProgress) {
             EpisodeInfo.PROGRESS_DRAFT -> {
                 //10=剧本输入 20=资产生成中 30=分镜生成中 35=待合成 40=已完成
-                StoryEditorActivity.start(
+                StoryEditorActivity.restore(
                     this@SeriesActivity,
                     2,
                     mRealVM.workId,
-                    episodeInfo.storyId
+                    episodeInfo.storyId,
                 )
             }
 
             EpisodeInfo.PROGRESS_ASSET_GENERATING -> {
                 //20=资产生成中
-                StoryEditorActivity.start(
+                StoryEditorActivity.restore(
                     this@SeriesActivity,
                     3,
                     mRealVM.workId,
@@ -175,9 +175,17 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 )
             }
 
-            EpisodeInfo.PROGRESS_STORYBOARD_GENERATING,
-            EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
+            EpisodeInfo.PROGRESS_STORYBOARD_GENERATING -> {
                 //30=分镜生成中
+                StoryEditorActivity.restore(
+                    this@SeriesActivity,
+                    4,
+                    mRealVM.workId,
+                    episodeInfo.storyId
+                )
+            }
+
+            EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
                 //35=待合成
                 EditStoryboardVideoActivity.start(
                     workId = mRealVM.workId,

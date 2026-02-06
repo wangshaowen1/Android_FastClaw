@@ -88,12 +88,13 @@ class StoryEditorActivity :
          * @param step 步骤几  1 故事梗概 2 故事剧本 3 资产管理 4 分镜设计
          */
         @JvmStatic
-        fun start(context: Context?, step: Int? = 2, workId: String?, storyId: String? = null) {
+        fun restore(context: Context?, step: Int, workId: String?, storyId: String? = null) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
             starter.putExtra(KEY_STEP, step)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
             starter.putExtra(Constants.Extra.STORY_ID, storyId)
+            starter.putExtra(Constants.Extra.RESTORE, true)
             context.startActivity(starter)
         }
     }

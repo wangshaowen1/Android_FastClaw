@@ -6,16 +6,18 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
-import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.StorySseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 
 /**
@@ -150,7 +152,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
      * @param onSuccess 成功回调，返回作品ID
      */
     fun confirmGenerate(workTitle: String?, onSuccess: ((String?, String?) -> Unit)? = null) {
-        launchWithLoading {
+        setLoading(true)
+        launch(block = {
             if (model == DramaGenerateConstants.MODEL_STORY) {
                 //第一集创作(小说)
                 val body = CreateStoryWorkBody(
@@ -161,9 +164,13 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     totalEpisodeCnt = customEpisodeCount,
                     totalEpisodeCntCode = episodeRangeCode
                 )
-                response(mRepo.api.saveStoryEpisodeScript(body)) {
-                    onSuccess?.invoke(data?.workId, data?.storyId)
-                }
+                response(
+                    bean = mRepo.api.saveStoryEpisodeScript(body),
+                    result = { generateAllAssetDescription(data?.workId, data?.storyId, onSuccess) },
+                    error = {
+                        setLoading(false)
+                        this?.msg?.showToast()
+                    })
             } else {
                 val body = SaveEpisodeScriptBody(
                     workTitle = workTitle,
@@ -172,10 +179,31 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     storyId = episodeId,
                     workType = if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) 2 else 1
                 )
-                response(mRepo.api.saveEpisodeScript(body)) {
-                    onSuccess?.invoke(data?.workId, data?.storyId)
-                }
+                response(
+                    bean = mRepo.api.saveEpisodeScript(body),
+                    result = { generateAllAssetDescription(data?.workId, data?.storyId, onSuccess) },
+                    error = {
+                        setLoading(false)
+                        this?.msg?.showToast()
+                    })
             }
+        }, onError = {
+            setLoading(false)
+        })
+    }
+
+    private fun generateAllAssetDescription(workId: String?, storyId: String?, onSuccess: ((workId: String?, storyId: String?) -> Unit)?) {
+        launch {
+            response(
+                bean = mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)),
+                result = {
+                    setLoading(false)
+                    onSuccess?.invoke(workId, storyId)
+                },
+                error = {
+                    setLoading(false)
+                    this?.msg?.showToast()
+                })
         }
     }
 }

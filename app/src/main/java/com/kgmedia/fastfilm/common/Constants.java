@@ -162,6 +162,7 @@ public class Constants {
         String TASK_ID = "taskId";
         String PLAYER_IN_SERIES = "playerInSeries";
         String NEWLY_PUBLISH = "newlyPublish";
+        String RESTORE = "restore";
     }
 
 }
