@@ -197,7 +197,7 @@ class App : BaseApp() {
         LoadingConfig.setFactory { LoadingDialog2() }
         OssManager.init(ossType = OssType.ALIYUN, ossFileNameProvider = {ossPathName, suffix ->
             val timestamp = System.currentTimeMillis()
-            "FFApp/$ossPathName/${User.get().id}/0$timestamp.$suffix"
+            "FFApp/$ossPathName/${User.get().userId}/0$timestamp.$suffix"
         })
         // 初始化加载刷新控件
         initSmartRefreshLayoutView()
