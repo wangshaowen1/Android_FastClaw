@@ -38,7 +38,6 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val workName by lazy { mBundle.getString(Constants.Extra.NAME) }
     val input by lazy { MutableLiveData(Global.continueWritingContent[workId]) }
     val episodeInfo = MutableLiveData<EpisodeInfo>()
-    val workInfo = MutableLiveData<WorkInfo>()
 
     val textLimitNum by lazy { Config.get().appConfig.shortDramas }
     val minInputLength = 10
@@ -50,24 +49,16 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val isVip = ObservableBoolean(true)
     val isSSEStreaming = ObservableBoolean(false)
 
+
+    private var sseHandler: SSEStreamHandler? = null
+
+
     override fun onCreate() {
         super.onCreate()
         workName?.let {
             mToolbarVM.mTitle.set("续创：$it")
         }
         getEpisodeInfo()
-        getWorkInfo()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        refreshConfig()
-    }
-
-    fun refreshConfig() {
-//        isVip.set(User.get().isVip)
-//        val maxLength = if (isVip.get()) textLimitNum?.shortDramasWriteStoryLimitNumForVip else textLimitNum?.shortDramasWriteStoryLimitNum
-//        maxInputLength.set(maxLength ?: (if (isVip.get()) 5000 else 1000))
     }
 
     /**
@@ -88,17 +79,6 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
             }
         }
     }
-
-    fun getWorkInfo() {
-        launchWithLoading {
-            response(mRepo.api.getWorkInfo(WorkIdBody(workId))) {
-                workInfo.value = data
-                mToolbarVM.mTitle.set(data?.workTitle)
-            }
-        }
-    }
-
-    private var sseHandler: SSEStreamHandler? = null
 
     fun sseGenerate() {
         promptGenerating.value = true to ("AI扩写中...")

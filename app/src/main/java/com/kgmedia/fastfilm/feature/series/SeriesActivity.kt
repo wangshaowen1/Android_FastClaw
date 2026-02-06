@@ -255,7 +255,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     return
                 }
                 //小说改编续写
-                ContinueWritingActivity.start(this, mRealVM.workId, workInfo.workTitle)
+                ContinueWritingActivity.start(this, workId=mRealVM.workId, workTitle=workInfo.workTitle)
             }
         }
     }

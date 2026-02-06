@@ -42,7 +42,8 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_avatar"
-                loadHQThumbnailUri="@{layout.workInfo.workCoverUrl}"
+                loadHQThumbnailUri="@{layout.episodeInfo.workCoverUrl}"
+                placeHolder="@{@color/bg_color_2_dark}"
                 android:layout_width="78dp"
                 android:layout_height="104dp"
                 android:scaleType="centerCrop"
@@ -132,6 +133,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:gravity="center"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/inputView"
                 app:layout_constraintEnd_toEndOf="@id/inputView"
                 app:layout_constraintStart_toStartOf="@id/inputView"

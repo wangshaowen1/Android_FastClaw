@@ -27,11 +27,11 @@ class ContinueWritingActivity :
     companion object {
 
         @JvmStatic
-        fun start(context: Context?, dramasSeriesId: String?, dramasSeriesName: String?) {
+        fun start(context: Context?, workId: String?, workTitle: String?) {
             if (context == null) return
             val starter = Intent(context, ContinueWritingActivity::class.java)
-            starter.putExtra(Constants.Extra.ID, dramasSeriesId)
-            starter.putExtra(Constants.Extra.NAME, dramasSeriesName)
+            starter.putExtra(Constants.Extra.ID, workId)
+            starter.putExtra(Constants.Extra.NAME, workTitle)
             context.startActivity(starter)
         }
     }
@@ -63,7 +63,7 @@ class ContinueWritingActivity :
         })
         observeEvents {
             on<Events.ConfigChangeEvent> { event ->
-                mRealVM.refreshConfig()
+                //mRealVM.refreshConfig()
             }
             on<Events.ScriptContentGenerateSuccessEvent> {
                 if (it.type == Events.ScriptContentGenerateSuccessEvent.TYPE_CONTINUE_WRITE && it.seriesId == mRealVM.workId) {
@@ -134,7 +134,7 @@ class ContinueWritingActivity :
             content = mRealVM.input.value,
             workId = mRealVM.workId,
             workTitle= mRealVM.workName,
-            lastEpisodeId = mRealVM.workInfo.value?.workId,
+            lastEpisodeId = mRealVM.episodeInfo.value?.storyId,
             model = DramaGenerateConstants.MODEL_CONTINUE_STORY,
         )
     }
