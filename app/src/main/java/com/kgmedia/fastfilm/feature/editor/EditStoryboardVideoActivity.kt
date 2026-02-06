@@ -39,7 +39,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     "视频正在生成中，请稍后再试".showToast()
                     return
                 }
-                EditStoryboardActivity.start(mRealVM.workId,mRealVM.storyId, current)
+                EditStoryboardActivity.start(current)
             }
 
             R.id.btnDownload -> {

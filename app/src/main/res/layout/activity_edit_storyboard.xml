@@ -64,7 +64,7 @@
                 tools:visibility="invisible" />
 
             <ImageView
-                setVisible="@{layout.videoGenStatus == 2}"
+                setVisible="@{layout.videoGenerated(layout.videoGenStatus)}"
                 android:layout_width="32dp"
                 android:layout_height="16dp"
                 android:layout_margin="8dp"
@@ -74,7 +74,7 @@
                 tools:text="AI生成" />
 
             <ImageView
-                setVisible="@{layout.videoGenStatus == 2 &amp;&amp; !layout.playing}"
+                setVisible="@{layout.videoGenerated(layout.videoGenStatus) &amp;&amp; !layout.playing}"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_short_drama_editor_play"
@@ -85,7 +85,7 @@
 
             <LinearLayout
                 setDimensionRatio="@{layout.workRatio}"
-                setVisible="@{layout.videoGenStatus == 1 || layout.videoGenStatus == 3}"
+                setVisible="@{!layout.videoGenerated(layout.videoGenStatus)}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="?attr/fillColor1"
@@ -98,7 +98,7 @@
                 tools:layout_constraintDimensionRatio="9:16">
 
                 <ImageView
-                    setVisible="@{layout.videoGenStatus == 1}"
+                    setVisible="@{layout.videoGenerating(layout.videoGenStatus)}"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginBottom="12dp"
@@ -118,8 +118,8 @@
 
                 <TextView
                     android:id="@+id/btnRetry"
-                    setVisible="@{layout.videoGenStatus == 3}"
-                    singleClick="@{() -> layout.retryGenerate()}"
+                    setVisible="@{layout.videoGenerateFailed(layout.videoGenStatus)}"
+                    singleClick="@{(v) -> layout.retryGenerateVideo(false)}"
                     android:layout_width="88dp"
                     android:layout_height="28dp"
                     android:layout_marginTop="12dp"
@@ -219,7 +219,7 @@
 
             <FrameLayout
                 android:id="@+id/btnRegenerateImage"
-                singleClick="@{layout.clickHandler::onClick}"
+                singleClick="@{() -> layout.reGenerateImage()}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="6dp"
@@ -241,7 +241,7 @@
 
             <TextView
                 android:id="@+id/btnRegenerate"
-                singleClick="@{layout.clickHandler::onClick}"
+                singleClick="@{() -> layout.reGenerateVideo()}"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="15dp"
@@ -256,7 +256,7 @@
 
             <TextView
                 android:id="@+id/btnSave"
-                singleClick="@{layout.clickHandler::onClick}"
+                singleClick="@{() -> layout.save(false)}"
                 android:layout_width="70dp"
                 android:layout_height="30dp"
                 android:layout_marginEnd="15dp"

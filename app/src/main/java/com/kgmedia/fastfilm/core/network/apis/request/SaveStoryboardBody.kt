@@ -41,7 +41,7 @@ data class SaveStoryboardBody(
     /**
      * 视频时长(秒)
      */
-    val duration: Int?,
+    val duration: Long?,
     /**
      * 剧集 id
      */

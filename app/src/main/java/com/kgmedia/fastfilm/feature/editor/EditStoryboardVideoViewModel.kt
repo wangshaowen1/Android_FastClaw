@@ -163,7 +163,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
             }
         } else {
             storyboardPlayer.clearMediaItems()
-            storyboardPlayer.stop()
+            storyboardPlayer.pause()
             playing.set(false)
         }
     }

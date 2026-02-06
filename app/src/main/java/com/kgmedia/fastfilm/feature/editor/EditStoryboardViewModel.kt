@@ -7,17 +7,27 @@ import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
+import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
+import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
+import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.nhsd.basic.ext.getParcelableValue
+import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /**
  * 编辑分镜视频
  */
 class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
-    val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
-    val storyId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
     val storyboard by lazy { ObservableField<SimpleStoryboardInfo>() }
     val workRatio = "9:16"
 
@@ -43,14 +53,20 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     val playing by lazy { ObservableBoolean(true) }
 
     val storyboardDesc by lazy { MutableLiveData<String>() }
+
     /**
      * 图片生成状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
      */
     val imageGenStatus by lazy { ObservableInt() }
+    private var imageGenTaskId: String? = null
+    private var loopImageJob: Job? = null
+
     /**
      * 视频生成状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
      */
     val videoGenStatus by lazy { ObservableInt() }
+    private var videoGenTaskId: String? = null
+    private var loopVideoJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -59,18 +75,28 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             finish()
             return
         }
+        storyboard.set(info)
         storyboardDesc.value = info.storyBoardDesc
         //任务类型 [1=文生文 2=文生图 3=图生图 4=文生视频 5图生视频 6-视频生视频]
         when (info.taskType) {
             1, 2, 3 -> {
+                imageGenTaskId = info.taskId
                 imageGenStatus.set(info.stepStatus ?: -1)
                 videoGenStatus.set(-1)
             }
-            4, 5, 6 ->{
+
+            4, 5, 6 -> {
+                videoGenTaskId = info.taskId
                 imageGenStatus.set(2)
                 videoGenStatus.set(info.stepStatus ?: -1)
             }
         }
+        if (videoGenerating(videoGenStatus.get())) {
+            loopVideo()
+        } else if (imageGenerating(imageGenStatus.get())) {
+            loopImage()
+        }
+        play()
     }
 
     override fun onCleared() {
@@ -127,6 +153,11 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     fun videoGenerated(videoGenStatus: Int?) = videoGenStatus == 2 || videoGenStatus == 4
 
     /**
+     * 视频生成失败
+     */
+    fun videoGenerateFailed(videoGenStatus: Int?) = videoGenStatus == 3
+
+    /**
      * 图片生成中
      */
     fun imageGenerating(imageGenStatus: Int?) = imageGenStatus == 1
@@ -136,7 +167,140 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
      */
     fun imageGenerated(imageGenStatus: Int?) = imageGenStatus == 2 || imageGenStatus == 4
 
-    fun retryGenerate(){
-
+    /**
+     * 视频失败重试
+     */
+    fun retryGenerateVideo(finish: Boolean = false) {
+        val storyboard = storyboard.get() ?: return
+        launchWithLoading {
+            val body = GenerateStoryboardBody(
+                storyboardId = storyboard.storyboardId,
+                storyBoardDesc = storyboard.storyBoardDesc,
+                genImagePrompt = storyboard.genImagePrompt,
+                genVideoPrompt = storyboard.genVideoPrompt,
+                workId = storyboard.workId,
+                storyId = storyboard.storyId
+            )
+            response(ApiFactory.apiService.workStoryboardVideoSingleGenerate(body)) {
+                if (finish){
+                    finish()
+                    return@response
+                }
+                videoGenTaskId = data?.taskId
+                data?.genStatus?.let { videoGenStatus.set(it) }
+                loopVideo()
+            }
+        }
     }
+
+    /**
+     * 重新生成图片
+     */
+    fun reGenerateImage() {
+        val storyboard = storyboard.get() ?: return
+        val storyboardDesc = storyboardDesc.value
+        if (storyboardDesc.isNullOrEmpty()) {
+            "请先填写分镜描述".showToast()
+            return
+        }
+        storyboard.storyBoardDesc = storyboardDesc
+        launchWithLoading {
+            val body = GenerateStoryboardBody(
+                storyboardId = storyboard.storyboardId,
+                storyBoardDesc = storyboardDesc,
+                genImagePrompt = storyboard.genImagePrompt,
+                genVideoPrompt = storyboard.genVideoPrompt,
+                workId = storyboard.workId,
+                storyId = storyboard.storyId
+            )
+            response(ApiFactory.apiService.workStoryboardSingleGenerate(body)) {
+                imageGenTaskId = data?.taskId
+                data?.genStatus?.let { imageGenStatus.set(it) }
+                loopImage()
+            }
+        }
+    }
+
+    /**
+     * 重新生成视频
+     */
+    fun reGenerateVideo() {
+        retryGenerateVideo(true)
+    }
+
+    private fun loopImage() {
+        loopImageJob?.cancel()
+        loopImageJob = launch {
+            loop@ while (imageGenerating(imageGenStatus.get())) {
+                runCatching {
+                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(videoGenTaskId, 71)).data }
+                    taskStatus?.genStatus?.let { imageGenStatus.set(it) }
+                    taskStatus?.result?.let {
+                        storyboard.get()?.imageUrl = it
+                        storyboard.notifyChange()
+                    }
+                }
+                if (!imageGenerating(imageGenStatus.get())) {
+                    break@loop
+                }
+                delay(3000)
+            }
+        }
+    }
+
+    private fun loopVideo() {
+        loopVideoJob?.cancel()
+        loopVideoJob = launch {
+            loop@ while (videoGenerating(videoGenStatus.get())) {
+                runCatching {
+                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(videoGenTaskId, 72)).data }
+                    taskStatus?.genStatus?.let { videoGenStatus.set(it) }
+                    taskStatus?.result?.let { storyboard.get()?.videoUrl = it }
+                }
+                if (!videoGenerating(videoGenStatus.get())) {
+                    if (videoGenerated(videoGenStatus.get())) {
+                        play()
+                    }
+                    break@loop
+                }
+                delay(3000)
+            }
+        }
+    }
+
+    fun save(finish: Boolean = false) {
+        val storyboard = storyboard.get() ?: return
+        val storyboardDesc = storyboardDesc.value
+        if (storyboardDesc.isNullOrEmpty()) {
+            "请先填写分镜描述".showToast()
+            return
+        }
+        storyboard.storyBoardDesc = storyboardDesc
+        launchWithLoading {
+            val body = SaveStoryboardBody(
+                storyboard.storyboardId,
+                storyboardDesc,
+                storyboard.genImagePrompt,
+                storyboard.genVideoPrompt,
+                storyboard.imageUrl,
+                storyboard.videoUrl,
+                storyboard.duration,
+                storyboard.workId,
+                storyboard.storyId
+            )
+            response(ApiFactory.apiService.workStoryboardSave(body)) {
+                "保存成功".showToast()
+                if (finish) {
+                    finish()
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        loopImageJob?.cancel()
+        loopVideoJob?.cancel()
+        super.onDestroy()
+    }
+
 }

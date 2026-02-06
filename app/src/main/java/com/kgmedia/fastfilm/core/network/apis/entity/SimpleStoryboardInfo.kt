@@ -46,7 +46,7 @@ data class SimpleStoryboardInfo(
     /**
      * 分镜描述
      */
-    val storyBoardDesc: String? = null,
+    var storyBoardDesc: String? = null,
     /**
      * 图片生成提示词
      */
