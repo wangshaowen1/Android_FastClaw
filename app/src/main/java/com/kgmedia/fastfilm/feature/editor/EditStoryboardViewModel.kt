@@ -5,25 +5,12 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.common.adapter.QuickAdapter
-import com.kgmedia.fastfilm.core.ext.launch
-import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.network.RetrofitClient
-import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
-import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
-import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
-import com.kgmedia.fastfilm.kit.media.setPlayUrl
-import com.kgmedia.fastfilm.widget.LoadStateViewHolder
-import com.kuaige.videoedit.resource.UrlResource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import com.nhsd.basic.ext.getParcelableValue
 
 /**
  * 编辑分镜视频
@@ -31,13 +18,8 @@ import kotlinx.coroutines.withContext
 class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
     val storyId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    val storyboard by lazy { ObservableField<SimpleStoryboardInfo>() }
     val workRatio = "9:16"
-    val loadState by lazy { ObservableInt() }
-    val currentStoryboard by lazy { ObservableField<ItemStoryboardVM>() }
-    val scrollToItem by lazy { MutableLiveData<Int>(-1) }
-    val adapter by lazy { QuickAdapter<ItemStoryboardVM>(R.layout.item_short_drama_editor_segment, emptyList()) }
-    val nextStepEnabled by lazy { ObservableBoolean(false) }
-    private var loopGeneratingStoryboardJob: Job? = null
 
     val storyboardPlayer by lazy {
         PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
@@ -49,7 +31,9 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                         }
 
                         Player.STATE_ENDED -> {
-                            playNext()
+                            seekTo(0)
+                            play()
+                            playing.set(true)
                         }
                     }
                 }
@@ -58,84 +42,40 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     }
     val playing by lazy { ObservableBoolean(true) }
 
+    val storyboardDesc by lazy { MutableLiveData<String>() }
+    /**
+     * 图片生成状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
+     */
+    val imageGenStatus by lazy { ObservableInt() }
+    /**
+     * 视频生成状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
+     */
+    val videoGenStatus by lazy { ObservableInt() }
+
     override fun onCreate() {
         super.onCreate()
-        getStoryboardList()
+        val info = mBundle.getParcelableValue(Constants.Extra.DATA, SimpleStoryboardInfo::class.java)
+        if (info == null) {
+            finish()
+            return
+        }
+        storyboardDesc.value = info.storyBoardDesc
+        //任务类型 [1=文生文 2=文生图 3=图生图 4=文生视频 5图生视频 6-视频生视频]
+        when (info.taskType) {
+            1, 2, 3 -> {
+                imageGenStatus.set(info.stepStatus ?: -1)
+                videoGenStatus.set(-1)
+            }
+            4, 5, 6 ->{
+                imageGenStatus.set(2)
+                videoGenStatus.set(info.stepStatus ?: -1)
+            }
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
-        loopGeneratingStoryboardJob?.cancel()
         storyboardPlayer.release()
-    }
-
-    fun getStoryboardList() {
-        loopGeneratingStoryboardJob?.cancel()
-        if (adapter.items.isEmpty()) loadState.set(LoadStateViewHolder.LOADING)
-        launch(
-            block = {
-                val list = withContext(Dispatchers.IO) { mRepo.api.workStoryboardList(WorkBody(workId, storyId)).data }
-                if (list.isNullOrEmpty()) {
-                    updateLoadState()
-                    return@launch
-                }
-                if (list.size == adapter.items.size) {
-                    list.forEachIndexed { index, info -> adapter.getItem(index)?.data?.set(info) }
-                } else {
-                    list.mapIndexed { index, info ->
-                        ItemStoryboardVM(workId, storyId, info).apply {
-                            onItemClick.value = { v ->
-                                if (this != currentStoryboard.get()) {
-                                    select()
-                                }
-                            }
-                        }
-                    }.let { adapter.submitList(it) }
-                }
-                nextStepEnabled.set(allStoryboardGenerated())
-                if (currentStoryboard.get() == null) {
-                    adapter.items.firstOrNull()?.select()
-                }
-                updateLoadState()
-            },
-            onError = {
-                updateLoadState()
-            }
-        )
-    }
-
-    fun retryGenerate() {
-        val shotSegmentId = currentStoryboard.get()?.data?.get()?.storyboardId ?: return
-        launchWithLoading {
-            response(mRepo.shortDramasSegmentImageGenerateRetry(workId, shotSegmentId)) {
-                getStoryboardList()
-            }
-        }
-    }
-
-    fun synthesis() {
-    }
-
-    private fun updateLoadState() {
-        if (adapter.items.isEmpty()) {
-            loadState.set(LoadStateViewHolder.RETRY)
-        } else {
-            loadState.set(LoadStateViewHolder.CONTENT)
-            loopGeneratingSegments()
-        }
-    }
-
-    /**
-     * 轮询生成中片段
-     */
-    private fun loopGeneratingSegments() {
-        loopGeneratingStoryboardJob?.cancel()
-        if (anyStoryboardGenerating()) {
-            loopGeneratingStoryboardJob = launch {
-                delay(3000)
-                getStoryboardList()
-            }
-        }
     }
 
     fun play() {
@@ -145,7 +85,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         } else {
             when (storyboardPlayer.playbackState) {
                 Player.STATE_IDLE -> {
-                    val videoUrl = currentStoryboard.get()?.data?.get()?.videoUrl
+                    val videoUrl = storyboard.get()?.videoUrl
                     if (videoUrl.isNullOrEmpty().not()) {
                         storyboardPlayer.play(videoUrl)
                         playing.set(true)
@@ -166,65 +106,37 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         }
     }
 
-    fun stopPlay() {
-        storyboardPlayer.stop()
-        playing.set(false)
-    }
-
-    private fun playNext() {
-        val current = currentStoryboard.get()
-        val currentIndex = adapter.items.indexOf(current)
-        val next = if (currentIndex > -1 && currentIndex < adapter.items.size - 1) adapter.getItem(currentIndex + 1) else adapter.getItem(0)
-        next.select()
-    }
-
-    private fun ItemStoryboardVM?.select() {
-        currentStoryboard.get()?.selected?.set(false)
-        this?.selected?.set(true)
-        currentStoryboard.set(this)
-        adapter.items.indexOf(this).takeIf { it > -1 }?.let { scrollToItem.value = it }
-        val videoUrl = currentStoryboard.get()?.data?.get()?.videoUrl
-        if (videoUrl.isNullOrEmpty().not()) {
-            if (playing.get()) {
-                storyboardPlayer.play(videoUrl)
-            } else {
-                storyboardPlayer.playWhenReady = false
-                storyboardPlayer.setPlayUrl(videoUrl)
-                storyboardPlayer.prepare()
-            }
-        } else {
-            storyboardPlayer.clearMediaItems()
-            storyboardPlayer.stop()
-            playing.set(false)
+    /**
+     * [枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
+     */
+    fun videoGenStatusText(videoGenStatus: Int?) =
+        when (videoGenStatus) {
+            1 -> "视频生成中"
+            3 -> "视频生成失败"
+            else -> null
         }
-    }
 
-    private fun allStoryboardGenerated(): Boolean {
-        return adapter.items.all { it.data.get()?.videoGenerated == true }
-    }
+    /**
+     * 视频生成中
+     */
+    fun videoGenerating(videoGenStatus: Int?) = videoGenStatus == 1
 
-    fun anyStoryboardGenerating(): Boolean {
-        return adapter.items.any { it.data.get()?.videoGenerating == true }
-    }
+    /**
+     * 视频已生成
+     */
+    fun videoGenerated(videoGenStatus: Int?) = videoGenStatus == 2 || videoGenStatus == 4
 
-    fun anyStoryboardFailed(): Boolean {
-        return adapter.items.any { it.data.get()?.failed == true }
-    }
+    /**
+     * 图片生成中
+     */
+    fun imageGenerating(imageGenStatus: Int?) = imageGenStatus == 1
 
-    fun download(videoUrl: String) {
-        launchWithLoading {
-            UrlResource(videoUrl, RetrofitClient.httpClient).download {
+    /**
+     * 图片已生成
+     */
+    fun imageGenerated(imageGenStatus: Int?) = imageGenStatus == 2 || imageGenStatus == 4
 
-            }
-        }
-    }
+    fun retryGenerate(){
 
-    fun deleteCurrentStoryboard() {
-        launchWithLoading {
-            response(mRepo.api.workStoryboardDelete(IdsBody(null, currentStoryboard.get()?.data?.get()?.storyboardId))) {
-                playNext()
-                currentStoryboard.get()?.let { adapter.remove(it) }
-            }
-        }
     }
 }

@@ -5,6 +5,8 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.PathUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
@@ -20,10 +22,10 @@ import com.kgmedia.fastfilm.kit.media.play
 import com.kgmedia.fastfilm.kit.media.setPlayUrl
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.kuaige.videoedit.resource.UrlResource
+import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.io.File
 
 /**
  * 编辑分镜视频
@@ -38,8 +40,6 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     val scrollToItem by lazy { MutableLiveData<Int>(-1) }
     val adapter by lazy { QuickAdapter<ItemStoryboardVM>(R.layout.item_short_drama_editor_segment, emptyList()) }
     val nextStepEnabled by lazy { ObservableBoolean(false) }
-    private var loopGeneratingStoryboardJob: Job? = null
-
     val storyboardPlayer by lazy {
         PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
             addListener(object : Player.Listener {
@@ -66,12 +66,10 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     override fun onCleared() {
         super.onCleared()
-        loopGeneratingStoryboardJob?.cancel()
         storyboardPlayer.release()
     }
 
     fun getStoryboardList() {
-        loopGeneratingStoryboardJob?.cancel()
         if (adapter.items.isEmpty()) loadState.set(LoadStateViewHolder.LOADING)
         launch(
             block = {
@@ -80,19 +78,15 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                     updateLoadState()
                     return@launch
                 }
-                if (list.size == adapter.items.size) {
-                    list.forEachIndexed { index, info -> adapter.getItem(index)?.data?.set(info) }
-                } else {
-                    list.mapIndexed { index, info ->
-                        ItemStoryboardVM(workId, storyId, info).apply {
-                            onItemClick.value = { v ->
-                                if (this != currentStoryboard.get()) {
-                                    select()
-                                }
+                list.mapIndexed { index, info ->
+                    ItemStoryboardVM(workId, storyId, info).apply {
+                        onItemClick.value = { v ->
+                            if (this != currentStoryboard.get()) {
+                                select()
                             }
                         }
-                    }.let { adapter.submitList(it) }
-                }
+                    }
+                }.let { adapter.submitList(it) }
                 nextStepEnabled.set(allStoryboardGenerated())
                 if (currentStoryboard.get() == null) {
                     adapter.items.firstOrNull()?.select()
@@ -105,28 +99,11 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         )
     }
 
-    fun synthesis() {
-    }
-
     private fun updateLoadState() {
         if (adapter.items.isEmpty()) {
             loadState.set(LoadStateViewHolder.RETRY)
         } else {
             loadState.set(LoadStateViewHolder.CONTENT)
-            loopGeneratingSegments()
-        }
-    }
-
-    /**
-     * 轮询生成中片段
-     */
-    private fun loopGeneratingSegments() {
-        loopGeneratingStoryboardJob?.cancel()
-        if (anyStoryboardGenerating()) {
-            loopGeneratingStoryboardJob = launch {
-                delay(3000)
-                getStoryboardList()
-            }
         }
     }
 
@@ -205,8 +182,15 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     fun download(videoUrl: String) {
         launchWithLoading {
-            UrlResource(videoUrl, RetrofitClient.httpClient).download {
-
+            val resource = UrlResource(videoUrl, RetrofitClient.httpClient)
+            resource.download { }
+            val destFile = File(PathUtils.getExternalDownloadsPath(), resource.file.name)
+            val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(resource.file, destFile) }
+            if (copied) {
+                FileUtils.notifySystemToScan(destFile)
+                "视频已保存至相册".showToast()
+            } else {
+                "保存失败".showToast()
             }
         }
     }

@@ -1,7 +1,10 @@
 package com.kgmedia.fastfilm.feature.creator.storyboard
 
+import android.view.View
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.databinding.FragmentStoryboardDesignBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getParentViewModel
 
@@ -21,6 +24,18 @@ class StoryboardDesignFragment : BaseViewModelFragment<FragmentStoryboardDesignB
         mRealVM.workId = hostVm?.workId
         mRealVM.storyId = hostVm?.storyId
         mRealVM.retry()
+    }
+
+    override fun <Data> onClick(view: View, data: Data?) {
+        super.onClick(view, data)
+        when (view.id) {
+            R.id.btnNext -> {
+                mRealVM.confirmGenerate { workId, storyId, taskId ->
+                    EditStoryboardVideoActivity.start(workId, storyId)
+                    activity?.finish()
+                }
+            }
+        }
     }
 
 }

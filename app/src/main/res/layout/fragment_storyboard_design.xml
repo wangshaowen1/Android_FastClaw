@@ -76,7 +76,7 @@
                 <TextView
                     android:id="@+id/btnNext"
                     setEnabled="@{layout.nextEnabled}"
-                    singleClick="@{(v)->layout.next()}"
+                    singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="15dp"

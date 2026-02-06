@@ -16,7 +16,6 @@ import com.nhsd.basic.ext.showToast
  */
 class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboardVideoBinding, EditStoryboardVideoViewModel>() {
     companion object {
-
         @JvmStatic
         fun launchIntent(activity: Activity, workId: String?, storyId: String?): Intent {
             val intent = Intent(activity, EditStoryboardVideoActivity::class.java)
@@ -40,6 +39,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     "视频正在生成中，请稍后再试".showToast()
                     return
                 }
+                EditStoryboardActivity.start(mRealVM.workId,mRealVM.storyId, current)
             }
 
             R.id.btnDownload -> {

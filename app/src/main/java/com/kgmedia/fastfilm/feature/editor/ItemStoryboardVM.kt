@@ -34,10 +34,10 @@ class ItemStoryboardVM(
     /**
      * [枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
      */
-    fun genStatusBig(status: Int?) =
-        when (status) {
-            0, 1, 2 -> "视频生成中"
-            3 -> "视频生成失败"
+    fun genStatusBig(info: SimpleStoryboardInfo?) =
+        when {
+            info?.videoGenerating == true -> "视频生成中"
+            info?.failed == true -> "视频生成失败"
             else -> null
         }
 

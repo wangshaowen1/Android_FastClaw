@@ -16,7 +16,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
-import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -192,10 +191,10 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
-    fun next() {
+    fun confirmGenerate(onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
         launchWithLoading {
             response(mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId))) {
-                EditStoryboardVideoActivity.start(workId, storyId)
+                onSuccess?.invoke(workId, storyId, data?.taskId)
             }
         }
     }

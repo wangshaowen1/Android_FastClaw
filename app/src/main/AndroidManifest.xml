@@ -320,30 +320,57 @@
                 <data android:scheme="__kuaige__" />
             </intent-filter>
         </activity>
-        <activity android:name=".feature.timbre.TimbreExtractionActivity" />
-        <activity android:name=".feature.timbre.MyTimbresActivity" />
-        <activity android:name=".feature.creator.generate.StoryEditorActivity" />
+        <activity
+            android:name=".feature.timbre.TimbreExtractionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.timbre.MyTimbresActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.creator.generate.StoryEditorActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".feature.editor.EditStoryboardVideoActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".feature.mine.PhoneShowActivity" />
+        <activity
+            android:name=".feature.editor.EditStoryboardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.mine.PhoneShowActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".feature.wallet.withdraw.WithdrawActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".feature.message.systemnotice.SystemNoticeActivity" />
-        <activity android:name=".feature.creator.CreationRootActivity" />
-        <activity android:name=".feature.series.SeriesActivity" />
-        <activity android:name=".feature.series.editinfo.EditInfoActivity" />
-        <activity android:name=".feature.creator.continuewriting.ContinueWritingActivity" />
-        <activity android:name=".feature.message.likes.SystemMessageLikesActivity" />
-        <activity android:name=".feature.message.watching.SystemMessageWatchingActivity" />
+        <activity
+            android:name=".feature.message.systemnotice.SystemNoticeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.creator.CreationRootActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.series.SeriesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.series.editinfo.EditInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.creator.continuewriting.ContinueWritingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.message.likes.SystemMessageLikesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.message.watching.SystemMessageWatchingActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".feature.creator.character.CharacterHistoryActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".feature.play.DramasPlayPagerActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".feature.editor.info.DramaInfoEditActivity" />
+        <activity
+            android:name=".feature.editor.info.DramaInfoEditActivity"
+            android:screenOrientation="portrait" />
     </application>
     <queries>
         <intent>

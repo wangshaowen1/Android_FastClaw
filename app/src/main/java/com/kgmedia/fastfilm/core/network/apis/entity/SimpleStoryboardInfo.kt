@@ -1,5 +1,8 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * {
  *     "storyboardId": "分镜主键id",
@@ -18,6 +21,7 @@ package com.kgmedia.fastfilm.core.network.apis.entity
  *     "taskType": "[枚举]任务类型 [1=文生文 2=文生图 3=图生图 4=图生视频]"
  * }
  */
+@Parcelize
 data class SimpleStoryboardInfo(
     /**
      * 分镜主键id
@@ -75,7 +79,7 @@ data class SimpleStoryboardInfo(
      * [枚举]任务类型 [1=文生文 2=文生图 3=图生图 4=文生视频 5图生视频 6-视频生视频]
      */
     val taskType: Int? = null,
-) {
+) : Parcelable {
     val imageGenerating
         get() = when (creationMode) {
             3 -> true
