@@ -24,7 +24,7 @@ import com.nhsd.basic.BaseApp
         Tone::class,
         ShortDramaInfo::class,
         WorkInformationInfo::class,
-    ], version = 6, exportSchema = true
+    ], version = 7, exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 
