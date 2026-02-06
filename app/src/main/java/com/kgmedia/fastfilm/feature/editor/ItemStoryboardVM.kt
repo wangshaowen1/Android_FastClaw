@@ -37,7 +37,7 @@ class ItemStoryboardVM(
     fun genStatusBig(info: SimpleStoryboardInfo?) =
         when {
             info?.videoGenerating == true -> "视频生成中"
-            info?.failed == true -> "视频生成失败"
+            info?.videoGenerateFailed == true -> "视频生成失败"
             else -> null
         }
 
@@ -56,7 +56,7 @@ class ItemStoryboardVM(
             response(ApiFactory.apiService.workStoryboardVideoSingleGenerate(body)) {
                 val storyboard = this@ItemStoryboardVM.data.get() ?: SimpleStoryboardInfo()
                 storyboard.taskId = data?.taskId
-                storyboard.stepStatus = data?.genStatus
+                storyboard.genStatusVideo = data?.genStatus
                 this@ItemStoryboardVM.data.set(storyboard)
                 loopGenStatus()
             }
@@ -71,7 +71,7 @@ class ItemStoryboardVM(
             loop@ while (storyboard.videoGenerating) {
                 runCatching {
                     val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 72)).data }
-                    storyboard.stepStatus = taskStatus?.genStatus
+                    storyboard.genStatusVideo = taskStatus?.genStatus
                     storyboard.videoUrl = taskStatus?.result
                     data.notifyChange()
                 }

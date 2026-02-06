@@ -28,7 +28,6 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         if (mRealVM.storyboardDesc.value != mRealVM.storyboard.get()?.storyBoardDesc) {
             showCommonDialog(tip = "您对分镜信息有修改尚未保存，是否保存修改？", confirmText = "保存并退出") {
                 mRealVM.save(true)

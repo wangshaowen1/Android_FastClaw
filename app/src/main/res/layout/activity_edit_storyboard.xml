@@ -11,6 +11,8 @@
 
         <import type="android.text.TextUtils" />
 
+        <import type="android.view.View" />
+
         <import type="com.kgmedia.fastfilm.common.ext.TextViewExtKt" />
     </data>
 
@@ -50,7 +52,7 @@
                 android:id="@+id/storyboardPlayer"
                 player="@{layout.storyboardPlayer}"
                 setDimensionRatio="@{layout.workRatio}"
-                setVisible="@{layout.videoGenerated(layout.videoGenStatus)}"
+                setVisible="@{layout.storyboard.videoGenerated}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:onClick="@{(v)->layout.play()}"
@@ -64,7 +66,7 @@
                 tools:visibility="invisible" />
 
             <ImageView
-                setVisible="@{layout.videoGenerated(layout.videoGenStatus)}"
+                setVisible="@{layout.storyboard.videoGenerated}"
                 android:layout_width="32dp"
                 android:layout_height="16dp"
                 android:layout_margin="8dp"
@@ -74,7 +76,7 @@
                 tools:text="AI生成" />
 
             <ImageView
-                setVisible="@{layout.videoGenerated(layout.videoGenStatus) &amp;&amp; !layout.playing}"
+                setVisible="@{layout.storyboard.videoGenerated &amp;&amp; !layout.playing}"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_short_drama_editor_play"
@@ -85,7 +87,7 @@
 
             <LinearLayout
                 setDimensionRatio="@{layout.workRatio}"
-                setVisible="@{!layout.videoGenerated(layout.videoGenStatus)}"
+                setVisible="@{!layout.storyboard.videoGenerated}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="?attr/fillColor1"
@@ -98,7 +100,7 @@
                 tools:layout_constraintDimensionRatio="9:16">
 
                 <ImageView
-                    setVisible="@{layout.videoGenerating(layout.videoGenStatus)}"
+                    setVisible="@{layout.storyboard.videoGenerating}"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginBottom="12dp"
@@ -107,7 +109,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{layout.videoGenStatusText(layout.videoGenStatus)}"
+                    android:text="@{layout.videoGenStatusText(layout.storyboard.genStatusVideo)}"
                     android:textAppearance="@style/Text12"
                     android:textColor="@color/fixed_white_1"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -118,7 +120,7 @@
 
                 <TextView
                     android:id="@+id/btnRetry"
-                    setVisible="@{layout.videoGenerateFailed(layout.videoGenStatus)}"
+                    setVisible="@{layout.storyboard.videoGenerateFailed}"
                     singleClick="@{(v) -> layout.retryGenerateVideo(false)}"
                     android:layout_width="88dp"
                     android:layout_height="28dp"
@@ -152,12 +154,12 @@
             <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
                 android:id="@+id/ivCover"
                 loadHQThumbnailUri="@{layout.storyboard.imageUrl}"
-                setVisible="@{layout.imageGenerated(layout.imageGenStatus)}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="12dp"
                 android:scaleType="centerCrop"
                 android:src="?attr/fillColor1"
+                android:visibility="@{layout.storyboard.imageGenerated ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintDimensionRatio="108:152"
                 app:layout_constraintStart_toStartOf="@+id/tvStoryboardTitle"
                 app:layout_constraintTop_toBottomOf="@+id/tvStoryboardTitle"
@@ -167,7 +169,7 @@
                 app:riv_corner_radius="8dp" />
 
             <ImageView
-                setVisible="@{layout.imageGenerated(layout.imageGenStatus)}"
+                setVisible="@{layout.storyboard.imageGenerated}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
@@ -177,7 +179,7 @@
 
             <ImageView
                 android:id="@+id/btnPreview"
-                setVisible="@{layout.imageGenerated(layout.imageGenStatus)}"
+                setVisible="@{layout.storyboard.imageGenerated}"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
@@ -185,6 +187,15 @@
                 android:src="@drawable/icon_magnify"
                 app:layout_constraintBottom_toBottomOf="@+id/ivCover"
                 app:layout_constraintEnd_toEndOf="@+id/ivCover" />
+
+            <ProgressBar
+                setVisible="@{layout.storyboard.imageGenerating}"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+                app:layout_constraintEnd_toEndOf="@+id/ivCover"
+                app:layout_constraintStart_toStartOf="@+id/ivCover"
+                app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
             <com.kgmedia.fastfilm.widget.GradientBorderView
                 android:layout_width="0dp"

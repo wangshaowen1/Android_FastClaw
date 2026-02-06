@@ -177,7 +177,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     }
 
     fun anyStoryboardFailed(): Boolean {
-        return adapter.items.any { it.data.get()?.failed == true }
+        return adapter.items.any { it.data.get()?.videoGenerateFailed == true }
     }
 
     fun download(videoUrl: String) {

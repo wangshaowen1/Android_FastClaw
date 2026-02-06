@@ -48,7 +48,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     "视频正在生成中，请稍后再试".showToast()
                     return
                 }
-                if (current.failed) {
+                if (current.videoGenerateFailed) {
                     "视频生成失败，请重新生成".showToast()
                     return
                 }

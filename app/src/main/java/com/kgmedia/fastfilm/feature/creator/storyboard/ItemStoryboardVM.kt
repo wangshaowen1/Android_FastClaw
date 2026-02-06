@@ -32,9 +32,9 @@ class ItemStoryboardVM(
     val selected by lazy { ObservableBoolean(false) }
 
     /**
-     * -1=新创建 0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成
+     * [枚举]图片生成状态 -1=新创建  0=待生成 1=生成中 2=成功 3=失败 99=无需生成
      */
-    val status by lazy { ObservableInt(data?.stepStatus ?: -1) }
+    val status by lazy { ObservableInt(data?.genStatusImage ?: -1) }
 
     /**
      * 当前应用的分镜描述
@@ -72,12 +72,12 @@ class ItemStoryboardVM(
     }
 
     private fun saveInput() {
-        val storyboardPrompt = storyboardDesc.get()?.trim()
-        if (storyboardPrompt.isNullOrEmpty()) {
+        val storyboardDesc = this@ItemStoryboardVM.storyboardDesc.get()?.trim()
+        if (storyboardDesc.isNullOrEmpty()) {
             return
         }
         launch {
-            val body = SaveStoryboardBody(data.get()?.storyboardId, storyboardPrompt, null, null, null, null, null, workId, storyId)
+            val body = SaveStoryboardBody(data.get()?.storyboardId, storyboardDesc, null, null, null, null, null, workId, storyId)
             response(ApiFactory.apiService.workStoryboardSave(body)) {
                 this@ItemStoryboardVM.data.set(data)
             }
@@ -104,7 +104,7 @@ class ItemStoryboardVM(
             response(ApiFactory.apiService.workStoryboardSingleGenerate(body)) {
                 val storyboard = this@ItemStoryboardVM.data.get() ?: SimpleStoryboardInfo()
                 storyboard.taskId = data?.taskId
-                storyboard.stepStatus = data?.genStatus
+                storyboard.genStatusImage = data?.genStatus
                 data?.genStatus?.let { status.set(it) }
                 this@ItemStoryboardVM.data.set(storyboard)
                 loopGenStatus()
@@ -127,7 +127,7 @@ class ItemStoryboardVM(
                 runCatching {
                     val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 71)).data }
                     data.get()?.let {
-                        it.stepStatus = taskStatus?.genStatus
+                        it.genStatusImage = taskStatus?.genStatus
                         it.imageUrl = taskStatus?.result
                     }
                     data.notifyChange()

@@ -2,7 +2,6 @@ package com.kgmedia.fastfilm.feature.editor
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
@@ -54,18 +53,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
 
     val storyboardDesc by lazy { MutableLiveData<String>() }
 
-    /**
-     * 图片生成状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
-     */
-    val imageGenStatus by lazy { ObservableInt() }
-    private var imageGenTaskId: String? = null
     private var loopImageJob: Job? = null
-
-    /**
-     * 视频生成状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
-     */
-    val videoGenStatus by lazy { ObservableInt() }
-    private var videoGenTaskId: String? = null
     private var loopVideoJob: Job? = null
 
     override fun onCreate() {
@@ -77,24 +65,10 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         }
         storyboard.set(info)
         storyboardDesc.value = info.storyBoardDesc
-        //任务类型 [1=文生文 2=文生图 3=图生图 4=文生视频 5图生视频 6-视频生视频]
-        when (info.taskType) {
-            1, 2, 3 -> {
-                imageGenTaskId = info.taskId
-                imageGenStatus.set(info.stepStatus ?: -1)
-                videoGenStatus.set(-1)
-            }
-
-            4, 5, 6 -> {
-                videoGenTaskId = info.taskId
-                imageGenStatus.set(2)
-                videoGenStatus.set(info.stepStatus ?: -1)
-            }
-        }
-        if (videoGenerating(videoGenStatus.get())) {
-            loopVideo()
-        } else if (imageGenerating(imageGenStatus.get())) {
-            loopImage()
+        if (info.videoGenerating) {
+            loopVideo(info.taskId)
+        } else if (info.imageGenerating) {
+            loopImage(info.taskId)
         }
         play()
     }
@@ -133,45 +107,28 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     }
 
     /**
-     * [枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
+     * @param genStatusVideo [枚举]视频生成状态 0=待生成 1=生成中 2=成功 3=失败
      */
-    fun videoGenStatusText(videoGenStatus: Int?) =
-        when (videoGenStatus) {
+    fun videoGenStatusText(genStatusVideo: Int?) =
+        when (genStatusVideo) {
             1 -> "视频生成中"
             3 -> "视频生成失败"
             else -> null
         }
 
     /**
-     * 视频生成中
-     */
-    fun videoGenerating(videoGenStatus: Int?) = videoGenStatus == 1
-
-    /**
-     * 视频已生成
-     */
-    fun videoGenerated(videoGenStatus: Int?) = videoGenStatus == 2 || videoGenStatus == 4
-
-    /**
-     * 视频生成失败
-     */
-    fun videoGenerateFailed(videoGenStatus: Int?) = videoGenStatus == 3
-
-    /**
-     * 图片生成中
-     */
-    fun imageGenerating(imageGenStatus: Int?) = imageGenStatus == 1
-
-    /**
-     * 图片已生成
-     */
-    fun imageGenerated(imageGenStatus: Int?) = imageGenStatus == 2 || imageGenStatus == 4
-
-    /**
      * 视频失败重试
      */
     fun retryGenerateVideo(finish: Boolean = false) {
         val storyboard = storyboard.get() ?: return
+        if (storyboard.imageGenerating) {
+            "图片正在生成中，请稍后再试".showToast()
+            return
+        }
+        if (storyboard.videoGenerating) {
+            "视频正在生成中，请稍后再试".showToast()
+            return
+        }
         launchWithLoading {
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
@@ -182,13 +139,14 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 storyId = storyboard.storyId
             )
             response(ApiFactory.apiService.workStoryboardVideoSingleGenerate(body)) {
-                if (finish){
+                if (finish) {
                     finish()
                     return@response
                 }
-                videoGenTaskId = data?.taskId
-                data?.genStatus?.let { videoGenStatus.set(it) }
-                loopVideo()
+                storyboard.taskId = data?.taskId
+                storyboard.genStatusVideo = data?.genStatus
+                this@EditStoryboardViewModel.storyboard.notifyChange()
+                loopVideo(data?.taskId)
             }
         }
     }
@@ -198,6 +156,14 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
      */
     fun reGenerateImage() {
         val storyboard = storyboard.get() ?: return
+        if (storyboard.imageGenerating) {
+            "图片正在生成中，请稍后再试".showToast()
+            return
+        }
+        if (storyboard.videoGenerating) {
+            "视频正在生成中，请稍后再试".showToast()
+            return
+        }
         val storyboardDesc = storyboardDesc.value
         if (storyboardDesc.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
@@ -214,9 +180,10 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 storyId = storyboard.storyId
             )
             response(ApiFactory.apiService.workStoryboardSingleGenerate(body)) {
-                imageGenTaskId = data?.taskId
-                data?.genStatus?.let { imageGenStatus.set(it) }
-                loopImage()
+                storyboard.taskId = data?.taskId
+                storyboard.genStatusImage = data?.genStatus
+                this@EditStoryboardViewModel.storyboard.notifyChange()
+                loopImage(data?.taskId)
             }
         }
     }
@@ -228,19 +195,19 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         retryGenerateVideo(true)
     }
 
-    private fun loopImage() {
+    private fun loopImage(taskId: String?) {
         loopImageJob?.cancel()
         loopImageJob = launch {
-            loop@ while (imageGenerating(imageGenStatus.get())) {
+            loop@ while (storyboard.get()?.imageGenerating == true) {
                 runCatching {
-                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(videoGenTaskId, 71)).data }
-                    taskStatus?.genStatus?.let { imageGenStatus.set(it) }
-                    taskStatus?.result?.let {
-                        storyboard.get()?.imageUrl = it
-                        storyboard.notifyChange()
+                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 71)).data }
+                    storyboard.get()?.apply {
+                        genStatusImage = taskStatus?.genStatus
+                        imageUrl = taskStatus?.result
                     }
+                    storyboard.notifyChange()
                 }
-                if (!imageGenerating(imageGenStatus.get())) {
+                if (storyboard.get()?.imageGenerating != true) {
                     break@loop
                 }
                 delay(3000)
@@ -248,17 +215,20 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         }
     }
 
-    private fun loopVideo() {
+    private fun loopVideo(taskId: String?) {
         loopVideoJob?.cancel()
         loopVideoJob = launch {
-            loop@ while (videoGenerating(videoGenStatus.get())) {
+            loop@ while (storyboard.get()?.videoGenerating == true) {
                 runCatching {
-                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(videoGenTaskId, 72)).data }
-                    taskStatus?.genStatus?.let { videoGenStatus.set(it) }
-                    taskStatus?.result?.let { storyboard.get()?.videoUrl = it }
+                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 72)).data }
+                    storyboard.get()?.apply {
+                        genStatusVideo = taskStatus?.genStatus
+                        videoUrl = taskStatus?.result
+                    }
+                    storyboard.notifyChange()
                 }
-                if (!videoGenerating(videoGenStatus.get())) {
-                    if (videoGenerated(videoGenStatus.get())) {
+                if (storyboard.get()?.videoGenerating != true) {
+                    if (storyboard.get()?.videoGenerated == true) {
                         play()
                     }
                     break@loop
