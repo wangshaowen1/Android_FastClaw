@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.widget.stateful.paging
 
+import android.content.Context
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.paging.LoadState
@@ -92,5 +93,20 @@ class MyMultiStatePagingFooterAdapter(
         if (layoutParams is StaggeredGridLayoutManager.LayoutParams) {
             layoutParams.isFullSpan = true
         }
+    }
+
+    fun setGridLayoutManager(context: Context, recyclerView:RecyclerView,spanCount:Int){
+        val layoutManager = GridLayoutManager(context, spanCount)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                val adapter = recyclerView.adapter ?: return 1
+                return if (adapter.getItemViewType(position) == R.layout.multi_state_adapter_view) {
+                    3 // footer 占满
+                } else {
+                    1
+                }
+            }
+        }
+        recyclerView.layoutManager = layoutManager
     }
 }

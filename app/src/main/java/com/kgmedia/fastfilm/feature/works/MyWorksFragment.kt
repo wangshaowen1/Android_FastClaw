@@ -82,6 +82,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             itemAnimator = null
             val myMultiStatePagingFooterAdapter = MyMultiStatePagingFooterAdapter(
                 myWorksAdapter,
+                noMoreThreshold=6,
                 noData = "暂无作品记录，快去创作你的作品吧",
             ) {
                 myWorksAdapter.retry()

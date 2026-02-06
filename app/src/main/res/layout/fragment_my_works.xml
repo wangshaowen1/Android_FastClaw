@@ -125,7 +125,7 @@
                     android:scrollbars="none"
                     app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
                     app:spanCount="3"
-                    tools:itemCount="9"
+                    tools:itemCount="2"
                     tools:listitem="@layout/item_my_work" />
             </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
