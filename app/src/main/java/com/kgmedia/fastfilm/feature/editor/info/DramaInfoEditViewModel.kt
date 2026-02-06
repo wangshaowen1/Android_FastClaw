@@ -18,6 +18,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getParcelableValue
@@ -94,14 +95,19 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                 )
             )
         }) {
-            editAndModify.value=true
+            editAndModify.value = true
         }
     }
 
     private var sseHandler: SSEStreamHandler? = null
 
     fun sseGenerate() {
-        val sseFlow = mRepo.api.sseWorkDescOptimize(SSEContentBody(desc.value, 34))
+        val sseFlow = mRepo.api.sseWorkDescOptimize(
+            SSEContentBody(
+                desc.value,
+                DramaGenerateConstants.MODEL_OPTIMIZE_DRAMA_DESC
+            )
+        )
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(

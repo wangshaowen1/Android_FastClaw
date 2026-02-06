@@ -22,6 +22,7 @@ import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 
@@ -84,7 +85,13 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     fun sseGenerate() {
         promptGenerating.value = true to ("AI扩写中...")
-        val sseFlow = mRepo.api.sseContentAIExpand(AIExpandBody(episodeInfo.value?.storyId, workId))
+        val sseFlow = mRepo.api.sseContentAIExpand(
+            AIExpandBody(
+                storyId = episodeInfo.value?.storyId,
+                workId = workId,
+                bizType = DramaGenerateConstants.MODEL_CONTINUE_STORY
+            )
+        )
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(

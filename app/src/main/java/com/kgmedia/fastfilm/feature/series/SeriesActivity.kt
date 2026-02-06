@@ -240,6 +240,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 val popup = Popup(popupView)
                 popupView.binding.btnEdit.setOnSingleClickListener {
                     popup.dismiss()
+                    //编辑剧本信息
                     DramaInfoEditActivity.start(this, mRealVM.workInfo.get())
                 }
                 popupView.binding.btnManage.setOnSingleClickListener {

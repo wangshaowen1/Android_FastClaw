@@ -10,7 +10,7 @@ class DramaGenerateConstants {
         /**
          * 继续创作(小说)
          */
-        const val MODEL_CONTINUE_STORY = 35
+        const val MODEL_CONTINUE_STORY = 32
 
         /**
          * 第一集创作(灵感)
@@ -20,6 +20,16 @@ class DramaGenerateConstants {
         /**
          * 第一集创作(小说)
          */
-        const val MODEL_STORY = 1
+        const val MODEL_STORY = 31
+
+        /**
+         * 剧集梗概
+         */
+        const val MODEL_EPISODE_SYNOPSIS = 20
+
+        /**
+         * 优化作品简介
+         */
+        const val MODEL_OPTIMIZE_DRAMA_DESC = 34
     }
 }
