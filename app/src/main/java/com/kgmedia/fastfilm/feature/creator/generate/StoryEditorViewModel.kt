@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.nhsd.basic.utils.Logger
 
 class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
@@ -23,7 +24,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
     var storyId: String? = null
 
     //作品标题
-    val title = MutableLiveData(mBundle.getString(Constants.Extra.TITLE, "未命名标题"))
+    val title = MutableLiveData("未命名标题")
 
     //当前处于的步骤序号1-5
     val step = MutableLiveData<Int>()
@@ -35,6 +36,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
+        title.value = mBundle.getString(Constants.Extra.TITLE, "未命名标题")
         workId = mBundle.getString(Constants.Extra.WORK_ID)
         storyId = mBundle.getString(Constants.Extra.STORY_ID)
 

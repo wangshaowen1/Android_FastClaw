@@ -29,8 +29,11 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
     var inspiration: String? = null
     var episodeRangeCode: String? = null
+    //自定义集数
     var customEpisodeCount: String? = null
+    //视频比例
     var videoRatio: String? = null
+    //视频风格样式id
     var videoStyleId: String? = null
 
     var mSSEContent = MutableLiveData<String>()

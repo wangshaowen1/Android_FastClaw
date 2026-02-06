@@ -14,8 +14,11 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class VideoConfigInfo(
     val configCode: String? = null,
+    //配置值
     val configValue: String? = null,
+    //扩展配置（视频风格图片url）
     val extraConfig: String? = null,
+    //排序号
     val sortNo: Int? = null
 ) : Parcelable {
     fun isCustomInput(): Boolean {

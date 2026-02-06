@@ -51,7 +51,7 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
             onSuccess?.invoke(
                 mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
                 mRealVM.checkedEpisodeSet?.input?.get(),
-                mRealVM.checkedRatio?.data?.get()?.configCode,
+                mRealVM.checkedRatio?.data?.get()?.configValue,
                 mRealVM.checkedStyle?.data?.get()?.styleCode
             )
             dismissAllowingStateLoss()

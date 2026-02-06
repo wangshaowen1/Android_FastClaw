@@ -74,11 +74,7 @@ class CreationFragment :
             if (mRealVM.inspirationModel()) Global.inspirationContent =
                 it else Global.customizedContent = it
         }
-//        binding.inputView.setOnTextOutOfBondsListener {
-//            mRealVM.maxInputLength.get().takeIf { it > 0 }.let {
-//                getString(R.string.toast_input_max_characters_exceeded, it).showToast()
-//            }
-//        }
+
         binding.inputView.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 mRealVM.input.value = s.toString()
@@ -130,13 +126,13 @@ class CreationFragment :
             val newInstance = VideoSetDialog.newInstance(mRealVM.videoSetConfig.value)
             newInstance.onSuccess = { range, custom, ratio, style ->
                 StoryEditorActivity.start(
-                    mActivity,
-                    mRealVM.input.value,
-                    range,
-                    custom,
-                    ratio,
-                    style,
-                    if (mRealVM.inspirationModel()) DramaGenerateConstants.MODEL_INSPIRATION else DramaGenerateConstants.MODEL_STORY
+                    context = mActivity,
+                    content = mRealVM.input.value,
+                    episodeRangeCode = range,
+                    customEpisodeCount = custom,
+                    videoRatio = ratio,
+                    styleId = style,
+                    model = if (mRealVM.inspirationModel()) DramaGenerateConstants.MODEL_INSPIRATION else DramaGenerateConstants.MODEL_STORY
                 )
             }
             newInstance.show(childFragmentManager)
@@ -193,9 +189,9 @@ class CreationFragment :
             }
 
             R.id.btnNext -> {
-//                if (AppNavigator.checkLoginIntercepted(true)) {
-//                    return
-//                }
+                if (AppNavigator.checkLoginIntercepted(true)) {
+                    return
+                }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
