@@ -16,6 +16,7 @@ import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
+import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
@@ -30,7 +31,6 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
         title = "未命名标题",
-        titleColor = R.color.textColorPrimary.getResColor(),
         background = Color.TRANSPARENT,
     )
 
@@ -39,6 +39,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val input by lazy { MutableLiveData(Global.continueWritingContent[workId]) }
     val episodeInfo = MutableLiveData<EpisodeInfo>()
     val workInfo = MutableLiveData<WorkInfo>()
+
     val textLimitNum by lazy { Config.get().appConfig.shortDramas }
     val minInputLength = 10
     val maxInputLength by lazy {
@@ -69,16 +70,26 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
 //        maxInputLength.set(maxLength ?: (if (isVip.get()) 5000 else 1000))
     }
 
+    /**
+     *获取剧集最新一集剧本详情
+     */
     fun getEpisodeInfo(function: (() -> Unit)? = null) {
         launchWithLoading {
-            response(mRepo.api.latestEpisode(WorkIdBody(workId))) {
+            response(
+                mRepo.api.latestEpisode(
+                    LatestEpisodeBody(
+                        workType = LatestEpisodeBody.WORK_TYPE_NOVEL,
+                        workId = workId
+                    )
+                )
+            ) {
                 episodeInfo.value = data
                 function?.invoke()
             }
         }
     }
 
-    fun getWorkInfo(function: (() -> Unit)? = null) {
+    fun getWorkInfo() {
         launchWithLoading {
             response(mRepo.api.getWorkInfo(WorkIdBody(workId))) {
                 workInfo.value = data

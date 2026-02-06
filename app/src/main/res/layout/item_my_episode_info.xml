@@ -20,18 +20,17 @@
         android:layout_margin="6dp"
         android:onClick="@{(v)->item.onClick()}">
 
-        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCover"
-            loadUri="@{item.workInfo.workCoverUrl}"
-            placeHolder="@{@color/fill_color_1_dark}"
+            loadUri="@{item.data.workCoverUrl}"
+            placeHolder="@{@color/bg_color_2_dark}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_default_cover"
+            android:src="@color/bg_color_2_dark"
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
-            app:riv_corner_radius="@dimen/radius_m"
-            tools:src="@color/fill_color_1_dark" />
+            app:shapeAppearanceOverlay="@style/roundStyle_r8" />
 
         <com.kgmedia.fastfilm.widget.BorderConstraintLayout
             android:layout_width="0dp"

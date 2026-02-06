@@ -54,7 +54,13 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         super.onCreate(savedInstanceState)
         binding.toolbarLayout.minimumHeight = 32.dp
         initView()
+        //数据更新
         observeData()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        refresh()
     }
 
     private fun initView() {
@@ -237,17 +243,19 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             R.id.btnContinue -> {
-                mRealVM.workInfo.get()?.let {
-                    if (it.isInspirationGenerated()) {
-                        StoryEditorActivity.startContinue(
-                            this,
-                            workId = mRealVM.workId,
-                            model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
-                        )
-                    } else {
-                        ContinueWritingActivity.start(this, mRealVM.workId, it.workTitle)
-                    }
+                val workInfo = mRealVM.workInfo.get() ?: return
+                if (workInfo.isInspirationGenerated()) {
+                    //灵感创作续写
+                    StoryEditorActivity.startContinue(
+                        this,
+                        workId = mRealVM.workId,
+                        workTitle = workInfo.workTitle,
+                        model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
+                    )
+                    return
                 }
+                //小说改编续写
+                ContinueWritingActivity.start(this, mRealVM.workId, workInfo.workTitle)
             }
         }
     }

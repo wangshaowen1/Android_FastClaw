@@ -15,7 +15,6 @@ import com.nhsd.basic.item.BindingViewHolder
 class EpisodeAdapter(private val eventVm: ItemMultipleChoiceEventsViewModel<SeriesEpisodeEvent, String>) :
     PagingDataAdapter<EpisodeInfo, EpisodeAdapter.ViewHolder>(DIFF_CALLBACK) {
 
-    var workInfo: WorkInfo? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -40,7 +39,6 @@ class EpisodeAdapter(private val eventVm: ItemMultipleChoiceEventsViewModel<Seri
                             eventVm,
                             position,
                             item,
-                            workInfo
                         ).also { binding.putVm(position, it) }
                 binding.item = viewModel
                 binding.executePendingBindings()

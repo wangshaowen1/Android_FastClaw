@@ -65,12 +65,14 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
             context: Context?,
             content: String? = null,
             workId: String? = null,
+            workTitle: String? = null,
             lastEpisodeId: String? = null,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
         ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
             starter.putExtra(Constants.Extra.MODE, model)
+            starter.putExtra(Constants.Extra.TITLE, workTitle)
             starter.putExtra(Constants.Extra.CONTENT, content)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
             starter.putExtra(Constants.Extra.LAST_EPISODE_ID, lastEpisodeId)

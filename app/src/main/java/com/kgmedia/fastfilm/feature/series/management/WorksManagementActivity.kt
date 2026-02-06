@@ -69,7 +69,7 @@ class WorksManagementActivity :
                     noDataButtonDisplay = false,
                     requestButtonDisplay = false,
                     noDataButtonText = noDataButtonTextAs,
-                    displayedHeight = 400.dp,
+                    noMoreThreshold=1000,
                     refresh = { refresh() },
                     requestButtonTextAndImg = false,
                 )

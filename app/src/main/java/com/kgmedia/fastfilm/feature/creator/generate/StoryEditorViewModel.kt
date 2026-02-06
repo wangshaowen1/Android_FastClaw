@@ -15,14 +15,19 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         title = "未命名标题",
         background = Color.TRANSPARENT
     )
+
     //作品id
     var workId: String? = null
+
     //当前正在创作的剧集id
     var storyId: String? = null
+
     //作品标题
     val title = MutableLiveData(mBundle.getString(Constants.Extra.TITLE, "未命名标题"))
+
     //当前处于的步骤序号1-5
     val step = MutableLiveData<Int>()
+
     //从1还是从2开始，从2开始就是4步创作流程
     val startFrom = MutableLiveData<Int>()
     val model by lazy { mBundle.getInt(Constants.Extra.MODE) }
@@ -32,6 +37,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         super.onCreate()
         workId = mBundle.getString(Constants.Extra.WORK_ID)
         storyId = mBundle.getString(Constants.Extra.STORY_ID)
+
         when (model) {
             DramaGenerateConstants.MODEL_INSPIRATION -> {
                 step.value = 1

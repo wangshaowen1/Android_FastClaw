@@ -201,6 +201,10 @@ data class EpisodeInfo(
     val workRatio: String? = null,
     //播放量(初始化1000-10000)
     val playCount: Int? = null,
+    //续创剧集id（灵感续创才有的，小说没有，保存剧本需要带回来）
+    val sequelStoryId: String? = null,
+    //封面
+    val workCoverUrl: String? = null
 ) : Parcelable {
 
     fun isGenerating(): Boolean {

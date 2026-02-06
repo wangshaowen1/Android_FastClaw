@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityWorkInfoEditBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.ext.showToast
 import com.nhsd.mattise.Matisse
 
 /**
@@ -75,6 +76,7 @@ class DramaInfoEditActivity :
 
         mRealVM.editAndModify.observe(this){
             if (!it)return@observe
+            "保存成功".showToast()
             FlowEventBus.postSync(Events.SeriesUpdatedEvent(mRealVM.workInfo?.workId?:""))
             finish()
         }

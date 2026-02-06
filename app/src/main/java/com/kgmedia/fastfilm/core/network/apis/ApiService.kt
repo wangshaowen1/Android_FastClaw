@@ -73,6 +73,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.HitRecommendPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImageUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.InputContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByFlashMobileBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
@@ -790,7 +791,7 @@ interface ApiService {
      * 获取剧集最新一集剧本详情
      */
     @POST(ApiConstants.LATEST_DRAMAS_WORK_DETAIL)
-    suspend fun latestEpisode(@Body body: WorkIdBody): ApiResponse<EpisodeInfo?>
+    suspend fun latestEpisode(@Body body: LatestEpisodeBody): ApiResponse<EpisodeInfo?>
 
     /**
      * 查询我的作品详情

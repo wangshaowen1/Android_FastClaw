@@ -13,7 +13,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?android:windowBackground">
 
         <com.kgmedia.fastfilm.widget.LoadStateViewHolder
             displayChild="@{layout.loadState}"
@@ -69,10 +70,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent">
 
-                                <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+                                <com.google.android.material.imageview.ShapeableImageView
                                     android:id="@+id/ivCover"
                                     loadThumbnailUri="@{layout.workInfo.workCoverUrl}"
-                                    placeHolder="@{@drawable/ic_default_cover}"
+                                    placeHolder="@{@color/bg_color_2_dark}"
                                     android:layout_width="0dp"
                                     android:layout_height="0dp"
                                     android:layout_marginStart="15dp"
@@ -82,8 +83,8 @@
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintWidth_percent="0.208"
-                                    app:riv_corner_radius="8dp"
-                                    tools:src="@drawable/ic_default_cover" />
+                                    app:shapeAppearanceOverlay="@style/roundStyle_r8"
+                                    tools:src="@color/bg_color_2_dark" />
 
                                 <TextView
                                     android:id="@+id/tvTitle"
@@ -106,7 +107,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
-                                    android:text="@{`已创作 `+layout.workInfo.lastEpisodeNo+` 集 / 共`+layout.workInfo.totalEpisodeCnt+`集`}"
+                                    android:text="@{`已创作 `+layout.workInfo.finishedEpisodeCnt+` 集 / 共`+layout.workInfo.totalEpisodeCnt+`集`}"
                                     android:textAppearance="@style/Text12"
                                     android:textColor="?attr/textColor3"
                                     app:layout_constraintEnd_toEndOf="@+id/tvTitle"
@@ -177,8 +178,8 @@
                         <com.kgmedia.fastfilm.widget.LoadStateViewHolder
                             android:id="@+id/loadStateViewHolder"
                             android:layout_width="match_parent"
-                            app:scrollable="true"
-                            android:layout_height="match_parent">
+                            android:layout_height="match_parent"
+                            app:scrollable="true">
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/recyclerView"
@@ -201,14 +202,14 @@
 
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+                <!--setVisible="@{layout.workInfo.isMine() &amp;&amp; layout.workInfo.workStatus == 60}"-->
                 <TextView
                     android:id="@+id/btnContinue"
-                    setVisible="@{layout.workInfo.isMine() &amp;&amp; layout.workInfo.workStatus == 60}"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="15dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="34dp"
                     android:background="@drawable/selector_common_button"
                     android:gravity="center"
                     android:text="创建续集"
@@ -216,9 +217,7 @@
                     android:textColor="@color/fixed_white_1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="345:44" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
 
         <LinearLayout

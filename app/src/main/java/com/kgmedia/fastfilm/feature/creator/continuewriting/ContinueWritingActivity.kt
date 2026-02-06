@@ -130,14 +130,12 @@ class ContinueWritingActivity :
 
     fun toGenerate() {
         StoryEditorActivity.startContinue(
-            this,
-            mRealVM.input.value,
-            mRealVM.workId,
-            mRealVM.workInfo.value?.workId,
-            DramaGenerateConstants.MODEL_CONTINUE_STORY,
+            context = this,
+            content = mRealVM.input.value,
+            workId = mRealVM.workId,
+            workTitle= mRealVM.workName,
+            lastEpisodeId = mRealVM.workInfo.value?.workId,
+            model = DramaGenerateConstants.MODEL_CONTINUE_STORY,
         )
-//        Global.clearContinueInputContent(mRealVM.dramasSeriesId)
-//        finish()
     }
-
 }

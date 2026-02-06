@@ -127,20 +127,28 @@
                 app:layout_constraintBottom_toTopOf="@id/llBottom"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:drawableTop="@drawable/ic_loading_fail"
-                android:drawablePadding="@dimen/spacing_l"
+            <LinearLayout
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:gravity="center"
-                android:text="生成失败"
-                android:textColor="?attr/textColor4"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toBottomOf="@id/inputView"
+                app:layout_constraintEnd_toEndOf="@id/inputView"
+                app:layout_constraintStart_toStartOf="@id/inputView"
+                app:layout_constraintTop_toTopOf="@id/inputView">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableTop="@drawable/ic_loading_fail"
+                    android:drawablePadding="@dimen/spacing_l"
+                    android:gravity="center"
+                    android:text="生成失败"
+                    android:textColor="?attr/textColor4"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/llBottom"
