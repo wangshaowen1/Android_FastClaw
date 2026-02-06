@@ -144,6 +144,7 @@
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:hint="角色名"
+            android:lines="1"
             android:paddingHorizontal="12dp"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"

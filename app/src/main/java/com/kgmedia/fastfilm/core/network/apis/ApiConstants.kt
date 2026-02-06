@@ -825,6 +825,11 @@ object ApiConstants {
     const val WORK_STORYBOARD_VIDEO_SINGLE_GENERATE = "ai/storyboard/generation/single/video"
 
     /**
+     * 分镜视频合成
+     */
+    const val WORK_STORYBOARD_VIDEO_SYNTHESIS  = "work/storyboard/synthesizeVideo"
+
+    /**
      * 举报提交
      */
     const val REPORT_SUBMISSION = "app/report/save"

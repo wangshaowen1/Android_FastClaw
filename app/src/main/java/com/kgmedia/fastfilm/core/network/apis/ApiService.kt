@@ -126,6 +126,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.UpdateTimbreTitleBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserShareUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTimbreIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
+import com.kgmedia.fastfilm.core.network.apis.request.VideoSynthesisBody
 import com.kgmedia.fastfilm.core.network.apis.request.WithdrawBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
@@ -1172,6 +1173,12 @@ interface ApiService {
      */
     @POST(ApiConstants.WORK_STORYBOARD_VIDEO_SINGLE_GENERATE)
     suspend fun workStoryboardVideoSingleGenerate(@Body body: GenerateStoryboardBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 分镜视频合成
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_VIDEO_SYNTHESIS)
+    suspend fun workStoryboardVideoSynthesis(@Body body: VideoSynthesisBody): ApiResponse<Any?>
 
     /**
      * 举报提交
