@@ -47,7 +47,6 @@ class HomeFragment :
         initView()
         //数据更新
         dataUpdate()
-
     }
 
     private fun initView() {

@@ -56,13 +56,6 @@ class CoverPlayerView : PlayerView, Player.Listener {
     }
 
 
-//    override fun onFinishInflate() {
-//        super.onFinishInflate()
-//        if(offsetY>0&&videoHeight == 0 && videoWidth == 0){
-//            setMarginByVideoSize(DEFAULT_VIDEO_WIDTH, DEFAULT_VIDEO_HEIGHT)
-//        }
-//    }
-
     private fun startHideCoverAnim() {
         if (isCoverVisible() && player != null) {
             Logger.i("CoverPlayerView  hide image with amin=" + workInfo?.stripedTrickTitle)
@@ -137,14 +130,6 @@ class CoverPlayerView : PlayerView, Player.Listener {
         workInfo = track
     }
 
-//    fun setMusicVideo(musicVideo: MusicVideo?) {
-//        // 仅在没有有效视频尺寸时尝试设置
-//        if (videoWidth == 0 || videoHeight == 0) {
-//            val defaultWidth = musicVideo?.videoWidth ?: DEFAULT_VIDEO_WIDTH
-//            val defaultHeight = musicVideo?.videoHigh ?: DEFAULT_VIDEO_HEIGHT
-//            setMarginByVideoSize(defaultWidth, defaultHeight)
-//        }
-//    }
 
     override fun setPlayer(player: Player?) {
         restorePlayer?.removeListener(this)

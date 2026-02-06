@@ -81,7 +81,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 episodeRangeCode,
                 customEpisodeCount
             )
-            Log.i("测试一下", "第一集创作:$body")
             mRepo.api.sseScriptFromStory(body)
         } else {
             val body = AIExpandBody(
@@ -93,7 +92,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 bizType = model,
             )
-            Log.i("测试一下", "续集:$body")
             mRepo.api.sseScriptFromIdea(body)
         }
         promptGenerating.value = true to "内容生成中..."

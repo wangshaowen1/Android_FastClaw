@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.play.manger
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
@@ -69,14 +70,12 @@ class FeedPlayerManager(
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-//                _isPlayingFlow.value = isPlaying
                 if (isPlaying) startProgressUpdater() else progressJob?.cancel()
             }
             // [修复2] 改用 playWhenReady 驱动 UI。
             // 只要 playWhenReady=true，就认为应该显示"播放中"状态(隐藏暂停图标)，忽略 Buffering 导致的 isPlaying=false
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 _isPlayingFlow.value = playWhenReady
-//                if (playWhenReady) startProgressUpdater() else progressJob?.cancel()
             }
         })
     }

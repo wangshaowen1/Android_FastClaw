@@ -1,11 +1,9 @@
 package com.kgmedia.fastfilm.feature.play
 
-import android.graphics.Color
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
-import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
@@ -17,6 +15,7 @@ import kotlinx.coroutines.launch
 class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     enum class PlayMode { RECOMMEND, SERIES }
+
     var currentPlayMode = PlayMode.SERIES
 
     // 对外暴露的数据流
@@ -25,7 +24,7 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     init {
         // 默认加载一次，方便进入页面直接看效果
-       // loadFeed(true, null)
+        // loadFeed(true, null)
     }
 
     fun loadFeed(isSeriesMode: Boolean, id: String?) {

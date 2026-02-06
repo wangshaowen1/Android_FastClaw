@@ -2,7 +2,9 @@ package com.kgmedia.fastfilm.feature.play
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
+import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
@@ -60,7 +62,13 @@ class DramasPlayPagerActivity :
 
         // 2. 数据流
         lifecycleScope.launch {
-            mRealVM.feedFlow.collectLatest { adapter.submitData(it) }
+            mRealVM.feedFlow.collectLatest {
+                adapter.submitData(it)
+
+                binding.recyclerView.doOnLayout {
+                    listController.playCurrentItem()
+                }
+            }
         }
 
         // 告知 Controller 初始位置 (需要在 FeedListController 中加个方法，见下文)
@@ -81,11 +89,9 @@ class DramasPlayPagerActivity :
         }
         // 3. 事件流
         setupPlayerEvents()
-
-
     }
 
-    private fun initView(){
+    private fun initView() {
         binding.btnMenu.setOnSingleClickListener {
             showPopupWindow()
         }

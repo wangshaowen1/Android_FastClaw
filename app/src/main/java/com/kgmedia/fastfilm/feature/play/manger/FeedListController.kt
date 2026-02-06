@@ -4,7 +4,6 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.feature.play.VideoFeedAdapter
 import com.nhsd.basic.utils.Logger
@@ -74,7 +73,10 @@ class FeedListController(
                     recyclerView.post {
                         if (recyclerView.isAttachedToWindow) {
                             // [核心修复] 在这里统一处理跳转逻辑
-                            Logger.d("FeedListController", "targetInitialPosition=$targetInitialPosition adapter.itemcount = ${adapter.itemCount}")
+                            Logger.d(
+                                "FeedListController",
+                                "targetInitialPosition=$targetInitialPosition adapter.itemcount = ${adapter.itemCount}"
+                            )
                             if (targetInitialPosition != -1 && targetInitialPosition < adapter.itemCount) {
                                 // 1. 直接闪现到指定位置 (使用 scrollToPositionWithOffset 确保准确置顶)
                                 layoutManager.scrollToPositionWithOffset(targetInitialPosition, 0)
@@ -103,7 +105,9 @@ class FeedListController(
         val item = adapter.peek(position) ?: return
 
         onPageChanged?.invoke(item, position)
-        val holder = recyclerView.getChildViewHolder(centerView) as? VideoFeedAdapter.VideoViewHolder ?: return
+        val holder =
+            recyclerView.getChildViewHolder(centerView) as? VideoFeedAdapter.VideoViewHolder
+                ?: return
 
         // 调用 Manager 播放
         playerManager.attachAndPlay(item, holder.binding.playerView)

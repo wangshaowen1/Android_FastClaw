@@ -69,7 +69,10 @@ object FeedRepository {
         }
 
         // 2. 如果没有预加载数据（比如内存回收、DeepLink进入），则走网络兜底
-        Logger.d(TAG, "No valid preload data (req=$workId, cache=$preloadId), fetching from NETWORK...")
+        Logger.d(
+            TAG,
+            "No valid preload data (req=$workId, cache=$preloadId), fetching from NETWORK..."
+        )
         return getSeriesFlowInternal(workId, forceRefresh = true)
     }
 
@@ -78,7 +81,11 @@ object FeedRepository {
     /**
      * 通用获取入口：根据模式分发
      */
-    fun getFeedFlow(isSeriesMode: Boolean, id: String?, forceRefresh: Boolean = false): Flow<PagingData<WorkInfo>> {
+    fun getFeedFlow(
+        isSeriesMode: Boolean,
+        id: String?,
+        forceRefresh: Boolean = false
+    ): Flow<PagingData<WorkInfo>> {
         return if (isSeriesMode) {
             getSeriesFlowInternal(id, forceRefresh)
         } else {
@@ -121,7 +128,10 @@ object FeedRepository {
      * 内部实现：获取剧集流 (Series Mode) - 网络兜底用
      * todo 这个逻辑暂不需要  数据源也没有做转换  暂时不要用
      */
-    private fun getSeriesFlowInternal(id: String?, forceRefresh: Boolean): Flow<PagingData<WorkInfo>> {
+    private fun getSeriesFlowInternal(
+        id: String?,
+        forceRefresh: Boolean
+    ): Flow<PagingData<WorkInfo>> {
         val safeId = id ?: ""
 
         // 1. 命中缓存：不强制刷新 且 缓存存在 且 ID一致
