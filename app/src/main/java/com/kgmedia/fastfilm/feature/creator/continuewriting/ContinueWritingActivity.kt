@@ -134,7 +134,8 @@ class ContinueWritingActivity :
             content = mRealVM.input.value,
             workId = mRealVM.workId,
             workTitle= mRealVM.workName,
-            lastEpisodeId = mRealVM.episodeInfo.value?.storyId,
+            storyId= mRealVM.episodeInfo.value?.sequelStoryId,
+            previousStoryId = mRealVM.episodeInfo.value?.storyId,
             model = DramaGenerateConstants.MODEL_CONTINUE_STORY,
         )
     }

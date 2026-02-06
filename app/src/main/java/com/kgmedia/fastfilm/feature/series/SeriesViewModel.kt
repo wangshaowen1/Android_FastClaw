@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.series
 
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -11,8 +12,11 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.PagedProxy
 import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
+import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
+import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import kotlinx.coroutines.flow.Flow
 
@@ -23,6 +27,10 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.ID) }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
     val workInfo by lazy { ObservableField<WorkInfo>() }
+
+    //创建续集信息
+    val episodeInfo= MutableLiveData<EpisodeInfo?>()
+
     override fun onCreate() {
         super.onCreate()
         getWorkDtl()
@@ -63,5 +71,23 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
                 EpisodePagingSource(workId)
             }
         ).flow.cachedIn(viewModelScope)
+    }
+
+    /**
+     *获取剧集最新一集剧本详情
+     */
+    fun getEpisodeInfo() {
+        launchWithLoading {
+            response(
+                mRepo.api.latestEpisode(
+                    LatestEpisodeBody(
+                        workType = LatestEpisodeBody.WORK_TYPE_NOVEL,
+                        workId = workId
+                    )
+                )
+            ) {
+                episodeInfo.value = data
+            }
+        }
     }
 }

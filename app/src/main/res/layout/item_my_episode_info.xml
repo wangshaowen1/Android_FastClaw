@@ -23,11 +23,11 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCover"
             loadUri="@{item.data.workCoverUrl}"
-            placeHolder="@{@color/bg_color_2_dark}"
+            placeHolder="@{@color/fill_color_1_dark}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
-            android:src="@color/bg_color_2_dark"
+            android:src="@color/fill_color_1_dark"
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundStyle_r8" />

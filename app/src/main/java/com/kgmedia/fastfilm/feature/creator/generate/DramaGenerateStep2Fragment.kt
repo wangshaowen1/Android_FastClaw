@@ -35,7 +35,10 @@ class DramaGenerateStep2Fragment :
         EventManager.onAppTrack(AppEvent.JG_VIEW_GENERATE_STORYBOARD_PAGE)
         activity?.intent?.let {
             mRealVM.workId.value = hostVm?.workId
+            //当前正在创作的剧集id
             mRealVM.episodeId = hostVm?.storyId
+            //上一集的剧集id,只有续写的时候才有
+            mRealVM.previousStoryId = hostVm?.previousStoryId
             mRealVM.inspiration = it.getStringExtra(Constants.Extra.CONTENT)
             mRealVM.model = it.getIntExtra(Constants.Extra.MODE, 0)
             mRealVM.customEpisodeCount = it.getStringExtra(StoryEditorActivity.CUSTOM_EPISODE_COUNT)

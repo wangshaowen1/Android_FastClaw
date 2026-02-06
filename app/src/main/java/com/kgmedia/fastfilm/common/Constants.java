@@ -104,6 +104,8 @@ public class Constants {
         String SHOW_CREATION_TIPS = "isNoviceProcess";
         String RESULT = "result";
         String LAST_EPISODE_ID = "lastEpisodeId";
+        //上一集的剧集id，续写的时候需要
+        String PREVIOUS_STORY_ID = "previousStoryId";
         String MV_ID = "mvId";
         String TRACK_NAME = "trackName";
         @Nullable

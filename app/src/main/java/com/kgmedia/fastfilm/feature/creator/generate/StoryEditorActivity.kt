@@ -60,13 +60,17 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
             context.startActivity(starter)
         }
 
+
         @JvmStatic
         fun startContinue(
             context: Context?,
             content: String? = null,
             workId: String? = null,
             workTitle: String? = null,
-            lastEpisodeId: String? = null,
+            //剧集id
+            storyId: String? = null,
+            //上一集的剧集id
+            previousStoryId: String? = null,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
         ) {
             val context = context ?: return
@@ -75,7 +79,8 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
             starter.putExtra(Constants.Extra.TITLE, workTitle)
             starter.putExtra(Constants.Extra.CONTENT, content)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
-            starter.putExtra(Constants.Extra.LAST_EPISODE_ID, lastEpisodeId)
+            starter.putExtra(Constants.Extra.STORY_ID, storyId)
+            starter.putExtra(Constants.Extra.PREVIOUS_STORY_ID, previousStoryId)
             context.startActivity(starter)
         }
 
