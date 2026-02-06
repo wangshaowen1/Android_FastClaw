@@ -198,8 +198,9 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     fun deleteCurrentStoryboard() {
         launchWithLoading {
             response(mRepo.api.workStoryboardDelete(IdsBody(null, currentStoryboard.get()?.data?.get()?.storyboardId))) {
+                val currentStoryboard = currentStoryboard.get()
                 playNext()
-                currentStoryboard.get()?.let { adapter.remove(it) }
+                currentStoryboard?.let { adapter.remove(it) }
             }
         }
     }
