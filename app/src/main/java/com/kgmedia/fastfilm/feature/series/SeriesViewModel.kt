@@ -29,7 +29,7 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
     val workInfo by lazy { ObservableField<WorkInfo>() }
 
     //创建续集信息
-    val episodeInfo= MutableLiveData<EpisodeInfo?>()
+    val episodeInfo = MutableLiveData<EpisodeInfo?>()
 
     override fun onCreate() {
         super.onCreate()
@@ -81,7 +81,7 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
             response(
                 mRepo.api.latestEpisode(
                     LatestEpisodeBody(
-                        workType = LatestEpisodeBody.WORK_TYPE_NOVEL,
+                        workType = LatestEpisodeBody.WORK_TYPE_INSPIRATION,
                         workId = workId
                     )
                 )

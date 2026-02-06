@@ -73,7 +73,7 @@
                                 <com.google.android.material.imageview.ShapeableImageView
                                     android:id="@+id/ivCover"
                                     loadThumbnailUri="@{layout.workInfo.workCoverUrl}"
-                                    placeHolder="@{@color/bg_color_2_dark}"
+                                    placeHolder="@{@color/fill_color_1_dark}"
                                     android:layout_width="0dp"
                                     android:layout_height="0dp"
                                     android:layout_marginStart="15dp"
@@ -84,7 +84,7 @@
                                     app:layout_constraintTop_toTopOf="parent"
                                     app:layout_constraintWidth_percent="0.208"
                                     app:shapeAppearanceOverlay="@style/roundStyle_r8"
-                                    tools:src="@color/bg_color_2_dark" />
+                                    tools:src="@color/fill_color_1_dark" />
 
                                 <TextView
                                     android:id="@+id/tvTitle"

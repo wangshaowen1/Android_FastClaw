@@ -43,13 +43,14 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_avatar"
                 loadHQThumbnailUri="@{layout.episodeInfo.workCoverUrl}"
-                placeHolder="@{@color/bg_color_2_dark}"
+                placeHolder="@{@color/fill_color_1_dark}"
                 android:layout_width="78dp"
                 android:layout_height="104dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="@style/roundStyle_r8" />
+                app:shapeAppearance="@style/roundStyle_r8"
+                tools:src="@color/fill_color_1_dark" />
 
             <TextView
                 android:id="@+id/tv_name"
@@ -59,21 +60,19 @@
                 android:layout_marginStart="@dimen/spacing_m"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{`第`+layout.episodeInfo.sortNo+`集 | `+layout.episodeInfo.storyTitle}"
+                android:text="@{layout.gradeAssembly()}"
                 android:textColor="?attr/textColor1"
-                app:layout_constraintBottom_toTopOf="@id/tv_desc"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@id/iv_avatar"
                 app:layout_constraintTop_toTopOf="@id/iv_avatar"
-                app:layout_constraintVertical_chainStyle="packed"
                 tools:text="第1章｜穿成恶毒女配后，我反向攻略女主..." />
 
             <TextView
                 android:id="@+id/tv_desc"
                 style="@style/Text12"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginTop="@dimen/spacing_s"
                 android:ellipsize="end"
                 android:maxLines="4"
@@ -83,7 +82,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_name"
                 app:layout_constraintTop_toBottomOf="@id/tv_name"
-                tools:text="上学的时候黄元元是那种特别讨厌的同学，尤其是在接老师下茬这一点。他坐在我右边，阳光茬这一点。他坐在我右边，阳光茬这一点。他坐在我右边，阳光茬这一点。他坐在我右边..." />
+                tools:text="上学的时候黄元元是那种特别讨厌的同学，" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

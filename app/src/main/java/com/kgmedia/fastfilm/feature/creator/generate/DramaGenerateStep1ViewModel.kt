@@ -35,7 +35,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     var videoRatio: String? = null
     //视频风格样式id
     var videoStyleId: String? = null
-
+    //作品内容
     var mSSEContent = MutableLiveData<String>()
     var mContent = ObservableField<String>()
     // 作品名称
@@ -63,13 +63,13 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             processor = EpisodeSseProcessor(
                 scope = viewModelScope,
                 onStart = {
-                    promptGenerating.value = false to ""
                     originalJson = ""
                     mSSEContent.value = ""
                     mContent.set("")
                     Logger.d("[SSE]", "Open")
                 },
                 onTitleUpdate = { title ->
+                    promptGenerating.value = false to ""
                     mWorkName.value = title
                 },
                 onMdUpdate = { fullContent ->

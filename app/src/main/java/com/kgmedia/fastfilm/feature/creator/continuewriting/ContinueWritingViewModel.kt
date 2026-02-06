@@ -117,6 +117,20 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
         sseHandler?.start(sseFlow)
     }
 
+
+    fun gradeAssembly(): String{
+        val episode=episodeInfo.value?:return ""
+        return buildString {
+            append("第")
+            append(episode.sortNo)
+            append("集")
+            if (!episode.storyTitle.isNullOrBlank()) {
+                append(" | ")
+                append(episode.storyTitle)
+            }
+        }
+    }
+
     /**
      * 页面销毁或需要重置时调用
      */

@@ -92,7 +92,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 bizType = model,
             )
-            Logger.i("测试一下","body:${body}")
             mRepo.api.sseScriptFromIdea(body)
         }
         promptGenerating.value = true to "内容生成中..."
