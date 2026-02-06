@@ -230,6 +230,8 @@ data class EpisodeInfo(
     }
 
 
+
+
     companion object {
         const val PROGRESS_DRAFT = 10
         const val PROGRESS_ASSET_GENERATING = 20

@@ -856,4 +856,10 @@ object ApiConstants {
      * 轮询查询我的作品状态列表
      */
     const val GET_WORK_STATUS_LIST = "work/getWorkStatusList"
+
+
+    /**
+     * 小说-保存续创剧集（只有小说有）
+     */
+    const val SAVE_SEQUEL_NOVEL_STORY = "work/production/sequel/saveSequelNovelStory"
 }

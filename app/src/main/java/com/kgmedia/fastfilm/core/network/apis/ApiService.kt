@@ -21,6 +21,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.ProfitDetailInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.QuantityStatisticsOfWorksInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.RoleTagInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SaveSequelNovelStoryInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SegmentImageHistoryInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SeriesPriceConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
@@ -103,6 +104,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveSequelNovelStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneContentEditBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneCostBody
@@ -1213,4 +1215,10 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_WORK_STATUS_LIST)
     suspend fun getWorkStatusList(@Body body: UserTokenBody): ApiResponse<List<WorkInfo>>
+
+    /**
+     * 小说-保存续创剧集（只有小说有）
+     */
+    @POST(ApiConstants.SAVE_SEQUEL_NOVEL_STORY)
+    suspend fun saveSequelNovelStory(@Body body: SaveSequelNovelStoryBody): ApiResponse<SaveSequelNovelStoryInfo>
 }

@@ -129,14 +129,15 @@ class ContinueWritingActivity :
     }
 
     fun toGenerate() {
-        StoryEditorActivity.startContinue(
-            context = this,
-            content = mRealVM.input.value,
-            workId = mRealVM.workId,
-            workTitle= mRealVM.workName,
-            storyId= mRealVM.episodeInfo.value?.sequelStoryId,
-            previousStoryId = mRealVM.episodeInfo.value?.storyId,
-            model = DramaGenerateConstants.MODEL_CONTINUE_STORY,
-        )
+        mRealVM.saveSequelNovelStory { saveSequelNovelStory ->
+            StoryEditorActivity.startContinue(
+                context = this,
+                workId = saveSequelNovelStory.workId,
+                workTitle = mRealVM.workName,
+                storyId = saveSequelNovelStory.storyId,
+                previousStoryId = mRealVM.episodeInfo.value?.storyId,
+                model = DramaGenerateConstants.MODEL_CONTINUE_STORY,
+            )
+        }
     }
 }

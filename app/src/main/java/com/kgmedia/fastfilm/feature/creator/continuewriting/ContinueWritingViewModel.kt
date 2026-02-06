@@ -3,10 +3,10 @@ package com.kgmedia.fastfilm.feature.creator.continuewriting
 import android.graphics.Color
 import android.util.Log
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
@@ -14,15 +14,14 @@ import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SaveSequelNovelStoryInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
-import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveSequelNovelStoryBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 
@@ -49,6 +48,8 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val isVip = ObservableBoolean(true)
     val isSSEStreaming = ObservableBoolean(false)
 
+    //标题
+    val combinationTitle = ObservableField("")
 
     private var sseHandler: SSEStreamHandler? = null
 
@@ -75,6 +76,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
                 )
             ) {
                 episodeInfo.value = data
+                gradeAssembly()
                 function?.invoke()
             }
         }
@@ -118,9 +120,13 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
 
 
-    fun gradeAssembly(): String{
-        val episode=episodeInfo.value?:return ""
-        return buildString {
+    private fun gradeAssembly() {
+        val episode = episodeInfo.value
+        if (episode == null) {
+            combinationTitle.set("")
+            return
+        }
+        combinationTitle.set(buildString {
             append("第")
             append(episode.sortNo)
             append("集")
@@ -128,8 +134,29 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
                 append(" | ")
                 append(episode.storyTitle)
             }
+        })
+    }
+
+
+    /**
+     *小说-保存续创剧集（只有小说有）
+     */
+    fun saveSequelNovelStory(function: ((SaveSequelNovelStoryInfo) -> Unit)? = null) {
+        launchWithLoading {
+            response(
+                mRepo.api.saveSequelNovelStory(
+                    SaveSequelNovelStoryBody(
+                        storySummary = input.value,
+                        workId = workId,
+                        storyId = episodeInfo.value?.storyId
+                    )
+                )
+            ) {
+                function?.invoke(data)
+            }
         }
     }
+
 
     /**
      * 页面销毁或需要重置时调用

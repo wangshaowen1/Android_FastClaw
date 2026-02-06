@@ -61,10 +61,10 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
         }
 
 
+        //续写
         @JvmStatic
         fun startContinue(
             context: Context?,
-            content: String? = null,
             workId: String? = null,
             workTitle: String? = null,
             //剧集id
@@ -77,7 +77,6 @@ class StoryEditorActivity : BaseViewModelActivity<ActivityStoryEditorBinding, St
             val starter = Intent(context, StoryEditorActivity::class.java)
             starter.putExtra(Constants.Extra.MODE, model)
             starter.putExtra(Constants.Extra.TITLE, workTitle)
-            starter.putExtra(Constants.Extra.CONTENT, content)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
             starter.putExtra(Constants.Extra.STORY_ID, storyId)
             starter.putExtra(Constants.Extra.PREVIOUS_STORY_ID, previousStoryId)

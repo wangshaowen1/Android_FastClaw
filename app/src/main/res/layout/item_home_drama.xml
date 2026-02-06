@@ -22,7 +22,7 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCover"
             loadHQThumbnailUri="@{item.data.workCoverUrl}"
-            placeHolder="@{@drawable/ic_default_cover}"
+            placeHolder="@{@color/fill_color_1_dark}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
@@ -31,7 +31,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearance="@style/roundStyle_tr12"
-            tools:src="@drawable/ic_default_cover" />
+            tools:src="@color/fill_color_1_dark" />
 
         <TextView
             android:layout_width="wrap_content"

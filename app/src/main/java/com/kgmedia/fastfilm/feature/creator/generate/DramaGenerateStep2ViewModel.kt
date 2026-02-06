@@ -58,6 +58,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     //剧集id
     var episodeId: String? = null
+
     //上一集的剧集id,只有续写的时候才有
     var previousStoryId: String? = null
 
@@ -75,23 +76,24 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     fun sseGenerate() {
         val sseFlow = if (model == DramaGenerateConstants.MODEL_STORY) {
             //第一集创作(小说)
-            mRepo.api.sseScriptFromStory(
-                AISynopsisBody(
-                    inspiration,
-                    episodeRangeCode,
-                    customEpisodeCount
-                )
+            val body = AISynopsisBody(
+                inspiration,
+                episodeRangeCode,
+                customEpisodeCount
             )
+            Log.i("测试一下", "第一集创作:$body")
+            mRepo.api.sseScriptFromStory(body)
         } else {
             val body = AIExpandBody(
                 workId = workId.value,
-                storyId = if (model == DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION|| model == DramaGenerateConstants.MODEL_CONTINUE_STORY){
+                storyId = if (model == DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION || model == DramaGenerateConstants.MODEL_CONTINUE_STORY) {
                     previousStoryId
-                }else{
+                } else {
                     episodeId
                 },
                 bizType = model,
             )
+            Log.i("测试一下", "续集:$body")
             mRepo.api.sseScriptFromIdea(body)
         }
         promptGenerating.value = true to "内容生成中..."
