@@ -135,11 +135,12 @@ class ContinueWritingActivity :
                 workId = saveSequelNovelStory.workId,
                 workTitle = mRealVM.workName,
                 storyId = saveSequelNovelStory.storyId,
-                chapterIndex= (mRealVM.episodeInfo.value?.sortNo?:0)+1,
+                chapterIndex = (mRealVM.episodeInfo.value?.sortNo ?: 0) + 1,
                 previousStoryId = mRealVM.episodeInfo.value?.storyId,
                 model = DramaGenerateConstants.MODEL_CONTINUE_STORY,
-                dramaContent= mRealVM.input.value,
+                dramaContent = mRealVM.input.value,
             )
+            finish()
         }
     }
 }
