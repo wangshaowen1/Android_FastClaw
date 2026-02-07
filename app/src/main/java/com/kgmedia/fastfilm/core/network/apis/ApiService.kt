@@ -31,6 +31,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SingleEpisodeDetailsInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.StrategyInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SystemMessageLikeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SystemMessageWatchingInfo
@@ -1217,10 +1218,10 @@ interface ApiService {
     suspend fun getWorkStatusList(@Body body: UserTokenBody): ApiResponse<List<WorkInfo>>
 
      /**
-     * 查询剧集生成资产/分镜描述的任务状态
+     * 查看作品单个剧集详情
      */
-    @POST(ApiConstants.WORK_STORY_TASK_STATUS)
-    suspend fun workStoryTaskStatus(@Body body: WorkBody): ApiResponse<TaskStatusInfo?>
+    @POST(ApiConstants.SINGLE_EPISODE_DETAILS)
+    suspend fun singleEpisodeDetails(@Body body: WorkBody): ApiResponse<SingleEpisodeDetailsInfo?>
 
     /**
      * 小说-保存续创剧集（只有小说有）

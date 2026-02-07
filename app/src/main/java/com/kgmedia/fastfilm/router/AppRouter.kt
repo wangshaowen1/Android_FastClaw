@@ -18,6 +18,8 @@ import com.kgmedia.fastfilm.common.utils.IntentUtils
 import com.kgmedia.fastfilm.common.utils.Utils
 import com.kgmedia.fastfilm.core.manager.IRouter
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity.Companion.launch
@@ -28,7 +30,8 @@ import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.withContext
-
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 
 object AppRouter : IRouter {
 
@@ -132,7 +135,8 @@ object AppRouter : IRouter {
     }
 
     @JvmStatic
-    fun startStory(workId: String?, storyId: String?) {
+    fun startStory(work: WorkInfo?, storyId: String?) {
+        val workId= work?.workId
         if (workId.isNullOrEmpty() || storyId.isNullOrEmpty()) {
             return
         }
@@ -143,22 +147,83 @@ object AppRouter : IRouter {
         }
         MainScope().launchNoCrash(
             block = {
-                val res = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryTaskStatus(WorkBody(workId, storyId)) }
+                val res = withContext(Dispatchers.IO) {
+                    ApiFactory.apiService.singleEpisodeDetails(
+                        WorkBody(
+                            workId,
+                            storyId
+                        )
+                    )
+                }
                 if (!res.isSuccess) {
                     res.msg?.showToast()
                     loading?.dismissAllowingStateLoss()
                     return@launchNoCrash
                 }
-                //业务类型 40=生成所有资产描述 70=生成所有分镜描述
-                when (res.data?.bizType) {
-                    40 -> {
-                        //生成所有资产描述
-                        StoryEditorActivity.restore(topActivity, 3, workId, storyId, res.data?.taskId)
+                val singleEpisodeDetailsInfo = res.data
+                val sortNo= singleEpisodeDetailsInfo?.sortNo?:1
+                when (singleEpisodeDetailsInfo?.stepProgress) {
+                    EpisodeInfo.PROGRESS_DRAFT -> {
+                        //10=剧本输入
+                        StoryEditorActivity.restore(
+                            context = topActivity,
+                            step = 1,
+                            workId = workId,
+                            storyId = storyId,
+                            workTitle = work.workTitle,
+                            chapterIndex = sortNo,
+                            model = getModel(work = work, sortNo = sortNo),
+                        )
                     }
 
-                    70 -> {
-                        //生成所有分镜描述
-                        StoryEditorActivity.restore(topActivity, 4, workId, storyId, res.data?.taskId)
+                    EpisodeInfo.PROGRESS_STORY_GENERATING -> {
+                        //15=剧本生成中
+                        StoryEditorActivity.restore(
+                            context = topActivity,
+                            step = 2,
+                            workId = workId,
+                            storyId = storyId,
+                            workTitle = work.workTitle,
+                            chapterIndex = sortNo,
+                            model = getModel(work = work, sortNo = sortNo),
+                        )
+                    }
+
+                    EpisodeInfo.PROGRESS_ASSET_GENERATING -> {
+                        //20=资产生成中  业务类型 40=生成所有资产描述 70=生成所有分镜描述
+                        StoryEditorActivity.restore(
+                            context = topActivity,
+                            step = 3,
+                            workId = workId,
+                            storyId = storyId,
+                            workTitle = work.workTitle,
+                            taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
+                            chapterIndex = sortNo,
+                            model = getModel(work = work, sortNo = sortNo),
+                        )
+                    }
+
+                    EpisodeInfo.PROGRESS_STORYBOARD_GENERATING_ASSET -> {
+                        //30=分镜生成中
+                        StoryEditorActivity.restore(
+                            context = topActivity,
+                            step = 4,
+                            workId = workId,
+                            storyId = storyId,
+                            workTitle = work.workTitle,
+                            chapterIndex = sortNo,
+                            model = getModel(work = work, sortNo = sortNo),
+                        )
+                    }
+
+                    EpisodeInfo.PROGRESS_STORYBOARD_GENERATING,
+                    EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
+                        //30=分镜生成中 32=分镜视频生成中 35=待合成
+                        EditStoryboardVideoActivity.start(
+                            storyTitle = work.workTitle?.let { "$it：第${singleEpisodeDetailsInfo.sortNo}集" },
+                            workId = workId,
+                            storyId = storyId
+                        )
                     }
                 }
                 loading?.dismissAllowingStateLoss()
@@ -167,5 +232,23 @@ object AppRouter : IRouter {
                 loading?.dismissAllowingStateLoss()
             }
         )
+    }
+
+
+    private fun getModel(work: WorkInfo, sortNo: Int=0): Int {
+        if (work.workType == WorkInfo.INSPIRATION_CREATION) {
+            if (sortNo <= 1) {
+                //第一集创作(灵感)
+                return DramaGenerateConstants.MODEL_INSPIRATION
+            }
+            //继续创作(灵感)
+            return DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
+        }
+        if (sortNo <= 1) {
+            //第一集创作(小说)
+            return DramaGenerateConstants.MODEL_STORY
+        }
+        //继续创作(小说)
+        return DramaGenerateConstants.MODEL_CONTINUE_STORY
     }
 }

@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.storyboard.StoryboardDesignFragment
 import com.kgmedia.fastfilm.feature.editor.info.DramaTitleEditDialog
 import com.nhsd.basic.BaseViewModelActivity
+import kotlin.String
 
 /**
  * 作品生成根界面（灵感模式有5步，小说模式只有4步，从剧本生成开始）
@@ -91,14 +92,27 @@ class StoryEditorActivity :
          * @param step 步骤几  1 故事梗概 2 故事剧本 3 资产管理 4 分镜设计
          */
         @JvmStatic
-        fun restore(context: Context?, step: Int, workId: String?, storyId: String?, taskId: String? = null) {
+        fun restore(
+            context: Context?,
+            step: Int,
+            workId: String?,
+            storyId: String?,
+            taskId: String? = null,
+            workTitle: String? = null,
+            //当前章节的序号
+            chapterIndex: Int? = 1,
+            model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
+        ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
             starter.putExtra(KEY_STEP, step)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
             starter.putExtra(Constants.Extra.STORY_ID, storyId)
             starter.putExtra(Constants.Extra.TASK_ID, taskId)
+            starter.putExtra(Constants.Extra.TITLE, workTitle)
             starter.putExtra(Constants.Extra.RESTORE, true)
+            starter.putExtra(Constants.Extra.CHAPTER_INDEX, chapterIndex)
+            starter.putExtra(Constants.Extra.MODE, model)
             context.startActivity(starter)
         }
     }

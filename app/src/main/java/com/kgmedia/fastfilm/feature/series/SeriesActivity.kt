@@ -15,7 +15,6 @@ import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
-import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
@@ -110,11 +109,13 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 }
             }
         }
+
         lifecycleScope.launch {
             mRealVM.episodeList().collect {
                 episodeAdapter.submitData(it)
             }
         }
+
         observeEvents {
             on<Events.SeriesUpdatedEvent> { event ->
                 if (isActive && event.seriesId == mRealVM.workId) {
@@ -155,38 +156,18 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
      */
     private fun clickToView(episodeInfo: EpisodeInfo?, position: Int) {
         if (episodeInfo == null) return
+        //[10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜生成中 32=分镜视频生成中 35=待合成 40=已完成]
         when (episodeInfo.stepProgress) {
-            EpisodeInfo.PROGRESS_DRAFT -> {
-                //10=剧本输入 20=资产生成中 30=分镜生成中 35=待合成 40=已完成
-                StoryEditorActivity.restore(
-                    this@SeriesActivity,
-                    2,
-                    mRealVM.workId,
-                    episodeInfo.storyId,
-                )
-            }
-
-            EpisodeInfo.PROGRESS_ASSET_GENERATING, EpisodeInfo.PROGRESS_STORYBOARD_GENERATING -> {
-                //20=资产生成中 30=分镜生成中
-                AppRouter.startStory(mRealVM.workId, episodeInfo.storyId)
-            }
-
-            EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
-                //35=待合成
-                EditStoryboardVideoActivity.start(
-                    storyTitle = mRealVM.workInfo.get()?.workTitle?.let { "$it：第${episodeInfo.sortNo}集" },
-                    workId = mRealVM.workId,
-                    storyId = episodeInfo.storyId
-                )
-            }
-
-            else -> {
+            EpisodeInfo.PROGRESS_COMPLETED -> {
                 val snapshot = episodeAdapter.snapshot().items
                 onPlayEpisodeClicked(
                     mRealVM.workInfo.get(),
                     snapshot,
                     position
                 )
+            }
+            else -> {
+                AppRouter.startStory(mRealVM.workInfo.get(), episodeInfo.storyId)
             }
         }
     }

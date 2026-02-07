@@ -44,8 +44,14 @@ data class WorkInfo(
 ) : Parcelable {
 
     companion object {
+        //作品类型：1-灵感创作
+        const val INSPIRATION_CREATION = 1
+        //作品类型：2-小说创作
+        const val NOVEL_CREATION = 2
+
         //剧本生成中
         const val DRAFT_GEN_STATE = 20
+
         //资产生成中
         const val DRAFT_STATE = 30
 
@@ -72,10 +78,10 @@ data class WorkInfo(
 
     //草稿状态
     fun isDraftStatus(): Boolean {
-        return workStatus in listOf( DRAFT_GEN_STATE,DRAFT_STATE)
+        return workStatus in listOf(DRAFT_GEN_STATE, DRAFT_STATE)
     }
 
-    fun seriesIntroduction(index: Int = 0):String?{
+    fun seriesIntroduction(index: Int = 0): String? {
         return workStoryItemList?.getOrNull(index)?.storySummary
     }
 
@@ -199,7 +205,7 @@ data class EpisodeInfo(
     val storyContent: String? = null,
     //序号
     val sortNo: Int? = null,
-    //[枚举]创作流程进度 [10=剧本输入 20=资产生成中 30=分镜生成中 35=待合成 40=已完成]
+    //[枚举]创作流程进度 [10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜生成中 32=分镜视频生成中 35=待合成 40=已完成]
     val stepProgress: Int? = null,
     //[枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败]
     val stepStatus: Int? = null,
@@ -219,14 +225,53 @@ data class EpisodeInfo(
     val workCoverUrl: String? = null
 ) : Parcelable {
 
-    fun isGenerating(): Boolean {
-        return stepProgress == PROGRESS_ASSET_GENERATING || stepProgress == PROGRESS_STORYBOARD_GENERATING
+    companion object {
+        //剧本输入
+        const val PROGRESS_DRAFT = 10
+        //剧本生成中
+        const val PROGRESS_STORY_GENERATING = 15
+
+        //资产生成中
+        const val PROGRESS_ASSET_GENERATING = 20
+
+        //分镜生成中
+        const val PROGRESS_STORYBOARD_GENERATING_ASSET = 30
+
+        //分镜视频生成中
+        const val PROGRESS_STORYBOARD_GENERATING = 32
+
+        //待合成
+        const val PROGRESS_WAITING_COMPOSING = 35
+
+        //已完成
+        const val PROGRESS_COMPLETED = 40
     }
 
+
+    /**
+     * 是否是正在生成中
+     * @return Boolean
+     */
+    fun isGenerating(): Boolean {
+        return stepProgress in listOf(
+            PROGRESS_ASSET_GENERATING,
+            PROGRESS_STORYBOARD_GENERATING_ASSET,
+            PROGRESS_STORYBOARD_GENERATING
+        )
+    }
+
+    /**
+     * 等待合成
+     * @return Boolean
+     */
     fun isWaitingComposing(): Boolean {
         return stepProgress == PROGRESS_WAITING_COMPOSING
     }
 
+    /**
+     * 已完成
+     * @return Boolean
+     */
     fun isCompleted(): Boolean {
         return stepProgress == PROGRESS_COMPLETED
     }
@@ -236,18 +281,4 @@ data class EpisodeInfo(
     }
 
 
-
-
-    companion object {
-        const val PROGRESS_DRAFT = 10
-        const val PROGRESS_ASSET_GENERATING = 20
-        const val PROGRESS_STORYBOARD_GENERATING = 30
-        const val PROGRESS_WAITING_COMPOSING = 35
-        const val PROGRESS_COMPLETED = 40
-
-        const val STATE_COMPLETED = 2
-        const val STATE_WAITING = 0
-        const val STATE_FAILED = 3
-        const val STATE_GENERATING = 1
-    }
 }

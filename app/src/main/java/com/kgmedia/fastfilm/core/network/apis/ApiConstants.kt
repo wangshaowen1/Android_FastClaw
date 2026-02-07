@@ -857,9 +857,9 @@ object ApiConstants {
     const val GET_WORK_STATUS_LIST = "work/getWorkStatusList"
 
     /**
-     * 查询剧集生成资产/分镜描述的任务状态
+     * 查看作品单个剧集详情
      */
-    const val WORK_STORY_TASK_STATUS = "ai/task/query/story/task"
+    const val SINGLE_EPISODE_DETAILS = "work/storyDetail"
 
     /**
      * 小说-保存续创剧集（只有小说有）
