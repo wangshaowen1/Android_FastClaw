@@ -41,6 +41,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     //业务类型
     var model: Int? = null
+
     //灵感内容
     var inspiration: String? = null
 
@@ -124,6 +125,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     nextStepEnabled.set(true)
                     sseOutputComplete.value = true
                     originalJson = originalContent
+                    Logger.d("[SSE]", "originalContent：${originalContent}")
                     Logger.d("[SSE]", "Finished")
                     // 触发原本结束后的逻辑
                 },
