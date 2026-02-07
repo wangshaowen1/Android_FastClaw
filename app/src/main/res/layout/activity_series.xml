@@ -9,6 +9,7 @@
             name="layout"
             type="com.kgmedia.fastfilm.feature.series.SeriesViewModel" />
 
+        <import type="android.view.View"/>
     </data>
 
     <FrameLayout
@@ -202,7 +203,6 @@
 
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-                <!--setVisible="@{layout.workInfo.isMine() &amp;&amp; layout.workInfo.workStatus == 60}"-->
                 <TextView
                     android:id="@+id/btnContinue"
                     singleClick="@{layout.clickHandler::onClick}"
@@ -212,6 +212,7 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/selector_common_button"
                     android:gravity="center"
+                    android:visibility="@{layout.canCreateEpisode?View.VISIBLE:View.GONE}"
                     android:text="创建续集"
                     android:textAppearance="@style/Text16"
                     android:textColor="@color/fixed_white_1"

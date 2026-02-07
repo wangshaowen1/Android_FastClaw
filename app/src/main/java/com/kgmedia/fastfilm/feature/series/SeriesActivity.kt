@@ -89,8 +89,16 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             setNoDataButton(noDataButtonTextAs, { refresh() })
             setNoDataPrompt(noDataAs)
         }
-        binding.swipeRefreshLayout.startRefreshWithAdapter(episodeAdapter)
+        binding.swipeRefreshLayout.startRefreshWithAdapter(
+            pagingDataAdapter = episodeAdapter,
+            addExtraLoadStateListener = {
+                //是否存在草稿状态的
+                mRealVM.canCreateEpisode.set(episodeAdapter.snapshot().any {
+                    it?.isDraft() == true
+                })
+            })
     }
+
 
     private fun refresh() {
         episodeAdapter.refresh()

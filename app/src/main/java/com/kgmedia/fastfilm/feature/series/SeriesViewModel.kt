@@ -31,6 +31,9 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
     //创建续集信息
     val episodeInfo = MutableLiveData<EpisodeInfo?>()
 
+    //是否可以创建续集
+    val canCreateEpisode by lazy { ObservableField(false) }
+
     override fun onCreate() {
         super.onCreate()
         getWorkDtl()
