@@ -32,7 +32,7 @@ class ItemSceneVM(
     private fun saveInput() {
         val scenePrompt = assetDesc.get()?.trim()
         val sceneName = assetName.get()?.trim()
-        if (scenePrompt.isNullOrEmpty() && sceneName.isNullOrEmpty()) {
+        if (scenePrompt.isNullOrEmpty() || sceneName.isNullOrEmpty()) {
             return
         }
         launch {

@@ -33,7 +33,7 @@ class ItemRoleVM(
     private fun saveInput() {
         val rolePrompt = assetDesc.get()?.trim()
         val roleName = assetName.get()?.trim()
-        if (rolePrompt.isNullOrEmpty() && roleName.isNullOrEmpty()) {
+        if (rolePrompt.isNullOrEmpty() || roleName.isNullOrEmpty()) {
             return
         }
         launch {

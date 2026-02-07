@@ -33,7 +33,7 @@ class ItemPropVM(
     private fun saveInput() {
         val propPrompt = assetDesc.get()?.trim()
         val propName = assetName.get()?.trim()
-        if (propPrompt.isNullOrEmpty() && propName.isNullOrEmpty()) {
+        if (propPrompt.isNullOrEmpty() || propName.isNullOrEmpty()) {
             return
         }
         launch {
