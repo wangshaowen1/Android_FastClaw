@@ -52,11 +52,13 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     val nextEnabled by lazy { ObservableBoolean(false) }
     private val handler by lazy { Handler(Looper.getMainLooper()) }
     private var inputRunnable: Runnable? = null
+    val keyboardHeight by lazy { ObservableInt() }
 
     override fun onResume() {
         super.onResume()
         topActivity?.let {
             KeyboardUtils.registerSoftInputChangedListener(it) { height ->
+                keyboardHeight.set(height)
                 if (height <= 0) {
                     editingStoryboardDescVM?.exitEditStoryboardDesc()
                     editingStoryboardDescVM = null
