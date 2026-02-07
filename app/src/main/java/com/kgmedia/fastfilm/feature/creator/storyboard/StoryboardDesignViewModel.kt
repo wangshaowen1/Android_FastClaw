@@ -239,7 +239,8 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         val notGenerateItems = arrayListOf<ItemStoryboardVM>()
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemStoryboardVM) {
-                if (item.status.get() < 1) {
+                val genStatusImage = item.data.get()?.genStatusImage ?: 1
+                if (genStatusImage < 1) {
                     val assetDesc = item.storyboardDesc.get()
                     if (assetDesc.isNullOrEmpty()) {
                         "您还有分镜尚未填写描述，请补充后再继续".showToast()
