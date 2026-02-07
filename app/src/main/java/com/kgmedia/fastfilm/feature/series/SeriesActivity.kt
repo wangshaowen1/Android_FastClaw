@@ -94,6 +94,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
     private fun refresh() {
         episodeAdapter.refresh()
+        //作品详情
+        mRealVM.getWorkDtl()
     }
 
     private fun observeData() {
@@ -166,6 +168,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     position
                 )
             }
+
             else -> {
                 AppRouter.startStory(mRealVM.workInfo.get(), episodeInfo.storyId)
             }

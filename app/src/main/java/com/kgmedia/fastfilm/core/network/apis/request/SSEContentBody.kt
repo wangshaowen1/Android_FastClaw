@@ -73,6 +73,8 @@ data class AIExpandBody(
     val workId: String? = null,
     //业务类型枚举30=灵感剧集剧本  33=灵感续集剧本
     val bizType: Int? = null,
+    //小说内容
+    val workInspiration: String? = null,
 )
 
 /**
@@ -83,10 +85,18 @@ data class AIExpandBody(
  * }
  */
 data class AISynopsisBody(
+    //作品灵感（小说内容）
     val workInspiration: String? = null,
-    val configCode: String? = null,
+    //剧集集数code：1-15=RANGE_1_15 15-30=RANGE_15_30 自定义=CUSTOM_EXACT
+    val totalEpisodeCntCode: String? = null,
+    //自定义具体集数（仅当 CUSTOM_EXACT 时填写的整数）
     val totalEpisodeCnt: String? = null,
-)
+){
+    companion object{
+        const val CUSTOM_EXACT = "CUSTOM_EXACT"
+    }
+}
+
 
 /**
 {

@@ -36,6 +36,9 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
         getWorkDtl()
     }
 
+    /**
+     *作品详情
+     */
     fun getWorkDtl() {
         loadState.set(LoadStateViewHolder.LOADING)
         if (workInfo.get() == null) loadState.set(LoadStateViewHolder.LOADING)

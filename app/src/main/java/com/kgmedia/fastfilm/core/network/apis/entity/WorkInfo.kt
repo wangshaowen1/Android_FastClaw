@@ -5,6 +5,7 @@ import androidx.room.TypeConverters
 import com.kgmedia.fastfilm.common.ext.toUnitText
 import com.kgmedia.fastfilm.core.db.convert.Converters
 import kotlinx.parcelize.Parcelize
+import kotlin.collections.contains
 
 @Parcelize
 @TypeConverters(Converters::class)
@@ -277,8 +278,9 @@ data class EpisodeInfo(
     }
 
     fun isDraft(): Boolean {
-        return stepProgress == PROGRESS_DRAFT
+        return stepProgress in listOf(
+            PROGRESS_DRAFT,
+            PROGRESS_STORY_GENERATING,
+        )
     }
-
-
 }

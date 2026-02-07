@@ -89,7 +89,8 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
             AIExpandBody(
                 storyId = episodeInfo.value?.storyId,
                 workId = workId,
-                bizType = DramaGenerateConstants.MODEL_CONTINUE_STORY_EXPAND
+                bizType = DramaGenerateConstants.MODEL_CONTINUE_STORY_EXPAND,
+                workInspiration = input.value,
             )
         )
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)

@@ -35,7 +35,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
     val minInputLength = 10
     val maxInputLength by lazy {
-        ObservableInt( 1000)
+        ObservableInt(1000)
     }
     val input by lazy { MutableLiveData<String?>() }
 
@@ -76,28 +76,29 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     var originalJson: String? = null
 
     fun sseGenerate() {
-        val sseFlow = if (model == DramaGenerateConstants.MODEL_STORY) {
-            //第一集创作(小说)
-            val body = AISynopsisBody(
-                inspiration,
-                episodeRangeCode,
-                customEpisodeCount
-            )
-            Logger.d("[SSE]", "Starting with content body = $body")
-            mRepo.api.sseScriptFromStory(body)
-        } else {
-            val body = AIExpandBody(
-                workId = workId.value,
-                storyId = if (model == DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION || model == DramaGenerateConstants.MODEL_CONTINUE_STORY) {
-                    previousStoryId
-                } else {
-                    episodeId
-                },
-                bizType = model,
-            )
-            Logger.d("[SSE]", "Starting with content body = $body")
-            mRepo.api.sseScriptFromIdea(body)
-        }
+        val sseFlow =
+            if (model == DramaGenerateConstants.MODEL_STORY || model == DramaGenerateConstants.MODEL_CONTINUE_STORY) {
+                //第一集创作(小说)
+                val body = AISynopsisBody(
+                    workInspiration = inspiration,
+                    totalEpisodeCntCode = AISynopsisBody.CUSTOM_EXACT,
+                    totalEpisodeCnt = "1"
+                )
+                Logger.d("[SSE]", "Starting with content body = $body")
+                mRepo.api.sseScriptFromStory(body)
+            } else {
+                val body = AIExpandBody(
+                    workId = workId.value,
+                    storyId = if (model == DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION) {
+                        previousStoryId
+                    } else {
+                        episodeId
+                    },
+                    bizType = model,
+                )
+                Logger.d("[SSE]", "Starting with content body = $body")
+                mRepo.api.sseScriptFromIdea(body)
+            }
         promptGenerating.value = true to "内容生成中..."
         nextStepEnabled.set(false)
         sseOutputComplete.value = false
@@ -151,7 +152,10 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
      * 确认生成
      * @param onSuccess 成功回调，返回作品ID
      */
-    fun confirmGenerate(workTitle: String?, onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
+    fun confirmGenerate(
+        workTitle: String?,
+        onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null
+    ) {
         setLoading(true)
         launch(block = {
             if (model == DramaGenerateConstants.MODEL_STORY) {
@@ -166,7 +170,13 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 )
                 response(
                     bean = mRepo.api.saveStoryEpisodeScript(body),
-                    result = { generateAllAssetDescription(data?.workId, data?.storyId, onSuccess) },
+                    result = {
+                        generateAllAssetDescription(
+                            data?.workId,
+                            data?.storyId,
+                            onSuccess
+                        )
+                    },
                     error = {
                         setLoading(false)
                         this?.msg?.showToast()
@@ -181,7 +191,13 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 )
                 response(
                     bean = mRepo.api.saveEpisodeScript(body),
-                    result = { generateAllAssetDescription(data?.workId, data?.storyId, onSuccess) },
+                    result = {
+                        generateAllAssetDescription(
+                            data?.workId,
+                            data?.storyId,
+                            onSuccess
+                        )
+                    },
                     error = {
                         setLoading(false)
                         this?.msg?.showToast()
@@ -192,7 +208,11 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         })
     }
 
-    private fun generateAllAssetDescription(workId: String?, storyId: String?, onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
+    private fun generateAllAssetDescription(
+        workId: String?,
+        storyId: String?,
+        onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?
+    ) {
         launch {
             response(
                 bean = mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)),
