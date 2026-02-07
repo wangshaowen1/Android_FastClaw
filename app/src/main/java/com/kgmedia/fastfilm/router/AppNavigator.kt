@@ -2,9 +2,11 @@ package com.kgmedia.fastfilm.router
 
 import com.blankj.utilcode.util.AppUtils
 import com.kgmedia.fastfilm.common.Constant
+import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.feature.login.LoginDialog
 import com.kgmedia.fastfilm.feature.login.flash.FlashLoginDialogFragment
+import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.kgmedia.fastfilm.kit.SignUtils
 
 object AppNavigator {
@@ -35,11 +37,12 @@ object AppNavigator {
     }
 
     fun startLogin(showToast: Boolean) {
-        if (Constant.SDKConfiguration.IS_SHOW_WE_CHAT.not()) {
-            FlashLoginDialogFragment.show(showToast, false)
-            return
-        }
-        LoginDialog.show(showToast)
+        PhoneLoginDialogActivity.start(topActivity, checkedPolicy = false)
+//        if (Constant.SDKConfiguration.IS_SHOW_WE_CHAT.not()) {
+//            FlashLoginDialogFragment.show(showToast, false)
+//            return
+//        }
+//        LoginDialog.show(showToast)
     }
 
 }

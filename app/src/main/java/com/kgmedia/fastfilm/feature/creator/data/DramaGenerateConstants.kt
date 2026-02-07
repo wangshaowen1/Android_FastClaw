@@ -10,7 +10,12 @@ class DramaGenerateConstants {
         /**
          * 继续创作(小说)
          */
-        const val MODEL_CONTINUE_STORY = 32
+        const val MODEL_CONTINUE_STORY = 31
+
+        /**
+         * 继续创作(小说)-帮我扩写
+         */
+        const val MODEL_CONTINUE_STORY_EXPAND = 32
 
         /**
          * 第一集创作(灵感)
@@ -19,8 +24,9 @@ class DramaGenerateConstants {
 
         /**
          * 第一集创作(小说)
+         * todo 注意这里不是对应的 bizType值，这里是对应的业务类型
          */
-        const val MODEL_STORY = 31
+        const val MODEL_STORY = 29
 
         /**
          * 剧集梗概
