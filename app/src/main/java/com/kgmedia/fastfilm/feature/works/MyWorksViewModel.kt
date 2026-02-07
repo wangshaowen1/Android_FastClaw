@@ -106,7 +106,7 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
         checkGeneratingJob = viewModelScope.launch(Dispatchers.IO) {
             while (isActive) {
                 try {
-//                    checkGenerating()
+                    checkGenerating()
                     delay(3000)
                 } catch (e: CancellationException) {
                     // 这是正常关闭（通过 stopCheckGenerating() 或 ViewModel 销毁）,正常退出，不需要额外处理
