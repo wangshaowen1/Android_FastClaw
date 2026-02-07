@@ -86,7 +86,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     totalEpisodeCntCode = AISynopsisBody.CUSTOM_EXACT,
                     totalEpisodeCnt = "1"
                 )
-                Logger.d("[SSE]", "Starting with content body = $body")
+                Logger.d("[SSE]", "MODEL_STORY Starting with content body = $body")
                 mRepo.api.sseScriptFromStory(body)
             } else {
                 val body = AIExpandBody(
@@ -98,7 +98,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     },
                     bizType = model,
                 )
-                Logger.d("[SSE]", "Starting with content body = $body")
+                Logger.d("[SSE]", "MODEL_CONTINUE_INSPIRATION Starting with content body = $body")
                 mRepo.api.sseScriptFromIdea(body)
             }
         promptGenerating.value = true to "内容生成中..."
@@ -139,7 +139,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         )
 
         // 3. 启动
-        Logger.d("[SSE]", "Starting with content body = $inspiration")
+        Logger.d("[SSE]", "启动 灵感内容 = $inspiration")
         sseHandler?.start(sseFlow)
     }
 

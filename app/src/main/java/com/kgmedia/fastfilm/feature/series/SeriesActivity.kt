@@ -30,6 +30,7 @@ import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.launch
 
 /**
@@ -149,6 +150,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             if (it == null) return@observe
             mRealVM.episodeInfo.value = null
             val workInfo = mRealVM.workInfo.get() ?: return@observe
+            Logger.d("[SSE]", "上一集的剧集id = ${it.storyId}")
+            Logger.d("[SSE]", "当前集的剧集id = ${it.sequelStoryId}")
             //灵感创作续写
             StoryEditorActivity.startContinue(
                 this,
