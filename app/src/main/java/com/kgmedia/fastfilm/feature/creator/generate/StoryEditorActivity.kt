@@ -72,6 +72,8 @@ class StoryEditorActivity :
             storyId: String? = null,
             //上一集的剧集id
             previousStoryId: String? = null,
+            //当前章节的序号
+            chapterIndex: Int? = 1,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
         ) {
             val context = context ?: return
@@ -81,6 +83,7 @@ class StoryEditorActivity :
             starter.putExtra(Constants.Extra.WORK_ID, workId)
             starter.putExtra(Constants.Extra.STORY_ID, storyId)
             starter.putExtra(Constants.Extra.PREVIOUS_STORY_ID, previousStoryId)
+            starter.putExtra(Constants.Extra.CHAPTER_INDEX, chapterIndex)
             context.startActivity(starter)
         }
 

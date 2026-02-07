@@ -106,6 +106,8 @@ public class Constants {
         String LAST_EPISODE_ID = "lastEpisodeId";
         //上一集的剧集id，续写的时候需要
         String PREVIOUS_STORY_ID = "previousStoryId";
+        //当前章节的序号
+        String CHAPTER_INDEX = "chapterIndex";
         String MV_ID = "mvId";
         String TRACK_NAME = "trackName";
         @Nullable

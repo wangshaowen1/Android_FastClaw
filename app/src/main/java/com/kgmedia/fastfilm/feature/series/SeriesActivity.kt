@@ -144,6 +144,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 workTitle = workInfo.workTitle,
                 storyId = it.sequelStoryId,
                 previousStoryId = it.storyId,
+                chapterIndex= (it.sortNo?:0)+1,
                 model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
             )
         }

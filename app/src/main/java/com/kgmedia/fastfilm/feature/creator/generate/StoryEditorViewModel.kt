@@ -41,6 +41,10 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
     //任务id
     var taskId: String? = null
 
+    //当前章节的序号 1开始
+    var chapterIndex: Int = 1
+
+
     override fun onCreate() {
         super.onCreate()
         title.value = mBundle.getString(Constants.Extra.TITLE, "未命名标题")
@@ -48,6 +52,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         storyId = mBundle.getString(Constants.Extra.STORY_ID)
         taskId = mBundle.getString(Constants.Extra.TASK_ID)
         previousStoryId = mBundle.getString(Constants.Extra.PREVIOUS_STORY_ID)
+        chapterIndex= mBundle.getInt(Constants.Extra.CHAPTER_INDEX, 1)
 
         when (model) {
             DramaGenerateConstants.MODEL_INSPIRATION -> {

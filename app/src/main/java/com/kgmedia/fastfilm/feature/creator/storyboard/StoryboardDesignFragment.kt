@@ -11,7 +11,8 @@ import com.nhsd.basic.ext.getParentViewModel
 /**
  * 分镜设计
  */
-class StoryboardDesignFragment : BaseViewModelFragment<FragmentStoryboardDesignBinding, StoryboardDesignViewModel>() {
+class StoryboardDesignFragment :
+    BaseViewModelFragment<FragmentStoryboardDesignBinding, StoryboardDesignViewModel>() {
 
     companion object {
         fun newInstance() = StoryboardDesignFragment()
@@ -32,7 +33,11 @@ class StoryboardDesignFragment : BaseViewModelFragment<FragmentStoryboardDesignB
         when (view.id) {
             R.id.btnNext -> {
                 mRealVM.confirmGenerate { workId, storyId, taskId ->
-                    EditStoryboardVideoActivity.start(hostVm?.title?.value?.let { "$it：第1集" }, workId, storyId)
+                    EditStoryboardVideoActivity.start(
+                        hostVm?.title?.value?.let { "$it：第${hostVm?.chapterIndex ?: 1}集" },
+                        workId,
+                        storyId
+                    )
                     activity?.finish()
                 }
             }
