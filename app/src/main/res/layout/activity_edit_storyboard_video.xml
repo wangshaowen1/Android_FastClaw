@@ -38,11 +38,15 @@
                     android:id="@+id/tvTitle"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/action_bar_size"
+                    android:ellipsize="middle"
                     android:gravity="center"
-                    android:text="代码纪元：觉醒指令"
+                    android:lines="1"
+                    android:paddingHorizontal="100dp"
+                    android:text="@{layout.storyTitle}"
                     android:textAppearance="@style/Text16"
                     android:textColor="?attr/textColor1"
-                    app:layout_constraintTop_toBottomOf="@+id/statusBar" />
+                    app:layout_constraintTop_toBottomOf="@+id/statusBar"
+                    tools:text="代码纪元：觉醒指令代码纪元：觉醒指令代码纪元：觉醒指令" />
 
                 <androidx.constraintlayout.widget.Placeholder
                     android:id="@+id/previewArea"

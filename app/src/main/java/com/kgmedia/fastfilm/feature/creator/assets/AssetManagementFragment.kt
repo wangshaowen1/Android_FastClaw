@@ -34,6 +34,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
         super.onPrepareView()
         mRealVM.workId = hostVm?.workId
         mRealVM.storyId = hostVm?.storyId
+        mRealVM.taskId = hostVm?.taskId
         mRealVM.retry()
         binding.rvAssets.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -64,7 +65,9 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
             }
 
             R.id.btnNext -> {
-                hostVm?.nextStep(4)
+                mRealVM.generateAllStoryboardDescription { workId, storyId, taskId ->
+                    hostVm?.nextStep(4, workId, storyId, taskId)
+                }
             }
         }
     }

@@ -827,7 +827,7 @@ object ApiConstants {
     /**
      * 分镜视频合成
      */
-    const val WORK_STORYBOARD_VIDEO_SYNTHESIS  = "work/storyboard/synthesizeVideo"
+    const val WORK_STORYBOARD_VIDEO_SYNTHESIS = "work/storyboard/synthesizeVideo"
 
     /**
      * 举报提交
@@ -845,7 +845,6 @@ object ApiConstants {
      */
     const val BATCH_DELETE_WORK = "work/batchDeleteIds"
 
-
     /**
      * 批量删除我的作品剧集
      */
@@ -857,6 +856,10 @@ object ApiConstants {
      */
     const val GET_WORK_STATUS_LIST = "work/getWorkStatusList"
 
+    /**
+     * 查询剧集生成资产/分镜描述的任务状态
+     */
+    const val WORK_STORY_TASK_STATUS = "ai/task/query/story/task"
 
     /**
      * 小说-保存续创剧集（只有小说有）

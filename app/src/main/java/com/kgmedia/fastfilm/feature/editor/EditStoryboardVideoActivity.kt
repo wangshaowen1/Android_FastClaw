@@ -17,16 +17,17 @@ import com.nhsd.basic.ext.showToast
 class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboardVideoBinding, EditStoryboardVideoViewModel>() {
     companion object {
         @JvmStatic
-        fun launchIntent(activity: Activity, workId: String?, storyId: String?): Intent {
+        fun launchIntent(activity: Activity, storyTitle: String?, workId: String?, storyId: String?): Intent {
             val intent = Intent(activity, EditStoryboardVideoActivity::class.java)
+            intent.putExtra(Constants.Extra.TITLE, storyTitle)
             intent.putExtra(Constants.Extra.WORK_ID, workId)
             intent.putExtra(Constants.Extra.STORY_ID, storyId)
             return intent
         }
 
         @JvmStatic
-        fun start(workId: String?, storyId: String?) {
-            topActivity?.let { it.startActivity(launchIntent(it, workId, storyId)) }
+        fun start(storyTitle: String?, workId: String?, storyId: String?) {
+            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId)) }
         }
     }
 

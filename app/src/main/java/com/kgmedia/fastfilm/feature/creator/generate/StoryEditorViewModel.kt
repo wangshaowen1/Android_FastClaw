@@ -28,21 +28,25 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
     //从1还是从2开始，从2开始就是4步创作流程
     val startFrom = MutableLiveData<Int>()
     val model by lazy { mBundle.getInt(Constants.Extra.MODE) }
+
     //子界面在流式输出的时候 用户要退出的时候需要弹出提示
     var backWarning = false
 
     //当前正在创作的剧集id
     var storyId: String? = null
+
     //上一集的剧集id,只有续写的时候才有
     var previousStoryId: String? = null
 
-
+    //任务id
+    var taskId: String? = null
 
     override fun onCreate() {
         super.onCreate()
         title.value = mBundle.getString(Constants.Extra.TITLE, "未命名标题")
         workId = mBundle.getString(Constants.Extra.WORK_ID)
         storyId = mBundle.getString(Constants.Extra.STORY_ID)
+        taskId = mBundle.getString(Constants.Extra.TASK_ID)
         previousStoryId = mBundle.getString(Constants.Extra.PREVIOUS_STORY_ID)
 
         when (model) {
@@ -70,12 +74,15 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
-    fun nextStep(step: Int, workId: String? = null, storyId: String? = null) {
+    fun nextStep(step: Int, workId: String? = null, storyId: String? = null, taskId: String? = null) {
         workId?.let {
             this.workId = it
         }
         storyId?.let {
             this.storyId = it
+        }
+        taskId?.let {
+            this.taskId = it
         }
         this.step.value = step
     }

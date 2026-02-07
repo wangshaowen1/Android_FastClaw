@@ -75,8 +75,8 @@ class DramaGenerateStep2Fragment :
             mRealVM.sseGenerate()
         }
         binding.btnNext.setOnSingleClickListener {
-            mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId ->
-                hostVm?.nextStep(3, workId, storyId)
+            mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId, taskId ->
+                hostVm?.nextStep(3, workId, storyId, taskId)
             }
         }
         binding.btnDelete.setOnSingleClickListener {

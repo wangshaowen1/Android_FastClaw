@@ -9,10 +9,12 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
+import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +29,13 @@ import kotlinx.coroutines.withContext
 class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepository>() {
     var workId: String? = null
     var storyId: String? = null
+    var taskId: String? = null
+        set(value) {
+            field = value
+            if (!value.isNullOrEmpty()) {
+                step = 1
+            }
+        }
     val loadState by lazy { ObservableInt() }
     val adapter by lazy { AssetManagementAdapter() }
     private val addRoleItem by lazy { ItemAddVM("添加角色").apply { onItemClick.value = { addRole(this) } } }
@@ -40,7 +49,6 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
      * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
      */
     private var step = 0
-    private var taskId: String? = null
     val nextEnabled by lazy { ObservableBoolean(false) }
 
     override fun onResume() {
@@ -79,6 +87,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     private fun generateAllAssetDescription() {
+        if (step > 0) return
         loadState.set(LoadStateViewHolder.LOADING)
         launch(block = {
             val allAssetDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)).data }
@@ -228,4 +237,11 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
     }
 
+    fun generateAllStoryboardDescription(onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
+        launchWithLoading {
+            response(mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId))) {
+                onSuccess?.invoke(workId, storyId, data?.taskId)
+            }
+        }
+    }
 }

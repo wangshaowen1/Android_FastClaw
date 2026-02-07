@@ -1216,6 +1216,12 @@ interface ApiService {
     @POST(ApiConstants.GET_WORK_STATUS_LIST)
     suspend fun getWorkStatusList(@Body body: UserTokenBody): ApiResponse<List<WorkInfo>>
 
+     /**
+     * 查询剧集生成资产/分镜描述的任务状态
+     */
+    @POST(ApiConstants.WORK_STORY_TASK_STATUS)
+    suspend fun workStoryTaskStatus(@Body body: WorkBody): ApiResponse<TaskStatusInfo?>
+
     /**
      * 小说-保存续创剧集（只有小说有）
      */

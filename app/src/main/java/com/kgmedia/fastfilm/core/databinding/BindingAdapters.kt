@@ -1690,14 +1690,13 @@ fun setCoverUrl(
     }
 }
 
-@BindingAdapter(value = ["setEditing", "text"], requireAll = true)
-fun setEditing(view: RecyclerEditText, editing: Boolean, text: String?) {
+@BindingAdapter(value = ["setEditing", "content"], requireAll = true)
+fun setEditing(view: RecyclerEditText, editing: Boolean, content: String?) {
+    view.setText(content)
     if (editing) {
-        view.setText(text)
         KeyboardUtils.showSoftInput(view)
         view.setSelection(view.length())
     } else {
-        view.setText(text)
         view.clearFocus()
         KeyboardUtils.hideSoftInput(view)
     }

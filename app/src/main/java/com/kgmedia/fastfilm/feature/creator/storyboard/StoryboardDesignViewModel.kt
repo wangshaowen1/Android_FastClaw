@@ -29,6 +29,13 @@ import kotlinx.coroutines.withContext
 class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     var workId: String? = null
     var storyId: String? = null
+    var taskId: String? = null
+        set(value) {
+            field = value
+            if (!value.isNullOrEmpty()) {
+                step = 1
+            }
+        }
     val loadState by lazy { ObservableInt() }
     val adapter by lazy { StoryboardDesignAdapter() }
     private val addStoryboardItem by lazy { ItemAddVM("添加分镜").apply { onItemClick.value = { addStoryboard(this) } } }
@@ -39,7 +46,6 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
      * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
      */
     private var step = 0
-    private var taskId: String? = null
     val nextEnabled by lazy { ObservableBoolean(false) }
 
     override fun onResume() {

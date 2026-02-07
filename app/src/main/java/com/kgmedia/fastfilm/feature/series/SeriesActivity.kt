@@ -188,6 +188,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
                 //35=待合成
                 EditStoryboardVideoActivity.start(
+                    storyTitle = mRealVM.workInfo.get()?.workTitle?.let { "$it：第${episodeInfo.sortNo}集" },
                     workId = mRealVM.workId,
                     storyId = episodeInfo.storyId
                 )

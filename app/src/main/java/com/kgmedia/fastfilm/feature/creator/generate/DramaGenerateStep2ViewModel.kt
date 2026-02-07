@@ -151,7 +151,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
      * 确认生成
      * @param onSuccess 成功回调，返回作品ID
      */
-    fun confirmGenerate(workTitle: String?, onSuccess: ((String?, String?) -> Unit)? = null) {
+    fun confirmGenerate(workTitle: String?, onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
         setLoading(true)
         launch(block = {
             if (model == DramaGenerateConstants.MODEL_STORY) {
@@ -192,13 +192,13 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         })
     }
 
-    private fun generateAllAssetDescription(workId: String?, storyId: String?, onSuccess: ((workId: String?, storyId: String?) -> Unit)?) {
+    private fun generateAllAssetDescription(workId: String?, storyId: String?, onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
         launch {
             response(
                 bean = mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)),
                 result = {
                     setLoading(false)
-                    onSuccess?.invoke(workId, storyId)
+                    onSuccess?.invoke(workId, storyId, data?.taskId)
                 },
                 error = {
                     setLoading(false)

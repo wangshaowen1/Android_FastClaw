@@ -23,6 +23,7 @@ class StoryboardDesignFragment : BaseViewModelFragment<FragmentStoryboardDesignB
         super.onPrepareView()
         mRealVM.workId = hostVm?.workId
         mRealVM.storyId = hostVm?.storyId
+        mRealVM.taskId = hostVm?.taskId
         mRealVM.retry()
     }
 
@@ -31,7 +32,7 @@ class StoryboardDesignFragment : BaseViewModelFragment<FragmentStoryboardDesignB
         when (view.id) {
             R.id.btnNext -> {
                 mRealVM.confirmGenerate { workId, storyId, taskId ->
-                    EditStoryboardVideoActivity.start(workId, storyId)
+                    EditStoryboardVideoActivity.start(hostVm?.title?.value?.let { "$it：第1集" }, workId, storyId)
                     activity?.finish()
                 }
             }

@@ -18,10 +18,8 @@ import com.kgmedia.fastfilm.common.utils.IntentUtils
 import com.kgmedia.fastfilm.common.utils.Utils
 import com.kgmedia.fastfilm.core.manager.IRouter
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
-import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
-import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
-import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity.Companion.launch
 import com.kgmedia.fastfilm.widget.LoadingDialog2
 import com.nhsd.basic.ext.launchNoCrash
@@ -108,11 +106,6 @@ object AppRouter : IRouter {
         }
 
         when (host) {
-            //短剧作品，APP需判断作品当前状态跳转对应页面
-            //fastfilm://shortDramas?dramasId=短剧id
-            "shortDramas" -> {
-                startShortDrama(uri.getQueryParameter("dramasId"))
-            }
             "bookGenerated" -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
@@ -139,8 +132,8 @@ object AppRouter : IRouter {
     }
 
     @JvmStatic
-    fun startShortDrama(dramasId: String?) {
-        if (TextUtils.isEmpty(dramasId)) {
+    fun startStory(workId: String?, storyId: String?) {
+        if (workId.isNullOrEmpty() || storyId.isNullOrEmpty()) {
             return
         }
         val loading = (topActivity as? FragmentActivity)?.supportFragmentManager?.let {
@@ -150,22 +143,22 @@ object AppRouter : IRouter {
         }
         MainScope().launchNoCrash(
             block = {
-                val res = withContext(Dispatchers.IO) { ApiFactory.apiService.shortDramasStatus(DramasIdBody(dramasId)) }
+                val res = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryTaskStatus(WorkBody(workId, storyId)) }
                 if (!res.isSuccess) {
                     res.msg?.showToast()
                     loading?.dismissAllowingStateLoss()
                     return@launchNoCrash
                 }
-                val info = res.data
-                if (info?.publishStatus == 1) {
-                    DramasPlayPagerActivity.start(info.dramasSeriesId)
-                } else {
-                    //作品状态 [0=预生成中(剧本大纲和分镜在生成中) 1=画面生成中 2=画面全部生成失败 3=画面部分生成失败 4=待选择角色 5=画面生成成功(未合成短剧) 6=已合成短剧 7=预生成成功(剧本大纲和分镜在生成成功)]
-                    when (info?.workStatus) {
-                        1, 2, 3, 5 -> {
-                        }
+                //业务类型 40=生成所有资产描述 70=生成所有分镜描述
+                when (res.data?.bizType) {
+                    40 -> {
+                        //生成所有资产描述
+                        StoryEditorActivity.restore(topActivity, 3, workId, storyId, res.data?.taskId)
+                    }
 
-                        else -> {}
+                    70 -> {
+                        //生成所有分镜描述
+                        StoryEditorActivity.restore(topActivity, 4, workId, storyId, res.data?.taskId)
                     }
                 }
                 loading?.dismissAllowingStateLoss()

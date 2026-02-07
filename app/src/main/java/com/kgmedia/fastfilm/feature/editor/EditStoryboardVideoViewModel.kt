@@ -32,6 +32,7 @@ import java.io.File
  */
 class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    val storyTitle by lazy { mBundle.getString(Constants.Extra.TITLE) }
     val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
     val taskId by lazy { mBundle.getString(Constants.Extra.TASK_ID) }
     val workRatio = "9:16"
