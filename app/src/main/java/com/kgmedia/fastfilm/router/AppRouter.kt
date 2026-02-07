@@ -22,7 +22,9 @@ import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity.Companion.launch
 import com.kgmedia.fastfilm.widget.LoadingDialog2
 import com.nhsd.basic.ext.launchNoCrash
@@ -31,8 +33,6 @@ import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.withContext
-import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
-import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 
 object AppRouter : IRouter {
 
@@ -175,6 +175,7 @@ object AppRouter : IRouter {
                             workTitle = work.workTitle,
                             chapterIndex = sortNo,
                             model = getModel(work = work, sortNo = sortNo),
+                            videoRatio = work.workRatio,
                         )
                     }
 
@@ -188,6 +189,7 @@ object AppRouter : IRouter {
                             workTitle = work.workTitle,
                             chapterIndex = sortNo,
                             model = getModel(work = work, sortNo = sortNo),
+                            videoRatio = work.workRatio,
                         )
                     }
 
@@ -202,6 +204,7 @@ object AppRouter : IRouter {
                             taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
                             chapterIndex = sortNo,
                             model = getModel(work = work, sortNo = sortNo),
+                            videoRatio = work.workRatio,
                         )
                     }
 
@@ -215,6 +218,7 @@ object AppRouter : IRouter {
                             workTitle = work.workTitle,
                             chapterIndex = sortNo,
                             model = getModel(work = work, sortNo = sortNo),
+                            videoRatio = work.workRatio,
                         )
                     }
 
@@ -224,7 +228,8 @@ object AppRouter : IRouter {
                         EditStoryboardVideoActivity.start(
                             storyTitle = work.workTitle?.let { "$it：第${singleEpisodeDetailsInfo.sortNo}集" },
                             workId = workId,
-                            storyId = storyId
+                            storyId = storyId,
+                            workRatio = work.workRatio,
                         )
                     }
                 }

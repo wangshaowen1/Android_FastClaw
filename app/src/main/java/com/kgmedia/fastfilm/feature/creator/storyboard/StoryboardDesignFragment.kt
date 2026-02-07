@@ -36,7 +36,8 @@ class StoryboardDesignFragment :
                     EditStoryboardVideoActivity.start(
                         hostVm?.title?.value?.let { "$it：第${hostVm?.chapterIndex ?: 1}集" },
                         workId,
-                        storyId
+                        storyId,
+                        hostVm?.videoRatio,
                     )
                     activity?.finish()
                 }

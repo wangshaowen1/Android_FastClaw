@@ -41,6 +41,9 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
     //任务id
     var taskId: String? = null
 
+    //视频比例
+    var videoRatio: String? = null
+
     //当前章节的序号 1开始
     var chapterIndex: Int = 1
 
@@ -51,6 +54,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         workId = mBundle.getString(Constants.Extra.WORK_ID)
         storyId = mBundle.getString(Constants.Extra.STORY_ID)
         taskId = mBundle.getString(Constants.Extra.TASK_ID)
+        videoRatio = mBundle.getString(Constants.Extra.VIDEO_RATIO)
         previousStoryId = mBundle.getString(Constants.Extra.PREVIOUS_STORY_ID)
         chapterIndex = mBundle.getInt(Constants.Extra.CHAPTER_INDEX, 1)
 

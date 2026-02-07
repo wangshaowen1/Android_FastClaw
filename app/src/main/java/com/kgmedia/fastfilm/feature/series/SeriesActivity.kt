@@ -157,7 +157,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 storyId = it.sequelStoryId,
                 previousStoryId = it.storyId,
                 chapterIndex = (it.sortNo ?: 0) + 1,
-                model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
+                model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
+                videoRatio = it.workRatio
             )
         }
     }

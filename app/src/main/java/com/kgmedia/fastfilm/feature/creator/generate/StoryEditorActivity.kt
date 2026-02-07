@@ -78,6 +78,7 @@ class StoryEditorActivity :
             //剧集内容，续写小说的时候需要
             dramaContent: String? = null,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
+            videoRatio: String? = null,
         ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
@@ -88,6 +89,7 @@ class StoryEditorActivity :
             starter.putExtra(Constants.Extra.PREVIOUS_STORY_ID, previousStoryId)
             starter.putExtra(Constants.Extra.CHAPTER_INDEX, chapterIndex)
             starter.putExtra(Constants.Extra.CONTENT, dramaContent)
+            starter.putExtra(Constants.Extra.VIDEO_RATIO, videoRatio)
             context.startActivity(starter)
         }
 
@@ -105,6 +107,7 @@ class StoryEditorActivity :
             //当前章节的序号
             chapterIndex: Int? = 1,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
+            videoRatio: String? = null,
         ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
@@ -116,6 +119,7 @@ class StoryEditorActivity :
             starter.putExtra(Constants.Extra.RESTORE, true)
             starter.putExtra(Constants.Extra.CHAPTER_INDEX, chapterIndex)
             starter.putExtra(Constants.Extra.MODE, model)
+            starter.putExtra(Constants.Extra.VIDEO_RATIO, videoRatio)
             context.startActivity(starter)
         }
     }

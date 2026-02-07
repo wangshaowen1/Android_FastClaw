@@ -17,17 +17,18 @@ import com.nhsd.basic.ext.showToast
 class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboardVideoBinding, EditStoryboardVideoViewModel>() {
     companion object {
         @JvmStatic
-        fun launchIntent(activity: Activity, storyTitle: String?, workId: String?, storyId: String?): Intent {
+        fun launchIntent(activity: Activity, storyTitle: String?, workId: String?, storyId: String?, workRatio: String?): Intent {
             val intent = Intent(activity, EditStoryboardVideoActivity::class.java)
             intent.putExtra(Constants.Extra.TITLE, storyTitle)
             intent.putExtra(Constants.Extra.WORK_ID, workId)
             intent.putExtra(Constants.Extra.STORY_ID, storyId)
+            intent.putExtra(Constants.Extra.VIDEO_RATIO, workRatio)
             return intent
         }
 
         @JvmStatic
-        fun start(storyTitle: String?, workId: String?, storyId: String?) {
-            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId)) }
+        fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?) {
+            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio)) }
         }
     }
 
@@ -40,7 +41,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     "视频正在生成中，请稍后再试".showToast()
                     return
                 }
-                EditStoryboardActivity.start(current)
+                EditStoryboardActivity.start(current, mRealVM.workRatio)
             }
 
             R.id.btnDownload -> {

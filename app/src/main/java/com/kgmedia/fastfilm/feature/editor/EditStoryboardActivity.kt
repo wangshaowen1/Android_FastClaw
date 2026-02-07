@@ -18,15 +18,16 @@ import com.nhsd.basic.BaseViewModelActivity
 class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBinding, EditStoryboardViewModel>() {
     companion object {
         @JvmStatic
-        fun launchIntent(activity: Activity, info: SimpleStoryboardInfo): Intent {
+        fun launchIntent(activity: Activity, info: SimpleStoryboardInfo, workRatio: String?): Intent {
             val intent = Intent(activity, EditStoryboardActivity::class.java)
             intent.putExtra(Constants.Extra.DATA, info)
+            intent.putExtra(Constants.Extra.VIDEO_RATIO, workRatio)
             return intent
         }
 
         @JvmStatic
-        fun start(info: SimpleStoryboardInfo) {
-            topActivity?.let { it.startActivity(launchIntent(it, info)) }
+        fun start(info: SimpleStoryboardInfo, workRatio: String?) {
+            topActivity?.let { it.startActivity(launchIntent(it, info, workRatio)) }
         }
     }
 

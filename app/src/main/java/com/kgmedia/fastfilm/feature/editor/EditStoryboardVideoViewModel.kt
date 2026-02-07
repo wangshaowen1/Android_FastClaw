@@ -35,7 +35,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     val storyTitle by lazy { mBundle.getString(Constants.Extra.TITLE) }
     val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
     val taskId by lazy { mBundle.getString(Constants.Extra.TASK_ID) }
-    val workRatio = "9:16"
+    val workRatio by lazy { mBundle.getString(Constants.Extra.VIDEO_RATIO, "9:16") ?: "9:16" }
     val loadState by lazy { ObservableInt() }
     val currentStoryboard by lazy { ObservableField<ItemStoryboardVM>() }
     val scrollToItem by lazy { MutableLiveData<Int>(-1) }

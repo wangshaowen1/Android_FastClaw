@@ -139,6 +139,7 @@ class ContinueWritingActivity :
                 previousStoryId = mRealVM.episodeInfo.value?.storyId,
                 model = DramaGenerateConstants.MODEL_CONTINUE_STORY,
                 dramaContent = mRealVM.input.value,
+                videoRatio = mRealVM.episodeInfo.value?.workRatio
             )
             finish()
         }

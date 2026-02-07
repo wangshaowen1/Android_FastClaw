@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
  */
 class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
     val storyboard by lazy { ObservableField<SimpleStoryboardInfo>() }
-    val workRatio = "9:16"
+    val workRatio by lazy { mBundle.getString(Constants.Extra.VIDEO_RATIO, "9:16") ?: "9:16" }
 
     val storyboardPlayer by lazy {
         PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
