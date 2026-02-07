@@ -132,9 +132,6 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         launchWithLoading {
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
-                storyBoardDesc = storyboard.storyBoardDesc,
-                genImagePrompt = storyboard.genImagePrompt,
-                genVideoPrompt = storyboard.genVideoPrompt,
                 workId = storyboard.workId,
                 storyId = storyboard.storyId
             )
@@ -173,9 +170,6 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         launchWithLoading {
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
-                storyBoardDesc = storyboardDesc,
-                genImagePrompt = storyboard.genImagePrompt,
-                genVideoPrompt = storyboard.genVideoPrompt,
                 workId = storyboard.workId,
                 storyId = storyboard.storyId
             )

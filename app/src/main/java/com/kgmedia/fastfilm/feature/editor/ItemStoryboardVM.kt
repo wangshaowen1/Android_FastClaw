@@ -63,9 +63,6 @@ class ItemStoryboardVM(
         launch {
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
-                storyBoardDesc = storyboard.storyBoardDesc,
-                genImagePrompt = null,
-                genVideoPrompt = storyboard.genVideoPrompt,
                 workId = workId,
                 storyId = storyId
             )
