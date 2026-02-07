@@ -101,14 +101,20 @@ class ItemStoryboardVM(
                 workId = workId,
                 storyId = storyId
             )
-            response(ApiFactory.apiService.workStoryboardSingleGenerate(body)) {
-                val storyboard = this@ItemStoryboardVM.data.get() ?: SimpleStoryboardInfo()
-                storyboard.taskId = data?.taskId
-                storyboard.genStatusImage = data?.genStatus
-                data?.genStatus?.let { status.set(it) }
-                this@ItemStoryboardVM.data.set(storyboard)
-                loopGenStatus()
-            }
+            response(
+                bean = ApiFactory.apiService.workStoryboardSingleGenerate(body),
+                result = {
+                    val storyboard = this@ItemStoryboardVM.data.get() ?: SimpleStoryboardInfo()
+                    storyboard.taskId = data?.taskId
+                    storyboard.genStatusImage = data?.genStatus
+                    data?.genStatus?.let { status.set(it) }
+                    this@ItemStoryboardVM.data.set(storyboard)
+                    loopGenStatus()
+                },
+                error = {
+                    this?.msg?.showToast()
+                    status.set(0)
+                })
         }
     }
 

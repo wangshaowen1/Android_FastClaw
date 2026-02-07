@@ -72,14 +72,20 @@ class ItemRoleVM(
                 storyId = storyId,
                 workId = workId,
             )
-            response(ApiFactory.apiService.workAssetSingleGenerate(body)) {
-                val role = this@ItemRoleVM.data.get() ?: SimpleRoleInfo()
-                role.taskId = data?.taskId
-                role.genStatus = data?.genStatus
-                data?.genStatus?.let { status.set(it) }
-                this@ItemRoleVM.data.set(role)
-                loopGenStatus()
-            }
+            response(
+                bean = ApiFactory.apiService.workAssetSingleGenerate(body),
+                result = {
+                    val role = this@ItemRoleVM.data.get() ?: SimpleRoleInfo()
+                    role.taskId = data?.taskId
+                    role.genStatus = data?.genStatus
+                    data?.genStatus?.let { status.set(it) }
+                    this@ItemRoleVM.data.set(role)
+                    loopGenStatus()
+                },
+                error = {
+                    this?.msg?.showToast()
+                    status.set(0)
+                })
         }
     }
 

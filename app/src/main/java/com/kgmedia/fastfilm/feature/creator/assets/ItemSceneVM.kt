@@ -71,13 +71,19 @@ class ItemSceneVM(
                 storyId = storyId,
                 workId = workId,
             )
-            response(ApiFactory.apiService.workAssetSingleGenerate(body)) {
-                val scene = this@ItemSceneVM.data.get() ?: SimpleSceneInfo()
-                scene.taskId = data?.taskId
-                scene.genStatus = data?.genStatus
-                this@ItemSceneVM.data.set(scene)
-                loopGenStatus()
-            }
+            response(
+                bean = ApiFactory.apiService.workAssetSingleGenerate(body),
+                result = {
+                    val scene = this@ItemSceneVM.data.get() ?: SimpleSceneInfo()
+                    scene.taskId = data?.taskId
+                    scene.genStatus = data?.genStatus
+                    this@ItemSceneVM.data.set(scene)
+                    loopGenStatus()
+                },
+                error = {
+                    this?.msg?.showToast()
+                    status.set(0)
+                })
         }
     }
 

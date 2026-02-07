@@ -72,13 +72,19 @@ class ItemPropVM(
                 storyId = storyId,
                 workId = workId,
             )
-            response(ApiFactory.apiService.workAssetSingleGenerate(body)) {
-                val prop = this@ItemPropVM.data.get() ?: SimplePropInfo()
-                prop.taskId = data?.taskId
-                prop.genStatus = data?.genStatus
-                this@ItemPropVM.data.set(prop)
-                loopGenStatus()
-            }
+            response(
+                bean = ApiFactory.apiService.workAssetSingleGenerate(body),
+                result = {
+                    val prop = this@ItemPropVM.data.get() ?: SimplePropInfo()
+                    prop.taskId = data?.taskId
+                    prop.genStatus = data?.genStatus
+                    this@ItemPropVM.data.set(prop)
+                    loopGenStatus()
+                },
+                error = {
+                    this?.msg?.showToast()
+                    status.set(0)
+                })
         }
     }
 
