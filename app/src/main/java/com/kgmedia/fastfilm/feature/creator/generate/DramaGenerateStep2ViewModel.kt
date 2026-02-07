@@ -41,6 +41,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     //业务类型
     var model: Int? = null
+    //灵感内容
     var inspiration: String? = null
 
     //剧集集数code

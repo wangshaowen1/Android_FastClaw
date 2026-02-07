@@ -93,9 +93,10 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             pagingDataAdapter = episodeAdapter,
             addExtraLoadStateListener = {
                 //是否存在草稿状态的
-                mRealVM.canCreateEpisode.set(episodeAdapter.snapshot().any {
+                val isDraft = episodeAdapter.snapshot().any {
                     it?.isDraft() == true
-                })
+                }
+                mRealVM.canCreateEpisode.set(!isDraft)
             })
     }
 
