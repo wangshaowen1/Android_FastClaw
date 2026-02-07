@@ -47,7 +47,6 @@
             android:hint="分镜描述词"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
             android:padding="12dp"
-            android:text="史莱克七怪之首，沉稳冷静。他留着一头深蓝色长发，目光深篷，拥有极强的战斗天赋和统筹全局的智慧。战斗时使用蓝银草魂灵与外附魂骨八蛛矛。"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
             android:textColorHint="?attr/textColor4"

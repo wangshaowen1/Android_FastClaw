@@ -175,17 +175,17 @@ public class XEditText extends AppCompatEditText {
 
     /**
      * 正则判断emoji表情
-     *
-     * @param input
-     * @return
      */
-    protected boolean isEmoji(CharSequence input) {
-        Pattern p = Pattern.compile("[\ud83c\udc00-\ud83c\udfff]|[\ud83d\udc00-\ud83d\udfff]|[\ud83e\udc00-\ud83e\udfff]" +
-                "|[\u2100-\u32ff]|[\u0030-\u007f][\u20d0-\u20ff]|[\u0080-\u00ff]");
-        Matcher m = p.matcher(input);
-        return m.find();
+    protected boolean isEmoji(CharSequence CharSequence) {
+        for (int i = 0; i < CharSequence.length(); i++) {
+            int type = Character.getType(CharSequence.charAt(i));
+            // 检查字符类型是否属于“其他符号”或“代理字符”
+            if (type == Character.SURROGATE || type == Character.OTHER_SYMBOL) {
+                return true;
+            }
+        }
+        return false;
     }
-
     /**
      * Here you can catch paste, copy and cut events
      */
@@ -227,7 +227,7 @@ public class XEditText extends AppCompatEditText {
         public void onTextPasted();
     }
 
-    public  void setCursorColor( @ColorInt int color) {
+    public void setCursorColor(@ColorInt int color) {
         try {
             // Get the cursor resource id
             @SuppressLint("SoonBlockedPrivateApi") Field field = TextView.class.getDeclaredField("mCursorDrawableRes");
