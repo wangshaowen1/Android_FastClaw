@@ -70,23 +70,23 @@
             app:layout_constraintBottom_toTopOf="@id/tvContent"
             tools:text="代码纪元：觉醒指令" />
 
+<!--        android:onClick="@{(v)->item.onItemClick.invoke(v)}"-->
         <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
             android:id="@+id/tvContent"
-            expandContent="@{item.data.workTitle}"
+            expandContent="@{item.data.seriesIntroduction(0)}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"
             android:layout_marginEnd="80dp"
             android:layout_marginBottom="64dp"
             android:lineSpacingExtra="@dimen/lineSpacingExtra"
-            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
             android:saveEnabled="false"
             android:textColor="?attr/textColor3"
             android:textSize="14dp"
             app:collapseLines="3"
             app:collapseTipLabel="收起"
             app:expandTipLabel="展开"
-            app:expandable="false"
+            app:expandable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

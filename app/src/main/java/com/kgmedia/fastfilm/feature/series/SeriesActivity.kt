@@ -144,7 +144,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 workTitle = workInfo.workTitle,
                 storyId = it.sequelStoryId,
                 previousStoryId = it.storyId,
-                chapterIndex= (it.sortNo?:0)+1,
+                chapterIndex = (it.sortNo ?: 0) + 1,
                 model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
             )
         }
@@ -222,7 +222,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         // 4. 跳转播放页
         DramasPlayPagerActivity.start(
             workId = workInfo?.workId,
-            position = newPosition // 传入修正后的位置
+            // 传入修正后的位置
+            position = newPosition
         )
     }
 

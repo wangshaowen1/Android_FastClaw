@@ -132,13 +132,10 @@ public class ExpandableTextView extends RelativeLayout {
         mTvContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, mContentTextSize);
         mTvExpand.setText(TIP_EXPAND);
         if (mExpandable) {
-            OnClickListener clickListener = new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    performedByUser = true;
-                    mCancelAnim = false;
-                    toggleText();
-                }
+            OnClickListener clickListener = v -> {
+                performedByUser = true;
+                mCancelAnim = false;
+                toggleText();
             };
             //默认点击文本也展开折叠,可通过
             mTvContent.setOnClickListener(clickListener);

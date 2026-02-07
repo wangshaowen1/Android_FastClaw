@@ -75,6 +75,10 @@ data class WorkInfo(
         return workStatus in listOf( DRAFT_GEN_STATE,DRAFT_STATE)
     }
 
+    fun seriesIntroduction(index: Int = 0):String?{
+        return workStoryItemList?.getOrNull(index)?.storySummary
+    }
+
 
     fun isInspirationGenerated(): Boolean {
         return workType == 1
