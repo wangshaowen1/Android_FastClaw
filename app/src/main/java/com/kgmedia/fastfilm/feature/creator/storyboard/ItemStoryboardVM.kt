@@ -28,6 +28,7 @@ class ItemStoryboardVM(
     val storyId: String?,
     data: SimpleStoryboardInfo?
 ) : AppItemViewModel<SimpleStoryboardInfo>(data) {
+    val no by lazy { ObservableInt() }
     val selected by lazy { ObservableBoolean(false) }
 
     /**

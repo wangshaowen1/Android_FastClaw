@@ -151,6 +151,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 props?.map { it.toItemAssetVM() }?.let { items.addAll(it) }
                 items.add(addPropItem)
                 adapter.submitList(items)
+                updateItemNo()
                 loadState.set(LoadStateViewHolder.CONTENT)
             },
             onError = {
@@ -167,17 +168,41 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
 
     fun addRole(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
+        nextEnabled.set(false)
         adapter.add(index, ItemRoleVM(workId, storyId, null).applyConfig())
+        updateItemNo()
     }
 
     fun addScene(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
+        nextEnabled.set(false)
         adapter.add(index, ItemSceneVM(workId, storyId, null).applyConfig())
+        updateItemNo()
     }
 
     fun addProp(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
+        nextEnabled.set(false)
         adapter.add(index, ItemPropVM(workId, storyId, null).applyConfig())
+        updateItemNo()
+    }
+
+    private fun updateItemNo() {
+//        var roleNum = 0
+//        var sceneNum = 0
+//        var propNum = 0
+//        adapter.items.forEachIndexed { index, item ->
+//            if (item is ItemRoleVM) {
+//                roleNum++
+//                item.no.set(roleNum)
+//            } else if (item is ItemSceneVM) {
+//                sceneNum++
+//                item.no.set(sceneNum)
+//            } else if (item is ItemPropVM) {
+//                propNum++
+//                item.no.set(propNum)
+//            }
+//        }
     }
 
     private fun ItemAssetVM<*>.applyConfig(): ItemAssetVM<*> {
@@ -222,6 +247,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 R.id.btnDelete -> {
                     if (data.get() == null) {
                         adapter.remove(this)
+                        updateItemNo()
                     } else {
                         topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
                             deleteAsset(this)
@@ -237,6 +263,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         launchWithLoading {
             response(item.deleteAsset()) {
                 adapter.remove(item)
+                updateItemNo()
             }
         }
     }

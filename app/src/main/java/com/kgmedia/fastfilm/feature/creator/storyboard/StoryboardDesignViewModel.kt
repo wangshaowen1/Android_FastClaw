@@ -138,6 +138,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 storyboards?.map { it.toItemStoryboardVM() }?.let { items.addAll(it) }
                 items.add(addStoryboardItem)
                 adapter.submitList(items)
+                updateItemNo()
                 loadState.set(LoadStateViewHolder.CONTENT)
             },
             onError = {
@@ -150,7 +151,19 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun addStoryboard(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
+        nextEnabled.set(false)
         adapter.add(index, ItemStoryboardVM(workId, storyId, null).applyConfig())
+        updateItemNo()
+    }
+
+    private fun updateItemNo() {
+        var storyboardNum = 0
+        adapter.items.forEachIndexed { index, item ->
+            if (item is ItemStoryboardVM) {
+                storyboardNum++
+                item.no.set(storyboardNum)
+            }
+        }
     }
 
     private fun ItemStoryboardVM.applyConfig(): ItemStoryboardVM {
@@ -185,6 +198,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 R.id.btnDelete -> {
                     if (data.get() == null) {
                         adapter.remove(this)
+                        updateItemNo()
                     } else {
                         topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
                             deleteStoryboard(this)
@@ -200,6 +214,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         launchWithLoading {
             response(mRepo.api.workStoryboardDelete(IdsBody(null, item.data.get()?.storyboardId))) {
                 adapter.remove(item)
+                updateItemNo()
             }
         }
     }

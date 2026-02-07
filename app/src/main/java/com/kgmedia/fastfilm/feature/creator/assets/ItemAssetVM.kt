@@ -19,6 +19,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     val storyId: String?,
     data: Item?
 ) : AppItemViewModel<Item>(data) {
+    val no by lazy { ObservableInt() }
     /**
      * -1=新创建 0=待生成 1=生成中 2=成功 3=失败
      */
