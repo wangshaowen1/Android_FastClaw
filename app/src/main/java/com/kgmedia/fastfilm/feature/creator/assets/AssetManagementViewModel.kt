@@ -1,5 +1,7 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
+import android.os.Handler
+import android.os.Looper
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import com.blankj.utilcode.util.KeyboardUtils
@@ -50,6 +52,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
      */
     private var step = 0
     val nextEnabled by lazy { ObservableBoolean(false) }
+    private val handler by lazy { Handler(Looper.getMainLooper()) }
+    private var inputRunnable: Runnable? = null
 
     override fun onResume() {
         super.onResume()
@@ -180,18 +184,25 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 R.id.etAssetDescCover -> {
-                    val edit = {
+                    inputRunnable?.let { handler.removeCallbacks(it) }
+                    val edit: (delay: Long) -> Unit = { delay ->
                         editingAssetDescVM?.exitEditAssetDesc()
                         editingAssetNameVM?.exitEditAssetName()
                         editingAssetDescVM = this
                         editingAssetNameVM = null
-                        editAssetDesc()
+                        if (delay > 0) {
+                            inputRunnable = Runnable { editAssetDesc() }.also {
+                                handler.postDelayed(it, delay)
+                            }
+                        } else {
+                            editAssetDesc()
+                        }
                     }
                     if (assetDesc.get().isNullOrEmpty()) {
-                        edit.invoke()
+                        edit.invoke(0)
                     } else {
                         topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
-                            edit.invoke()
+                            edit.invoke(200)
                         }
                     }
                 }

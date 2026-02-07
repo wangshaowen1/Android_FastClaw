@@ -8,7 +8,6 @@ import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
-import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
@@ -54,7 +53,7 @@ class ItemStoryboardVM(
         }
     }
 
-    fun editAssetDesc() {
+    fun editStoryboardDesc() {
         storyboardDescInputListener.set(object : RecyclerEditText.OnTextInputListener {
             override fun onTextInput(text: String) {
                 editingStoryboardDescText = text
@@ -64,7 +63,7 @@ class ItemStoryboardVM(
         editingStoryboardDescText = storyboardDesc.get()
     }
 
-    fun exitEditAssetDesc() {
+    fun exitEditStoryboardDesc() {
         storyboardDescInputListener.set(null)
         editingStoryboardDesc.set(false)
         storyboardDesc.set(editingStoryboardDescText)
@@ -115,13 +114,6 @@ class ItemStoryboardVM(
                     this?.msg?.showToast()
                     status.set(0)
                 })
-        }
-    }
-
-    fun deleteAsset() {
-        launch {
-            response(ApiFactory.apiService.workStoryboardDelete(IdsBody(null, data.get()?.storyboardId))) {
-            }
         }
     }
 

@@ -1,5 +1,7 @@
 package com.kgmedia.fastfilm.feature.creator.storyboard
 
+import android.os.Handler
+import android.os.Looper
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import com.blankj.utilcode.util.KeyboardUtils
@@ -12,6 +14,7 @@ import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
+import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
@@ -47,13 +50,15 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     private var step = 0
     val nextEnabled by lazy { ObservableBoolean(false) }
+    private val handler by lazy { Handler(Looper.getMainLooper()) }
+    private var inputRunnable: Runnable? = null
 
     override fun onResume() {
         super.onResume()
         topActivity?.let {
             KeyboardUtils.registerSoftInputChangedListener(it) { height ->
                 if (height <= 0) {
-                    editingStoryboardDescVM?.exitEditAssetDesc()
+                    editingStoryboardDescVM?.exitEditStoryboardDesc()
                     editingStoryboardDescVM = null
                 }
             }
@@ -82,6 +87,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun generateAllStoryboardDescription() {
+        if (step > 0) return
         loadState.set(LoadStateViewHolder.LOADING)
         launch(block = {
             val allStoryboardDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId)).data }
@@ -151,29 +157,44 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
 
                 R.id.etStoryboardDescCover -> {
-                    val edit = {
-                        editingStoryboardDescVM?.exitEditAssetDesc()
+                    inputRunnable?.let { handler.removeCallbacks(it) }
+                    val edit: (delay: Long) -> Unit = { delay ->
+                        editingStoryboardDescVM?.exitEditStoryboardDesc()
                         editingStoryboardDescVM = this
-                        editAssetDesc()
+                        if (delay > 0) {
+                            inputRunnable = Runnable { editStoryboardDesc() }.also {
+                                handler.postDelayed(it, delay)
+                            }
+                        } else {
+                            editStoryboardDesc()
+                        }
                     }
                     if (storyboardDesc.get().isNullOrEmpty()) {
-                        edit.invoke()
+                        edit.invoke(0)
                     } else {
                         topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
-                            edit.invoke()
+                            edit.invoke(200)
                         }
                     }
                 }
 
                 R.id.btnDelete -> {
                     topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
-                        deleteAsset()
+                        deleteStoryboard(this)
                         adapter.remove(this)
                     }
                 }
             }
         }
         return this
+    }
+
+    private fun deleteStoryboard(item: ItemStoryboardVM) {
+        launchWithLoading {
+            response(mRepo.api.workStoryboardDelete(IdsBody(null, item.data.get()?.storyboardId))) {
+                adapter.remove(item)
+            }
+        }
     }
 
     fun oneKeyGenerate() {
