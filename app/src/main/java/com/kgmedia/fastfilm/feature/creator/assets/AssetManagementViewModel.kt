@@ -218,8 +218,12 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 R.id.btnDelete -> {
-                    topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
-                        deleteAsset(this)
+                    if (data.get() == null) {
+                        adapter.remove(this)
+                    } else {
+                        topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
+                            deleteAsset(this)
+                        }
                     }
                 }
             }
