@@ -115,7 +115,10 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                             }
                         }
                     }
-                }.let { adapter.submitList(it) }
+                }.let {
+                    adapter.items.forEach { it.clear() }
+                    adapter.submitList(it)
+                }
                 nextStepEnabled.set(allStoryboardGenerated())
                 if (currentStoryboard.get() == null) {
                     adapter.items.firstOrNull()?.select()

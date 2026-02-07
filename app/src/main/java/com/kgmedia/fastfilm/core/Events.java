@@ -1,30 +1,12 @@
 package com.kgmedia.fastfilm.core;
 
 
-import androidx.annotation.NonNull;
-
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo;
 import com.nhsd.basic.bus.AppEvent;
 
 /**
  * Created by ymh on 2016/7/1 0001.
  */
 public class Events {
-
-
-    /**
-     * 关闭
-     */
-    public static class CloseEvent implements AppEvent {
-        public static final String FINISH_ALL = "finishAll";
-        public String eventType;
-        public final String[] ignoreClass;
-
-        public CloseEvent(String eventType, String... ignoreClass) {
-            this.eventType = eventType;
-            this.ignoreClass = ignoreClass;
-        }
-    }
 
     public static class PurchaseEvent implements AppEvent {
         //购买类型会员
@@ -197,49 +179,6 @@ public class Events {
         }
     }
 
-
-    /**
-     * 绘本删除事件
-     */
-    public static class ShortDeletionEvent implements AppEvent {
-        @NonNull
-        public final ShortDramaInfo shortDramaInfo;
-
-        public ShortDeletionEvent(@NonNull ShortDramaInfo shortDramaInfo) {
-            this.shortDramaInfo = shortDramaInfo;
-        }
-    }
-
-    /**
-     * 绘本信息改变
-     */
-    public static class ShortChangeEvent implements AppEvent {
-        @NonNull
-        public final ShortDramaInfo shortDramaInfo;
-
-        public ShortChangeEvent(@NonNull ShortDramaInfo shortDramaInfo) {
-            this.shortDramaInfo = shortDramaInfo;
-        }
-    }
-
-    /**
-     * track喜欢事件
-     */
-    public static class TrackLikeEvent implements AppEvent {
-        public final String trackId;
-        public final int likeStatus;
-        public final int likeNum;
-
-
-        public TrackLikeEvent(String trackId, int likeStatus, int likeNum) {
-            this.trackId = trackId;
-            this.likeStatus = likeStatus;
-            this.likeNum = likeNum;
-        }
-
-    }
-
-
     public static class DownloadProgressEvent implements AppEvent {
         public final int percent;
         public final String url;
@@ -252,18 +191,6 @@ public class Events {
         }
     }
 
-    /**
-     * 生成歌的AI有变化
-     */
-    public static class ComposeConfigChangeEvent implements AppEvent {
-        public int way;
-
-        public ComposeConfigChangeEvent(int way) {
-            this.way = way;
-        }
-    }
-
-
     //apk更新
     public static class ApkRenewal implements AppEvent {
 
@@ -274,60 +201,12 @@ public class Events {
         }
     }
 
-
-    /**
-     * 灵感
-     */
-    public static class InspirationEvent implements AppEvent {
-        public final String inspiration;
-
-        public InspirationEvent(String inspiration) {
-            this.inspiration = inspiration;
-        }
-    }
-
-
     /**
      * 手机号绑定成功
      */
     public static class BindingSuccessfulEvent implements AppEvent {
 
         public BindingSuccessfulEvent() {
-        }
-    }
-
-    public static class TimbreGeneratedEvent implements AppEvent {
-
-        public final String timbreId;
-
-        public TimbreGeneratedEvent(String timbreId) {
-            this.timbreId = timbreId;
-        }
-    }
-
-    public static class PictureBookGeneratedEvent implements AppEvent {
-
-        public final String pictureBookTemplateId;
-
-        public PictureBookGeneratedEvent(String pictureBookTemplateId) {
-            this.pictureBookTemplateId = pictureBookTemplateId;
-        }
-    }
-
-    public static class PictureBookStartGenerateEvent implements AppEvent {
-
-        public PictureBookStartGenerateEvent() {
-        }
-
-        ;
-    }
-
-    public static class PictureBookPublishEvent implements AppEvent {
-
-        public final String pictureBookId;
-
-        public PictureBookPublishEvent(String pictureBookId) {
-            this.pictureBookId = pictureBookId;
         }
     }
 
@@ -366,17 +245,6 @@ public class Events {
     }
 
     /**
-     * 短剧更新事件
-     */
-    public static class ShortDramasUpdatedEvent implements AppEvent {
-        public final String dramasId;
-
-        public ShortDramasUpdatedEvent(String dramasId) {
-            this.dramasId = dramasId;
-        }
-    }
-
-    /**
      * 修改视频信息
      */
     public static class ShortDramasEditInfoEvent implements AppEvent {
@@ -403,32 +271,6 @@ public class Events {
     }
 
     /**
-     * 字幕配音事件
-     */
-    public static class DubbingEvent implements AppEvent {
-        public final String dramasId;
-        public final String timbreId;
-
-        public DubbingEvent(String dramasId, String timbreId) {
-            this.dramasId = dramasId;
-            this.timbreId = timbreId;
-        }
-    }
-
-    /**
-     * 字幕配音事件
-     */
-    public static class UseDubbingEvent implements AppEvent {
-        public final String dramasId;
-        public final String timbreId;
-
-        public UseDubbingEvent(String dramasId, String timbreId) {
-            this.dramasId = dramasId;
-            this.timbreId = timbreId;
-        }
-    }
-
-    /**
      * 剧集更新事件
      */
     public static class SeriesUpdatedEvent implements AppEvent {
@@ -436,54 +278,6 @@ public class Events {
 
         public SeriesUpdatedEvent(String seriesId) {
             this.seriesId = seriesId;
-        }
-    }
-
-    /**
-     * 喜欢
-     */
-    public static class ShortDramaLikeEvent implements AppEvent {
-        public final String shortDramaId;
-        public final int likeStatus;
-
-        public ShortDramaLikeEvent(String shortDramaId, int likeStatus) {
-            this.shortDramaId = shortDramaId;
-            this.likeStatus = likeStatus;
-        }
-    }
-
-    /**
-     * 追更
-     */
-    public static class SeriesWatchingEvent implements AppEvent {
-        public final String seriesId;
-        public final int watchingStatus;
-        public final String watchingNumStr;
-
-        public SeriesWatchingEvent(String seriesId, int watchingStatus, String watchingNumStr) {
-            this.seriesId = seriesId;
-            this.watchingStatus = watchingStatus;
-            this.watchingNumStr = watchingNumStr;
-        }
-    }
-
-    public static class UnLockEvent implements AppEvent {
-
-        public final String dramasId;
-
-        public UnLockEvent(String dramasId) {
-            this.dramasId = dramasId;
-        }
-    }
-
-    public static class AutoUnLockSwitchEvent implements AppEvent {
-
-        public final String dramasSeriesId;
-        public final boolean autoLock;
-
-        public AutoUnLockSwitchEvent(String dramasSeriesId, boolean autoLock) {
-            this.dramasSeriesId = dramasSeriesId;
-            this.autoLock = autoLock;
         }
     }
 
@@ -501,6 +295,45 @@ public class Events {
         public ScriptContentGenerateSuccessEvent(int type, String seriesId) {
             this.seriesId = seriesId;
             this.type = type;
+        }
+    }
+
+    /**
+     * 合成视频成功事件
+     */
+    public static class VideoSynthesisSuccessEvent implements AppEvent {
+        public final String workId;
+        public final String storyId;
+
+        public VideoSynthesisSuccessEvent(String workId, String storyId) {
+            this.workId = workId;
+            this.storyId = storyId;
+        }
+    }
+
+    /**
+     * 重绘分镜图片事件
+     */
+    public static class StoryboardImageRegenerateEvent implements AppEvent {
+        public final String workId;
+        public final String storyId;
+
+        public StoryboardImageRegenerateEvent(String workId, String storyId) {
+            this.workId = workId;
+            this.storyId = storyId;
+        }
+    }
+
+    /**
+     * 重绘分镜事件
+     */
+    public static class StoryboardVideoRegenerateEvent implements AppEvent {
+        public final String workId;
+        public final String storyId;
+
+        public StoryboardVideoRegenerateEvent(String workId, String storyId) {
+            this.workId = workId;
+            this.storyId = storyId;
         }
     }
 }

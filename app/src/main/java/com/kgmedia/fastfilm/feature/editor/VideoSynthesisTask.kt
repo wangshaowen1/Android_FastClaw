@@ -4,12 +4,14 @@ import androidx.databinding.ObservableFloat
 import androidx.databinding.ObservableInt
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.common.ext.ioScope
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.request.VideoSynthesisBody
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.kuaige.videoedit.core.TransformListener
 import com.kuaige.videoedit.ffmpeg.FFmpegHelper
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.utils.Logger
 import kotlinx.parcelize.IgnoredOnParcel
@@ -109,6 +111,7 @@ data class VideoSynthesisTask(
                 if (response.isSuccess) {
                     changeStatus(STATUS_SUCCESS)
                     VideoSynthesisManager.delete(this@VideoSynthesisTask)
+                    FlowEventBus.postSync(Events.VideoSynthesisSuccessEvent(workId, storyId))
                 } else {
                     fail(STATUS_SAVE_FAIL, response.msg ?: "调用保存接口失败")
                 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
@@ -16,6 +17,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -136,6 +138,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 storyId = storyboard.storyId
             )
             response(ApiFactory.apiService.workStoryboardVideoSingleGenerate(body)) {
+                FlowEventBus.postSync(Events.StoryboardVideoRegenerateEvent(storyboard.workId, storyboard.storyId))
                 if (finish) {
                     finish()
                     return@response
@@ -178,6 +181,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 storyboard.genStatusImage = data?.genStatus
                 this@EditStoryboardViewModel.storyboard.notifyChange()
                 loopImage(data?.taskId)
+                FlowEventBus.postSync(Events.StoryboardImageRegenerateEvent(storyboard.workId, storyboard.storyId))
             }
         }
     }

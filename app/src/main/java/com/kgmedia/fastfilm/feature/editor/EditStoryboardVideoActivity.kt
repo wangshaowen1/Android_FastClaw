@@ -2,13 +2,16 @@ package com.kgmedia.fastfilm.feature.editor
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardVideoBinding
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -29,6 +32,18 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
         @JvmStatic
         fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?) {
             topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio)) }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        observeEvents {
+            on<Events.StoryboardVideoRegenerateEvent> {
+                mRealVM.getStoryboardList()
+            }
+            on<Events.StoryboardImageRegenerateEvent> {
+                mRealVM.getStoryboardList()
+            }
         }
     }
 
