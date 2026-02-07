@@ -172,7 +172,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@{item.status &lt; 1 ? `生成角色` : `重新生成`}"
+                android:text="@{item.status &lt; 1 ? item.generateButtonText : `重新生成`}"
                 android:textAppearance="@style/Text13"
                 android:textColor="@android:color/white"
                 app:endColor="#8F83FF"

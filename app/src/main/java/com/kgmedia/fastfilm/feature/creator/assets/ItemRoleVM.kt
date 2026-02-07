@@ -46,6 +46,7 @@ class ItemRoleVM(
 
     override val assetDescHint: String = "角色描述词"
     override val assetNameHint: String = "角色名"
+    override val generateButtonText: String = "生成角色"
 
     override fun generate() {
         if (status.get() == 1) return

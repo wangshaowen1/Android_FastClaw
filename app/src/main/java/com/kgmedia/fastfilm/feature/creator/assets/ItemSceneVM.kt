@@ -45,6 +45,7 @@ class ItemSceneVM(
 
     override val assetDescHint: String = "场景描述词"
     override val assetNameHint: String = "场景名"
+    override val generateButtonText: String = "生成场景"
 
     override fun generate() {
         if (status.get() == 1) return

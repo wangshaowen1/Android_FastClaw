@@ -46,6 +46,7 @@ class ItemPropVM(
 
     override val assetDescHint: String = "道具描述词"
     override val assetNameHint: String = "道具名"
+    override val generateButtonText: String = "生成道具"
 
     override fun generate() {
         if (status.get() == 1) return

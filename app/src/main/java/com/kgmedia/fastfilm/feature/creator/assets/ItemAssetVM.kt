@@ -93,6 +93,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
 
     abstract val assetDescHint: String
     abstract val assetNameHint: String
+    abstract val generateButtonText: String
 
     abstract fun generate()
 
