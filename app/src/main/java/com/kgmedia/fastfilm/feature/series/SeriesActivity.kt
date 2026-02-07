@@ -94,7 +94,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             addExtraLoadStateListener = {
                 //是否存在草稿状态的
                 val isDraft = episodeAdapter.snapshot().any {
-                    it?.isDraft() == true
+                    it?.isBeforeStoryboardGenerating() == true
                 }
                 mRealVM.canCreateEpisode.set(!isDraft)
             })
@@ -208,7 +208,6 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         val clickedEpisodeId = episodes[clickPosition].storyId
         val newPosition =
             validPlayList.indexOfFirst { it.workId == clickedEpisodeId }.coerceAtLeast(0)
-
         // 3. 存入 Repository
         FeedRepository.setPreloadedSeries(workInfo?.workId ?: "", validPlayList)
 

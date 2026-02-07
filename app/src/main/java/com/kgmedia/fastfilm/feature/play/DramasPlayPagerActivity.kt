@@ -2,7 +2,6 @@ package com.kgmedia.fastfilm.feature.play
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
@@ -64,15 +63,15 @@ class DramasPlayPagerActivity :
         lifecycleScope.launch {
             mRealVM.feedFlow.collectLatest {
                 adapter.submitData(it)
-
                 binding.recyclerView.doOnLayout {
-                    binding.recyclerView.smoothScrollToPosition(initialPos)
+                    if (initialPos<(binding.recyclerView.adapter?.itemCount?:0)){
+                        binding.recyclerView.smoothScrollToPosition(initialPos)
+                    }
                     listController.playCurrentItem()
                 }
             }
         }
 
-        Log.i("测试一下", "initialPos:${initialPos}")
         // 告知 Controller 初始位置 (需要在 FeedListController 中加个方法，见下文)
         listController.setInitialPosition(initialPos)
 

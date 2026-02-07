@@ -277,10 +277,26 @@ data class EpisodeInfo(
         return stepProgress == PROGRESS_COMPLETED
     }
 
+    /**
+     * 是否是草稿
+     * @return Boolean
+     */
     fun isDraft(): Boolean {
         return stepProgress in listOf(
             PROGRESS_DRAFT,
             PROGRESS_STORY_GENERATING,
+        )
+    }
+
+    /**
+     * 是否在分镜视频生成前
+     */
+    fun isBeforeStoryboardGenerating(): Boolean {
+        return stepProgress in listOf(
+            PROGRESS_DRAFT,
+            PROGRESS_STORY_GENERATING,
+            PROGRESS_ASSET_GENERATING,
+            PROGRESS_STORYBOARD_GENERATING_ASSET
         )
     }
 }
