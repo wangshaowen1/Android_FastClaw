@@ -38,7 +38,7 @@
             android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
             android:src="?attr/fillColor1"
-            android:visibility="@{item.status == 2 || item.status == 4 ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{item.status == 2 ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintDimensionRatio="108:152"
             app:layout_constraintStart_toStartOf="@+id/tvIndex"
             app:layout_constraintTop_toBottomOf="@+id/tvIndex"
@@ -46,7 +46,7 @@
             app:riv_corner_radius="8dp" />
 
         <ImageView
-            setVisible="@{item.status == 2 || item.status == 4}"
+            setVisible="@{item.status == 2}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
@@ -56,7 +56,7 @@
 
         <ImageView
             android:id="@+id/btnPreview"
-            setVisible="@{item.status == 2 || item.status == 4}"
+            setVisible="@{item.status == 2}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="36dp"
             android:layout_height="36dp"
@@ -76,10 +76,21 @@
 
         <ImageView
             setVisible="@{item.status &lt; 1}"
-            singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_ai_image_1"
+            android:tint="?attr/textColor4"
+            android:tintMode="src_in"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <ImageView
+            setVisible="@{item.status == 3}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_image_fail"
             android:tint="?attr/textColor4"
             android:tintMode="src_in"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
@@ -100,9 +111,9 @@
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etStoryboardDesc"
+            content="@{item.storyboardDesc}"
             onTextInputListener="@{item.storyboardDescInputListener}"
             setEditing="@{item.editingStoryboardDesc}"
-            content="@{item.storyboardDesc}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"

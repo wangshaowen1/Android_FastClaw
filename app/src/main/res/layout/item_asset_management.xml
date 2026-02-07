@@ -64,10 +64,21 @@
 
         <ImageView
             setVisible="@{item.status &lt; 1}"
-            singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_ai_image_1"
+            android:tint="?attr/textColor4"
+            android:tintMode="src_in"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+
+        <ImageView
+            setVisible="@{item.status == 3}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_image_fail"
             android:tint="?attr/textColor4"
             android:tintMode="src_in"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"

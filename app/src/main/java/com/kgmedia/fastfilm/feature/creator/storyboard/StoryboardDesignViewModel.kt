@@ -18,6 +18,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
@@ -156,6 +157,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         onItemClick.value = { view ->
             when (view?.id) {
                 R.id.btnPreview -> {
+                    data.get()?.imageUrl?.let { PhotoPagerActivity.launch(topActivity, it) }
                 }
 
                 R.id.etStoryboardDescCover -> {

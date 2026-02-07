@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -183,6 +184,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         onItemClick.value = { view ->
             when (view?.id) {
                 R.id.btnPreview -> {
+                    assetImage.get()?.let { PhotoPagerActivity.launch(topActivity, it) }
                 }
 
                 R.id.etAssetDescCover -> {
