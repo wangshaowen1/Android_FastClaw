@@ -2,11 +2,14 @@ package com.kgmedia.fastfilm.feature.editor
 
 import android.app.Activity
 import android.content.Intent
+import android.view.View
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardBinding
+import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.nhsd.basic.BaseViewModelActivity
 
 /**
@@ -34,6 +37,15 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
             }
         } else {
             super.onBackPressed()
+        }
+    }
+
+    override fun <Data> onClick(view: View?, data: Data?) {
+        super.onClick(view, data)
+        when (view?.id) {
+            R.id.btnPreview -> {
+                mRealVM.storyboard.get()?.imageUrl?.let { PhotoPagerActivity.launch(this, it) }
+            }
         }
     }
 }
