@@ -19,7 +19,9 @@ class JsonSseFieldStreamer(
         SKIP_VALUE
     }
 
-    private enum class Target { NONE, TITLE, MD, STORY }
+    private enum class Target {
+        NONE, TITLE, MD, STORY
+    }
 
     private var state = State.SEEK_KEY
     private var target = Target.NONE
@@ -93,6 +95,7 @@ class JsonSseFieldStreamer(
                         escape = false
                         state = State.IN_VALUE
                     }
+
                     !c.isWhitespace() -> {
                         target = Target.NONE
                         state = State.SKIP_VALUE
@@ -125,6 +128,7 @@ class JsonSseFieldStreamer(
                         target = Target.NONE
                         state = State.SEEK_KEY
                     }
+
                     else -> {
                         valueBuf.append(c)
                         emit(false)
@@ -147,6 +151,7 @@ class JsonSseFieldStreamer(
                     onTitleUpdate?.invoke(valueBuf.toString())
                 }
             }
+
             Target.MD -> {
                 val now = System.currentTimeMillis()
                 if ((isFinal || now - lastMdEmitTime >= MD_THROTTLE_MS) && valueBuf.length > lastMdEmittedLength) {
@@ -160,6 +165,7 @@ class JsonSseFieldStreamer(
                     lastMdEmitTime = now
                 }
             }
+
             Target.STORY -> {
                 // 5. 处理 Story，通常 story 也是长文本，建议同样应用节流逻辑
                 val now = System.currentTimeMillis()
@@ -168,6 +174,7 @@ class JsonSseFieldStreamer(
                     lastMdEmitTime = now
                 }
             }
+
             else -> Unit
         }
 

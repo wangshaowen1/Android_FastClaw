@@ -105,6 +105,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
                     input.value = ""
                 },
                 onUpdate = { fullContent ->
+                    Logger.d("[SSE]", "Update: $fullContent")
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
                     input.value = fullContent
                 },
