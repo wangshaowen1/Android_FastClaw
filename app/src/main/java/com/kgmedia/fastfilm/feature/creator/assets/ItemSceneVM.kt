@@ -93,24 +93,23 @@ class ItemSceneVM(
     }
 
     override fun loopGenStatus() {
+        loopGenStatusJob?.cancel()
         val taskId = data.get()?.taskId
         if (taskId.isNullOrEmpty()) return
-        launch {
-            loop@ while (status.get() == 1) {
-                runCatching {
-                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(taskId, 61)).data }
-                    data.get()?.let {
-                        it.genStatus = taskStatus?.genStatus
-                        it.imageUrl = taskStatus?.result
-                        assetImage.set(taskStatus?.result)
-                    }
-                    data.notifyChange()
-                    taskStatus?.genStatus?.let { status.set(it) }
+        loopGenStatusJob = launch {
+            runCatching {
+                val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSingleStatus(TaskIdBody(taskId, 61)).data }
+                data.get()?.let {
+                    it.genStatus = taskStatus?.genStatus
+                    it.imageUrl = taskStatus?.result
+                    assetImage.set(taskStatus?.result)
                 }
-                if (status.get() != 1) {
-                    break@loop
-                }
+                data.notifyChange()
+                taskStatus?.genStatus?.let { status.set(it) }
+            }
+            if (status.get() == 1) {
                 delay(3000)
+                loopGenStatus()
             }
         }
     }

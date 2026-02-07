@@ -14,6 +14,7 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
@@ -32,11 +33,6 @@ class ItemStoryboardVM(
     val selected by lazy { ObservableBoolean(false) }
 
     /**
-     * [枚举]图片生成状态 -1=新创建  0=待生成 1=生成中 2=成功 3=失败 99=无需生成
-     */
-    val status by lazy { ObservableInt(data?.genStatusImage ?: -1) }
-
-    /**
      * 当前应用的分镜描述
      */
     val storyboardDesc by lazy { ObservableField(data?.storyBoardDesc) }
@@ -47,11 +43,17 @@ class ItemStoryboardVM(
     var editingStoryboardDescText: String? = data?.storyBoardDesc
     val editingStoryboardDesc by lazy { ObservableBoolean(false) }
     val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
+    private var loopGenStatusJob: Job? = null
 
     init {
         if (data?.imageGenerating == true) {
             loopGenStatus()
         }
+    }
+
+    override fun onCleared() {
+        loopGenStatusJob?.cancel()
+        super.onCleared()
     }
 
     fun editStoryboardDesc() {
@@ -85,13 +87,15 @@ class ItemStoryboardVM(
     }
 
     fun generate() {
-        if (status.get() == 1) return
+        if (data.get()?.imageGenerating == true) return
         val storyBoardDesc = if (editingStoryboardDesc.get()) editingStoryboardDescText else storyboardDesc.get()
         if (storyBoardDesc.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
             return
         }
-        status.set(1)
+        val preStatus = data.get()?.genStatusImage
+        data.get()?.genStatusImage = 1
+        data.notifyChange()
         launch {
             val body = GenerateStoryboardBody(
                 storyboardId = data.get()?.storyboardId,
@@ -107,35 +111,33 @@ class ItemStoryboardVM(
                     val storyboard = this@ItemStoryboardVM.data.get() ?: SimpleStoryboardInfo()
                     storyboard.taskId = data?.taskId
                     storyboard.genStatusImage = data?.genStatus
-                    data?.genStatus?.let { status.set(it) }
                     this@ItemStoryboardVM.data.set(storyboard)
+                    this@ItemStoryboardVM.data.notifyChange()
                     loopGenStatus()
                 },
                 error = {
                     this?.msg?.showToast()
-                    status.set(0)
+                    data.get()?.genStatusImage = preStatus
                 })
         }
     }
 
     private fun loopGenStatus() {
+        loopGenStatusJob?.cancel()
         val taskId = data.get()?.taskId
         if (taskId.isNullOrEmpty()) return
-        launch {
-            loop@ while (status.get() == 1) {
-                runCatching {
-                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 71)).data }
-                    data.get()?.let {
-                        it.genStatusImage = taskStatus?.genStatus
-                        it.imageUrl = taskStatus?.result
-                    }
-                    data.notifyChange()
-                    taskStatus?.genStatus?.let { status.set(it) }
+        loopGenStatusJob = launch {
+            runCatching {
+                val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 71)).data }
+                data.get()?.let {
+                    it.genStatusImage = taskStatus?.genStatus
+                    it.imageUrl = taskStatus?.result
                 }
-                if (status.get() != 1) {
-                    break@loop
-                }
+                data.notifyChange()
+            }
+            if (data.get()?.imageGenerating == true) {
                 delay(3000)
+                loopGenStatus()
             }
         }
     }

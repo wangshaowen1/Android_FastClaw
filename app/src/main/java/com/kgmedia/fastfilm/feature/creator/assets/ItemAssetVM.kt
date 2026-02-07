@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.widget.RecyclerEditText
+import kotlinx.coroutines.Job
 
 abstract class ItemAssetVM<Item : SimpleAsset>(
     /**
@@ -20,6 +21,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     data: Item?
 ) : AppItemViewModel<Item>(data) {
     val no by lazy { ObservableInt() }
+
     /**
      * -1=新创建 0=待生成 1=生成中 2=成功 3=失败
      */
@@ -53,11 +55,17 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     var editingAssetNameText: String? = data?.assetName
     val editingAssetName by lazy { ObservableBoolean(false) }
     val assetNameInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
+    protected var loopGenStatusJob: Job? = null
 
     init {
         if (status.get() == 1) {
             loopGenStatus()
         }
+    }
+
+    override fun onCleared() {
+        loopGenStatusJob?.cancel()
+        super.onCleared()
     }
 
     fun editAssetDesc() {
