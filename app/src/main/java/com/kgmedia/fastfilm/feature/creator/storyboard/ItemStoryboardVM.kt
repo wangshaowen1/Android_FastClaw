@@ -56,6 +56,10 @@ class ItemStoryboardVM(
         super.onCleared()
     }
 
+    fun clear() {
+        loopGenStatusJob?.cancel()
+    }
+
     fun editStoryboardDesc() {
         storyboardDescInputListener.set(object : RecyclerEditText.OnTextInputListener {
             override fun onTextInput(text: String) {

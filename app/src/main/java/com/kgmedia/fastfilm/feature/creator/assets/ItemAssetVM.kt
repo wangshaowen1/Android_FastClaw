@@ -63,6 +63,10 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
         }
     }
 
+    fun clear() {
+        loopGenStatusJob?.cancel()
+    }
+
     override fun onCleared() {
         loopGenStatusJob?.cancel()
         super.onCleared()

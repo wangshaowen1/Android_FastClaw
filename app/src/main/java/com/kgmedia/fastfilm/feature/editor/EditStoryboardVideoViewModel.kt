@@ -66,6 +66,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     }
 
     override fun onCleared() {
+        adapter.items.forEach { it.clear() }
         super.onCleared()
         storyboardPlayer.release()
     }

@@ -76,6 +76,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     override fun onCleared() {
         loopAllStoryboardDescriptionStatusJob?.cancel()
         inputJob?.cancel()
+        adapter.items.forEach { if (it is ItemStoryboardVM) it.clear() }
         super.onCleared()
     }
 

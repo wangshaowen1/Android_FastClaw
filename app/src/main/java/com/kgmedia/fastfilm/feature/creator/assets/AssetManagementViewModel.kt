@@ -80,6 +80,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     override fun onCleared() {
         loopAllAssetDescriptionStatusJob?.cancel()
         inputJob?.cancel()
+        adapter.items.forEach { if (it is ItemAssetVM<*>) it.clear() }
         super.onCleared()
     }
 
