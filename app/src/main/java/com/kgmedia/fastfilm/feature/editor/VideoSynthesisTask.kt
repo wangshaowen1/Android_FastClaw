@@ -23,7 +23,7 @@ data class VideoSynthesisTask(
     val storyId: String?,
     private val storyboards: List<String>,
     var status: Int = STATUS_INIT,
-    private var reason: String? = ""
+    var reason: String? = ""
 ) {
 
     companion object {

@@ -66,25 +66,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
             }
 
             R.id.btnGenerate -> {
-                if (mRealVM.anyStoryboardGenerating()) {
-                    "视频正在生成中，请稍后再试".showToast()
-                    return
-                }
-                if (mRealVM.anyStoryboardFailed()) {
-                    "视频生成失败，请重新生成".showToast()
-                    return
-                }
-                val storyboards = mRealVM.adapter.items.mapNotNull { it.data.get()?.videoUrl }
-                if (storyboards.isEmpty()) {
-                    return
-                }
-                val task = VideoSynthesisTask(
-                    mRealVM.workId,
-                    mRealVM.storyId,
-                    storyboards
-                )
-                VideoSynthesisManager.synthesis(task)
-                finish()
+                mRealVM.synthesis()
             }
         }
     }

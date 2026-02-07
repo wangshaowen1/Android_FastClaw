@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
+import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.RetrofitClient
@@ -20,10 +21,13 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.kgmedia.fastfilm.kit.media.setPlayUrl
+import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.kuaige.videoedit.resource.UrlResource
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -59,6 +63,9 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         }
     }
     val playing by lazy { ObservableBoolean(true) }
+    private var synthesisDialog: GeneratingDialog? = null
+    private var synthesisTask: VideoSynthesisTask? = null
+    private var loopSynthesisStatusJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -66,9 +73,29 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     }
 
     override fun onCleared() {
+        loopSynthesisStatusJob?.cancel()
         adapter.items.forEach { it.clear() }
         super.onCleared()
         storyboardPlayer.release()
+    }
+
+    private fun loopSynthesisStatus() {
+        loopSynthesisStatusJob?.cancel()
+        loopSynthesisStatusJob = launch {
+            val task = synthesisTask
+            if (task != null) {
+                if (task.status == VideoSynthesisTask.STATUS_SUCCESS) {
+                    synthesisDialog?.dismiss()
+                    finish()
+                } else if (task.isSynthesising()) {
+                    delay(1000)
+                    loopSynthesisStatus()
+                } else if (task.isFailed()) {
+                    synthesisDialog?.dismiss()
+                    task.reason?.showToast()
+                }
+            }
+        }
     }
 
     fun getStoryboardList() {
@@ -206,4 +233,29 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
             }
         }
     }
+
+    fun synthesis() {
+        if (anyStoryboardGenerating()) {
+            "视频正在生成中，请稍后再试".showToast()
+            return
+        }
+        if (anyStoryboardFailed()) {
+            "视频生成失败，请重新生成".showToast()
+            return
+        }
+        val storyboards = adapter.items.mapNotNull { it.data.get()?.videoUrl }
+        if (storyboards.isEmpty()) {
+            return
+        }
+        topActivity?.let {
+            val dialog = GeneratingDialog(it, "视频合成中...")
+            synthesisDialog = dialog
+            dialog.show()
+        }
+        val task = VideoSynthesisTask(workId, storyId, storyboards)
+        synthesisTask = task
+        VideoSynthesisManager.synthesis(task)
+        loopSynthesisStatus()
+    }
+
 }
