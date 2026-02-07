@@ -62,29 +62,18 @@
             app:layout_constraintStart_toStartOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
-        <LinearLayout
-            android:id="@+id/btnAddImg"
+        <ImageView
             setVisible="@{item.status &lt; 1}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_ai_image_1"
+            android:tint="?attr/textColor4"
+            android:tintMode="src_in"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
-            app:layout_constraintTop_toTopOf="@+id/ivCover">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableTop="@drawable/icon_image_add"
-                android:drawablePadding="8dp"
-                android:text="设置角色形象"
-                android:textAppearance="@style/Text12"
-                android:textColor="?attr/textColor3" />
-
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
         <com.kgmedia.fastfilm.widget.GradientBorderView
             android:layout_width="0dp"
@@ -99,9 +88,9 @@
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etAssetDesc"
+            content="@{item.assetDesc}"
             onTextInputListener="@{item.assetDescInputListener}"
             setEditing="@{item.editingAssetDesc}"
-            content="@{item.assetDesc}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
@@ -109,7 +98,7 @@
             android:background="@drawable/fill_color1_r8"
             android:ellipsize="end"
             android:gravity="top"
-            android:hint="角色描述词"
+            android:hint="@{item.assetDescHint}"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
             android:padding="12dp"
             android:textAppearance="@style/Text13"
@@ -118,7 +107,8 @@
             app:layout_constraintDimensionRatio="229:130"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivCover"
-            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            tools:hint="角色描述词" />
 
         <View
             android:id="@+id/etAssetDescCover"
@@ -133,9 +123,9 @@
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etAssetName"
+            content="@{item.assetName}"
             onTextInputListener="@{item.assetNameInputListener}"
             setEditing="@{item.editingAssetName}"
-            content="@{item.assetName}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="6dp"
@@ -143,16 +133,17 @@
             android:drawableEnd="@drawable/icon_edit_text4_16"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:hint="角色名"
-            android:singleLine="true"
+            android:hint="@{item.assetNameHint}"
             android:paddingHorizontal="12dp"
+            android:singleLine="true"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
             android:textColorHint="?attr/textColor4"
             app:layout_constraintDimensionRatio="109:32"
             app:layout_constraintStart_toStartOf="@+id/etAssetDesc"
             app:layout_constraintTop_toBottomOf="@+id/etAssetDesc"
-            app:layout_constraintWidth_percent="0.29" />
+            app:layout_constraintWidth_percent="0.29"
+            tools:hint="角色名" />
 
         <View
             android:id="@+id/etAssetNameCover"

@@ -206,13 +206,20 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
 
                 R.id.btnDelete -> {
                     topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
-                        deleteAsset()
-                        adapter.remove(this)
+                        deleteAsset(this)
                     }
                 }
             }
         }
         return this
+    }
+
+    private fun deleteAsset(item: ItemAssetVM<*>) {
+        launchWithLoading {
+            response(item.deleteAsset()) {
+                adapter.remove(item)
+            }
+        }
     }
 
     fun oneKeyGenerate() {

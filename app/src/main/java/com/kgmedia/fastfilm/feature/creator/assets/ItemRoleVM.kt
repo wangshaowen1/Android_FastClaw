@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.creator.assets
 
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
@@ -43,6 +44,9 @@ class ItemRoleVM(
         }
     }
 
+    override val assetDescHint: String = "角色描述词"
+    override val assetNameHint: String = "角色名"
+
     override fun generate() {
         if (status.get() == 1) return
         val rolePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
@@ -79,11 +83,8 @@ class ItemRoleVM(
         }
     }
 
-    override fun deleteAsset() {
-        launch {
-            response(ApiFactory.apiService.workAssetRoleDelete(IdsBody(null, data.get()?.roleId))) {
-            }
-        }
+    override suspend fun deleteAsset(): ApiResponse<Any> {
+        return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetRoleDelete(IdsBody(null, data.get()?.appearanceId)) }
     }
 
     override fun loopGenStatus() {

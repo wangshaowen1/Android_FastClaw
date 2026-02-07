@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.creator.assets
 
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
@@ -42,6 +43,9 @@ class ItemSceneVM(
         }
     }
 
+    override val assetDescHint: String = "场景描述词"
+    override val assetNameHint: String = "场景名"
+
     override fun generate() {
         if (status.get() == 1) return
         val scenePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
@@ -77,11 +81,8 @@ class ItemSceneVM(
         }
     }
 
-    override fun deleteAsset() {
-        launch {
-            response(ApiFactory.apiService.workAssetSceneDelete(IdsBody(null, data.get()?.sceneId))) {
-            }
-        }
+    override suspend fun deleteAsset(): ApiResponse<Any> {
+        return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSceneDelete(IdsBody(null, data.get()?.appearanceId)) }
     }
 
     override fun loopGenStatus() {

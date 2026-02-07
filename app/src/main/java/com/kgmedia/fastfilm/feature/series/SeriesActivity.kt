@@ -21,6 +21,7 @@ import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import com.kgmedia.fastfilm.feature.series.management.WorksManagementActivity
 import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
+import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.Popup
 import com.kgmedia.fastfilm.widget.SeriesMorePopupView
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
@@ -164,24 +165,9 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 )
             }
 
-            EpisodeInfo.PROGRESS_ASSET_GENERATING -> {
-                //20=资产生成中
-                StoryEditorActivity.restore(
-                    this@SeriesActivity,
-                    3,
-                    mRealVM.workId,
-                    episodeInfo.storyId
-                )
-            }
-
-            EpisodeInfo.PROGRESS_STORYBOARD_GENERATING -> {
-                //30=分镜生成中
-                StoryEditorActivity.restore(
-                    this@SeriesActivity,
-                    4,
-                    mRealVM.workId,
-                    episodeInfo.storyId
-                )
+            EpisodeInfo.PROGRESS_ASSET_GENERATING, EpisodeInfo.PROGRESS_STORYBOARD_GENERATING -> {
+                //20=资产生成中 30=分镜生成中
+                AppRouter.startStory(mRealVM.workId, episodeInfo.storyId)
             }
 
             EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {

@@ -4,6 +4,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 
@@ -90,9 +91,16 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
         assetName.set(editingAssetNameText)
     }
 
+    abstract val assetDescHint: String
+    abstract val assetNameHint: String
+
     abstract fun generate()
 
-    abstract fun deleteAsset()
+    /**
+     * 删除资产
+     * @return 是否删除成功
+     */
+    abstract suspend fun deleteAsset(): ApiResponse<Any>
 
     abstract fun loopGenStatus()
 }
