@@ -1,7 +1,5 @@
 package com.kgmedia.fastfilm.feature.creator.storyboard
 
-import android.os.Handler
-import android.os.Looper
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import com.blankj.utilcode.util.KeyboardUtils
@@ -45,14 +43,14 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private val addStoryboardItem by lazy { ItemAddVM("添加分镜").apply { onItemClick.value = { addStoryboard(this) } } }
     private var editingStoryboardDescVM: ItemStoryboardVM? = null
     private var loopNextEnabledJob: Job? = null
+    private var loopAllStoryboardDescriptionStatusJob: Job? = null
+    private var inputJob: Job? = null
 
     /**
      * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
      */
     private var step = 0
     val nextEnabled by lazy { ObservableBoolean(false) }
-    private val handler by lazy { Handler(Looper.getMainLooper()) }
-    private var inputRunnable: Runnable? = null
     val keyboardHeight by lazy { ObservableInt() }
 
     override fun onResume() {
@@ -66,13 +64,19 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
             }
         }
-        loopNextEnabledJob = launch {
-            while (true) {
-                val containStoryboard = adapter.items.any { it is ItemStoryboardVM }
-                nextEnabled.set(containStoryboard && adapter.items.all { if (it is ItemStoryboardVM) it.data.get()?.imageGenerated == true else true })
-                delay(1000)
-            }
-        }
+        loopNextEnabled()
+    }
+
+    override fun onPause() {
+        loopNextEnabledJob?.cancel()
+        topActivity?.window?.let { KeyboardUtils.unregisterSoftInputChangedListener(it) }
+        super.onPause()
+    }
+
+    override fun onCleared() {
+        loopAllStoryboardDescriptionStatusJob?.cancel()
+        inputJob?.cancel()
+        super.onCleared()
     }
 
     fun retry() {
@@ -83,10 +87,14 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
-    override fun onPause() {
+    private fun loopNextEnabled() {
         loopNextEnabledJob?.cancel()
-        topActivity?.window?.let { KeyboardUtils.unregisterSoftInputChangedListener(it) }
-        super.onPause()
+        loopNextEnabledJob = launch {
+            val containStoryboard = adapter.items.any { it is ItemStoryboardVM }
+            nextEnabled.set(containStoryboard && adapter.items.all { if (it is ItemStoryboardVM) it.data.get()?.imageGenerated == true else true })
+            delay(1000)
+            loopNextEnabled()
+        }
     }
 
     private fun generateAllStoryboardDescription() {
@@ -107,22 +115,29 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun loopAllStoryboardDescriptionStatus() {
+        loopAllStoryboardDescriptionStatusJob?.cancel()
         loadState.set(LoadStateViewHolder.LOADING)
-        launch(block = {
+        loopAllStoryboardDescriptionStatusJob = launch(block = {
             var genStatus: Int? = 1
-            while (genStatus == 1) {
-                runCatching {
-                    val status = withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescriptionStatus(TaskIdBody(taskId, null)).data?.genStatus }
-                    genStatus = status
-                }
-                delay(3000)
+            runCatching {
+                val status = withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescriptionStatus(TaskIdBody(taskId, null)).data?.genStatus }
+                genStatus = status
             }
             //生成状态 [0=待生成 1=生成中 2=成功 3=失败]
-            if (genStatus == 2) {
-                step = 2
-                getStoryboards()
-            } else {
-                loadState.set(LoadStateViewHolder.RETRY)
+            when (genStatus) {
+                1 -> {
+                    delay(3000)
+                    loopAllStoryboardDescriptionStatus()
+                }
+
+                2 -> {
+                    step = 2
+                    getStoryboards()
+                }
+
+                else -> {
+                    loadState.set(LoadStateViewHolder.RETRY)
+                }
             }
         }, onError = {
             loadState.set(LoadStateViewHolder.RETRY)
@@ -174,13 +189,14 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
 
                 R.id.etStoryboardDescCover -> {
-                    inputRunnable?.let { handler.removeCallbacks(it) }
+                    inputJob?.cancel()
                     val edit: (delay: Long) -> Unit = { delay ->
                         editingStoryboardDescVM?.exitEditStoryboardDesc()
                         editingStoryboardDescVM = this
                         if (delay > 0) {
-                            inputRunnable = Runnable { editStoryboardDesc() }.also {
-                                handler.postDelayed(it, delay)
+                            inputJob = launch {
+                                delay(delay)
+                                editStoryboardDesc()
                             }
                         } else {
                             editStoryboardDesc()

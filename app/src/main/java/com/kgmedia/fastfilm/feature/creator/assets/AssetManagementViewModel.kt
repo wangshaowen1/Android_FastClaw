@@ -1,7 +1,5 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
-import android.os.Handler
-import android.os.Looper
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import com.blankj.utilcode.util.KeyboardUtils
@@ -47,14 +45,14 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private var editingAssetDescVM: ItemAssetVM<*>? = null
     private var editingAssetNameVM: ItemAssetVM<*>? = null
     private var loopNextEnabledJob: Job? = null
+    private var loopAllAssetDescriptionStatusJob: Job? = null
+    private var inputJob: Job? = null
 
     /**
      * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
      */
     private var step = 0
     val nextEnabled by lazy { ObservableBoolean(false) }
-    private val handler by lazy { Handler(Looper.getMainLooper()) }
-    private var inputRunnable: Runnable? = null
     val keyboardHeight by lazy { ObservableInt() }
 
     override fun onResume() {
@@ -70,13 +68,19 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
             }
         }
-        loopNextEnabledJob = launch {
-            while (true) {
-                val containAssets = adapter.items.any { it is ItemAssetVM<*> }
-                nextEnabled.set(containAssets && adapter.items.all { if (it is ItemAssetVM<*>) it.status.get() == 2 else true })
-                delay(1000)
-            }
-        }
+        loopNextEnabled()
+    }
+
+    override fun onPause() {
+        loopNextEnabledJob?.cancel()
+        topActivity?.window?.let { KeyboardUtils.unregisterSoftInputChangedListener(it) }
+        super.onPause()
+    }
+
+    override fun onCleared() {
+        loopAllAssetDescriptionStatusJob?.cancel()
+        inputJob?.cancel()
+        super.onCleared()
     }
 
     fun retry() {
@@ -87,10 +91,14 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
     }
 
-    override fun onPause() {
+    private fun loopNextEnabled() {
         loopNextEnabledJob?.cancel()
-        topActivity?.window?.let { KeyboardUtils.unregisterSoftInputChangedListener(it) }
-        super.onPause()
+        loopNextEnabledJob = launch {
+            val containAssets = adapter.items.any { it is ItemAssetVM<*> }
+            nextEnabled.set(containAssets && adapter.items.all { if (it is ItemAssetVM<*>) it.status.get() == 2 else true })
+            delay(1000)
+            loopNextEnabled()
+        }
     }
 
     private fun generateAllAssetDescription() {
@@ -111,22 +119,29 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     private fun loopAllAssetDescriptionStatus() {
+        loopAllAssetDescriptionStatusJob?.cancel()
         loadState.set(LoadStateViewHolder.LOADING)
-        launch(block = {
+        loopAllAssetDescriptionStatusJob = launch(block = {
             var genStatus: Int? = 1
-            while (genStatus == 1) {
-                runCatching {
-                    val status = withContext(Dispatchers.IO) { mRepo.workAssetAllStatus(taskId, null).data?.genStatus }
-                    genStatus = status
-                }
-                delay(3000)
+            runCatching {
+                val status = withContext(Dispatchers.IO) { mRepo.workAssetAllStatus(taskId, null).data?.genStatus }
+                genStatus = status
             }
             //生成状态 [0=待生成 1=生成中 2=成功 3=失败]
-            if (genStatus == 2) {
-                step = 2
-                getAssets()
-            } else {
-                loadState.set(LoadStateViewHolder.RETRY)
+            when (genStatus) {
+                1 -> {
+                    delay(3000)
+                    loopAllAssetDescriptionStatus()
+                }
+
+                2 -> {
+                    step = 2
+                    getAssets()
+                }
+
+                else -> {
+                    loadState.set(LoadStateViewHolder.RETRY)
+                }
             }
         }, onError = {
             loadState.set(LoadStateViewHolder.RETRY)
@@ -213,15 +228,16 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 R.id.etAssetDescCover -> {
-                    inputRunnable?.let { handler.removeCallbacks(it) }
+                    inputJob?.cancel()
                     val edit: (delay: Long) -> Unit = { delay ->
                         editingAssetDescVM?.exitEditAssetDesc()
                         editingAssetNameVM?.exitEditAssetName()
                         editingAssetDescVM = this
                         editingAssetNameVM = null
                         if (delay > 0) {
-                            inputRunnable = Runnable { editAssetDesc() }.also {
-                                handler.postDelayed(it, delay)
+                            inputJob = launch {
+                                delay(delay)
+                                editAssetDesc()
                             }
                         } else {
                             editAssetDesc()
