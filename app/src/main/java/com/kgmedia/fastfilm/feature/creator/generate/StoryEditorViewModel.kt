@@ -52,34 +52,57 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         storyId = mBundle.getString(Constants.Extra.STORY_ID)
         taskId = mBundle.getString(Constants.Extra.TASK_ID)
         previousStoryId = mBundle.getString(Constants.Extra.PREVIOUS_STORY_ID)
-        chapterIndex= mBundle.getInt(Constants.Extra.CHAPTER_INDEX, 1)
+        chapterIndex = mBundle.getInt(Constants.Extra.CHAPTER_INDEX, 1)
 
+        //中途恢复界面走这里
+        val newStep = mBundle.getInt(StoryEditorActivity.KEY_STEP, -1)
         when (model) {
             DramaGenerateConstants.MODEL_INSPIRATION -> {
-                step.value = 1
+                if (newStep != -1) {
+                    step.value = newStep
+                } else {
+                    step.value = 1
+                }
                 startFrom.value = 1
             }
 
             DramaGenerateConstants.MODEL_STORY -> {
-                step.value = 2
+                if (newStep != -1) {
+                    step.value = newStep
+                } else {
+                    step.value = 2
+                }
                 startFrom.value = 2
             }
 
             DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION -> {
-                step.value = 2
+                if (newStep != -1) {
+                    step.value = newStep
+                } else {
+                    step.value = 2
+                }
                 startFrom.value = 2
             }
 
             DramaGenerateConstants.MODEL_CONTINUE_STORY -> {
-                step.value = 2
+                if (newStep != -1) {
+                    step.value = newStep
+                } else {
+                    step.value = 2
+                }
                 startFrom.value = 2
             }
 
-            else -> step.value = mBundle.getInt(StoryEditorActivity.KEY_STEP, 1)//中途恢复界面走这里
+            else -> step.value = 1
         }
     }
 
-    fun nextStep(step: Int, workId: String? = null, storyId: String? = null, taskId: String? = null) {
+    fun nextStep(
+        step: Int,
+        workId: String? = null,
+        storyId: String? = null,
+        taskId: String? = null
+    ) {
         workId?.let {
             this.workId = it
         }

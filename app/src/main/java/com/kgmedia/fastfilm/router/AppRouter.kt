@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.text.TextUtils
+import android.util.Log
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import com.blankj.utilcode.util.ActivityUtils
@@ -162,6 +163,7 @@ object AppRouter : IRouter {
                 }
                 val singleEpisodeDetailsInfo = res.data
                 val sortNo= singleEpisodeDetailsInfo?.sortNo?:1
+                Log.i("测试一下","stepProgress:${singleEpisodeDetailsInfo?.stepProgress}")
                 when (singleEpisodeDetailsInfo?.stepProgress) {
                     EpisodeInfo.PROGRESS_DRAFT -> {
                         //10=剧本输入
