@@ -25,7 +25,7 @@ data class WorkInfo(
     val workCoverUrl: String? = null,
     //作品类型：1-灵感创作 2-小说改编
     val workType: Int? = null,
-    //作品状态：草稿（30=资产生成中） 生成中（40=分镜生成中 42=分镜视频生成中 50=合成中） 60=已完成 70=失败
+    //作品状态：草稿（20=剧本生成中 30=资产生成中） 生成中（40=分镜生成中  42=分镜视频生成中 50=待合成） 60=已完成 70=失败
     val workStatus: Int? = null,
     //总集数（规划集数）
     val totalEpisodeCnt: Int? = null,
@@ -44,11 +44,10 @@ data class WorkInfo(
 ) : Parcelable {
 
     companion object {
-        //草稿状态
+        //剧本生成中
+        const val DRAFT_GEN_STATE = 20
+        //资产生成中
         const val DRAFT_STATE = 30
-
-        //待合成状态
-        const val WAIT_STATE = 1002
 
         //分镜生成中
         const val GEN_MUSIC_BASE = 40
@@ -56,8 +55,8 @@ data class WorkInfo(
         //分镜视频生成中
         const val GEN_MUSIC_VIDEO = 42
 
-        //合成中状态
-        const val COMPOSING_STATE = 50
+        //待合成状态
+        const val WAIT_STATE = 50
 
         //已完成状态
         const val COMPLETED_STATE = 60
@@ -68,7 +67,12 @@ data class WorkInfo(
 
     //是否是生成中状态
     fun isGenerating(): Boolean {
-        return workStatus in listOf(GEN_MUSIC_BASE, GEN_MUSIC_VIDEO, COMPOSING_STATE)
+        return workStatus in listOf(GEN_MUSIC_BASE, GEN_MUSIC_VIDEO)
+    }
+
+    //草稿状态
+    fun isDraftStatus(): Boolean {
+        return workStatus in listOf( DRAFT_GEN_STATE,DRAFT_STATE)
     }
 
 

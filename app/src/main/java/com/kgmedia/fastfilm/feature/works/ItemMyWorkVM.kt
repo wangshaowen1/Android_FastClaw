@@ -16,9 +16,6 @@ class ItemMyWorkVM(
     //当前显示状态是查看(true)还是编辑(false)
     var isView = ObservableBoolean(true)
 
-    //当前合成状态
-    val workState = ObservableField(WorkInfo.COMPLETED_STATE)
-
     //是否选中
     val isSelected = ObservableBoolean(false)
 
