@@ -26,24 +26,18 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         const val DISPLAY_FAIL = 1
         const val DISPLAY_CONTENT = 0
     }
-
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
     var inspiration: String? = null
     var episodeRangeCode: String? = null
-
     //自定义集数
     var customEpisodeCount: String? = null
-
     //视频比例
     var videoRatio: String? = null
-
     //视频风格样式id
     var videoStyleId: String? = null
-
     //作品内容
     var mSSEContent = MutableLiveData<String>()
     var mContent = ObservableField<String>()
-
     // 作品名称
     var mWorkName = MutableLiveData<String>()
 
@@ -59,13 +53,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     fun sseGenerate() {
         nextStepEnabled.set(false)
         // 1. 准备请求 Flow
-        val sseFlow = mRepo.api.sseContentSynopsis(
-            AISynopsisBody(
-                inspiration,
-                episodeRangeCode,
-                customEpisodeCount
-            )
-        )
+        val sseFlow = mRepo.api.sseContentSynopsis(AISynopsisBody(inspiration, episodeRangeCode, customEpisodeCount))
         displayChild.set(DISPLAY_CONTENT)
         promptGenerating.value = true to "故事生成中..."
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
@@ -90,13 +78,10 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 onComplete = { originalContent ->
                     Logger.d("[SSE]", "Finished")
-                    if (originalContent.isNotEmpty()) {
-                        nextStepEnabled.set(true)
-                    }
                     originalJson = originalContent
                     // 触发原本结束后的逻辑
                     onSSECompleted?.invoke()
-                    promptGenerating.value = false to ""
+                    nextStepEnabled.set(true)
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
