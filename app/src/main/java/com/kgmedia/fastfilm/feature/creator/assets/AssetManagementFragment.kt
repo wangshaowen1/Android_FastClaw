@@ -28,7 +28,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
             }
         }
     private val layoutManager get() = bindingNullable?.rvAssets?.layoutManager as? LinearLayoutManager
-    val hostVm by lazy { getParentViewModel<StoryEditorViewModel>() }
+    private val hostVm by lazy { getParentViewModel<StoryEditorViewModel>() }
 
     override fun onPrepareView() {
         super.onPrepareView()

@@ -18,6 +18,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
+import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -38,7 +39,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 step = 1
             }
         }
-    val loadState by lazy { ObservableInt() }
+    val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
     val adapter by lazy { StoryboardDesignAdapter() }
     private val addStoryboardItem by lazy { ItemAddVM("添加分镜").apply { onItemClick.value = { addStoryboard(this) } } }
     private var editingStoryboardDescVM: ItemStoryboardVM? = null
@@ -52,6 +53,20 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private var step = 0
     val nextEnabled by lazy { ObservableBoolean(false) }
     val keyboardHeight by lazy { ObservableInt() }
+    private var generatingDialog: GeneratingDialog? = null
+    private var generating = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (value) {
+                    generatingDialog?.dismiss()
+                    generatingDialog = topActivity?.let { activity -> GeneratingDialog(activity, "分镜生成中...") }
+                    generatingDialog?.show()
+                } else {
+                    generatingDialog?.dismiss()
+                }
+            }
+        }
 
     override fun onResume() {
         super.onResume()
@@ -100,7 +115,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private fun generateAllStoryboardDescription() {
         if (step > 0) return
-        loadState.set(LoadStateViewHolder.LOADING)
+        generating = true
         launch(block = {
             val allStoryboardDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId)).data }
             taskId = allStoryboardDescriptionStatus?.taskId
@@ -109,15 +124,17 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 loopAllStoryboardDescriptionStatus()
             } else {
                 loadState.set(LoadStateViewHolder.RETRY)
+                generating = false
             }
         }, onError = {
             loadState.set(LoadStateViewHolder.RETRY)
+            generating = false
         })
     }
 
     private fun loopAllStoryboardDescriptionStatus() {
         loopAllStoryboardDescriptionStatusJob?.cancel()
-        loadState.set(LoadStateViewHolder.LOADING)
+        generating = true
         loopAllStoryboardDescriptionStatusJob = launch(block = {
             var genStatus: Int? = 1
             runCatching {
@@ -138,15 +155,17 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
                 else -> {
                     loadState.set(LoadStateViewHolder.RETRY)
+                    generating = false
                 }
             }
         }, onError = {
             loadState.set(LoadStateViewHolder.RETRY)
+            generating = false
         })
     }
 
     fun getStoryboards() {
-        loadState.set(LoadStateViewHolder.LOADING)
+        generating = true
         launch(
             block = {
                 val storyboards = mRepo.api.workStoryboardList(WorkBody(workId, storyId)).data
@@ -156,9 +175,11 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 adapter.submitList(items)
                 updateItemNo()
                 loadState.set(LoadStateViewHolder.CONTENT)
+                generating = false
             },
             onError = {
                 loadState.set(LoadStateViewHolder.RETRY)
+                generating = false
             }
         )
     }

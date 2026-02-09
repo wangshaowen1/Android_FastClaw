@@ -18,7 +18,7 @@ class StoryboardDesignFragment :
         fun newInstance() = StoryboardDesignFragment()
     }
 
-    val hostVm by lazy { getParentViewModel<StoryEditorViewModel>() }
+    private val hostVm by lazy { getParentViewModel<StoryEditorViewModel>() }
 
     override fun onPrepareView() {
         super.onPrepareView()

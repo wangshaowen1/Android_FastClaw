@@ -16,6 +16,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
+import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +38,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 step = 1
             }
         }
-    val loadState by lazy { ObservableInt() }
+    val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
     val adapter by lazy { AssetManagementAdapter() }
     private val addRoleItem by lazy { ItemAddVM("添加角色").apply { onItemClick.value = { addRole(this) } } }
     private val addSceneItem by lazy { ItemAddVM("添加场景").apply { onItemClick.value = { addScene(this) } } }
@@ -54,6 +55,20 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private var step = 0
     val nextEnabled by lazy { ObservableBoolean(false) }
     val keyboardHeight by lazy { ObservableInt() }
+    private var generatingDialog: GeneratingDialog? = null
+    private var generating = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (value) {
+                    generatingDialog?.dismiss()
+                    generatingDialog = topActivity?.let { activity -> GeneratingDialog(activity, "资产生成中...") }
+                    generatingDialog?.show()
+                } else {
+                    generatingDialog?.dismiss()
+                }
+            }
+        }
 
     override fun onResume() {
         super.onResume()
@@ -104,7 +119,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
 
     private fun generateAllAssetDescription() {
         if (step > 0) return
-        loadState.set(LoadStateViewHolder.LOADING)
+        generating = true
         launch(block = {
             val allAssetDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)).data }
             taskId = allAssetDescriptionStatus?.taskId
@@ -113,15 +128,17 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 loopAllAssetDescriptionStatus()
             } else {
                 loadState.set(LoadStateViewHolder.RETRY)
+                generating = false
             }
         }, onError = {
             loadState.set(LoadStateViewHolder.RETRY)
+            generating = false
         })
     }
 
     private fun loopAllAssetDescriptionStatus() {
         loopAllAssetDescriptionStatusJob?.cancel()
-        loadState.set(LoadStateViewHolder.LOADING)
+        generating = true
         loopAllAssetDescriptionStatusJob = launch(block = {
             var genStatus: Int? = 1
             runCatching {
@@ -142,15 +159,17 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
 
                 else -> {
                     loadState.set(LoadStateViewHolder.RETRY)
+                    generating = false
                 }
             }
         }, onError = {
             loadState.set(LoadStateViewHolder.RETRY)
+            generating = false
         })
     }
 
     fun getAssets() {
-        loadState.set(LoadStateViewHolder.LOADING)
+        generating = true
         launch(
             block = {
                 val rolesDeferred = async { mRepo.workAssetRoleList(null, null, null, storyId, workId).data }
@@ -169,9 +188,11 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 adapter.submitList(items)
                 updateItemNo()
                 loadState.set(LoadStateViewHolder.CONTENT)
+                generating = false
             },
             onError = {
                 loadState.set(LoadStateViewHolder.RETRY)
+                generating = false
             }
         )
     }
