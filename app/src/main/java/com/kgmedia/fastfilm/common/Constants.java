@@ -29,7 +29,7 @@ public class Constants {
     public static final String DEFAULT_USER_VIP_PROTOCOL_URL = "https://file.jinguomanju.com/data/protocol/hyxy.html";
 
     public static final String DEFAULT_ALGORITHM_ANNOUNCEMENT = "https://file.jinguomanju.com/data/protocol/tgLLM-algorithm.html";
-    public static final String THIRD_PARTY_INFORMATION_SHARING_LIST_HTML_URL = "https://file.jinguomanju.com/data/protocol/dsfxxgxqd.html";
+    public static final String THIRD_PARTY_INFORMATION_SHARING_LIST_HTML_URL = "https://file.kuaichupian.cn/data/protocol/sharing.html";
 
 
     public static final String KEY_UNLIMITED = "不限";

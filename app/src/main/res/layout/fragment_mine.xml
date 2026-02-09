@@ -99,6 +99,7 @@
                 android:id="@+id/iv_copy"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
+                singleClick="@{layout.clickHandler::onClick}"
                 android:layout_marginStart="6dp"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_copy"
