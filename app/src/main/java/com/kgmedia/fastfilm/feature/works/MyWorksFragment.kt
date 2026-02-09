@@ -19,6 +19,7 @@ import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
+import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
@@ -79,15 +80,17 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         binding.recyclerView.apply {
             addItemDecoration(SpaceDecoration(12.dp))
             addItemDecoration(BottomSpaceDecoration(80.dp))
+            val noMoreThreshold = 2
             itemAnimator = null
             val myMultiStatePagingFooterAdapter = MyMultiStatePagingFooterAdapter(
                 myWorksAdapter,
-                noMoreThreshold=6,
+                noMoreThreshold = noMoreThreshold,
                 noData = "暂无作品记录，快去创作你的作品吧",
             ) {
                 myWorksAdapter.retry()
             }
             adapter = myWorksAdapter.withLoadStateFooter(myMultiStatePagingFooterAdapter)
+            binding.recyclerView.applyGridSpanSizeLookup()
         }
         binding.srl.startRefreshWithAdapter(
             pagingDataAdapter = myWorksAdapter,

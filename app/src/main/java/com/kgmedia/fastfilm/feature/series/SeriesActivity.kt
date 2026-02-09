@@ -24,6 +24,7 @@ import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.Popup
 import com.kgmedia.fastfilm.widget.SeriesMorePopupView
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
+import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
@@ -83,6 +84,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     requestButtonTextAndImg = false,
                 )
             )
+            binding.recyclerView.applyGridSpanSizeLookup()
         }
         binding.loadStateViewHolder.apply {
             setGravityHorizontalTop(100.dp)
