@@ -63,36 +63,46 @@ class FeedListController(
     }
 
     private fun setupFirstLoadListener() {
-        adapter.addLoadStateListener { loadState ->
-            // 当数据刷新完成 (NotLoading) 且是第一次加载时触发
-            if (loadState.refresh is LoadState.NotLoading && isFirstLoad) {
-                if (adapter.itemCount > 0) {
-                    // 立即锁定，防止后续 LoadState 变化重复触发
-                    isFirstLoad = false
+        // [修改方案] 拆分触发逻辑：
+        // 1. 定义一个通用的检查并播放的方法
+        val checkAndPlay = {
+            if (isFirstLoad && adapter.itemCount > 0) {
+                Logger.d("FeedListController", "AutoPlay triggered! itemCount=${adapter.itemCount}")
+                // 立即锁定，防止重复触发
+                isFirstLoad = false
 
-                    recyclerView.post {
-                        if (recyclerView.isAttachedToWindow) {
-                            // [核心修复] 在这里统一处理跳转逻辑
-                            Logger.d(
-                                "FeedListController",
-                                "targetInitialPosition=$targetInitialPosition adapter.itemcount = ${adapter.itemCount}"
-                            )
-                            if (targetInitialPosition != -1 && targetInitialPosition < adapter.itemCount) {
-                                // 1. 直接闪现到指定位置 (使用 scrollToPositionWithOffset 确保准确置顶)
-                                layoutManager.scrollToPositionWithOffset(targetInitialPosition, 0)
-
-                                // 2. 再次 Post，等待 RecyclerView 布局稳定后，寻找 SnapView 并播放
-                                recyclerView.post {
-                                    playCurrentItem()
-                                }
-                            } else {
-                                // 默认逻辑：播放第 0 个
-                                playCurrentItem()
-                            }
+                recyclerView.post {
+                    if (recyclerView.isAttachedToWindow) {
+                        Logger.d(
+                            "FeedListController",
+                            "targetInitialPosition=$targetInitialPosition adapter.itemcount = ${adapter.itemCount}"
+                        )
+                        if (targetInitialPosition != -1 && targetInitialPosition < adapter.itemCount) {
+                            // 1. 直接闪现到指定位置
+                            layoutManager.scrollToPositionWithOffset(targetInitialPosition, 0)
+                            // 2. 等待布局稳定后播放
+                            recyclerView.post { playCurrentItem() }
+                        } else {
+                            // 默认播放第 0 个
+                            playCurrentItem()
                         }
                     }
                 }
             }
+        }
+
+        // 2. 监听 LoadState (保留，用于兼容网络加载的Loading->NotLoading状态切换)
+        adapter.addLoadStateListener { loadState ->
+            Logger.d("FeedListController", "LoadState: ${loadState.refresh}, Count: ${adapter.itemCount}")
+            if (loadState.refresh is LoadState.NotLoading) {
+                checkAndPlay.invoke()
+            }
+        }
+
+        // 3. [核心修复] 监听数据页面更新 (专门解决 PagingData.from 内存数据不触发 LoadState 变化的问题)
+        adapter.addOnPagesUpdatedListener {
+            Logger.d("FeedListController", "PagesUpdated! Count: ${adapter.itemCount}")
+            checkAndPlay.invoke()
         }
     }
 

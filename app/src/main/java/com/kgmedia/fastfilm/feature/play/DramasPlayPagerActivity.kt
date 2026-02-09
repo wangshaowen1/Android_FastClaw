@@ -63,12 +63,6 @@ class DramasPlayPagerActivity :
         lifecycleScope.launch {
             mRealVM.feedFlow.collectLatest {
                 adapter.submitData(it)
-                binding.recyclerView.doOnLayout {
-                    if (initialPos<(binding.recyclerView.adapter?.itemCount?:0)){
-                        binding.recyclerView.smoothScrollToPosition(initialPos)
-                    }
-                    listController.playCurrentItem()
-                }
             }
         }
 
