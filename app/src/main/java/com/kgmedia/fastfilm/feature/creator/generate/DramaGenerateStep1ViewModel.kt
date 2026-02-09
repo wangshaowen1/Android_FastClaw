@@ -8,8 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.EpisodeSseProcessor
 import com.kgmedia.fastfilm.core.response
@@ -124,7 +126,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
      * 确认生成
      * @param onSuccess 成功回调，返回作品ID
      */
-    fun confirmGenerate(onSuccess: ((String?, String?) -> Unit)? = null) {
+    fun confirmGenerate(mdContent: String?, onSuccess: ((String?, String?) -> Unit)? = null) {
         launchWithLoading {
             val body = CreateWorkBody(
                 workTitle = mWorkName.value,
@@ -135,8 +137,42 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 totalEpisodeCntCode = episodeRangeCode
             )
             response(mRepo.api.saveWorkSummary(body)) {
-                onSuccess?.invoke(data?.workId, data?.storyId)
+                saveDesc(mdContent, data?.workId) {
+                    onSuccess?.invoke(data?.workId, data?.storyId)
+                }
             }
         }
+    }
+
+    fun saveDesc(mdContent: String?, workId: String?, onSuccess: (() -> Unit)? = null) {
+        requestWithLoading({
+            mRepo.api.updateWorkInfo(
+                WorkInfoUpdateBody(
+                    workId,
+                    workDesc = parseSeasonOverview(mdContent ?: "")
+                )
+            )
+        }) {
+            onSuccess?.invoke()
+        }
+    }
+
+    fun parseSeasonOverview(rawText: String): String {
+        Logger.d("mdContent", rawText)
+        val afterKeyword = rawText.substringAfter("整季梗概：", "")
+
+        // 2. 找到第一个出现“第”字的地方（通常是 第1集 的开始）
+        // 这样可以确保完全切断后续的集数内容
+        val content = if (afterKeyword.contains("第")) {
+            afterKeyword.substringBefore("第")
+        } else {
+            afterKeyword
+        }
+
+        // 3. 清理杂质：去除全角空格 (\u3000)、换行符、Markdown 符号
+        return content
+            .replace("\u3000", "") // 去除全角空格
+            .replace(">", "")      // 去除可能存在的引用符
+            .trim()                // 去除首尾不可见字符
     }
 }

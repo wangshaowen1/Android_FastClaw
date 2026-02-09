@@ -112,7 +112,7 @@ class DramaGenerateStep1Fragment :
             "故事生成中，请稍候".showToast()
         }
         binding.btnNext.setOnSingleClickListener {
-            mRealVM.confirmGenerate { workId, storyId ->
+            mRealVM.confirmGenerate(markDownTextView.text.toString()) { workId, storyId ->
                 hostVm?.nextStep(2, workId, storyId)
             }
         }
