@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
  */
 class StorySseProcessor(
     private val scope: CoroutineScope,
+    private val onTitleBack: (String) -> Unit,
     private val onStoryUpdate: (String) -> Unit, // 只关注 story 内容
     private val onStart: () -> Unit,
     private val onComplete: (String) -> Unit,    // 完成时返回完整 JSON
@@ -20,12 +21,16 @@ class StorySseProcessor(
     private val fullSourceAccumulator = StringBuilder()
 
     private val parser = JsonSseFieldStreamer(
+        onTitleUpdate = {title->
+            onTitleBack.invoke(title)
+        },
         onStoryUpdate = { content ->
             scope.launch(Dispatchers.Main) {
                 Logger.d("StorySseProcessor", "content: $content")
                 onStoryUpdate(content)
             }
         }
+
     )
 
     override fun onSSEStart() {

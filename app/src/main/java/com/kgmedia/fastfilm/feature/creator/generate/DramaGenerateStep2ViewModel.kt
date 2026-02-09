@@ -66,6 +66,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     //上一集的剧集id,只有续写的时候才有
     var previousStoryId: String? = null
 
+    // 作品名称
+    var mWorkName = MutableLiveData<String>()
+
 
     val nextStepEnabled by lazy { ObservableBoolean(false) }
     val sseOutputComplete by lazy { MutableLiveData(false) }
@@ -117,6 +120,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     originalJson = ""
                     Logger.d("[SSE]", "Open")
                 },
+                onTitleBack = { title ->
+                    mWorkName.value = parseCleanTitle(title)
+                },
                 onStoryUpdate = { fullContent ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
                     input.value = fullContent
@@ -143,6 +149,18 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         sseHandler?.start(sseFlow)
     }
 
+
+    fun parseCleanTitle(rawTitle: String): String {
+        // 正则解释：
+        // ^      : 匹配字符串开头
+        // 第     : 匹配“第”字
+        // \d+    : 匹配一个或多个数字
+        // 集     : 匹配“集”字
+        // [：:\s]* : 匹配后面可能跟着的 中文冒号、英文冒号 或 空格 (0次或多次)
+        val regex = Regex("^第\\d+集[：:\\s]*")
+
+        return rawTitle.replace(regex, "")
+    }
     /**
      * 页面销毁或需要重置时调用
      */

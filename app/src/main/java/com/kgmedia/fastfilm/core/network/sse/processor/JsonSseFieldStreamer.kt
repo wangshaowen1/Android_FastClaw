@@ -1,7 +1,5 @@
 package com.kgmedia.fastfilm.core.network.sse.processor
 
-import com.nhsd.basic.utils.Logger
-
 class JsonSseFieldStreamer(
     private val onTitleUpdate: ((String) -> Unit)? = null,
     private val onMdUpdate: ((String) -> Unit)? = null,
@@ -18,7 +16,7 @@ class JsonSseFieldStreamer(
         SKIP_VALUE
     }
 
-    private enum class Target { NONE, TITLE, MD, STORY }
+    private enum class Target { NONE, TITLE, EPISODE_TITLE, MD, STORY }
 
     private var state = State.SEEK_KEY
     private var target = Target.NONE
@@ -74,6 +72,7 @@ class JsonSseFieldStreamer(
                 if (c == '"') {
                     target = when (keyBuf.toString()) {
                         "title" -> Target.TITLE
+                        "episode_title" -> Target.EPISODE_TITLE
                         "md" -> Target.MD
                         "story_content" -> Target.STORY
                         else -> Target.NONE
@@ -169,6 +168,13 @@ class JsonSseFieldStreamer(
 
         when (target) {
             Target.TITLE -> {
+                // Title 保持原样：只在结束时发送一次
+                if (isFinal) {
+                    onTitleUpdate?.invoke(valueBuf.toString())
+                }
+            }
+
+            Target.EPISODE_TITLE -> {
                 // Title 保持原样：只在结束时发送一次
                 if (isFinal) {
                     onTitleUpdate?.invoke(valueBuf.toString())

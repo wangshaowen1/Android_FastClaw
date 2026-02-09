@@ -67,6 +67,11 @@ class DramaGenerateStep2Fragment :
         mRealVM.sseOutputComplete.observe(this) {
             hostVm?.backWarning = false
         }
+        mRealVM.mWorkName.observe(this) {
+            if (hostVm?.title?.value != it) {
+                hostVm?.title?.value = it
+            }
+        }
         binding.inputView.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 mRealVM.input.value = s.toString()
