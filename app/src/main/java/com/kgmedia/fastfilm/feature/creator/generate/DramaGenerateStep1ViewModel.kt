@@ -90,7 +90,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 onComplete = { originalContent ->
                     Logger.d("[SSE]", "Finished")
-                    if (originalContent.isNotEmpty()) {
+                    Logger.d("[SSE]", "nextStepEnabled：${originalContent}")
+                    if (originalContent.isNotBlank()) {
                         nextStepEnabled.set(true)
                     }
                     originalJson = originalContent
