@@ -73,7 +73,7 @@
 <!--        android:onClick="@{(v)->item.onItemClick.invoke(v)}"-->
         <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
             android:id="@+id/tvContent"
-            expandContent="@{item.data.seriesIntroduction(0)}"
+            expandContent="@{item.data.workDesc}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"
