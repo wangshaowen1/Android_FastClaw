@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- drawable/ic_my_wallet_with_right_padding.xml -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:drawable="@drawable/ic_my_wallet"
-        android:right="2dp" /> <!-- 这里设置你想要的右边距，比如 8dp -->
-</layer-list>
