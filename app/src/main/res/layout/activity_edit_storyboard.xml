@@ -70,7 +70,6 @@
                 android:layout_width="32dp"
                 android:layout_height="16dp"
                 android:layout_margin="8dp"
-                android:src="@drawable/icon_ai_label"
                 app:layout_constraintStart_toStartOf="@+id/storyboardPlayer"
                 app:layout_constraintTop_toTopOf="@+id/storyboardPlayer"
                 tools:text="AI生成" />
@@ -173,7 +172,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
-                android:src="@drawable/icon_ai_label"
                 app:layout_constraintStart_toStartOf="@+id/ivCover"
                 app:layout_constraintTop_toTopOf="@+id/ivCover" />
 

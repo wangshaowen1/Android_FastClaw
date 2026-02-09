@@ -38,7 +38,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
-            android:src="@drawable/icon_ai_label"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
