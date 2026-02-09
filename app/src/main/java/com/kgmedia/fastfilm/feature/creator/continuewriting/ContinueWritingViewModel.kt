@@ -139,10 +139,10 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
             append("第")
             append(episode.sortNo)
             append("集")
-            if (!episode.storyTitle.isNullOrBlank()) {
-                append(" | ")
-                append(episode.storyTitle)
-            }
+//            if (!episode.storyTitle.isNullOrBlank()) {
+//                append(" | ")
+//                append(episode.storyTitle)
+//            }
         })
     }
 
