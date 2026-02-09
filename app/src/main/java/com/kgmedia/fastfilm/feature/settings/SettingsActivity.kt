@@ -17,16 +17,13 @@ import com.kgmedia.fastfilm.feature.mine.PhoneShowActivity
 import com.kgmedia.fastfilm.feature.settings.about.AboutUsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
 import com.kgmedia.fastfilm.feature.settings.logoff.LogoffActivity
-import com.kgmedia.fastfilm.feature.settings.personal.PersonalInformationActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.kit.SignUtils
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.actionsheet.ActionSheetHelper
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.setOnSingleClickListener
-import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -84,7 +81,6 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                     return
                 }
                 //个人资料
-                PersonalInformationActivity.start(this)
             }
 
             R.id.sll_about_us -> {

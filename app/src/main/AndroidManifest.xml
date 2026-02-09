@@ -206,16 +206,6 @@
         <activity android:name=".feature.settings.logoff.LogoffActivity" />
         <!--申请注销-->
         <activity android:name=".feature.settings.logoff.ApplyLogOffActivity" />
-        <!--个人资料-->
-        <activity
-            android:name=".feature.settings.personal.PersonalInformationActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--会员权益-->
-        <activity
-            android:name=".feature.payment.vip.MembershipBenefitsActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <!--绑定手机号-->
         <activity
             android:name=".feature.login.bind.BindPhoneActivity"
@@ -229,32 +219,6 @@
             android:name=".feature.login.LoginDialog"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--          android:theme="@style/Theme.ActivityBottomDialogStyle"-->
-        <!--积分充值-->
-        <activity
-            android:name=".feature.payment.points.PointsRechargeActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--积分明细-->
-        <activity
-            android:name=".feature.payment.points.details.PointsDetailActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--邀请明细-->
-        <activity
-            android:name=".feature.invitation.InvitationDetailsActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--提现明细-->
-        <activity
-            android:name=".feature.wallet.details.WithdrawalDetailsActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--创造收益-->
-        <activity
-            android:name=".feature.revenue.CreateRevenueActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
         <!--作品管理-->
         <activity
             android:name=".feature.series.management.WorksManagementActivity"
@@ -321,12 +285,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature.timbre.TimbreExtractionActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.timbre.MyTimbresActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".feature.creator.generate.StoryEditorActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -339,31 +297,13 @@
             android:name=".feature.mine.PhoneShowActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".feature.wallet.withdraw.WithdrawActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.message.systemnotice.SystemNoticeActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".feature.creator.CreationRootActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".feature.series.SeriesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".feature.series.editinfo.EditInfoActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".feature.creator.continuewriting.ContinueWritingActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.message.likes.SystemMessageLikesActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.message.watching.SystemMessageWatchingActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.creator.character.CharacterHistoryActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".feature.play.DramasPlayPagerActivity"

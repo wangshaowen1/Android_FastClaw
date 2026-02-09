@@ -12,7 +12,6 @@ import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.databinding.DialogEpisodeShareBinding
 import com.kgmedia.fastfilm.feature.play.more.DownloadTypeDialog
-import com.kgmedia.fastfilm.feature.play.more.ShortInfoEditorDialog
 import com.kgmedia.fastfilm.feature.settings.report.ReportActivity
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.getParcelableValue
@@ -76,9 +75,6 @@ class EpisodeShareDialog : BaseBottomPushVMDialogFragment<DialogEpisodeShareBind
             }
 
             R.id.btnDownload -> {
-                if (drama?.isMine == true)
-                    DownloadTypeDialog.show(this, drama?.dramasSeries?.seriesCoverUrl, drama?.dramasSeries?.seriesName, drama?.artist?.nickName)
-                else "暂不支持下载Ta人作品".showToast()
             }
 
             R.id.btnReport -> {
@@ -86,15 +82,6 @@ class EpisodeShareDialog : BaseBottomPushVMDialogFragment<DialogEpisodeShareBind
             }
 
             R.id.btnEdit -> {
-                activity?.supportFragmentManager?.let {
-                    ShortInfoEditorDialog.show(
-                        it,
-                        drama?.dramasId,
-                        drama?.dramasName,
-                        drama?.scriptIntro
-                    )
-                    dismissAllowingStateLoss()
-                }
             }
         }
     }

@@ -9,7 +9,6 @@ import androidx.viewpager.widget.ViewPager
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.ActivityCreationRootBinding
-import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingListFragment
 import com.nhsd.basic.BaseViewModelActivity
 
 /**
