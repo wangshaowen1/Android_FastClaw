@@ -13,6 +13,8 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class VideoConfigInfo(
+    //配置名称
+    val configName: String? = null,
     val configCode: String? = null,
     //配置值
     val configValue: String? = null,

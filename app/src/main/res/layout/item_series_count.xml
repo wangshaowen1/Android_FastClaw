@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:minWidth="52dp"
-            android:text="@{item.data.configValue}"
+            android:text="@{item.data.configName}"
             android:textColor="?attr/textColor2"
             android:visibility="@{item.data.customInput&amp;&amp;item.checked?View.GONE:View.VISIBLE}"
             tools:text="自定义集数"
