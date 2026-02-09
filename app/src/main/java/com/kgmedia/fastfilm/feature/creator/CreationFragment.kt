@@ -53,6 +53,9 @@ class CreationFragment :
             binding.lyricPrompts.setTags(it?.mapNotNull { it1 -> it1.configCode }, true)
         }
         binding.lyricPrompts.setOnItemClickListener { _, index ->
+            if(mRealVM.isStreaming()){
+                return@setOnItemClickListener true
+            }
             val tagConfigCode = binding.lyricPrompts.tags.getOrNull(index)
             mRealVM.inspirationPrompts.value?.forEach { (configCode, configValue) ->
                 if (configCode == tagConfigCode) {
@@ -154,6 +157,9 @@ class CreationFragment :
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
                 }
+                if(mRealVM.isStreaming()){
+                    return
+                }
                 if (mRealVM.inspirationModel()) {
                     EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_OPTIMIZE_BUTTON)
                 } else {
@@ -167,11 +173,13 @@ class CreationFragment :
                     return
                 }
                 mRealVM.randomInspirations(true)
-
             }
 
             R.id.btnRandomPrompt -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
+                    return
+                }
+                if(mRealVM.isStreaming()){
                     return
                 }
                 EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_RANDOM_INSPIRATION_BUTTON)
@@ -182,6 +190,9 @@ class CreationFragment :
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
+                if(mRealVM.isStreaming()){
+                    return
+                }
                 mRealVM.input.value = ""
             }
 
@@ -189,11 +200,17 @@ class CreationFragment :
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
+                if(mRealVM.isStreaming()){
+                    return
+                }
                 mRealVM.input.value = ClipboardUtils.getText().toString()
             }
 
             R.id.btnNext -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
+                    return
+                }
+                if(mRealVM.isStreaming()){
                     return
                 }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {

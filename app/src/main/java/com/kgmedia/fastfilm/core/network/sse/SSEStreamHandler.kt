@@ -7,6 +7,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -20,10 +22,14 @@ class SSEStreamHandler(
 
     // 新增：防止重复调用 onComplete
     private var isCompleted = false
+    private val _isStreaming = MutableStateFlow(false)
+    val isStreaming = _isStreaming.asStateFlow()
 
     fun start(flow: Flow<SSEvent>) {
         cancel()
         isCompleted = false // 重置标志位
+
+        _isStreaming.value = true
 
         job = scope.launch {
             try {
@@ -74,6 +80,7 @@ class SSEStreamHandler(
                 if (isActive && !isCompleted) {
                     handleComplete()
                 }
+                _isStreaming.value = false
             }
         }
     }
@@ -81,11 +88,13 @@ class SSEStreamHandler(
     private fun handleComplete() {
         if (!isCompleted) {
             isCompleted = true
+            _isStreaming.value = false
             processor.onSSEComplete()
         }
     }
 
     fun cancel() {
+        _isStreaming.value = false
         job?.cancel()
         job = null
     }

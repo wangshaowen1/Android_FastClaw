@@ -63,6 +63,10 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     private var sseHandler: SSEStreamHandler? = null
 
+    fun isStreaming(): Boolean {
+        return sseHandler?.isStreaming?.value ?: false
+    }
+
     fun sseGenerate(bizType: Int? = null, promptGeneratingContent: String?) {
         promptGenerating.value = true to (promptGeneratingContent ?: "")
         val sseFlow =
