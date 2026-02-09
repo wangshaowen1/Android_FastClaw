@@ -100,7 +100,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         val user = User.get()
         userInfo.set(
             mapOf(
-                "id" to user.userName,
+                "id" to user.userId,
                 "nickname" to user.nickName,
                 "avatar" to user.avatarUrl,
             )

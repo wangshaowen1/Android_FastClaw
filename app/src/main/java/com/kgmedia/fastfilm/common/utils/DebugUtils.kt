@@ -10,7 +10,7 @@ object DebugUtils {
             "郭义明：192.168.10.44",
             "测试外网：https://short-api.mynatapp.cc",
             "预发布：120.24.240.28:9010",
-            "正式环境：jk.jinguomanju.com"
+            "正式环境：kuaichupianjk.kuaigeai.cn"
         )
     }
     val ips by lazy {
@@ -20,7 +20,7 @@ object DebugUtils {
             "http://192.168.10.44:8088",
             "https://short-api.mynatapp.cc",
             "http://120.24.240.28:7010",
-            "https://jk.jinguomanju.com"
+            "https://kuaichupianjk.kuaigeai.cn"
         )
     }
 

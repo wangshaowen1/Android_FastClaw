@@ -235,7 +235,7 @@ android {
         //生产环境
         production {
             dimension 'env'
-            buildConfigField 'String', 'SERVER_URL', '"https://jk.jinguomanju.com"'
+            buildConfigField 'String', 'SERVER_URL', '"https://kuaichupianjk.kuaigeai.cn"'
         }
         arch32 {
             dimension 'arch'
