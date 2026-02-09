@@ -4,7 +4,7 @@ package com.kgmedia.fastfilm.core.network.apis;
 public class ApiException extends RuntimeException {
 
     //token失效
-    public static final int AUTHORIZATION_ERROR = 110;
+    public static final int AUTHORIZATION_ERROR = 1001;
     //已注销用户
     public static final int LOGGED_OUT_USER = 112;
 
