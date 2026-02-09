@@ -183,7 +183,7 @@
             android:visibility="@{layout.inspirationModel()?View.VISIBLE:View.GONE}"
             app:cacheMode="none"
             app:horizontalSpace="@dimen/spacing_m"
-            app:maxLines="3"
+            app:maxLines="2"
             app:tagBackground="@drawable/selector_prompts"
             app:tagSelectMode="single"
             app:tagTextColor="?attr/textColor3"

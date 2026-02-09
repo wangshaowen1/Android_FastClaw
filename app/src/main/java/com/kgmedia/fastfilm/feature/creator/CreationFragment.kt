@@ -50,11 +50,15 @@ class CreationFragment :
         super.onPrepareView()
         initView()
         mRealVM.inspirationPrompts.observe(this) {
-            binding.lyricPrompts.setTags(it?.mapNotNull { it1 -> it1.configValue }, true)
+            binding.lyricPrompts.setTags(it?.mapNotNull { it1 -> it1.configCode }, true)
         }
         binding.lyricPrompts.setOnItemClickListener { _, index ->
-            binding.lyricPrompts.tags.getOrNull(index)?.let {
-                mRealVM.input.value = it
+            val tagConfigCode = binding.lyricPrompts.tags.getOrNull(index)
+            mRealVM.inspirationPrompts.value?.forEach { (configCode, configValue) ->
+                if (configCode == tagConfigCode) {
+                    mRealVM.input.value = configValue
+                    return@forEach
+                }
             }
             false
         }

@@ -20,8 +20,6 @@ class CreationRootViewModel : AppRepositoryViewModel<CreationRepository>() {
     val tabIndicatorPosition by lazy { ObservableFloat(0f) }
     val selectedTab by lazy { MutableLiveData<Int>() }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
+
 
 }
