@@ -158,21 +158,38 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     }
 
     fun parseSeasonOverview(rawText: String): String {
-        Logger.d("mdContent", rawText)
-        val afterKeyword = rawText.substringAfter("整季梗概：", "")
+        // 1. 预处理：标准化空白字符
+        // 把所有的 全角空格(\u3000)、制表符(\t)、换行(\n) 都变成单个普通空格
+        // 这样 "整季梗概：\n   \u3000  内容" 就会变成 "整季梗概： 内容"
+        val normalizedText = rawText.replace(Regex("[\\s\\u3000]+"), " ")
 
-        // 2. 找到第一个出现“第”字的地方（通常是 第1集 的开始）
-        // 这样可以确保完全切断后续的集数内容
-        val content = if (afterKeyword.contains("第")) {
-            afterKeyword.substringBefore("第")
+        // 2. 定位起点
+        val startKeyword = "整季梗概："
+        val startIndex = normalizedText.indexOf(startKeyword)
+        if (startIndex == -1) return "" // 没找到直接返回空
+
+        // 截取起点之后的所有内容（此时内容已经是单行，没有乱七八糟的符号了）
+        val contentAfterStart = normalizedText.substring(startIndex + startKeyword.length)
+
+        // 3. 智能定位终点（核心优化）
+        // 匹配模式： "第" + (空格可选) + (阿拉伯数字 或 中文数字) + (空格可选) + "集"
+        // 例子能匹配： "第1集", "第一集", "第 1 集", "第 十二 集"
+        val nextEpisodeRegex = Regex("第\\s*[0-9一二三四五六七八九十]+\\s*集")
+
+        val matchResult = nextEpisodeRegex.find(contentAfterStart)
+
+        val finalContent = if (matchResult != null) {
+            // 找到了下一集的开头，截取到这里为止
+            contentAfterStart.take(matchResult.range.first)
         } else {
-            afterKeyword
+            // 没找到下一集（可能只有梗概），直接取全部
+            contentAfterStart
         }
 
-        // 3. 清理杂质：去除全角空格 (\u3000)、换行符、Markdown 符号
-        return content
-            .replace("\u3000", "") // 去除全角空格
-            .replace(">", "")      // 去除可能存在的引用符
-            .trim()                // 去除首尾不可见字符
+        // 4. 最终净化
+        return finalContent
+            .replace(">", "")      // 去除 Markdown 引用符
+            .replace("*", "")      // 去除 Markdown 加粗符
+            .trim()                // 去除首尾空格
     }
 }
