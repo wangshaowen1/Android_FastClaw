@@ -268,10 +268,9 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     if (assetDesc.get().isNullOrEmpty()) {
                         edit.invoke(0)
                     } else {
-                        edit.invoke(0)
-//                        topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
-//                            edit.invoke(200)
-//                        }
+                        topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
+                            edit.invoke(200)
+                        }
                     }
                 }
 
