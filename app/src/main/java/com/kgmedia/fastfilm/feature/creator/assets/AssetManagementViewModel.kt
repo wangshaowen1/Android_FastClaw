@@ -307,6 +307,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     fun oneKeyGenerate() {
+        var notInput = false
         val notGenerateItems = arrayListOf<ItemAssetVM<*>>()
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemAssetVM<*>) {
@@ -314,12 +315,15 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     val assetDesc = item.assetDesc.get()
                     val assetName = item.assetName.get()
                     if (assetDesc.isNullOrEmpty() || assetName.isNullOrEmpty()) {
-                        "您还有资产尚未填写描述，请补充后再继续".showToast()
-                        return
+                        notInput = true
+                    } else {
+                        notGenerateItems.add(item)
                     }
-                    notGenerateItems.add(item)
                 }
             }
+        }
+        if (notInput) {
+            "您还有资产尚未填写描述，请补充后再继续".showToast()
         }
         if (notGenerateItems.isEmpty()) {
 
