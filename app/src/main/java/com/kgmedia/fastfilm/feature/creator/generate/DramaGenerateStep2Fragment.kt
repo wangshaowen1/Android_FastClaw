@@ -2,8 +2,10 @@ package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.os.Bundle
 import android.text.Editable
+import androidx.core.view.isVisible
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
+import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
@@ -77,6 +79,11 @@ class DramaGenerateStep2Fragment :
         binding.btnNext.setOnSingleClickListener {
             mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId, taskId ->
                 hostVm?.nextStep(3, workId, storyId, taskId)
+            }
+        }
+        binding.vInputConfirm.setOnSingleClickListener {
+            mActivity.showConfirmPrompt("您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
+                binding.vInputConfirm.isVisible = false
             }
         }
         binding.btnDelete.setOnSingleClickListener {

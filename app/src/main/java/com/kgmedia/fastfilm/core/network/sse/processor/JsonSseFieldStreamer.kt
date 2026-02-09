@@ -93,6 +93,7 @@ class JsonSseFieldStreamer(
                     // 简易转义：物理换行符保留原意，其他保留转义后字符
                     valueBuf.append(if (c == 'n') '\n' else c)
                     escape = false
+                    emit(false)
                 } else {
                     when (c) {
                         '\\' -> escape = true
@@ -138,6 +139,8 @@ class JsonSseFieldStreamer(
                             valueBuf.append(pendingWs)
                             pendingWs.setLength(0)
                         }
+
+                        emit(false)
 
                         // 3. 处理当前字符
                         if (c == '"') {
