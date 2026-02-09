@@ -17,6 +17,8 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.GsonUtils
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.BuildConfig
 import com.kgmedia.fastfilm.R
@@ -32,7 +34,6 @@ import com.kgmedia.fastfilm.common.permissions.requestRxPermissions
 import com.kgmedia.fastfilm.common.utils.ImageSaveHelper
 import com.kgmedia.fastfilm.common.utils.IntentUtils
 import com.kgmedia.fastfilm.core.CookieUtils
-import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.createAppPayment
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
@@ -49,11 +50,8 @@ import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity.Companion.launch
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.Session
-import com.nhsd.basic.bus.observeEvent
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.paddingStatusBar
@@ -87,22 +85,23 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
         }
     }
 
+    //private val mShareManager by lazy { ShareManager(mActivity) }
     private var bridge: WebViewJavascriptBridge? = null
     private var gson: Gson? = null
 
     private var mUploadCallbackBelow: ValueCallback<Uri>? = null
-    private var mUploadCallbackAboveL: ValueCallback<Array<Uri>>? = null
+    private var mUploadCallbackAboveL: ValueCallback<Array<Uri?>?>? = null
 
     private val mWebViewClient = object : WebViewClient() {
-        override fun onPageFinished(view: WebView, url: String) {
+        override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             mRealVM.isLoading.value = false
             binding.viewAnimator.displayedChild = if (mRealVM.isLoadError.value == true) 1 else 0
             binding.progressbar.isVisible = false
         }
 
-        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-            if (TextUtils.isEmpty(url)) return true
+        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+            if (url.isNullOrEmpty()) return true
             if (url.contains("newView")) {
                 launch(mActivity, url, mRealVM.interceptBack)
                 return true
@@ -110,12 +109,7 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
             return !url.startsWith("http") || super.shouldOverrideUrlLoading(view, url)
         }
 
-        override fun onReceivedError(
-            view: WebView,
-            errorCode: Int,
-            description: String,
-            failingUrl: String
-        ) {
+        override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
             mRealVM.isLoadError.value = true
             mRealVM.isLoading.value = false
             binding.viewAnimator.displayedChild = 1
@@ -124,13 +118,13 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
             binding.netPromptView.setText(R.string.page_network_error)
         }
 
-        override fun onReceivedSslError(view: WebView, handler: SslErrorHandler, error: SslError) {
-            handler.proceed()
+        override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+            handler?.proceed()
         }
     }
 
     private val mWebChromeClient = object : WebChromeClient() {
-        override fun onProgressChanged(view: WebView, newProgress: Int) {
+        override fun onProgressChanged(view: WebView?, newProgress: Int) {
             if (newProgress == 100) {
                 binding.progressbar.isVisible = false
             } else {
@@ -141,30 +135,25 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
             super.onProgressChanged(view, newProgress)
         }
 
-        override fun onReceivedTitle(view: WebView, title: String) {
+        override fun onReceivedTitle(view: WebView?, title: String?) {
             super.onReceivedTitle(view, title)
-            if (!Session.getInstance().appName.equals(title) && !TextUtils.isEmpty(title) && view.url?.contains(
-                    title
-                ) == false
-            ) {
+            if (Session.getInstance().appName != title && !title.isNullOrEmpty() && view?.url?.contains(title) == false && mRealVM.title?.isNotEmpty() == true) {
                 mRealVM.mToolbarVM.mTitle.set(title)
             }
         }
 
-        override fun onShowFileChooser(
-            webView: WebView,
-            filePathCallback: ValueCallback<Array<Uri>>,
-            fileChooserParams: FileChooserParams
-        ): Boolean {
+        override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri?>?>?, fileChooserParams: FileChooserParams?): Boolean {
             mUploadCallbackAboveL = filePathCallback
             choosePic()
             return true
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onPrepareView() {
+        super.onPrepareView()
         mRealVM.paymentClient = createAppPayment()
+        //mRealVM.shareManagerFactory = this
+        //mRealVM.getFragmentManager = { childFragmentManager }
         initUI()
         setupObservers()
     }
@@ -239,13 +228,22 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
     }
 
     private fun setupObservers() {
+//        mRealVM.showWaitingDialog.observe(this) { trackId ->
+//            trackId?.let {
+//                WaitingDialog.newInstance(it).apply {
+//                    setOnDismissListener { /*ignore*/ }
+//                    show(childFragmentManager)
+//                }
+//            }
+//        }
+
         mRealVM.openWebUrl.observe(this) { url ->
             url?.openWithBrowser()
         }
-    }
 
-    override fun onPrepareView() {
-        super.onPrepareView()
+//        mRealVM.payStatusCallback.observe(this) { info ->
+//            info?.let { bridge?.callHandler("payStatusCallback", GsonUtils.toJson(it)) }
+//        }
         observeEvents {
             onUserStatusChanged {
                 mRealVM.url?.let { CookieUtils.syncCookie(it, "userInfo", User.get().userInfoStr) }
@@ -254,13 +252,15 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
         }
     }
 
+//    override fun onStart(share_media: SHARE_MEDIA?) {}
+//    override fun onResult(share_media: SHARE_MEDIA?) = "分享成功！".showToast()
+//    override fun onError(share_media: SHARE_MEDIA?, throwable: Throwable?) = "分享失败！".showToast()
+//    override fun onCancel(share_media: SHARE_MEDIA?) {}
+
     inner class UserServerHandler : WebViewJavascriptBridge.WVJBHandler {
-        override fun handle(
-            data: String,
-            jsCallback: WebViewJavascriptBridge.WVJBResponseCallback
-        ) {
+        override fun handle(data: String?, jsCallback: WebViewJavascriptBridge.WVJBResponseCallback?) {
             Logger.d(TAG, "Received message from javascript: $data")
-            jsCallback.callback("Java said:Right back atcha")
+            jsCallback?.callback("Java said:Right back atcha")
             bridge?.send("I expect a response!") { responseData ->
                 Logger.d("test", "Got response! $responseData")
             }
@@ -369,6 +369,46 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
 //                        "${User.get().longitude},${User.get().latitude}"
 //                    )
 //                    jsCallback?.callback(toJson(result))
+//                }
+//            }
+//            registerHandler("startComposeChristmasMusic") { data, jsCallback ->
+//                val contentData = Gson().fromJson(data, ContentData::class.java)
+//                contentData?.let { it.content?.let { it1 -> mRealVM.composeChristmasMusic(it1) } }
+//            }
+//            registerHandler("startComposeDebutMusic") { data, jsCallback ->
+//                val stageInfo = Gson().fromJson(data, StageInfo::class.java)
+//                mRealVM.composeDebutMusic(stageInfo)
+//            }
+//            registerHandler("startComposeCreativeMusic") { data, jsCallback ->
+//                val creativeBody = Gson().fromJson(data, CreativeContentBody::class.java)
+//                mRealVM.composeCreativeMusic(creativeBody) {
+//                    jsCallback.callback("200")
+//                }
+//            }
+//            registerHandler("inviteUserClick") { data, _ ->
+//                val entity = Gson().fromJson(data, InviteUrlEntity::class.java)
+//                mShareManager.doShare(
+//                    "只需一句话，为你生成歌",
+//                    "来快歌创作你的专属歌曲，还有各种写歌现金奖励等你哦",
+//                    getBitmap(R.mipmap.ic_launcher),
+//                    R.mipmap.ic_launcher,
+//                    entity.inviteUrl,
+//                    SHARE_MEDIA.WEIXIN,
+//                    this@BrowserFragment
+//                )
+//                EventManager.onAppEvent(
+//                    AppEvent.INVITE_FRIEND_INVITE_BUTTON_CLICK,
+//                    null,
+//                    "{\"isWeb\":true}"
+//                )
+//            }
+//            registerHandler("webPay") { data, jsCallback ->
+//                try {
+//                    mRealVM.orderNo = null
+//                    val info = GsonUtils.fromJson(data, H5PayInfo::class.java)
+//                    mRealVM.startPay(info)
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
 //                }
 //            }
             registerHandler("openWebUrl") { data, _ ->
@@ -480,5 +520,17 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
         binding.webview.destroy()
         super.onDestroy()
     }
+
+//    override fun getShareManager(): ShareManager {
+//        return mShareManager
+//    }
+//
+//    override fun getShareListener(): UMShareListener? {
+//        return this
+//    }
+//
+//    override fun getStatusHolder(): DownloadingViewModel.DownloadStatusHolder? {
+//        return if (isActive) mRealVM else null
+//    }
 
 }
