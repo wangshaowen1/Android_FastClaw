@@ -30,7 +30,7 @@ import kotlinx.coroutines.withContext
 class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
     var mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "意见反馈"
+        title = "建议反馈"
     )
 
     val phoneNumber = MutableLiveData<String>()

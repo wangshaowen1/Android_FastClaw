@@ -81,7 +81,7 @@
     <string name="app_customer_service_hours">在线时间 9:00–18:00</string>
     <string name="app_personal_information">个人资料</string>
     <string name="app_about_us">关于我们</string>
-    <string name="app_suggestion_and_feedback">意见反馈</string>
+    <string name="app_suggestion_and_feedback">建议反馈</string>
     <string name="app_cancel_the_account">注销账号</string>
     <string name="app_log_out">退出登录</string>
     <string name="text_save">保存</string>
