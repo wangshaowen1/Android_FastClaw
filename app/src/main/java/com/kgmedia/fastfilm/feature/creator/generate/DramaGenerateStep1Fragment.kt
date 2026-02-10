@@ -56,11 +56,17 @@ class DramaGenerateStep1Fragment :
         }
         mRealVM.promptGenerating.observe(this) {
             if (it.first) {
-                dialog?.dismiss()
-                dialog = activity?.let { it1 -> GeneratingDialog(it1, it.second) }
-                dialog?.show()
+                if (dialog == null || !dialog!!.isShowing) {
+                    // 只在 Dialog 不存在时创建
+                    dialog = GeneratingDialog(requireContext(), it.second, it.third)
+                    dialog?.show()
+                } else {
+                    // 如果已经在显示，只更新文字内容，不重置 Dialog
+                    dialog?.updateContent(it.second, it.third)
+                }
             } else {
                 dialog?.dismiss()
+                dialog = null
             }
         }
 

@@ -7,6 +7,7 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
+import com.kgmedia.fastfilm.common.utils.ProgressSimulator
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
@@ -29,7 +30,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         const val DISPLAY_CONTENT = 0
     }
 
-    val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
+    val promptGenerating = MutableLiveData<Triple<Boolean, String, String>>()
     var inspiration: String? = null
     var episodeRangeCode: String? = null
 
@@ -58,6 +59,13 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
 
+    private val progressHelper by lazy {
+        ProgressSimulator(viewModelScope) { progress ->
+            // 统一处理进度文案更新
+            promptGenerating.value = Triple(true, "创建故事大纲 $progress%", "退出后AI会继续生成")
+        }
+    }
+
     fun sseGenerate() {
         nextStepEnabled.set(false)
         // 1. 准备请求 Flow
@@ -69,7 +77,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             )
         )
         displayChild.set(DISPLAY_CONTENT)
-        promptGenerating.value = true to "故事生成中..."
+        promptGenerating.value = Triple(true, "创建故事大纲 0%", "退出后AI会继续生成")
+        progressHelper.start(0, 5, 1000)
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
@@ -83,7 +92,10 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     Logger.d("[SSE]", "Open")
                 },
                 onTitleUpdate = { title ->
-                    promptGenerating.value = false to ""
+                    progressHelper.finish {
+                        // 这里的代码会在 100% 显示 200ms 后执行
+                        promptGenerating.value = Triple(false, "", "")
+                    }
                     mWorkName.value = title
                 },
                 onMdUpdate = { fullContent ->
@@ -96,16 +108,18 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     if (originalContent.isNotBlank()) {
                         nextStepEnabled.set(true)
                     }
+                    progressHelper.stop()
+                    promptGenerating.value = Triple(false, "", "")
                     originalJson = originalContent
                     // 触发原本结束后的逻辑
                     onSSECompleted?.invoke()
-                    promptGenerating.value = false to ""
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     displayChild.set(DISPLAY_FAIL)
                     onSSECompleted?.invoke()
-                    promptGenerating.value = false to ""
+                    progressHelper.stop()
+                    promptGenerating.value = Triple(false, "", "")
                 })
         )
 
@@ -119,6 +133,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
      */
     override fun onCleared() {
         super.onCleared()
+        progressHelper.stop()
         sseHandler?.cancel()
     }
 
