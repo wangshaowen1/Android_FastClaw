@@ -157,7 +157,7 @@ object CommonNavigatorUtils {
         indicator.lineWidth = indicatorWidth.dp.toFloat()
         indicator.roundRadius = 2.dp.toFloat()
         indicator.yOffset = 4.dp.toFloat()
-        indicator.setColors(R.color.color_2cdcff.getResColor())
+        indicator.setColors(R.color.white.getResColor())
         return indicator
     }
 
@@ -168,15 +168,16 @@ object CommonNavigatorUtils {
         indicator.startInterpolator = AccelerateInterpolator()
         indicator.endInterpolator = DecelerateInterpolator(1.6f)
         indicator.lineHeight = 4.dp.toFloat()
-        indicator.lineWidth = 22.dp.toFloat()
+        indicator.lineWidth = 12.dp.toFloat()
         indicator.roundRadius = 2.dp.toFloat()
         indicator.yOffset = 1.dp.toFloat()
-        indicator.setGradientColors(
-            Pair(
-                R.color.color_ff4332.getResColor(),
-                R.color.color_ffa029.getResColor()
-            )
-        )
+        indicator.setColors(R.color.theme_color_1_dark.getResColor())
+        //indicator.setGradientColors(
+        //    Pair(
+        //        R.color.color_ff4332.getResColor(),
+        //        R.color.color_ffa029.getResColor()
+        //    )
+        //)
         return indicator
     }
 }
