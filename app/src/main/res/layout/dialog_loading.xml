@@ -19,7 +19,7 @@
             app:lottie_loop="true"
             app:lottie_fileName="loading.json"
             app:lottie_imageAssetsFolder="images"
-            app:lottie_repeatMode="restart" />
+            app:lottie_repeatMode="reverse" />
 
         <ImageView
             android:id="@+id/iv_loading_image"
