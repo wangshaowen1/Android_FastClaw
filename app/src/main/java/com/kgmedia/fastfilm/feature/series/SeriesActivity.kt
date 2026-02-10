@@ -99,7 +99,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 val isDraft = episodeAdapter.snapshot().any {
                     it?.isBeforeStoryboardGenerating() == true
                 }
-                mRealVM.canCreateEpisode.set(!isDraft)
+                val notFinished = mRealVM.workInfo.get()?.let { (it.finishedEpisodeCnt ?: 0) < (it.totalEpisodeCnt ?: 0) } == true
+                mRealVM.canCreateEpisode.set(!isDraft && notFinished)
             })
     }
 
