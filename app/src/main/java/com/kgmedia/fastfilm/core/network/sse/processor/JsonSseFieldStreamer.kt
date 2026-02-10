@@ -3,7 +3,8 @@ package com.kgmedia.fastfilm.core.network.sse.processor
 class JsonSseFieldStreamer(
     private val onTitleUpdate: ((String) -> Unit)? = null,
     private val onMdUpdate: ((String) -> Unit)? = null,
-    private val onStoryUpdate: ((String) -> Unit)? = null
+    private val onStoryUpdate: ((String) -> Unit)? = null,
+    private val MD_THROTTLE_MS: Long = 80L
 ) {
 
     private enum class State {
@@ -31,7 +32,6 @@ class JsonSseFieldStreamer(
 
     private var lastMdEmittedLength = 0
     private var lastMdEmitTime = 0L
-    private val MD_THROTTLE_MS = 80L
 
     fun onChunk(chunk: String) {
         for (c in chunk) {

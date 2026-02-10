@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
  */
 class PlainTextSseProcessor(
     scope: CoroutineScope,
-    throttleMs: Long = 50L,
+    throttleMs: Long = 20L,
     private val onStart: () -> Unit,
     private val onUpdate: (String) -> Unit,
     private val onComplete: () -> Unit,

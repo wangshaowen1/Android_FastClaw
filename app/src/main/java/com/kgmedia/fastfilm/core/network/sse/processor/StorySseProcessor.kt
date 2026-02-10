@@ -29,8 +29,8 @@ class StorySseProcessor(
                 Logger.d("StorySseProcessor", "content: $content")
                 onStoryUpdate(content)
             }
-        }
-
+        },
+        MD_THROTTLE_MS = 20L
     )
 
     override fun onSSEStart() {
