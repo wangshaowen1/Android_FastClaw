@@ -80,6 +80,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     //剧集剧本内容
     var originalJson: String? = null
 
+    fun isStreaming() = sseHandler?.isStreaming?.value == true
+
     fun sseGenerate() {
         val sseFlow =
             if (model == DramaGenerateConstants.MODEL_STORY || model == DramaGenerateConstants.MODEL_CONTINUE_STORY) {

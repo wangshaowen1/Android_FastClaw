@@ -78,20 +78,24 @@ class DramaGenerateStep2Fragment :
             }
         })
         binding.btnRegenerate.setOnSingleClickListener {
+            if (mRealVM.isStreaming()) return@setOnSingleClickListener
             hostVm?.backWarning = true
             mRealVM.sseGenerate()
         }
         binding.btnNext.setOnSingleClickListener {
+            if (mRealVM.isStreaming()) return@setOnSingleClickListener
             mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId, taskId ->
                 hostVm?.nextStep(3, workId, storyId, taskId)
             }
         }
         binding.vInputConfirm.setOnSingleClickListener {
+            if (mRealVM.isStreaming()) return@setOnSingleClickListener
             mActivity.showConfirmPrompt("您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
                 binding.vInputConfirm.isVisible = false
             }
         }
         binding.btnDelete.setOnSingleClickListener {
+            if (mRealVM.isStreaming()) return@setOnSingleClickListener
             mRealVM.input.value = ""
         }
     }
