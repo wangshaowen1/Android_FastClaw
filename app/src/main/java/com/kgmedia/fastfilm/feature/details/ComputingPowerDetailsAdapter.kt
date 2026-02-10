@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.getVm
 import com.kgmedia.fastfilm.core.network.apis.response.ComputingPowerDetailsInfo
-import com.kgmedia.fastfilm.databinding.ItemRechargeDetailsBinding
+import com.kgmedia.fastfilm.databinding.ItemComputingPowerDetailsBinding
 import com.nhsd.basic.item.BindingViewHolder
 
 /**
@@ -23,7 +23,7 @@ class ComputingPowerDetailsAdapter  : PagingDataAdapter<ComputingPowerDetailsInf
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            ItemRechargeDetailsBinding.inflate(
+            ItemComputingPowerDetailsBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -38,8 +38,8 @@ class ComputingPowerDetailsAdapter  : PagingDataAdapter<ComputingPowerDetailsInf
     }
 
 
-    inner class ViewHolder(binding: ItemRechargeDetailsBinding) :
-        BindingViewHolder<ItemRechargeDetailsBinding>(binding) {
+    inner class ViewHolder(binding: ItemComputingPowerDetailsBinding) :
+        BindingViewHolder<ItemComputingPowerDetailsBinding>(binding) {
 
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
