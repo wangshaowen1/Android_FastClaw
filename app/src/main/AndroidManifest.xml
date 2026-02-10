@@ -219,30 +219,10 @@
             android:name=".feature.login.LoginDialog"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--          android:theme="@style/Theme.ActivityBottomDialogStyle"-->
-        <!--积分充值-->
-        <activity
-            android:name=".feature.payment.points.PointsRechargeActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--积分明细-->
+
+        <!--充值消耗明细-->
         <activity
             android:name=".feature.details.ComputingPowerDetailsActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--邀请明细-->
-        <activity
-            android:name=".feature.invitation.InvitationDetailsActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--提现明细-->
-        <activity
-            android:name=".feature.wallet.details.WithdrawalDetailsActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--创造收益-->
-        <activity
-            android:name=".feature.revenue.CreateRevenueActivity"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <!--作品管理-->
