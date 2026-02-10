@@ -70,7 +70,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     return
                 }
                 if (current.videoGenerated) {
-                    current.videoUrl?.let { mRealVM.download(it) }
+                    current.videoUrl?.let { mRealVM.download(current, it) }
                 }
             }
 

@@ -5,16 +5,11 @@ import android.view.View
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.arthenica.ffmpegkit.FFmpegKit
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.PathUtils
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.base.viewmodel.BaseShareViewModel
-import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.toCache
-import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launch
-import com.kgmedia.fastfilm.core.ext.putAIGCMetadata
 import com.kgmedia.fastfilm.core.ext.shortDramaVideoShareContent
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaVideoInfo
@@ -99,25 +94,25 @@ abstract class ShareShortDramaViewModel<T : AppRepository> : BaseShareViewModel<
     }
 
     protected fun saveToAlbum(shortDrama: ShortDramaInfo, file: File, media: SHARE_MEDIA?) {
-        launch {
-            val destFile = File(PathUtils.getExternalDownloadsPath(), file.name)
-            val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(file.putAIGCMetadata(shortDrama), destFile) }
-            if (copied) {
-                FileUtils.notifySystemToScan(destFile)
-                if (arrayOf(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE).contains(media)) {
-                    "视频已保存至相册，打开微信后，请从相册上传分享。".showToast()
-                } else {
-                    topActivity?.showConfirmPrompt(
-                        title = "保存成功",
-                        tip = "在手机的“相册-视频”中可查看",
-                        confirmText = "我知道了",
-                        confirmStyle = true
-                    )
-                }
-            } else {
-                "保存失败".showToast()
-            }
-        }
+//        launch {
+//            val destFile = File(PathUtils.getExternalDownloadsPath(), file.name)
+//            val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(file.putAIGCMetadata(shortDrama), destFile) }
+//            if (copied) {
+//                FileUtils.notifySystemToScan(destFile)
+//                if (arrayOf(SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE).contains(media)) {
+//                    "视频已保存至相册，打开微信后，请从相册上传分享。".showToast()
+//                } else {
+//                    topActivity?.showConfirmPrompt(
+//                        title = "保存成功",
+//                        tip = "在手机的“相册-视频”中可查看",
+//                        confirmText = "我知道了",
+//                        confirmStyle = true
+//                    )
+//                }
+//            } else {
+//                "保存失败".showToast()
+//            }
+//        }
     }
 
     protected fun shareVideo(shortDrama: ShortDramaInfo, file: File, media: SHARE_MEDIA?, otherMedia: OtherShareMedia?) {

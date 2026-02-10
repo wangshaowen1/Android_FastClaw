@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.model.PhotoItem
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
 import com.kgmedia.fastfilm.core.network.apis.response.WxPayData
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
@@ -103,11 +104,11 @@ fun Activity.customerServiceTransfer() {
 }
 
 
-suspend fun File.putAIGCMetadata(shortDrama: ShortDramaInfo): File {
+suspend fun File.putAIGCMetadata(shortDrama: SimpleStoryboardInfo): File {
     withContext(Dispatchers.IO) {
         runCatching {
             val contentProducer = AppUtils.getAppName().let { URLEncoder.encode(it) }
-            val produceID = shortDrama.dramasId
+            val produceID = shortDrama.storyboardId
             val reservedCode1 = EncryptUtils.encryptMD5ToString("${contentProducer}${produceID}")
             val contentPropagator = User.get().nickName?.let { URLEncoder.encode(it) }
             val propagateID = User.get().getId()

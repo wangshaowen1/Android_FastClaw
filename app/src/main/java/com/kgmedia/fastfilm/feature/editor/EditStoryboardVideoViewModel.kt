@@ -14,7 +14,9 @@ import com.kgmedia.fastfilm.common.adapter.QuickAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.putAIGCMetadata
 import com.kgmedia.fastfilm.core.network.RetrofitClient
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
@@ -212,12 +214,12 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         return adapter.items.any { it.data.get()?.videoGenerateFailed == true }
     }
 
-    fun download(videoUrl: String) {
+    fun download(storyboard: SimpleStoryboardInfo, videoUrl: String) {
         launchWithLoading {
             val resource = UrlResource(videoUrl, RetrofitClient.httpClient)
             resource.download { }
             val destFile = File(PathUtils.getExternalDownloadsPath(), resource.file.name)
-            val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(resource.file, destFile) }
+            val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(resource.file.putAIGCMetadata(storyboard), destFile) }
             if (copied) {
                 FileUtils.notifySystemToScan(destFile)
                 "视频已保存至相册".showToast()
