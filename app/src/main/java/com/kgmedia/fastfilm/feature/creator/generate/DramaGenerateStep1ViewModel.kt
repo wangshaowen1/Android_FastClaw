@@ -137,9 +137,9 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 totalEpisodeCntCode = episodeRangeCode
             )
             response(mRepo.api.saveWorkSummary(body)) {
-                saveDesc(mdContent, data?.workId) {
-                    onSuccess?.invoke(data?.workId, data?.storyId)
-                }
+                onSuccess?.invoke(data?.workId, data?.storyId)
+//                saveDesc(mdContent, data?.workId) {
+//                }
             }
         }
     }
