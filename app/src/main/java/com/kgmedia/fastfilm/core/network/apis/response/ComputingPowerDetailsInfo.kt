@@ -9,21 +9,17 @@ package com.kgmedia.fastfilm.core.network.apis.response
  * @Version: 1.0
  * *****************************************
  */
-data class RechargePageInfo(
-    //充值标题
-    val detailTitle: String?,
-    //充值时间
-    val detailTime: Long?,
-    //充值金额
-    val detailAmount: Long?,
+data class ComputingPowerDetailsInfo(
+    //标题
+    val detailTitle: String? = null,
+    // 时间
+    val detailTime: Long? = null,
+    //明细类型：1-生成画面，2-字幕配音，3-活动赠送
+    val detailType: String? = null,
     //交易类型：1-收入，2-支出
-    val tradeType: Int?,
-    //积分明细ID
-    val userScoreDetailsId: String?,
-    //类型：1-会员充值，2-积分充值
-    val detailType: String?,
-    //备注
-    val remark: String?,
+    val tradeType: Int? = null,
+    //数量
+    val detailAmount: Long? = null,
 ){
     companion object{
         //积分获取

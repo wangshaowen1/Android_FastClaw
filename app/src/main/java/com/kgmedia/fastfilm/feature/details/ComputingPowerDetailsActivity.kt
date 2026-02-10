@@ -7,7 +7,6 @@ import com.kgmedia.fastfilm.common.adapter.FragmentStateCacheAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.CommonNavigatorUtils
 import com.kgmedia.fastfilm.databinding.ActivityComputingPowerDetailsBinding
-import com.kgmedia.fastfilm.feature.payment.points.details.ComputingPowerDetailsFragment
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
 import com.nhsd.magicindicator.ViewPagerHelper

@@ -16,7 +16,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.LogOffStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.MyFavoriteScriptInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.MyTvSeriesListInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.OrderStatusInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.PointConsumePageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ProfitDetailInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.QuantityStatisticsOfWorksInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
@@ -139,6 +138,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.AlipayData
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.BalanceData
 import com.kgmedia.fastfilm.core.network.apis.response.CharacterListData
+import com.kgmedia.fastfilm.core.network.apis.response.ComputingPowerDetailsInfo
 import com.kgmedia.fastfilm.core.network.apis.response.DramasIdData
 import com.kgmedia.fastfilm.core.network.apis.response.DramasInfoData
 import com.kgmedia.fastfilm.core.network.apis.response.DramasSeriesIdData
@@ -149,7 +149,6 @@ import com.kgmedia.fastfilm.core.network.apis.response.MessageSummaryData
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBook
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBookGenerateStatusData
 import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
-import com.kgmedia.fastfilm.core.network.apis.response.RechargePageInfo
 import com.kgmedia.fastfilm.core.network.apis.response.SceneCostData
 import com.kgmedia.fastfilm.core.network.apis.response.ScoreConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.ShortLikeData
@@ -504,24 +503,13 @@ interface ApiService {
     @POST(ApiConstants.ROLE_TAG_LIST)
     suspend fun roleTagList(@Body body: UserTokenBody): ApiResponse<ListData<RoleTagInfo>?>
 
-    /**
-     * 角色形象列表
-     */
-    @POST(ApiConstants.CHARACTER_LIST)
-    suspend fun characterList(@Body body: DramasIdBody): ApiResponse<CharacterListData?>
 
-
-    /**
-     * 获取积分消耗明细分页
-     */
-    @POST(ApiConstants.GET_POINT_CONSUME_PAGE)
-    suspend fun getPointConsumePage(@Body body: PagedBody): ApiResponse<PagedList<PointConsumePageInfo>?>
 
     /**
      * 获取充值明细分页
      */
     @POST(ApiConstants.GET_RECHARGE_PAGE)
-    suspend fun getRechargePage(@Body body: PagedBody): ApiResponse<PagedList<RechargePageInfo>?>
+    suspend fun getRechargePage(@Body body: PagedBody): ApiResponse<PagedList<ComputingPowerDetailsInfo>?>
 
     /**
      * 获取积分配置

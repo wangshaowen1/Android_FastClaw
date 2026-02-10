@@ -10,7 +10,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ItemVideoFeedBinding
 import com.kgmedia.fastfilm.widget.PlayerSeekbar
 import com.nhsd.basic.item.BindingViewHolder
-import com.nhsd.basic.utils.Logger
 
 class VideoFeedAdapter(private val interactionListener: InteractionListener) :
     PagingDataAdapter<WorkInfo, VideoFeedAdapter.VideoViewHolder>(DIFF_CALLBACK) {

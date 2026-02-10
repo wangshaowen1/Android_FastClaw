@@ -1,4 +1,4 @@
-package com.kgmedia.fastfilm.feature.payment.points.details
+package com.kgmedia.fastfilm.feature.details
 
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
@@ -25,8 +25,10 @@ class ComputingPowerDetailsFragment :
     companion object {
         //类型
         const val TYPE_PROTAGONIST = "typeProtagonist"
+
         //全部
         const val TYPE_ALL = 0
+
         //充值明细
         const val TYPE_RECHARGE = 1
 
@@ -41,15 +43,10 @@ class ComputingPowerDetailsFragment :
         }
     }
 
-    //消耗明细
-    private val pointsDetailPersonaAdapter by lazy {
-        ConsumptionDetailsAdapter()
-    }
 
-
-    //充值明细
-    private val rechargeDetailsAdapter by lazy {
-        RechargeDetailsAdapter()
+    //明细
+    private val computingPowerDetailsAdapter by lazy {
+        ComputingPowerDetailsAdapter()
     }
 
     private var typeProtagonist: Int = TYPE_RECHARGE
@@ -68,38 +65,28 @@ class ComputingPowerDetailsFragment :
         } else {
             "当前还没有消耗积分哦~"
         }
-        val pointsDetailAdapter = when (typeProtagonist) {
-            TYPE_RECHARGE -> rechargeDetailsAdapter
-            else -> pointsDetailPersonaAdapter
-        }
 
         binding.recyclerView.apply {
             addItemDecoration(TopSpaceDecoration(14.dp))
             isFocusable = false
             adapter =
-                pointsDetailAdapter.withLoadStateFooter(
+                computingPowerDetailsAdapter.withLoadStateFooter(
                     MyMultiStatePagingFooterAdapter(
-                        hostAdapter = pointsDetailAdapter,
+                        hostAdapter = computingPowerDetailsAdapter,
                         noData = noDataAs,
-                        noMoreThreshold = 15
-                    ) { pointsDetailAdapter.retry() })
+                        noMoreThreshold = 5
+                    ) { computingPowerDetailsAdapter.retry() })
         }
         binding.srl.startRefreshWithAdapter(
-            pagingDataAdapter = pointsDetailAdapter
+            pagingDataAdapter = computingPowerDetailsAdapter
         )
     }
 
 
     private fun dataUpdate() {
         lifecycleScope.launch {
-            if (typeProtagonist == TYPE_RECHARGE) {
-                mRealVM.rechargeDetails().collect {
-                    rechargeDetailsAdapter.submitData(it)
-                }
-            } else {
-                mRealVM.getPointConsumePage().collect {
-                    pointsDetailPersonaAdapter.submitData(it)
-                }
+            mRealVM.getComputingPowerDetailsPage().collect {
+                computingPowerDetailsAdapter.submitData(it)
             }
         }
     }

@@ -163,10 +163,7 @@ object ApiConstants {
      */
     const val GET_PICTURE_BOOK_STATUS = "userPictureBook/getPictureBookStatus"
 
-    /**
-     * 获取积分消耗明细分页
-     */
-    const val GET_POINT_CONSUME_PAGE = "user/getPointConsumePage"
+
 
     /**
      * 获取充值明细分页
@@ -415,10 +412,6 @@ object ApiConstants {
      */
     const val DELETE_DRAMA_INFO = "shortDramas/work/remove"
 
-    /**
-     * 查询剧本的角色列表
-     */
-    const val CHARACTER_LIST = "shortDramas/script/role/list"
 
 
     /**
