@@ -35,13 +35,13 @@ class ItemStoryboardVM(
     /**
      * 当前应用的分镜描述
      */
-    val storyboardDesc by lazy { ObservableField(data?.storyBoardDesc) }
+    val genImagePrompt by lazy { ObservableField(data?.genImagePrompt) }
 
     /**
      * 编辑中的分镜描述
      */
-    var editingStoryboardDescText: String? = data?.storyBoardDesc
-    val editingStoryboardDesc by lazy { ObservableBoolean(false) }
+    var editingGenImagePromptText: String? = data?.genImagePrompt
+    val editingGenImagePrompt by lazy { ObservableBoolean(false) }
     val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
     private var loopGenStatusJob: Job? = null
 
@@ -63,27 +63,32 @@ class ItemStoryboardVM(
     fun editStoryboardDesc() {
         storyboardDescInputListener.set(object : RecyclerEditText.OnTextInputListener {
             override fun onTextInput(text: String) {
-                editingStoryboardDescText = text
+                editingGenImagePromptText = text
             }
         })
-        editingStoryboardDesc.set(true)
-        editingStoryboardDescText = storyboardDesc.get()
+        editingGenImagePrompt.set(true)
+        editingGenImagePromptText = genImagePrompt.get()
     }
 
     fun exitEditStoryboardDesc() {
         storyboardDescInputListener.set(null)
-        editingStoryboardDesc.set(false)
-        storyboardDesc.set(editingStoryboardDescText)
+        editingGenImagePrompt.set(false)
+        genImagePrompt.set(editingGenImagePromptText)
         saveInput()
     }
 
     private fun saveInput() {
-        val storyboardDesc = this@ItemStoryboardVM.storyboardDesc.get()?.trim()
-        if (storyboardDesc.isNullOrEmpty()) {
+        val genImagePrompt = this@ItemStoryboardVM.genImagePrompt.get()?.trim()
+        if (genImagePrompt.isNullOrEmpty()) {
             return
         }
         launch {
-            val body = SaveStoryboardBody(data.get()?.storyboardId, storyboardDesc, null, null, null, null, null, workId, storyId)
+            val body = SaveStoryboardBody(
+                workId = workId,
+                storyId = storyId,
+                storyboardId = data.get()?.storyboardId,
+                genImagePrompt = genImagePrompt
+            )
             response(ApiFactory.apiService.workStoryboardSave(body)) {
                 this@ItemStoryboardVM.data.set(data)
             }
@@ -92,8 +97,8 @@ class ItemStoryboardVM(
 
     fun generate() {
         if (data.get()?.imageGenerating == true) return
-        val storyBoardDesc = if (editingStoryboardDesc.get()) editingStoryboardDescText else storyboardDesc.get()
-        if (storyBoardDesc.isNullOrEmpty()) {
+        val genImagePrompt = if (editingGenImagePrompt.get()) editingGenImagePromptText else this@ItemStoryboardVM.genImagePrompt.get()
+        if (genImagePrompt.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
             return
         }

@@ -53,7 +53,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     }
     val playing by lazy { ObservableBoolean(true) }
 
-    val storyboardDesc by lazy { MutableLiveData<String>() }
+    val genImagePrompt by lazy { MutableLiveData<String>() }
 
     private var loopImageJob: Job? = null
     private var loopVideoJob: Job? = null
@@ -66,7 +66,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             return
         }
         storyboard.set(info)
-        storyboardDesc.value = info.storyBoardDesc
+        genImagePrompt.value = info.genImagePrompt
         if (info.videoGenerating) {
             loopVideo(info.taskId)
         } else if (info.imageGenerating) {
@@ -164,12 +164,12 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             "视频正在生成中，请稍后再试".showToast()
             return
         }
-        val storyboardDesc = storyboardDesc.value
-        if (storyboardDesc.isNullOrEmpty()) {
+        val genImagePrompt = genImagePrompt.value
+        if (genImagePrompt.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
             return
         }
-        storyboard.storyBoardDesc = storyboardDesc
+        storyboard.genImagePrompt = genImagePrompt
         launchWithLoading {
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
@@ -238,25 +238,20 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
 
     fun save(finish: Boolean = false) {
         val storyboard = storyboard.get() ?: return
-        val storyboardDesc = storyboardDesc.value
-        if (storyboardDesc.isNullOrEmpty()) {
+        val genImagePrompt = genImagePrompt.value
+        if (genImagePrompt.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
             return
         }
-        storyboard.storyBoardDesc = storyboardDesc
         launchWithLoading {
             val body = SaveStoryboardBody(
-                storyboard.storyboardId,
-                storyboardDesc,
-                storyboard.genImagePrompt,
-                storyboard.genVideoPrompt,
-                storyboard.imageUrl,
-                storyboard.videoUrl,
-                storyboard.duration,
-                storyboard.workId,
-                storyboard.storyId
+                workId = storyboard.workId,
+                storyId = storyboard.storyId,
+                storyboardId = storyboard.storyboardId,
+                genImagePrompt = genImagePrompt
             )
             response(ApiFactory.apiService.workStoryboardSave(body)) {
+                storyboard.genImagePrompt = genImagePrompt
                 "保存成功".showToast()
                 if (finish) {
                     finish()

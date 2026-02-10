@@ -110,9 +110,9 @@
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etStoryboardDesc"
-            content="@{item.storyboardDesc}"
+            content="@{item.genImagePrompt}"
             onTextInputListener="@{item.storyboardDescInputListener}"
-            setEditing="@{item.editingStoryboardDesc}"
+            setEditing="@{item.editingGenImagePrompt}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
@@ -133,7 +133,7 @@
 
         <View
             android:id="@+id/etStoryboardDescCover"
-            setVisible="@{!item.editingStoryboardDesc}"
+            setVisible="@{!item.editingGenImagePrompt}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:onClick="@{(v)->item.onItemClick.invoke(v)}"

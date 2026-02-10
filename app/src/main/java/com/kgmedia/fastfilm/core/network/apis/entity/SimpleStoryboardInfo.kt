@@ -48,11 +48,11 @@ data class SimpleStoryboardInfo(
     /**
      * 分镜描述
      */
-    var storyBoardDesc: String? = null,
+    val storyBoardDesc: String? = null,
     /**
      * 图片生成提示词
      */
-    val genImagePrompt: String? = null,
+    var genImagePrompt: String? = null,
     /**
      * 视频生成提示词
      */

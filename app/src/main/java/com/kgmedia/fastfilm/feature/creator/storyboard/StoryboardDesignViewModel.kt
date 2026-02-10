@@ -224,7 +224,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                             editStoryboardDesc()
                         }
                     }
-                    if (storyboardDesc.get().isNullOrEmpty()) {
+                    if (genImagePrompt.get().isNullOrEmpty()) {
                         edit.invoke(0)
                     } else {
                         topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
@@ -263,8 +263,8 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
             if (item is ItemStoryboardVM) {
                 val genStatusImage = item.data.get()?.genStatusImage ?: 1
                 if (genStatusImage < 1) {
-                    val assetDesc = item.storyboardDesc.get()
-                    if (assetDesc.isNullOrEmpty()) {
+                    val genImagePrompt = item.genImagePrompt.get()
+                    if (genImagePrompt.isNullOrEmpty()) {
                         "您还有分镜尚未填写描述，请补充后再继续".showToast()
                         return
                     }
