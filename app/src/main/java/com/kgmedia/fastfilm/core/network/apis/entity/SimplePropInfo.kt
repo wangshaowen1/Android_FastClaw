@@ -49,4 +49,5 @@ data class SimplePropInfo(
         get() = propName
     override val assetImage: String?
         get() = imageUrl
+    val hasHistory = true
 }

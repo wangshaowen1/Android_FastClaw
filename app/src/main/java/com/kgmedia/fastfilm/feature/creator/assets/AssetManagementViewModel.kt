@@ -328,7 +328,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         if (notGenerateItems.isEmpty()) {
 
         } else {
-            notGenerateItems.forEach { it.generate() }
+            notGenerateItems.forEach { it.generateAsset() }
         }
     }
 

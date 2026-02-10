@@ -49,4 +49,5 @@ data class SimpleSceneInfo(
         get() = sceneName
     override val assetImage: String?
         get() = imageUrl
+    val hasHistory = true
 }

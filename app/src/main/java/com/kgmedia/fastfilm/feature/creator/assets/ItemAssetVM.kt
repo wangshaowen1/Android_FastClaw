@@ -5,6 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
+import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 import kotlinx.coroutines.Job
@@ -109,6 +110,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     abstract val generateButtonText: String
 
     abstract fun generate()
+    abstract fun generateAsset(reference: ReferenceImageInfo? = null)
 
     /**
      * 删除资产
