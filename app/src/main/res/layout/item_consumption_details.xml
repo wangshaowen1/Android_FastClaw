@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.payment.points.details.ItemRechargeDetailsVm" />
+            type="com.kgmedia.fastfilm.feature.details.ItemComputingPowerDetailsVm" />
 
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
