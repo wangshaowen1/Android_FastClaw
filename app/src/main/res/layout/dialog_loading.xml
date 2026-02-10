@@ -13,18 +13,19 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/loading_image"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="gone"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/lottie_dialog_loading40"
+            app:lottie_fileName="loading.json"
+            app:lottie_imageAssetsFolder="images"
             app:lottie_repeatMode="restart" />
 
         <ImageView
             android:id="@+id/iv_loading_image"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:visibility="gone"
             android:src="@drawable/img_loading" />
 
         <TextView
