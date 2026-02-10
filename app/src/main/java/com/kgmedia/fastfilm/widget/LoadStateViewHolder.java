@@ -122,7 +122,7 @@ public class LoadStateViewHolder extends ViewAnimator {
         }
         boolean lightMode = typedArray.getBoolean(R.styleable.LoadStateViewHolder_lightMode, false);
         if (lightMode) {
-            binding.loadingView.setAnimation(R.raw.lottie_loading);
+//            binding.loadingView.setAnimation(R.raw.lottie_loading);
             binding.loadingText.setTextColor(getResources().getColor(R.color.color_30_000000));
             binding.noDataIcon.setAlpha(.5f);
             binding.icon.setAlpha(.5f);
