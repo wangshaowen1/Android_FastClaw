@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.recharge.PowerRechargeViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:text="算力充值"
+            android:textAppearance="@style/Text16"
+            android:textColor="?attr/textColor1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:onClick="@{(v)->layout.dismiss()}"
+            android:paddingHorizontal="15dp"
+            android:src="@drawable/icon_close"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvTitle" />
+
+        <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content">
+
+        </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
+
+        <TextView
+            android:id="@+id/tvPower"
+            android:layout_width="70dp"
+            android:layout_height="21dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="17dp"
+            android:text="@{`算力余额 `+layout.balance}"
+            android:textAppearance="@style/Text14"
+            android:textColor="?attr/textColor2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            tools:text="算力余额 0" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvRechargeAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adapter="@{layout.powerAdapter}"
+            android:paddingHorizontal="9dp"
+            android:paddingVertical="6dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/tvPower"
+            app:spanCount="3"
+            tools:itemCount="6"
+            tools:listitem="@layout/item_recharge_power" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="12dp"
+            android:text="支付方式"
+            android:textAppearance="@style/Text14"
+            android:textColor="?attr/textColor2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvRechargeAmount" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="33dp"
+            android:adapter="@{layout.paymentAdapter}"
+            android:paddingHorizontal="9dp"
+            android:paddingVertical="6dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/rvRechargeAmount"
+            app:spanCount="2"
+            tools:itemCount="2"
+            tools:listitem="@layout/item_recharge_payment_dialog" />
+
+        <TextView
+            singleClick="@{(v)->layout.recharge()}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/selector_common_button"
+            android:gravity="center"
+            android:text="立即支付"
+            android:textAppearance="@style/Text16"
+            android:textColor="@color/fixed_white_1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="345:44"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvPayment"
+            app:layout_constraintWidth_percent="0.92" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -9,6 +9,7 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.databinding.FragmentMineBinding
+import com.kgmedia.fastfilm.feature.recharge.MyBalanceActivity
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
 import com.kgmedia.fastfilm.router.AppNavigator
@@ -104,6 +105,10 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             R.id.suggestions_feedback -> {
                 //建议与反馈
                 FeedbackActivity.start(topActivity)
+            }
+
+            R.id.btnMyBalance -> {
+                MyBalanceActivity.start()
             }
         }
     }

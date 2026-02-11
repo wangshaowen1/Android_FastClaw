@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -33,25 +34,26 @@
             android:id="@+id/ivPayment"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/icon_payment_wx"
+            android:src="@{item.data.icon}"
             app:layout_constraintBottom_toBottomOf="@+id/scope"
             app:layout_constraintEnd_toStartOf="@+id/tvPayment"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="@+id/scope"
-            app:layout_constraintTop_toTopOf="@+id/scope" />
+            app:layout_constraintTop_toTopOf="@+id/scope"
+            tools:src="@drawable/icon_payment_wx" />
 
         <TextView
             android:id="@+id/tvPayment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:text="微信"
+            android:text="@{item.data.name}"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor2"
-            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/scope"
             app:layout_constraintEnd_toEndOf="@+id/scope"
             app:layout_constraintStart_toEndOf="@+id/ivPayment"
-            app:layout_constraintTop_toTopOf="@+id/scope" />
+            app:layout_constraintTop_toTopOf="@+id/scope"
+            tools:text="微信" />
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 </layout>

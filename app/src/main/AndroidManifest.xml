@@ -317,6 +317,9 @@
         <activity
             android:name=".feature.editor.info.DramaInfoEditActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".feature.recharge.MyBalanceActivity"
+            android:screenOrientation="portrait" />
     </application>
     <queries>
         <intent>
