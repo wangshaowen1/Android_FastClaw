@@ -25,7 +25,6 @@ import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import com.umeng.socialize.bean.SHARE_MEDIA
-import java.lang.Exception
 
 /**
  * *****************************************
@@ -100,9 +99,11 @@ class PhoneLoginActivity :
         mRealVM.loginResult.observe(this) {
             if (!it) return@observe
             mRealVM.loginResult.value = false
-            finish()
+            finishOnly()
         }
     }
+
+
 
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
@@ -179,7 +180,7 @@ class PhoneLoginActivity :
     //手机号登录
     private fun phoneLogin() {
         mRealVM.phoneLogin { phone ->
-            finish()
+            finishOnly()
             if (mRealVM.isBind.get()) {
                 FlowEventBus.postSync(Events.BindingSuccessfulEvent())
                 return@phoneLogin
@@ -201,7 +202,7 @@ class PhoneLoginActivity :
             SHARE_MEDIA.WEIXIN -> LoginByThirdBody.LOGIN_TYPE_WECHAT
             SHARE_MEDIA.QQ -> LoginByThirdBody.LOGIN_TYPE_QQ
             else -> {
-                finish()
+                finishOnly()
                 return
             }
         }
