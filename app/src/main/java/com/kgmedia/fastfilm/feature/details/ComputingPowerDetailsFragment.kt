@@ -60,12 +60,6 @@ class ComputingPowerDetailsFragment :
     }
 
     private fun initView() {
-        val noDataAs = if (typeProtagonist == TYPE_RECHARGE) {
-            "当前还没有充值哦~"
-        } else {
-            "当前还没有消耗积分哦~"
-        }
-
         binding.recyclerView.apply {
             addItemDecoration(TopSpaceDecoration(14.dp))
             isFocusable = false
@@ -73,7 +67,6 @@ class ComputingPowerDetailsFragment :
                 computingPowerDetailsAdapter.withLoadStateFooter(
                     MyMultiStatePagingFooterAdapter(
                         hostAdapter = computingPowerDetailsAdapter,
-                        noData = noDataAs,
                         noMoreThreshold = 5
                     ) { computingPowerDetailsAdapter.retry() })
         }
