@@ -63,13 +63,13 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/siv_avatar"
                 loadUri="@{layout.userInfo[`avatar`]}"
-                placeHolder="@{@drawable/ic_default_avatar_big}"
+                placeHolder="@{@drawable/ic_default_avatar}"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_marginStart="@dimen/spacing_l"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_default_avatar_big"
+                android:src="@drawable/ic_default_avatar"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/roundStyle_circle" />
