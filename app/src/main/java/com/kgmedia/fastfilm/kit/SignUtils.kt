@@ -7,7 +7,7 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.manager.FlashLoginManager
 import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
-import com.kgmedia.fastfilm.feature.login.LoginDialog
+import com.kgmedia.fastfilm.feature.login.LoginActivity
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.growingio.android.sdk.autotrack.GrowingAutotracker
 import com.nhsd.basic.bus.FlowEventBus
@@ -29,7 +29,7 @@ object SignUtils {
         GeneratingViewModel.generating = true
         User.Companion.get().id?.let { App.instance.setAlias(it) }
         FlashLoginManager.finishAuthActivity()
-        ActivityUtils.finishActivity(LoginDialog::class.java)
+        ActivityUtils.finishActivity(LoginActivity::class.java)
         ActivityUtils.finishActivity(PhoneLoginDialogActivity::class.java)
         FlowEventBus.postSync(Events.UserChangedEvent(Events.UserChangedEvent.SIGN_IN))
     }

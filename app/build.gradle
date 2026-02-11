@@ -122,8 +122,8 @@ android {
             //友盟SECRET
             buildConfigField "String", "UMENG_SECRET", '"4b8c2487a2b9f04e095022fb59ed32b8"'
             buildConfigField "String", "UMENG_APP_KEY", '"69005d13644c9e2c20677a21"'
-            buildConfigField "String", "SHANYAN_APPID", '"FWfSSoWa"' //闪验APPID
-            buildConfigField "String", "SHANYAN_APP_KEY", '"SLszLLH8"' //闪验APPKEY
+            buildConfigField "String", "SHANYAN_APPID", '"KfNYHDRd"' //闪验APPID
+            buildConfigField "String", "SHANYAN_APP_KEY", '"VDE8Q8TY"' //闪验APPKEY
 
             manifestPlaceholders = [
                     UMENG_APP_KEY      : "69005d13644c9e2c20677a21",
@@ -160,8 +160,8 @@ android {
             buildConfigField "String", "UMENG_SECRET", '"4b8c2487a2b9f04e095022fb59ed32b8"'
             buildConfigField "String", "UMENG_APP_KEY", '"69005d13644c9e2c20677a21"'
             //友盟SECRET
-            buildConfigField "String", "SHANYAN_APPID", '"FWfSSoWa"' //闪验APPID
-            buildConfigField "String", "SHANYAN_APP_KEY", '"SLszLLH8"' //闪验APPKEY
+            buildConfigField "String", "SHANYAN_APPID", '"KfNYHDRd"' //闪验APPID
+            buildConfigField "String", "SHANYAN_APP_KEY", '"VDE8Q8TY"' //闪验APPKEY
 
             versionNameSuffix ""
             signingConfig signingConfigs.debug

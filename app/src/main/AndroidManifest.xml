@@ -216,7 +216,13 @@
             android:windowSoftInputMode="stateVisible" />
         <!--手机号登录-->
         <activity
-            android:name=".feature.login.LoginDialog"
+            android:name=".feature.login.LoginActivity"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <!--闪验登录入口-->
+        <activity
+            android:name=".feature.login.phone.PhoneLoginActivity"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
 

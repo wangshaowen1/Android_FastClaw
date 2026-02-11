@@ -1,11 +1,8 @@
 package com.kgmedia.fastfilm.router
 
 import com.blankj.utilcode.util.AppUtils
-import com.kgmedia.fastfilm.common.Constant
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.User
-import com.kgmedia.fastfilm.feature.login.LoginDialog
-import com.kgmedia.fastfilm.feature.login.flash.FlashLoginDialogFragment
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.kgmedia.fastfilm.kit.SignUtils
 

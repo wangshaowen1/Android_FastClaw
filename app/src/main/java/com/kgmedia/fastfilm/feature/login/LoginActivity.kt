@@ -17,7 +17,7 @@ import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import com.umeng.socialize.bean.SHARE_MEDIA
 
-class LoginDialog : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(),
+class LoginActivity : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(),
     ShareManager.UmengLoginListener {
 
     companion object {
@@ -27,7 +27,7 @@ class LoginDialog : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(),
                 "请先登录".showToast()
             }
             val activity = topActivity ?: return
-            activity.startActivity(Intent(activity, LoginDialog::class.java))
+            activity.startActivity(Intent(activity, LoginActivity::class.java))
             activity.overridePendingTransition(
                 R.anim.push_bottom_in,
                 R.anim.push_bottom_out

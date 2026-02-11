@@ -9,15 +9,13 @@ import androidx.fragment.app.FragmentActivity
 import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.core.manager.FlashLoginManager
 import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.databinding.DialogFlashLoginBinding
-import com.kgmedia.fastfilm.feature.login.LoginDialog
+import com.kgmedia.fastfilm.feature.login.LoginActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.nhsd.basic.BaseVMDialogFragment
-import com.nhsd.basic.bus.observeEvent
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
@@ -61,7 +59,7 @@ class FlashLoginDialogFragment :
             dialogRef?.clear()
             dialogRef = null
             FlashLoginManager.finishAuthActivity()
-            ActivityUtils.finishActivity(LoginDialog::class.java)
+            ActivityUtils.finishActivity(LoginActivity::class.java)
         }
     }
 
@@ -154,7 +152,7 @@ class FlashLoginDialogFragment :
      * 手机号登录
      */
     private fun loginByPhoneDialog(dismiss: Boolean) {
-        LoginDialog.checkedPolicy = FlashLoginManager.checkedPolicy
+        LoginActivity.checkedPolicy = FlashLoginManager.checkedPolicy
         PhoneLoginDialogActivity.start(requireActivity(), checkedPolicy = checkedPolicy)
         if (dismiss) {
             isCancelable = true
