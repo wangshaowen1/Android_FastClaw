@@ -19,10 +19,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class ItemSceneVM(
+    index: Int,
     workId: String?,
     storyId: String?,
     data: SimpleSceneInfo?
-) : ItemAssetVM<SimpleSceneInfo>(workId, storyId, data) {
+) : ItemAssetVM<SimpleSceneInfo>(index, workId, storyId, data) {
     override fun exitEditAssetDesc() {
         super.exitEditAssetDesc()
         saveInput()
@@ -47,6 +48,7 @@ class ItemSceneVM(
         }
     }
 
+    override val assetType: String = "场景"
     override val assetDescHint: String = "场景描述词"
     override val assetNameHint: String = "场景名"
     override val generateButtonText: String = "生成场景"

@@ -19,10 +19,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class ItemRoleVM(
+    index: Int,
     workId: String?,
     storyId: String?,
     data: SimpleRoleInfo?
-) : ItemAssetVM<SimpleRoleInfo>(workId, storyId, data) {
+) : ItemAssetVM<SimpleRoleInfo>(index, workId, storyId, data) {
 
     override fun exitEditAssetDesc() {
         super.exitEditAssetDesc()
@@ -48,6 +49,7 @@ class ItemRoleVM(
         }
     }
 
+    override val assetType: String = "角色"
     override val assetDescHint: String = "角色描述词"
     override val assetNameHint: String = "角色名"
     override val generateButtonText: String = "生成角色"

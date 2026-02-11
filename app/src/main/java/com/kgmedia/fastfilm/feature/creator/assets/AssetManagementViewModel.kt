@@ -179,11 +179,11 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 val scenes = scenesDeferred.await()
                 val props = propsDeferred.await()
                 val items = mutableListOf<AppItemViewModel<*>>()
-                roles?.map { it.toItemAssetVM() }?.let { items.addAll(it) }
+                roles?.mapIndexed { index, info -> info.toItemAssetVM(index) }?.let { items.addAll(it) }
                 items.add(addRoleItem)
-                scenes?.map { it.toItemAssetVM() }?.let { items.addAll(it) }
+                scenes?.mapIndexed { index, info -> info.toItemAssetVM(index) }?.let { items.addAll(it) }
                 items.add(addSceneItem)
-                props?.map { it.toItemAssetVM() }?.let { items.addAll(it) }
+                props?.mapIndexed { index, info -> info.toItemAssetVM(index) }?.let { items.addAll(it) }
                 items.add(addPropItem)
                 adapter.submitList(items)
                 updateItemNo()
@@ -197,30 +197,30 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         )
     }
 
-    private fun SimpleRoleInfo.toItemAssetVM() = ItemRoleVM(workId, storyId, this).applyConfig()
+    private fun SimpleRoleInfo.toItemAssetVM(index: Int) = ItemRoleVM(index, workId, storyId, this).applyConfig()
 
-    private fun SimpleSceneInfo.toItemAssetVM() = ItemSceneVM(workId, storyId, this).applyConfig()
+    private fun SimpleSceneInfo.toItemAssetVM(index: Int) = ItemSceneVM(index, workId, storyId, this).applyConfig()
 
-    private fun SimplePropInfo.toItemAssetVM() = ItemPropVM(workId, storyId, this).applyConfig()
+    private fun SimplePropInfo.toItemAssetVM(index: Int) = ItemPropVM(index, workId, storyId, this).applyConfig()
 
     fun addRole(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
         nextEnabled.set(false)
-        adapter.add(index, ItemRoleVM(workId, storyId, null).applyConfig())
+        adapter.add(index, ItemRoleVM(adapter.items.count { it is ItemRoleVM }, workId, storyId, null).applyConfig())
         updateItemNo()
     }
 
     fun addScene(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
         nextEnabled.set(false)
-        adapter.add(index, ItemSceneVM(workId, storyId, null).applyConfig())
+        adapter.add(index, ItemSceneVM(adapter.items.count { it is ItemSceneVM }, workId, storyId, null).applyConfig())
         updateItemNo()
     }
 
     fun addProp(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
         nextEnabled.set(false)
-        adapter.add(index, ItemPropVM(workId, storyId, null).applyConfig())
+        adapter.add(index, ItemPropVM(adapter.items.count { it is ItemPropVM }, workId, storyId, null).applyConfig())
         updateItemNo()
     }
 

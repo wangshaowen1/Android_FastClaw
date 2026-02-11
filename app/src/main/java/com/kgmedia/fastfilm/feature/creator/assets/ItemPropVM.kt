@@ -19,10 +19,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class ItemPropVM(
+    index: Int,
     workId: String?,
     storyId: String?,
     data: SimplePropInfo?
-) : ItemAssetVM<SimplePropInfo>(workId, storyId, data) {
+) : ItemAssetVM<SimplePropInfo>(index, workId, storyId, data) {
 
     override fun exitEditAssetDesc() {
         super.exitEditAssetDesc()
@@ -48,6 +49,7 @@ class ItemPropVM(
         }
     }
 
+    override val assetType: String = "道具"
     override val assetDescHint: String = "道具描述词"
     override val assetNameHint: String = "道具名"
     override val generateButtonText: String = "生成道具"

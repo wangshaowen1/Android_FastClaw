@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.widget.RecyclerEditText
 import kotlinx.coroutines.Job
 
 abstract class ItemAssetVM<Item : SimpleAsset>(
+    val index: Int,
     /**
      * 作品 ID
      */
@@ -21,7 +22,6 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     val storyId: String?,
     data: Item?
 ) : AppItemViewModel<Item>(data) {
-    val no by lazy { ObservableInt() }
 
     /**
      * -1=新创建 0=待生成 1=生成中 2=成功 3=失败
@@ -105,6 +105,10 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
         assetName.set(editingAssetNameText)
     }
 
+    /**
+     * 资产类型
+     */
+    abstract val assetType: String
     abstract val assetDescHint: String
     abstract val assetNameHint: String
     abstract val generateButtonText: String
