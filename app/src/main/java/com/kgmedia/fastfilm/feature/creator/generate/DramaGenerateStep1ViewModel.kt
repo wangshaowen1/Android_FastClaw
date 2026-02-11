@@ -7,7 +7,7 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
-import com.kgmedia.fastfilm.common.utils.ProgressSimulator
+import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
@@ -60,9 +60,9 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     private var sseHandler: SSEStreamHandler? = null
 
     private val progressHelper by lazy {
-        ProgressSimulator(viewModelScope) { progress ->
+        AutoProgressSimulator(viewModelScope) { show, title, progress ->
             // 统一处理进度文案更新
-            promptGenerating.value = Triple(true, "创建故事大纲 $progress%", "退出后AI会继续生成")
+            promptGenerating.value = Triple(show, "$title $progress%", "退出后AI会继续生成")
         }
     }
 
@@ -77,8 +77,11 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             )
         )
         displayChild.set(DISPLAY_CONTENT)
-        promptGenerating.value = Triple(true, "创建故事大纲 0%", "退出后AI会继续生成")
-        progressHelper.start(0, 5, 1000)
+        progressHelper.start(
+            "创建故事大纲", "生成故事梗概",
+            step = 1,
+            intervalMs = 100L
+        )
         // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
         sseHandler?.cancel()
         sseHandler = SSEStreamHandler(
@@ -92,10 +95,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     Logger.d("[SSE]", "Open")
                 },
                 onTitleUpdate = { title ->
-                    progressHelper.finish {
-                        // 这里的代码会在 100% 显示 200ms 后执行
-                        promptGenerating.value = Triple(false, "", "")
-                    }
+                    progressHelper.finish()
                     mWorkName.value = title
                 },
                 onMdUpdate = { fullContent ->
@@ -109,7 +109,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                         nextStepEnabled.set(true)
                     }
                     progressHelper.stop()
-                    promptGenerating.value = Triple(false, "", "")
                     originalJson = originalContent
                     // 触发原本结束后的逻辑
                     onSSECompleted?.invoke()
@@ -119,7 +118,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     displayChild.set(DISPLAY_FAIL)
                     onSSECompleted?.invoke()
                     progressHelper.stop()
-                    promptGenerating.value = Triple(false, "", "")
                 })
         )
 

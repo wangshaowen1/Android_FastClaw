@@ -33,6 +33,7 @@
             android:textColor="?attr/textColor1"
             android:textSize="14sp"
             android:textStyle="bold"
+            android:typeface="monospace"
             tools:text="创建故事大纲 20%" />
 
         <TextView
