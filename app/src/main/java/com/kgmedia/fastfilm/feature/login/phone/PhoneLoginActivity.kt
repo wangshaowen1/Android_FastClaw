@@ -171,7 +171,7 @@ class PhoneLoginActivity :
             }
 
             R.id.bt_settings->{
-                startActivity(SettingsActivity::class.java)
+                SettingsActivity.start(this)
             }
         }
     }
