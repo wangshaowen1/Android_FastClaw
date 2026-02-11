@@ -141,7 +141,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 }
             }
         }
-        mRealVM.workInfo.observe(this){
+        mRealVM.workInfo.observe(this) {
             episodeAdapter.refresh()
         }
         mRealVM.episodeInfo.observe(this) {
@@ -181,7 +181,11 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             else -> {
-                AppRouter.startStory(mRealVM.workInfo.value, episodeInfo.storyId)
+                if (episodeInfo.storyId.isNullOrEmpty()) {
+                    continueWriting()
+                } else {
+                    AppRouter.startStory(mRealVM.workInfo.value, episodeInfo.storyId)
+                }
             }
         }
     }
@@ -239,21 +243,21 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 }
                 popup.showUnder(view)
             }
-
-            R.id.btnContinue -> {
-                val workInfo = mRealVM.workInfo.value ?: return
-                if (!workInfo.isInspirationGenerated()) {
-                    //小说改编续写
-                    ContinueWritingActivity.start(
-                        this,
-                        workId = mRealVM.workId,
-                        workTitle = workInfo.workTitle
-                    )
-                    return
-                }
-                //需要拿到上一集的剧集信息，所以先调用一下
-                mRealVM.getEpisodeInfo()
-            }
         }
+    }
+
+    private fun continueWriting() {
+        val workInfo = mRealVM.workInfo.value ?: return
+        if (!workInfo.isInspirationGenerated()) {
+            //小说改编续写
+            ContinueWritingActivity.start(
+                this,
+                workId = mRealVM.workId,
+                workTitle = workInfo.workTitle
+            )
+            return
+        }
+        //需要拿到上一集的剧集信息，所以先调用一下
+        mRealVM.getEpisodeInfo()
     }
 }
