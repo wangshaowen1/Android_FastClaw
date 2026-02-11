@@ -32,7 +32,7 @@ class StoryboardDesignFragment :
         super.onClick(view, data)
         when (view.id) {
             R.id.btnNext -> {
-                mRealVM.confirmGenerate { workId, storyId, taskId ->
+                mRealVM.clickNext { workId, storyId, taskId ->
                     EditStoryboardVideoActivity.start(
                         hostVm?.title?.value?.let { "$it：第${hostVm?.chapterIndex ?: 1}集" },
                         workId,

@@ -43,27 +43,27 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         /**
          * 资产描述生成中
          */
-        private const val STEP_ASSET_DESCRIPTION_GENERATING = 1
+        private const val STEP_DESCRIPTION_GENERATING = 1
 
         /**
          * 资产描述已生成
          */
-        private const val STEP_ASSET_DESCRIPTION_GENERATED = 2
+        private const val STEP_DESCRIPTION_GENERATED = 2
 
         /**
          * 资产图片生成中
          */
-        private const val STEP_ASSET_IMAGE_GENERATING = 3
+        private const val STEP_IMAGE_GENERATING = 3
 
         /**
          * 资产图片生成失败
          */
-        private const val STEP_ASSET_IMAGE_GENERATE_FAILED = 4
+        private const val STEP_IMAGE_GENERATE_FAILED = 4
 
         /**
          * 资产图片已生成
          */
-        private const val STEP_ASSET_IMAGE_GENERATED = 5
+        private const val STEP_IMAGE_GENERATED = 5
     }
 
     var workId: String? = null
@@ -72,7 +72,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         set(value) {
             field = value
             if (!value.isNullOrEmpty()) {
-                step.set(STEP_ASSET_DESCRIPTION_GENERATING)
+                step.set(STEP_DESCRIPTION_GENERATING)
             }
         }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
@@ -91,7 +91,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
      */
     val step by lazy { ObservableInt(STEP_INIT) }
     val cost by lazy { ObservableInt() }
-    val keyboardHeight by lazy { ObservableInt() }
+    val keyboardHeight by lazy { ObservableInt(100) }
     private var generatingDialog: GeneratingDialog? = null
     private var generating = false
         set(value) {
@@ -139,8 +139,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     fun retry() {
         when (step.get()) {
             STEP_INIT -> generateAllAssetDescription()
-            STEP_ASSET_DESCRIPTION_GENERATING -> loopAllAssetDescriptionStatus()
-            STEP_ASSET_DESCRIPTION_GENERATED -> getAssets()
+            STEP_DESCRIPTION_GENERATING -> loopAllAssetDescriptionStatus()
+            STEP_DESCRIPTION_GENERATED -> getAssets()
         }
     }
 
@@ -151,7 +151,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             val allAssetDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)).data }
             taskId = allAssetDescriptionStatus?.taskId
             if (allAssetDescriptionStatus?.genStatus == 1 || allAssetDescriptionStatus?.genStatus == 2) {
-                step.set(STEP_ASSET_DESCRIPTION_GENERATING)
+                step.set(STEP_DESCRIPTION_GENERATING)
                 loopAllAssetDescriptionStatus()
             } else {
                 loadState.set(LoadStateViewHolder.RETRY)
@@ -180,7 +180,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 2 -> {
-                    step.set(STEP_ASSET_DESCRIPTION_GENERATED)
+                    step.set(STEP_DESCRIPTION_GENERATED)
                     getAssets()
                 }
 
@@ -265,10 +265,18 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
         }
         when {
-            generatingNum > 0 -> step.set(STEP_ASSET_IMAGE_GENERATING)
-            newNum > 0 -> step.set(STEP_ASSET_DESCRIPTION_GENERATED)
-            failedNum > 0 -> step.set(STEP_ASSET_IMAGE_GENERATE_FAILED)
-            else -> step.set(STEP_ASSET_IMAGE_GENERATED)
+            generatingNum > 0 -> step.set(STEP_IMAGE_GENERATING)
+            newNum > 0 -> {
+                step.set(STEP_DESCRIPTION_GENERATED)
+                calcCost()
+            }
+
+            failedNum > 0 -> {
+                step.set(STEP_IMAGE_GENERATE_FAILED)
+                calcCost()
+            }
+
+            else -> step.set(STEP_IMAGE_GENERATED)
         }
     }
 
@@ -362,6 +370,10 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
     }
 
+    private fun calcCost() {
+        cost.set((Math.random() * 1000).toInt())
+    }
+
     private fun generateAllStoryboardDescription(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
         launchWithLoading {
             response(mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId))) {
@@ -371,15 +383,15 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     fun buttonEnable(step: Int): Boolean {
-        return step == STEP_ASSET_DESCRIPTION_GENERATED || step == STEP_ASSET_IMAGE_GENERATE_FAILED || step == STEP_ASSET_IMAGE_GENERATED
+        return step == STEP_DESCRIPTION_GENERATED || step == STEP_IMAGE_GENERATE_FAILED || step == STEP_IMAGE_GENERATED
     }
 
     fun buttonText(step: Int, cost: Int): CharSequence? {
         return when (step) {
-            STEP_ASSET_DESCRIPTION_GENERATED -> if (cost > 0) "一键生成  $POWER $cost".replaceSpan(POWER) { powerSpan } else "一键生成"
-            STEP_ASSET_IMAGE_GENERATING -> "图片生成中..."
-            STEP_ASSET_IMAGE_GENERATE_FAILED -> if (cost > 0) "重试失败项  $POWER $cost".replaceSpan(POWER) { powerSpan } else "重试失败项"
-            STEP_ASSET_IMAGE_GENERATED -> "下一步：生成分镜图片"
+            STEP_DESCRIPTION_GENERATED -> if (cost > 0) "一键生成  $POWER $cost".replaceSpan(POWER) { powerSpan } else "一键生成"
+            STEP_IMAGE_GENERATING -> "图片生成中..."
+            STEP_IMAGE_GENERATE_FAILED -> if (cost > 0) "重试失败项  $POWER $cost".replaceSpan(POWER) { powerSpan } else "重试失败项"
+            STEP_IMAGE_GENERATED -> "下一步：生成分镜图片"
             else -> null
         }
     }
@@ -389,12 +401,12 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
      */
     fun clickNext(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
         when (step.get()) {
-            STEP_ASSET_DESCRIPTION_GENERATED, STEP_ASSET_IMAGE_GENERATE_FAILED -> {
+            STEP_DESCRIPTION_GENERATED, STEP_IMAGE_GENERATE_FAILED -> {
                 //一键生成、重试失败项
                 oneKeyGenerate()
             }
 
-            STEP_ASSET_IMAGE_GENERATED -> {
+            STEP_IMAGE_GENERATED -> {
                 //下一步：生成分镜图片
                 generateAllStoryboardDescription(toNextStep)
             }

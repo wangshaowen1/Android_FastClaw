@@ -27,6 +27,7 @@ class ItemStoryboardVM(
      * 剧集 id
      */
     val storyId: String?,
+    private val onItemChanged: () -> Unit,
     data: SimpleStoryboardInfo?
 ) : AppItemViewModel<SimpleStoryboardInfo>(data) {
     val no by lazy { ObservableInt() }
@@ -91,6 +92,7 @@ class ItemStoryboardVM(
             )
             response(ApiFactory.apiService.workStoryboardSave(body)) {
                 this@ItemStoryboardVM.data.set(data)
+                onItemChanged()
             }
         }
     }
@@ -105,6 +107,7 @@ class ItemStoryboardVM(
         val preStatus = data.get()?.genStatusImage
         data.get()?.genStatusImage = 1
         data.notifyChange()
+        onItemChanged()
         launch {
             val body = GenerateStoryboardBody(
                 storyboardId = data.get()?.storyboardId,
@@ -124,6 +127,7 @@ class ItemStoryboardVM(
                 error = {
                     this?.msg?.showToast()
                     data.get()?.genStatusImage = preStatus
+                    onItemChanged()
                 })
         }
     }
@@ -144,6 +148,8 @@ class ItemStoryboardVM(
             if (data.get()?.imageGenerating == true) {
                 delay(3000)
                 loopGenStatus()
+            } else {
+                onItemChanged()
             }
         }
     }
