@@ -1,8 +1,10 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import com.blankj.utilcode.util.KeyboardUtils
+import com.drake.spannable.replaceSpan
+import com.drake.spannable.span.CenterImageSpan
+import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
@@ -18,6 +20,7 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
+import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,13 +32,47 @@ import kotlinx.coroutines.withContext
  * 资产管理
  */
 class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepository>() {
+    companion object {
+        private const val POWER = "[power]"
+
+        /**
+         * 初始化
+         */
+        private const val STEP_INIT = 0
+
+        /**
+         * 资产描述生成中
+         */
+        private const val STEP_ASSET_DESCRIPTION_GENERATING = 1
+
+        /**
+         * 资产描述已生成
+         */
+        private const val STEP_ASSET_DESCRIPTION_GENERATED = 2
+
+        /**
+         * 资产图片生成中
+         */
+        private const val STEP_ASSET_IMAGE_GENERATING = 3
+
+        /**
+         * 资产图片生成失败
+         */
+        private const val STEP_ASSET_IMAGE_GENERATE_FAILED = 4
+
+        /**
+         * 资产图片已生成
+         */
+        private const val STEP_ASSET_IMAGE_GENERATED = 5
+    }
+
     var workId: String? = null
     var storyId: String? = null
     var taskId: String? = null
         set(value) {
             field = value
             if (!value.isNullOrEmpty()) {
-                step = 1
+                step.set(STEP_ASSET_DESCRIPTION_GENERATING)
             }
         }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
@@ -52,8 +89,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     /**
      * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
      */
-    private var step = 0
-    val nextEnabled by lazy { ObservableBoolean(false) }
+    val step by lazy { ObservableInt(STEP_INIT) }
+    val cost by lazy { ObservableInt() }
     val keyboardHeight by lazy { ObservableInt() }
     private var generatingDialog: GeneratingDialog? = null
     private var generating = false
@@ -69,6 +106,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
             }
         }
+    private val powerSpan by lazy { CenterImageSpan(App.instance, R.drawable.icon_power).apply { setDrawableSize(16.dp, 16.dp) } }
 
     override fun onResume() {
         super.onResume()
@@ -83,7 +121,6 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
             }
         }
-        loopNextEnabled()
     }
 
     override fun onPause() {
@@ -100,31 +137,21 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     fun retry() {
-        when (step) {
-            0 -> generateAllAssetDescription()
-            1 -> loopAllAssetDescriptionStatus()
-            2 -> getAssets()
-        }
-    }
-
-    private fun loopNextEnabled() {
-        loopNextEnabledJob?.cancel()
-        loopNextEnabledJob = launch {
-            val containAssets = adapter.items.any { it is ItemAssetVM<*> }
-            nextEnabled.set(containAssets && adapter.items.all { if (it is ItemAssetVM<*>) it.status.get() == 2 else true })
-            delay(1000)
-            loopNextEnabled()
+        when (step.get()) {
+            STEP_INIT -> generateAllAssetDescription()
+            STEP_ASSET_DESCRIPTION_GENERATING -> loopAllAssetDescriptionStatus()
+            STEP_ASSET_DESCRIPTION_GENERATED -> getAssets()
         }
     }
 
     private fun generateAllAssetDescription() {
-        if (step > 0) return
+        if (step.get() > STEP_INIT) return
         generating = true
         launch(block = {
             val allAssetDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)).data }
             taskId = allAssetDescriptionStatus?.taskId
             if (allAssetDescriptionStatus?.genStatus == 1 || allAssetDescriptionStatus?.genStatus == 2) {
-                step = 1
+                step.set(STEP_ASSET_DESCRIPTION_GENERATING)
                 loopAllAssetDescriptionStatus()
             } else {
                 loadState.set(LoadStateViewHolder.RETRY)
@@ -153,7 +180,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 2 -> {
-                    step = 2
+                    step.set(STEP_ASSET_DESCRIPTION_GENERATED)
                     getAssets()
                 }
 
@@ -186,7 +213,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 props?.mapIndexed { index, info -> info.toItemAssetVM(index) }?.let { items.addAll(it) }
                 items.add(addPropItem)
                 adapter.submitList(items)
-                updateItemNo()
+                onItemChanged()
                 loadState.set(LoadStateViewHolder.CONTENT)
                 generating = false
             },
@@ -197,49 +224,52 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         )
     }
 
-    private fun SimpleRoleInfo.toItemAssetVM(index: Int) = ItemRoleVM(index, workId, storyId, this).applyConfig()
+    private fun SimpleRoleInfo.toItemAssetVM(index: Int) = ItemRoleVM(index, workId, storyId, ::onItemChanged, this).applyConfig()
 
-    private fun SimpleSceneInfo.toItemAssetVM(index: Int) = ItemSceneVM(index, workId, storyId, this).applyConfig()
+    private fun SimpleSceneInfo.toItemAssetVM(index: Int) = ItemSceneVM(index, workId, storyId, ::onItemChanged, this).applyConfig()
 
-    private fun SimplePropInfo.toItemAssetVM(index: Int) = ItemPropVM(index, workId, storyId, this).applyConfig()
+    private fun SimplePropInfo.toItemAssetVM(index: Int) = ItemPropVM(index, workId, storyId, ::onItemChanged, this).applyConfig()
 
     fun addRole(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        nextEnabled.set(false)
-        adapter.add(index, ItemRoleVM(adapter.items.count { it is ItemRoleVM }, workId, storyId, null).applyConfig())
-        updateItemNo()
+        adapter.add(index, ItemRoleVM(adapter.items.count { it is ItemRoleVM }, workId, storyId, ::onItemChanged, null).applyConfig())
+        onItemChanged()
     }
 
     fun addScene(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        nextEnabled.set(false)
-        adapter.add(index, ItemSceneVM(adapter.items.count { it is ItemSceneVM }, workId, storyId, null).applyConfig())
-        updateItemNo()
+        adapter.add(index, ItemSceneVM(adapter.items.count { it is ItemSceneVM }, workId, storyId, ::onItemChanged, null).applyConfig())
+        onItemChanged()
     }
 
     fun addProp(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        nextEnabled.set(false)
-        adapter.add(index, ItemPropVM(adapter.items.count { it is ItemPropVM }, workId, storyId, null).applyConfig())
-        updateItemNo()
+        adapter.add(index, ItemPropVM(adapter.items.count { it is ItemPropVM }, workId, storyId, ::onItemChanged, null).applyConfig())
+        onItemChanged()
     }
 
-    private fun updateItemNo() {
-//        var roleNum = 0
-//        var sceneNum = 0
-//        var propNum = 0
-//        adapter.items.forEachIndexed { index, item ->
-//            if (item is ItemRoleVM) {
-//                roleNum++
-//                item.no.set(roleNum)
-//            } else if (item is ItemSceneVM) {
-//                sceneNum++
-//                item.no.set(sceneNum)
-//            } else if (item is ItemPropVM) {
-//                propNum++
-//                item.no.set(propNum)
-//            }
-//        }
+    private fun onItemChanged() {
+        var newNum = 0
+        var generatingNum = 0
+        var generatedNum = 0
+        var failedNum = 0
+        adapter.items.forEachIndexed { index, item ->
+            if (item is ItemAssetVM<*>) {
+                //-1=新创建 0=待生成 1=生成中 2=成功 3=失败
+                when (item.status.get()) {
+                    -1, 0 -> newNum++
+                    1 -> generatingNum++
+                    2 -> generatedNum++
+                    3 -> failedNum++
+                }
+            }
+        }
+        when {
+            generatingNum > 0 -> step.set(STEP_ASSET_IMAGE_GENERATING)
+            newNum > 0 -> step.set(STEP_ASSET_DESCRIPTION_GENERATED)
+            failedNum > 0 -> step.set(STEP_ASSET_IMAGE_GENERATE_FAILED)
+            else -> step.set(STEP_ASSET_IMAGE_GENERATED)
+        }
     }
 
     private fun ItemAssetVM<*>.applyConfig(): ItemAssetVM<*> {
@@ -285,7 +315,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 R.id.btnDelete -> {
                     if (data.get() == null) {
                         adapter.remove(this)
-                        updateItemNo()
+                        onItemChanged()
                     } else {
                         topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
                             deleteAsset(this)
@@ -301,12 +331,12 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         launchWithLoading {
             response(item.deleteAsset()) {
                 adapter.remove(item)
-                updateItemNo()
+                onItemChanged()
             }
         }
     }
 
-    fun oneKeyGenerate() {
+    private fun oneKeyGenerate() {
         var notInput = false
         val notGenerateItems = arrayListOf<ItemAssetVM<*>>()
         adapter.items.forEachIndexed { index, item ->
@@ -332,10 +362,41 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
     }
 
-    fun generateAllStoryboardDescription(onSuccess: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
+    private fun generateAllStoryboardDescription(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
         launchWithLoading {
             response(mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId))) {
-                onSuccess?.invoke(workId, storyId, data?.taskId)
+                toNextStep?.invoke(workId, storyId, data?.taskId)
+            }
+        }
+    }
+
+    fun buttonEnable(step: Int): Boolean {
+        return step == STEP_ASSET_DESCRIPTION_GENERATED || step == STEP_ASSET_IMAGE_GENERATE_FAILED || step == STEP_ASSET_IMAGE_GENERATED
+    }
+
+    fun buttonText(step: Int, cost: Int): CharSequence? {
+        return when (step) {
+            STEP_ASSET_DESCRIPTION_GENERATED -> if (cost > 0) "一键生成  $POWER $cost".replaceSpan(POWER) { powerSpan } else "一键生成"
+            STEP_ASSET_IMAGE_GENERATING -> "图片生成中..."
+            STEP_ASSET_IMAGE_GENERATE_FAILED -> if (cost > 0) "重试失败项  $POWER $cost".replaceSpan(POWER) { powerSpan } else "重试失败项"
+            STEP_ASSET_IMAGE_GENERATED -> "下一步：生成分镜图片"
+            else -> null
+        }
+    }
+
+    /**
+     * 点击下一步
+     */
+    fun clickNext(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
+        when (step.get()) {
+            STEP_ASSET_DESCRIPTION_GENERATED, STEP_ASSET_IMAGE_GENERATE_FAILED -> {
+                //一键生成、重试失败项
+                oneKeyGenerate()
+            }
+
+            STEP_ASSET_IMAGE_GENERATED -> {
+                //下一步：生成分镜图片
+                generateAllStoryboardDescription(toNextStep)
             }
         }
     }

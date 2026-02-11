@@ -20,6 +20,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
      * 剧集 id
      */
     val storyId: String?,
+    protected val onItemChanged: () -> Unit,
     data: Item?
 ) : AppItemViewModel<Item>(data) {
 

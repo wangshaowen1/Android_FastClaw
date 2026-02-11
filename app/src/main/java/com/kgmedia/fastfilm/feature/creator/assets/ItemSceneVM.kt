@@ -22,8 +22,9 @@ class ItemSceneVM(
     index: Int,
     workId: String?,
     storyId: String?,
+    onItemChanged: () -> Unit,
     data: SimpleSceneInfo?
-) : ItemAssetVM<SimpleSceneInfo>(index, workId, storyId, data) {
+) : ItemAssetVM<SimpleSceneInfo>(index, workId, storyId, onItemChanged, data) {
     override fun exitEditAssetDesc() {
         super.exitEditAssetDesc()
         saveInput()
@@ -44,6 +45,7 @@ class ItemSceneVM(
             val body = SaveSceneBody(data.get()?.sceneId, data.get()?.appearanceId, workId, storyId, sceneName, scenePrompt)
             response(ApiFactory.apiService.workAssetSceneSave(body)) {
                 this@ItemSceneVM.data.set(data)
+                onItemChanged()
             }
         }
     }
@@ -79,6 +81,7 @@ class ItemSceneVM(
             return
         }
         status.set(1)
+        onItemChanged()
         launch {
             val body = GenerateAssetBody(
                 assetId = data.get()?.sceneId,
@@ -103,6 +106,7 @@ class ItemSceneVM(
                 error = {
                     this?.msg?.showToast()
                     status.set(0)
+                    onItemChanged()
                 })
         }
     }
@@ -129,6 +133,8 @@ class ItemSceneVM(
             if (status.get() == 1) {
                 delay(3000)
                 loopGenStatus()
+            } else {
+                onItemChanged()
             }
         }
     }

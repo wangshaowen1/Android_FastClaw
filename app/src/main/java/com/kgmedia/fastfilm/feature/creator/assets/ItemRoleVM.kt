@@ -22,8 +22,9 @@ class ItemRoleVM(
     index: Int,
     workId: String?,
     storyId: String?,
+    onItemChanged: () -> Unit,
     data: SimpleRoleInfo?
-) : ItemAssetVM<SimpleRoleInfo>(index, workId, storyId, data) {
+) : ItemAssetVM<SimpleRoleInfo>(index, workId, storyId, onItemChanged, data) {
 
     override fun exitEditAssetDesc() {
         super.exitEditAssetDesc()
@@ -45,6 +46,7 @@ class ItemRoleVM(
             val body = SaveRoleBody(data.get()?.roleId, data.get()?.appearanceId, workId, storyId, roleName, rolePrompt)
             response(ApiFactory.apiService.workAssetRoleSave(body)) {
                 this@ItemRoleVM.data.set(data)
+                onItemChanged()
             }
         }
     }
@@ -79,7 +81,9 @@ class ItemRoleVM(
             "请先填写角色名称".showToast()
             return
         }
+
         status.set(1)
+        onItemChanged()
         launch {
             val body = GenerateAssetBody(
                 assetId = data.get()?.roleId,
@@ -105,6 +109,7 @@ class ItemRoleVM(
                 error = {
                     this?.msg?.showToast()
                     status.set(0)
+                    onItemChanged()
                 })
         }
     }
@@ -131,6 +136,8 @@ class ItemRoleVM(
             if (status.get() == 1) {
                 delay(3000)
                 loopGenStatus()
+            } else {
+                onItemChanged()
             }
         }
     }

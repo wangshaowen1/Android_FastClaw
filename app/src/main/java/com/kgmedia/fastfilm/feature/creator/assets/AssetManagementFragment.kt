@@ -65,7 +65,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
             }
 
             R.id.btnNext -> {
-                mRealVM.generateAllStoryboardDescription { workId, storyId, taskId ->
+                mRealVM.clickNext { workId, storyId, taskId ->
                     hostVm?.nextStep(4, workId, storyId, taskId)
                 }
             }

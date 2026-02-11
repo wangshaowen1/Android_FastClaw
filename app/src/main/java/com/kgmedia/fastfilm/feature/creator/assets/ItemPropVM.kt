@@ -22,8 +22,9 @@ class ItemPropVM(
     index: Int,
     workId: String?,
     storyId: String?,
+    onItemChanged: () -> Unit,
     data: SimplePropInfo?
-) : ItemAssetVM<SimplePropInfo>(index, workId, storyId, data) {
+) : ItemAssetVM<SimplePropInfo>(index, workId, storyId, onItemChanged, data) {
 
     override fun exitEditAssetDesc() {
         super.exitEditAssetDesc()
@@ -45,6 +46,7 @@ class ItemPropVM(
             val body = SavePropBody(data.get()?.propId, data.get()?.appearanceId, workId, storyId, propName, propPrompt)
             response(ApiFactory.apiService.workAssetPropSave(body)) {
                 this@ItemPropVM.data.set(data)
+                onItemChanged()
             }
         }
     }
@@ -80,6 +82,7 @@ class ItemPropVM(
             return
         }
         status.set(1)
+        onItemChanged()
         launch {
             val body = GenerateAssetBody(
                 assetId = data.get()?.propId,
@@ -104,6 +107,7 @@ class ItemPropVM(
                 error = {
                     this?.msg?.showToast()
                     status.set(0)
+                    onItemChanged()
                 })
         }
     }
@@ -130,6 +134,8 @@ class ItemPropVM(
             if (status.get() == 1) {
                 delay(3000)
                 loopGenStatus()
+            } else {
+                onItemChanged()
             }
         }
     }
