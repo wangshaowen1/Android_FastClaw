@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.kgmedia.fastfilm.feature.recharge.ItemRechargePowerVM" />
+    </data>
+
+    <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        showBorder="@{item.isChecked}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:onClick="@{(it)->item.onItemClick.invoke(it)}"
+        app:backgroundStartColor="?attr/bgColor2"
+        app:borderCenterColor="@color/gradient_btn_center_dark"
+        app:borderEndColor="@color/gradient_btn_end_dark"
+        app:borderStartColor="@color/gradient_btn_start_dark"
+        app:borderWidth="1.5dp"
+        app:roundCornerRadius="12dp">
+
+        <androidx.constraintlayout.widget.Placeholder
+            android:id="@+id/scope"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="107:69"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivPower"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/icon_power"
+            app:layout_constraintBottom_toBottomOf="@+id/scope"
+            app:layout_constraintEnd_toStartOf="@+id/tvPower"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/scope"
+            app:layout_constraintTop_toTopOf="@+id/scope"
+            app:layout_constraintVertical_bias="0.2653" />
+
+        <TextView
+            android:id="@+id/tvPower"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:fontFamily="@font/d_din_pro_600_semibold"
+            android:text="500"
+            android:textAppearance="@style/Text20"
+            android:textColor="?attr/textColor2"
+            app:layout_constraintBottom_toBottomOf="@+id/ivPower"
+            app:layout_constraintEnd_toEndOf="@+id/scope"
+            app:layout_constraintStart_toEndOf="@+id/ivPower"
+            app:layout_constraintTop_toTopOf="@+id/ivPower" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¥49.99"
+            android:textColor="?attr/textColor3"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/scope"
+            app:layout_constraintEnd_toEndOf="@+id/scope"
+            app:layout_constraintStart_toStartOf="@+id/scope"
+            app:layout_constraintTop_toTopOf="@+id/scope"
+            app:layout_constraintVertical_bias="0.781818" />
+    </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+</layout>

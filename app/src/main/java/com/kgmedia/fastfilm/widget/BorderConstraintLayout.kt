@@ -31,6 +31,7 @@ class BorderConstraintLayout : ConstraintLayout {
         }
     private var borderWidth = 0f
     private var borderStartColor = Color.TRANSPARENT
+    private var borderCenterColor = Color.TRANSPARENT
     private var borderEndColor = Color.TRANSPARENT
     private var borderAngle = 0
     private var backgroundStartColor = Color.TRANSPARENT
@@ -74,6 +75,7 @@ class BorderConstraintLayout : ConstraintLayout {
         context.withStyledAttributes(attrs, R.styleable.BorderConstraintLayout) {
             borderWidth = getDimensionPixelSize(R.styleable.BorderConstraintLayout_borderWidth, 0).toFloat()
             borderStartColor = getColor(R.styleable.BorderConstraintLayout_borderStartColor, Color.TRANSPARENT)
+            borderCenterColor = getColor(R.styleable.GradientBorderView_borderCenterColor, Color.TRANSPARENT)
             borderEndColor = getColor(R.styleable.BorderConstraintLayout_borderEndColor, Color.TRANSPARENT)
             borderAngle = getInteger(R.styleable.BorderConstraintLayout_borderAngle, 0)
             backgroundStartColor = getColor(R.styleable.BorderConstraintLayout_backgroundStartColor, Color.TRANSPARENT)
@@ -111,7 +113,10 @@ class BorderConstraintLayout : ConstraintLayout {
                     }
                     endPosition = endX.toFloat() to endY.toFloat()
                 }
-                borderPaint.shader = LinearGradient(0f, 0f, endPosition.first, endPosition.second, borderStartColor, borderEndColor, Shader.TileMode.CLAMP)
+                borderPaint.shader = if (borderCenterColor != Color.TRANSPARENT)
+                    LinearGradient(0f, 0f, endPosition.first, endPosition.second, intArrayOf(borderStartColor, borderCenterColor, borderEndColor), floatArrayOf(0f, 0.5f, 1f), Shader.TileMode.CLAMP)
+                else
+                    LinearGradient(0f, 0f, endPosition.first, endPosition.second, borderStartColor, borderEndColor, Shader.TileMode.CLAMP)
                 borderPaint.color = Color.WHITE
             }
         }

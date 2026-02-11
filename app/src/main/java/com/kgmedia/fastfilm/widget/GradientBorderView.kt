@@ -43,6 +43,7 @@ class GradientBorderView : View {
             }
         }
     private var borderStartColor = Color.TRANSPARENT
+    private var borderCenterColor = Color.TRANSPARENT
     private var borderEndColor = Color.TRANSPARENT
     private var borderAngle = 0
     private var backgroundStartColor = Color.TRANSPARENT
@@ -77,6 +78,7 @@ class GradientBorderView : View {
             borderEndColor = getColor(R.styleable.GradientBorderView_borderEndColor, Color.TRANSPARENT)
             borderAngle = getInteger(R.styleable.GradientBorderView_borderAngle, 0)
             backgroundStartColor = getColor(R.styleable.GradientBorderView_backgroundStartColor, Color.TRANSPARENT)
+            borderCenterColor = getColor(R.styleable.GradientBorderView_borderCenterColor, Color.TRANSPARENT)
             backgroundEndColor = getColor(R.styleable.GradientBorderView_backgroundEndColor, Color.TRANSPARENT)
             backgroundAngle = getInteger(R.styleable.GradientBorderView_backgroundAngle, 0)
             cornerRadius = getDimensionPixelSize(R.styleable.GradientBorderView_roundCornerRadius, 0).toFloat()
@@ -111,7 +113,10 @@ class GradientBorderView : View {
                     }
                     endPosition = endX.toFloat() to endY.toFloat()
                 }
-                borderPaint.shader = LinearGradient(0f, 0f, endPosition.first, endPosition.second, borderStartColor, borderEndColor, Shader.TileMode.CLAMP)
+                borderPaint.shader = if (borderCenterColor != Color.TRANSPARENT)
+                    LinearGradient(0f, 0f, endPosition.first, endPosition.second, intArrayOf(borderStartColor, borderCenterColor, borderEndColor), floatArrayOf(0f, 0.5f, 1f), Shader.TileMode.CLAMP)
+                else
+                    LinearGradient(0f, 0f, endPosition.first, endPosition.second, borderStartColor, borderEndColor, Shader.TileMode.CLAMP)
                 borderPaint.color = Color.WHITE
             }
         }
