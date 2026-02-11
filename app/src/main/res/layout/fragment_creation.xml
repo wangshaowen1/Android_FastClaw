@@ -76,9 +76,9 @@
                     android:paddingHorizontal="@dimen/spacing_s"
                     android:paddingVertical="@dimen/spacing_xs"
                     android:text="AI优化"
-                    android:textColor="?attr/textColor2"
+                    android:textColor="?attr/funcColorSpecial"
                     android:visibility="@{layout.inspirationModel()&amp;&amp;layout.input.length()>0?View.VISIBLE:View.GONE}"
-                    app:drawableStartCompat="@drawable/icon_optimize12" />
+                    app:drawableStartCompat="@drawable/icon_optimize_yellow" />
 
                 <TextView
                     android:id="@+id/btnRandomPrompt"

@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="视频设置"
+                android:text="创建作品"
                 android:textColor="?attr/textColor1" />
 
             <ImageView
@@ -44,10 +44,49 @@
         </FrameLayout>
 
         <TextView
+            style="@style/Text12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:text="填写基础信息，A自动生成剧情和视频让你轻松当导演"
+            android:textColor="?attr/textColor4" />
+
+        <TextView
+            android:id="@+id/tvSubtitle"
             style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xl"
+            android:text="作品名称"
+            android:textColor="?attr/textColor1"
+            android:textStyle="bold" />
+
+        <com.kgmedia.fastfilm.widget.CounterInputLayout
+            android:id="@+id/nameInputer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:background="@drawable/bg_fill_color_1_r8"
+            app:inputCounterGravity="right"
+            app:inputCounterRightMargin="0dp"
+            app:inputCounterTextColor="?attr/textColor4"
+            app:inputCounterTextSize="12sp"
+            app:inputCounterVisible="true"
+            app:inputHint="给你的作品取个名字吧～"
+            app:inputHorizontalPadding="@dimen/spacing_m"
+            app:inputMaxLength="20"
+            app:inputTextColor="?attr/textColor2"
+            app:inputTextColorHint="?attr/textColor4"
+            app:inputTextSize="14sp"
+            app:inputVerticalPadding="@dimen/spacing_m"
+            app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />
+
+        <TextView
+            style="@style/Text14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="总集数"
             android:textColor="?attr/textColor1"
             android:textStyle="bold" />
@@ -123,7 +162,7 @@
             android:layout_width="match_parent"
             android:layout_marginTop="37dp"
             android:layout_marginBottom="30dp"
-            android:text="确定"
+            android:text="开始创作"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
