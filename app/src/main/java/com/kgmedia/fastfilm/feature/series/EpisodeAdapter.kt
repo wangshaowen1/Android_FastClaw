@@ -35,11 +35,7 @@ class EpisodeAdapter(private val eventVm: ItemMultipleChoiceEventsViewModel<Seri
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
                 val viewModel = binding.getVm<ItemSeriesEpisodeVM>(position)?.also { it.updateData(item) }
-                        ?: ItemSeriesEpisodeVM(
-                            eventVm,
-                            position,
-                            item,
-                        ).also { binding.putVm(position, it) }
+                        ?: ItemSeriesEpisodeVM(eventVm, position, item,).also { binding.putVm(position, it) }
                 binding.item = viewModel
                 binding.executePendingBindings()
             }

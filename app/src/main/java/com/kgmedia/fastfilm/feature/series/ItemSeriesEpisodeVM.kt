@@ -1,13 +1,10 @@
 package com.kgmedia.fastfilm.feature.series
 
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
-import com.kgmedia.fastfilm.feature.works.MyWorksEvent
 import kotlinx.coroutines.launch
 
 /**
@@ -15,7 +12,7 @@ import kotlinx.coroutines.launch
  */
 class ItemSeriesEpisodeVM(
     private val eventVm: ItemMultipleChoiceEventsViewModel<SeriesEpisodeEvent, String>,
-    private val position: Int,
+    val position: Int,
     private val episodeInfo: EpisodeInfo?,
 ) : AppItemViewModel<EpisodeInfo>(episodeInfo) {
 

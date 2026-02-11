@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.Flow
 class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.ID) }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
-    val workInfo by lazy { ObservableField<WorkInfo>() }
+    val workInfo by lazy { MutableLiveData<WorkInfo>() }
 
     //创建续集信息
     val episodeInfo = MutableLiveData<EpisodeInfo?>()
@@ -44,11 +44,11 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
      */
     fun getWorkDtl() {
         loadState.set(LoadStateViewHolder.LOADING)
-        if (workInfo.get() == null) loadState.set(LoadStateViewHolder.LOADING)
+        if (workInfo.value == null) loadState.set(LoadStateViewHolder.LOADING)
         launch(
             block = {
                 mRepo.getWorkInfo(workId).data?.let {
-                    workInfo.set(it)
+                    workInfo.value = it
                 }
                 updateLoadState()
             },
@@ -60,7 +60,7 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
 
     private fun updateLoadState() {
         loadState.set(LoadStateViewHolder.CONTENT)
-        if (workInfo.get() == null) {
+        if (workInfo.value == null) {
             loadState.set(LoadStateViewHolder.RETRY)
         } else {
             loadState.set(LoadStateViewHolder.CONTENT)
@@ -73,9 +73,7 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
                 initialLoadSize = PagedProxy.DEFAULT_PAGE_SIZE * 3,
                 pageSize = PagedProxy.DEFAULT_PAGE_SIZE
             ),
-            pagingSourceFactory = {
-                EpisodePagingSource(workId)
-            }
+            pagingSourceFactory = { EpisodePagingSource(workId, workInfo.value?.totalEpisodeCnt ?: 0) }
         ).flow.cachedIn(viewModelScope)
     }
 

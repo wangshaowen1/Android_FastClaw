@@ -28,6 +28,7 @@
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             android:src="@color/fill_color_1_dark"
+            android:visibility="@{item.data.storyId.length()>0?View.VISIBLE:View.INVISIBLE}"
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundStyle_r8" />
@@ -52,6 +53,35 @@
                 android:text="视频生成中..."
                 android:textAppearance="@style/Text12"
                 android:textColor="@color/fixed_white_1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+
+        <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{item.data.storyId.length()>0?View.GONE:View.VISIBLE}"
+            app:backgroundStartColor="?attr/fillColor1"
+            app:borderStartColor="?attr/borderColor2"
+            app:borderWidth="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:roundCornerRadius="@dimen/radius_m">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/icon_add"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:text="待创建"
+                android:textAppearance="@style/Text12"
+                android:textColor="?attr/textColor3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +123,7 @@
             android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:lines="1"
-            android:text="@{`第`+item.data.sortNo+`集`}"
+            android:text="@{`第`+(item.position+1)+`集`}"
             android:textAppearance="@style/Text12"
             android:textColor="?textColor2"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"

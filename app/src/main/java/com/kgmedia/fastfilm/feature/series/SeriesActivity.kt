@@ -61,11 +61,6 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         observeData()
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        refresh()
-    }
-
     private fun initView() {
         val noDataButtonTextAs = "刷新"
         val noDataAs = "暂无数据"
@@ -99,14 +94,12 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 val isDraft = episodeAdapter.snapshot().any {
                     it?.isBeforeStoryboardGenerating() == true
                 }
-                val notFinished = mRealVM.workInfo.get()?.let { (it.finishedEpisodeCnt ?: 0) < (it.totalEpisodeCnt ?: 0) } == true
+                val notFinished = mRealVM.workInfo.value?.let { (it.finishedEpisodeCnt ?: 0) < (it.totalEpisodeCnt ?: 0) } == true
                 mRealVM.canCreateEpisode.set(!isDraft && notFinished)
             })
     }
 
-
     private fun refresh() {
-        episodeAdapter.refresh()
         //作品详情
         mRealVM.getWorkDtl()
     }
@@ -134,7 +127,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         observeEvents {
             on<Events.SeriesUpdatedEvent> { event ->
                 if (isActive && event.seriesId == mRealVM.workId) {
-                    mRealVM.getWorkDtl()
+                    refresh()
                 }
             }
             on<Events.ShortDramasEditInfoEvent> { event ->
@@ -148,11 +141,13 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 }
             }
         }
-
+        mRealVM.workInfo.observe(this){
+            episodeAdapter.refresh()
+        }
         mRealVM.episodeInfo.observe(this) {
             if (it == null) return@observe
             mRealVM.episodeInfo.value = null
-            val workInfo = mRealVM.workInfo.get() ?: return@observe
+            val workInfo = mRealVM.workInfo.value ?: return@observe
             Logger.d("[SSE]", "上一集的剧集id = ${it.storyId}")
             Logger.d("[SSE]", "当前集的剧集id = ${it.sequelStoryId}")
             //灵感创作续写
@@ -179,14 +174,14 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             EpisodeInfo.PROGRESS_COMPLETED -> {
                 val snapshot = episodeAdapter.snapshot().items
                 onPlayEpisodeClicked(
-                    mRealVM.workInfo.get(),
+                    mRealVM.workInfo.value,
                     snapshot,
                     position
                 )
             }
 
             else -> {
-                AppRouter.startStory(mRealVM.workInfo.get(), episodeInfo.storyId)
+                AppRouter.startStory(mRealVM.workInfo.value, episodeInfo.storyId)
             }
         }
     }
@@ -230,13 +225,13 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         super.onClick(view, data)
         when (view?.id) {
             R.id.btnMore -> {
-                mRealVM.workInfo.get() ?: return
+                mRealVM.workInfo.value ?: return
                 val popupView = SeriesMorePopupView(this)
                 val popup = Popup(popupView)
                 popupView.binding.btnEdit.setOnSingleClickListener {
                     popup.dismiss()
                     //编辑剧本信息
-                    DramaInfoEditActivity.start(this, mRealVM.workInfo.get())
+                    DramaInfoEditActivity.start(this, mRealVM.workInfo.value)
                 }
                 popupView.binding.btnManage.setOnSingleClickListener {
                     popup.dismiss()
@@ -246,7 +241,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             R.id.btnContinue -> {
-                val workInfo = mRealVM.workInfo.get() ?: return
+                val workInfo = mRealVM.workInfo.value ?: return
                 if (!workInfo.isInspirationGenerated()) {
                     //小说改编续写
                     ContinueWritingActivity.start(
