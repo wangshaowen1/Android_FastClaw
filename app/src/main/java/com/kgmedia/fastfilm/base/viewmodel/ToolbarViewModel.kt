@@ -38,7 +38,7 @@ class ToolbarViewModel(
     var menuTextVerPadding: Int = 0,
     var menuButtonHorPadding: Int = 12.dp,
     var menuButtonVerPadding: Int = 5.dp,
-    var menuTextColorRes: Int = R.color.textColorPrimary,
+    var menuTextColorRes: Int = R.color.text_color_3_dark,
     var menuButtonTextColor: Int = Color.WHITE,
     var menuIconMarginEnd: Int = 12.dp,
     var menuButtonMarginEnd: Int = 8.dp,
