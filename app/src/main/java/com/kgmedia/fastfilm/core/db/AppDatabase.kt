@@ -5,13 +5,16 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.kgmedia.fastfilm.core.db.dao.AIMessageDao
 import com.kgmedia.fastfilm.core.db.dao.ChatSceneDao
+import com.kgmedia.fastfilm.core.db.dao.RemoteKeysDao
 import com.kgmedia.fastfilm.core.db.dao.SearchHistoryDao
 import com.kgmedia.fastfilm.core.db.dao.ShortDramaDao
+import com.kgmedia.fastfilm.core.db.dao.WorkDao
 import com.kgmedia.fastfilm.core.db.dao.WorkInformationDao
 import com.kgmedia.fastfilm.core.db.entity.AIMessage
 import com.kgmedia.fastfilm.core.db.entity.ChatScene
+import com.kgmedia.fastfilm.core.db.entity.RemoteKeys
 import com.kgmedia.fastfilm.core.db.entity.SearchHistory
-import com.kgmedia.fastfilm.core.db.entity.Tone
+import com.kgmedia.fastfilm.core.db.entity.WorkInfoEntity
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.nhsd.basic.BaseApp
@@ -21,10 +24,11 @@ import com.nhsd.basic.BaseApp
         AIMessage::class,
         ChatScene::class,
         SearchHistory::class,
-        Tone::class,
         ShortDramaInfo::class,
         WorkInformationInfo::class,
-    ], version = 7, exportSchema = true
+        WorkInfoEntity::class,
+        RemoteKeys::class
+    ], version = 8, exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -34,6 +38,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val shortDramsDao: ShortDramaDao
 
     abstract fun workInformationDao(): WorkInformationDao
+    abstract val workDao : WorkDao
+    abstract val remoteKeysDao: RemoteKeysDao
+
 
     companion object {
 

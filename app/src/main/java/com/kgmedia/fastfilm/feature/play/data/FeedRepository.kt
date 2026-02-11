@@ -1,16 +1,23 @@
 package com.kgmedia.fastfilm.feature.play.data
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
+import com.kgmedia.fastfilm.core.db.AppDatabase
+import com.kgmedia.fastfilm.core.db.mapper.toDomain
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
+import com.kgmedia.fastfilm.feature.home.data.VideoRemoteMediator
 import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 /**
  * 全局单例仓库：负责数据分发、缓存管理和预加载桥接
@@ -21,6 +28,7 @@ object FeedRepository {
 
     // 1. 定义一个全局作用域，确保 Paging 数据流在 ViewModel 销毁后依然存活（针对推荐流）
     private val repositoryScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val appDatabase = AppDatabase.getInstance()
 
     // ------------------- 缓存区 -------------------
 
@@ -96,7 +104,7 @@ object FeedRepository {
     /**
      * 内部实现：获取推荐流 (Recommend Mode)
      */
-    private fun getRecommendFlowInternal(forceRefresh: Boolean): Flow<PagingData<WorkInfo>> {
+    private fun getRecommendFlowInternal2(forceRefresh: Boolean): Flow<PagingData<WorkInfo>> {
         // 1. 命中缓存：不强制刷新 且 缓存存在
         if (!forceRefresh && cachedRecommendFlow != null) {
             Logger.d(TAG, "Returning CACHED -> RECOMMEND flow")
@@ -120,6 +128,34 @@ object FeedRepository {
         ).flow.cachedIn(repositoryScope) // [关键] 绑定全局生命周期
 
         // 3. 更新缓存
+        cachedRecommendFlow = newFlow
+        return newFlow
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    private fun getRecommendFlowInternal(forceRefresh: Boolean): Flow<PagingData<WorkInfo>> {
+        // 1. 如果流已经存在，直接返回它！（实现多界面共享的核心）
+        if (cachedRecommendFlow != null && !forceRefresh) {
+            Logger.d(TAG, "Returning Shared CACHED -> RECOMMEND flow")
+            return cachedRecommendFlow!!
+        }
+
+        Logger.d(TAG, "Creating NEW -> RECOMMEND flow with Room & Mediator")
+
+        // 2. 只有第一次（或强制要求重建时），才创建 Pager
+        val newFlow = Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                prefetchDistance = 3,
+                initialLoadSize = 20
+            ),
+            remoteMediator = VideoRemoteMediator(appDatabase, ApiFactory.apiService),
+            pagingSourceFactory = { appDatabase.workDao.getPagingData() }
+        ).flow
+         .map { pagingData -> pagingData.map { it.toDomain() } } // 转回业务模型
+         .cachedIn(repositoryScope) // 绑定在 Repository 的全局作用域上
+
+        // 3. 缓存起来，后续界面直接复用
         cachedRecommendFlow = newFlow
         return newFlow
     }

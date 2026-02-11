@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.EntityCache
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
@@ -20,6 +21,9 @@ import kotlinx.coroutines.launch
 class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val bannerData = MutableLiveData<List<BannerInfo>>()
+    private val bannerCache: EntityCache<List<BannerInfo>> by lazy {
+        object : EntityCache<List<BannerInfo>>("HomeBannerList") {}
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -27,9 +31,18 @@ class HomeViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun getData() {
-        launch {
-            response(mRepo.api.getAppBanner(BannerBody(BannerBody.LOCATION_HOME))) {
+        launch({
+            response(mRepo.api.getAppBanner(BannerBody(BannerBody.LOCATION_HOME)), {
                 bannerData.value = this.data
+                bannerCache.cache(this.data)
+            }) {
+                bannerCache.cache?.let {
+                    bannerData.value = it
+                }
+            }
+        }) {
+            bannerCache.cache?.let {
+                bannerData.value = it
             }
         }
     }
