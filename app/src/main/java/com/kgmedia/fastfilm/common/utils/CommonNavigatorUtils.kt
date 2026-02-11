@@ -102,8 +102,8 @@ object CommonNavigatorUtils {
         vp: ViewPager2,
         indicatorView: IPagerIndicator? = null,
         isBold: Boolean = true,
-        normalColor: Int = R.color.color_60_121212.getResColor(),
-        selectedColor: Int = R.color.color_121212.getResColor(),
+        normalColor: Int = R.color.text_color_3_dark.getResColor(),
+        selectedColor: Int = R.color.text_color_1_dark.getResColor(),
         textSize: Float = 16f,
         indicatorWidth: Float = 30f,
         gravity: Int = Gravity.CENTER,
@@ -157,7 +157,7 @@ object CommonNavigatorUtils {
         indicator.lineWidth = indicatorWidth.dp.toFloat()
         indicator.roundRadius = 2.dp.toFloat()
         indicator.yOffset = 4.dp.toFloat()
-        indicator.setColors(R.color.white.getResColor())
+        indicator.setColors(R.color.theme_color_1_dark.getResColor())
         return indicator
     }
 

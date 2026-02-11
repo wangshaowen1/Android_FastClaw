@@ -24,23 +24,35 @@ class ComputingPowerDetailsPagingSource() : PagingSource<Int, ComputingPowerDeta
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ComputingPowerDetailsInfo> {
         return try {
-            val pageNum = params.key ?: 1
-            val body = PagedBody(pageNum, params.loadSize)
-            val apiResponse = ApiFactory.apiService.getRechargePage(
-                body
-            )
-            if (apiResponse.isSuccess) {
-                val prevKey = if (pageNum > 1) pageNum - 1 else null
-                val items: ArrayList<ComputingPowerDetailsInfo> = ArrayList()
-                val data = apiResponse.data?.items
-                // 加载下一页的键（为 null 表示没有下一页）
-                val nextKey =
-                    if (data.isNullOrEmpty() || data.size < params.loadSize) null else pageNum + 1
-                data?.filterNotNull()?.let { items.addAll(it) }
-                LoadResult.Page(data = items, prevKey, nextKey)
-            } else {
-                LoadResult.Error(ApiException(apiResponse.code, apiResponse.msg))
+            val data = mutableListOf<ComputingPowerDetailsInfo>()
+            for (i in 1..50) {
+                data.add(
+                    ComputingPowerDetailsInfo(
+                        "算力充值",
+                        detailTime = System.currentTimeMillis(),
+                        tradeType = ComputingPowerDetailsInfo.SCORE_TYPE_GET,
+                        detailAmount = (100 + i).toLong()
+                    )
+                )
             }
+            LoadResult.Page(data = data, null, null)
+//            val pageNum = params.key ?: 1
+//            val body = PagedBody(pageNum, params.loadSize)
+//            val apiResponse = ApiFactory.apiService.getRechargePage(
+//                body
+//            )
+//            if (apiResponse.isSuccess) {
+//                val prevKey = if (pageNum > 1) pageNum - 1 else null
+//                val items: ArrayList<ComputingPowerDetailsInfo> = ArrayList()
+//                val data = apiResponse.data?.items
+//                // 加载下一页的键（为 null 表示没有下一页）
+//                val nextKey =
+//                    if (data.isNullOrEmpty() || data.size < params.loadSize) null else pageNum + 1
+//                data?.filterNotNull()?.let { items.addAll(it) }
+//                LoadResult.Page(data = items, prevKey, nextKey)
+//            } else {
+//                LoadResult.Error(ApiException(apiResponse.code, apiResponse.msg))
+//            }
         } catch (e: Exception) {
             LoadResult.Error(e)
         }

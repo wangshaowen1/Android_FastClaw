@@ -14,8 +14,6 @@ data class ComputingPowerDetailsInfo(
     val detailTitle: String? = null,
     // 时间
     val detailTime: Long? = null,
-    //明细类型：1-生成画面，2-字幕配音，3-活动赠送
-    val detailType: String? = null,
     //交易类型：1-收入，2-支出
     val tradeType: Int? = null,
     //数量

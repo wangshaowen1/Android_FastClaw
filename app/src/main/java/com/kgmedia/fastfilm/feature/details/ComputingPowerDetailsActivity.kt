@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import com.kgmedia.fastfilm.common.adapter.FragmentStateCacheAdapter
+import com.kgmedia.fastfilm.common.ext.removeTheRipples
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.CommonNavigatorUtils
 import com.kgmedia.fastfilm.databinding.ActivityComputingPowerDetailsBinding
@@ -71,6 +72,7 @@ class ComputingPowerDetailsActivity :
         ViewPagerHelper.bind(binding.magicIndicator, binding.viewPager)
 
         binding.viewPager.setCurrentItem(0, false)
+        binding.viewPager.removeTheRipples()
     }
 
 
