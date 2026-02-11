@@ -106,7 +106,7 @@ class PhoneLoginDialog :
                     mRealVM.flashLoginVerification()
                     return
                 }
-                val dialog = PrivacyPolicyDialog.show(childFragmentManager)
+                val dialog = PrivacyPolicyDialog.show(parentFragmentManager)
                 dialog.callback = callback@{ agree ->
                     if (!agree) return@callback
                     mRealVM.checkedPolicy.set(true)
@@ -126,7 +126,7 @@ class PhoneLoginDialog :
                     shareManager.login(SHARE_MEDIA.WEIXIN, this)
                     return
                 }
-                val dialog = PrivacyPolicyDialog.show(childFragmentManager)
+                val dialog = PrivacyPolicyDialog.show(parentFragmentManager)
                 dialog.callback = callback@{ agree ->
                     if (!agree) return@callback
                     mRealVM.checkedPolicy.set(true)
@@ -150,7 +150,7 @@ class PhoneLoginDialog :
                     phoneLogin()
                     return
                 }
-                val dialog = PrivacyPolicyDialog.show(childFragmentManager)
+                val dialog = PrivacyPolicyDialog.show(parentFragmentManager)
                 dialog.callback = callback@{
                     if (!it) return@callback
                     mRealVM.checkedPolicy.set(true)

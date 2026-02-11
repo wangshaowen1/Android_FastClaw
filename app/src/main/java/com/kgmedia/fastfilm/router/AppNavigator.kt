@@ -1,9 +1,15 @@
 package com.kgmedia.fastfilm.router
 
+import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.AppUtils
+import com.kgmedia.fastfilm.common.Constant
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
+import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginActivity
+import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginDialog
+import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginActivity
+import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginDialog
 import com.kgmedia.fastfilm.kit.SignUtils
 
 object AppNavigator {
@@ -25,21 +31,44 @@ object AppNavigator {
      * @return true: 已拦截(跳转去登录了) false: 未拦截(用户已登录)
      */
     @JvmStatic
-    fun checkLoginIntercepted(showToast: Boolean = true): Boolean {
+    fun checkLoginIntercepted(
+        showToast: Boolean = true,
+        isFullScreen: Boolean = true
+    ): Boolean {
         if (User.get().isVisitor) {
-            startLogin(showToast)
+            startLogin(showToast, isFullScreen)
             return true
         }
         return false
     }
 
-    fun startLogin(showToast: Boolean) {
-        PhoneLoginDialogActivity.start(topActivity, checkedPolicy = false)
-//        if (Constant.SDKConfiguration.IS_SHOW_WE_CHAT.not()) {
-//            FlashLoginDialogFragment.show(showToast, false)
-//            return
-//        }
-//        LoginDialog.show(showToast)
+    fun startLogin(
+        showToast: Boolean,
+        isFullScreen: Boolean = true
+    ) {
+        if (Constant.SDKConfiguration.IS_SHOW_WE_CHAT.not()) {
+            if (isFullScreen) {
+                PhoneLoginActivity.start(showToast = showToast, checkedPolicy = false)
+            } else if (topActivity != null && topActivity is AppCompatActivity) {
+                (topActivity as AppCompatActivity).apply {
+                    PhoneLoginDialog.show(
+                        showToast = showToast,
+                        checkedPolicy = false,
+                        manager = this.supportFragmentManager
+                    )
+                }
+            }
+            return
+        }
+        if (isFullScreen) {
+            UnifiedLoginActivity.start(showToast = showToast)
+        } else if (topActivity != null && topActivity is AppCompatActivity) {
+            (topActivity as AppCompatActivity).apply {
+                UnifiedLoginDialog.show(
+                    showToast = showToast,
+                    manager = this.supportFragmentManager
+                )
+            }
+        }
     }
-
 }

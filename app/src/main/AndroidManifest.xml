@@ -219,6 +219,11 @@
             android:name=".feature.login.LoginActivity"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <!--手机号登录-->
+        <activity
+            android:name=".feature.login.unified.UnifiedLoginActivity"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <!--闪验登录入口-->
         <activity

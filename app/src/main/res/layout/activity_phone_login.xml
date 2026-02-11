@@ -172,7 +172,7 @@
                         android:textColor="?attr/textColor3"
                         android:textColorHighlight="@android:color/transparent"
                         android:textSize="12sp"
-                        tools:text="我已阅读并同意《用户协议》、《隐私政策》我已阅读并同意《用户协议》、《隐私政策》我已阅读并同意《用户协议》、《隐私政策》" />
+                        tools:text="我已阅读并同意《用户协议》、《隐私政策》" />
                 </LinearLayout>
 
                 <ImageView

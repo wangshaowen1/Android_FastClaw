@@ -43,7 +43,7 @@ class PhoneLoginActivity :
 
         //是否同意了隐私政策用户协议这个
         var checkedPolicy = false
-        fun show(
+        fun start(
             showToast: Boolean = false,
             checkedPolicy: Boolean = false
         ) {
