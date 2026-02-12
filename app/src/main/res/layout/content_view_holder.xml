@@ -25,8 +25,8 @@
             android:alpha="0.5"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_fileName="lottie_loading.json"
-            app:lottie_imageAssetsFolder="images"
+            app:lottie_fileName="loading_point/loading_point.json"
+            app:lottie_imageAssetsFolder="loading_point/images"
             app:lottie_repeatMode="reverse" />
 
         <TextView
