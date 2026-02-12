@@ -120,8 +120,8 @@ android {
             //隐私政策
             buildConfigField "String", "OFFICIAL_URL", '"http://rmgf.wechatrenmai.cn"' //官方网站
             //友盟SECRET
-            buildConfigField "String", "UMENG_SECRET", '"4b8c2487a2b9f04e095022fb59ed32b8"'
-            buildConfigField "String", "UMENG_APP_KEY", '"69005d13644c9e2c20677a21"'
+            buildConfigField "String", "UMENG_SECRET", '"a0d38408ddaceb5c935d511e71f1ac36"'//填写Umeng Message Secret对应信息
+            buildConfigField "String", "UMENG_APP_KEY", '"698d31b96f259537c758f5a2"'
             buildConfigField "String", "SHANYAN_APPID", '"KfNYHDRd"' //闪验APPID
             buildConfigField "String", "SHANYAN_APP_KEY", '"VDE8Q8TY"' //闪验APPKEY
 
@@ -157,8 +157,8 @@ android {
             buildConfigField "String", "PRIVACY_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96.html"'
             //隐私政策
             buildConfigField "String", "OFFICIAL_URL", '"http://rmgf.wechatrenmai.cn"' //官方网站
-            buildConfigField "String", "UMENG_SECRET", '"4b8c2487a2b9f04e095022fb59ed32b8"'
-            buildConfigField "String", "UMENG_APP_KEY", '"69005d13644c9e2c20677a21"'
+            buildConfigField "String", "UMENG_SECRET", '"a0d38408ddaceb5c935d511e71f1ac36"'//填写Umeng Message Secret对应信息
+            buildConfigField "String", "UMENG_APP_KEY", '"698d31b96f259537c758f5a2"'
             //友盟SECRET
             buildConfigField "String", "SHANYAN_APPID", '"KfNYHDRd"' //闪验APPID
             buildConfigField "String", "SHANYAN_APP_KEY", '"VDE8Q8TY"' //闪验APPKEY
