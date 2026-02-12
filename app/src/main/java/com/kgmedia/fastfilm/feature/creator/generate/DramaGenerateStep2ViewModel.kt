@@ -35,7 +35,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
     val minInputLength = 10
     val maxInputLength by lazy {
-        ObservableInt(5000)
+        ObservableInt(2000)
     }
     val input by lazy { MutableLiveData<String?>() }
 
