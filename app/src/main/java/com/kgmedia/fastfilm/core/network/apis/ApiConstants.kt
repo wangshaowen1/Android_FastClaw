@@ -29,7 +29,7 @@ object ApiConstants {
     /**
      * 获取APP升级信息
      */
-    const val GET_APP_UPGRADE_INFO = "sys/getAppUpgradeInfo"
+    const val GET_APP_UPGRADE_INFO = "app/getAppUpgradeInfo"
 
     /**
      * 第三方登录
