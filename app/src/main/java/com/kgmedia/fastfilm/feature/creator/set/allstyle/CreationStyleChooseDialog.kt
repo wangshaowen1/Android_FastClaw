@@ -1,4 +1,4 @@
-package com.kgmedia.fastfilm.feature.creator.style
+package com.kgmedia.fastfilm.feature.creator.set.allstyle
 
 import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants

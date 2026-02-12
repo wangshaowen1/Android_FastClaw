@@ -12,7 +12,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.creator.generate.edit.ReferenceHistoricalImageryDialog
+import com.kgmedia.fastfilm.feature.creator.assets.edit.ReferenceHistoricalImageryDialog
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

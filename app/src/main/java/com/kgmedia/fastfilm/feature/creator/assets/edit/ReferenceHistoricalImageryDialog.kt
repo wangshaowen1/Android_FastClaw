@@ -1,8 +1,6 @@
-package com.kgmedia.fastfilm.feature.creator.generate.edit
+package com.kgmedia.fastfilm.feature.creator.assets.edit
 
 import android.os.Bundle
-import androidx.core.os.bundleOf
-import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
 import com.kgmedia.fastfilm.databinding.DialogReferenceHistoricalImageryBinding

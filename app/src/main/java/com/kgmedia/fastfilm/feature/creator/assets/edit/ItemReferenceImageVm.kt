@@ -1,4 +1,4 @@
-package com.kgmedia.fastfilm.feature.creator.generate.edit
+package com.kgmedia.fastfilm.feature.creator.assets.edit
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField

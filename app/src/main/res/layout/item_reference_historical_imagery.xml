@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.creator.generate.edit.ItemReferenceImageVm" />
+            type="com.kgmedia.fastfilm.feature.creator.assets.edit.ItemReferenceImageVm" />
 
         <import type="android.view.View" />
     </data>

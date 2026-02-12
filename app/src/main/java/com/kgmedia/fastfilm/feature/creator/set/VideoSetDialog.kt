@@ -4,7 +4,7 @@ import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.databinding.DialogVideoSetBinding
-import com.kgmedia.fastfilm.feature.creator.style.CreationStyleChooseDialog
+import com.kgmedia.fastfilm.feature.creator.set.allstyle.CreationStyleChooseDialog
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast

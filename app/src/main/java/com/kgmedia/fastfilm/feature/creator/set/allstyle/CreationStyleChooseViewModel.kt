@@ -1,4 +1,4 @@
-package com.kgmedia.fastfilm.feature.creator.style
+package com.kgmedia.fastfilm.feature.creator.set.allstyle
 
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.RecyclerViewVM

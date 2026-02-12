@@ -15,7 +15,7 @@ import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoStyleConfigInfo
-import com.kgmedia.fastfilm.feature.creator.style.ItemCreationStyleVm
+import com.kgmedia.fastfilm.feature.creator.set.allstyle.ItemCreationStyleVm
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getParcelableValue

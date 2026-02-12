@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.creator.style.ItemCreationStyleVm" />
+            type="com.kgmedia.fastfilm.feature.creator.set.allstyle.ItemCreationStyleVm" />
 
         <import type="android.view.View" />
     </data>

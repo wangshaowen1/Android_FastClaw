@@ -1,4 +1,4 @@
-package com.kgmedia.fastfilm.feature.creator.generate.edit
+package com.kgmedia.fastfilm.feature.creator.assets.edit
 
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.RecyclerViewVM
@@ -7,8 +7,6 @@ import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.request
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
-import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
-import com.nhsd.basic.ext.dp
 
 /**
  * *****************************************

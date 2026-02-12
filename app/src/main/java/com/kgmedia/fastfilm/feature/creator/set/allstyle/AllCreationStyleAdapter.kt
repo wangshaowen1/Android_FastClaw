@@ -1,4 +1,4 @@
-package com.kgmedia.fastfilm.feature.creator.style
+package com.kgmedia.fastfilm.feature.creator.set.allstyle
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
