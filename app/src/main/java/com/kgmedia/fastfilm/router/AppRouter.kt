@@ -109,6 +109,16 @@ object AppRouter : IRouter {
         }
 
         when (host) {
+            "retoreCreator" -> {//fastfilm://retoreCreator?workId=%s&storyId=%s&workTitle=%s&workType=%s&workRatio=%s
+                val workId = uri.getQueryParameter("workId")
+                val storyId = uri.getQueryParameter("storyId")
+                val workTitle = uri.getQueryParameter("workTitle")
+                val workType = uri.getQueryParameter("workType")
+                val workRatio = uri.getQueryParameter("workRatio")
+                Logger.i("retoreCreator workId=$workId, storyId=$storyId, workTitle=$workTitle, workType=$workType, workRatio=$workRatio")
+                startStory(workId, storyId, workTitle, workType?.toIntOrNull(), workRatio)
+            }
+
             "bookGenerated" -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
@@ -136,7 +146,14 @@ object AppRouter : IRouter {
 
     @JvmStatic
     fun startStory(work: WorkInfo?, storyId: String?) {
-        val workId= work?.workId
+        work?.apply {
+            startStory(workId, storyId, workTitle, workType, workRatio)
+        }
+    }
+
+    //workId storyId workTitle workType workRatio
+    @JvmStatic
+    fun startStory(workId: String?, storyId: String?, workTitle: String?, workType: Int?, workRatio: String?) {
         if (workId.isNullOrEmpty() || storyId.isNullOrEmpty()) {
             return
         }
@@ -161,8 +178,8 @@ object AppRouter : IRouter {
                     return@launchNoCrash
                 }
                 val singleEpisodeDetailsInfo = res.data
-                val sortNo= singleEpisodeDetailsInfo?.sortNo?:1
-                Logger.i("测试一下","stepProgress:${singleEpisodeDetailsInfo?.stepProgress}")
+                val sortNo = singleEpisodeDetailsInfo?.sortNo ?: 1
+                Logger.i("测试一下", "stepProgress:${singleEpisodeDetailsInfo?.stepProgress}")
                 when (singleEpisodeDetailsInfo?.stepProgress) {
                     EpisodeInfo.PROGRESS_DRAFT -> {
                         //10=剧本输入
@@ -171,10 +188,10 @@ object AppRouter : IRouter {
                             step = 1,
                             workId = workId,
                             storyId = storyId,
-                            workTitle = work.workTitle,
+                            workTitle = workTitle,
                             chapterIndex = sortNo,
-                            model = getModel(work = work, sortNo = sortNo),
-                            videoRatio = work.workRatio,
+                            model = getModel(workType = workType, sortNo = sortNo),
+                            videoRatio = workRatio,
                         )
                     }
 
@@ -185,10 +202,10 @@ object AppRouter : IRouter {
                             step = 2,
                             workId = workId,
                             storyId = storyId,
-                            workTitle = work.workTitle,
+                            workTitle = workTitle,
                             chapterIndex = sortNo,
-                            model = getModel(work = work, sortNo = sortNo),
-                            videoRatio = work.workRatio,
+                            model = getModel(workType = workType, sortNo = sortNo),
+                            videoRatio = workRatio,
                         )
                     }
 
@@ -199,11 +216,11 @@ object AppRouter : IRouter {
                             step = 3,
                             workId = workId,
                             storyId = storyId,
-                            workTitle = work.workTitle,
+                            workTitle = workTitle,
                             taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
                             chapterIndex = sortNo,
-                            model = getModel(work = work, sortNo = sortNo),
-                            videoRatio = work.workRatio,
+                            model = getModel(workType = workType, sortNo = sortNo),
+                            videoRatio = workRatio,
                         )
                     }
 
@@ -214,10 +231,10 @@ object AppRouter : IRouter {
                             step = 4,
                             workId = workId,
                             storyId = storyId,
-                            workTitle = work.workTitle,
+                            workTitle = workTitle,
                             chapterIndex = sortNo,
-                            model = getModel(work = work, sortNo = sortNo),
-                            videoRatio = work.workRatio,
+                            model = getModel(workType = workType, sortNo = sortNo),
+                            videoRatio = workRatio,
                         )
                     }
 
@@ -225,10 +242,10 @@ object AppRouter : IRouter {
                     EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
                         //30=分镜生成中 32=分镜视频生成中 35=待合成
                         EditStoryboardVideoActivity.start(
-                            storyTitle = work.workTitle?.let { "$it：第${singleEpisodeDetailsInfo.sortNo}集" },
+                            storyTitle = workTitle?.let { "$it：第${singleEpisodeDetailsInfo.sortNo}集" },
                             workId = workId,
                             storyId = storyId,
-                            workRatio = work.workRatio,
+                            workRatio = workRatio,
                         )
                     }
                 }
@@ -241,8 +258,8 @@ object AppRouter : IRouter {
     }
 
 
-    private fun getModel(work: WorkInfo, sortNo: Int=0): Int {
-        if (work.workType == WorkInfo.INSPIRATION_CREATION) {
+    private fun getModel(workType: Int?, sortNo: Int = 0): Int {
+        if (workType == WorkInfo.INSPIRATION_CREATION) {
             if (sortNo <= 1) {
                 //第一集创作(灵感)
                 return DramaGenerateConstants.MODEL_INSPIRATION
