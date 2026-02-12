@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.kgmedia.fastfilm.common.utils.KeyboardUtils
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.ActivityCreationRootBinding
@@ -48,6 +49,7 @@ class CreationRootActivity :
 
             override fun onPageSelected(position: Int) {
                 mRealVM.selectedTab.value = position
+                KeyboardUtils.hideKeyboard(binding.root)
             }
 
             override fun onPageScrollStateChanged(state: Int) {
