@@ -44,6 +44,7 @@ class EpisodeSseProcessor(
     }
 
     override fun onSSEComplete() {
+        parser.finish()
         val fullSource = fullSourceAccumulator.toString()
         scope.launch(Dispatchers.Main) {
             // 4. 传给回调

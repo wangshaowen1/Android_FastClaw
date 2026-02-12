@@ -209,6 +209,37 @@ class JsonSseFieldStreamer(
         }
     }
 
+    /**
+     * 当流被中断或结束时调用此方法。
+     * 它可以强制输出缓冲区中剩余的内容，解决 JSON 缺少闭合括号导致数据丢失的问题。
+     */
+    fun finish() {
+        // 如果流结束时还处于“正在读取值”的状态，说明 JSON 被截断了
+        // 此时我们应该尽可能把缓冲区里的东西吐出来
+        if (state == State.IN_VALUE || state == State.POTENTIAL_END) {
+
+            // 如果是在 POTENTIAL_END 状态，说明最后一个字符是引号
+            // 在截断的情况下，我们通常认为这个引号就是结束引号（或者内容的一部分），
+            // 但为了保险起见，我们把暂存的空白字符也补回来
+            if (state == State.POTENTIAL_END) {
+                if (pendingWs.isNotEmpty()) {
+                    valueBuf.append(pendingWs)
+                    pendingWs.setLength(0)
+                }
+                // 注意：POTENTIAL_END 状态下，那个触发进入该状态的引号已经在之前被吞掉了
+                // 如果是正常结束，那个引号是界定符；如果是异常截断，通常也不需要补回那个引号，
+                // 除非你认为 AI 刚好输出了一个作为内容的引号然后挂了。
+                // 简单处理：直接视为字段结束。
+            }
+
+            // 强制触发一次 Final Emit
+            emit(isFinal = true)
+        }
+
+        // 重置状态
+        reset()
+    }
+
     fun reset() {
         state = State.SEEK_KEY
         target = Target.NONE

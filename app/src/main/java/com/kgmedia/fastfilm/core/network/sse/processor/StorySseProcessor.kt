@@ -45,6 +45,7 @@ class StorySseProcessor(
     }
 
     override fun onSSEComplete() {
+        parser.finish()
         val fullSource = fullSourceAccumulator.toString()
         scope.launch(Dispatchers.Main) { onComplete(fullSource) }
     }
