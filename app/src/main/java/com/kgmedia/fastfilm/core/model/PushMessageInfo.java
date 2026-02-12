@@ -6,12 +6,8 @@ public class PushMessageInfo {
     //推送消息类型 1-普通消息（默认为1） 2-警告弹出消息
     private String pushMsgContent;
     private int pushMsgType;
-    private long msgId;
+    private long notifyId;
 
-    //jumpUri : topicId=121212 话题动态
-    //jumpUri : scriptId=121212  剧本详情页
-    //jumpUri : groupId=121212  组局详情页
-    private String jumpUri;
     private String pushMsgJumpUri;
 
     public String getPushMsgJumpUri() {
@@ -20,14 +16,6 @@ public class PushMessageInfo {
 
     public void setPushMsgJumpUri(String pushMsgJumpUri) {
         this.pushMsgJumpUri = pushMsgJumpUri;
-    }
-
-    public String getJumpUri() {
-        return jumpUri;
-    }
-
-    public void setJumpUri(String jumpUri) {
-        this.jumpUri = jumpUri;
     }
 
     public String getPushMsgContent() {
@@ -47,11 +35,11 @@ public class PushMessageInfo {
     }
 
     public long getMsgId() {
-        return msgId;
+        return notifyId;
     }
 
     public void setMsgId(long msgId) {
-        this.msgId = msgId;
+        this.notifyId = msgId;
     }
 
     @Override
@@ -59,8 +47,7 @@ public class PushMessageInfo {
         return "PushMessageInfo{" +
                 "pushMsgContent='" + pushMsgContent + '\'' +
                 ", pushMsgType=" + pushMsgType +
-                ", msgId=" + msgId +
-                ", jumpUri='" + jumpUri + '\'' +
+                ", msgId=" + notifyId +
                 ", pushMsgJumpUri='" + pushMsgJumpUri + '\'' +
                 '}';
     }

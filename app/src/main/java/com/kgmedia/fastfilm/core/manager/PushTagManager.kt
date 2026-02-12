@@ -18,7 +18,7 @@ object PushTagManager {
     fun updateTags() {
         var tags = emptyList<String>()
         if (!User.get().isVisitor) {
-            val creationTime = User.get().lastLoginTime?.toLong()?:0L
+            val creationTime = User.get().lastLoginTime?.toLongOrNull() ?: 0L
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = creationTime
             val dayOfMonth = calendar[Calendar.DAY_OF_MONTH]

@@ -78,7 +78,7 @@ public class PushManager {
                 Config.get().storeDeviceToken(deviceToken);
                 //注册成功会返回deviceToken deviceToken是推送消息的唯一标志
                 if (!User.get().isVisitor()) {
-                    setAlias(User.get().getId());
+                    setAlias(User.get().getUserId());
                     addDeviceTags();
                 }
             }
@@ -120,7 +120,7 @@ public class PushManager {
         //final String uniqueId = Config.get().getRole() == Config.ROLE_EMPLOYEE ? User.get().getEmployeeId() : User.get().getId();
         //Logger.e(TAG, "删除推送别名：-------->  " + "uniqueId:" + uniqueId);
         //别名删除，将某一类型的别名ID绑定至某设备，老的绑定设备信息被覆盖，别名ID和deviceToken是一对一的映射关系
-        mPushAgent.deleteAlias(User.get().getId(), ALIAS_TYPE, (UTrack.ICallBack) (isSuccess, message) -> Logger.e(TAG, "删除推送别名：-------->  " + "isSuccess:" + isSuccess + ",message:" + message));
+        mPushAgent.deleteAlias(User.get().getUserId(), ALIAS_TYPE, (UTrack.ICallBack) (isSuccess, message) -> Logger.e(TAG, "删除推送别名：-------->  " + "isSuccess:" + isSuccess + ",message:" + message));
     }
 
     UmengMessageHandler messageHandler = new UmengMessageHandler() {

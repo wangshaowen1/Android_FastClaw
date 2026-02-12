@@ -27,7 +27,7 @@ object SignUtils {
     @JvmStatic
     fun signIn() {
         GeneratingViewModel.generating = true
-        User.Companion.get().id?.let { App.instance.setAlias(it) }
+        User.Companion.get().userId?.let { App.instance.setAlias(it) }
         FlashLoginManager.finishAuthActivity()
         ActivityUtils.finishActivity(LoginActivity::class.java)
         ActivityUtils.finishActivity(PhoneLoginDialogActivity::class.java)
