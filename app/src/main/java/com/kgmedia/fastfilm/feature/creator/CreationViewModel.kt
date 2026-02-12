@@ -45,7 +45,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     override fun onCreate() {
         super.onCreate()
         hint.set(if (inspirationModel()) "写下你的故事灵感，AI将帮你扩展成完整剧情" else "请粘贴一章完整的原创或已授权小说内容，用于改编创作")
-        maxInputLength.set(if (inspirationModel()) 1000 else 5000)
+        maxInputLength.set(if (inspirationModel()) 1000 else 2000)
         input.value =
             if (inspirationModel()) Global.inspirationContent else Global.customizedContent
         if (inspirationModel()) {

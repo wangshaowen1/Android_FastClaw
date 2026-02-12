@@ -30,21 +30,23 @@
             android:layout_width="37dp"
             android:layout_height="37dp"
             android:layout_gravity="center"
+            android:layout_marginStart="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/tvName"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:background="@drawable/img_9_16" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvName"
             style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/spacing_s"
+            android:layout_marginStart="@dimen/spacing_m"
             android:text="@{item.data.configName}"
             android:textColor="?attr/textColor2"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/tvValue"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/llImage"
