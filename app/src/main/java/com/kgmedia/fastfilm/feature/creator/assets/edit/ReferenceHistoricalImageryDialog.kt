@@ -57,14 +57,17 @@ class ReferenceHistoricalImageryDialog :
         }
     }
 
-    var onSuccess: (ReferenceImageInfo?) -> Unit = {}
+    var onUserReference: (ReferenceImageInfo?) -> Unit = {}
 
     override fun onPrepareView() {
         super.onPrepareView()
         binding.close.setOnClickListener { dismissAllowingStateLoss() }
-        binding.btnCancel.setOnClickListener { dismissAllowingStateLoss() }
+        binding.btnCancel.setOnClickListener {
+            onUserReference.invoke(null)
+            dismissAllowingStateLoss()
+        }
         binding.btnConfirm.setOnClickListener {
-            onSuccess.invoke(mRealVM.checkedVm?.data?.get())
+            onUserReference.invoke(mRealVM.checkedVm?.data?.get())
             dismissAllowingStateLoss()
         }
     }

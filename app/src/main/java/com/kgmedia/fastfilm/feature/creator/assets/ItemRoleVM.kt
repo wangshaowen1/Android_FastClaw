@@ -46,7 +46,7 @@ class ItemRoleVM(
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
         if (data.get()?.hasHistory == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.roleId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_ROLE_IMAGE)
-                .apply { onSuccess = { generate(rolePrompt, roleName, it) } }
+                .apply { onUserReference = { generate(rolePrompt, roleName, it) } }
                 .show(fragmentManager)
         } else {
             generate(rolePrompt, roleName)
