@@ -349,7 +349,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         val notGenerateItems = arrayListOf<ItemAssetVM<*>>()
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemAssetVM<*>) {
-                if (item.status.get() < 1) {
+                if (item.status.get() < 1 || item.status.get() == 3) {
                     val assetDesc = item.assetDesc.get()
                     val assetName = item.assetName.get()
                     if (assetDesc.isNullOrEmpty() || assetName.isNullOrEmpty()) {

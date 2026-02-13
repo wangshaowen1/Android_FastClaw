@@ -321,7 +321,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemStoryboardVM) {
                 val genStatusImage = item.data.get()?.genStatusImage ?: 1
-                if (genStatusImage < 1) {
+                if (genStatusImage < 1 || genStatusImage == 3) {
                     val genImagePrompt = item.genImagePrompt.get()
                     if (genImagePrompt.isNullOrEmpty()) {
                         "您还有分镜尚未填写描述，请补充后再继续".showToast()
