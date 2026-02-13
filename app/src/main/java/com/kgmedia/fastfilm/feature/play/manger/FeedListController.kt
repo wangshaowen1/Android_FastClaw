@@ -133,19 +133,48 @@ class FeedListController(
         }
     }
 
+    // [修复] 只有在真的到了最后一条时，才返回 false
     fun smoothScrollToNext(): Boolean {
-        val centerView = snapHelper.findSnapView(layoutManager) ?: return false
-        val currentPos = layoutManager.getPosition(centerView)
+        // 使用加强版的方法获取位置
+        val currentPos = getCurrentPosition()
+        val totalCount = adapter.itemCount
 
-        if (currentPos < adapter.itemCount - 1) {
+        Logger.d("FeedListController", "smoothScrollToNext: current=$currentPos, total=$totalCount")
+
+        // 1. 异常保护：如果没数据，或者连当前位置都找不到，不能认为是“最后一集”，
+        // 但也不能翻页。这里返回 true 并在内部消化，防止 Activity 误报 Toast
+        if (currentPos == -1 || totalCount == 0) {
+            Logger.w("FeedListController", "Cannot determine position, skipping scroll")
+            return true // 返回 true 欺骗 Activity 别弹 Toast
+        }
+
+        // 2. 正常翻页逻辑
+        if (currentPos < totalCount - 1) {
             recyclerView.smoothScrollToPosition(currentPos + 1)
             return true
         }
+
+        // 3. 只有明确确认是最后一集（当前位置 == 总数-1），才返回 false 让 Activity 弹 Toast
+        Logger.i("FeedListController", "Reached end of list")
         return false
     }
 
+    // [修复] 获取当前位置的加强版方法
     fun getCurrentPosition(): Int {
-        val centerView = snapHelper.findSnapView(layoutManager) ?: return -1
-        return layoutManager.getPosition(centerView)
+        // 1. 优先尝试标准的 SnapHelper (获取正中间的)
+        val centerView = snapHelper.findSnapView(layoutManager)
+        if (centerView != null) {
+            val pos = layoutManager.getPosition(centerView)
+            if (pos != RecyclerView.NO_POSITION) return pos
+        }
+
+        // 2. [关键兜底] 如果 SnapHelper 失败（例如刚进页面或正在快速滑动），
+        // 退而求其次，获取第一个完全可见/部分可见的 Item
+        val firstPos = layoutManager.findFirstVisibleItemPosition()
+        if (firstPos != RecyclerView.NO_POSITION) {
+            return firstPos
+        }
+
+        return -1
     }
 }

@@ -3,7 +3,6 @@ package com.kgmedia.fastfilm.feature.play
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
-import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
@@ -147,11 +146,18 @@ class DramasPlayPagerActivity :
             }
         }
 
-        // 播放状态同步 (图标)
         lifecycleScope.launch {
-            playerManager.isPlayingFlow.collect { isPlaying ->
+            playerManager.playerState.collect { state ->
+                // [优化] 直接把状态甩给 ViewHolder 处理，逻辑更聚拢
                 updateViewHolderSafely { holder ->
-                    holder.updatePlayState(isPlaying)
+                    holder.updatePlayerUiState(state)
+                }
+                // [补充] 针对 Activity 级别的特殊处理（如 Toast）
+                if (state is FeedPlayerManager.FeedPlayerState.Error) {
+                    if (!state.isNoCache) {
+                        // 有缓存断网，仅弹 Toast
+                        state.msg.showToast()
+                    }
                 }
             }
         }
