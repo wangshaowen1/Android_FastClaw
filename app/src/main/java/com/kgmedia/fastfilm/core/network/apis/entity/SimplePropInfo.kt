@@ -39,7 +39,11 @@ data class SimplePropInfo(
     /**
      * 任务ID (雪花算法)
      */
-    var taskId: String? = null
+    var taskId: String? = null,
+    /**
+     * 是否有历史道具形象（同一 propId 是否存在其他版本）
+     */
+    val hasHistory: Boolean? = null
 ) : SimpleAsset {
     override val status: Int?
         get() = genStatus
@@ -49,5 +53,4 @@ data class SimplePropInfo(
         get() = propName
     override val assetImage: String?
         get() = imageUrl
-    val hasHistory = true
 }

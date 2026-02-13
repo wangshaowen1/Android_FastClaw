@@ -337,7 +337,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
 
     private fun deleteAsset(item: ItemAssetVM<*>) {
         launchWithLoading {
-            response(item.deleteAsset()) {
+            response(item.delete()) {
                 adapter.remove(item)
                 onItemChanged()
             }
@@ -346,16 +346,16 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
 
     private fun oneKeyGenerate() {
         var notInput = false
-        val notGenerateItems = arrayListOf<ItemAssetVM<*>>()
+        val notGenerateItems = arrayListOf<Triple<ItemAssetVM<*>, String, String>>()
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemAssetVM<*>) {
                 if (item.status.get() < 1 || item.status.get() == 3) {
-                    val assetDesc = item.assetDesc.get()
-                    val assetName = item.assetName.get()
+                    val assetDesc = if (item.editingAssetDesc.get()) item.editingAssetDescText else item.assetDesc.get()
+                    val assetName = if (item.editingAssetName.get()) item.editingAssetNameText else item.assetName.get()
                     if (assetDesc.isNullOrEmpty() || assetName.isNullOrEmpty()) {
                         notInput = true
                     } else {
-                        notGenerateItems.add(item)
+                        notGenerateItems.add(Triple(item, assetDesc, assetName))
                     }
                 }
             }
@@ -363,10 +363,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         if (notInput) {
             "您还有资产尚未填写描述，请补充后再继续".showToast()
         }
-        if (notGenerateItems.isEmpty()) {
-
-        } else {
-            notGenerateItems.forEach { it.generateAsset() }
+        if (notGenerateItems.isNotEmpty()) {
+            notGenerateItems.forEach { (item, assetDesc, assetName) -> item.generate(assetDesc, assetName) }
         }
     }
 

@@ -25,50 +25,13 @@ class ItemSceneVM(
     onItemChanged: () -> Unit,
     data: SimpleSceneInfo?
 ) : ItemAssetVM<SimpleSceneInfo>(index, workId, storyId, onItemChanged, data) {
-    override fun exitEditAssetDesc() {
-        super.exitEditAssetDesc()
-        saveInput()
-    }
-
-    override fun exitEditAssetName() {
-        super.exitEditAssetName()
-        saveInput()
-    }
-
-    private fun saveInput() {
-        val scenePrompt = assetDesc.get()?.trim()
-        val sceneName = assetName.get()?.trim()
-        if (scenePrompt.isNullOrEmpty() || sceneName.isNullOrEmpty()) {
-            return
-        }
-        launch {
-            val body = SaveSceneBody(data.get()?.sceneId, data.get()?.appearanceId, workId, storyId, sceneName, scenePrompt)
-            response(ApiFactory.apiService.workAssetSceneSave(body)) {
-                this@ItemSceneVM.data.set(data)
-                onItemChanged()
-            }
-        }
-    }
 
     override val assetType: String = "场景"
     override val assetDescHint: String = "场景描述词"
     override val assetNameHint: String = "场景名"
     override val generateButtonText: String = "生成场景"
 
-    override fun generate() {
-        val status = status.get()
-        if (status == 1) return
-        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-        if (data.get()?.hasHistory == true && fragmentManager != null) {
-            ReferenceHistoricalImageryDialog.newInstance(data.get()?.sceneId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_SCENE_IMAGE)
-                .apply { onSuccess = { generateAsset(it) } }
-                .show(fragmentManager)
-        } else {
-            generateAsset()
-        }
-    }
-
-    override fun generateAsset(reference: ReferenceImageInfo?) {
+    override fun clickGenerate() {
         if (status.get() == 1) return
         val scenePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
         val sceneName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
@@ -80,19 +43,54 @@ class ItemSceneVM(
             "请先填写场景名称".showToast()
             return
         }
+        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
+        if (data.get()?.hasHistory == true && fragmentManager != null) {
+            ReferenceHistoricalImageryDialog.newInstance(data.get()?.sceneId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_SCENE_IMAGE)
+                .apply { onSuccess = { generate(scenePrompt, sceneName, it) } }
+                .show(fragmentManager)
+        } else {
+            generate(scenePrompt, sceneName)
+        }
+    }
+
+    override fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo?) {
+        val preStatus = status.get()
+        if (preStatus == 1) return
         status.set(1)
         onItemChanged()
         launch {
+            var scene = data.get()
+            if (assetDesc != scene?.scenePrompt || assetName != scene.sceneName) {
+                val response = withContext(Dispatchers.IO) {
+                    val body = SaveSceneBody(
+                        workId = workId,
+                        storyId = storyId,
+                        sceneId = scene?.sceneId,
+                        appearanceId = scene?.appearanceId,
+                        scenePrompt = assetDesc,
+                        sceneName = assetName,
+                    )
+                    ApiFactory.apiService.workAssetSceneSave(body)
+                }
+                if (response.isSuccess && response.data != null) {
+                    scene = response.data
+                    data.set(response.data)
+                } else {
+                    response.msg?.showToast()
+                    status.set(preStatus)
+                    onItemChanged()
+                    return@launch
+                }
+            }
             val body = GenerateAssetBody(
-                assetId = data.get()?.sceneId,
-                appearanceId = data.get()?.appearanceId,
-                bizType = 61,
-                prompt = scenePrompt,
-                referenceImageId = reference?.id,
-                referenceImageInStatus = if (reference != null) 1 else 0,
-                referenceImageUrl = reference?.referenceImageUrl,
-                storyId = storyId,
                 workId = workId,
+                storyId = storyId,
+                assetId = scene?.sceneId,
+                appearanceId = scene?.appearanceId,
+                referenceImageId = reference?.id,
+                referenceImageUrl = reference?.referenceImageUrl,
+                referenceImageInStatus = if (reference != null) 1 else 0,
+                bizType = if (reference != null) 62 else 61,
             )
             response(
                 bean = ApiFactory.apiService.workAssetSingleGenerate(body),
@@ -100,18 +98,19 @@ class ItemSceneVM(
                     val scene = this@ItemSceneVM.data.get() ?: SimpleSceneInfo()
                     scene.taskId = data?.taskId
                     scene.genStatus = data?.genStatus
+                    data?.genStatus?.let { status.set(it) }
                     this@ItemSceneVM.data.set(scene)
                     loopGenStatus()
                 },
                 error = {
                     this?.msg?.showToast()
-                    status.set(0)
+                    status.set(preStatus)
                     onItemChanged()
                 })
         }
     }
 
-    override suspend fun deleteAsset(): ApiResponse<Any> {
+    override suspend fun delete(): ApiResponse<Any> {
         return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSceneDelete(IdsBody(null, data.get()?.appearanceId)) }
     }
 

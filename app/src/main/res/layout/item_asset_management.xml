@@ -182,7 +182,7 @@
 
         <FrameLayout
             android:id="@+id/btnGenerate"
-            singleClick="@{(v)->item.generate()}"
+            singleClick="@{(v)->item.clickGenerate()}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginHorizontal="8dp"

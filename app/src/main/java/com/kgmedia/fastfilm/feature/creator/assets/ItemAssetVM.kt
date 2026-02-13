@@ -43,6 +43,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
      * 编辑中的资源描述
      */
     var editingAssetDescText: String? = data?.assetDesc
+        private set
     val editingAssetDesc by lazy { ObservableBoolean(false) }
     val assetDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
 
@@ -55,6 +56,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
      * 编辑中的资源名称
      */
     var editingAssetNameText: String? = data?.assetName
+        private set
     val editingAssetName by lazy { ObservableBoolean(false) }
     val assetNameInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
     protected var loopGenStatusJob: Job? = null
@@ -114,14 +116,21 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     abstract val assetNameHint: String
     abstract val generateButtonText: String
 
-    abstract fun generate()
-    abstract fun generateAsset(reference: ReferenceImageInfo? = null)
+    /**
+     * 点击单个资产 生成/重新生成
+     */
+    abstract fun clickGenerate()
 
     /**
-     * 删除资产
-     * @return 是否删除成功
+     * 调用生成资产图片接口
+     * @param reference 参考图信息
      */
-    abstract suspend fun deleteAsset(): ApiResponse<Any>
+    abstract fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo? = null)
+
+    /**
+     * 调用删除资产接口
+     */
+    abstract suspend fun delete(): ApiResponse<Any>
 
     abstract fun loopGenStatus()
 }

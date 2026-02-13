@@ -26,50 +26,12 @@ class ItemRoleVM(
     data: SimpleRoleInfo?
 ) : ItemAssetVM<SimpleRoleInfo>(index, workId, storyId, onItemChanged, data) {
 
-    override fun exitEditAssetDesc() {
-        super.exitEditAssetDesc()
-        saveInput()
-    }
-
-    override fun exitEditAssetName() {
-        super.exitEditAssetName()
-        saveInput()
-    }
-
-    private fun saveInput() {
-        val rolePrompt = assetDesc.get()?.trim()
-        val roleName = assetName.get()?.trim()
-        if (rolePrompt.isNullOrEmpty() || roleName.isNullOrEmpty()) {
-            return
-        }
-        launch {
-            val body = SaveRoleBody(data.get()?.roleId, data.get()?.appearanceId, workId, storyId, roleName, rolePrompt)
-            response(ApiFactory.apiService.workAssetRoleSave(body)) {
-                this@ItemRoleVM.data.set(data)
-                onItemChanged()
-            }
-        }
-    }
-
     override val assetType: String = "角色"
     override val assetDescHint: String = "角色描述词"
     override val assetNameHint: String = "角色名"
     override val generateButtonText: String = "生成角色"
 
-    override fun generate() {
-        val status = status.get()
-        if (status == 1) return
-        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-        if (data.get()?.hasHistory == true && fragmentManager != null) {
-            ReferenceHistoricalImageryDialog.newInstance(data.get()?.roleId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_ROLE_IMAGE)
-                .apply { onSuccess = { generateAsset(it) } }
-                .show(fragmentManager)
-        } else {
-            generateAsset()
-        }
-    }
-
-    override fun generateAsset(reference: ReferenceImageInfo?) {
+    override fun clickGenerate() {
         if (status.get() == 1) return
         val rolePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
         val roleName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
@@ -81,20 +43,54 @@ class ItemRoleVM(
             "请先填写角色名称".showToast()
             return
         }
+        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
+        if (data.get()?.hasHistory == true && fragmentManager != null) {
+            ReferenceHistoricalImageryDialog.newInstance(data.get()?.roleId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_ROLE_IMAGE)
+                .apply { onSuccess = { generate(rolePrompt, roleName, it) } }
+                .show(fragmentManager)
+        } else {
+            generate(rolePrompt, roleName)
+        }
+    }
 
+    override fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo?) {
+        val preStatus = status.get()
+        if (preStatus == 1) return
         status.set(1)
         onItemChanged()
         launch {
+            var role = data.get()
+            if (assetDesc != role?.rolePrompt || assetName != role.roleName) {
+                val response = withContext(Dispatchers.IO) {
+                    val body = SaveRoleBody(
+                        workId = workId,
+                        storyId = storyId,
+                        roleId = role?.roleId,
+                        appearanceId = role?.appearanceId,
+                        rolePrompt = assetDesc,
+                        roleName = assetName,
+                    )
+                    ApiFactory.apiService.workAssetRoleSave(body)
+                }
+                if (response.isSuccess && response.data != null) {
+                    role = response.data
+                    data.set(response.data)
+                } else {
+                    response.msg?.showToast()
+                    status.set(preStatus)
+                    onItemChanged()
+                    return@launch
+                }
+            }
             val body = GenerateAssetBody(
-                assetId = data.get()?.roleId,
-                appearanceId = data.get()?.appearanceId,
-                bizType = 41,
-                prompt = rolePrompt,
-                referenceImageId = reference?.id,
-                referenceImageInStatus = if (reference != null) 1 else 0,
-                referenceImageUrl = reference?.referenceImageUrl,
-                storyId = storyId,
                 workId = workId,
+                storyId = storyId,
+                assetId = role?.roleId,
+                appearanceId = role?.appearanceId,
+                referenceImageId = reference?.id,
+                referenceImageUrl = reference?.referenceImageUrl,
+                referenceImageInStatus = if (reference != null) 1 else 0,
+                bizType = if (reference != null) 42 else 41,
             )
             response(
                 bean = ApiFactory.apiService.workAssetSingleGenerate(body),
@@ -108,13 +104,13 @@ class ItemRoleVM(
                 },
                 error = {
                     this?.msg?.showToast()
-                    status.set(0)
+                    status.set(preStatus)
                     onItemChanged()
                 })
         }
     }
 
-    override suspend fun deleteAsset(): ApiResponse<Any> {
+    override suspend fun delete(): ApiResponse<Any> {
         return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetRoleDelete(IdsBody(null, data.get()?.appearanceId)) }
     }
 

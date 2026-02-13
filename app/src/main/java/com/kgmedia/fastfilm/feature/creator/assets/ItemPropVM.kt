@@ -26,50 +26,12 @@ class ItemPropVM(
     data: SimplePropInfo?
 ) : ItemAssetVM<SimplePropInfo>(index, workId, storyId, onItemChanged, data) {
 
-    override fun exitEditAssetDesc() {
-        super.exitEditAssetDesc()
-        saveInput()
-    }
-
-    override fun exitEditAssetName() {
-        super.exitEditAssetName()
-        saveInput()
-    }
-
-    private fun saveInput() {
-        val propPrompt = assetDesc.get()?.trim()
-        val propName = assetName.get()?.trim()
-        if (propPrompt.isNullOrEmpty() || propName.isNullOrEmpty()) {
-            return
-        }
-        launch {
-            val body = SavePropBody(data.get()?.propId, data.get()?.appearanceId, workId, storyId, propName, propPrompt)
-            response(ApiFactory.apiService.workAssetPropSave(body)) {
-                this@ItemPropVM.data.set(data)
-                onItemChanged()
-            }
-        }
-    }
-
     override val assetType: String = "道具"
     override val assetDescHint: String = "道具描述词"
     override val assetNameHint: String = "道具名"
     override val generateButtonText: String = "生成道具"
 
-    override fun generate() {
-        val status = status.get()
-        if (status == 1) return
-        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-        if (data.get()?.hasHistory == true && fragmentManager != null) {
-            ReferenceHistoricalImageryDialog.newInstance(data.get()?.propId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_PROP_IMAGE)
-                .apply { onSuccess = { generateAsset(it) } }
-                .show(fragmentManager)
-        } else {
-            generateAsset()
-        }
-    }
-
-    override fun generateAsset(reference: ReferenceImageInfo?) {
+    override fun clickGenerate() {
         if (status.get() == 1) return
         val propPrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
         val propName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
@@ -81,19 +43,54 @@ class ItemPropVM(
             "请先填写道具名称".showToast()
             return
         }
+        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
+        if (data.get()?.hasHistory == true && fragmentManager != null) {
+            ReferenceHistoricalImageryDialog.newInstance(data.get()?.propId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_PROP_IMAGE)
+                .apply { onSuccess = { generate(propPrompt, propName, it) } }
+                .show(fragmentManager)
+        } else {
+            generate(propPrompt, propName)
+        }
+    }
+
+    override fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo?) {
+        val preStatus = status.get()
+        if (preStatus == 1) return
         status.set(1)
         onItemChanged()
         launch {
+            var prop = data.get()
+            if (assetDesc != prop?.propPrompt || assetName != prop.propName) {
+                val response = withContext(Dispatchers.IO) {
+                    val body = SavePropBody(
+                        workId = workId,
+                        storyId = storyId,
+                        propId = prop?.propId,
+                        appearanceId = prop?.appearanceId,
+                        propPrompt = assetDesc,
+                        propName = assetName,
+                    )
+                    ApiFactory.apiService.workAssetPropSave(body)
+                }
+                if (response.isSuccess && response.data != null) {
+                    prop = response.data
+                    data.set(response.data)
+                } else {
+                    response.msg?.showToast()
+                    status.set(preStatus)
+                    onItemChanged()
+                    return@launch
+                }
+            }
             val body = GenerateAssetBody(
-                assetId = data.get()?.propId,
-                appearanceId = data.get()?.appearanceId,
-                bizType = 51,
-                prompt = propPrompt,
-                referenceImageId = reference?.id,
-                referenceImageInStatus = if (reference != null) 1 else 0,
-                referenceImageUrl = reference?.referenceImageUrl,
-                storyId = storyId,
                 workId = workId,
+                storyId = storyId,
+                assetId = prop?.propId,
+                appearanceId = prop?.appearanceId,
+                referenceImageId = reference?.id,
+                referenceImageUrl = reference?.referenceImageUrl,
+                referenceImageInStatus = if (reference != null) 1 else 0,
+                bizType = if (reference != null) 52 else 51,
             )
             response(
                 bean = ApiFactory.apiService.workAssetSingleGenerate(body),
@@ -101,18 +98,19 @@ class ItemPropVM(
                     val prop = this@ItemPropVM.data.get() ?: SimplePropInfo()
                     prop.taskId = data?.taskId
                     prop.genStatus = data?.genStatus
+                    data?.genStatus?.let { status.set(it) }
                     this@ItemPropVM.data.set(prop)
                     loopGenStatus()
                 },
                 error = {
                     this?.msg?.showToast()
-                    status.set(0)
+                    status.set(preStatus)
                     onItemChanged()
                 })
         }
     }
 
-    override suspend fun deleteAsset(): ApiResponse<Any> {
+    override suspend fun delete(): ApiResponse<Any> {
         return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetPropDelete(IdsBody(null, data.get()?.appearanceId)) }
     }
 
