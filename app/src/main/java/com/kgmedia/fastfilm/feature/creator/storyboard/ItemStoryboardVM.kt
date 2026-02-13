@@ -42,6 +42,7 @@ class ItemStoryboardVM(
      * 编辑中的分镜描述
      */
     var editingGenImagePromptText: String? = data?.genImagePrompt
+        private set
     val editingGenImagePrompt by lazy { ObservableBoolean(false) }
     val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
     private var loopGenStatusJob: Job? = null
@@ -75,44 +76,50 @@ class ItemStoryboardVM(
         storyboardDescInputListener.set(null)
         editingGenImagePrompt.set(false)
         genImagePrompt.set(editingGenImagePromptText)
-        saveInput()
     }
 
-    private fun saveInput() {
-        val genImagePrompt = this@ItemStoryboardVM.genImagePrompt.get()?.trim()
-        if (genImagePrompt.isNullOrEmpty()) {
-            return
-        }
-        launch {
-            val body = SaveStoryboardBody(
-                workId = workId,
-                storyId = storyId,
-                storyboardId = data.get()?.storyboardId,
-                genImagePrompt = genImagePrompt
-            )
-            response(ApiFactory.apiService.workStoryboardSave(body)) {
-                this@ItemStoryboardVM.data.set(data)
-                onItemChanged()
-            }
-        }
-    }
-
-    fun generate() {
+    fun clickGenerate() {
         if (data.get()?.imageGenerating == true) return
         val genImagePrompt = if (editingGenImagePrompt.get()) editingGenImagePromptText else this@ItemStoryboardVM.genImagePrompt.get()
         if (genImagePrompt.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
             return
         }
+        generate(genImagePrompt)
+    }
+
+    fun generate(genImagePrompt: String) {
+        if (data.get()?.imageGenerating == true) return
         val preStatus = data.get()?.genStatusImage
         data.get()?.genStatusImage = 1
         data.notifyChange()
         onItemChanged()
         launch {
+            var storyboard = data.get()
+            if (genImagePrompt != storyboard?.genImagePrompt) {
+                val response = withContext(Dispatchers.IO) {
+                    val body = SaveStoryboardBody(
+                        workId = workId,
+                        storyId = storyId,
+                        storyboardId = storyboard?.storyboardId,
+                        genImagePrompt = genImagePrompt
+                    )
+                    ApiFactory.apiService.workStoryboardSave(body)
+                }
+                if (response.isSuccess && response.data != null) {
+                    storyboard = response.data
+                    data.set(response.data)
+                } else {
+                    response.msg?.showToast()
+                    data.get()?.genStatusImage = preStatus
+                    onItemChanged()
+                    return@launch
+                }
+            }
             val body = GenerateStoryboardBody(
-                storyboardId = data.get()?.storyboardId,
                 workId = workId,
-                storyId = storyId
+                storyId = storyId,
+                storyboardId = storyboard?.storyboardId,
             )
             response(
                 bean = ApiFactory.apiService.workStoryboardSingleGenerate(body),

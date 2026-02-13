@@ -80,7 +80,6 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     val adapter by lazy { StoryboardDesignAdapter() }
     private val addStoryboardItem by lazy { ItemAddVM("添加分镜").apply { onItemClick.value = { addStoryboard(this) } } }
     private var editingStoryboardDescVM: ItemStoryboardVM? = null
-    private var loopNextEnabledJob: Job? = null
     private var loopAllStoryboardDescriptionStatusJob: Job? = null
     private var inputJob: Job? = null
 
@@ -88,7 +87,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
      * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
      */
     val step by lazy { ObservableInt(STEP_INIT) }
-    val cost by lazy { ObservableInt(100) }
+    val cost by lazy { ObservableInt() }
     val keyboardHeight by lazy { ObservableInt() }
     private var generatingDialog: GeneratingDialog? = null
     private var generating = false
@@ -120,7 +119,6 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     override fun onPause() {
-        loopNextEnabledJob?.cancel()
         topActivity?.window?.let { KeyboardUtils.unregisterSoftInputChangedListener(it) }
         super.onPause()
     }
@@ -317,24 +315,26 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun oneKeyGenerate() {
-        val notGenerateItems = arrayListOf<ItemStoryboardVM>()
+        var notInput = false
+        val notGenerateItems = arrayListOf<Pair<ItemStoryboardVM, String>>()
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemStoryboardVM) {
                 val genStatusImage = item.data.get()?.genStatusImage ?: 1
                 if (genStatusImage < 1 || genStatusImage == 3) {
-                    val genImagePrompt = item.genImagePrompt.get()
+                    val genImagePrompt = if (item.editingGenImagePrompt.get()) item.editingGenImagePromptText else item.genImagePrompt.get()
                     if (genImagePrompt.isNullOrEmpty()) {
-                        "您还有分镜尚未填写描述，请补充后再继续".showToast()
-                        return
+                        notInput = true
+                    } else {
+                        notGenerateItems.add(item to genImagePrompt)
                     }
-                    notGenerateItems.add(item)
                 }
             }
         }
-        if (notGenerateItems.isEmpty()) {
-
-        } else {
-            notGenerateItems.forEach { it.generate() }
+        if (notInput) {
+            "您还有分镜尚未填写描述，请补充后再继续".showToast()
+        }
+        if (notGenerateItems.isNotEmpty()) {
+            notGenerateItems.forEach { (item, genImagePrompt) -> item.generate(genImagePrompt) }
         }
     }
 
