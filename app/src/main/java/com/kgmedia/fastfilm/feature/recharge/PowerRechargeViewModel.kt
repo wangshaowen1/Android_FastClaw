@@ -4,6 +4,8 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
+import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
@@ -12,6 +14,7 @@ import com.kgmedia.fastfilm.core.ext.toPaymentParams
 import com.kgmedia.fastfilm.core.network.apis.request.CreatePointOrderBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
+import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.async
@@ -108,6 +111,12 @@ class PowerRechargeViewModel : PaymentViewModel<PowerRepository>() {
                 refreshBalance()
             },
             { error, paymentData -> })
+    }
+
+    fun viewPolicy() {
+        val activity = topActivity ?: return
+        val url = Config.get().appConfig.clientPaymentProtocolUrl ?: return
+        SimpleBrowserActivity.launch(activity, url)
     }
 
     fun updateBalance() {

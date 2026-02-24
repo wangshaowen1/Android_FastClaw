@@ -31,28 +31,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/ivPower"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                <TextView
+                    android:id="@+id/tvBalance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/icon_power"
+                    android:text="我的余额"
+                    android:textAppearance="@style/Text12"
+                    android:textColor="?attr/textColor3"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/ivPower"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/icon_power"
+                    app:layout_constraintBottom_toBottomOf="@+id/tvPower"
+                    app:layout_constraintEnd_toStartOf="@+id/tvPower"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tvPower" />
 
                 <TextView
                     android:id="@+id/tvPower"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="10dp"
                     android:fontFamily="@font/d_din_pro_600_semibold"
                     android:text="@{layout.balance}"
-                    android:textAppearance="@style/Text28"
                     android:textColor="?attr/textColor1"
+                    android:textSize="24sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ivPower"
+                    app:layout_constraintStart_toEndOf="@+id/ivPower"
+                    app:layout_constraintTop_toBottomOf="@+id/tvBalance"
                     tools:text="1000" />
 
                 <TextView

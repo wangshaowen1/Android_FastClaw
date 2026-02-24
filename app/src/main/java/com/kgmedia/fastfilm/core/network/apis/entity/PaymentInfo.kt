@@ -43,7 +43,7 @@ data class PaymentInfo(
         get() = when (payWay) {
             1 -> R.drawable.icon_payment_wx
             2 -> R.drawable.icon_payment_zfb
-            else -> ""
+            else -> null
         }
     val paymentMethod
         get() = when (payWay) {

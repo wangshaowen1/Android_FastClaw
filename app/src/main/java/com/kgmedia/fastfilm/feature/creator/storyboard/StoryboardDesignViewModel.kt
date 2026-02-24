@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
@@ -23,6 +24,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.dp
@@ -339,6 +341,12 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun oneKeyGenerate() {
+        val cost = cost.get()
+        if (cost == 0) return
+        if (cost > User.get().computingPower) {
+            PowerRechargeDialog.show()
+            return
+        }
         var notInput = false
         val notGenerateItems = arrayListOf<Pair<ItemStoryboardVM, String>>()
         adapter.items.forEachIndexed { index, item ->
@@ -363,6 +371,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun calcGenImageCost() {
+        cost.set(0)
         launch {
             if (genImagePrice <= 0) {
                 withContext(Dispatchers.IO) {
@@ -377,6 +386,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun calcGenVideoCost() {
+        cost.set(0)
         launch {
             if (genVideoPrice <= 0) {
                 withContext(Dispatchers.IO) {
@@ -391,6 +401,12 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun generateStoryboardVideo(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
+        val cost = cost.get()
+        if (cost == 0) return
+        if (cost > User.get().computingPower) {
+            PowerRechargeDialog.show()
+            return
+        }
         launchWithLoading {
             response(mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId))) {
                 toNextStep?.invoke(workId, storyId, data?.taskId)

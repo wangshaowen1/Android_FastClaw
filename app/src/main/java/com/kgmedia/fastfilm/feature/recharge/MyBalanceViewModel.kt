@@ -126,7 +126,7 @@ class MyBalanceViewModel : PaymentViewModel<PowerRepository>() {
 
     fun viewPolicy() {
         val activity = topActivity ?: return
-        val url = Config.get().appConfig.algorithmUrl ?: return
+        val url = Config.get().appConfig.clientPaymentProtocolUrl ?: return
         SimpleBrowserActivity.launch(activity, url)
     }
 
