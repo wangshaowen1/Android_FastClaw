@@ -10,7 +10,6 @@ import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
 import com.kgmedia.fastfilm.core.network.apis.request.OrderStatusBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
-import com.kgmedia.fastfilm.core.network.apis.response.WxPayData
 import com.kgmedia.fastfilm.core.response
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.PaymentDataSource
@@ -156,9 +155,7 @@ open class PaymentViewModel<T : AppRepository> : AppRepositoryViewModel<T>() {
     }
 
     fun setupBaoFuData(data: PaymentData?) {
-        if (data is WxPayData) {
-            baoFuOrderId = data.orderNo
-            isBaoFu.set(true)
-        }
+        baoFuOrderId = data?.orderNo
+        isBaoFu.set(data?.isBaoFu == true)
     }
 }

@@ -79,11 +79,6 @@ object ApiConstants {
     const val DAILY = "user/login/daily"
 
     /**
-     * 图片风控检测
-     */
-    const val IMAGE_CHECK = "sys/image/risk/check"
-
-    /**
      * 歌曲生成来源上报
      */
     const val MUSIC_GENERATE_SOURCE_REPORT = "music/generate/source/report"
@@ -119,73 +114,6 @@ object ApiConstants {
      * 用户注销状态
      */
     const val LOG_OFF_STATUS = "user/remove/state"
-
-    /**
-     * 添加/完善用户音色
-     */
-    const val TIMBRE_ADD_OR_OPTIMIZE = "timbre/addUserTimbre"
-
-    /**
-     * 我的声色
-     */
-    const val TIMBRE_MINE_LIST = "timbre/getPageUserTimbre"
-
-    const val USER_TIMBRE_LIST = "timbre/getUserTimbreList"
-
-    /**
-     * 更新音色名称
-     */
-    const val UPDATE_TIMBRE_TITLE = "timbre/updateTimbreTitle"
-
-    /**
-     * 删除音色
-     */
-    const val DEL_TIMBRE = "timbre/delTimbre"
-
-    /**
-     * 获取音色状态
-     */
-    const val TIMBRE_STATUS_GET = "timbre/getTimbreStatus"
-
-    /**
-     * 微信下单会员
-     */
-    const val MEMBER_WECHAT_ORDERING = "vip/wxPurchaseVip"
-
-
-    /**
-     * 支付宝下单会员
-     */
-    const val MEMBER_ALIPAY_ORDERING = "vip/alipayPurchaseVip"
-
-    /**
-     * 绘本状态（轮询）
-     */
-    const val GET_PICTURE_BOOK_STATUS = "userPictureBook/getPictureBookStatus"
-
-
-
-    /**
-     * 获取充值明细分页
-     */
-    const val GET_RECHARGE_PAGE = "user/getRechargePage"
-
-    /**
-     * 获取积分配置
-     */
-    const val SCORE_CONFIG = "point/getPointConfig"
-
-
-    /**
-     * 微信下单积分
-     */
-    const val WECHAT_ORDERING_POINTS = "point/wxPurchase"
-
-
-    /**
-     * 支付宝下单积分
-     */
-    const val ALIPAY_ORDERING_POINTS = "point/alipayPurchase"
 
     /**
      * 预生成短剧剧本大纲
@@ -293,31 +221,6 @@ object ApiConstants {
     const val ROLE_TAG_LIST = "shortDramas/script/role/tag/list"
 
     /**
-     * 场景扣费
-     */
-    const val SCENE_COST = "sceneDeductionFee/info"
-
-    /**
-     * 获取APP浮动窗口
-     */
-    const val GET_APP_FLOAT_WINDOWS = "sys/getAppFloatWindows"
-
-    /**
-     * 邀请收益信息
-     */
-    const val INVITE_INCOME_PAGE = "inviteUser/getInviteIncomePage"
-
-    /**
-     * 邀请用户记录分页
-     */
-    const val INVITE_USER_PAGE = "inviteUser/getInviteUserPage"
-
-    /**
-     * 用户提现记录（余额）
-     */
-    const val WITHDRAWAL_RECORD = "withdrawal/getWithdrawalRecord"
-
-    /**
      * 合成短剧
      */
     const val SHORT_DRAMAS_SYNTHESIS = "shortDramas/shot/synthesis"
@@ -338,11 +241,6 @@ object ApiConstants {
     const val SHORT_DRAMAS_RELEASED_INFO = "shortDramas/script/info/launched/other"
 
     /**
-     * 查询剧本状态信息
-     */
-    const val SHORT_DRAMAS_STATUS = "shortDramas/script/status"
-
-    /**
      * 提交字幕配音
      */
     const val SHORT_DRAMAS_DUBBING = "shortDramas/confirm/subtitle/voice"
@@ -361,11 +259,6 @@ object ApiConstants {
      * 字幕配音生成状态
      */
     const val SHORT_DRAMAS_DUBBING_STATUS = "shortDramas/subtitle/voice/status"
-
-    /**
-     * 字幕配音音色列表
-     */
-    const val DUBBING_VOICE_LIST = "shortDramas/subtitle/voice/list"
 
     /**
      * 使用历史分镜（分镜替换）
@@ -393,111 +286,14 @@ object ApiConstants {
     const val SHORT_DRAMAS_SEGMENT_IMAGE_GENERATE_RETRY = "shortDramas/script/image/generate/retry"
 
     /**
-     *生成剧本图片(生成画面)
-     */
-    const val GENERATING_SEGMENT_IMAGE = "shortDramas/script/image/generate"
-
-    /**
-     * 下载短剧视频（合成后回传给后端）
-     */
-    const val SHORT_DRAMAS_DOWNLOAD = "shortDramas/shot/video/download"
-
-    /**
-     * 修改视频信息
-     */
-    const val EDIT_SHORT_DRAMA_INFO = "shortDramas/script/info/edit"
-
-    /**
      * 删除剧本
      */
     const val DELETE_DRAMA_INFO = "shortDramas/work/remove"
-
-
-
-    /**
-     * 获取支付宝信息(并绑定)
-     */
-    const val BIND_ZFB = "withdrawal/getAilUserInfo"
-
-    /**
-     * 绑定账号
-     */
-    const val BIND_WITHDRAW_ACCOUNT = "withdrawal/bindingAccount"
-
-    /**
-     * 余额提现
-     */
-    const val WITHDRAW = "withdrawal/addWithdrawal"
-
-    /**
-     * 收益提现详情
-     */
-    const val WITHDRAW_INFO = "withdrawal/getWithdrawalInfo"
-
-    /**
-     * 余额提现弹窗详情-钻石
-     */
-    const val WITHDRAW_CONFIRM = "withdrawal/getWithdrawalOpen"
-
-    /**
-     * 查询所有类型消息列表
-     */
-    const val MESSAGES_SUMMARY = "messages/list"
-
-    /**
-     * 系统通知
-     */
-    const val SYSTEM_NOTICE = "messages/system"
-
-    /**
-     * 分页查询用户追剧消息列表
-     */
-    const val MESSAGES_WATCHING = "messages/watching"
-
-    /**
-     * 分页查询用户喜欢消息列表
-     */
-    const val MESSAGES_LIKES = "messages/likes"
-
-    /**
-     * 消息全部设置成已读
-     */
-    const val MESSAGES_MARK_READ = "messages/markAllAsRead"
-
-    /**
-     * 爆款推荐列表
-     */
-    const val HIT_RECOMMEND_LIST = "popular/recommend/dramas/list"
-
-    /**
-     * 爆款推荐tab
-     */
-    const val HIT_RECOMMEND_TABS = "popular/recommend/dramas/tab/list"
-
-    /**
-     * 攻略咨询列表
-     */
-    const val STRATEGY_LIST = "strategy/list"
-
-    /**
-     * 短剧配置展示数据
-     */
-    const val SHORT_DRAMA_STATISTICS = "sys/shortdrama/statistics"
-
-    /**
-     * 获取弹幕列表
-     */
-    const val DANMAKU_LIST = "appUserTip/list"
 
     /**
      * 用户收益信息
      */
     const val USER_REVENUE_INFORMATION = "user/profit/info"
-
-    /**
-     * 收益明细列表
-     */
-    const val PROFIT_DETAIL_LIST = "user/profit/detailList"
 
     /**
      * 解锁首次生成的短剧(首次生成的短剧付费)
@@ -535,16 +331,6 @@ object ApiConstants {
     const val WORK_INFO = "work/detail"
 
     /**
-     * 流式生成帮我续写(生成续写的用户输出内容)
-     */
-    const val AI_CONTINUE_GENERATE = "shortDramas/script/inputContent/extend/generate/stream"
-
-    /**
-     * 分页查询我的剧集列表
-     */
-    const val MY_TV_SERIES_LIST = "user/shortDramas/series/page"
-
-    /**
      * 获取剧集价格配置
      */
     const val SERIES_PRICE_CONFIG = "shortDramasSeries/priceConfig"
@@ -564,32 +350,6 @@ object ApiConstants {
      */
     const val EPISODE_LIST = "work/storyPage"
 
-
-    /**
-     * 分页查询我追的剧集列表
-     */
-    const val THE_TV_SERIES_I_FOLLOW = "user/shortDramas/series/watching/page"
-
-    /**
-     * 分页查询我喜欢的剧本列表
-     */
-    const val MY_FAVORITE_SCRIPT = "user/shortDramas/script/like/page"
-
-    /**
-     * 查询我的作品数量统计信息
-     */
-    const val QUANTITY_STATISTICS_OF_WORKS = "user/work/num/stat"
-
-    /**
-     * 流式生成短剧剧本内容（灵感、自定义、续写使用）
-     */
-    const val SSE_CONTENT_GENERATE = "shortDramas/scriptContent/generate/stream"
-
-    /**
-     * 流式生成短剧剧本内容（爆款制作同款使用）
-     */
-    const val SSE_MAKE_SAME_CONTENT_GENERATE = "shortDramas/scriptContent/generate/popular/stream"
-
     /**
      * 预生成短剧剧本(流式输出完之后调)
      */
@@ -599,11 +359,6 @@ object ApiConstants {
      * 生成短剧来源上报(调完生成短剧剧本接口后调用)
      */
     const val DRAMA_GENERATE_SOURCE_REPORT = "shortDramas/script/generate/source/report"
-
-    /**
-     * 攻略咨询点击上报
-     */
-    const val TUTORIAL_CLICK_REPORT = "strategy/click"
 
     /**
      * 查询剧本的角色列表和标题(轮询使用)
@@ -621,19 +376,9 @@ object ApiConstants {
     const val AUTO_UNLOCK_SWITCH = "shortDramasSeries/autoUnlockSwitch"
 
     /**
-     * 首页短剧推荐列表
-     */
-    const val RECOMMEND_SHORT_LIST = "shortDramas/recommend/list"
-
-    /**
      * 发布剧本
      */
     const val PUBLISH_SHORT_DRAMA = "shortDramas/work/publish"
-
-    /**
-     * 播放剧本上报
-     */
-    const val SHORT_DRAMA_PLAY_REPORT = "shortDramas/play"
 
     /**
      * 获取订单状态
@@ -644,16 +389,6 @@ object ApiConstants {
      * 爆款推荐点击上报
      */
     const val RECOMMEND_CLICK_REPORT = "popular/recommend/dramas/click"
-
-    /**
-     * 获取正在生成的短剧信息
-     */
-    const val GET_GENERATING_INFO = "shortDramas/script/generating/info"
-
-    /**
-     * 关闭正在生成的短剧
-     */
-    const val CLOSE_GENERATING_DRAMAS = "shortDramas/script/generating/close"
 
     /**
      * 新增剧本的角色
@@ -858,4 +593,34 @@ object ApiConstants {
      * 小说-保存续创剧集（只有小说有）
      */
     const val SAVE_SEQUEL_NOVEL_STORY = "work/production/sequel/saveSequelNovelStory"
+
+    /**
+     * 查询用户钱包信息
+     */
+    const val QUERY_WALLET_INFO = "trade/user/wallet/current"
+
+    /**
+     * 查询算力明细列表（分页）
+     */
+    const val QUERY_POINT_DETAIL_LIST = "trade/point/detail/queryPointDetailList"
+
+    /**
+     * 算力信息配置列表
+     */
+    const val POINT_CONFIG_LIST = "trade/point/config/list"
+
+    /**
+     * 交易支付方式配置列表
+     */
+    const val PAYMENT_CONFIG_LIST = "trade/pay/way/config/list"
+
+    /**
+     * 创建支付订单
+     */
+    const val CREATE_POINT_ORDER = "trade/pay/order/create"
+
+    /**
+     * 获取扣费策略规则信息
+     */
+    const val QUERY_AI_PRICE = "trade/deduct/strategy/rule/info"
 }

@@ -1,10 +1,34 @@
 package com.kgmedia.fastfilm.core.network.apis.response
 
+/**
+ * {
+ *     "upgradeDesc": "升级描叙",
+ *     "upgradeUrl": "升级地址",
+ *     "versionStatus": "版本状态：0-不升级 1-强制升级 2-建议升级",
+ *     "versionDesc": "版本描叙",
+ *     "md5Hash": "apk 校验码"
+ * }
+ */
 data class UpgradeData(
-    val upgradeDesc: String?,//升级的文字说明
-    val upgradeUrl: String?,//升级跳转地址
-    val versionDesc: String?,//待升级的版本号
-    val versionStatus: Int?,//升级状态 0-不升级 1-强制升级 2-建议升级
+    /**
+     * 升级描叙
+     */
+    val upgradeDesc: String?,
+    /**
+     * 升级地址
+     */
+    val upgradeUrl: String?,
+    /**
+     * 版本描叙
+     */
+    val versionDesc: String?,
+    /**
+     * 版本状态：0-不升级 1-强制升级 2-建议升级
+     */
+    val versionStatus: Int?,
+    /**
+     * apk 校验码
+     */
     val md5Hash:String?
 ){
     fun isNeedUpdate(): Boolean {

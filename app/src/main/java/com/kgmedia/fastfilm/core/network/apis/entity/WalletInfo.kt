@@ -4,14 +4,19 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * @author xiaoowuu
- * <br>
- * 用户钱包信息
- * </pre>
- * <br>
+ * {
+ *     "pointNum": "算力数量 单位：个",
+ *     "pointUsedNum": "已使用算力数量 单位：个"
+ * }
  */
 @Parcelize
 data class WalletInfo(
-    //积分余额
-    val pointBalance: Int? = 0,
+    /**
+     * 算力数量 单位：个
+     */
+    val pointNum: Int?,
+    /**
+     * 已使用算力数量 单位：个
+     */
+    val pointUsedNum: Int?
 ) : Parcelable

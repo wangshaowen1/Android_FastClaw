@@ -1,63 +1,45 @@
 package com.kgmedia.fastfilm.core.network.apis
 
 import com.kgmedia.fastfilm.core.network.SSEvent
+import com.kgmedia.fastfilm.core.network.apis.entity.AIPriceInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.CharacterInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ContentInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.DanmakuItem
-import com.kgmedia.fastfilm.core.network.apis.entity.DramasTimbreInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DubbingGenStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.HitRecommendInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.HitTabInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.LogOffStatusInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.MyFavoriteScriptInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.MyTvSeriesListInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.OrderStatusInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.ProfitDetailInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.QuantityStatisticsOfWorksInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
+import com.kgmedia.fastfilm.core.network.apis.entity.PaymentInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.RoleTagInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SaveSequelNovelStoryInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SegmentImageHistoryInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SeriesPriceConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaStatusInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramasStatisticsData
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SingleEpisodeDetailsInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.StrategyInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.SystemMessageLikeInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.SystemMessageWatchingInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.SystemNoticeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.TaskStatusInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.TheTvSeriesIFollowInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.TimbreInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.UserRevenueInformationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.UserShareUrlInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.entity.VipConfigInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawConfirmInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.WithdrawSuccessInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WalletInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindPhoneBody
-import com.kgmedia.fastfilm.core.network.apis.request.BindWithdrawAccountBody
-import com.kgmedia.fastfilm.core.network.apis.request.BindZfbBody
 import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
-import com.kgmedia.fastfilm.core.network.apis.request.ContinueGenerateBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreatePointOrderBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
-import com.kgmedia.fastfilm.core.network.apis.request.DanmakuBody
 import com.kgmedia.fastfilm.core.network.apis.request.DeleteWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
@@ -65,35 +47,23 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportB
 import com.kgmedia.fastfilm.core.network.apis.request.DramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramasSeriesId
 import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbreBody
-import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbrePagedBody
-import com.kgmedia.fastfilm.core.network.apis.request.EditDramaBody
 import com.kgmedia.fastfilm.core.network.apis.request.FeedbackBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
-import com.kgmedia.fastfilm.core.network.apis.request.HitRecommendPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
-import com.kgmedia.fastfilm.core.network.apis.request.ImageUrlBody
-import com.kgmedia.fastfilm.core.network.apis.request.InputContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByFlashMobileBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
-import com.kgmedia.fastfilm.core.network.apis.request.MemberPaymentBody
-import com.kgmedia.fastfilm.core.network.apis.request.MessagesTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
-import com.kgmedia.fastfilm.core.network.apis.request.MyTvSeriesBody
 import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeContentData
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeRoleImageDescBody
 import com.kgmedia.fastfilm.core.network.apis.request.OrderStatusBody
-import com.kgmedia.fastfilm.core.network.apis.request.OrderingPointsBody
 import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
-import com.kgmedia.fastfilm.core.network.apis.request.PictureBookId
 import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
-import com.kgmedia.fastfilm.core.network.apis.request.PointConfigBody
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
-import com.kgmedia.fastfilm.core.network.apis.request.RecommendShortsBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReportSubmissionBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
@@ -107,7 +77,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSequelNovelStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneContentEditBody
-import com.kgmedia.fastfilm.core.network.apis.request.SceneCostBody
 import com.kgmedia.fastfilm.core.network.apis.request.SegmentImageDescOptimizeBody
 import com.kgmedia.fastfilm.core.network.apis.request.SegmentImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.SegmentImageReplaceBody
@@ -119,46 +88,31 @@ import com.kgmedia.fastfilm.core.network.apis.request.SeriesSetPriceBody
 import com.kgmedia.fastfilm.core.network.apis.request.ShareReportBody
 import com.kgmedia.fastfilm.core.network.apis.request.ShortLikeBody
 import com.kgmedia.fastfilm.core.network.apis.request.ShotSegmentIdBody
-import com.kgmedia.fastfilm.core.network.apis.request.StrategyInfoIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.SynthesisUploadBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
-import com.kgmedia.fastfilm.core.network.apis.request.TimbreAddOrOptimizeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TipOffBody
-import com.kgmedia.fastfilm.core.network.apis.request.UpdateTimbreTitleBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserShareUrlBody
-import com.kgmedia.fastfilm.core.network.apis.request.UserTimbreIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.VideoSynthesisBody
-import com.kgmedia.fastfilm.core.network.apis.request.WithdrawBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
-import com.kgmedia.fastfilm.core.network.apis.response.AlipayData
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.BalanceData
 import com.kgmedia.fastfilm.core.network.apis.response.CharacterListData
-import com.kgmedia.fastfilm.core.network.apis.response.ComputingPowerDetailsInfo
 import com.kgmedia.fastfilm.core.network.apis.response.DramasIdData
-import com.kgmedia.fastfilm.core.network.apis.response.DramasInfoData
 import com.kgmedia.fastfilm.core.network.apis.response.DramasSeriesIdData
 import com.kgmedia.fastfilm.core.network.apis.response.FollowingData
-import com.kgmedia.fastfilm.core.network.apis.response.InviteIncomePageInfo
-import com.kgmedia.fastfilm.core.network.apis.response.InviteUserPageInfo
-import com.kgmedia.fastfilm.core.network.apis.response.MessageSummaryData
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBook
-import com.kgmedia.fastfilm.core.network.apis.response.PictureBookGenerateStatusData
 import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
-import com.kgmedia.fastfilm.core.network.apis.response.SceneCostData
-import com.kgmedia.fastfilm.core.network.apis.response.ScoreConfigData
+import com.kgmedia.fastfilm.core.network.apis.response.PointConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.ShortLikeData
 import com.kgmedia.fastfilm.core.network.apis.response.StoryboardListData
-import com.kgmedia.fastfilm.core.network.apis.response.TimbreIdData
 import com.kgmedia.fastfilm.core.network.apis.response.UpgradeData
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
-import com.kgmedia.fastfilm.core.network.apis.response.WithdrawalRecordInfo
 import com.kgmedia.fastfilm.core.network.apis.response.WorkIdData
-import com.kgmedia.fastfilm.core.network.apis.response.WxPayData
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
 import retrofit2.http.Headers
@@ -245,12 +199,6 @@ interface ApiService {
     suspend fun daily(@Body body: UserTokenBody): ApiResponse<Any>
 
     /**
-     * 图片风控检测
-     */
-    @POST(ApiConstants.IMAGE_CHECK)
-    suspend fun imageCheck(@Body body: ImageUrlBody): ApiResponse<Any>
-
-    /**
      * 歌曲生成来源上报
      */
     @POST(ApiConstants.MUSIC_GENERATE_SOURCE_REPORT)
@@ -292,54 +240,6 @@ interface ApiService {
      */
     @POST(ApiConstants.LOG_OFF_STATUS)
     suspend fun logOffStatus(@Body body: UserTokenBody): ApiResponse<LogOffStatusInfo?>
-
-    /**
-     * 添加/完善用户音色
-     */
-    @POST(ApiConstants.TIMBRE_ADD_OR_OPTIMIZE)
-    suspend fun timbreAddOrOptimize(@Body body: TimbreAddOrOptimizeBody): ApiResponse<TimbreIdData?>
-
-    /**
-     * 我的声色
-     */
-    @POST(ApiConstants.TIMBRE_MINE_LIST)
-    suspend fun timbreMineList(@Body body: PagedBody): ApiResponse<PagedList<TimbreInfo>?>
-
-    /**
-     * 添加/完善用户音色
-     */
-    @POST(ApiConstants.UPDATE_TIMBRE_TITLE)
-    suspend fun updateTimbreTitle(@Body body: UpdateTimbreTitleBody): ApiResponse<Any?>
-
-    /**
-     * 删除音色
-     */
-    @POST(ApiConstants.DEL_TIMBRE)
-    suspend fun delTimbre(@Body body: UserTimbreIdBody): ApiResponse<Any?>
-
-    /**
-     * 获取音色状态
-     */
-    @POST(ApiConstants.TIMBRE_STATUS_GET)
-    suspend fun timbreStatusGet(@Body body: UserTimbreIdBody): ApiResponse<TimbreInfo?>
-
-    /**
-     * 微信下单会员
-     */
-    @POST(ApiConstants.MEMBER_WECHAT_ORDERING)
-    suspend fun memberWechatOrdering(@Body body: MemberPaymentBody): ApiResponse<WxPayData?>
-
-    /**
-     * 支付宝下单会员
-     */
-    @POST(ApiConstants.MEMBER_ALIPAY_ORDERING)
-    suspend fun memberAlipayOrdering(@Body body: MemberPaymentBody): ApiResponse<AlipayData?>
-
-    /**
-     * 绘本状态（轮询）
-     */
-    @POST(ApiConstants.GET_PICTURE_BOOK_STATUS)
-    suspend fun getPictureBookStatus(@Body body: PictureBookId?): ApiResponse<PictureBookGenerateStatusData?>
 
     /**
      * 预生成短剧剧本大纲
@@ -503,56 +403,6 @@ interface ApiService {
     @POST(ApiConstants.ROLE_TAG_LIST)
     suspend fun roleTagList(@Body body: UserTokenBody): ApiResponse<ListData<RoleTagInfo>?>
 
-
-
-    /**
-     * 获取充值明细分页
-     */
-    @POST(ApiConstants.GET_RECHARGE_PAGE)
-    suspend fun getRechargePage(@Body body: PagedBody): ApiResponse<PagedList<ComputingPowerDetailsInfo>?>
-
-    /**
-     * 获取积分配置
-     */
-    @POST(ApiConstants.SCORE_CONFIG)
-    suspend fun scoreConfig(@Body body: PointConfigBody): ApiResponse<ScoreConfigData?>
-
-    /**
-     * 微信下单积分
-     */
-    @POST(ApiConstants.WECHAT_ORDERING_POINTS)
-    suspend fun wechatOrderingPoints(@Body body: OrderingPointsBody): ApiResponse<WxPayData?>
-
-    /**
-     * 支付宝下单积分
-     */
-    @POST(ApiConstants.ALIPAY_ORDERING_POINTS)
-    suspend fun alipayOrderingPoints(@Body body: OrderingPointsBody): ApiResponse<AlipayData?>
-
-    /**
-     * 场景扣费
-     */
-    @POST(ApiConstants.SCENE_COST)
-    suspend fun sceneCost(@Body body: SceneCostBody): ApiResponse<SceneCostData>
-
-    /**
-     * 邀请收益信息
-     */
-    @POST(ApiConstants.INVITE_INCOME_PAGE)
-    suspend fun getInviteIncomePage(@Body body: PagedBody): ApiResponse<PagedList<InviteIncomePageInfo>?>
-
-    /**
-     * 邀请用户记录分页
-     */
-    @POST(ApiConstants.INVITE_USER_PAGE)
-    suspend fun getInviteUserPage(@Body body: PagedBody): ApiResponse<PagedList<InviteUserPageInfo>?>
-
-    /**
-     * 用户提现记录（余额）
-     */
-    @POST(ApiConstants.WITHDRAWAL_RECORD)
-    suspend fun getWithdrawalRecord(@Body body: PagedBody): ApiResponse<PagedList<WithdrawalRecordInfo>?>
-
     /**
      * 生成中的绘本列表
      */
@@ -582,12 +432,6 @@ interface ApiService {
      */
     @POST(ApiConstants.SHORT_DRAMAS_RELEASED_INFO)
     suspend fun releasedShortDramasInfo(@Body body: DramasIdBody): ApiResponse<ShortDramaInfo?>
-
-    /**
-     * 查询剧本信息（作品详情也用这个）
-     */
-    @POST(ApiConstants.SHORT_DRAMAS_STATUS)
-    suspend fun shortDramasStatus(@Body body: DramasIdBody): ApiResponse<ShortDramaStatusInfo?>
 
     /**
      * 提交字幕配音
@@ -620,12 +464,6 @@ interface ApiService {
     suspend fun shortDramasDubbingStatus(@Body body: DramasTimbreBody): ApiResponse<DubbingGenStatusInfo?>
 
     /**
-     * 字幕配音音色列表
-     */
-    @POST(ApiConstants.DUBBING_VOICE_LIST)
-    suspend fun dubbingVoiceList(@Body body: DramasTimbrePagedBody): ApiResponse<PagedList<DramasTimbreInfo>?>
-
-    /**
      * 使用历史分镜（分镜替换）
      */
     @POST(ApiConstants.SHORT_DRAMAS_SEGMENT_IMAGE_REPLACE)
@@ -656,122 +494,10 @@ interface ApiService {
     suspend fun shortDramasSegmentImageGenerateRetry(@Body body: SegmentImageRetryBody): ApiResponse<Any?>
 
     /**
-     * 生成剧本图片
-     */
-    @POST(ApiConstants.GENERATING_SEGMENT_IMAGE)
-    suspend fun generatingSegmentImage(@Body body: DramasIdBody): ApiResponse<DramasIdData?>
-
-
-    /**
-     * 修改剧本信息
-     */
-    @POST(ApiConstants.EDIT_SHORT_DRAMA_INFO)
-    suspend fun editShotDramaInfo(@Body body: EditDramaBody): ApiResponse<Any?>
-
-    /**
      * 删除剧本
      */
     @POST(ApiConstants.DELETE_DRAMA_INFO)
     suspend fun deleteDramaInfo(@Body body: DramasIdBody): ApiResponse<Any?>
-
-
-    /**
-     * 获取支付宝信息(并绑定)
-     */
-    @POST(ApiConstants.BIND_ZFB)
-    suspend fun bindZfb(@Body body: BindZfbBody): ApiResponse<Any?>
-
-    /**
-     * 绑定账号
-     */
-    @POST(ApiConstants.BIND_WITHDRAW_ACCOUNT)
-    suspend fun bindWithdrawAccount(@Body body: BindWithdrawAccountBody): ApiResponse<Any?>
-
-    /**
-     * 钻石提现
-     */
-    @POST(ApiConstants.WITHDRAW)
-    suspend fun withdraw(@Body body: WithdrawBody): ApiResponse<WithdrawSuccessInfo?>
-
-    /**
-     * 收益提现详情-钻石
-     */
-    @POST(ApiConstants.WITHDRAW_INFO)
-    suspend fun withdrawInfo(@Body body: UserTokenBody): ApiResponse<WithdrawInfo?>
-
-    /**
-     * 余额提现弹窗详情-钻石
-     */
-    @POST(ApiConstants.WITHDRAW_CONFIRM)
-    suspend fun withdrawConfirm(@Body body: WithdrawBody): ApiResponse<WithdrawConfirmInfo?>
-
-    /**
-     * 查询所有类型消息列表
-     */
-    @POST(ApiConstants.MESSAGES_SUMMARY)
-    suspend fun messagesSummary(@Body body: UserTokenBody): ApiResponse<MessageSummaryData?>
-
-    /**
-     * 系统通知
-     */
-    @POST(ApiConstants.SYSTEM_NOTICE)
-    suspend fun systemNotice(@Body body: PagedBody): ApiResponse<PagedList<SystemNoticeInfo>?>
-
-    /**
-     * 分页查询用户追剧消息列表
-     */
-    @POST(ApiConstants.MESSAGES_WATCHING)
-    suspend fun messagesWatching(@Body body: PagedBody): ApiResponse<PagedList<SystemMessageWatchingInfo>?>
-
-    /**
-     * 分页查询用户喜欢消息列表
-     */
-    @POST(ApiConstants.MESSAGES_LIKES)
-    suspend fun messagesLikes(@Body body: PagedBody): ApiResponse<PagedList<SystemMessageLikeInfo>?>
-
-    /**
-     * 消息全部设置成已读
-     */
-    @POST(ApiConstants.MESSAGES_MARK_READ)
-    suspend fun messagesMarkRead(@Body body: MessagesTypeBody): ApiResponse<Any>
-
-
-    /** 爆款推荐列表
-     */
-    @POST(ApiConstants.HIT_RECOMMEND_LIST)
-    suspend fun hitRecommendList(@Body body: HitRecommendPagedBody): ApiResponse<PagedList<HitRecommendInfo>?>
-
-    /**爆款推荐tab
-     */
-    @POST(ApiConstants.HIT_RECOMMEND_TABS)
-    suspend fun hitRecommendTabs(@Body body: UserTokenBody): ApiResponse<ListData<HitTabInfo>?>
-
-    /** 攻略咨询列表
-     */
-    @POST(ApiConstants.STRATEGY_LIST)
-    suspend fun strategyList(@Body body: PagedBody): ApiResponse<PagedList<StrategyInfo>?>
-
-    /** 短剧配置展示数据
-     */
-    @POST(ApiConstants.SHORT_DRAMA_STATISTICS)
-    suspend fun shortDramaStatistics(@Body body: UserTokenBody): ApiResponse<ShortDramasStatisticsData?>
-
-    /** 获取弹幕列表
-     */
-    @POST(ApiConstants.DANMAKU_LIST)
-    suspend fun danmakuList(@Body body: DanmakuBody): ApiResponse<ListData<DanmakuItem>?>
-
-    /**
-     * 用户收益信息
-     */
-    @POST(ApiConstants.USER_REVENUE_INFORMATION)
-    suspend fun userRevenueInformation(@Body body: UserTokenBody): ApiResponse<UserRevenueInformationInfo?>
-
-    /**
-     * 收益明细列表
-     */
-    @POST(ApiConstants.PROFIT_DETAIL_LIST)
-    suspend fun profitDetailList(@Body body: PagedBody): ApiResponse<PagedList<ProfitDetailInfo>?>
 
     /**
      * 获取用户可续写的剧集列表
@@ -790,23 +516,6 @@ interface ApiService {
      */
     @POST(ApiConstants.WORK_INFO)
     suspend fun getWorkInfo(@Body body: WorkIdBody): ApiResponse<WorkInfo?>
-
-    /**
-     *流式生成帮我续写(生成续写的用户输出内容)
-     */
-    @Headers(
-        "Accept: text/event-stream",  // 声明 SSE 媒体类型
-        "Cache-Control: no-cache",     // 禁用缓存
-        "Connection: keep-alive"       // 保持长连接
-    )
-    @POST(ApiConstants.AI_CONTINUE_GENERATE)
-    fun aiContinueGenerate(@Body body: ContinueGenerateBody): Flow<SSEvent>
-
-    /**
-     * 分页查询我的剧集列表
-     */
-    @POST(ApiConstants.MY_TV_SERIES_LIST)
-    suspend fun myTvSeriesList(@Body body: MyTvSeriesBody): ApiResponse<PagedList<MyTvSeriesListInfo>?>
 
     /**
      * 追剧或取消追剧
@@ -850,48 +559,6 @@ interface ApiService {
     @POST(ApiConstants.EPISODE_LIST)
     suspend fun episodeList(@Body body: WorkIdPagedBody): ApiResponse<PagedList<EpisodeInfo>?>
 
-
-    /**
-     * 分页查询我追的剧集列表
-     */
-    @POST(ApiConstants.THE_TV_SERIES_I_FOLLOW)
-    suspend fun theTvSeriesIFollow(@Body body: PagedBody): ApiResponse<PagedList<TheTvSeriesIFollowInfo>?>
-
-    /**
-     * 分页查询我喜欢的剧本列表
-     */
-    @POST(ApiConstants.MY_FAVORITE_SCRIPT)
-    suspend fun myFavoriteScript(@Body body: PagedBody): ApiResponse<PagedList<MyFavoriteScriptInfo>?>
-
-    /**
-     * 查询我的作品数量统计信息
-     */
-    @POST(ApiConstants.QUANTITY_STATISTICS_OF_WORKS)
-    suspend fun quantityStatisticsOfWorks(@Body body: UserTokenBody): ApiResponse<QuantityStatisticsOfWorksInfo?>
-
-
-    /**
-     * 流式生成短剧剧本内容（灵感、自定义、续写使用）
-     */
-    @POST(ApiConstants.SSE_CONTENT_GENERATE)
-    @Headers(
-        "Accept: text/event-stream",  // 声明 SSE 媒体类型
-        "Cache-Control: no-cache",     // 禁用缓存
-        "Connection: keep-alive"       // 保持长连接
-    )
-    fun sseContentGenerate(@Body body: InputContentBody): Flow<SSEvent>
-
-    /**
-     * 流式生成短剧剧本内容（爆款制作同款使用）
-     */
-    @POST(ApiConstants.SSE_MAKE_SAME_CONTENT_GENERATE)
-    @Headers(
-        "Accept: text/event-stream",  // 声明 SSE 媒体类型
-        "Cache-Control: no-cache",     // 禁用缓存
-        "Connection: keep-alive"       // 保持长连接
-    )
-    fun sseMakeSameContentGenerate(@Body body: PopularRecommendDramasIdBody): Flow<SSEvent>
-
     /**
      * 预生成短剧剧本(流式输出完之后调)
      */
@@ -903,12 +570,6 @@ interface ApiService {
      */
     @POST(ApiConstants.DRAMA_GENERATE_SOURCE_REPORT)
     suspend fun dramaGenerateSourceReport(@Body body: DramaGenerateSourceReportBody): ApiResponse<Any>
-
-    /**
-     * 生成短剧来源上报(调完生成短剧剧本接口后调用)
-     */
-    @POST(ApiConstants.TUTORIAL_CLICK_REPORT)
-    suspend fun tutorialClickReport(@Body body: StrategyInfoIdBody): ApiResponse<Any>
 
     /**
      * 查询剧本的角色列表(轮询使用)
@@ -928,24 +589,11 @@ interface ApiService {
     @POST(ApiConstants.AUTO_UNLOCK_SWITCH)
     suspend fun autoUnlockSwitch(@Body body: DramasSeriesId): ApiResponse<Any>
 
-
-    /**
-     * 首页短剧推荐列表
-     */
-    @POST(ApiConstants.RECOMMEND_SHORT_LIST)
-    suspend fun recommendShortList(@Body body: RecommendShortsBody): ApiResponse<PagedList<ShortDramaInfo>?>
-
     /**
      * 发布剧本
      */
     @POST(ApiConstants.PUBLISH_SHORT_DRAMA)
     suspend fun publishShortDrama(@Body body: DramasIdBody): ApiResponse<DramasSeriesIdData?>
-
-    /**
-     * 剧本播放上报
-     */
-    @POST(ApiConstants.SHORT_DRAMA_PLAY_REPORT)
-    suspend fun shortDramaPlayReport(@Body body: DramasIdBody): ApiResponse<Any>
 
     /**
      * 获取订单状态
@@ -955,18 +603,6 @@ interface ApiService {
 
     @POST(ApiConstants.RECOMMEND_CLICK_REPORT)
     suspend fun recommendClickReport(@Body body: PopularRecommendDramasIdBody): ApiResponse<Any>
-
-    /**
-     * 获取正在生成的短剧信息
-     */
-    @POST(ApiConstants.GET_GENERATING_INFO)
-    suspend fun getGeneratingInfo(@Body body: UserTokenBody): ApiResponse<DramasInfoData>
-
-    /**
-     * 关闭正在生成的短剧
-     */
-    @POST(ApiConstants.CLOSE_GENERATING_DRAMAS)
-    suspend fun closeGeneratingDramas(@Body body: DramasIdBody): ApiResponse<Any>
 
     /**
      * 新增剧本的角色
@@ -1117,6 +753,7 @@ interface ApiService {
      */
     @POST(ApiConstants.GENERATE_ALL_STORYBOARD_DESCRIPTION)
     suspend fun generateAllStoryboardDescription(@Body body: WorkBody): ApiResponse<TaskStatusInfo?>
+
     /**
      * 轮询查询全部分镜描述
      */
@@ -1205,7 +842,7 @@ interface ApiService {
     @POST(ApiConstants.GET_WORK_STATUS_LIST)
     suspend fun getWorkStatusList(@Body body: UserTokenBody): ApiResponse<List<WorkInfo>>
 
-     /**
+    /**
      * 查看作品单个剧集详情
      */
     @POST(ApiConstants.SINGLE_EPISODE_DETAILS)
@@ -1216,4 +853,40 @@ interface ApiService {
      */
     @POST(ApiConstants.SAVE_SEQUEL_NOVEL_STORY)
     suspend fun saveSequelNovelStory(@Body body: SaveSequelNovelStoryBody): ApiResponse<SaveSequelNovelStoryInfo>
+
+    /**
+     * 查询用户钱包信息
+     */
+    @POST(ApiConstants.QUERY_WALLET_INFO)
+    suspend fun queryWalletInfo(@Body body: UserTokenBody): ApiResponse<WalletInfo?>
+
+    /**
+     * 查询算力明细列表（分页）
+     */
+    @POST(ApiConstants.QUERY_POINT_DETAIL_LIST)
+    suspend fun queryPointDetailList(@Body body: SaveSequelNovelStoryBody): ApiResponse<SaveSequelNovelStoryInfo>
+
+    /**
+     * 算力信息配置列表
+     */
+    @POST(ApiConstants.POINT_CONFIG_LIST)
+    suspend fun pointConfigList(@Body body: UserTokenBody): ApiResponse<PointConfigData?>
+
+    /**
+     * 交易支付方式配置列表
+     */
+    @POST(ApiConstants.PAYMENT_CONFIG_LIST)
+    suspend fun paymentConfigList(@Body body: UserTokenBody): ApiResponse<ListData<PaymentInfo>?>
+
+    /**
+     * 创建支付订单
+     */
+    @POST(ApiConstants.CREATE_POINT_ORDER)
+    suspend fun createPointOrder(@Body body: CreatePointOrderBody): ApiResponse<PaymentData?>
+
+    /**
+     * 获取扣费策略规则信息
+     */
+    @POST(ApiConstants.QUERY_AI_PRICE)
+    suspend fun queryAiPrice(@Body body: StrategyTypeBody): ApiResponse<AIPriceInfo?>
 }

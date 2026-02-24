@@ -17,7 +17,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
-import com.kgmedia.fastfilm.core.network.apis.response.WxPayData
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.entity.AliPayParams
@@ -157,23 +156,18 @@ fun createAppPayment(): PaymentClient {
     return PaymentClient(topActivity)
 }
 
-fun PaymentData.toPaymentParams(method: PaymentClient.PaymentMethod, isBaoFu: Boolean = false): PaymentParams {
-    return if (method == PaymentClient.PaymentMethod.Alipay) AliPayParams(
-        this.payInfo ?: ""
-    ) else {
-        val wxPayParams = WxPayParams()
-        if (isBaoFu) {
-            (this as? WxPayData)?.apply {
-                wxPayParams.let {
-                    it.miniprogramType = Config.get().appConfig.clientWxMiniShareMode
-                    it.payWay = payWay
-                    it.originalId = originalId
-                    it.miniProgramPath = payInfo
-                }
-            }
-        } else {
-            wxPayParams.apply {
-                val json = JSONObject(payInfo)
+fun PaymentData.toPaymentParams(method: PaymentClient.PaymentMethod): PaymentParams {
+    return if (method == PaymentClient.PaymentMethod.Alipay)
+        AliPayParams(this.orderStr ?: "")
+    else
+        WxPayParams().apply {
+            if (isBaoFu) {
+                this.miniprogramType = Config.get().appConfig.clientWxMiniShareMode
+                this.payWay = payWay
+                this.originalId = originalId
+                this.miniProgramPath = orderStr
+            } else {
+                val json = JSONObject(orderStr)
                 this.appId = json.optString("appid")
                 this.partnerId = json.optString("partnerId")
                 this.prepayId = json.optString("prepayId")
@@ -183,6 +177,4 @@ fun PaymentData.toPaymentParams(method: PaymentClient.PaymentMethod, isBaoFu: Bo
                 this.sign = json.optString("sign")
             }
         }
-        wxPayParams
-    }
 }
