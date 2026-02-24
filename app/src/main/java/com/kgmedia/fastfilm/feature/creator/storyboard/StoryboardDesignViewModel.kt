@@ -13,7 +13,6 @@ import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.AppRepository
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
@@ -343,8 +342,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private fun oneKeyGenerate() {
         val cost = cost.get()
         if (cost == 0) return
-        if (cost > User.get().computingPower) {
-            PowerRechargeDialog.show()
+        if (PowerRechargeDialog.checkLowBalance(cost)) {
             return
         }
         var notInput = false
@@ -403,8 +401,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private fun generateStoryboardVideo(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
         val cost = cost.get()
         if (cost == 0) return
-        if (cost > User.get().computingPower) {
-            PowerRechargeDialog.show()
+        if (PowerRechargeDialog.checkLowBalance(cost)) {
             return
         }
         launchWithLoading {

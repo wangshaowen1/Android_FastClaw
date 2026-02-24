@@ -30,6 +30,10 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
     //没有登录不让进
     val noLogIn = MutableLiveData(false)
 
+    /**
+     * 账户余额
+     */
+    val balance by lazy { ObservableField<String>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -105,5 +109,6 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
                 "avatar" to user.avatarUrl,
             )
         )
+        balance.set(user.computingPower.toString())
     }
 }

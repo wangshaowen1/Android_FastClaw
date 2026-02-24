@@ -49,9 +49,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:fontFamily="@font/d_din_pro_600_semibold"
-                android:text="8392"
+                android:text="@{layout.balance}"
                 android:textAppearance="@style/Text16"
-                android:textColor="?attr/textColor1" />
+                android:textColor="?attr/textColor1"
+                tools:text="8392" />
 
         </LinearLayout>
 
