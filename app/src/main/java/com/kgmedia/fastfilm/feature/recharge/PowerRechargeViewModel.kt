@@ -50,11 +50,11 @@ class PowerRechargeViewModel : PaymentViewModel<PowerRepository>() {
                 val pointConfigList = pointConfigListDeferred.await()
                 val paymentConfigList = paymentConfigListDeferred.await()
                 pointConfigList?.pointBalanceNum?.let { User.get().storeComputingPower(it) }
-                pointConfigList?.items?.map { ItemRechargePowerVM(it) }.let { vms ->
+                pointConfigList?.items?.map { ItemRechargePowerVM(it).apply { onItemClick.value = { select() } } }.let { vms ->
                     powerAdapter.submitList(vms)
                     vms?.firstOrNull()?.select()
                 }
-                paymentConfigList?.items?.map { ItemRechargePaymentVM(it) }.let { vms ->
+                paymentConfigList?.items?.map { ItemRechargePaymentVM(it).apply { onItemClick.value = { select() } } }.let { vms ->
                     paymentAdapter.submitList(vms)
                     (vms?.firstOrNull { it.data.get()?.isDefault == 1 } ?: vms?.firstOrNull())?.select()
                 }

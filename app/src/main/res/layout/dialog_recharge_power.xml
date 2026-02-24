@@ -12,7 +12,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_color2_tr20">
 
         <TextView
             android:id="@+id/tvTitle"
@@ -38,11 +39,12 @@
 
         <com.kgmedia.fastfilm.widget.LoadStateViewHolder
             displayChild="@{layout.loadState}"
+            hwRatio="@{layout.loadState == 3 ? 3f : 1f}"
             onRetry="@{layout::loadConfig}"
+            setConstraintMaxHeightByWidth="@{true}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="17dp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -88,8 +90,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:adapter="@{layout.powerAdapter}"
+                    android:overScrollMode="never"
                     android:paddingHorizontal="9dp"
                     android:paddingVertical="6dp"
+                    android:scrollbars="none"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintTop_toBottomOf="@+id/tvPower"
                     app:spanCount="3"
@@ -113,8 +117,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="33dp"
                     android:adapter="@{layout.paymentAdapter}"
+                    android:overScrollMode="never"
                     android:paddingHorizontal="9dp"
                     android:paddingVertical="6dp"
+                    android:scrollbars="none"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintTop_toBottomOf="@+id/rvRechargeAmount"
                     app:spanCount="2"

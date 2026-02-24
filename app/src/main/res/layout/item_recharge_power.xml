@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -47,24 +48,26 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:fontFamily="@font/d_din_pro_600_semibold"
-            android:text="500"
+            android:text="@{item.data.pointNum}"
             android:textAppearance="@style/Text20"
             android:textColor="?attr/textColor2"
             app:layout_constraintBottom_toBottomOf="@+id/ivPower"
             app:layout_constraintEnd_toEndOf="@+id/scope"
             app:layout_constraintStart_toEndOf="@+id/ivPower"
-            app:layout_constraintTop_toTopOf="@+id/ivPower" />
+            app:layout_constraintTop_toTopOf="@+id/ivPower"
+            tools:text="500" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="¥49.99"
+            android:text="@{item.data.pointPrice}"
             android:textColor="?attr/textColor3"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/scope"
             app:layout_constraintEnd_toEndOf="@+id/scope"
             app:layout_constraintStart_toStartOf="@+id/scope"
             app:layout_constraintTop_toTopOf="@+id/scope"
-            app:layout_constraintVertical_bias="0.781818" />
+            app:layout_constraintVertical_bias="0.781818"
+            tools:text="¥49.99" />
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 </layout>

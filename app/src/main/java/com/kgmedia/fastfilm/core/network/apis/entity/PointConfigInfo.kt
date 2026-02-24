@@ -12,5 +12,5 @@ data class PointConfigInfo(
     val pointConfigId: String?,
     val pointName: String?,
     val pointPrice: String?,
-    val pointNum: Int?
+    val pointNum: String?
 )

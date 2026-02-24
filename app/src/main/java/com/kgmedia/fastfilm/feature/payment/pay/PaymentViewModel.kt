@@ -63,31 +63,32 @@ open class PaymentViewModel<T : AppRepository> : AppRepositoryViewModel<T>() {
                 })
                 ?.startPayment(payment, requestBody)
         }
-        setLoading(true)
-        launch(
-            block = {
-                //注销状态，0未申请，1提交申请
-                val removeAccountState = withContext(Dispatchers.IO) { mRepo.api.logOffStatus(UserTokenBody()).data?.removeAccountState }
-                setLoading(false)
-                if (removeAccountState == 1) {
-                    topActivity?.showCommonDialog(
-                        title = "确认是否购买",
-                        tip = "当前账号正在申请注销中，确认购买将自动取消注销账号",
-                        confirm = {
-                            launch { response(mRepo.api.cancelLogOff(UserTokenBody())) {} }
-                            launchPay.invoke()
-                        },
-                        cancel = null
-                    )
-                } else {
-                    launchPay.invoke()
-                }
-            },
-            onError = {
-                setLoading(false)
-                launchPay.invoke()
-            }
-        )
+        launchPay.invoke()
+//        setLoading(true)
+//        launch(
+//            block = {
+//                //注销状态，0未申请，1提交申请
+//                val removeAccountState = withContext(Dispatchers.IO) { mRepo.api.logOffStatus(UserTokenBody()).data?.removeAccountState }
+//                setLoading(false)
+//                if (removeAccountState == 1) {
+//                    topActivity?.showCommonDialog(
+//                        title = "确认是否购买",
+//                        tip = "当前账号正在申请注销中，确认购买将自动取消注销账号",
+//                        confirm = {
+//                            launch { response(mRepo.api.cancelLogOff(UserTokenBody())) {} }
+//                            launchPay.invoke()
+//                        },
+//                        cancel = null
+//                    )
+//                } else {
+//                    launchPay.invoke()
+//                }
+//            },
+//            onError = {
+//                setLoading(false)
+//                launchPay.invoke()
+//            }
+//        )
     }
 
     /**
