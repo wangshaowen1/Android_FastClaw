@@ -368,9 +368,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private fun oneKeyGenerate() {
         val cost = cost.get()
         if (cost == 0) return
-        if (PowerRechargeDialog.checkLowBalance(cost)) {
-            return
-        }
+        if (PowerRechargeDialog.checkLowBalance(cost)) return
         var notInput = false
         val notGenerateItems = arrayListOf<Triple<ItemAssetVM<*>, String, String>>()
         adapter.items.forEachIndexed { index, item ->

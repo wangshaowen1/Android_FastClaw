@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.edit.ReferenceHistoricalImageryDialog
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -101,6 +102,7 @@ class ItemRoleVM(
                     data?.genStatus?.let { status.set(it) }
                     this@ItemRoleVM.data.set(role)
                     loopGenStatus()
+                    if (data?.genStatus == 4) PowerRechargeDialog.show(true)
                 },
                 error = {
                     this?.msg?.showToast()

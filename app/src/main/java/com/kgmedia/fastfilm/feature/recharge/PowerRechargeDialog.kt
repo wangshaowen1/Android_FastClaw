@@ -16,16 +16,19 @@ class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBi
          */
         fun checkLowBalance(cost: Int): Boolean {
             if (cost > User.get().computingPower) {
-                "算力余额不足，请先充值算力".showToast()
-                show()
+                show(true)
                 return true
             }
             return false
         }
 
-        fun show() {
+        fun show(showToast: Boolean = false) {
             (topActivity as? FragmentActivity)?.supportFragmentManager?.let {
+                if (it.fragments.any { fragment -> fragment is PowerRechargeDialog }) return
                 PowerRechargeDialog().show(it)
+                if (showToast) {
+                    "算力余额不足，请先充值算力".showToast()
+                }
             }
         }
     }

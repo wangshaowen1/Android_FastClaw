@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -130,6 +131,7 @@ class ItemStoryboardVM(
                     this@ItemStoryboardVM.data.set(storyboard)
                     this@ItemStoryboardVM.data.notifyChange()
                     loopGenStatus()
+                    if (data?.genStatus == 4) PowerRechargeDialog.show(true)
                 },
                 error = {
                     this?.msg?.showToast()
