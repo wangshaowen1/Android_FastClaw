@@ -63,10 +63,12 @@
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover" />
 
-        <ProgressBar
+        <com.kgmedia.fastfilm.widget.AutoRotateLayout
+            autoRotate="@{item.data.imageGenerating}"
             setVisible="@{item.data.imageGenerating}"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:background="@drawable/icon_loading1"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
