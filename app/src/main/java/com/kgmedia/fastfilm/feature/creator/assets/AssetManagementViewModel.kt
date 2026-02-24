@@ -301,7 +301,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private fun ItemAssetVM<*>.applyConfig(): ItemAssetVM<*> {
         onItemClick.value = { view ->
             when (view?.id) {
-                R.id.btnPreview -> {
+                R.id.ivCover -> {
                     assetImage.get()?.let { PhotoPagerActivity.launch(topActivity, it) }
                 }
 

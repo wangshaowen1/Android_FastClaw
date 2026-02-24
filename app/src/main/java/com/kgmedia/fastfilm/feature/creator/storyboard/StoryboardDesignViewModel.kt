@@ -281,7 +281,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private fun ItemStoryboardVM.applyConfig(): ItemStoryboardVM {
         onItemClick.value = { view ->
             when (view?.id) {
-                R.id.btnPreview -> {
+                R.id.ivCover -> {
                     data.get()?.imageUrl?.let { PhotoPagerActivity.launch(topActivity, it) }
                 }
 
