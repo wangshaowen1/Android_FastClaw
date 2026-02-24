@@ -6,9 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.StrictMode
 import androidx.annotation.NonNull
-import androidx.fragment.app.DialogFragment
 import cn.android.security.APISecurity
 import com.alibaba.android.alpha.Task
 import com.blankj.utilcode.util.ProcessUtils
@@ -16,6 +14,8 @@ import com.blankj.utilcode.util.Utils
 import com.fm.openinstall.Configuration
 import com.fm.openinstall.OpenInstall
 import com.github.gzuliyujiang.oaid.DeviceID
+import com.growingio.android.sdk.autotrack.AutotrackConfiguration
+import com.growingio.android.sdk.autotrack.GrowingAutotracker
 import com.kgmedia.fastfilm.common.Cache
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.Oaid
@@ -29,21 +29,16 @@ import com.kgmedia.fastfilm.core.manager.FlashLoginManager
 import com.kgmedia.fastfilm.core.manager.OssManager
 import com.kgmedia.fastfilm.core.manager.PlaceManager
 import com.kgmedia.fastfilm.core.manager.PushManager
-import com.kgmedia.fastfilm.feature.main.MainActivity
 import com.kgmedia.fastfilm.feature.splash.SplashActivity
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.CommonDialog
 import com.kgmedia.fastfilm.widget.CustomizedRefreshHeader
 import com.kgmedia.fastfilm.widget.LoadingDialog2
 import com.kgmedia.fastfilm.widget.MyLoadViewFactory
-import com.growingio.android.sdk.autotrack.AutotrackConfiguration
-import com.growingio.android.sdk.autotrack.GrowingAutotracker
 import com.kuaige.oss.OssType
-import com.kuaige.payment.PaymentConfig
 import com.nhsd.basic.BaseApp
 import com.nhsd.basic.Session
 import com.nhsd.basic.manager.LoadingConfig
-import com.nhsd.basic.manager.LoadingDialogFactory
 import com.nhsd.basic.utils.Logger
 import com.nhsd.mvc.MVCHelper
 import com.nhsd.permisson.DefaultRationaleFactory
@@ -94,7 +89,7 @@ class App : BaseApp() {
 
             if (ProcessUtils.isMainProcess()) {
                 val releaseEnv = listOf("production", "preview")
-                val releaseDomain = listOf("http://120.24.240.28:9010", "https://jk.jinguomanju.com")
+                val releaseDomain = listOf("http://120.24.240.28:9010", "https://kuaichupianjk.kuaigeai.cn")
 
                 val apiSecurityStartTime = System.currentTimeMillis()
                 // 注意：Kotlin 中访问静态/伴生对象通常直接用类名，或者 companion 里的常量
@@ -195,7 +190,7 @@ class App : BaseApp() {
 
         // SAM 转换：直接使用 Lambda
         LoadingConfig.setFactory { LoadingDialog2() }
-        OssManager.init(ossType = OssType.ALIYUN, ossFileNameProvider = {ossPathName, suffix ->
+        OssManager.init(ossType = OssType.ALIYUN, ossFileNameProvider = { ossPathName, suffix ->
             val timestamp = System.currentTimeMillis()
             "FFApp/$ossPathName/${User.get().userId}/0$timestamp.$suffix"
         })

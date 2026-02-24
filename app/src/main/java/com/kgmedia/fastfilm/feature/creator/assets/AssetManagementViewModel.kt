@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.KeyboardUtils
 import com.drake.spannable.replaceSpan
 import com.drake.spannable.span.CenterImageSpan
@@ -10,6 +11,7 @@ import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
@@ -98,14 +100,30 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             if (field != value) {
                 field = value
                 if (value) {
-                    generatingDialog?.dismiss()
-                    generatingDialog = topActivity?.let { activity -> GeneratingDialog(activity, "资产生成中...") }
-                    generatingDialog?.show()
+                    progressHelper.start("提取资产信息", step = 1, intervalMs = 100L)
                 } else {
-                    generatingDialog?.dismiss()
+                    progressHelper.stop()
                 }
             }
         }
+    private val progressHelper by lazy {
+        AutoProgressSimulator(viewModelScope) { show, title, progress ->
+            if (show) {
+                val dialog = generatingDialog
+                if (dialog == null || !dialog.isShowing) {
+                    // 只在 Dialog 不存在时创建
+                    generatingDialog = topActivity?.let { activity -> GeneratingDialog(activity, "$title $progress%", "退出后AI会继续生成") }
+                    generatingDialog?.show()
+                } else {
+                    // 如果已经在显示，只更新文字内容，不重置 Dialog
+                    dialog.updateContent("$title $progress%", "退出后AI会继续生成")
+                }
+            } else {
+                generatingDialog?.dismiss()
+                generatingDialog = null
+            }
+        }
+    }
     private val powerSpan by lazy { CenterImageSpan(App.instance, R.drawable.icon_power).apply { setDrawableSize(16.dp, 16.dp) } }
 
     override fun onResume() {
