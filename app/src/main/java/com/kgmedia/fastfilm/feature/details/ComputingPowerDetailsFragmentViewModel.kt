@@ -22,8 +22,7 @@ import kotlinx.coroutines.flow.Flow
  */
 class ComputingPowerDetailsFragmentViewModel : AppRepositoryViewModel<AppRepository>() {
 
-
-
+    private val typeProtagonist by lazy { mBundle.getInt(ComputingPowerDetailsFragment.TYPE_PROTAGONIST, ComputingPowerDetailsFragment.TYPE_ALL) }
 
     /**
      * 获取积分消耗明细分页
@@ -37,7 +36,7 @@ class ComputingPowerDetailsFragmentViewModel : AppRepositoryViewModel<AppReposit
                 prefetchDistance = Constant.Paged.PREFETCH_DISTANCE,
             ),
             pagingSourceFactory = {
-                ComputingPowerDetailsPagingSource()
+                ComputingPowerDetailsPagingSource(typeProtagonist)
             }).flow.cachedIn(viewModelScope)
     }
 }

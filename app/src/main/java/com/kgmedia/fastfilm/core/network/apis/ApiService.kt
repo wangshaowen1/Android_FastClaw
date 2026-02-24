@@ -41,6 +41,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DeleteWorkBody
+import com.kgmedia.fastfilm.core.network.apis.request.DetailTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateSourceReportBody
@@ -102,6 +103,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.BalanceData
 import com.kgmedia.fastfilm.core.network.apis.response.CharacterListData
+import com.kgmedia.fastfilm.core.network.apis.response.ComputingPowerDetailsInfo
 import com.kgmedia.fastfilm.core.network.apis.response.DramasIdData
 import com.kgmedia.fastfilm.core.network.apis.response.DramasSeriesIdData
 import com.kgmedia.fastfilm.core.network.apis.response.FollowingData
@@ -864,7 +866,7 @@ interface ApiService {
      * 查询算力明细列表（分页）
      */
     @POST(ApiConstants.QUERY_POINT_DETAIL_LIST)
-    suspend fun queryPointDetailList(@Body body: SaveSequelNovelStoryBody): ApiResponse<SaveSequelNovelStoryInfo>
+    suspend fun queryPointDetailList(@Body body: DetailTypeBody): ApiResponse<PagedList<ComputingPowerDetailsInfo>?>
 
     /**
      * 算力信息配置列表

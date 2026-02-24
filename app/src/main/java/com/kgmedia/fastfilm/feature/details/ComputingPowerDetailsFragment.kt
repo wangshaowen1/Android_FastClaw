@@ -34,7 +34,7 @@ class ComputingPowerDetailsFragment :
 
         //消耗明细
         const val TYPE_CONSUME = 2
-        fun newInstance(typeProtagonist: Int = TYPE_RECHARGE): ComputingPowerDetailsFragment {
+        fun newInstance(typeProtagonist: Int = TYPE_ALL): ComputingPowerDetailsFragment {
             val fragment = ComputingPowerDetailsFragment()
             val bundle = Bundle()
             bundle.putInt(TYPE_PROTAGONIST, typeProtagonist)
@@ -49,11 +49,8 @@ class ComputingPowerDetailsFragment :
         ComputingPowerDetailsAdapter()
     }
 
-    private var typeProtagonist: Int = TYPE_RECHARGE
-
     override fun onPrepareView() {
         super.onPrepareView()
-        typeProtagonist = arguments?.getInt(TYPE_PROTAGONIST) ?: TYPE_RECHARGE
         initView()
         //数据更新
         dataUpdate()
