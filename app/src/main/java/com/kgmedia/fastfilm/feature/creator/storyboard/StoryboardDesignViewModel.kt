@@ -91,7 +91,8 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     val step by lazy { ObservableInt(STEP_INIT) }
     val cost by lazy { ObservableInt() }
-    private var aiPrice = 0
+    private var genImagePrice = 0
+    private var genVideoPrice = 0
     val keyboardHeight by lazy { ObservableInt() }
     private var generatingDialog: GeneratingDialog? = null
     private var generating = false
@@ -268,15 +269,18 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
             generatingNum > 0 -> step.set(STEP_IMAGE_GENERATING)
             newNum > 0 -> {
                 step.set(STEP_DESCRIPTION_GENERATED)
-                calcCost()
+                calcGenImageCost()
             }
 
             failedNum > 0 -> {
                 step.set(STEP_IMAGE_GENERATE_FAILED)
-                calcCost()
+                calcGenImageCost()
             }
 
-            else -> step.set(STEP_IMAGE_GENERATED)
+            else -> {
+                step.set(STEP_IMAGE_GENERATED)
+                calcGenVideoCost()
+            }
         }
     }
 
@@ -358,16 +362,30 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
-    private fun calcCost() {
+    private fun calcGenImageCost() {
         launch {
-            if (aiPrice <= 0) {
+            if (genImagePrice <= 0) {
                 withContext(Dispatchers.IO) {
-                    mRepo.api.queryAiPrice(StrategyTypeBody(2)).data?.pointNum?.let { aiPrice = it }
+                    mRepo.api.queryAiPrice(StrategyTypeBody(2)).data?.pointNum?.let { genImagePrice = it }
                 }
             }
-            if (aiPrice > 0) {
+            if (genImagePrice > 0) {
                 val num = adapter.items.count { it is ItemStoryboardVM && it.data.get()?.genStatusImage?.let { status -> status < 1 || status == 3 } == true }
-                cost.set(aiPrice * num)
+                cost.set(genImagePrice * num)
+            }
+        }
+    }
+
+    private fun calcGenVideoCost() {
+        launch {
+            if (genVideoPrice <= 0) {
+                withContext(Dispatchers.IO) {
+                    mRepo.api.queryAiPrice(StrategyTypeBody(3)).data?.pointNum?.let { genVideoPrice = it }
+                }
+            }
+            if (genVideoPrice > 0) {
+                val num = adapter.items.count { it is ItemStoryboardVM }
+                cost.set(genVideoPrice * num)
             }
         }
     }
