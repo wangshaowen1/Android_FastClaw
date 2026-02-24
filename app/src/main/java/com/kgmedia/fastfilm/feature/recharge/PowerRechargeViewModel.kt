@@ -4,16 +4,17 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
-import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.core.Config
+import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
-import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
+import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.toPaymentParams
+import com.kgmedia.fastfilm.core.network.apis.request.CreatePointOrderBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
-import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.async
 
 class PowerRechargeViewModel : PaymentViewModel<PowerRepository>() {
     /**
@@ -22,7 +23,7 @@ class PowerRechargeViewModel : PaymentViewModel<PowerRepository>() {
     val balance by lazy { ObservableField<String>() }
     val loadState by lazy { ObservableInt() }
     val powerAdapter by lazy { QuickAdapter<ItemRechargePowerVM>(R.layout.item_recharge_power, emptyList()) }
-    val paymentAdapter by lazy { QuickAdapter<ItemRechargePaymentVM>(R.layout.item_recharge_payment, emptyList()) }
+    val paymentAdapter by lazy { QuickAdapter<ItemRechargePaymentVM>(R.layout.item_recharge_payment_dialog, emptyList()) }
     private var currentPower: ItemRechargePowerVM? = null
     private var currentPayment: ItemRechargePaymentVM? = null
 
@@ -33,30 +34,28 @@ class PowerRechargeViewModel : PaymentViewModel<PowerRepository>() {
 
     override fun onResume() {
         super.onResume()
-        setUserInfo()
-        fetchUserInfo()
+        updateBalance()
+        refreshBalance()
     }
 
     fun loadConfig() {
-        if (powerAdapter.items.isEmpty()) loadState.set(LoadStateViewHolder.LOADING)
+        if (powerAdapter.items.isEmpty() || paymentAdapter.items.isEmpty()) loadState.set(LoadStateViewHolder.LOADING)
         launch(
             block = {
-                response(
-                    bean = mRepo.api.workAssetSceneList(QueryAssetBody(null, null, null, null, null)),
-                    result = {
-//                        data?.diamondConfigInfo
-//                            ?.map { ItemRechargeKCoinVM(it, true).apply { onItemClick.value = { select() } } }
-//                            ?.let { vms ->
-//                                if (firstRechargeSelected.get().not()) {
-//                                    vms.firstOrNull { (it.data.get() as? RechargeKCoinConfigData.DiamondConfig)?.defaultSelectStatus == 1 }?.select()
-//                                }
-//                                adapter.submitList(vms)
-//                                adapter2.submitList(vms)
-//                            }
-                        updateLoadState()
-                    },
-                    error = { updateLoadState() }
-                )
+                val pointConfigListDeferred = async { mRepo.pointConfigList().data }
+                val paymentConfigListDeferred = async { mRepo.paymentConfigList().data }
+                val pointConfigList = pointConfigListDeferred.await()
+                val paymentConfigList = paymentConfigListDeferred.await()
+                pointConfigList?.pointBalanceNum?.let { User.get().storeComputingPower(it) }
+                pointConfigList?.items?.map { ItemRechargePowerVM(it) }.let { vms ->
+                    powerAdapter.submitList(vms)
+                    vms?.firstOrNull()?.select()
+                }
+                paymentConfigList?.items?.map { ItemRechargePaymentVM(it) }.let { vms ->
+                    paymentAdapter.submitList(vms)
+                    (vms?.firstOrNull { it.data.get()?.isDefault == 1 } ?: vms?.firstOrNull())?.select()
+                }
+                updateLoadState()
             },
             onError = {
                 updateLoadState()
@@ -64,7 +63,7 @@ class PowerRechargeViewModel : PaymentViewModel<PowerRepository>() {
     }
 
     private fun updateLoadState() {
-        if (powerAdapter.items.isEmpty()) {
+        if (powerAdapter.items.isEmpty() || paymentAdapter.items.isEmpty()) {
             loadState.set(LoadStateViewHolder.RETRY)
         } else {
             loadState.set(LoadStateViewHolder.CONTENT)
@@ -89,47 +88,33 @@ class PowerRechargeViewModel : PaymentViewModel<PowerRepository>() {
             "请选择充值金额".showToast()
             return
         }
-        val payment = currentPayment?.data?.get()?.type
-        if (payment == null) {
+        val payment = currentPayment?.data?.get()
+        val paymentMethod = payment?.paymentMethod
+        if (paymentMethod == null) {
             "请选择支付方式".showToast()
             return
         }
         pay(
-            payment,
+            paymentMethod,
             { paymentMethod, requestBody, responseSender ->
-//                launchWithLoading {
-//                    response(mRepo.recharge(paymentMethod, item, from, popupId)) {
-//                        responseSender?.sendData(this.data?.toPaymentParams(paymentMethod))
-//                    }
-//                }
+                launchWithLoading {
+                    response(mRepo.api.createPointOrder(CreatePointOrderBody(item.pointConfigId, 1, payment.payWay))) {
+                        responseSender?.sendData(this.data?.toPaymentParams(paymentMethod))
+                    }
+                }
             },
             item,
             { paymentData ->
-                fetchUserInfo()
+                refreshBalance()
             },
             { error, paymentData -> })
     }
 
-    fun viewPolicy() {
-        val activity = topActivity ?: return
-        val url = Config.get().appConfig.algorithmUrl ?: return
-        SimpleBrowserActivity.launch(activity, url)
+    fun updateBalance() {
+        balance.set(User.get().computingPower.toString())
     }
 
-    private fun setUserInfo() {
-        val user = User.get()
-        balance.set(user.phoneNum)
+    private fun refreshBalance() {
+        Global.refreshBalance()
     }
-
-    private fun fetchUserInfo() {
-        if (User.get().isLogged) {
-            launch {
-                response(mRepo.getUserInfo()) {
-                    User.get().updateFrom(data)
-                    setUserInfo()
-                }
-            }
-        }
-    }
-
 }

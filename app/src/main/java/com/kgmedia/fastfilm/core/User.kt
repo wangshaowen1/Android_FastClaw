@@ -55,6 +55,10 @@ class User : IUser {
     var token: String?
         private set
 
+    /**算力余额*/
+    var computingPower: Int
+        private set
+
     var requestNotificationsPermissionEnable = true
 
     val userInfoStr: String?
@@ -85,7 +89,7 @@ class User : IUser {
         lastLoginTime = sp.getString(LAST_LOGIN_TIME, null)
         registerStatus = sp.getInt(REGISTER_STATUS, 0)
         token = sp.getString(TOKEN, null)
-
+        computingPower = sp.getInt(COMPUTING_POWER, 0)
         requestNotificationsPermissionEnable = sp.getBoolean(REQUEST_NOTIFICATIONS_PERMISSION, true)
     }
 
@@ -155,6 +159,8 @@ class User : IUser {
         sp.remove(REGISTER_STATUS)
         token = null
         sp.remove(TOKEN)
+        computingPower = 0
+        sp.remove(COMPUTING_POWER)
     }
 
 
@@ -282,6 +288,14 @@ class User : IUser {
         sp.putString(TOKEN, token)
     }
 
+    /**
+     * 算力余额
+     */
+    fun storeComputingPower(computingPower: Int) {
+        this.computingPower = computingPower
+        sp.putInt(COMPUTING_POWER, this.computingPower)
+        notifyChange(COMPUTING_POWER)
+    }
 
     fun isFemale(): Boolean {
         return gender == FEMALE
@@ -332,6 +346,8 @@ class User : IUser {
 
         //访问令牌
         const val TOKEN = "token"
+
+        const val COMPUTING_POWER = "computingPower"
 
         //性别-男
         const val MALE = 1
