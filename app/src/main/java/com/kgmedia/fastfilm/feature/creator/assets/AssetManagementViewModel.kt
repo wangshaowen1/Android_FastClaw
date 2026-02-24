@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
+import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
@@ -93,6 +94,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
      */
     val step by lazy { ObservableInt(STEP_INIT) }
     val cost by lazy { ObservableInt() }
+    private var aiPrice = 0
     val keyboardHeight by lazy { ObservableInt(100) }
     private var generatingDialog: GeneratingDialog? = null
     private var generating = false
@@ -387,7 +389,17 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     private fun calcCost() {
-        cost.set((Math.random() * 1000).toInt())
+        launch {
+            if (aiPrice <= 0) {
+                withContext(Dispatchers.IO) {
+                    mRepo.api.queryAiPrice(StrategyTypeBody(1)).data?.pointNum?.let { aiPrice = it }
+                }
+            }
+            if (aiPrice > 0) {
+                val num = adapter.items.count { it is ItemAssetVM<*> && it.status.get().let { status -> status < 1 || status == 3 } }
+                cost.set(aiPrice * num)
+            }
+        }
     }
 
     private fun generateAllStoryboardDescription(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
