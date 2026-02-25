@@ -32,9 +32,9 @@
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etStoryboardDesc"
+            content="@{item.genImagePrompt}"
             onTextInputListener="@{item.storyboardDescInputListener}"
             setEditing="@{item.editingGenImagePrompt}"
-            content="@{item.genImagePrompt}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="15dp"

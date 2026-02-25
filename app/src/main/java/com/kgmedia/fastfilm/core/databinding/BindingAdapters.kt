@@ -1696,7 +1696,22 @@ fun setEditing(view: RecyclerEditText, editing: Boolean, content: String?) {
     if (editing) {
         KeyboardUtils.showSoftInput(view)
         view.setSelection(view.length())
+        view.setOnTouchListener { view, event ->
+            // 只有当 EditText 获取焦点，并且内容高度超出可视区域（即可以垂直滚动）时，才处理滑动冲突
+            if (view.hasFocus() && (view.canScrollVertically(1) || view.canScrollVertically(-1))) {
+                // 告诉父控件（及祖父控件等）：不要拦截这个触摸事件，让我自己处理
+                view.parent.requestDisallowInterceptTouchEvent(true)
+
+                // 当手指抬起或取消触摸时，恢复父控件的拦截权
+                if (event.action == MotionEvent.ACTION_UP || event.action == MotionEvent.ACTION_CANCEL) {
+                    view.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            // 返回 false，表示不消费此事件，让 EditText 原本的触摸逻辑继续执行（比如光标移动、弹出键盘等）
+            false
+        }
     } else {
+        view.setOnTouchListener(null)
         view.clearFocus()
         KeyboardUtils.hideSoftInput(view)
     }
