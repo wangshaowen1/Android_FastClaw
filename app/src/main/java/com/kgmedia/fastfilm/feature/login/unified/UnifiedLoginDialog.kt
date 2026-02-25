@@ -93,7 +93,6 @@ class UnifiedLoginDialog :
 
             R.id.bt_settings -> {
                 SettingsActivity.start(activity)
-                finishOnly()
             }
 
             R.id.ll_describe -> {

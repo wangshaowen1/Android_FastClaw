@@ -39,6 +39,7 @@
         <Button
             android:id="@+id/bt_settings"
             style="@style/Button.Menu"
+            singleClick="@{layout.clickHandler::onClick}"
             android:layout_marginEnd="16dp"
             android:text="设置"
             android:visibility="@{DebugUtils.INSTANCE.isDebug()?View.VISIBLE:View.GONE}"

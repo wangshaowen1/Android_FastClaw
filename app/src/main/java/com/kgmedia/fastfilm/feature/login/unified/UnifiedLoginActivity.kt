@@ -84,7 +84,6 @@ class UnifiedLoginActivity : BaseViewModelActivity<ActivityUnifiedLoginBinding, 
 
             R.id.bt_settings -> {
                 SettingsActivity.start(this)
-                finishOnly()
             }
 
             R.id.ll_describe -> {
