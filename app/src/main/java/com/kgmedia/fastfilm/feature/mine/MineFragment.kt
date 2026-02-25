@@ -103,11 +103,17 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
 
             R.id.suggestions_feedback -> {
+                if (AppNavigator.checkLoginIntercepted(false)) {
+                    return
+                }
                 //建议与反馈
                 FeedbackActivity.start(topActivity)
             }
 
             R.id.btnMyBalance -> {
+                if (AppNavigator.checkLoginIntercepted(false)) {
+                    return
+                }
                 MyBalanceActivity.start()
             }
         }
