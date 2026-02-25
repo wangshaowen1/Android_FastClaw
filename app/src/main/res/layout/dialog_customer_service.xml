@@ -38,8 +38,7 @@
                 loadUri="@{layout.customerServiceUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitCenter"
-                tools:src="@drawable/img_customer_service" />
+                android:scaleType="fitCenter" />
         </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 
 

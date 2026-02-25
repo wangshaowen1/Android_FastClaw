@@ -25,10 +25,11 @@
 
         <com.kgmedia.fastfilm.widget.CropShapeImageView
             loadThumbnailUri="@{item.data.referenceImageUrl}"
+            placeHolder="@{@drawable/img_default_cover_3_4}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:shapeAppearanceOverlay="@style/roundStyle_r8"
-            tools:srcCompat="@mipmap/ic_launcher" />
+            tools:srcCompat="@drawable/img_default_cover_3_4" />
 
         <ImageView
             android:layout_width="20dp"

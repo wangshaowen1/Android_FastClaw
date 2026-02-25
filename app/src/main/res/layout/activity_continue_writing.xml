@@ -43,14 +43,14 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_avatar"
                 loadHQThumbnailUri="@{layout.episodeInfo.workCoverUrl}"
-                placeHolder="@{@color/fill_color_1_dark}"
+                placeHolder="@{@drawable/img_default_cover_4_3}"
                 android:layout_width="78dp"
                 android:layout_height="104dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearance="@style/roundStyle_r8"
-                tools:src="@color/fill_color_1_dark" />
+                tools:src="@drawable/img_default_cover_4_3" />
 
             <TextView
                 android:id="@+id/tv_name"

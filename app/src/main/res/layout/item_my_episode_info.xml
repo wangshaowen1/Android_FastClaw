@@ -24,15 +24,15 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCover"
             loadUri="@{item.data.workCoverUrl}"
-            placeHolder="@{@color/fill_color_1_dark}"
+            placeHolder="@{@drawable/img_default_cover_3_4}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
-            android:src="@color/fill_color_1_dark"
             android:visibility="@{item.data.storyId.length()>0?View.VISIBLE:View.INVISIBLE}"
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/roundStyle_r8" />
+            app:shapeAppearanceOverlay="@style/roundStyle_r8"
+            tools:src="@drawable/img_default_cover_3_4" />
 
         <com.kgmedia.fastfilm.widget.BorderConstraintLayout
             android:layout_width="0dp"

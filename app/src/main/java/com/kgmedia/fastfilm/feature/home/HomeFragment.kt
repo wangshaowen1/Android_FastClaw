@@ -19,6 +19,7 @@ import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapt
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
+import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.crop.util.ViewUtils
 import com.zhpan.bannerview.BaseBannerAdapter
@@ -63,7 +64,7 @@ class HomeFragment :
             ) {
                 holder?.apply {
                     val image = findViewById<ImageView>(R.id.image)
-                    loadUri(image,data.imageUrl)
+                    loadUri(image, data.imageUrl, R.drawable.img_default_cover_16_9.getResDrawable())
                     image.setOnSingleClickListener {
                         AppRouter.jump(data.jumpCode)
                     }
