@@ -12,5 +12,9 @@ data class PointConfigInfo(
     val pointConfigId: String?,
     val pointName: String?,
     val pointPrice: String?,
-    val pointNum: String?
+    val pointNum: String?,
+    /**
+     * 是否默认选中（0-非默认、1-默认）
+     */
+    val isDefault: Int?
 )

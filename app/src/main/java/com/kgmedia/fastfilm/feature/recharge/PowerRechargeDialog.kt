@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.recharge
 
 import androidx.fragment.app.FragmentActivity
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
@@ -9,7 +10,7 @@ import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
 
-class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBinding, PowerRechargeViewModel>() {
+class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBinding, MyBalanceViewModel>() {
     companion object {
         /**
          * 检查是否余额不足，并弹出充值弹窗
@@ -27,7 +28,7 @@ class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBi
                 if (it.fragments.any { fragment -> fragment is PowerRechargeDialog }) return
                 PowerRechargeDialog().show(it)
                 if (showToast) {
-                    "算力余额不足，请先充值算力".showToast()
+                    "算力余额不足，请及时充值".showToast()
                 }
             }
         }
@@ -40,5 +41,9 @@ class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBi
                 mRealVM.updateBalance()
             }
         }
+    }
+
+    override fun createViewModel(): MyBalanceViewModel {
+        return MyBalanceViewModel(R.layout.item_recharge_payment_dialog)
     }
 }

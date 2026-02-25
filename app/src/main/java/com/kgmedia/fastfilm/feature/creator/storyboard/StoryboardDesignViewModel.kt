@@ -341,7 +341,10 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private fun oneKeyGenerate() {
         val cost = cost.get()
-        if (cost == 0) return
+        if (cost == 0) {
+            calcGenImageCost()
+            return
+        }
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         var notInput = false
         val notGenerateItems = arrayListOf<Pair<ItemStoryboardVM, String>>()
@@ -398,7 +401,10 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private fun generateStoryboardVideo(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
         val cost = cost.get()
-        if (cost == 0) return
+        if (cost == 0) {
+            calcGenVideoCost()
+            return
+        }
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
             response(mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId))) {

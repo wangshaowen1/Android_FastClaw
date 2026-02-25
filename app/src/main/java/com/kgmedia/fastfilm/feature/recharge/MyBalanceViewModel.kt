@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.recharge
 
+import androidx.annotation.LayoutRes
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import com.kgmedia.fastfilm.R
@@ -21,7 +22,7 @@ import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.async
 
-class MyBalanceViewModel : PaymentViewModel<PowerRepository>() {
+class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : PaymentViewModel<PowerRepository>() {
     val toolbar by lazy {
         ToolbarViewModel(
             title = "我的余额",
@@ -37,7 +38,7 @@ class MyBalanceViewModel : PaymentViewModel<PowerRepository>() {
     val balance by lazy { ObservableField<String>() }
     val loadState by lazy { ObservableInt() }
     val powerAdapter by lazy { QuickAdapter<ItemRechargePowerVM>(R.layout.item_recharge_power, emptyList()) }
-    val paymentAdapter by lazy { QuickAdapter<ItemRechargePaymentVM>(R.layout.item_recharge_payment, emptyList()) }
+    val paymentAdapter by lazy { QuickAdapter<ItemRechargePaymentVM>(paymentItemLayout, emptyList()) }
     private var currentPower: ItemRechargePowerVM? = null
     private var currentPayment: ItemRechargePaymentVM? = null
 
@@ -63,7 +64,7 @@ class MyBalanceViewModel : PaymentViewModel<PowerRepository>() {
                 pointConfigList?.pointBalanceNum?.let { User.get().storeComputingPower(it) }
                 pointConfigList?.items?.map { ItemRechargePowerVM(it).apply { onItemClick.value = { select() } } }.let { vms ->
                     powerAdapter.submitList(vms)
-                    vms?.firstOrNull()?.select()
+                    (vms?.firstOrNull { it.data.get()?.isDefault == 1 } ?: vms?.firstOrNull())?.select()
                 }
                 paymentConfigList?.items?.map { ItemRechargePaymentVM(it).apply { onItemClick.value = { select() } } }.let { vms ->
                     paymentAdapter.submitList(vms)

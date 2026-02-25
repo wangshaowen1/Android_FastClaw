@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.recharge
 
 import android.os.Bundle
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.databinding.ActivityMyBalanceBinding
@@ -22,5 +23,9 @@ class MyBalanceActivity : BaseViewModelActivity<ActivityMyBalanceBinding, MyBala
                 mRealVM.updateBalance()
             }
         }
+    }
+
+    override fun createViewModel(): MyBalanceViewModel {
+        return MyBalanceViewModel(R.layout.item_recharge_payment)
     }
 }
