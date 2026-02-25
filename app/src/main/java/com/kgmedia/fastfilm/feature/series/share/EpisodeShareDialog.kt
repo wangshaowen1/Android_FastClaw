@@ -104,7 +104,7 @@ class EpisodeShareDialog : BaseBottomPushVMDialogFragment<DialogEpisodeShareBind
                 if (shareMedia == SHARE_MEDIA.WEIXIN_CIRCLE) pyqShareTitle else wxShareTitle,
                 wxShareContent,
                 imageBitmap,
-                R.drawable.ic_default_cover,
+                R.drawable.img_default_cover_1_1,
                 shareUrl,
                 shareMedia,
                 this

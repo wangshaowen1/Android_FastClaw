@@ -110,7 +110,7 @@ public class GridImageLayout extends ViewGroup {
             singleImageMinHeight = (int) a.getDimension(R.styleable.GridImageLayout_singleImageMinHeight, SINGLE_IMAGE_MIN_HEIGHT);
             maxRowCount = a.getInteger(R.styleable.GridImageLayout_maxRowCount, DEFAULT_MAX_ROW_COUNT);
             imageSizeAutoFit = a.getBoolean(R.styleable.GridImageLayout_imageSizeAutoFit, false);
-            placeHolderRes = a.getResourceId(R.styleable.GridImageLayout_placeHolder, R.drawable.ic_default_cover);
+            placeHolderRes = a.getResourceId(R.styleable.GridImageLayout_placeHolder, R.drawable.img_default_cover_1_1);
 //            a.getInteger(R.styleable.GridImageLayout_si)
             cornerRadius = a.getDimension(R.styleable.GridImageLayout_cornerRadius, 0);
             a.recycle();

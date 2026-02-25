@@ -88,7 +88,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
 
             R.id.ll_settings -> {
                 //设置
-                if (AppNavigator.checkLoginIntercepted(false) && !BuildConfig.DEBUG) {
+                if (AppNavigator.checkLoginIntercepted(false)) {
                     return
                 }
                 SettingsActivity.start(requireActivity())

@@ -1511,7 +1511,7 @@ fun loadImageWithBlurBackground(parent: ViewGroup, imageUrl: String?) {
         imageUrl
     )
         .setUseThumbnail(true)
-        .setDefaultResId(R.drawable.ic_default_cover)
+        .setDefaultResId(R.drawable.img_default_cover_1_1)
         .setBlurRadius(8)
         .setBlurSampling(2)
         .build()

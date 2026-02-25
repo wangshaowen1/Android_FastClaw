@@ -18,8 +18,8 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             app:lottie_autoPlay="true"
-            app:lottie_fileName="loading_point/loading_point.json"
-            app:lottie_imageAssetsFolder="loading_point/images"
+            app:lottie_fileName="loading_ball/loading_ball.json"
+            app:lottie_imageAssetsFolder="loading_ball/images"
             app:lottie_loop="true"
             app:lottie_repeatMode="reverse" />
 
