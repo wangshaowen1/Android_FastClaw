@@ -24,36 +24,38 @@
             layout="@layout/view_model_toolbar"
             app:toolbar="@{layout.mToolbarVM}" />
 
-        <androidx.core.widget.NestedScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="@dimen/spacing_l"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@drawable/bg_06_ffffff_b1_2e2e30_r12"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_06_ffffff_b1_2e2e30_r12"
-                android:orientation="vertical"
-                android:padding="@dimen/radius_l">
+                android:padding="@dimen/spacing_m"
+                android:text="用户须知"
+                android:textAppearance="@style/Text16"
+                android:textColor="?attr/textColor2" />
 
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
                 <TextView
-                    style="@style/Text16"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="用户注销须知"
-                    android:textColor="?attr/textColor2" />
-
-                <TextView
-                    style="@style/Text14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/radius_l"
                     android:lineSpacingExtra="@dimen/lineSpacingExtra"
+                    android:paddingHorizontal="@dimen/spacing_m"
+                    android:paddingBottom="@dimen/spacing_m"
                     android:text="@string/app_log_off"
+                    android:textAppearance="@style/Text14"
                     android:textColor="?attr/textColor3" />
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_agreement"
