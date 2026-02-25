@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.feature.play.manger.FeedPlayerManager
 import com.kgmedia.fastfilm.feature.play.menu.ListPopupWindow
 import com.kgmedia.fastfilm.feature.play.menu.OnItemSelectedListener
 import com.kgmedia.fastfilm.feature.settings.report.ReportDialog
+import com.kgmedia.fastfilm.router.AppNavigator
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
@@ -119,6 +120,7 @@ class DramasPlayPagerActivity :
                     listPopupWindow?.dismiss()
                     when (selectedItem.getItemId()) {
                         PlayMenuInfo.REPORT -> {
+                            if (AppNavigator.checkLoginIntercepted(showToast = true, isFullScreen = false)) return
                             //举报
                             val item = listController.getCurrentItem()
                             ReportDialog.newInstance(
