@@ -100,7 +100,7 @@ class DramasPlayPagerActivity :
                     PlayMenuInfo(
                         reportTypeId = PlayMenuInfo.REPORT,
                         reportText = "举报",
-                        reportIcon = R.drawable.ic_report
+                        reportIcon = R.drawable.icon_report
                     )
                 ),
                 selectedItemId = PlayMenuInfo.REPORT

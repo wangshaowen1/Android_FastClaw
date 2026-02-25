@@ -65,6 +65,7 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
                         mRealVM.checkedStyle?.checked?.set(false)
                         vm.checked.set(true)
                         mRealVM.checkedStyle = vm
+                        bindingNullable?.recyclerView?.scrollToPosition(mRealVM.styleVms.indexOf(vm))
                     }
                 }
             }

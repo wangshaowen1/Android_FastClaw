@@ -69,7 +69,8 @@
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent">
+                                android:layout_height="match_parent"
+                                android:paddingBottom="12dp">
 
                                 <com.google.android.material.imageview.ShapeableImageView
                                     android:id="@+id/ivCover"
@@ -135,8 +136,8 @@
                                     android:layout_marginHorizontal="15dp"
                                     android:layout_marginTop="12dp"
                                     android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
-                                    android:textColor="?textColor4"
-                                    android:textSize="12sp"
+                                    android:textColor="?textColor3"
+                                    android:textSize="13sp"
                                     app:collapseLines="3"
                                     app:collapseTipLabel="收起"
                                     app:expandTipLabel="展开"
@@ -144,7 +145,7 @@
                                     app:layout_constraintTop_toBottomOf="@+id/tvSeriesIntro"
                                     app:tipPosition="align_right"
                                     app:tipsColor="?attr/textColor1"
-                                    app:tipsSize="12sp" />
+                                    app:tipsSize="13sp" />
 
                                 <TextView
                                     android:layout_width="wrap_content"
@@ -170,7 +171,6 @@
                         android:focusableInTouchMode="true"
                         android:overScrollMode="never"
                         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                        app:layout_constraintDimensionRatio="375:324"
                         app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
                         app:srlAccentColor="@color/color_121212"
                         app:srlEnablePreviewInEditMode="true"
@@ -189,7 +189,6 @@
                                 android:clipToPadding="false"
                                 android:overScrollMode="never"
                                 android:paddingHorizontal="9dp"
-                                android:paddingVertical="6dp"
                                 android:scrollbars="none"
                                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                                 app:spanCount="3"

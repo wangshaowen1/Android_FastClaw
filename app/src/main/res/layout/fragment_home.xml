@@ -62,8 +62,10 @@
                         android:id="@+id/btnCreation"
                         style="@style/Button.Bold"
                         android:layout_width="match_parent"
-                        android:layout_marginHorizontal="@dimen/spacing_l"
-                        android:layout_marginTop="-11dp"
+                        android:layout_height="0dp"
+                        android:layout_marginHorizontal="25dp"
+                        android:layout_marginTop="-12dp"
+                        app:layout_constraintDimensionRatio="325:48"
                         app:layout_constraintTop_toBottomOf="@id/banner" />
 
                     <TextView
@@ -81,23 +83,19 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvTitle"
+                style="@style/Text16"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_scrollFlags="enterAlways">
-
-                <TextView
-                    android:id="@+id/tvTitle"
-                    style="@style/Text16"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_l"
-                    android:layout_marginBottom="@dimen/spacing_s"
-                    android:paddingVertical="@dimen/spacing_m"
-                    android:text="爆款漫剧"
-                    android:textColor="?attr/textColor1"
-                    app:drawableStartCompat="@drawable/img_hot" />
-            </FrameLayout>
+                android:layout_marginStart="@dimen/spacing_l"
+                android:drawablePadding="8dp"
+                android:gravity="center_vertical"
+                android:paddingVertical="20dp"
+                android:text="爆款漫剧"
+                android:textColor="?attr/textColor1"
+                app:drawableStartCompat="@drawable/img_hot"
+                app:layout_scrollFlags="enterAlways" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout

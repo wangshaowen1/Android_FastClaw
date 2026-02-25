@@ -44,6 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -75,8 +76,8 @@
                 android:layout_marginEnd="4dp"
                 android:importantForAccessibility="no"
                 android:scaleType="fitCenter"
-                android:src="@{layout.checkedPolicy?@drawable/ic_logoff_choose_checked:@drawable/ic_logoff_choose_normal}"
-                tools:src="@drawable/ic_logoff_choose_checked" />
+                android:src="@{layout.checkedPolicy?@drawable/icon_choose_checked:@drawable/icon_choose_normal_dark}"
+                tools:src="@drawable/icon_choose_normal_dark" />
 
             <TextView
                 android:id="@+id/tv_purchase_instructions"
