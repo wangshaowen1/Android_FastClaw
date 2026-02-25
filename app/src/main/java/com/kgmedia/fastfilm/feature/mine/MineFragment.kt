@@ -10,10 +10,6 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.databinding.FragmentMineBinding
 import com.kgmedia.fastfilm.feature.recharge.MyBalanceActivity
-import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginActivity
-import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginDialog
-import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginActivity
-import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginDialog
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
 import com.kgmedia.fastfilm.router.AppNavigator

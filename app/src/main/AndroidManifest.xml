@@ -210,27 +210,16 @@
         <activity
             android:name=".feature.login.bind.BindPhoneActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--手机号登录-->
-        <activity
-            android:name=".feature.login.flash.PhoneLoginDialogActivity"
-            android:windowSoftInputMode="stateVisible" />
-        <!--手机号登录-->
-        <activity
-            android:name=".feature.login.LoginActivity"
-            android:screenOrientation="behind"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--手机号登录-->
+        <!--统一登录-->
         <activity
             android:name=".feature.login.unified.UnifiedLoginActivity"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--闪验登录入口-->
+        <!--手机号登录、绑定-->
         <activity
             android:name=".feature.login.phone.PhoneLoginActivity"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <!--充值消耗明细-->
         <activity
             android:name=".feature.details.ComputingPowerDetailsActivity"

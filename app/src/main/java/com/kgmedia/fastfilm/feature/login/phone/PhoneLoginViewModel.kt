@@ -19,14 +19,12 @@ import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.loginToast
 import com.kgmedia.fastfilm.core.ext.parseMessage
-import com.kgmedia.fastfilm.core.manager.FlashLoginManager
 import com.kgmedia.fastfilm.core.network.apis.entity.FlashTestPreFetchNumberInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.FlashTestTokenInfo
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
 import com.kgmedia.fastfilm.core.network.apis.request.SendSmsValidateCodeBody
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.login.LoginActivity
 import com.kgmedia.fastfilm.feature.login.data.FlashLoginRepository
 import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginActivity.Companion.TAG
 import com.kgmedia.fastfilm.kit.SignUtils
@@ -86,6 +84,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
 
     //发送验证码按钮文字
     val sendCodeText = ObservableField(R.string.send_sms_code.getResString())
+
     //验证码
     val code by lazy { MutableLiveData<String?>() }
 
@@ -93,8 +92,14 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        //初始化闪验并获取内容
-        initFlashTest()
+        isBind.set(mBundle.getBoolean(PhoneLoginActivity.BIND, false))
+        checkedPolicy.set(mBundle.getBoolean(PhoneLoginActivity.CHECKED_POLICY, false))
+        if (isBind.get()) {
+            showState.set(SHOW_VERIFY_CODE_LOGIN)
+        } else {
+            //初始化闪验并获取内容
+            initFlashTest()
+        }
     }
 
     /**
@@ -111,8 +116,6 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                 //code 为 1022：成功；其他：失败 result 预取号结果描述
                 if (1022 != code) {
                     checkedPolicyChange.value = true
-                    //获取失败，可能没有手机卡，这里做处理
-                    LoginActivity.checkedPolicy = FlashLoginManager.checkedPolicy
                     //跳转验证码登录
                     showState.set(SHOW_VERIFY_CODE_LOGIN)
                     return@getPhoneInfo

@@ -12,7 +12,7 @@ import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.openTheCustomerServiceChat
 import com.kgmedia.fastfilm.databinding.ActivitySettingsBinding
-import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
+import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginActivity
 import com.kgmedia.fastfilm.feature.mine.PhoneShowActivity
 import com.kgmedia.fastfilm.feature.settings.about.AboutUsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
@@ -123,7 +123,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                     return
                 }
                 if (User.get().phoneNum.isNullOrEmpty()) {
-                    PhoneLoginDialogActivity.start(this, true)
+                    PhoneLoginActivity.start(showToast = false, isBind = true)
                 } else {
                     PhoneShowActivity.start(this)
                 }
