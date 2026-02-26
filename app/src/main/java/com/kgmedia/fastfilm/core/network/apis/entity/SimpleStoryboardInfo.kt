@@ -94,11 +94,11 @@ data class SimpleStoryboardInfo(
 
     val imageGenerated get() = genStatusImage == 2 || genStatusImage == 99
 
-    val imageGenerateFailed get() = genStatusImage == 3
+    val imageGenerateFailed get() = genStatusImage == 3 || genStatusImage == 4
 
     val videoGenerating get() = genStatusVideo == 1
 
     val videoGenerated get() = genStatusVideo == 2
 
-    val videoGenerateFailed get() = genStatusVideo == 3
+    val videoGenerateFailed get() = genStatusVideo == 3 || genStatusVideo == 4
 }
