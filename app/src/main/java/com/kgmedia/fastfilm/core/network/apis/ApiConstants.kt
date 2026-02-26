@@ -34,7 +34,7 @@ object ApiConstants {
     /**
      * 第三方登录
      */
-    const val LOGIN_BY_THIRD = "user/loginByThirdParty"
+    const val LOGIN_BY_THIRD = "auth/loginByThirdParty"
 
     /**
      * 退出登录
@@ -98,7 +98,7 @@ object ApiConstants {
     /**
      * 手机登录接口--闪验方式
      */
-    const val LOGIN_BY_FLASH_MOBILE = "user/loginByFlashMobile"
+    const val LOGIN_BY_FLASH_MOBILE = "auth/loginByFlashMobile"
 
     /**
      * 手机登录接口--验证码方式
