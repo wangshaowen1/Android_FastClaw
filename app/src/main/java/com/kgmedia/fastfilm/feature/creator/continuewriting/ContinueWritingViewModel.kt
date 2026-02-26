@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SaveSequelNovelStoryInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
@@ -119,7 +120,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
                     Log.e("[SSE]", "Error: $e")
                     // 根据需要处理特定错误
                     promptGenerating.value = false to ""
-                    e?.message?.showToast()
+                    parseMessage(e)?.showToast()
                     isSSEStreaming.set(false)
                 })
         )

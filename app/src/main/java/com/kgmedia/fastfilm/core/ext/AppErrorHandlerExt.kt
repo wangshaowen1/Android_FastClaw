@@ -149,11 +149,7 @@ fun showWarnDialog(context: BaseActivity?, warningData: SysWarnInfo) {
         warningDialog?.setOnClickListener {
 
         }
-        warningDialog?.setOnDismissListener(object : DialogInterface.OnDismissListener {
-            override fun onDismiss(dialog: DialogInterface?) {
-                warningDialog = null
-            }
-        })
+        warningDialog?.setOnDismissListener { warningDialog = null }
     }
 }
 fun parseMessage(e: Throwable?): String? {

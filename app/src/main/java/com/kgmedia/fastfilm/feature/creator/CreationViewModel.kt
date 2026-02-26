@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.Global
+import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
@@ -97,7 +98,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     // 根据需要处理特定错误
-                    e?.message?.showToast()
+                    parseMessage(e)?.showToast()
                     promptGenerating.value = false to ""
                 })
         )

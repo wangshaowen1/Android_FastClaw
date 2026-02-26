@@ -12,6 +12,7 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
@@ -129,7 +130,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     // 根据需要处理特定错误
-                    e?.message?.showToast()
+                    parseMessage(e)?.showToast()
                 })
         )
         // 3. 启动
