@@ -7,9 +7,12 @@ import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.response.PlayMenuInfo
 import com.kgmedia.fastfilm.databinding.ActivityDramasPlayPagerBinding
+import com.kgmedia.fastfilm.feature.download.DownloadingDialog
+import com.kgmedia.fastfilm.feature.download.DownloadingViewModel
 import com.kgmedia.fastfilm.feature.play.manger.FeedListController
 import com.kgmedia.fastfilm.feature.play.manger.FeedPlayerManager
 import com.kgmedia.fastfilm.feature.play.menu.ListPopupWindow
@@ -26,7 +29,8 @@ import kotlinx.coroutines.launch
 
 class DramasPlayPagerActivity :
     BaseViewModelActivity<ActivityDramasPlayPagerBinding, DramasPlayPagerViewModel>(),
-    VideoFeedAdapter.InteractionListener {
+    VideoFeedAdapter.InteractionListener,
+    DownloadingViewModel.DownloadStatusHolderFactory {
 
     companion object {
         @JvmStatic
@@ -46,6 +50,7 @@ class DramasPlayPagerActivity :
     private var listPopupWindow: ListPopupWindow<PlayMenuInfo>? = null
 
     private var workId: String? = null
+    private var downloadingDialog: DownloadingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +68,16 @@ class DramasPlayPagerActivity :
         lifecycleScope.launch {
             mRealVM.feedFlow.collectLatest {
                 adapter.submitData(it)
+            }
+        }
+        mRealVM.downloading.observe(this) {
+            if (it) {
+                if (downloadingDialog == null) {
+                    downloadingDialog = DownloadingDialog.show(this)
+                }
+            } else {
+                downloadingDialog?.dismissAllowingStateLoss()
+                downloadingDialog = null
             }
         }
 
@@ -101,6 +116,11 @@ class DramasPlayPagerActivity :
                         reportTypeId = PlayMenuInfo.REPORT,
                         reportText = "举报",
                         reportIcon = R.drawable.icon_report
+                    ),
+                    PlayMenuInfo(
+                        reportTypeId = PlayMenuInfo.DOWNLOAD,
+                        reportText = "下载",
+                        reportIcon = R.drawable.icon_download
                     )
                 ),
                 selectedItemId = PlayMenuInfo.REPORT
@@ -128,6 +148,15 @@ class DramasPlayPagerActivity :
                                 item?.userId,
                                 if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else item?.workId//剧集模式下workId是剧集id
                             )
+                        }
+
+                        PlayMenuInfo.DOWNLOAD -> {
+                            //下载
+                            requestRead2WritePermissions { granted ->
+                                if (granted) {
+                                    listController.getCurrentItem()?.getPlayUrl()?.let { mRealVM.downloadVideo(it) }
+                                }
+                            }
                         }
                     }
                 }
@@ -217,5 +246,9 @@ class DramasPlayPagerActivity :
 
     override fun onDestroy() {
         super.onDestroy(); playerManager.release()
+    }
+
+    override fun getStatusHolder(): DownloadingViewModel.DownloadStatusHolder? {
+        return mRealVM
     }
 }

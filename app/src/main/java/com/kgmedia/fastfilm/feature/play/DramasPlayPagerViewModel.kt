@@ -1,18 +1,30 @@
 package com.kgmedia.fastfilm.feature.play
 
+import androidx.databinding.ObservableInt
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.PathUtils
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
+import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.network.RetrofitClient
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.kgmedia.fastfilm.feature.download.DownloadingViewModel
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
+import com.kuaige.videoedit.resource.UrlResource
+import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
-class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
+class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>(), DownloadingViewModel.DownloadStatusHolder {
 
     enum class PlayMode { RECOMMEND, SERIES }
 
@@ -60,4 +72,32 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>() {
             }
         }
     }
+
+    override val downloadProgress by lazy { ObservableInt() }
+    val downloading by lazy { MutableLiveData(false) }
+    override fun cancelDownload() {
+    }
+
+    fun downloadVideo(url: String) {
+        launch {
+            downloadProgress.set(0)
+            downloading.value = true
+            val resource = UrlResource(url, RetrofitClient.httpClient)
+            resource.download { downloadProgress.set(it) }
+            if (resource.file.exists()) {
+                val destFile = File(PathUtils.getExternalDownloadsPath(), resource.file.name)
+                val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(resource.file, destFile) }
+                if (copied) {
+                    FileUtils.notifySystemToScan(destFile)
+                    "下载成功，请到系统相册查看".showToast()
+                } else {
+                    "视频下载失败，请重试".showToast()
+                }
+            } else {
+                "视频下载失败，请重试".showToast()
+            }
+            downloading.value = false
+        }
+    }
+
 }

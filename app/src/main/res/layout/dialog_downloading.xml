@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -11,43 +11,45 @@
         <import type="android.view.View" />
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_80_121212_r12"
-        android:clickable="true"
-        android:focusable="true"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingVertical="16dp">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{layout.statusHolder.downloadProgress+`%`}"
-            android:textColor="@android:color/white"
-            android:textSize="12dp"
-            tools:text="32%" />
-
-        <TextView
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+        <LinearLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@drawable/bg_color3_r20"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
-            android:text="@string/dialog_downloading_in_progress"
-            android:textColor="@android:color/white"
-            android:textSize="12dp" />
+            android:orientation="vertical">
 
-        <TextView
-            singleClick="@{(v)->layout.statusHolder.cancelDownload()}"
-            android:layout_width="72dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_20_ffffff_r50"
-            android:gravity="center"
-            android:text="@string/cancel"
-            android:textColor="@android:color/white"
-            android:textSize="14dp" />
-    </LinearLayout>
+            <com.dinuscxj.progressbar.CircleProgressBar
+                max="@{100}"
+                progress="@{layout.statusHolder.downloadProgress}"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center"
+                app:progress_background_color="?attr/textColor5"
+                app:progress_end_color="?attr/textColor1"
+                app:progress_start_color="?attr/textColor1"
+                app:progress_start_degree="-90"
+                app:progress_stroke_cap="round"
+                app:progress_stroke_width="3dp"
+                app:progress_style="solid_line"
+                app:progress_text_color="@android:color/white"
+                app:progress_text_size="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="正在保存到本地"
+                android:textColor="?attr/textColor2"
+                android:textSize="14dp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
 
 </layout>

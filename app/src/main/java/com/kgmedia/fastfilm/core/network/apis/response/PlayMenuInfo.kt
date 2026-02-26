@@ -26,6 +26,8 @@ data class PlayMenuInfo(
     companion object {
         //举报
         const val REPORT = "1"
+        //下载
+        const val DOWNLOAD = "2"
     }
 
     override fun getImageResId(): Int? =reportIcon?:0
