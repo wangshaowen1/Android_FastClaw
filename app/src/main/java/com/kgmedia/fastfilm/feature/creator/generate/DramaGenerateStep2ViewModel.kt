@@ -1,11 +1,15 @@
 package com.kgmedia.fastfilm.feature.creator.generate
 
+import android.graphics.Color
 import android.util.Log
+import androidx.annotation.ColorInt
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
+import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
@@ -17,6 +21,7 @@ import com.kgmedia.fastfilm.core.network.sse.processor.StorySseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 
@@ -163,6 +168,13 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
         return rawTitle.replace(regex, "")
     }
+
+     @ColorInt
+    fun getLimitColor(length: Int?): Int {
+        val attr = if (length == maxInputLength.get()) R.attr.funcColorFailure else R.attr.textColor4
+        return topActivity?.getThemeColor(attr) ?: Color.BLACK
+    }
+
     /**
      * 页面销毁或需要重置时调用
      */
