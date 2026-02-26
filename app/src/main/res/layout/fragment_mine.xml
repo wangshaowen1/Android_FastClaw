@@ -138,6 +138,14 @@
                 app:layout_constraintTop_toTopOf="@id/tv_id" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <include
+            android:id="@+id/banner"
+            layout="@layout/layout_common_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:layout_marginTop="24dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

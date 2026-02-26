@@ -5,10 +5,15 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
+import com.kgmedia.fastfilm.core.ext.setupCommonBanner
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
+import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.databinding.DialogRechargePowerBinding
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
+import com.zhpan.bannerview.BannerViewPager
 
 class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBinding, MyBalanceViewModel>() {
     companion object {
@@ -36,6 +41,9 @@ class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBi
 
     override fun onPrepareView() {
         super.onPrepareView()
+        setupCommonBanner(binding.banner.root, binding.banner.banner as BannerViewPager<BannerInfo>) {
+            ApiFactory.apiService.getAppBanner(BannerBody(BannerBody.LOCATION_HOME)).data
+        }
         observeEvents {
             on<Events.UserDataEvent> {
                 mRealVM.updateBalance()

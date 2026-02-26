@@ -3,8 +3,13 @@
 package com.kgmedia.fastfilm.core.ext
 
 import android.app.Activity
+import android.view.View
+import android.widget.ImageView
+import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentActivity
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.EncryptUtils
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.OssHelp
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.topActivity
@@ -12,20 +17,34 @@ import com.kgmedia.fastfilm.common.utils.WXUtils
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
+import com.kgmedia.fastfilm.core.databinding.loadHQThumbnailUri
+import com.kgmedia.fastfilm.core.databinding.loadUri
 import com.kgmedia.fastfilm.core.model.PhotoItem
+import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
+import com.kgmedia.fastfilm.router.AppRouter
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.entity.AliPayParams
 import com.kuaige.payment.entity.PaymentParams
 import com.kuaige.payment.entity.WxPayParams
+import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResColor
+import com.nhsd.basic.ext.getResDrawable
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToastDelay
 import com.nhsd.basic.utils.Logger
 import com.nhsd.share.ShareContent
+import com.zhpan.bannerview.BannerViewPager
+import com.zhpan.bannerview.BaseBannerAdapter
+import com.zhpan.bannerview.BaseViewHolder
+import com.zhpan.indicator.enums.IndicatorStyle
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jcodec.containers.mp4.boxes.MetaValue
 import org.jcodec.movtool.MetadataEditor
@@ -177,4 +196,45 @@ fun PaymentData.toPaymentParams(method: PaymentClient.PaymentMethod): PaymentPar
                 this.sign = json.optString("sign")
             }
         }
+}
+
+fun setupCommonBanner(
+    container: View,
+    pager: BannerViewPager<BannerInfo>,
+    getBanners: suspend () -> List<BannerInfo>?
+) {
+    MainScope().launch {
+        val banners = runCatching { getBanners.invoke() }.getOrNull()
+        if (banners.isNullOrEmpty()) {
+            container.isVisible = false
+        } else {
+            container.isVisible = true
+            pager.setAdapter(
+                object : BaseBannerAdapter<BannerInfo>() {
+                    override fun bindData(holder: BaseViewHolder<BannerInfo>?, data: BannerInfo, position: Int, pageSize: Int) {
+                        holder?.apply {
+                            val image = findViewById<ImageView>(R.id.image)
+                            image.setOnSingleClickListener { AppRouter.jump(data.jumpCode) }
+                            loadHQThumbnailUri(image, data.imageUrl, R.drawable.img_default_cover_16_9.getResDrawable())
+                        }
+                    }
+
+                    override fun getLayoutId(viewType: Int): Int {
+                        return R.layout.item_common_banner
+                    }
+                })
+                .apply {
+                    (pager.context as? FragmentActivity)?.lifecycle?.let { setLifecycleRegistry(it) }
+                }
+                .setAutoPlay(true)
+                .setIndicatorSliderRadius(2f.dp)
+                .setIndicatorSliderGap(4.dp)
+                .setIndicatorHeight(4.dp)
+                .setIndicatorSliderWidth(4.dp, 16.dp)
+                .setIndicatorSliderColor(R.color.color_60_ffffff.getResColor(), R.color.white.getResColor()).setIndicatorStyle(IndicatorStyle.ROUND_RECT)
+                .setIndicatorMargin(0, 0, 0, 4.dp)
+                .setIndicatorVisibility(View.VISIBLE)
+                .create(banners)
+        }
+    }
 }

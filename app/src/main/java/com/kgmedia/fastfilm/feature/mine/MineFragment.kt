@@ -2,12 +2,15 @@ package com.kgmedia.fastfilm.feature.mine
 
 import android.view.View
 import com.blankj.utilcode.util.ClipboardUtils
-import com.kgmedia.fastfilm.BuildConfig
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
+import com.kgmedia.fastfilm.core.ext.setupCommonBanner
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
+import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.databinding.FragmentMineBinding
 import com.kgmedia.fastfilm.feature.recharge.MyBalanceActivity
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
@@ -16,6 +19,7 @@ import com.kgmedia.fastfilm.router.AppNavigator
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
+import com.zhpan.bannerview.BannerViewPager
 
 /**
  * *****************************************
@@ -51,7 +55,9 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
     }
 
     private fun initView() {
-
+        setupCommonBanner(binding.banner.root, binding.banner.banner as BannerViewPager<BannerInfo>) {
+            ApiFactory.apiService.getAppBanner(BannerBody(BannerBody.LOCATION_HOME)).data
+        }
     }
 
 
