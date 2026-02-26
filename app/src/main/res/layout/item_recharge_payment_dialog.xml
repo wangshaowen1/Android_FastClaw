@@ -8,20 +8,23 @@
         <variable
             name="item"
             type="com.kgmedia.fastfilm.feature.recharge.ItemRechargePaymentVM" />
+
+        <import type="com.kgmedia.fastfilm.R" />
     </data>
 
     <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        backgroundColorAttr="@{item.isChecked ? R.attr.bgColor2 : R.attr.bgColor3}"
         showBorder="@{item.isChecked}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:onClick="@{(it)->item.onItemClick.invoke(it)}"
-        app:backgroundStartColor="?attr/bgColor2"
         app:borderCenterColor="@color/gradient_btn_center_dark"
         app:borderEndColor="@color/gradient_btn_end_dark"
         app:borderStartColor="@color/gradient_btn_start_dark"
         app:borderWidth="2dp"
-        app:roundCornerRadius="12dp">
+        app:roundCornerRadius="12dp"
+        tools:backgroundStartColor="?attr/bgColor2">
 
         <androidx.constraintlayout.widget.Placeholder
             android:id="@+id/scope"

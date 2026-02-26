@@ -615,9 +615,14 @@ object ApiConstants {
     const val PAYMENT_CONFIG_LIST = "trade/pay/way/config/list"
 
     /**
-     * 创建支付订单
+     * 创建app支付宝支付订单
      */
-    const val CREATE_POINT_ORDER = "trade/pay/order/create"
+    const val CREATE_ORDER_ALIPAY = "trade/pay/order/createAppAlipay"
+
+    /**
+     * 创建app微信支付订单
+     */
+    const val CREATE_ORDER_WECHAT = "trade/pay/order/createAppWechat"
 
     /**
      * 获取扣费策略规则信息

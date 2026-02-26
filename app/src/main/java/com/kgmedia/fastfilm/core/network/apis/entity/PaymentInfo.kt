@@ -27,7 +27,7 @@ data class PaymentInfo(
     /**
      * 支付商配置表ID（苹果内购不需要设置）
      */
-    val payMerchantConfigId: Int?,
+    val payMerchantConfigId: String?,
     /**
      * 是否默认选中（0-非默认、1-默认）
      */

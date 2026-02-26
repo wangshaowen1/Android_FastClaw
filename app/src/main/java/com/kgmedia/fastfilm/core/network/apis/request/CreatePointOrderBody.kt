@@ -1,5 +1,13 @@
 package com.kgmedia.fastfilm.core.network.apis.request
 
+/**
+ * {
+ *     "goodsCode": "商品编号目前是算力配置表的编号",
+ *     "goodsType": "商品类型1-算力",
+ *     "mobileType": "手机类型：1 - Android，2 - iOS",
+ *     "payMerchantConfigId": "支付商配置表ID"
+ * }
+ */
 data class CreatePointOrderBody(
     /**
      * 商品编号目前是算力配置表的编号
@@ -10,9 +18,9 @@ data class CreatePointOrderBody(
      */
     val goodsType: Int?,
     /**
-     * 支付方式：1 - 微信支付，2 - 支付宝支付，3 - 苹果内购支付
+     * 支付商配置表ID
      */
-    val payWayType: Int?,
+    val payMerchantConfigId: String?,
     /**
      * 手机类型：1 - Android，2 - iOS
      */

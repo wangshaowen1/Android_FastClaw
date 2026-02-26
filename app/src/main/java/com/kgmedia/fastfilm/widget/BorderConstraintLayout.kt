@@ -9,14 +9,13 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Shader
 import android.util.AttributeSet
+import androidx.annotation.AttrRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.withClip
 import com.kgmedia.fastfilm.R
-import kotlin.apply
+import com.nhsd.basic.ext.getThemeColor
 import kotlin.math.tan
-import kotlin.ranges.coerceAtLeast
-import kotlin.to
 
 class BorderConstraintLayout : ConstraintLayout {
 
@@ -38,14 +37,12 @@ class BorderConstraintLayout : ConstraintLayout {
         set(value) {
             if (field != value) {
                 field = value
-                invalidate()
             }
         }
     private var backgroundEndColor = Color.TRANSPARENT
         set(value) {
             if (field != value) {
                 field = value
-                invalidate()
             }
         }
     private var backgroundAngle = 0
@@ -185,5 +182,13 @@ class BorderConstraintLayout : ConstraintLayout {
                 }
             }
         }
+    }
+
+    fun setBackgroundColorAttr(@AttrRes colorAttr: Int) {
+        backgroundStartColor = context.getThemeColor(colorAttr)
+        //纯色
+        bgPaint.shader = null
+        bgPaint.color = backgroundStartColor
+        invalidate()
     }
 }

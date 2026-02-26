@@ -881,10 +881,16 @@ interface ApiService {
     suspend fun paymentConfigList(@Body body: UserTokenBody): ApiResponse<ListData<PaymentInfo>?>
 
     /**
-     * 创建支付订单
+     * 创建app支付宝支付订单
      */
-    @POST(ApiConstants.CREATE_POINT_ORDER)
-    suspend fun createPointOrder(@Body body: CreatePointOrderBody): ApiResponse<PaymentData?>
+    @POST(ApiConstants.CREATE_ORDER_ALIPAY)
+    suspend fun createOrderAlipay(@Body body: CreatePointOrderBody): ApiResponse<PaymentData?>
+
+    /**
+     * 创建app微信支付订单
+     */
+    @POST(ApiConstants.CREATE_ORDER_WECHAT)
+    suspend fun createOrderWechat(@Body body: CreatePointOrderBody): ApiResponse<PaymentData?>
 
     /**
      * 获取扣费策略规则信息

@@ -13,7 +13,6 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.toPaymentParams
-import com.kgmedia.fastfilm.core.network.apis.request.CreatePointOrderBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.details.ComputingPowerDetailsActivity
 import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
@@ -113,7 +112,7 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
             paymentMethod,
             { paymentMethod, requestBody, responseSender ->
                 launchWithLoading {
-                    response(mRepo.api.createPointOrder(CreatePointOrderBody(item.pointConfigId, 1, payment.payWay))) {
+                    response(mRepo.createPowerOrder(paymentMethod, item.pointConfigCode, payment.payMerchantConfigId)) {
                         responseSender?.sendData(this.data?.toPaymentParams(paymentMethod))
                     }
                 }
