@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
@@ -146,6 +147,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     Log.e("[SSE]", "Error: $e")
                     sseOutputComplete.value = true
                     sseOutputFail.set(true)
+                    parseMessage(e)?.showToast()
                     promptGenerating.value = false to ""
                     // 根据需要处理特定错误
                 })

@@ -47,7 +47,7 @@
                     android:layout_gravity="center"
                     android:drawableTop="@drawable/ic_loading_fail"
                     android:gravity="center"
-                    android:text="生成失败"
+                    android:text="加载失败"
                     android:textColor="?attr/textColor4"
                     android:textSize="14sp" />
 

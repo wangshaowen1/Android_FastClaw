@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
@@ -17,6 +18,7 @@ import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.EpisodeSseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 
 /**
@@ -117,6 +119,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     Log.e("[SSE]", "Error: $e")
                     displayChild.set(DISPLAY_FAIL)
                     onSSECompleted?.invoke()
+                    parseMessage(e)?.showToast()
                     progressHelper.stop()
                 })
         )

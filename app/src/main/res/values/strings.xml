@@ -347,6 +347,6 @@
     <string name="listing_to_earn_profits">上架赚收益</string>
     <string name="go_put_it_on_the_shelves">去上架</string>
     <string name="terms_of_service">服务协议</string>
-    <string name="generation_failed">生成失败</string>
+    <string name="generation_failed">加载失败</string>
 </resources>
 
