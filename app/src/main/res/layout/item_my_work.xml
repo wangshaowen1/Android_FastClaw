@@ -94,13 +94,14 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="6dp"
-            android:text="@{`共`+item.data.finishedEpisodeCnt+`集`}"
+            android:fontFamily="monospace"
+            android:text="@{item.data.totalEpisodeCnt==1?`单集短片`:item.data.finishedEpisodeCnt+`/`+item.data.totalEpisodeCnt+`集`}"
             android:textAppearance="@style/Text12"
+            android:textColor="@color/fixed_white_1"
             android:visibility="@{(item.data.finishedEpisodeCnt>0)?View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toBottomOf="@id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
-            tools:text="共1集"
-            android:textColor="@color/fixed_white_1" />
+            tools:text="1/30集" />
 
         <TextView
             android:layout_width="0dp"
