@@ -84,7 +84,7 @@
                     app:inputHint="请输入六个字以上的反馈描述（必填）"
                     app:inputHorizontalPadding="16dp"
                     app:inputLines="5"
-                    app:inputMaxLength="300"
+                    app:inputMaxLength="500"
                     app:inputTextColor="?attr/textColor2"
                     app:inputTextColorHint="?attr/textColor4"
                     app:inputTextSize="14sp"
