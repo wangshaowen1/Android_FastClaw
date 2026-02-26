@@ -129,20 +129,18 @@
                 android:textColor="?attr/textColor1" />
         </LinearLayout>
 
-        <TextView
+        <Button
             android:id="@+id/btnCancel"
-            style="@style/Text16"
+            style="@style/Button.Bold.Gray"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginHorizontal="@dimen/spacing_l"
             android:layout_marginTop="18dp"
             android:layout_marginBottom="30dp"
-            android:background="@{layout.removeAccountState==LogoffViewModel.REMOVE_ACCOUNT_STATE_NOT_APPLY?@drawable/gradient_left_50_73b0f8_right_50_7567f0_r100:layout.removeAccountState==LogoffViewModel.REMOVE_ACCOUNT_STATE_APPLY?@drawable/gradient_left_73b0f8_right_7567f0_r100:@drawable/btn_common_cancel}"
+            android:enabled="@{layout.removeAccountState==LogoffViewModel.REMOVE_ACCOUNT_STATE_APPLY}"
             android:gravity="center"
             android:text="@{layout.submitApplyText}"
-            android:textColor="?attr/textColor1"
-            tools:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
             tools:text="申请注销中"
             tools:visibility="visible" />
     </LinearLayout>
