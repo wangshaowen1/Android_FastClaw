@@ -1,9 +1,11 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import android.view.View
+import androidx.databinding.Observable
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.databinding.FragmentAssetManagementBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.nhsd.basic.BaseViewModelFragment
@@ -35,6 +37,11 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
         mRealVM.workId = hostVm?.workId
         mRealVM.storyId = hostVm?.storyId
         mRealVM.taskId = hostVm?.taskId
+        mRealVM.step.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                Global.refreshBalance()
+            }
+        })
         mRealVM.retry()
         binding.rvAssets.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

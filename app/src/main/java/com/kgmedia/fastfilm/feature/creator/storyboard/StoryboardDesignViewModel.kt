@@ -86,10 +86,6 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private var editingStoryboardDescVM: ItemStoryboardVM? = null
     private var loopAllStoryboardDescriptionStatusJob: Job? = null
     private var inputJob: Job? = null
-
-    /**
-     * 0 初始化 1 已提交生成所有资产描述 2 所以资产描述已生成
-     */
     val step by lazy { ObservableInt(STEP_INIT) }
     val cost by lazy { ObservableInt() }
     private var genImagePrice = 0

@@ -1,7 +1,9 @@
 package com.kgmedia.fastfilm.feature.creator.storyboard
 
 import android.view.View
+import androidx.databinding.Observable
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.databinding.FragmentStoryboardDesignBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
@@ -25,6 +27,11 @@ class StoryboardDesignFragment :
         mRealVM.workId = hostVm?.workId
         mRealVM.storyId = hostVm?.storyId
         mRealVM.taskId = hostVm?.taskId
+        mRealVM.step.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                Global.refreshBalance()
+            }
+        })
         mRealVM.retry()
     }
 

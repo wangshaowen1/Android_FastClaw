@@ -6,6 +6,7 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
@@ -54,6 +55,9 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
     override fun onResume() {
         super.onResume()
         isLogin.set(User.get().isLogged)
+        if (isLogin.get()) {
+            Global.refreshBalance()
+        }
     }
 
     /**

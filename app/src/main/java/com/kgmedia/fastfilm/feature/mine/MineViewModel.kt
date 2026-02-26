@@ -5,6 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
@@ -76,6 +77,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
                 return
             }
             noLogIn.value = false
+            Global.refreshBalance()
             launch {
                 response(
                     bean = mRepo.api.getUserHomeInfo(UserTokenBody()),
