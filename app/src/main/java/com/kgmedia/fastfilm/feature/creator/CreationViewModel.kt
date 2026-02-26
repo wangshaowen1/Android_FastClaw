@@ -1,12 +1,16 @@
 package com.kgmedia.fastfilm.feature.creator
 
+import android.graphics.Color
 import android.util.Log
+import androidx.annotation.ColorInt
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
+import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
@@ -19,6 +23,7 @@ import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.KEY_MODEL
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.MODEL_INSPIRATION
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 
@@ -60,6 +65,12 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     override fun onResume() {
         super.onResume()
         refreshConfig()
+    }
+
+    @ColorInt
+    fun getLimitColor(length: Int?): Int {
+        val attr = if (length == maxInputLength.get()) R.attr.funcColorFailure else R.attr.textColor4
+        return topActivity?.getThemeColor(attr) ?: Color.BLACK
     }
 
     private var sseHandler: SSEStreamHandler? = null

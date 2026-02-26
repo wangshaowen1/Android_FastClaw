@@ -142,10 +142,10 @@
                 android:layout_marginEnd="@dimen/spacing_m"
                 android:layout_marginBottom="@dimen/spacing_l"
                 android:text="@{layout.input.length()+`/`+layout.maxInputLength}"
-                android:textColor="?attr/textColor4"
+                android:textColor="@{layout.getLimitColor(layout.input.length)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="0/5000" />
+                tools:text="0/2000" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
