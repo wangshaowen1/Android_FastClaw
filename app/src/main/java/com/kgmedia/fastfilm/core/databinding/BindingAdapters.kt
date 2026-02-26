@@ -1572,10 +1572,17 @@ fun setPaddingByWidth(view: View, screenWith: Boolean, left: Float = 0f, top: Fl
  */
 @BindingAdapter("setConstraintMaxHeightByWidth", "hwRatio", requireAll = false)
 fun setConstraintMaxHeightByWidth(view: View, screenWith: Boolean, hwRatio: Float = 0f) {
-    view.post {
-        val width = if (screenWith) min(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight()) else view.width
+    if (screenWith) {
+        val width = min(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight())
         view.updateLayoutParams<ConstraintLayout.LayoutParams> {
             it.matchConstraintMaxHeight = (width * hwRatio).toInt()
+        }
+    } else {
+        view.post {
+            val width = view.width
+            view.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                it.matchConstraintMaxHeight = (width * hwRatio).toInt()
+            }
         }
     }
 }

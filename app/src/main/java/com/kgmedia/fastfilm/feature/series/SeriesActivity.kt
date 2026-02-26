@@ -31,6 +31,7 @@ import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.launch
 
@@ -182,7 +183,16 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
             else -> {
                 if (episodeInfo.storyId.isNullOrEmpty()) {
-                    continueWriting()
+                    val lastEpisode = episodeAdapter.snapshot().lastOrNull { !it?.storyId.isNullOrEmpty() }
+                    //仅当上一集内容已进入“分镜视频生成”环节，下一集才可开始创建。
+                    //若上一集还未进入“分镜视频生成”环节，此时点击“创建下一集”，则toast提示“请先完成上一集的内容制作”；
+                    if (lastEpisode == null) {
+                        // TODO: 没有剧集的情况
+                    } else if ((lastEpisode.stepProgress ?: 0) >= EpisodeInfo.PROGRESS_STORYBOARD_GENERATING) {
+                        continueWriting()
+                    } else {
+                        "请先完成上一集的内容制作".showToast()
+                    }
                 } else {
                     AppRouter.startStory(mRealVM.workInfo.value, episodeInfo.storyId)
                 }

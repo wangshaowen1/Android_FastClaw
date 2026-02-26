@@ -22,7 +22,7 @@
         app:borderCenterColor="@color/gradient_btn_center_dark"
         app:borderEndColor="@color/gradient_btn_end_dark"
         app:borderStartColor="@color/gradient_btn_start_dark"
-        app:borderWidth="2dp"
+        app:borderWidth="1.5dp"
         app:roundCornerRadius="12dp"
         tools:backgroundStartColor="?attr/bgColor2">
 
