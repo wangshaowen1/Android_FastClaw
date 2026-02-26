@@ -138,7 +138,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 storyId = storyboard.storyId
             )
             response(ApiFactory.apiService.workStoryboardVideoSingleGenerate(body)) {
-                FlowEventBus.postSync(Events.StoryboardVideoRegenerateEvent(storyboard.workId, storyboard.storyId))
+                FlowEventBus.postSync(Events.StoryboardVideoRegenerateEvent(storyboard.workId, storyboard.storyId, storyboard.storyboardId))
                 if (finish) {
                     finish()
                     return@response
@@ -169,19 +169,39 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             "请先填写分镜描述".showToast()
             return
         }
-        storyboard.genImagePrompt = genImagePrompt
         launchWithLoading {
+            if (genImagePrompt != storyboard.genImagePrompt) {
+                val response = withContext(Dispatchers.IO) {
+                    val body = SaveStoryboardBody(
+                        workId = storyboard.workId,
+                        storyId = storyboard.storyId,
+                        storyboardId = storyboard.storyboardId,
+                        genImagePrompt = genImagePrompt
+                    )
+                    ApiFactory.apiService.workStoryboardSave(body)
+                }
+                val data = response.data
+                if (response.isSuccess && data != null) {
+                    this@EditStoryboardViewModel.storyboard.set(data)
+                    FlowEventBus.postSync(Events.StoryboardSavedEvent(data))
+                } else {
+                    response.msg?.showToast()
+                    return@launchWithLoading
+                }
+            }
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
                 workId = storyboard.workId,
                 storyId = storyboard.storyId
             )
             response(ApiFactory.apiService.workStoryboardSingleGenerate(body)) {
-                storyboard.taskId = data?.taskId
-                storyboard.genStatusImage = data?.genStatus
+                this@EditStoryboardViewModel.storyboard.get()?.apply {
+                    taskId = data?.taskId
+                    genStatusImage = data?.genStatus
+                }
                 this@EditStoryboardViewModel.storyboard.notifyChange()
                 loopImage(data?.taskId)
-                FlowEventBus.postSync(Events.StoryboardImageRegenerateEvent(storyboard.workId, storyboard.storyId))
+                FlowEventBus.postSync(Events.StoryboardImageRegenerateEvent(storyboard.workId, storyboard.storyId, storyboard.storyboardId))
             }
         }
     }
@@ -251,7 +271,10 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 genImagePrompt = genImagePrompt
             )
             response(ApiFactory.apiService.workStoryboardSave(body)) {
-                storyboard.genImagePrompt = genImagePrompt
+                data?.let {
+                    this@EditStoryboardViewModel.storyboard.set(it)
+                    FlowEventBus.postSync(Events.StoryboardSavedEvent(it))
+                }
                 "保存成功".showToast()
                 if (finish) {
                     finish()

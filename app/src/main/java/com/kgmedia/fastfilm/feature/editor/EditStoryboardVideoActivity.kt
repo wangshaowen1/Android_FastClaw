@@ -38,6 +38,9 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observeEvents {
+            on<Events.StoryboardSavedEvent> {
+                mRealVM.updateStoryboard(it.storyboardInfo)
+            }
             on<Events.StoryboardVideoRegenerateEvent> {
                 mRealVM.getStoryboardList()
             }

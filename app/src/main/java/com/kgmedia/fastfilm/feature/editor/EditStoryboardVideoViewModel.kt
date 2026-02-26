@@ -263,4 +263,8 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         loopSynthesisStatus()
     }
 
+    fun updateStoryboard(storyboardInfo: SimpleStoryboardInfo) {
+        adapter.items.firstOrNull { it.data.get()?.storyboardId == storyboardInfo.storyboardId }?.data?.set(storyboardInfo)
+    }
+
 }

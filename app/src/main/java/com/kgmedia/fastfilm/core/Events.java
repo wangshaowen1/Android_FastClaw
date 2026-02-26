@@ -1,6 +1,9 @@
 package com.kgmedia.fastfilm.core;
 
 
+import androidx.annotation.NonNull;
+
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo;
 import com.nhsd.basic.bus.AppEvent;
 
 /**
@@ -312,15 +315,29 @@ public class Events {
     }
 
     /**
+     * 分镜图片提示词保存事件
+     */
+    public static class StoryboardSavedEvent implements AppEvent {
+        @NonNull
+        public final SimpleStoryboardInfo storyboardInfo;
+
+        public StoryboardSavedEvent(@NonNull SimpleStoryboardInfo storyboardInfo) {
+            this.storyboardInfo = storyboardInfo;
+        }
+    }
+
+    /**
      * 重绘分镜图片事件
      */
     public static class StoryboardImageRegenerateEvent implements AppEvent {
         public final String workId;
         public final String storyId;
+        public final String storyboardId;
 
-        public StoryboardImageRegenerateEvent(String workId, String storyId) {
+        public StoryboardImageRegenerateEvent(String workId, String storyId, String storyboardId) {
             this.workId = workId;
             this.storyId = storyId;
+            this.storyboardId = storyboardId;
         }
     }
 
@@ -330,10 +347,12 @@ public class Events {
     public static class StoryboardVideoRegenerateEvent implements AppEvent {
         public final String workId;
         public final String storyId;
+        public final String storyboardId;
 
-        public StoryboardVideoRegenerateEvent(String workId, String storyId) {
+        public StoryboardVideoRegenerateEvent(String workId, String storyId, String storyboardId) {
             this.workId = workId;
             this.storyId = storyId;
+            this.storyboardId = storyboardId;
         }
     }
 }

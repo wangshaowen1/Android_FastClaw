@@ -33,9 +33,11 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
 
     override fun onBackPressed() {
         if (mRealVM.genImagePrompt.value != mRealVM.storyboard.get()?.genImagePrompt) {
-            showCommonDialog(tip = "您对分镜信息有修改尚未保存，是否保存修改？", confirmText = "保存并退出") {
-                mRealVM.save(true)
-            }
+            showCommonDialog(
+                tip = "您对分镜信息有修改尚未保存，是否保存修改？",
+                cancelText = "不保存",
+                confirmText = "保存并退出",
+                confirm = { mRealVM.save(true) })
         } else {
             super.onBackPressed()
         }
@@ -44,7 +46,7 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
-            R.id.btnPreview -> {
+            R.id.ivCover -> {
                 mRealVM.storyboard.get()?.imageUrl?.let { PhotoPagerActivity.launch(this, it) }
             }
         }
