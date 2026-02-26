@@ -24,7 +24,7 @@ import kotlinx.coroutines.async
 class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : PaymentViewModel<PowerRepository>() {
     val toolbar by lazy {
         ToolbarViewModel(
-            title = "我的余额",
+            title = "算力充值",
             navigationAction = { back() },
             menuText = "算力明细",
             menuAction = { ComputingPowerDetailsActivity.start(topActivity) }

@@ -100,7 +100,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/icon_attention_16"
+                    android:drawableStart="@drawable/icon_prompt_16"
                     android:drawablePadding="4dp"
                     android:text="算力值有效期：1年"
                     android:textAppearance="@style/Text12"
