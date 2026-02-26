@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.core.network.sse
 import android.util.Log
 import com.kgmedia.fastfilm.core.db.entity.SSEMessage
 import com.kgmedia.fastfilm.core.network.SSEvent
+import com.kgmedia.fastfilm.core.network.apis.ApiException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -48,7 +49,7 @@ class SSEStreamHandler(
                                 val sseMessage = Json.decodeFromString<SSEMessage>(data)
                                 if (sseMessage.code == SSEMessage.TYPE_ERROR) {
                                     Log.e("[SSE]", "receive msg: parsing error for ${sseMessage.content ?: ""}")
-                                    processor.onSSEError(RuntimeException(sseMessage.content))
+                                    processor.onSSEError(ApiException(-1, sseMessage.content))
                                 } else {
                                     if (sseMessage.isOver()) {
                                         handleComplete()
