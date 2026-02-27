@@ -1723,3 +1723,18 @@ fun setEditing(view: RecyclerEditText, editing: Boolean, content: String?) {
         KeyboardUtils.hideSoftInput(view)
     }
 }
+
+@BindingAdapter("rotateLoading")
+fun setRotateLoading(view: ImageView, show: Boolean) {
+    if (show) {
+        view.visibility = View.VISIBLE
+        // 检查当前是否有动画在运行，防止重复启动导致闪烁
+        if (view.animation == null) {
+            val rotateAnim = AnimationUtils.loadAnimation(view.context, R.anim.loading_2)
+            view.startAnimation(rotateAnim)
+        }
+    } else {
+        view.visibility = View.GONE
+        view.clearAnimation()
+    }
+}

@@ -1,0 +1,141 @@
+package com.kgmedia.fastfilm.feature.creator
+
+import FileCountUtils
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Paint
+import android.os.Build
+import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
+import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.ext.getFileMeta
+import com.kgmedia.fastfilm.common.ext.getTempFilePathFromUri
+import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
+import com.kgmedia.fastfilm.databinding.DialogStoryUploadBinding
+import com.kgmedia.fastfilm.feature.creator.StoryUploadViewModel.Companion.STATE_UPLOAD_FAIL
+import com.nhsd.basic.BaseVMDialogFragment
+import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+/**
+ * 微信客服二维码
+ */
+class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUploadViewModel>() {
+
+    companion object {
+        fun show() {
+            val activity = topActivity as? FragmentActivity ?: return
+            StoryUploadDialog().show(activity.supportFragmentManager)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+//        dialog?.window?.let { dialogWindow ->
+//            dialogWindow.attributes?.let { attr ->
+//                attr.width = (ScreenUtils.getScreenWidth() * 287f / 375f).toInt()
+//                attr.gravity = Gravity.CENTER
+//                dialogWindow.attributes = attr
+//            }
+//        }
+    }
+
+    override fun onPrepareView() {
+        super.onPrepareView()
+        binding.btnChoose.paintFlags = binding.btnChoose.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        binding.btnChoose.setOnSingleClickListener {
+            openFilePicker()
+        }
+        binding.cancel.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
+        binding.confirm.setOnSingleClickListener {
+            //todo 保存
+        }
+    }
+
+    /**
+     * 申请权限并保存图片
+     */
+    private fun requestReadPermission(callback: () -> Unit) {
+        requestRead2WritePermissions { granted ->
+            if (granted) {
+                //权限申请成功
+                callback.invoke()
+            } else {
+                //权限申请失败
+            }
+        }
+    }
+
+    override fun <Data> onClick(view: View, data: Data?) {
+        super.onClick(view, data)
+        when (view.id) {
+            R.id.btnClose -> dismissAllowingStateLoss()
+        }
+    }
+
+    // 1. 定义 Launcher
+    private val filePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data
+            uri?.let {
+                // 在协程中处理，防止卡顿
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val count = FileCountUtils.getSafeCharacterCount(context, it)
+                    it.getFileMeta(context).let { meta ->
+                        mRealVM.fileName.set(meta.first + "." + meta.second)
+                        val allowedExtensions = listOf("txt")//, "doc", "docx"
+                        if (meta.second !in allowedExtensions) {
+                            "文件格式不支持，请选择 TXT 文件".showToast()
+                            return@launch
+                        }
+                    }
+                    val pathFromUri = uri.getTempFilePathFromUri(mActivity)
+                    withContext(Dispatchers.Main) {
+                        if (count > FileCountUtils.MAX_CHAR_COUNT) {
+                            mRealVM.uploadErrorType.set(StoryUploadViewModel.UPLOAD_ERROR_TYPE_FILE_TOO_LARGE)
+                            mRealVM.uploadStatus.set(STATE_UPLOAD_FAIL)
+                        } else {
+                            mRealVM.startUpload(pathFromUri)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 2. 触发选择（包含权限检查）
+    fun openFilePicker() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            requestReadPermission {
+                //, "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "text/plain" // 设置一个基础类型
+                    val mimeTypes = arrayOf(
+                        "text/plain",
+                    )
+                    putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+                }
+                filePickerLauncher.launch(intent)
+            }
+        } else {
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "text/plain" // 设置一个基础类型
+                val mimeTypes = arrayOf(
+                    "text/plain",
+                )
+                putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            }
+            filePickerLauncher.launch(intent)
+        }
+    }
+}

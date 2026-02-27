@@ -18,7 +18,6 @@ import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.databinding.loadHQThumbnailUri
-import com.kgmedia.fastfilm.core.databinding.loadUri
 import com.kgmedia.fastfilm.core.model.PhotoItem
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
@@ -226,7 +225,7 @@ fun setupCommonBanner(
                     override fun bindData(holder: BaseViewHolder<BannerInfo>?, data: BannerInfo, position: Int, pageSize: Int) {
                         holder?.apply {
                             val image = findViewById<ImageView>(R.id.image)
-                            image.setOnSingleClickListener { AppRouter.jump(data.jumpCode) }
+                            image.setOnSingleClickListener { AppRouter.jump(data.jumpUri) }
                             loadHQThumbnailUri(image, data.imageUrl, R.drawable.img_default_cover_16_9.getResDrawable())
                         }
                     }

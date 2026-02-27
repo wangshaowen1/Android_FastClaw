@@ -14,6 +14,6 @@ data class BannerInfo(
     val title: String? = null,
     val imageUrl: String? = null,
     val jumpType: Int? = null,
-    val jumpCode: String? = null,
+    val jumpUri: String? = null,
     val sortNo: Int? = null,
 )

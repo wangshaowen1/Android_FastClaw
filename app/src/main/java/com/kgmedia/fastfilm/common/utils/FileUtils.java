@@ -27,6 +27,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
@@ -564,6 +565,39 @@ public class FileUtils {
         String var3 = var2.substring(var2.lastIndexOf(".") + 1).toLowerCase();
         var1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(var3);
         return var1;
+    }
+
+    public static String getFileNameFromUri(Context context, Uri uri) {
+        String result = null;
+        if (uri == null) return "unknown";
+
+        // 1. 处理 content:// 协议（系统选择器最常用的协议）
+        if ("content".equalsIgnoreCase(uri.getScheme())) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    // 重点：必须先判断列索引是否存在
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (index != -1) {
+                        result = cursor.getString(index);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // 2. 兜底方案：如果是 file:// 协议或者 content 查询失败
+        if (result == null) {
+            result = uri.getPath();
+            if (result != null) {
+                int cut = result.lastIndexOf('/');
+                if (cut != -1) {
+                    result = result.substring(cut + 1);
+                }
+            }
+        }
+
+        return (result == null || result.isEmpty()) ? "unknown_file" : result;
     }
 
 }
