@@ -253,7 +253,11 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 }
             }
 
-            R.id.btnRelease -> {
+            R.id.btnSelfIssue -> {
+                // TODO: 自己发行
+            }
+
+            R.id.btnIssue -> {
                 SimpleBrowserActivity.launch(this, "http://192.168.10.16:5173/pages/issue/issue?nav=1&darkStyle=1")
             }
         }

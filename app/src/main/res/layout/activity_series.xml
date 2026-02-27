@@ -33,6 +33,19 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent" />
 
+                <TextView
+                    android:id="@+id/btnSelfIssue"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/action_bar_size"
+                    android:drawableStart="@drawable/icon_gold_coin"
+                    android:gravity="center_vertical"
+                    android:text="自己发行"
+                    android:textAppearance="@style/Text14"
+                    android:textColor="?attr/textColor2"
+                    app:layout_constraintEnd_toStartOf="@+id/btnMore"
+                    app:layout_constraintTop_toTopOf="@+id/btnMore" />
+
                 <ImageView
                     android:id="@+id/btnMore"
                     setVisible="@{layout.workInfo.isMine()}"
@@ -260,7 +273,7 @@
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <LinearLayout
-                        android:id="@+id/btnRelease"
+                        android:id="@+id/btnIssue"
                         singleClick="@{layout.clickHandler::onClick}"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
