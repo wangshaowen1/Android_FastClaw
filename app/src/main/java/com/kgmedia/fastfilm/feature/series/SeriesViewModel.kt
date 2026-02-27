@@ -1,6 +1,5 @@
 package com.kgmedia.fastfilm.feature.series
 
-import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -30,9 +29,6 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
 
     //创建续集信息
     val episodeInfo = MutableLiveData<EpisodeInfo?>()
-
-    //是否可以创建续集
-    val canCreateEpisode by lazy { ObservableField(false) }
 
     override fun onCreate() {
         super.onCreate()

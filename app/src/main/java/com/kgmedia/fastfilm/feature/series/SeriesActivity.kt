@@ -88,16 +88,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             setNoDataButton(noDataButtonTextAs, { refresh() })
             setNoDataPrompt(noDataAs)
         }
-        binding.swipeRefreshLayout.startRefreshWithAdapter(
-            pagingDataAdapter = episodeAdapter,
-            addExtraLoadStateListener = {
-                //是否存在草稿状态的
-                val isDraft = episodeAdapter.snapshot().any {
-                    it?.isBeforeStoryboardGenerating() == true
-                }
-                val notFinished = mRealVM.workInfo.value?.let { (it.finishedEpisodeCnt ?: 0) < (it.totalEpisodeCnt ?: 0) } == true
-                mRealVM.canCreateEpisode.set(!isDraft && notFinished)
-            })
+        binding.swipeRefreshLayout.startRefreshWithAdapter(pagingDataAdapter = episodeAdapter)
     }
 
     private fun refresh() {

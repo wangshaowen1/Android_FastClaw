@@ -6,7 +6,6 @@ import com.kgmedia.fastfilm.common.ext.toUnitText
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.convert.Converters
 import kotlinx.parcelize.Parcelize
-import kotlin.collections.contains
 
 @Parcelize
 @TypeConverters(Converters::class)
@@ -48,6 +47,7 @@ data class WorkInfo(
     companion object {
         //作品类型：1-灵感创作
         const val INSPIRATION_CREATION = 1
+
         //作品类型：2-小说创作
         const val NOVEL_CREATION = 2
 
@@ -75,12 +75,12 @@ data class WorkInfo(
 
     //是否是生成中状态
     fun isGenerating(): Boolean {
-        return workStatus in listOf(GEN_MUSIC_BASE, GEN_MUSIC_VIDEO)
+        return workStatus == GEN_MUSIC_VIDEO
     }
 
     //草稿状态
     fun isDraftStatus(): Boolean {
-        return workStatus in listOf(DRAFT_GEN_STATE, DRAFT_STATE)
+        return workStatus in listOf(DRAFT_GEN_STATE, DRAFT_STATE, GEN_MUSIC_BASE)
     }
 
     fun seriesIntroduction(index: Int = 0): String? {
@@ -230,6 +230,7 @@ data class EpisodeInfo(
     companion object {
         //剧本输入
         const val PROGRESS_DRAFT = 10
+
         //剧本生成中
         const val PROGRESS_STORY_GENERATING = 15
 
@@ -255,11 +256,7 @@ data class EpisodeInfo(
      * @return Boolean
      */
     fun isGenerating(): Boolean {
-        return stepProgress in listOf(
-            PROGRESS_ASSET_GENERATING,
-            PROGRESS_STORYBOARD_GENERATING_ASSET,
-            PROGRESS_STORYBOARD_GENERATING
-        )
+        return stepProgress  == PROGRESS_STORYBOARD_GENERATING
     }
 
     /**
@@ -283,16 +280,6 @@ data class EpisodeInfo(
      * @return Boolean
      */
     fun isDraft(): Boolean {
-        return stepProgress in listOf(
-            PROGRESS_DRAFT,
-            PROGRESS_STORY_GENERATING,
-        )
-    }
-
-    /**
-     * 是否在分镜视频生成前
-     */
-    fun isBeforeStoryboardGenerating(): Boolean {
         return stepProgress in listOf(
             PROGRESS_DRAFT,
             PROGRESS_STORY_GENERATING,
