@@ -301,11 +301,11 @@ class User : IUser {
         return gender == FEMALE
     }
 
-    fun isSameId(userToken: String?): Boolean {
+    fun isSameId(userId: String?): Boolean {
         if (this.isVisitor) {
             return false
         }
-        return TextUtils.equals(userToken, id)
+        return TextUtils.equals(userId, this.userId)
     }
 
     fun setRequestNotificationsPermissionDisable() {

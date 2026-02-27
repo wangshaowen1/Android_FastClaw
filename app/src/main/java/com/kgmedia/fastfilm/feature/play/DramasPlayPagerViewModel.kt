@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.play
 
+import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -28,6 +29,7 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>(), D
 
     enum class PlayMode { RECOMMEND, SERIES }
 
+    val currentWork by lazy { ObservableField<WorkInfo>() }
     var currentPlayMode = PlayMode.SERIES
 
     // 对外暴露的数据流

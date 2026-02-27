@@ -6,6 +6,7 @@ import android.view.Gravity
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
 import com.kgmedia.fastfilm.core.manager.EventManager
@@ -13,6 +14,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.PlayMenuInfo
 import com.kgmedia.fastfilm.databinding.ActivityDramasPlayPagerBinding
 import com.kgmedia.fastfilm.feature.download.DownloadingDialog
 import com.kgmedia.fastfilm.feature.download.DownloadingViewModel
+import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.kgmedia.fastfilm.feature.play.manger.FeedListController
 import com.kgmedia.fastfilm.feature.play.manger.FeedPlayerManager
 import com.kgmedia.fastfilm.feature.play.menu.ListPopupWindow
@@ -90,6 +92,7 @@ class DramasPlayPagerActivity :
         mRealVM.loadFeed(!workId.isNullOrEmpty(), workId)
 
         listController.onPageChanged = { workInfo, position ->
+            mRealVM.currentWork.set(workInfo)
             if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) {
                 binding.tvTitle.text = "第${workInfo.lastEpisodeNo}集"
             }
@@ -102,66 +105,70 @@ class DramasPlayPagerActivity :
     }
 
     private fun initView() {
+        binding.btnEdit.setOnSingleClickListener {
+            val currentWork = mRealVM.currentWork.get() ?: return@setOnSingleClickListener
+            showCommonDialog(tip = "本集视频重绘后将覆盖原视频,确定重绘吗？", confirmText = "确定") {
+                EditStoryboardVideoActivity.start(currentWork.workTitle, currentWork.workId, currentWork.getEpisodeId(), currentWork.workRatio)
+            }
+        }
         binding.btnMenu.setOnSingleClickListener {
             showPopupWindow()
         }
     }
 
     private fun showPopupWindow() {
-        if (listPopupWindow == null) {
-            listPopupWindow = ListPopupWindow(
-                context = this,
-                dataList = arrayListOf(
-                    PlayMenuInfo(
-                        reportTypeId = PlayMenuInfo.REPORT,
-                        reportText = "举报",
-                        reportIcon = R.drawable.icon_report
-                    ),
-                    PlayMenuInfo(
-                        reportTypeId = PlayMenuInfo.DOWNLOAD,
-                        reportText = "下载",
-                        reportIcon = R.drawable.icon_download
-                    )
-                ),
-                selectedItemId = PlayMenuInfo.REPORT
-            )
+        val currentWork = mRealVM.currentWork.get() ?: return
+        listPopupWindow = ListPopupWindow(
+            context = this,
+            dataList = listOfNotNull(
+                if (!currentWork.isMine()) PlayMenuInfo(
+                    reportTypeId = PlayMenuInfo.REPORT,
+                    reportText = "举报",
+                    reportIcon = R.drawable.icon_report
+                ) else null,
+                if (currentWork.isMine()) PlayMenuInfo(
+                    reportTypeId = PlayMenuInfo.DOWNLOAD,
+                    reportText = "下载",
+                    reportIcon = R.drawable.icon_menu_download
+                ) else null
+            ),
+            selectedItemId = PlayMenuInfo.REPORT
+        )
+        listPopupWindow?.setStatus(
+            normalBackgroundColor = R.color.bg_color_3_dark.getResColor(),
+            selectedBackgroundColor = R.color.bg_color_3_dark.getResColor(),
+            normalColor = R.color.text_color_3_dark.getResColor(),
+            selectedColor = R.color.text_color_3_dark.getResColor(),
+            isSelectBold = false
+        )
+        listPopupWindow?.setAdapter()
+        listPopupWindow?.setOnItemSelectedListener(object :
+            OnItemSelectedListener<PlayMenuInfo> {
+            override fun onItemSelected(selectedItem: PlayMenuInfo, position: Int) {
+                listPopupWindow?.dismiss()
+                listPopupWindow = null
+                when (selectedItem.getItemId()) {
+                    PlayMenuInfo.REPORT -> {
+                        if (AppNavigator.checkLoginIntercepted(showToast = true, isFullScreen = false)) return
+                        //举报
+                        ReportDialog.newInstance(
+                            supportFragmentManager,
+                            currentWork.userId,
+                            if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else currentWork.workId//剧集模式下workId是剧集id
+                        )
+                    }
 
-            listPopupWindow?.setStatus(
-                normalBackgroundColor = R.color.bg_color_3_dark.getResColor(),
-                selectedBackgroundColor = R.color.bg_color_3_dark.getResColor(),
-                normalColor = R.color.text_color_3_dark.getResColor(),
-                selectedColor = R.color.text_color_3_dark.getResColor(),
-                isSelectBold = false
-            )
-            listPopupWindow?.setAdapter()
-            listPopupWindow?.setOnItemSelectedListener(object :
-                OnItemSelectedListener<PlayMenuInfo> {
-                override fun onItemSelected(selectedItem: PlayMenuInfo, position: Int) {
-                    listPopupWindow?.dismiss()
-                    when (selectedItem.getItemId()) {
-                        PlayMenuInfo.REPORT -> {
-                            if (AppNavigator.checkLoginIntercepted(showToast = true, isFullScreen = false)) return
-                            //举报
-                            val item = listController.getCurrentItem()
-                            ReportDialog.newInstance(
-                                supportFragmentManager,
-                                item?.userId,
-                                if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else item?.workId//剧集模式下workId是剧集id
-                            )
-                        }
-
-                        PlayMenuInfo.DOWNLOAD -> {
-                            //下载
-                            requestRead2WritePermissions { granted ->
-                                if (granted) {
-                                    listController.getCurrentItem()?.getPlayUrl()?.let { mRealVM.downloadVideo(it) }
-                                }
+                    PlayMenuInfo.DOWNLOAD -> {
+                        //下载
+                        requestRead2WritePermissions { granted ->
+                            if (granted) {
+                                currentWork.getPlayUrl()?.let { mRealVM.downloadVideo(it) }
                             }
                         }
                     }
                 }
-            })
-        }
+            }
+        })
         val gravity = Gravity.END or Gravity.TOP
         listPopupWindow?.showAtLocation(binding.btnMenu, gravity, 32, 80.dp)
     }

@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.core.network.apis.entity
 import android.os.Parcelable
 import androidx.room.TypeConverters
 import com.kgmedia.fastfilm.common.ext.toUnitText
+import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.convert.Converters
 import kotlinx.parcelize.Parcelize
 import kotlin.collections.contains
@@ -92,7 +93,7 @@ data class WorkInfo(
     }
 
     fun isMine(): Boolean {
-        return true//User.get().isSameId(userId)
+        return User.get().isSameId(userId)
     }
 
     val stripedTrickTitle
