@@ -35,33 +35,28 @@ class ItemPropVM(
     override fun clickGenerate() {
         if (status.get() == 1) return
         val propPrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
-        val propName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
         if (propPrompt.isNullOrEmpty()) {
             "请先填写道具描述".showToast()
-            return
-        }
-        if (propName.isNullOrEmpty()) {
-            "请先填写道具名称".showToast()
             return
         }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
         if (data.get()?.hasHistory == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.propId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_PROP_IMAGE)
-                .apply { onUserReference = { generate(propPrompt, propName, it) } }
+                .apply { onUserReference = { generate(propPrompt, it) } }
                 .show(fragmentManager)
         } else {
-            generate(propPrompt, propName)
+            generate(propPrompt)
         }
     }
 
-    override fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo?) {
+    override fun generate(assetDesc: String, reference: ReferenceImageInfo?) {
         val preStatus = status.get()
         if (preStatus == 1) return
         status.set(1)
         onItemChanged()
         launch {
             var prop = data.get()
-            if (assetDesc != prop?.propPrompt || assetName != prop.propName) {
+            if (assetDesc != prop?.propPrompt) {
                 val response = withContext(Dispatchers.IO) {
                     val body = SavePropBody(
                         workId = workId,
@@ -69,7 +64,7 @@ class ItemPropVM(
                         propId = prop?.propId,
                         appearanceId = prop?.appearanceId,
                         propPrompt = assetDesc,
-                        propName = assetName,
+                        propName = null,
                     )
                     ApiFactory.apiService.workAssetPropSave(body)
                 }

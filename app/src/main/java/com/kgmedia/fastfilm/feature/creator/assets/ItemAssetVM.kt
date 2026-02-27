@@ -33,6 +33,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
      * 当前应用的资源描述
      */
     val assetDesc by lazy { ObservableField(data?.assetDesc) }
+    val assetName by lazy { data?.assetName }
 
     /**
      * 当前应用的资源图片URL
@@ -47,18 +48,6 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     val editingAssetDesc by lazy { ObservableBoolean(false) }
     val assetDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
 
-    /**
-     * 当前应用的资源名称
-     */
-    val assetName by lazy { ObservableField(data?.assetName) }
-
-    /**
-     * 编辑中的资源名称
-     */
-    var editingAssetNameText: String? = data?.assetName
-        private set
-    val editingAssetName by lazy { ObservableBoolean(false) }
-    val assetNameInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
     protected var loopGenStatusJob: Job? = null
 
     init {
@@ -92,22 +81,6 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
         assetDesc.set(editingAssetDescText)
     }
 
-    fun editAssetName() {
-        assetNameInputListener.set(object : RecyclerEditText.OnTextInputListener {
-            override fun onTextInput(text: String) {
-                editingAssetNameText = text
-            }
-        })
-        editingAssetName.set(true)
-        editingAssetNameText = assetName.get()
-    }
-
-    open fun exitEditAssetName() {
-        assetNameInputListener.set(null)
-        editingAssetName.set(false)
-        assetName.set(editingAssetNameText)
-    }
-
     /**
      * 资产类型
      */
@@ -125,7 +98,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
      * 调用生成资产图片接口
      * @param reference 参考图信息
      */
-    abstract fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo? = null)
+    abstract fun generate(assetDesc: String, reference: ReferenceImageInfo? = null)
 
     /**
      * 调用删除资产接口

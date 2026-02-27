@@ -35,33 +35,28 @@ class ItemSceneVM(
     override fun clickGenerate() {
         if (status.get() == 1) return
         val scenePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
-        val sceneName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
         if (scenePrompt.isNullOrEmpty()) {
             "请先填写场景描述".showToast()
-            return
-        }
-        if (sceneName.isNullOrEmpty()) {
-            "请先填写场景名称".showToast()
             return
         }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
         if (data.get()?.hasHistory == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.sceneId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_SCENE_IMAGE)
-                .apply { onUserReference = { generate(scenePrompt, sceneName, it) } }
+                .apply { onUserReference = { generate(scenePrompt, it) } }
                 .show(fragmentManager)
         } else {
-            generate(scenePrompt, sceneName)
+            generate(scenePrompt)
         }
     }
 
-    override fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo?) {
+    override fun generate(assetDesc: String, reference: ReferenceImageInfo?) {
         val preStatus = status.get()
         if (preStatus == 1) return
         status.set(1)
         onItemChanged()
         launch {
             var scene = data.get()
-            if (assetDesc != scene?.scenePrompt || assetName != scene.sceneName) {
+            if (assetDesc != scene?.scenePrompt) {
                 val response = withContext(Dispatchers.IO) {
                     val body = SaveSceneBody(
                         workId = workId,
@@ -69,7 +64,7 @@ class ItemSceneVM(
                         sceneId = scene?.sceneId,
                         appearanceId = scene?.appearanceId,
                         scenePrompt = assetDesc,
-                        sceneName = assetName,
+                        sceneName = null,
                     )
                     ApiFactory.apiService.workAssetSceneSave(body)
                 }

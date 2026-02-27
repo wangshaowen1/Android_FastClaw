@@ -35,33 +35,28 @@ class ItemRoleVM(
     override fun clickGenerate() {
         if (status.get() == 1) return
         val rolePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
-        val roleName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
         if (rolePrompt.isNullOrEmpty()) {
             "请先填写角色描述".showToast()
-            return
-        }
-        if (roleName.isNullOrEmpty()) {
-            "请先填写角色名称".showToast()
             return
         }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
         if (data.get()?.hasHistory == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.roleId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_ROLE_IMAGE)
-                .apply { onUserReference = { generate(rolePrompt, roleName, it) } }
+                .apply { onUserReference = { generate(rolePrompt, it) } }
                 .show(fragmentManager)
         } else {
-            generate(rolePrompt, roleName)
+            generate(rolePrompt)
         }
     }
 
-    override fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo?) {
+    override fun generate(assetDesc: String, reference: ReferenceImageInfo?) {
         val preStatus = status.get()
         if (preStatus == 1) return
         status.set(1)
         onItemChanged()
         launch {
             var role = data.get()
-            if (assetDesc != role?.rolePrompt || assetName != role.roleName) {
+            if (assetDesc != role?.rolePrompt) {
                 val response = withContext(Dispatchers.IO) {
                     val body = SaveRoleBody(
                         workId = workId,
@@ -69,7 +64,7 @@ class ItemRoleVM(
                         roleId = role?.roleId,
                         appearanceId = role?.appearanceId,
                         rolePrompt = assetDesc,
-                        roleName = assetName,
+                        roleName = null,
                     )
                     ApiFactory.apiService.workAssetRoleSave(body)
                 }
