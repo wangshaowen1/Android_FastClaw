@@ -23,6 +23,7 @@ import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.Popup
 import com.kgmedia.fastfilm.widget.SeriesMorePopupView
+import com.kgmedia.fastfilm.widget.SeriesReleaseFailTipsPopupView
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
@@ -243,6 +244,12 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     WorksManagementActivity.start(this, workId = mRealVM.workId)
                 }
                 popup.showUnder(view)
+            }
+
+            R.id.llReleaseStatus -> {
+                bindingNullable?.tvReleaseStatus?.let {
+                    Popup(SeriesReleaseFailTipsPopupView(this)).showUnder(it)
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.series
 
+import androidx.annotation.ColorRes
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.PagedProxy
@@ -29,6 +31,12 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
 
     //创建续集信息
     val episodeInfo = MutableLiveData<EpisodeInfo?>()
+
+    /**发行状态*/
+    val releaseStatus by lazy { ObservableInt() }
+
+    /**作品等级图标*/
+    val workLevelIcon by lazy { ObservableInt(R.drawable.icon_work_level_s) }
 
     override fun onCreate() {
         super.onCreate()
@@ -89,5 +97,18 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
                 episodeInfo.value = data
             }
         }
+    }
+
+    fun releaseStatusFailed(releaseStatus: Int) = when (releaseStatus) {
+        else -> true
+    }
+
+    @ColorRes
+    fun releaseStatusColor(releaseStatus: Int) = when (releaseStatus) {
+        else -> R.color.func_failure_dark
+    }
+
+    fun releaseStatusText(releaseStatus: Int) = when (releaseStatus) {
+        else -> "签约失败"
     }
 }

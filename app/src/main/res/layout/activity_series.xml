@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="@dimen/action_bar_size"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/btnContainer"
                     app:layout_constraintTop_toBottomOf="@+id/statusBar">
 
                     <com.google.android.material.appbar.AppBarLayout
@@ -88,6 +88,16 @@
                                     app:shapeAppearanceOverlay="@style/roundStyle_r8"
                                     tools:src="@drawable/img_default_cover_3_4" />
 
+                                <ImageView
+                                    imageResource="@{layout.workLevelIcon}"
+                                    android:layout_width="0dp"
+                                    android:layout_height="0dp"
+                                    app:layout_constraintDimensionRatio="34:16"
+                                    app:layout_constraintStart_toStartOf="@+id/ivCover"
+                                    app:layout_constraintTop_toTopOf="@+id/ivCover"
+                                    app:layout_constraintWidth_percent="0.0907"
+                                    tools:src="@drawable/icon_work_level_s" />
+
                                 <TextView
                                     android:id="@+id/tvTitle"
                                     android:layout_width="0dp"
@@ -106,6 +116,7 @@
                                     tools:text="代码纪元：觉醒指令" />
 
                                 <TextView
+                                    android:id="@+id/tvEpisodeCnt"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
@@ -116,6 +127,47 @@
                                     app:layout_constraintStart_toStartOf="@+id/tvTitle"
                                     app:layout_constraintTop_toBottomOf="@+id/tvTitle"
                                     tools:text="已创作 N 集 / 共M集" />
+
+                                <LinearLayout
+                                    android:id="@+id/llReleaseStatus"
+                                    singleClick="@{layout.clickHandler::onClick}"
+                                    android:layout_width="0dp"
+                                    android:layout_height="52dp"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="@+id/tvEpisodeCnt"
+                                    app:layout_constraintTop_toBottomOf="@+id/tvEpisodeCnt">
+
+                                    <ImageView
+                                        setVisible="@{layout.releaseStatusFailed(layout.releaseStatus)}"
+                                        android:layout_width="16dp"
+                                        android:layout_height="16dp"
+                                        android:layout_marginEnd="4dp"
+                                        android:src="@drawable/icon_attention_fail" />
+
+                                    <TextView
+                                        android:id="@+id/tvReleaseStatus"
+                                        textColorRes="@{layout.releaseStatusColor(layout.releaseStatus)}"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@{layout.releaseStatusText(layout.releaseStatus)}"
+                                        android:textAppearance="@style/Text13"
+                                        tools:text="已发行"
+                                        tools:textColor="@color/func_success_dark" />
+
+                                    <androidx.recyclerview.widget.RecyclerView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginStart="8dp"
+                                        android:layout_weight="1"
+                                        android:orientation="horizontal"
+                                        android:overScrollMode="never"
+                                        android:scrollbars="none"
+                                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                        tools:listitem="@layout/item_release_platform" />
+
+                                </LinearLayout>
 
                                 <TextView
                                     android:id="@+id/tvSeriesIntro"
@@ -199,6 +251,29 @@
                     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
                 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/btnContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <TextView
+                        android:id="@+id/btnApply"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginHorizontal="15dp"
+                        android:background="@drawable/selector_common_button"
+                        android:gravity="center"
+                        android:text="申请签约"
+                        android:textAppearance="@style/Text16"
+                        android:textColor="@color/fixed_white_1"
+                        app:layout_constraintDimensionRatio="345:44"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
