@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.editor
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
@@ -13,8 +14,10 @@ import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
+import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.nhsd.basic.bus.FlowEventBus
@@ -54,6 +57,8 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     val playing by lazy { ObservableBoolean(true) }
 
     val genImagePrompt by lazy { MutableLiveData<String>() }
+    val genImagePrice by lazy { ObservableInt(0) }
+    val genVideoPrice by lazy { ObservableInt(0) }
 
     private var loopImageJob: Job? = null
     private var loopVideoJob: Job? = null
@@ -65,6 +70,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             finish()
             return
         }
+        getGenPrice()
         storyboard.set(info)
         genImagePrompt.value = info.genImagePrompt
         if (info.videoGenerating) {
@@ -131,6 +137,12 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             "视频正在生成中，请稍后再试".showToast()
             return
         }
+        val cost = genVideoPrice.get()
+        if (cost == 0) {
+            getGenPrice()
+            return
+        }
+        if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
@@ -139,7 +151,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             )
             response(ApiFactory.apiService.workStoryboardVideoSingleGenerate(body)) {
                 FlowEventBus.postSync(Events.StoryboardVideoRegenerateEvent(storyboard.workId, storyboard.storyId, storyboard.storyboardId))
-                if (finish) {
+                if (finish && data?.genStatus.let { it == 1 || it == 2 }) {
                     finish()
                     return@response
                 }
@@ -169,6 +181,12 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             "请先填写分镜描述".showToast()
             return
         }
+        val cost = genImagePrice.get()
+        if (cost == 0) {
+            getGenPrice()
+            return
+        }
+        if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
             if (genImagePrompt != storyboard.genImagePrompt) {
                 val response = withContext(Dispatchers.IO) {
@@ -280,6 +298,13 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                     finish()
                 }
             }
+        }
+    }
+
+    private fun getGenPrice() {
+        launch {
+            withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(2)).data?.pointNum?.let { genImagePrice.set(it) } }
+            withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(3)).data?.pointNum?.let { genVideoPrice.set(it) } }
         }
     }
 

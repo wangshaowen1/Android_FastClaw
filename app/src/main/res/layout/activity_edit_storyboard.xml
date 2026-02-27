@@ -230,13 +230,15 @@
                 app:layout_constraintTop_toTopOf="@+id/ivCover"
                 tools:text="史莱克七怪之首，沉稳冷静。他留着一头深蓝色长发，目光深篷，拥有极强的战斗天赋和统筹全局的智慧。战斗时使用蓝银草魂灵与外附魂骨八蛛矛。" />
 
-            <FrameLayout
+            <LinearLayout
                 android:id="@+id/btnRegenerateImage"
                 singleClick="@{(v) -> layout.reGenerateImage()}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="6dp"
                 android:background="@drawable/fill_color1_r4"
+                android:gravity="center"
+                android:orientation="horizontal"
                 app:layout_constraintDimensionRatio="229:32"
                 app:layout_constraintEnd_toEndOf="@+id/tvStoryboardDesc"
                 app:layout_constraintStart_toStartOf="@+id/tvStoryboardDesc"
@@ -250,9 +252,25 @@
                     android:textColor="@android:color/white"
                     app:endColor="#8F83FF"
                     app:startColor="#68BFF9" />
-            </FrameLayout>
 
-            <TextView
+                <ImageView
+                    setVisible="@{layout.genImagePrice > 0}"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/icon_power" />
+
+                <TextView
+                    setVisible="@{layout.genImagePrice > 0}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textAppearance="@style/Text13"
+                    android:textColor="@color/fixed_white_1"
+                    tools:text="20" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/btnRegenerate"
                 singleClick="@{(v) -> layout.reGenerateVideo()}"
                 android:layout_width="match_parent"
@@ -261,11 +279,33 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/selector_common_button"
                 android:gravity="center"
-                android:text="重绘分镜"
-                android:textAppearance="@style/Text16"
-                android:textColor="@color/fixed_white_1"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="345:44" />
+                app:layout_constraintDimensionRatio="345:44">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="重绘分镜"
+                    android:textAppearance="@style/Text16"
+                    android:textColor="@color/fixed_white_1" />
+
+                <ImageView
+                    setVisible="@{layout.genVideoPrice > 0}"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="12dp"
+                    android:src="@drawable/icon_power" />
+
+                <TextView
+                    setVisible="@{layout.genVideoPrice > 0}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:textAppearance="@style/Text16"
+                    android:textColor="@color/fixed_white_1"
+                    tools:text="20" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/btnSave"
