@@ -90,7 +90,16 @@ class JsonSseFieldStreamer(
             State.IN_VALUE -> {
                 if (escape) {
                     // 简易转义：物理换行符保留原意，其他保留转义后字符
-                    valueBuf.append(if (c == 'n') '\n' else c)
+                    val unescaped = when (c) {
+                        'n' -> '\n'
+                        'r' -> '\r'
+                        't' -> '\t'
+                        '\"' -> '\"'
+                        '\\' -> '\\'
+                        '/' -> '/'
+                        else -> c
+                    }
+                    valueBuf.append(unescaped)
                     escape = false
                     emit(false)
                 } else {

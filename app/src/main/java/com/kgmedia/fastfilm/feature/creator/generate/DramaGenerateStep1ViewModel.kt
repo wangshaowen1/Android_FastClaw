@@ -100,9 +100,9 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     progressHelper.finish()
                     mWorkName.value = title
                 },
-                onMdUpdate = { fullContent ->
+                onMdUpdate = { delta ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                    mSSEContent.value = fullContent
+                    mSSEContent.value = delta
                 },
                 onComplete = { originalContent ->
                     Logger.d("[SSE]", "Finished")

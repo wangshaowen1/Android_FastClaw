@@ -21,6 +21,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.utils.Logger
 
 
 /**
@@ -87,7 +88,7 @@ class DramaGenerateStep1Fragment :
             }
         })
         markDownTextView.init(getCustomUIStyles(), null)
-        markDownTextView.setPrintParams(25, 1)
+        markDownTextView.setPrintParams(2, 3)
 
         mRealVM.mSSEContent.observe(this) {
             if (markDownTextView.isStarted) {
@@ -97,8 +98,9 @@ class DramaGenerateStep1Fragment :
             markDownTextView.startPrinting(it)
         }
         mRealVM.onSSECompleted = {
-            hostVm?.backWarning = false
-            markDownTextView.stopPrinting("")
+            Logger.d("[SSE] stopPrinting")
+//            hostVm?.backWarning = false
+//            markDownTextView.stopPrinting(null)
         }
         mRealVM.mWorkName.observe(this) {
             if (hostVm?.title?.value != it) {
@@ -111,6 +113,7 @@ class DramaGenerateStep1Fragment :
             }
         }
         binding.btnRegenerate.setOnSingleClickListener {
+            markDownTextView.stopPrinting(null)
             mRealVM.sseGenerate()
             hostVm?.backWarning = true
         }
