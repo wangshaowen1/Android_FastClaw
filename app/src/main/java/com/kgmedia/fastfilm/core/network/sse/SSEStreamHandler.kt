@@ -10,9 +10,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import java.util.concurrent.atomic.AtomicBoolean
 
 class SSEStreamHandler(
     private val scope: CoroutineScope,
@@ -21,22 +21,22 @@ class SSEStreamHandler(
 
     private var job: Job? = null
 
-    // 新增：防止重复调用 onComplete
-    private var isCompleted = false
+    // 优化1：使用 AtomicBoolean 彻底根除多线程并发回调导致的状态错乱
+    private val isFinished = AtomicBoolean(false)
     private val _isStreaming = MutableStateFlow(false)
     val isStreaming = _isStreaming.asStateFlow()
 
     fun start(flow: Flow<SSEvent>) {
-        cancel()
-        isCompleted = false // 重置标志位
+        cancel() // 开始前先清理上一次的资源
+        isFinished.set(false)
 
         _isStreaming.value = true
 
         job = scope.launch {
             try {
                 flow.collect { event ->
-                    // 如果已经完成就不再处理后续消息（防御性编程）
-                    if (isCompleted) return@collect
+                    // 只要标记结束，立即丢弃后续僵尸数据
+                    if (isFinished.get()) return@collect
 
                     when (event) {
                         is SSEvent.Open -> {
@@ -49,22 +49,22 @@ class SSEStreamHandler(
                                 val sseMessage = Json.decodeFromString<SSEMessage>(data)
                                 if (sseMessage.code == SSEMessage.TYPE_ERROR) {
                                     Log.e("[SSE]", "receive msg: parsing error for ${sseMessage.content ?: ""}")
-                                    processor.onSSEError(ApiException(-1, sseMessage.content))
+                                    handleError(ApiException(-1, sseMessage.content))
                                 } else {
                                     if (sseMessage.isOver()) {
                                         handleComplete()
-                                        return@collect
+                                    } else {
+                                        processor.onSSEChunk(sseMessage.content ?: "")
                                     }
-                                    processor.onSSEChunk(sseMessage.content ?: "")
                                 }
                             } catch (e: Exception) {
                                 Log.e("[SSE]", "receive msg: parsing error for $data", e)
-                                processor.onSSEError(e)
+                                handleError(e)
                             }
                         }
 
                         is SSEvent.Error -> {
-                            processor.onSSEError(event.throwable)
+                            handleError(event.throwable)
                         }
 
                         is SSEvent.Close -> {
@@ -73,13 +73,16 @@ class SSEStreamHandler(
                     }
                 }
             } catch (e: CancellationException) {
-                // 正常取消，不作为错误处理
+                // 协程被 cancel 时的正常抛出，无需作为报错处理
+                Log.d("[SSE]", "Stream cancelled normally")
             } catch (e: Exception) {
-                processor.onSSEError(e)
+                // 兜底外层异常
+                handleError(e)
             } finally {
-                // 确保流自然结束时（非 Close 事件触发）也能回调 complete
-                if (isActive && !isCompleted) {
-                    handleComplete()
+                // 优化2：兜底处理服务端静默断开（EOF）的情况
+                // 如果走到 finally 时既没有触发报错，也没有触发 Complete，说明是异常中断，在此强行触发结束
+                if (isFinished.compareAndSet(false, true)) {
+                    processor.onSSEComplete()
                 }
                 _isStreaming.value = false
             }
@@ -87,14 +90,28 @@ class SSEStreamHandler(
     }
 
     private fun handleComplete() {
-        if (!isCompleted) {
-            isCompleted = true
+        // compareAndSet：如果当前是 false，则设为 true 并返回 true；否则返回 false
+        if (isFinished.compareAndSet(false, true)) {
             _isStreaming.value = false
             processor.onSSEComplete()
+            // 彻底断开流连接
+            job?.cancel()
         }
     }
 
+    private fun handleError(e: Throwable?) {
+        if (isFinished.compareAndSet(false, true)) {
+            _isStreaming.value = false
+            processor.onSSEError(e)
+            // 发生错误时切断连接
+            job?.cancel()
+        }
+    }
+
+    // 优化3：统一的 Cancel 收口逻辑
     fun cancel() {
+        // 如果是外部主动调用 Cancel，将其强行标记为已结束，阻止 finally 块误触发 Complete 回调
+        isFinished.set(true)
         _isStreaming.value = false
         job?.cancel()
         job = null

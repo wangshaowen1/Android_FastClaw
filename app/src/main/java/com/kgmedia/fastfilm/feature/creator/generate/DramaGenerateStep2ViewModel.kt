@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.common.utils.NotificationHelper
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
@@ -62,6 +63,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     //作品风格
     var videoStyleId: String? = null
+
+    //章节序号
+    var chapterIndex: Int? = null
 
     //作品ID
     var workId = MutableLiveData<String>()
@@ -139,15 +143,16 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     nextStepEnabled.set(true)
                     sseOutputComplete.value = true
                     originalJson = originalContent
-                    Logger.d("[SSE]", "originalContent：${originalContent}")
-                    Logger.d("[SSE]", "Finished")
+                    Logger.d("[SSE]", "Finished originalContent：${originalContent}")
                     // 触发原本结束后的逻辑
+                    NotificationHelper.sendRecoveryNotification("《${mWorkName.value?.ifEmpty { "未命名" }}}》第${chapterIndex}集故事剧本已完成")
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     sseOutputComplete.value = true
                     sseOutputFail.set(true)
                     parseMessage(e)?.showToast()
+                    NotificationHelper.sendRecoveryNotification("《${mWorkName.value?.ifEmpty { "未命名" }}}》第${chapterIndex}集故事剧本生成失败")
                     promptGenerating.value = false to ""
                     // 根据需要处理特定错误
                 })
@@ -171,7 +176,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         return rawTitle.replace(regex, "")
     }
 
-     @ColorInt
+    @ColorInt
     fun getLimitColor(length: Int?): Int {
         val attr = if (length == maxInputLength.get()) R.attr.funcColorFailure else R.attr.textColor4
         return topActivity?.getThemeColor(attr) ?: Color.BLACK

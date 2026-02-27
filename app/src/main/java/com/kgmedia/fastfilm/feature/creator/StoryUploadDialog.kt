@@ -90,7 +90,9 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                         mRealVM.fileName.set(meta.first + "." + meta.second)
                         val allowedExtensions = listOf("txt")//, "doc", "docx"
                         if (meta.second !in allowedExtensions) {
-                            "文件格式不支持，请选择 TXT 文件".showToast()
+                            withContext(Dispatchers.Main) {
+                                "文件格式不支持，请选择 TXT 文件".showToast()
+                            }
                             return@launch
                         }
                     }

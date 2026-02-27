@@ -91,11 +91,31 @@ class DramaGenerateStep1Fragment :
         markDownTextView.setPrintParams(2, 3)
 
         mRealVM.mSSEContent.observe(this) {
-            if (markDownTextView.isStarted) {
-                markDownTextView.appendPrinting(it)
-                return@observe
+//            if (markDownTextView.isStarted) {
+//                markDownTextView.appendPrinting(it)
+//                return@observe
+//            }
+//            markDownTextView.startPrinting(it)
+
+            if (!markDownTextView.isStarted) {
+                // 场景 A：第一次生成，或者点击了“重新生成”
+                if (it.isNotEmpty()) {
+                    markDownTextView.startPrinting(it)
+                }
+            } else {
+                // 场景 B：正在生成中
+                // 获取打字机控件内部当前已经记录的完整文本
+                val currentText = markDownTextView.originText ?: ""
+
+                // 防御性判断：只有当 ViewModel 里的文本比打字机里的长，且前半部分完全匹配时，才说明有新内容
+                if (it.length > currentText.length && it.startsWith(currentText)) {
+                    // 【核心逻辑】：截取打字机错过的“差值增量”
+                    val missingDelta = it.substring(currentText.length)
+
+                    // 将差值增量一点一点喂给打字机，满足控件只接受 append 的特性 [cite: 72]
+                    markDownTextView.appendPrinting(missingDelta)
+                }
             }
-            markDownTextView.startPrinting(it)
         }
         mRealVM.onSSECompleted = {
             Logger.d("[SSE] stopPrinting")
@@ -176,6 +196,20 @@ class DramaGenerateStep1Fragment :
         )
 
         return styles
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (markDownTextView.isStarted) {
+            markDownTextView.resume()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (markDownTextView.isStarted) {
+            markDownTextView.pause()
+        }
     }
 
     override fun onDestroy() {

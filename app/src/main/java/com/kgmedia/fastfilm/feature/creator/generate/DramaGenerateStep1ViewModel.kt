@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
+import com.kgmedia.fastfilm.common.utils.NotificationHelper
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
@@ -57,6 +58,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     var onSSECompleted: (() -> Unit)? = null
     var originalJson: String? = null
+    var mFullMarkdown = ""
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
@@ -102,7 +104,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 onMdUpdate = { delta ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                    mSSEContent.value = delta
+                    mFullMarkdown += delta
+                    mSSEContent.value = mFullMarkdown
                 },
                 onComplete = { originalContent ->
                     Logger.d("[SSE]", "Finished")
@@ -114,6 +117,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     originalJson = originalContent
                     // 触发原本结束后的逻辑
                     onSSECompleted?.invoke()
+                    NotificationHelper.sendRecoveryNotification("故事梗概已完成")
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
@@ -121,6 +125,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     onSSECompleted?.invoke()
                     parseMessage(e)?.showToast()
                     progressHelper.stop()
+                    NotificationHelper.sendRecoveryNotification("故事梗概生成失败")
                 })
         )
 

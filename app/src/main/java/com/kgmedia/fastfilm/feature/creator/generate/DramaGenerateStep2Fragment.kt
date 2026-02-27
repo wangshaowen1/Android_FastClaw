@@ -47,6 +47,7 @@ class DramaGenerateStep2Fragment :
             mRealVM.episodeRangeCode = it.getStringExtra(StoryEditorActivity.EPISODE_RANGE_CODE)
             mRealVM.videoStyleId = it.getStringExtra(Constants.Extra.STYLE_ID)
             mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
+            mRealVM.chapterIndex = it.getIntExtra(Constants.Extra.CHAPTER_INDEX, 1)
             mRealVM.sseGenerate()
             hostVm?.backWarning = true
         }
