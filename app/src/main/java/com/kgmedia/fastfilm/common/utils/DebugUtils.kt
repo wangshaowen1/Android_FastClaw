@@ -5,6 +5,7 @@ import com.kgmedia.fastfilm.BuildConfig
 object DebugUtils {
     val ipsName by lazy {
         arrayOf(
+            "廖嘉宁：192.168.12.177",
             "郭义明：192.168.10.44",
             "刘子帆：192.168.12.176",
             "测试外网：https://short-api.mynatapp.cc",
@@ -14,6 +15,7 @@ object DebugUtils {
     }
     val ips by lazy {
         arrayOf(
+            "http://192.168.12.177:8088",
             "http://192.168.10.44:8088",
             "http://192.168.12.176:8088",
             "https://short-api.mynatapp.cc",
