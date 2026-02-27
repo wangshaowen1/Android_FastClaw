@@ -422,7 +422,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
             STEP_DESCRIPTION_GENERATED -> if (cost > 0) "一键生成  $POWER $cost".replaceSpan(POWER) { powerSpan } else "一键生成"
             STEP_IMAGE_GENERATING -> "图片生成中..."
             STEP_IMAGE_GENERATE_FAILED -> if (cost > 0) "重试失败项  $POWER $cost".replaceSpan(POWER) { powerSpan } else "重试失败项"
-            STEP_IMAGE_GENERATED -> "生成分镜视频"
+            STEP_IMAGE_GENERATED -> if (cost > 0) "生成分镜视频  $POWER $cost".replaceSpan(POWER) { powerSpan } else "生成分镜视频"
             else -> null
         }
     }
