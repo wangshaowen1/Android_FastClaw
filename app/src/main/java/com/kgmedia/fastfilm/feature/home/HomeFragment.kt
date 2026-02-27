@@ -66,7 +66,7 @@ class HomeFragment :
                     val image = findViewById<ImageView>(R.id.image)
                     loadUri(image, data.imageUrl, R.drawable.img_default_cover_16_9.getResDrawable())
                     image.setOnSingleClickListener {
-                        AppRouter.jump(data.jumpCode)
+                        AppRouter.jump(data.jumpUri)
                     }
                 }
             }
