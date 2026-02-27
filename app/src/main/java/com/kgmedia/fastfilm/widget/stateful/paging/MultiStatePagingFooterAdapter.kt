@@ -218,8 +218,16 @@ open class MultiStatePagingFooterAdapter(
                 tvNetworkAnomaly.visibility = View.GONE
             }
 
-            loadMoreLoadEnd.visibility = View.GONE
-            llNullView.visibility = View.VISIBLE
+            if (itemCount > 0) {//有缓存数据的时候只显示缩略版尾巴
+                llNullView.visibility = View.GONE
+                llLoadMoreLoading.visibility = View.GONE
+                llLoadMoreLoadFailSmall.visibility = View.VISIBLE
+                loadMoreLoadEnd.visibility = View.GONE
+                llNullView.visibility = View.GONE
+            } else {
+                loadMoreLoadEnd.visibility = View.GONE
+                llNullView.visibility = View.VISIBLE
+            }
         }
     }
 

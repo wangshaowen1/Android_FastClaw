@@ -17,13 +17,13 @@ import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
+import com.kgmedia.fastfilm.feature.creator.set.StoryGenerateConfirmDialog
 import com.kgmedia.fastfilm.feature.creator.set.VideoSetDialog
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
-import com.nhsd.basic.utils.Logger
 
 class CreationFragment :
     BaseViewModelFragment<FragmentCreationBinding, CreationViewModel>() {
@@ -53,7 +53,7 @@ class CreationFragment :
             binding.lyricPrompts.setTags(it?.mapNotNull { it1 -> it1.configCode }, true)
         }
         binding.lyricPrompts.setOnItemClickListener { _, index ->
-            if(mRealVM.isStreaming()){
+            if (mRealVM.isStreaming()) {
                 return@setOnItemClickListener true
             }
             val tagConfigCode = binding.lyricPrompts.tags.getOrNull(index)
@@ -128,21 +128,41 @@ class CreationFragment :
         }
     }
 
-    fun showVideoSetDialog() {
+    fun showVideoSetDialog(fileUrl: String? = null) {
         mRealVM.videoSetConfig(true) {
-            val newInstance = VideoSetDialog.newInstance(mRealVM.videoSetConfig.value)
-            newInstance.onSuccess = { range, custom, ratio, style ->
-                StoryEditorActivity.start(
-                    context = mActivity,
-                    content = mRealVM.input.value,
-                    episodeRangeCode = range,
-                    customEpisodeCount = custom,
-                    videoRatio = ratio,
-                    styleId = style,
-                    model = if (mRealVM.inspirationModel()) DramaGenerateConstants.MODEL_INSPIRATION else DramaGenerateConstants.MODEL_STORY
-                )
-            }
-            newInstance.show(childFragmentManager)
+            val config = mRealVM.videoSetConfig.value
+            VideoSetDialog.newInstance(config).apply {
+                onSuccess = { range, custom, ratio, style ->
+
+                    val isFileModel = !fileUrl.isNullOrEmpty()
+                    val content = fileUrl ?: this@CreationFragment.mRealVM.input.value
+                    val modelType = when {
+                        this@CreationFragment.mRealVM.inspirationModel() -> DramaGenerateConstants.MODEL_INSPIRATION
+                        isFileModel -> DramaGenerateConstants.MODEL_STORY_URL
+                        else -> DramaGenerateConstants.MODEL_STORY
+                    }
+
+                    val startEditor = {
+                        StoryEditorActivity.start(
+                            context = mActivity,
+                            content = content,
+                            episodeRangeCode = range,
+                            customEpisodeCount = custom,
+                            videoRatio = ratio,
+                            styleId = style,
+                            model = modelType
+                        )
+                    }
+
+                    if (isFileModel) {
+                        StoryGenerateConfirmDialog.newInstance().apply {
+                            onConfirm = { startEditor() }
+                        }.show(this@CreationFragment.childFragmentManager)
+                    } else {
+                        startEditor()
+                    }
+                }
+            }.show(childFragmentManager)
         }
     }
 
@@ -157,7 +177,7 @@ class CreationFragment :
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
                 }
-                if(mRealVM.isStreaming()){
+                if (mRealVM.isStreaming()) {
                     return
                 }
                 if (mRealVM.inspirationModel()) {
@@ -179,7 +199,7 @@ class CreationFragment :
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
-                if(mRealVM.isStreaming()){
+                if (mRealVM.isStreaming()) {
                     return
                 }
                 EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_RANDOM_INSPIRATION_BUTTON)
@@ -190,17 +210,28 @@ class CreationFragment :
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
-                if(mRealVM.isStreaming()){
+                if (mRealVM.isStreaming()) {
                     return
                 }
                 mRealVM.input.value = ""
+            }
+
+            R.id.btnStoryUpload -> {
+                if (AppNavigator.checkLoginIntercepted(true)) {
+                    return
+                }
+                StoryUploadDialog.show(mRealVM.fileName, mRealVM.fileUrl) { fileName, fileUrl ->
+                    mRealVM.fileName = fileName
+                    mRealVM.fileUrl = fileUrl
+                    showVideoSetDialog(mRealVM.fileUrl)
+                }
             }
 
             R.id.btnPaste -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
-                if(mRealVM.isStreaming()){
+                if (mRealVM.isStreaming()) {
                     return
                 }
                 mRealVM.input.value = ClipboardUtils.getText().toString()
@@ -210,7 +241,7 @@ class CreationFragment :
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
-                if(mRealVM.isStreaming()){
+                if (mRealVM.isStreaming()) {
                     return
                 }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {

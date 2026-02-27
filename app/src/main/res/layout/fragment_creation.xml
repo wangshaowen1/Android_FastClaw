@@ -81,6 +81,24 @@
                     app:drawableStartCompat="@drawable/icon_optimize_yellow" />
 
                 <TextView
+                    android:id="@+id/btnStoryUpload"
+                    style="@style/Text12"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:background="@drawable/bg_fill_color_3_r50"
+                    android:drawablePadding="@dimen/spacing_xs"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/spacing_s"
+                    android:paddingVertical="@dimen/spacing_xs"
+                    android:text="上传文本"
+                    android:textColor="?attr/funcColorSpecial"
+                    android:visibility="@{!layout.inspirationModel()?View.VISIBLE:View.GONE}"
+                    app:drawableStartCompat="@drawable/icon_copy_upload" />
+
+                <TextView
                     android:id="@+id/btnRandomPrompt"
                     style="@style/Text12"
                     singleClick="@{layout.clickHandler::onClick}"

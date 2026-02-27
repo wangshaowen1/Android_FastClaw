@@ -21,7 +21,7 @@ object SignUtils {
         User.get().loginOut()
         Cache.get().clear()
         FlowEventBus.postSync(Events.UserChangedEvent(Events.UserChangedEvent.SIGN_OUT))
-        GrowingAutotracker.get().cleanLoginUserId()
+//        GrowingAutotracker.get().cleanLoginUserId()
     }
 
     @JvmStatic

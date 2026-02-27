@@ -29,6 +29,11 @@ class DramaGenerateConstants {
         const val MODEL_STORY = 29
 
         /**
+         * 第一集创作(小说文档模式)
+         */
+        const val MODEL_STORY_URL = 35
+
+        /**
          * 剧集梗概
          */
         const val MODEL_EPISODE_SYNOPSIS = 20

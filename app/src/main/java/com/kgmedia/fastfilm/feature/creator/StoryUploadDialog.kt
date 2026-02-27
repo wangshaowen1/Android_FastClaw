@@ -7,9 +7,11 @@ import android.graphics.Paint
 import android.os.Build
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.getFileMeta
 import com.kgmedia.fastfilm.common.ext.getTempFilePathFromUri
 import com.kgmedia.fastfilm.common.ext.topActivity
@@ -29,22 +31,16 @@ import kotlinx.coroutines.withContext
 class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUploadViewModel>() {
 
     companion object {
-        fun show() {
+        fun show(fileName: String?, fileUrl: String?, callback: (String?, String?) -> Unit) {
             val activity = topActivity as? FragmentActivity ?: return
-            StoryUploadDialog().show(activity.supportFragmentManager)
+            StoryUploadDialog().apply {
+                arguments = bundleOf(Constants.Extra.NAME to fileName, Constants.Extra.URL to fileUrl)
+                this.uploadCallback = callback
+            }.show(activity.supportFragmentManager)
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-//        dialog?.window?.let { dialogWindow ->
-//            dialogWindow.attributes?.let { attr ->
-//                attr.width = (ScreenUtils.getScreenWidth() * 287f / 375f).toInt()
-//                attr.gravity = Gravity.CENTER
-//                dialogWindow.attributes = attr
-//            }
-//        }
-    }
+    var uploadCallback: (String?, String?) -> Unit = { _, _ -> }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -56,7 +52,8 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
             dismissAllowingStateLoss()
         }
         binding.confirm.setOnSingleClickListener {
-            //todo 保存
+            uploadCallback?.invoke(mRealVM.fileName.get(), mRealVM.fileUrl)
+            dismissAllowingStateLoss()
         }
     }
 

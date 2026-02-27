@@ -306,7 +306,7 @@ class App : BaseApp() {
 
             // 友盟正式初始化
             umInitConfig.init(this, AppRouter)
-            GrowingAutotracker.get().setDataCollectionEnabled(true)
+//            GrowingAutotracker.get().setDataCollectionEnabled(true)
             // QQ官方sdk授权
             // Tencent.setIsPermissionGranted(true);
 
@@ -349,7 +349,7 @@ class App : BaseApp() {
             .setRequireAppProcessesEnabled(true)
             .setDataCollectionEnabled(hasAgree())
             .setAutotrack(false)
-        GrowingAutotracker.startWithConfiguration(this, sConfiguration)
+//        GrowingAutotracker.startWithConfiguration(this, sConfiguration)
     }
 
     /**

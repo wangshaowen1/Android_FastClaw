@@ -29,6 +29,8 @@ import com.nhsd.basic.utils.Logger
 
 class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     val input by lazy { MutableLiveData<String?>() }
+    var fileName: String? = null
+    var fileUrl: String? = null
     val minInputLength = 10
     val maxInputLength by lazy {
         ObservableInt(1000)

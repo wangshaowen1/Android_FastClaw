@@ -6,6 +6,7 @@ import androidx.databinding.ObservableInt
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
@@ -17,6 +18,7 @@ import com.nhsd.basic.ext.showToast
 class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val fileName by lazy { ObservableField<String>() }
+    var fileUrl: String? = null
     val uploadStatus by lazy { ObservableInt(STATE_NONE) }
     val uploadErrorType by lazy { ObservableInt() }
     val uploadProgress by lazy { ObservableField<String>() }
@@ -29,6 +31,15 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
 
         const val UPLOAD_ERROR_TYPE_FILE_TOO_LARGE = 1
         const val UPLOAD_ERROR_TYPE_OTHER = 2
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        fileName.set(mBundle.getString(Constants.Extra.NAME))
+        fileUrl = mBundle.getString(Constants.Extra.URL)
+        if (!fileUrl.isNullOrEmpty()) {
+            uploadStatus.set(STATE_UPLOAD_SUCCESS)
+        }
     }
 
     fun getImageIcon(state: Int?): Drawable? {
@@ -65,6 +76,7 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
                 if (url.isNullOrEmpty()) {
                     onUploadFail(null)
                 } else {
+                    fileUrl = url
                     uploadStatus.set(STATE_UPLOAD_SUCCESS)
                 }
             }

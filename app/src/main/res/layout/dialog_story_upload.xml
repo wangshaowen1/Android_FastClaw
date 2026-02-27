@@ -133,10 +133,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:alpha="@{layout.uploadStatus==2?1.0f:0.6f}"
-                android:enabled="@{layout.uploadStatus==2}"
                 android:background="@drawable/bg_theme_color1_r50"
+                android:enabled="@{layout.uploadStatus==2}"
                 android:gravity="center"
-                android:text="@string/confirm"
+                android:text="上传"
                 android:textColor="?attr/textColor1" />
         </LinearLayout>
     </LinearLayout>
