@@ -39,6 +39,7 @@ import com.kgmedia.fastfilm.core.ext.createAppPayment
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.core.ext.openWithBrowser
 import com.kgmedia.fastfilm.core.manager.ShareManager
+import com.kgmedia.fastfilm.core.model.H5PayInfo
 import com.kgmedia.fastfilm.core.model.PermissionEntity
 import com.kgmedia.fastfilm.core.model.PreviewImageEntity
 import com.kgmedia.fastfilm.core.model.ResultEntity
@@ -164,7 +165,7 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
         binding.progressLayout.paddingStatusBar()
 
         if (mRealVM.darkStyle) {
-            binding.root.setBackgroundColor(resources.getColor(R.color.windowBackground))
+            binding.root.setBackgroundColor(resources.getColor(R.color.bg_color_1_dark))
         }
 
         binding.circularButton.setOnClickListener {
@@ -241,9 +242,9 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
             url?.openWithBrowser()
         }
 
-//        mRealVM.payStatusCallback.observe(this) { info ->
-//            info?.let { bridge?.callHandler("payStatusCallback", GsonUtils.toJson(it)) }
-//        }
+        mRealVM.payStatusCallback.observe(this) { info ->
+            info?.let { bridge?.callHandler("payStatusCallback", GsonUtils.toJson(it)) }
+        }
         observeEvents {
             onUserStatusChanged {
                 mRealVM.url?.let { CookieUtils.syncCookie(it, "userInfo", User.get().userInfoStr) }
@@ -402,15 +403,15 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
 //                    "{\"isWeb\":true}"
 //                )
 //            }
-//            registerHandler("webPay") { data, jsCallback ->
-//                try {
-//                    mRealVM.orderNo = null
-//                    val info = GsonUtils.fromJson(data, H5PayInfo::class.java)
-//                    mRealVM.startPay(info)
-//                } catch (e: Exception) {
-//                    e.printStackTrace()
-//                }
-//            }
+            registerHandler("webPay") { data, jsCallback ->
+                try {
+                    mRealVM.orderNo = null
+                    val info = GsonUtils.fromJson(data, H5PayInfo::class.java)
+                    mRealVM.startPay(info)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
             registerHandler("openWebUrl") { data, _ ->
                 try {
                     val uriEntity = GsonUtils.fromJson(data, UriEntity::class.java)

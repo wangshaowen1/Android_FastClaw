@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.core.network.apis
 
+import com.kgmedia.fastfilm.core.model.H5PayInfo
 import com.kgmedia.fastfilm.core.network.SSEvent
 import com.kgmedia.fastfilm.core.network.apis.entity.AIPriceInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
@@ -897,4 +898,17 @@ interface ApiService {
      */
     @POST(ApiConstants.QUERY_AI_PRICE)
     suspend fun queryAiPrice(@Body body: StrategyTypeBody): ApiResponse<AIPriceInfo?>
+
+    /**
+     * App转发H5支付-微信下单
+     */
+    @POST(ApiConstants.H5_PAY_WX)
+    suspend fun h5PayWx(@Body body: H5PayInfo): ApiResponse<PaymentData?>
+
+    /**
+     * 购买会员-支付宝方式
+     */
+    @POST(ApiConstants.H5_PAY_ALIPAY)
+    suspend fun h5PayAlipay(@Body body: H5PayInfo): ApiResponse<PaymentData?>
+
 }

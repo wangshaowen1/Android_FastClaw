@@ -628,4 +628,15 @@ object ApiConstants {
      * 获取扣费策略规则信息
      */
     const val QUERY_AI_PRICE = "trade/deduct/strategy/rule/info"
+
+    /**
+     * App转发H5支付-微信下单
+     */
+    const val H5_PAY_WX = "app/forward/purchase/wx"
+
+    /**
+     * 购买会员-支付宝方式
+     */
+    const val H5_PAY_ALIPAY = "app/forward/purchase/alipay"
+
 }
