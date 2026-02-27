@@ -122,6 +122,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
     private val powerSpan by lazy { CenterImageSpan(App.instance, R.drawable.icon_power).apply { setDrawableSize(16.dp, 16.dp) } }
+    private var editConfirm = false
 
     override fun onResume() {
         super.onResume()
@@ -302,9 +303,10 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                             editStoryboardDesc()
                         }
                     }
-                    if (genImagePrompt.get().isNullOrEmpty()) {
+                    if (genImagePrompt.get().isNullOrEmpty() || editConfirm) {
                         edit.invoke(0)
                     } else {
+                        editConfirm = true
                         topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
                             edit.invoke(200)
                         }
