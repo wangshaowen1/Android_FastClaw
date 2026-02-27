@@ -186,6 +186,18 @@ fun PaymentData.toPaymentParams(method: PaymentClient.PaymentMethod): PaymentPar
                 this.originalId = originalId
                 this.miniProgramPath = orderStr
             } else {
+                /**
+                 * {
+                 *   "appid" : "wxc4c951d1cd1816fc",
+                 *   "noncestr" : "5uTXPyYSYsOVrsFGCpBElYg7AT11DP2Y",
+                 *   "orderNo" : "2026022618300191381042664",
+                 *   "packageValue" : "Sign=WXPay",
+                 *   "partnerId" : "1718052044",
+                 *   "prepayId" : "wx27090925805964170b9d30499b82b90001",
+                 *   "sign" : "K3dov5YFnAdaeRPVda3Fbx1tc9X6Z/NjFSL+FJuLOCwdqjmgp/V9vxA4STr5UuUe3oHQGIbxDD5vi0mHhEAW1/6PyO8agrEjG5/GLNfwYdva02TDclclNxI2x4y+KuiVSOERtzHYDdLiEgU6ZPdRv1i3cp50VBbJZvdByvqr4LXAOu2GrxYnIncdoBbpuwnnz4hY8ABVY769tRiLt9NCeKRIfo5XUXI+/eLMMaHY6Ynmy4qsHiTUzdeVa+YTvQytxYdrHvHPlkHIjXRNlgIEW4QS4vovZmUaI+Zc0DWhCb/gt0FYQTSwUYLHk05Zrh3U1nkmV565tiPdHcvk4J3ZWg==",
+                 *   "timestamp" : "1772154565"
+                 * }
+                 */
                 val json = JSONObject(orderStr)
                 this.appId = json.optString("appid")
                 this.partnerId = json.optString("partnerId")

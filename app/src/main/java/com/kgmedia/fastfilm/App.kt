@@ -36,6 +36,7 @@ import com.kgmedia.fastfilm.widget.CustomizedRefreshHeader
 import com.kgmedia.fastfilm.widget.LoadingDialog2
 import com.kgmedia.fastfilm.widget.MyLoadViewFactory
 import com.kuaige.oss.OssType
+import com.kuaige.payment.PaymentConfig
 import com.nhsd.basic.BaseApp
 import com.nhsd.basic.Session
 import com.nhsd.basic.manager.LoadingConfig
@@ -196,7 +197,7 @@ class App : BaseApp() {
         })
         // 初始化加载刷新控件
         initSmartRefreshLayoutView()
-//todo 微信支付加上后需要打开这里        PaymentConfig.init(BuildConfig.WX_APP_ID, BuildConfig.WX_APP_SECRET)
+        PaymentConfig.init(BuildConfig.WX_APP_ID, BuildConfig.WX_APP_SECRET)
         initGrowingIO()
     }
 
