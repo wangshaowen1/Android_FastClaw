@@ -19,6 +19,7 @@ import com.kgmedia.fastfilm.feature.editor.info.DramaInfoEditActivity
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import com.kgmedia.fastfilm.feature.series.management.WorksManagementActivity
+import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.Popup
@@ -250,6 +251,10 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 bindingNullable?.tvReleaseStatus?.let {
                     Popup(SeriesReleaseFailTipsPopupView(this)).showUnder(it)
                 }
+            }
+
+            R.id.btnRelease -> {
+                SimpleBrowserActivity.launch(this, "http://192.168.10.16:5173/pages/issue/issue?nav=1&darkStyle=1")
             }
         }
     }

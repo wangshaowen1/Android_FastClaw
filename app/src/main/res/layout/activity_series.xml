@@ -259,19 +259,32 @@
                     android:paddingVertical="10dp"
                     app:layout_constraintBottom_toBottomOf="parent">
 
-                    <TextView
-                        android:id="@+id/btnApply"
+                    <LinearLayout
+                        android:id="@+id/btnRelease"
                         singleClick="@{layout.clickHandler::onClick}"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_marginHorizontal="15dp"
                         android:background="@drawable/selector_common_button"
                         android:gravity="center"
-                        android:text="申请签约"
-                        android:textAppearance="@style/Text16"
-                        android:textColor="@color/fixed_white_1"
+                        android:orientation="horizontal"
                         app:layout_constraintDimensionRatio="345:44"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/icon_add" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="去发行"
+                            android:textAppearance="@style/Text16"
+                            android:textColor="@color/fixed_white_1" />
+
+                    </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
