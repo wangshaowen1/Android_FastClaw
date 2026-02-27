@@ -114,7 +114,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
                 })
         )
         // 3. 启动
-        Logger.d("[SSE]", "Starting with content body = $input")
+        Logger.d("[SSE]", "Starting with content body = ${input.value}")
         sseHandler?.start(sseFlow)
     }
 

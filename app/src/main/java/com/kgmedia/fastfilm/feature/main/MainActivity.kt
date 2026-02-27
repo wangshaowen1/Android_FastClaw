@@ -205,6 +205,10 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             2 -> binding.mrg.check(R.id.rbMine)
             else -> binding.mrg.check(R.id.rbHome)
         }
+
+        binding.floatingBall.setOnMfClickListener {
+            //悬浮球
+        }
     }
 
 
