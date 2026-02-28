@@ -43,7 +43,7 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun getImageIcon(state: Int?): Drawable? {
-        return when (uploadStatus.get()) {
+        return when (state) {
             STATE_NONE -> R.drawable.img_text_upload
             STATE_UPLOAD_SUCCESS -> R.drawable.img_text
             STATE_UPLOAD_FAIL -> R.drawable.img_text_error

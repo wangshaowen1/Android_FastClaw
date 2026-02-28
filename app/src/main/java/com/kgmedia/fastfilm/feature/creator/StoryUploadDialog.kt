@@ -1,6 +1,5 @@
 package com.kgmedia.fastfilm.feature.creator
 
-import FileCountUtils
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
@@ -16,9 +15,11 @@ import com.kgmedia.fastfilm.common.ext.getFileMeta
 import com.kgmedia.fastfilm.common.ext.getTempFilePathFromUri
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
+import com.kgmedia.fastfilm.common.utils.FileCountUtils
 import com.kgmedia.fastfilm.databinding.DialogStoryUploadBinding
 import com.kgmedia.fastfilm.feature.creator.StoryUploadViewModel.Companion.STATE_UPLOAD_FAIL
 import com.nhsd.basic.BaseVMDialogFragment
+import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -31,19 +32,26 @@ import kotlinx.coroutines.withContext
 class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUploadViewModel>() {
 
     companion object {
-        fun show(fileName: String?, fileUrl: String?, callback: (String?, String?) -> Unit) {
+        fun show(
+            fileName: String?,
+            fileUrl: String?,
+            result: FileCountUtils.AnalysisResult?,
+            callback: (String?, String?, FileCountUtils.AnalysisResult?) -> Unit
+        ) {
             val activity = topActivity as? FragmentActivity ?: return
             StoryUploadDialog().apply {
-                arguments = bundleOf(Constants.Extra.NAME to fileName, Constants.Extra.URL to fileUrl)
+                arguments = bundleOf(Constants.Extra.NAME to fileName, Constants.Extra.URL to fileUrl, Constants.Extra.RESULT to result)
                 this.uploadCallback = callback
             }.show(activity.supportFragmentManager)
         }
     }
 
-    var uploadCallback: (String?, String?) -> Unit = { _, _ -> }
+    var uploadCallback: (String?, String?, FileCountUtils.AnalysisResult?) -> Unit = { _, _, _ -> }
+    var analyzeResult: FileCountUtils.AnalysisResult? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
+        analyzeResult = arguments?.getParcelableValue(Constants.Extra.RESULT, FileCountUtils.AnalysisResult::class.java)
         binding.btnChoose.paintFlags = binding.btnChoose.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.btnChoose.setOnSingleClickListener {
             openFilePicker()
@@ -52,7 +60,7 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
             dismissAllowingStateLoss()
         }
         binding.confirm.setOnSingleClickListener {
-            uploadCallback?.invoke(mRealVM.fileName.get(), mRealVM.fileUrl)
+            uploadCallback?.invoke(mRealVM.fileName.get(), mRealVM.fileUrl, analyzeResult)
             dismissAllowingStateLoss()
         }
     }
@@ -85,7 +93,8 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
             uri?.let {
                 // 在协程中处理，防止卡顿
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val count = FileCountUtils.getSafeCharacterCount(context, it)
+                    analyzeResult = FileCountUtils.getFileAnalysis(context, it)
+
                     it.getFileMeta(context).let { meta ->
                         mRealVM.fileName.set(meta.first + "." + meta.second)
                         val allowedExtensions = listOf("txt")//, "doc", "docx"
@@ -98,7 +107,7 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                     }
                     val pathFromUri = uri.getTempFilePathFromUri(mActivity)
                     withContext(Dispatchers.Main) {
-                        if (count > FileCountUtils.MAX_CHAR_COUNT) {
+                        if ((analyzeResult?.charCount ?: 0) > FileCountUtils.MAX_CHAR_COUNT) {
                             mRealVM.uploadErrorType.set(StoryUploadViewModel.UPLOAD_ERROR_TYPE_FILE_TOO_LARGE)
                             mRealVM.uploadStatus.set(STATE_UPLOAD_FAIL)
                         } else {
@@ -112,20 +121,8 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
 
     // 2. 触发选择（包含权限检查）
     fun openFilePicker() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            requestReadPermission {
-                //, "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "text/plain" // 设置一个基础类型
-                    val mimeTypes = arrayOf(
-                        "text/plain",
-                    )
-                    putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-                }
-                filePickerLauncher.launch(intent)
-            }
-        } else {
+        val pickerLauncher = {
+            //, "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 addCategory(Intent.CATEGORY_OPENABLE)
                 type = "text/plain" // 设置一个基础类型
@@ -135,6 +132,13 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                 putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
             }
             filePickerLauncher.launch(intent)
+        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            requestReadPermission {
+                pickerLauncher.invoke()
+            }
+        } else {
+            pickerLauncher.invoke()
         }
     }
 }

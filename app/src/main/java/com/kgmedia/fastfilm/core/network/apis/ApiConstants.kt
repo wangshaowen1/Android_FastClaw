@@ -640,7 +640,18 @@ object ApiConstants {
     const val H5_PAY_ALIPAY = "app/forward/purchase/alipay"
 
     /**
+     * 获取弹窗和浮窗配置信息
+     */
+    const val ACTIVITY_CONFIG = "app/window/config"
+
+    /**
      * 敏感词校验
      */
     const val SENSITIVE_WORD_CHECK = "ai/sensitive-word/check"
+
+    /**
+     * 小说上传-生成作品剧集梗概
+     */
+    const val NOVEL_UPLOAD_SUMMARY = "ai/stream/novel/upload/summary"
+
 }

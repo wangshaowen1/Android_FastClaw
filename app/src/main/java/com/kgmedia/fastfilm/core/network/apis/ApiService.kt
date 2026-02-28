@@ -96,6 +96,8 @@ import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.SynthesisUploadBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.TipOffBody
+import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
+import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.core.network.apis.request.UserShareUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.VideoSynthesisBody
@@ -103,6 +105,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
+import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.BalanceData
 import com.kgmedia.fastfilm.core.network.apis.response.CharacterListData
@@ -914,8 +917,20 @@ interface ApiService {
     suspend fun h5PayAlipay(@Body body: H5PayInfo): ApiResponse<PaymentData?>
 
     /**
+     * 获取弹窗和浮窗配置信息
+     */
+    @POST(ApiConstants.ACTIVITY_CONFIG)
+    suspend fun activityConfig(@Body body: UserTokenBody): ApiResponse<ActivityConfigData?>
+
+    /**
      * 敏感词校验
      */
     @POST(ApiConstants.SENSITIVE_WORD_CHECK)
     suspend fun sensitiveWordCheck(@Body body: ContentBody): ApiResponse<SensitiveWordCheckData?>
+
+    /**
+     * 小说上传-生成作品剧集梗概
+     */
+    @POST(ApiConstants.NOVEL_UPLOAD_SUMMARY)
+    suspend fun novelUploadSummary(@Body body: UploadStoryBody): ApiResponse<UploadStoryData?>
 }

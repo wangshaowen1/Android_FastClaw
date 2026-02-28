@@ -154,8 +154,8 @@ class CreationFragment :
                         )
                     }
 
-                    if (isFileModel) {
-                        StoryGenerateConfirmDialog.newInstance().apply {
+                    if (isFileModel && (this@CreationFragment.mRealVM.analysisResult?.charCount?:0) > 10000) {
+                        StoryGenerateConfirmDialog.newInstance(this@CreationFragment.mRealVM.analysisResult).apply {
                             onConfirm = { startEditor() }
                         }.show(this@CreationFragment.childFragmentManager)
                     } else {
@@ -220,9 +220,10 @@ class CreationFragment :
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
-                StoryUploadDialog.show(mRealVM.fileName, mRealVM.fileUrl) { fileName, fileUrl ->
+                StoryUploadDialog.show(mRealVM.fileName, mRealVM.fileUrl, mRealVM.analysisResult) { fileName, fileUrl, analysisResult ->
                     mRealVM.fileName = fileName
                     mRealVM.fileUrl = fileUrl
+                    mRealVM.analysisResult = analysisResult
                     showVideoSetDialog(mRealVM.fileUrl)
                 }
             }
