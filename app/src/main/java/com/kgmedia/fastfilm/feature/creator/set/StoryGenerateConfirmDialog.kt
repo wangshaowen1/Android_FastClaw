@@ -8,6 +8,7 @@ import com.kgmedia.fastfilm.databinding.DialogStoryGenerateConfirmBinding
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.getParcelableValue
+import kotlin.math.roundToInt
 
 class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGenerateConfirmBinding, StoryGenerateConfirmViewModel>() {
 
@@ -28,7 +29,7 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
         super.onPrepareView()
         val result = arguments?.getParcelableValue(Constants.Extra.RESULT, FileCountUtils.AnalysisResult::class.java)
         val fileUrl = arguments?.getString(Constants.Extra.URL)
-        binding.tvPower.text = result?.estimatedPower.toString()
+        binding.tvPower.text = result?.estimatedPower?.roundToInt().toString()
         binding.btnConfirm.setOnClickListener {
             mRealVM.confirmPowerConsume(fileUrl, result) { data ->
                 if (data?.checkStatus() == true) {

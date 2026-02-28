@@ -2,7 +2,6 @@ package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.util.Log
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -58,7 +57,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     //作品内容
     var mSSEContent = MutableLiveData<String>()
-    var mContent = ObservableField<String>()
 
     // 作品名称
     var mWorkName = MutableLiveData<String>()
@@ -105,7 +103,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 onStart = {
                     originalJson = ""
                     mSSEContent.value = ""
-                    mContent.set("")
                     Logger.d("[SSE]", "Open")
                 },
                 onTitleUpdate = { title ->
@@ -187,7 +184,11 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 if (response?.data?.result?.isNotEmpty() == true) {
                     nextStepEnabled.set(true)
                 }
-                progressHelper.stop()
+                response?.data?.let {
+                    mWorkName.value = ""
+                    mSSEContent.value = it.result ?: ""
+                }
+                progressHelper.finish()
                 NotificationHelper.sendRecoveryNotification("故事梗概已完成")
             },
             onFail = { _, error ->
@@ -214,6 +215,23 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             )
             response(mRepo.api.saveWorkSummary(body)) {
                 onSuccess?.invoke(data?.workId, data?.storyId)
+            }
+        }
+    }
+
+
+    /**
+     * 敏感词校验
+     */
+    fun sensitiveWordJudgment(callback: () -> Unit) {
+        requestWithLoading(
+            apiBlock = { mRepo.sensitiveWordCheck(mSSEContent.value) },
+            showLoading = true
+        ) {
+            if (data?.isSensitive() == true) {
+                data?.content?.showToast()
+            } else {
+                callback.invoke()
             }
         }
     }

@@ -67,6 +67,10 @@ class DramaGenerateStep1Fragment :
                 if (dialog == null || !dialog!!.isShowing) {
                     // 只在 Dialog 不存在时创建
                     dialog = GeneratingDialog(requireContext(), it.second, it.third)
+                    if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
+                        dialog?.setCanceledOnTouchOutside(true)
+                        dialog?.setCancelable(true)
+                    }
                     dialog?.show()
                 } else {
                     // 如果已经在显示，只更新文字内容，不重置 Dialog
@@ -153,8 +157,10 @@ class DramaGenerateStep1Fragment :
         }
         binding.btnNext.setOnSingleClickListener {
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
-                mRealVM.saveTitle {
-                    hostVm?.nextStep(2, mRealVM.workId, "")
+                mRealVM.sensitiveWordJudgment {
+                    mRealVM.saveTitle {
+                        hostVm?.nextStep(2, mRealVM.workId, "")
+                    }
                 }
                 return@setOnSingleClickListener
             }
