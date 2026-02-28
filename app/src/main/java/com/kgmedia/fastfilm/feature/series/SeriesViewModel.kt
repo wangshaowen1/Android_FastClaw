@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.PagedProxy
+import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
@@ -47,6 +48,7 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
         launch(
             block = {
                 mRepo.getWorkInfo(workId).data?.let {
+                    it.userId = User.get().userId
                     workInfo.value = it
                 }
                 updateLoadState()

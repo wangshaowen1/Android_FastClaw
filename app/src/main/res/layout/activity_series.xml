@@ -44,7 +44,8 @@
                     android:textAppearance="@style/Text14"
                     android:textColor="?attr/textColor2"
                     app:layout_constraintEnd_toStartOf="@+id/btnMore"
-                    app:layout_constraintTop_toTopOf="@+id/btnMore" />
+                    app:layout_constraintTop_toTopOf="@+id/btnMore"
+                    app:layout_goneMarginEnd="16dp" />
 
                 <ImageView
                     android:id="@+id/btnMore"
