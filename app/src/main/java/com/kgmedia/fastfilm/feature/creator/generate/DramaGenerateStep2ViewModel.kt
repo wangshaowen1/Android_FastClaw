@@ -13,6 +13,8 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.NotificationHelper
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.parseMessage
+import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
@@ -78,6 +80,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     // 作品名称
     var mWorkName = MutableLiveData<String>()
+    //敏感词校验结果
+    val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
 
 
     val nextStepEnabled by lazy { ObservableBoolean(false) }
@@ -266,6 +270,19 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     setLoading(false)
                     this?.msg?.showToast()
                 })
+        }
+    }
+
+
+    /**
+     * 敏感词校验
+     */
+    fun sensitiveWordJudgment() {
+        requestWithLoading(
+            apiBlock = { mRepo.sensitiveWordCheck(input.value) },
+            showLoading = true
+        ) {
+            sensitiveWordJudgmentResult.value = data
         }
     }
 }

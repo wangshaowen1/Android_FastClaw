@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.creator.data
 
 import com.kgmedia.fastfilm.core.data.CommonRepository
+import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.DramaGenerateBody
@@ -123,5 +124,12 @@ class CreationRepository : CommonRepository() {
         api.dramaRolesPolling(DramasIdBody(dramaId))
     }
 
+
+    /**
+     * 敏感词校验
+     */
+    suspend fun sensitiveWordCheck(content: String?) = withContext(Dispatchers.IO) {
+        api.sensitiveWordCheck(ContentBody(content))
+    }
 }
 

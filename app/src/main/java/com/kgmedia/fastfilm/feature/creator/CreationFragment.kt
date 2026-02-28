@@ -8,6 +8,7 @@ import android.view.View
 import com.blankj.utilcode.util.ClipboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
+import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.onUserSignOut
@@ -23,7 +24,9 @@ import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
+import java.lang.StringBuilder
 
 class CreationFragment :
     BaseViewModelFragment<FragmentCreationBinding, CreationViewModel>() {
@@ -49,58 +52,8 @@ class CreationFragment :
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
-        mRealVM.inspirationPrompts.observe(this) {
-            binding.lyricPrompts.setTags(it?.mapNotNull { it1 -> it1.configCode }, true)
-        }
-        binding.lyricPrompts.setOnItemClickListener { _, index ->
-            if (mRealVM.isStreaming()) {
-                return@setOnItemClickListener true
-            }
-            val tagConfigCode = binding.lyricPrompts.tags.getOrNull(index)
-            mRealVM.inspirationPrompts.value?.forEach { (configCode, configValue) ->
-                if (configCode == tagConfigCode) {
-                    mRealVM.input.value = configValue
-                    return@forEach
-                }
-            }
-            false
-        }
-        mRealVM.promptGenerating.observe(this) {
-            if (it.first) {
-                dialog?.dismiss()
-                dialog = activity?.let { it1 -> GeneratingDialog(it1, it.second) }
-                dialog?.show()
-            } else {
-                dialog?.dismiss()
-            }
-        }
-        mRealVM.input.observe(this) {
-            if (mRealVM.input.value != binding.inputView.text) {
-                binding.inputView.setText(mRealVM.input.value)
-            }
-            if (mRealVM.inspirationModel()) Global.inspirationContent =
-                it else Global.customizedContent = it
-        }
-
-        binding.inputView.addTextChangedListener(object : SimpleTextWatcher() {
-            override fun afterTextChanged(s: Editable?) {
-                mRealVM.input.value = s.toString()
-            }
-        })
-
-        observeEvents {
-            on<Events.ConfigChangeEvent> { event ->
-                mRealVM.refreshConfig()
-            }
-            onUserSignOut {
-                mRealVM.input.value = ""
-            }
-            on<Events.ScriptContentGenerateSuccessEvent> {
-                if (it.type == Events.ScriptContentGenerateSuccessEvent.TYPE_INSPIRATION || it.type == Events.ScriptContentGenerateSuccessEvent.TYPE_CUSTOMIZED) {
-                    mRealVM.input.value = ""
-                }
-            }
-        }
+        //数据更新
+        dataUpdate()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -125,6 +78,85 @@ class CreationFragment :
             }
             // 保持原有事件处理
             false
+        }
+
+        binding.lyricPrompts.setOnItemClickListener { _, index ->
+            if (mRealVM.isStreaming()) {
+                return@setOnItemClickListener true
+            }
+            val tagConfigCode = binding.lyricPrompts.tags.getOrNull(index)
+            mRealVM.inspirationPrompts.value?.forEach { (configCode, configValue) ->
+                if (configCode == tagConfigCode) {
+                    mRealVM.input.value = configValue
+                    return@forEach
+                }
+            }
+            false
+        }
+
+        binding.inputView.addTextChangedListener(object : SimpleTextWatcher() {
+            override fun afterTextChanged(s: Editable?) {
+                mRealVM.input.value = s.toString()
+            }
+        })
+    }
+
+    private fun dataUpdate() {
+        mRealVM.inspirationPrompts.observe(this) {
+            binding.lyricPrompts.setTags(it?.mapNotNull { it1 -> it1.configCode }, true)
+        }
+
+        mRealVM.promptGenerating.observe(this) {
+            if (it.first) {
+                dialog?.dismiss()
+                dialog = activity?.let { it1 -> GeneratingDialog(it1, it.second) }
+                dialog?.show()
+            } else {
+                dialog?.dismiss()
+            }
+        }
+        mRealVM.input.observe(this) {
+            if (mRealVM.input.value != binding.inputView.text) {
+                binding.inputView.setText(mRealVM.input.value)
+            }
+            if (mRealVM.inspirationModel()) Global.inspirationContent =
+                it else Global.customizedContent = it
+        }
+
+        observeEvents {
+            on<Events.ConfigChangeEvent> { event ->
+                mRealVM.refreshConfig()
+            }
+            onUserSignOut {
+                mRealVM.input.value = ""
+            }
+            on<Events.ScriptContentGenerateSuccessEvent> {
+                if (it.type == Events.ScriptContentGenerateSuccessEvent.TYPE_INSPIRATION || it.type == Events.ScriptContentGenerateSuccessEvent.TYPE_CUSTOMIZED) {
+                    mRealVM.input.value = ""
+                }
+            }
+        }
+
+        mRealVM.sensitiveWordJudgmentResult.observe(this) {
+            if (it == null) return@observe
+            mRealVM.sensitiveWordJudgmentResult.value = null
+            if (it.isSensitive()) {
+                it.content?.showToast()
+                val sp = SensitiveHighlighter.highlight(
+                    text = mRealVM.input.value,
+                    keywords = it.hitWords,
+                    color = R.color.func_failure_dark.getResColor()
+                )
+                binding.inputView.setText(sp)
+                return@observe
+            }
+            //敏感词没问题，开始下一步
+            showVideoSetDialog()
+            if (mRealVM.inspirationModel()) {
+                EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_NEXT_STEP_BUTTON)
+            } else {
+                EventManager.onAppTrack(AppEvent.JG_CLICK_WRITE_OWN_STORY_NEXT_STEP_BUTTON)
+            }
         }
     }
 
@@ -154,10 +186,13 @@ class CreationFragment :
                         )
                     }
 
-                    if (isFileModel && (this@CreationFragment.mRealVM.analysisResult?.charCount?:0) > 10000) {
-                        StoryGenerateConfirmDialog.newInstance(this@CreationFragment.mRealVM.analysisResult).apply {
-                            onConfirm = { startEditor() }
-                        }.show(this@CreationFragment.childFragmentManager)
+                    if (isFileModel && (this@CreationFragment.mRealVM.analysisResult?.charCount
+                            ?: 0) > 10000
+                    ) {
+                        StoryGenerateConfirmDialog.newInstance(this@CreationFragment.mRealVM.analysisResult)
+                            .apply {
+                                onConfirm = { startEditor() }
+                            }.show(this@CreationFragment.childFragmentManager)
                     } else {
                         startEditor()
                     }
@@ -220,7 +255,11 @@ class CreationFragment :
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
-                StoryUploadDialog.show(mRealVM.fileName, mRealVM.fileUrl, mRealVM.analysisResult) { fileName, fileUrl, analysisResult ->
+                StoryUploadDialog.show(
+                    mRealVM.fileName,
+                    mRealVM.fileUrl,
+                    mRealVM.analysisResult
+                ) { fileName, fileUrl, analysisResult ->
                     mRealVM.fileName = fileName
                     mRealVM.fileUrl = fileUrl
                     mRealVM.analysisResult = analysisResult
@@ -249,14 +288,9 @@ class CreationFragment :
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
                 }
-                showVideoSetDialog()
-                if (mRealVM.inspirationModel()) {
-                    EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_NEXT_STEP_BUTTON)
-                } else {
-                    EventManager.onAppTrack(AppEvent.JG_CLICK_WRITE_OWN_STORY_NEXT_STEP_BUTTON)
-                }
+                //检查敏感词
+                mRealVM.sensitiveWordJudgment()
             }
         }
     }
-
 }

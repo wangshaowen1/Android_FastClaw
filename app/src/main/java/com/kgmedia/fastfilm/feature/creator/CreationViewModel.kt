@@ -16,6 +16,7 @@ import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
@@ -48,6 +49,9 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     val inspirationPrompts by lazy { MutableLiveData<List<InspirationInfo>>() }
     val videoSetConfig by lazy { MutableLiveData<VideoConfigData>() }
 
+    //敏感词校验结果
+    val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
+
     fun inspirationModel(): Boolean {
         return creationModel == MODEL_INSPIRATION
     }
@@ -73,7 +77,8 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     @ColorInt
     fun getLimitColor(length: Int?): Int {
-        val attr = if (length == maxInputLength.get()) R.attr.funcColorFailure else R.attr.textColor4
+        val attr =
+            if (length == maxInputLength.get()) R.attr.funcColorFailure else R.attr.textColor4
         return topActivity?.getThemeColor(attr) ?: Color.BLACK
     }
 
@@ -162,6 +167,18 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
             showLoading = showLoading
         ) {
             inspirationPrompts.value = data
+        }
+    }
+
+    /**
+     * 敏感词校验
+     */
+    fun sensitiveWordJudgment() {
+        requestWithLoading(
+            apiBlock = { mRepo.sensitiveWordCheck(input.value) },
+            showLoading = true
+        ) {
+            sensitiveWordJudgmentResult.value = data
         }
     }
 }

@@ -22,4 +22,8 @@ data class SensitiveWordCheckData(
      * 命中的敏感词数组
      */
     val hitWords: List<String>?
-)
+) {
+    fun isSensitive(): Boolean {
+        return code == 2
+    }
+}
