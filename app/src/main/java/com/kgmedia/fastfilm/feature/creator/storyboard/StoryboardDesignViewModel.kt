@@ -391,8 +391,8 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
             }
             if (genVideoPrice > 0) {
-                val num = adapter.items.count { it is ItemStoryboardVM }
-                cost.set(genVideoPrice * num)
+                val duration = adapter.items.sumOf { (it as? ItemStoryboardVM)?.data?.get()?.duration ?: 0 }
+                cost.set(genVideoPrice * duration)
             }
         }
     }

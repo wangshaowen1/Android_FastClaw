@@ -304,7 +304,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     private fun getGenPrice() {
         launch {
             withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(2)).data?.pointNum?.let { genImagePrice.set(it) } }
-            withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(3)).data?.pointNum?.let { genVideoPrice.set(it) } }
+            withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(3)).data?.pointNum?.let { genVideoPrice.set(it * (storyboard.get()?.duration ?: 0)) } }
         }
     }
 

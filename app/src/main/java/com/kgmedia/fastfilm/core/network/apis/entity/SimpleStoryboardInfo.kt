@@ -70,9 +70,9 @@ data class SimpleStoryboardInfo(
      */
     private val stepStatus: Int? = null,
     /**
-     * 视频时长(毫秒)
+     * 视频时长(秒)
      */
-    val duration: Long? = null,
+    val duration: Int? = null,
     /**
      * 任务ID (雪花算法)
      */
