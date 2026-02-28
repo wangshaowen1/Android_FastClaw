@@ -133,6 +133,14 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
         else -> "未知状态"
     }
 
+    fun publishButtonText(workInfo: WorkInfo?) = when (workInfo?.contractStatus) {
+        /**[枚举]签约状态(0-未申请 1-审核中 2-已通过 3-已驳回)*/
+        0 -> "去发行"
+        1 -> "签约审核中"
+        3 -> "申请签约"
+        else -> ""
+    }
+
     /**
      * @param contractLevel 签约评级（S/A/B/C等）
      */

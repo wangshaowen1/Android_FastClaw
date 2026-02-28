@@ -13,5 +13,9 @@ data class H5PayInfo(
     /**
      * wx||zfb
      */
-    val payWay: String? = null
+    val payWay: String? = null,
+    /**
+     * 金额 单位厘
+     */
+    val amount: Long? = null
 )
