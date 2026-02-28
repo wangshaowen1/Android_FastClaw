@@ -1,10 +1,14 @@
 package com.kgmedia.fastfilm.core.network.apis.response
 
+import android.os.Parcelable
+import com.kgmedia.fastfilm.core.Config
+import kotlinx.parcelize.Parcelize
+
 /**
  *  {
  *         "popupList": [
  *             {
- *                 "id": "窗口ID",
+ *                 "id": "弹窗ID",
  *                 "popupLocationCode": "弹窗位置编号（1-大厅主页、2-个人主页、3-我的作品、）",
  *                 "businessType": "业务类型（1-课程）",
  *                 "showFrequency": "展示频次（1-首次启动弹出、2-每天弹出、3-常驻展示）",
@@ -31,26 +35,75 @@ package com.kgmedia.fastfilm.core.network.apis.response
 data class ActivityConfigData(
     val floatWindowList: List<FloatWindowInfo>? = null,
     val popupList: List<PopupInfo>? = null
-)
+) {
+    companion object {
+        const val TAB_HOME = 1
+        const val TAB_MINE = 2
+        const val TAB_MY_WORKS = 3
+    }
+
+    fun getFloatWindowInfo(tab: Int): FloatWindowInfo? {
+        return floatWindowList?.firstOrNull {
+            it.floatLocationCode == tab
+        }
+    }
+
+    fun getPopupInfo(tab: Int): PopupInfo? {
+        return popupList?.firstOrNull {
+            it.popupLocationCode == tab
+        }
+    }
+}
 
 data class FloatWindowInfo(
-    val businessType: String? = null,
-    val floatLocationCode: String? = null,
-    val floatWindowStatus: String? = null,
+    val businessType: Int? = null,
+    val floatLocationCode: Int? = null,
+    val floatWindowStatus: Int? = null,
     val id: String? = null,
-    val jumpType: String? = null,
+    val jumpType: Int? = null,
     val jumpUrl: String? = null,
-    val maxShowCountPerDay: String? = null,
-    val showFrequency: String? = null
-)
+    val maxShowCountPerDay: Int? = null,
+    val showFrequency: Int? = null
+) {
+    fun isShow(): Boolean {
+        if (floatWindowStatus != 1 || id.isNullOrEmpty()) return false
 
+        val config = Config.get()
+        val lastShowTime = config.activityPopupShowTime(id)
+        val showCountToday = config.activityPopupShowCount(id) // 此时该方法已自带跨天归零逻辑
+
+        return when (showFrequency) {
+            1 -> lastShowTime == 0L
+            2 -> showCountToday < (maxShowCountPerDay ?: 0) // 直接判断即可
+            3 -> true
+            else -> false
+        }
+    }
+}
+
+@Parcelize
 data class PopupInfo(
-    val businessType: String? = null,
+    val businessType: Int? = null,
     val id: String? = null,
-    val jumpType: String? = null,
+    val jumpType: Int? = null,
     val jumpUri: String? = null,
-    val maxShowCountPerDay: String? = null,
-    val popupLocationCode: String? = null,
-    val popupStatus: String? = null,
-    val showFrequency: String? = null
-)
+    val maxShowCountPerDay: Int? = null,
+    val popupLocationCode: Int? = null,
+    val popupStatus: Int? = null,
+    val showFrequency: Int? = null
+) : Parcelable {
+    fun isShow(): Boolean {
+        if (popupStatus != 1 || id.isNullOrEmpty()) return false
+
+        val config = Config.get()
+        val lastShowTime = config.activityPopupShowTime(id)
+        val showCountToday = config.activityPopupShowCount(id) // 此时该方法已自带跨天归零逻辑
+
+        return when (showFrequency) {
+            1 -> lastShowTime == 0L
+            2 -> showCountToday < (maxShowCountPerDay ?: 0) // 直接判断即可
+            3 -> true
+            else -> false
+        }
+    }
+}

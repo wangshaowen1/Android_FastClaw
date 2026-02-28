@@ -10,6 +10,7 @@ import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
+import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.DramasInfoData
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.play.more.ShareShortDramaViewModel
@@ -46,10 +47,12 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
     val startCreating = MutableLiveData<Boolean>()
 
     val generating = ObservableField<DramasInfoData>()
+    val activityConfigCache = MutableLiveData<ActivityConfigData>()
 
     fun initialization() {
         //获取用户主页信息接口
         fetchUserInfo()
+        getActivityConfig()
     }
 
     override fun onResume() {
@@ -100,5 +103,16 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
 
     fun getTabColorSelector(showTab: Int): Int {
         return if (showTab == 0) R.color.main_tab_txt_color_dark else R.color.main_tab_txt_color
+    }
+
+    fun getActivityConfig() {
+        launch {
+            response(
+                bean = mRepo.api.activityConfig(UserTokenBody()),
+                result = {
+                    activityConfigCache.value = this.data
+                }
+            )
+        }
     }
 }

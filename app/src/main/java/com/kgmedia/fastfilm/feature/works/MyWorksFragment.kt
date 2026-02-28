@@ -5,18 +5,25 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
+import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
+import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
+import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
+import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
+import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
@@ -38,6 +45,9 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
     }
     private val eventVm by lazy {
         ItemMultipleChoiceEventsViewModel<MyWorksEvent, String>()
+    }
+    private val parentVm by lazy {
+        getViewModelOfActivity<MainViewModel>()
     }
 
 
@@ -103,6 +113,10 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
     }
 
     private fun dataUpdate() {
+        parentVm?.activityConfigCache?.observe(this) {
+            handlePopup(it.getPopupInfo(ActivityConfigData.TAB_MY_WORKS))
+            handleFloatWindow(it.getFloatWindowInfo(ActivityConfigData.TAB_MY_WORKS))
+        }
         observeEvents {
             //登录状态变化
             onUserStatusChanged {
@@ -214,6 +228,27 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 //完成
                 mRealVM.isView.value = true
             }
+        }
+    }
+
+    private fun handlePopup(popup: PopupInfo?) {
+        popup?.let {
+            if (popup.isShow()) {
+                ActivityDialog.show(popup)
+                Config.get().activityPopupShowMark(popup.id)
+            }
+        }
+    }
+
+    private fun handleFloatWindow(float: FloatWindowInfo?) {
+        if (float != null && float.isShow()) {
+            binding.floatingBall.isVisible = true
+            Config.get().activityFloatShowMark(float.id)
+            binding.floatingBall.setOnMfClickListener {
+                AppRouter.jump(float.jumpUrl)
+            }
+        } else {
+            binding.floatingBall.visibility = View.GONE
         }
     }
 }

@@ -117,24 +117,5 @@
             </FrameLayout>
 
         </com.kgmedia.fastfilm.widget.MultRadioGroup>
-
-        <com.kgmedia.fastfilm.widget.MoveFrameLayout
-            android:id="@+id/floating_ball"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="70dp"
-            android:padding="12dp"
-            android:visibility="@{true?View.VISIBLE:View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:importantForAccessibility="no"
-                android:src="@drawable/img_floating" />
-        </com.kgmedia.fastfilm.widget.MoveFrameLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

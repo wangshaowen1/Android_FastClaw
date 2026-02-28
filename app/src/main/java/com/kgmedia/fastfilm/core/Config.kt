@@ -3,16 +3,17 @@ package com.kgmedia.fastfilm.core
 import android.text.TextUtils
 import com.blankj.utilcode.util.NetworkUtils
 import com.fm.openinstall.model.AppData
+import com.google.gson.Gson
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.BuildConfig
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SP
 import com.kgmedia.fastfilm.common.ext.ioScope
+import com.kgmedia.fastfilm.common.utils.DateUtil
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory.apiService
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.TotalComposeConfigData
-import com.google.gson.Gson
 import com.nhsd.basic.Session
 import com.nhsd.basic.Session.NetworkChangedListener
 import com.nhsd.basic.bus.FlowEventBus
@@ -33,7 +34,7 @@ class Config : NetworkChangedListener {
     var isFirstSetBookVoice: Boolean
         private set
 
-    var isFirstEyeProtectionSetting: Boolean=false
+    var isFirstEyeProtectionSetting: Boolean = false
         private set
     var objectId: String?
         private set
@@ -71,7 +72,7 @@ class Config : NetworkChangedListener {
     var opid: String?
         private set
 
-    var eyeProtectionEnabled: Boolean?=false
+    var eyeProtectionEnabled: Boolean? = false
         private set
 
     private fun ifInitialStatusInReview(): Boolean {
@@ -85,7 +86,7 @@ class Config : NetworkChangedListener {
     init {
         sp = SP("CONFIG_DATA")
         this.isFirstOpenApp = sp.getBoolean(FIRST_OPEN_APP, true)
-        this.isFirstSetBookVoice= sp.getBoolean(FIRST_SET_BOOK_VOICE, true)
+        this.isFirstSetBookVoice = sp.getBoolean(FIRST_SET_BOOK_VOICE, true)
         this.isFirstEyeProtectionSetting = sp.getBoolean(FIRST_EYE_PROTECTION_SETTING, true)
         objectId = sp.getString(OBJECT_ID, "1")
         this.isInReview =
@@ -101,7 +102,7 @@ class Config : NetworkChangedListener {
         deviceToken = sp.getString(DEVICE_TOKEN, deviceToken)
         installData = sp.getString(INSTALL_DATA, null)
         opid = sp.getString(OPID, null)
-        eyeProtectionEnabled=sp.getBoolean(EYE_PROTECTION_ENABLE, false)
+        eyeProtectionEnabled = sp.getBoolean(EYE_PROTECTION_ENABLE, false)
         gson = Gson()
     }
 
@@ -225,6 +226,7 @@ class Config : NetworkChangedListener {
         this.isFirstOpenApp = false
         notifyChange(FIRST_OPEN_APP)
     }
+
     fun markFirstSetBookVoiceWithNotify() {
         sp.putBoolean(FIRST_SET_BOOK_VOICE, false)
         this.isFirstSetBookVoice = false
@@ -236,6 +238,7 @@ class Config : NetworkChangedListener {
         this.isFirstEyeProtectionSetting = false
         notifyChange(FIRST_EYE_PROTECTION_SETTING)
     }
+
     fun storeDeviceToken(deviceToken: String?) {
         this.deviceToken = deviceToken
         sp.putString(DEVICE_TOKEN, deviceToken)
@@ -257,7 +260,7 @@ class Config : NetworkChangedListener {
         sp.remove(OPID)
         this.isShowJumpPop = true
         sp.remove(SHOW_JUMP_POP)
-        this.eyeProtectionEnabled=false
+        this.eyeProtectionEnabled = false
         sp.remove(EYE_PROTECTION_ENABLE)
     }
 
@@ -273,7 +276,6 @@ class Config : NetworkChangedListener {
         this.opid = opid
         sp.putString(OPID, opid)
     }
-
 
 
     fun storeDevelopmentMode(developMode: Boolean) {
@@ -299,8 +301,9 @@ class Config : NetworkChangedListener {
         this.baseUrlCustom = baseUrlCustom
         sp.putString(Constants.BASE_URL_CUSTOM, baseUrlCustom)
     }
+
     fun storeEyeProtectionEnabled(eyeProtectionEnabled: Boolean) {
-        if(this.eyeProtectionEnabled!=eyeProtectionEnabled) {
+        if (this.eyeProtectionEnabled != eyeProtectionEnabled) {
             this.eyeProtectionEnabled = eyeProtectionEnabled
             sp.putBoolean(EYE_PROTECTION_ENABLE, eyeProtectionEnabled)
         }
@@ -321,6 +324,61 @@ class Config : NetworkChangedListener {
         return false
     }
 
+    fun activityPopupShowCount(id: String?): Int {
+        if (id.isNullOrEmpty()) return 0
+
+        val lastShowTime = sp.getLong("activity_popup_show_time_$id", 0L)
+        // 关键点：如果上次展示时间不是今天，之前的计数就没意义了，直接返回 0
+        return if (DateUtil.isToday(lastShowTime)) {
+            sp.getInt("activity_popup_show_count_$id", 0)
+        } else {
+            0
+        }
+    }
+
+    fun activityPopupShowMark(id: String?) {
+        if (id.isNullOrEmpty()) return
+
+        val lastShowTime = sp.getLong("activity_popup_show_time_$id", 0L)
+        val currentCount = if (DateUtil.isToday(lastShowTime)) {
+            sp.getInt("activity_popup_show_count_$id", 0)
+        } else {
+            0 // 如果是跨天后的第一次展示，重置计数
+        }
+        sp.putInt("activity_popup_show_count_$id", currentCount + 1)
+        sp.putLong("activity_popup_show_time_$id", System.currentTimeMillis())
+    }
+
+    fun activityPopupShowTime(id: String?): Long {
+        return sp.getLong("activity_popup_show_time_$id", 0L)
+    }
+
+    fun activityFloatShowCount(id: String?): Int {
+        if (id.isNullOrEmpty()) return 0
+        val lastShowTime = sp.getLong("activity_float_show_time_$id", 0L)
+        return if (DateUtil.isToday(lastShowTime)) {
+            sp.getInt("activity_float_show_count_$id", 0)
+        } else {
+            0
+        }
+    }
+
+    fun activityFloatShowMark(id: String?) {
+        if (id.isNullOrEmpty()) return
+        val lastShowTime = sp.getLong("activity_float_show_time_$id", 0L)
+        val currentCount = if (DateUtil.isToday(lastShowTime)) {
+            sp.getInt("activity_float_show_count_$id", 0)
+        } else {
+            0
+        }
+        sp.putInt("activity_float_show_count_$id", currentCount + 1)
+        sp.putLong("activity_float_show_time_$id", System.currentTimeMillis())
+    }
+
+    fun activityFloatShowTime(id: String?): Long {
+        return sp.getLong("activity_float_show_time_$id", 0L)
+    }
+
 
     companion object {
         const val FIRST_OPEN_APP: String = "firstOpenApp"
@@ -339,7 +397,7 @@ class Config : NetworkChangedListener {
         private const val NOTIFICATION_ENABLE = "NOTIFICATION_ENABLE"
         private const val SHOW_JUMP_POP = "showJumpPop"
 
-        private const val EYE_PROTECTION_ENABLE: String="eyeProtectionEnable"
+        private const val EYE_PROTECTION_ENABLE: String = "eyeProtectionEnable"
         const val DAILY: Int = 1
         const val UAT: Int = 2
         const val ONLINE: Int = 3

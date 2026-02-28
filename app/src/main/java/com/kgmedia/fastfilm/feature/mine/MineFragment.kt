@@ -1,9 +1,11 @@
 package com.kgmedia.fastfilm.feature.mine
 
 import android.view.View
+import androidx.core.view.isVisible
 import com.blankj.utilcode.util.ClipboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
@@ -11,17 +13,24 @@ import com.kgmedia.fastfilm.core.ext.setupCommonBanner
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
+import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
+import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
+import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentMineBinding
 import com.kgmedia.fastfilm.feature.recharge.MyBalanceActivity
 import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginActivity
 import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginDialog
 import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginActivity
 import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginDialog
+import com.kgmedia.fastfilm.feature.main.ActivityDialog
+import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
 import com.kgmedia.fastfilm.router.AppNavigator
+import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
+import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.showToast
 import com.zhpan.bannerview.BannerViewPager
 
@@ -37,6 +46,9 @@ import com.zhpan.bannerview.BannerViewPager
 class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>() {
 
     private var userId: String? = null
+    private val parentVm by lazy {
+        getViewModelOfActivity<MainViewModel>()
+    }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -66,6 +78,11 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
 
 
     private fun dataUpdate() {
+        parentVm?.activityConfigCache?.observe(this) {
+            handlePopup(it.getPopupInfo(ActivityConfigData.TAB_MINE))
+            handleFloatWindow(it.getFloatWindowInfo(ActivityConfigData.TAB_MINE))
+        }
+
         observeEvents {
             /**
              * 登录状态变化
@@ -126,6 +143,27 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 }
                 MyBalanceActivity.start()
             }
+        }
+    }
+
+    private fun handlePopup(popup: PopupInfo?) {
+        popup?.let {
+            if (popup.isShow()) {
+                ActivityDialog.show(popup)
+                Config.get().activityPopupShowMark(popup.id)
+            }
+        }
+    }
+
+    private fun handleFloatWindow(float: FloatWindowInfo?) {
+        if (float != null && float.isShow()) {
+            binding.floatingBall.isVisible = true
+            Config.get().activityFloatShowMark(float.id)
+            binding.floatingBall.setOnMfClickListener {
+                AppRouter.jump(float.jumpUrl)
+            }
+        } else {
+            binding.floatingBall.visibility = View.GONE
         }
     }
 }

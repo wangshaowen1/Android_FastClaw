@@ -3,15 +3,22 @@ package com.kgmedia.fastfilm.feature.home
 import android.view.View
 import android.widget.ImageView
 import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.databinding.loadUri
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
+import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
+import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
+import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentHomeBinding
 import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
+import com.kgmedia.fastfilm.feature.main.ActivityDialog
+import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
@@ -20,6 +27,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResDrawable
+import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.crop.util.ViewUtils
 import com.zhpan.bannerview.BaseBannerAdapter
@@ -42,6 +50,9 @@ class HomeFragment :
         HomeAdapter()
     }
     private lateinit var bannerAdapter: BaseBannerAdapter<BannerInfo>
+    private val parentVm by lazy {
+        getViewModelOfActivity<MainViewModel>()
+    }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -138,6 +149,32 @@ class HomeFragment :
 
         mRealVM.bannerData.observe(this) {
             binding.banner.refreshData(it)
+        }
+
+        parentVm?.activityConfigCache?.observe(this) {
+            handlePopup(it.getPopupInfo(ActivityConfigData.TAB_HOME))
+            handleFloatWindow(it.getFloatWindowInfo(ActivityConfigData.TAB_HOME))
+        }
+    }
+
+    private fun handlePopup(popup: PopupInfo?) {
+        popup?.let {
+            if (popup.isShow()) {
+                ActivityDialog.show(popup)
+                Config.get().activityPopupShowMark(popup.id)
+            }
+        }
+    }
+
+    private fun handleFloatWindow(float: FloatWindowInfo?) {
+        if (float != null && float.isShow()) {
+            binding.floatingBall.isVisible = true
+            Config.get().activityFloatShowMark(float.id)
+            binding.floatingBall.setOnMfClickListener {
+                AppRouter.jump(float.jumpUrl)
+            }
+        } else {
+            binding.floatingBall.visibility = View.GONE
         }
     }
 }
