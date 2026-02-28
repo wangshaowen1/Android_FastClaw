@@ -152,6 +152,10 @@ class DramaGenerateStep1Fragment :
             "故事生成中，请稍候".showToast()
         }
         binding.btnNext.setOnSingleClickListener {
+            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
+                hostVm?.nextStep(2, mRealVM.workId, "")
+                return@setOnSingleClickListener
+            }
             mRealVM.confirmGenerate(markDownTextView.text.toString()) { workId, storyId ->
                 hostVm?.nextStep(2, workId, storyId)
             }
