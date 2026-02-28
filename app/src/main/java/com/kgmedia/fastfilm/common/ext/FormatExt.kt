@@ -21,6 +21,11 @@ fun Int.formatPlays(): String {
     return String.format("%.1f万", this / 10000.0F)
 }
 
+fun Int.formatW(): String {
+    if (this < 10000) return this.toString()
+    return String.format("%s万", this / 10000)
+}
+
 fun Int.toUnitText(): String {
     return if (this < 1000) toString() else {
         formatDouble(toDouble() / 1000f, 1) + "k"

@@ -7,7 +7,9 @@ import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.formatW
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.Config
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getResDrawable
@@ -22,6 +24,8 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
     val uploadStatus by lazy { ObservableInt(STATE_NONE) }
     val uploadErrorType by lazy { ObservableInt() }
     val uploadProgress by lazy { ObservableField<String>() }
+
+    val limitErrorText = "上传失败，字数超${(Config.get().appConfig.workNovelWordLimit ?: 500000).formatW()}字"
 
     companion object {
         const val STATE_NONE = 0

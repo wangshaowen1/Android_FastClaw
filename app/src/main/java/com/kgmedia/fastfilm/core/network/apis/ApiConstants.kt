@@ -654,4 +654,9 @@ object ApiConstants {
      */
     const val NOVEL_UPLOAD_SUMMARY = "ai/stream/novel/upload/summary"
 
+    /**
+     * 轮询查询小说上传生成作品剧集梗概结果
+     */
+    const val ROLL_NOVEL_SUMMARY = "ai/task/query/novel/upload/summary"
+
 }

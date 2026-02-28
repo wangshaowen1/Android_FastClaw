@@ -80,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_m"
-                android:text="@{layout.uploadErrorType==1?`上传失败，字数超50万字`:`上传失败`}"
+                android:text="@{layout.uploadErrorType==1?layout.limitErrorText:`上传失败`}"
                 android:textColor="?attr/funcColorFailure"
                 android:visibility="@{layout.uploadStatus==3?View.VISIBLE:View.GONE}"
                 tools:text="上传失败，字数超50万字" />

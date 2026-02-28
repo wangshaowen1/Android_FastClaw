@@ -1,7 +1,7 @@
 package com.kgmedia.fastfilm.core.network.apis.response
 
-import com.kgmedia.fastfilm.core.network.apis.entity.KeyValueInfo
 import com.google.gson.annotations.SerializedName
+import com.kgmedia.fastfilm.core.network.apis.entity.KeyValueInfo
 
 
 /**
@@ -122,6 +122,11 @@ class AppConfigData {
      * 小程序类型： 0 = 正式版 1 = 测试版 2 = 体验版
      */
     var clientWxMiniShareMode: Int = 0
+
+    /**
+     * 作品-小说字数限制数字（500000）
+     */
+    val workNovelWordLimit: Int? = 500000
 }
 
 data class PaymentStatus(

@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.User
+import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
@@ -31,6 +32,7 @@ import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
 import kotlinx.coroutines.launch
 
@@ -243,6 +245,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
     private fun handleFloatWindow(float: FloatWindowInfo?) {
         if (float != null && float.isShow()) {
             binding.floatingBall.isVisible = true
+            loadGifUrl(binding.ivFloating, float.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
             Config.get().activityFloatShowMark(float.id)
             binding.floatingBall.setOnMfClickListener {
                 AppRouter.jump(float.jumpUrl)

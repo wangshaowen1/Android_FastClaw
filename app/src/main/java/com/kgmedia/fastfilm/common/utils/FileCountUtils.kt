@@ -4,16 +4,17 @@ import android.content.Context
 import android.net.Uri
 import android.os.Parcelable
 import android.text.Html
+import com.kgmedia.fastfilm.core.Config
 import kotlinx.parcelize.Parcelize
 import java.io.InputStream
-import java.util.zip.ZipInputStream
 import java.util.regex.Pattern
+import java.util.zip.ZipInputStream
 import kotlin.math.ceil
 
 object FileCountUtils {
 
     // 保留你原本的 50万字 熔断上限
-    const val MAX_CHAR_COUNT = 500_000
+    val MAX_CHAR_COUNT = Config.get().appConfig.workNovelWordLimit ?: 500000
     // 恶意长词拆分阈值
     private const val MAX_WORD_LENGTH = 10
 

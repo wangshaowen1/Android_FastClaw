@@ -73,6 +73,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.ReportSubmissionBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
+import com.kgmedia.fastfilm.core.network.apis.request.RollNovelSummaryData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
@@ -933,4 +934,10 @@ interface ApiService {
      */
     @POST(ApiConstants.NOVEL_UPLOAD_SUMMARY)
     suspend fun novelUploadSummary(@Body body: UploadStoryBody): ApiResponse<UploadStoryData?>
+
+    /**
+     * 轮询查询小说上传生成作品剧集梗概结果
+     */
+    @POST(ApiConstants.ROLL_NOVEL_SUMMARY)
+    suspend fun rollNovelSummary(@Body body: WorkIdBody): ApiResponse<RollNovelSummaryData?>
 }

@@ -8,6 +8,7 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
+import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.core.ext.setupCommonBanner
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
@@ -30,6 +31,7 @@ import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
+import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.showToast
 import com.zhpan.bannerview.BannerViewPager
@@ -158,6 +160,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
     private fun handleFloatWindow(float: FloatWindowInfo?) {
         if (float != null && float.isShow()) {
             binding.floatingBall.isVisible = true
+            loadGifUrl(binding.ivFloating, float.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
             Config.get().activityFloatShowMark(float.id)
             binding.floatingBall.setOnMfClickListener {
                 AppRouter.jump(float.jumpUrl)

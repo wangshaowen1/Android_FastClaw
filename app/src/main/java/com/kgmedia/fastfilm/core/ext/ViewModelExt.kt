@@ -9,6 +9,13 @@ import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.response
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 fun ViewModel.launch(
     showToast: Boolean = false,
@@ -107,4 +114,66 @@ fun BaseViewModel.launchWithLoading(
     onError: ((e: Throwable) -> Unit)? = null,
 ) {
    launchWithLoading(showLoading, block, onError)
+}
+
+
+/**
+ * 轮询结果状态枚举
+ */
+enum class PollingState {
+    SUCCESS,  // 满足条件，成功结束轮询
+    FAIL,     // 出现明确错误（如后端返回失败），结束轮询
+    CONTINUE  // 仍在处理中，等待后继续下一次请求
+}
+fun <T> BaseViewModel.launchPolling(
+    intervalMs: Long = 3000L,
+    retryOnNetworkError: Boolean = false,
+    showToastError: Boolean = true,
+    apiBlock: suspend () -> ApiResponse<T>?,
+    checkState: (ApiResponse<T>?) -> PollingState,
+    onSuccess: (ApiResponse<T>?) -> Unit,
+    onFail: (response: ApiResponse<T>?, e: Throwable?) -> Unit = { _, _ -> },
+    onPolling: (ApiResponse<T>?) -> Unit = {}// 继续轮询之前可进行操作
+): Job {
+    return viewModelScope.launch {
+        var isPolling = true
+
+        while (isActive && isPolling) {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    apiBlock.invoke()
+                }
+
+                when (checkState(response)) {
+                    PollingState.SUCCESS -> {
+                        isPolling = false
+                        onSuccess(response)
+                    }
+                    PollingState.FAIL -> {
+                        isPolling = false
+                        // 假设 ApiResponse 实体类中有 msg 字段
+                        if (showToastError) response?.msg?.showToast()
+                        onFail(response, null)
+                    }
+                    PollingState.CONTINUE -> {
+                        onPolling(response)
+                        delay(intervalMs) // 挂起，等待下一次轮询
+                    }
+                }
+            } catch (e: Exception) {
+                // 必须放行 CancellationException，防止内存泄漏
+                if (e is CancellationException) throw e
+                e.printStackTrace()
+                if (retryOnNetworkError) {
+                    onPolling(null)
+                    delay(intervalMs)
+                } else {
+                    isPolling = false
+                    // 假设 BaseViewModel 中有 parseMessage 方法
+                    if (showToastError) parseMessage(e)?.showToast()
+                    onFail(null, e)
+                }
+            }
+        }
+    }
 }

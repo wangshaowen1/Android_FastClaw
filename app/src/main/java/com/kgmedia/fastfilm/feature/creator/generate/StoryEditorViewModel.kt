@@ -61,7 +61,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         //中途恢复界面走这里
         val newStep = mBundle.getInt(StoryEditorActivity.KEY_STEP, -1)
         when (model) {
-            DramaGenerateConstants.MODEL_INSPIRATION -> {
+            DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_STORY_URL -> {
                 if (newStep != -1) {
                     step.value = newStep
                 } else {
@@ -79,7 +79,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
                 startFrom.value = 2
             }
 
-            DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION -> {
+            DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION, DramaGenerateConstants.CONTINUE_WRITING_NOVEL_DOCUMENTS -> {
                 if (newStep != -1) {
                     step.value = newStep
                 } else {

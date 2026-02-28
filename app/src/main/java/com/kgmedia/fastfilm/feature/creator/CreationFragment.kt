@@ -15,11 +15,13 @@ import com.kgmedia.fastfilm.core.ext.onUserSignOut
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.creator.set.StoryGenerateConfirmDialog
 import com.kgmedia.fastfilm.feature.creator.set.VideoSetDialog
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
@@ -164,20 +166,23 @@ class CreationFragment :
         mRealVM.videoSetConfig(true) {
             val config = mRealVM.videoSetConfig.value
             VideoSetDialog.newInstance(config).apply {
-                onSuccess = { range, custom, ratio, style ->
+                onSuccess = { range, custom, ratio, style, name ->
 
                     val isFileModel = !fileUrl.isNullOrEmpty()
-                    val content = fileUrl ?: this@CreationFragment.mRealVM.input.value
+                    val content = this@CreationFragment.mRealVM.input.value
                     val modelType = when {
                         this@CreationFragment.mRealVM.inspirationModel() -> DramaGenerateConstants.MODEL_INSPIRATION
                         isFileModel -> DramaGenerateConstants.MODEL_STORY_URL
                         else -> DramaGenerateConstants.MODEL_STORY
                     }
 
-                    val startEditor = {
+                    val startEditor: (UploadStoryData?) -> Unit = { data ->
+                        //只有小说文档模式有data
                         StoryEditorActivity.start(
                             context = mActivity,
+                            workId = data?.workId,
                             content = content,
+                            name = name,
                             episodeRangeCode = range,
                             customEpisodeCount = custom,
                             videoRatio = ratio,
@@ -186,15 +191,25 @@ class CreationFragment :
                         )
                     }
 
-                    if (isFileModel && (this@CreationFragment.mRealVM.analysisResult?.charCount
-                            ?: 0) > 10000
-                    ) {
-                        StoryGenerateConfirmDialog.newInstance(this@CreationFragment.mRealVM.analysisResult)
-                            .apply {
-                                onConfirm = { startEditor() }
-                            }.show(this@CreationFragment.childFragmentManager)
-                    } else {
-                        startEditor()
+                    if (isFileModel) {
+                        if ((this@CreationFragment.mRealVM.analysisResult?.charCount ?: 0) > 10000) {//大于10000字要显示确认算力弹窗  这里要拿workid去轮询
+                            StoryGenerateConfirmDialog.newInstance(
+                                this@CreationFragment.mRealVM.fileUrl,
+                                this@CreationFragment.mRealVM.analysisResult
+                            ).apply {
+                                    onConfirm = { data -> startEditor(data) }
+                                }.show(this@CreationFragment.childFragmentManager)
+                        } else {//小于10000字直接开始 这里要拿workid去轮询
+                            this@CreationFragment.mRealVM.confirmPowerConsume { data ->
+                                if (data?.checkStatus() == true) {
+                                    startEditor(data)
+                                } else {
+                                    PowerRechargeDialog.show()
+                                }
+                            }
+                        }
+                    } else {//非小说文档走这里
+                        startEditor(null)
                     }
                 }
             }.show(childFragmentManager)

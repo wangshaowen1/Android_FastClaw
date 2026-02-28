@@ -16,6 +16,7 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
@@ -47,13 +48,19 @@ class DramaGenerateStep1Fragment :
         super.onPrepareView()
         EventManager.onAppTrack(AppEvent.JG_VIEW_GENERATE_STORYBOARD_PAGE)
         activity?.intent?.let {
+            mRealVM.workId = it.getStringExtra(Constants.Extra.WORK_ID)
+            mRealVM.model = it.getIntExtra(Constants.Extra.MODE, 0)
             mRealVM.inspiration = it.getStringExtra(Constants.Extra.CONTENT)
             mRealVM.customEpisodeCount = it.getStringExtra(StoryEditorActivity.CUSTOM_EPISODE_COUNT)
             mRealVM.episodeRangeCode = it.getStringExtra(StoryEditorActivity.EPISODE_RANGE_CODE)
             mRealVM.videoStyleId = it.getStringExtra(Constants.Extra.STYLE_ID)
             mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
-            mRealVM.sseGenerate()
-            hostVm?.backWarning = true
+            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
+                mRealVM.rollNovelSummary()
+            } else {
+                mRealVM.sseGenerate()
+                hostVm?.backWarning = true
+            }
         }
         mRealVM.promptGenerating.observe(this) {
             if (it.first) {
@@ -134,8 +141,12 @@ class DramaGenerateStep1Fragment :
         }
         binding.btnRegenerate.setOnSingleClickListener {
             markDownTextView.stopPrinting(null)
-            mRealVM.sseGenerate()
-            hostVm?.backWarning = true
+            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
+                mRealVM.rollNovelSummary()
+            } else {
+                mRealVM.sseGenerate()
+                hostVm?.backWarning = true
+            }
         }
         binding.btnNextDisable.setOnSingleClickListener {
             "故事生成中，请稍候".showToast()

@@ -37,7 +37,7 @@ class DramaGenerateConstants {
         /**
          * 继续创作(小说文档模式)
          */
-        const val CONTINUE_WRITING_NOVEL_DOCUMENTS = 35
+        const val CONTINUE_WRITING_NOVEL_DOCUMENTS = 36
 
 
         /**

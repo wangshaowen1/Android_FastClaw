@@ -23,9 +23,9 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
     }
 
     /**
-     * 按顺序依次是：集数范围，自定义集数，视频比例，视频风格
+     * 按顺序依次是：集数范围，自定义集数，视频比例，视频风格,作品名称
      */
-    var onSuccess: ((String?, String?, String?, String?) -> Unit)? = null
+    var onSuccess: ((String?, String?, String?, String?, String?) -> Unit)? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -52,7 +52,8 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
                 mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
                 mRealVM.checkedEpisodeSet?.input?.get(),
                 mRealVM.checkedRatio?.data?.get()?.configValue,
-                mRealVM.checkedStyle?.data?.get()?.styleCode
+                mRealVM.checkedStyle?.data?.get()?.styleCode,
+                binding.nameInputer.text
             )
             dismissAllowingStateLoss()
         }

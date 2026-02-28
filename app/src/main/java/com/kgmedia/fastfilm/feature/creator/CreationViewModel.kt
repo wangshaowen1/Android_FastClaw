@@ -19,6 +19,8 @@ import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
+import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
@@ -179,6 +181,14 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
             showLoading = true
         ) {
             sensitiveWordJudgmentResult.value = data
+        }
+    }
+
+    fun confirmPowerConsume(callback: (UploadStoryData?) -> Unit) {
+        requestWithLoading(
+            apiBlock = { mRepo.api.novelUploadSummary(UploadStoryBody(analysisResult?.charCount, fileUrl)) }
+        ) {
+            callback.invoke(data)
         }
     }
 }

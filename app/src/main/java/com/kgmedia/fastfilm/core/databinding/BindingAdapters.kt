@@ -322,8 +322,12 @@ fun loadThumbnailUri(
 
 @BindingAdapter("loadGifUrl", "placeHolder", requireAll = false)
 fun loadGifUrl(imageView: ImageView, path: String?, placeHolder: Drawable? = null) {
-    GlideApp.with(imageView).asGif().load(path).placeholder(placeHolder).skipMemoryCache(true)
-        .into(imageView)
+    if (path?.endsWith(".gif") == true) {
+        GlideApp.with(imageView).asGif().load(path).placeholder(placeHolder).skipMemoryCache(true)
+            .into(imageView)
+    } else {
+        loadUri(imageView, path, placeHolder)
+    }
 }
 
 @BindingAdapter("setAvatar", requireAll = false)

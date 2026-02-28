@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.core.Config
+import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.databinding.loadUri
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
@@ -169,6 +170,7 @@ class HomeFragment :
     private fun handleFloatWindow(float: FloatWindowInfo?) {
         if (float != null && float.isShow()) {
             binding.floatingBall.isVisible = true
+            loadGifUrl(binding.ivFloating, float.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
             Config.get().activityFloatShowMark(float.id)
             binding.floatingBall.setOnMfClickListener {
                 AppRouter.jump(float.jumpUrl)

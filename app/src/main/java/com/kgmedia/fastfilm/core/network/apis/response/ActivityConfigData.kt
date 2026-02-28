@@ -62,6 +62,7 @@ data class FloatWindowInfo(
     val id: String? = null,
     val jumpType: Int? = null,
     val jumpUrl: String? = null,
+    val imageUrl: String? = null,
     val maxShowCountPerDay: Int? = null,
     val showFrequency: Int? = null
 ) {
@@ -86,6 +87,7 @@ data class PopupInfo(
     val businessType: Int? = null,
     val id: String? = null,
     val jumpType: Int? = null,
+    val imageUrl: String? = null,
     val jumpUri: String? = null,
     val maxShowCountPerDay: Int? = null,
     val popupLocationCode: Int? = null,

@@ -9,11 +9,14 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.common.utils.NotificationHelper
+import com.kgmedia.fastfilm.core.ext.PollingState
+import com.kgmedia.fastfilm.core.ext.launchPolling
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.EpisodeSseProcessor
@@ -21,6 +24,7 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
+import kotlinx.coroutines.Job
 
 /**
  * 故事梗概生成
@@ -34,6 +38,12 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     }
 
     val promptGenerating = MutableLiveData<Triple<Boolean, String, String>>()
+
+    //小说文档扣费后生成的workId，用于轮询
+    var workId: String? = null
+
+    //业务类型
+    var model: Int? = null
     var inspiration: String? = null
     var episodeRangeCode: String? = null
 
@@ -140,7 +150,52 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     override fun onCleared() {
         super.onCleared()
         progressHelper.stop()
+        novelSummaryPollingJob?.cancel()
         sseHandler?.cancel()
+    }
+
+    private var novelSummaryPollingJob: Job? = null
+
+    /**
+     * 轮询小说文档模式下的故事梗概
+     */
+    fun rollNovelSummary() {
+        // 防抖与去重：如果已经在轮询中，直接 return
+        if (novelSummaryPollingJob?.isActive == true) return
+
+        nextStepEnabled.set(false)
+        displayChild.set(DISPLAY_CONTENT)
+        progressHelper.start(
+            "创建故事大纲", "生成故事梗概",
+            step = 1,
+            intervalMs = 6000L
+        )
+
+        novelSummaryPollingJob = launchPolling(
+            intervalMs = 3000L,
+            retryOnNetworkError = true, // 遇到断网等异常直接结束，不重试
+            apiBlock = { mRepo.api.rollNovelSummary(WorkIdBody(workId)) },
+            checkState = { response ->
+                val data = response?.data
+                when {
+                    data?.isSuccess() == true -> PollingState.SUCCESS
+                    data?.isFail() == true -> PollingState.FAIL
+                    else -> PollingState.CONTINUE
+                }
+            },
+            onSuccess = { response ->
+                if (response?.data?.result?.isNotEmpty() == true) {
+                    nextStepEnabled.set(true)
+                }
+                progressHelper.stop()
+                NotificationHelper.sendRecoveryNotification("故事梗概已完成")
+            },
+            onFail = { _, error ->
+                displayChild.set(DISPLAY_FAIL)
+                progressHelper.stop()
+                NotificationHelper.sendRecoveryNotification("故事梗概生成失败")
+            }
+        )
     }
 
     /**
