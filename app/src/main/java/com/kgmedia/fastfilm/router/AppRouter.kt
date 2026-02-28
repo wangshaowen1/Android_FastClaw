@@ -293,7 +293,7 @@ object AppRouter : IRouter {
                     return DramaGenerateConstants.MODEL_STORY_URL
                 }
                 //继续创作(小说文档模式)
-                return DramaGenerateConstants.CONTINUE_WRITING_NOVEL_DOCUMENTS
+                return DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS
             }
 
             else -> {

@@ -110,7 +110,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             } else {
                 val body = AIExpandBody(
                     workId = workId.value,
-                    storyId = if (model == DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION) {
+                    storyId = if (model == DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION || model == DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS) {
                         previousStoryId
                     } else {
                         episodeId
