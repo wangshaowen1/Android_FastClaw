@@ -19,6 +19,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.RoleTagInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SaveSequelNovelStoryInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SegmentImageHistoryInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.entity.SeriesPriceConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
@@ -37,6 +38,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
+import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreatePointOrderBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
@@ -911,4 +913,9 @@ interface ApiService {
     @POST(ApiConstants.H5_PAY_ALIPAY)
     suspend fun h5PayAlipay(@Body body: H5PayInfo): ApiResponse<PaymentData?>
 
+    /**
+     * 敏感词校验
+     */
+    @POST(ApiConstants.SENSITIVE_WORD_CHECK)
+    suspend fun sensitiveWordCheck(@Body body: ContentBody): ApiResponse<SensitiveWordCheckData?>
 }

@@ -639,4 +639,8 @@ object ApiConstants {
      */
     const val H5_PAY_ALIPAY = "app/forward/purchase/alipay"
 
+    /**
+     * 敏感词校验
+     */
+    const val SENSITIVE_WORD_CHECK = "ai/sensitive-word/check"
 }
