@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.toPaymentParams
 import com.kgmedia.fastfilm.core.model.H5PayInfo
 import com.kgmedia.fastfilm.core.model.H5PayStatusInfo
+import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.feature.web.data.BrowserRepository
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.PaymentResultStrategy
@@ -73,7 +74,7 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
                 override fun doWithFailure(
                     context: Activity,
                     method: PaymentClient.PaymentMethod,
-                    paymentData: PaymentParams,
+                    paymentData: PaymentParams?,
                     e: Throwable?
                 ) {
                     payStatusCallback.value = H5PayStatusInfo(400, orderNo)
