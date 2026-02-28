@@ -14,34 +14,24 @@
         <import type="android.text.TextUtils" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/bg_guang"
-            app:layout_constraintDimensionRatio="375:472"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <include
             android:id="@+id/toolbar"
             layout="@layout/view_model_toolbar"
-            app:layout_constraintTop_toTopOf="parent"
             app:toolbar="@{layout.mToolbarVM}" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/spacing_l"
             android:layout_marginTop="@dimen/spacing_m"
             android:background="@drawable/bg_fill_color_1_r50"
-            android:padding="@dimen/spacing_xs"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            android:padding="@dimen/spacing_xs">
 
             <View
                 setHorizontalBias="@{layout.tabIndicatorPosition}"
@@ -93,7 +83,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/spacing_l"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tabs" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_weight="1" />
+    </LinearLayout>
 </layout>

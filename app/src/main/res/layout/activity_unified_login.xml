@@ -22,14 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/bg_guang"
-            app:layout_constraintDimensionRatio="375:472"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <com.kgmedia.fastfilm.widget.StatusBarView
             android:id="@+id/statusBar"
             android:layout_width="match_parent"
@@ -47,7 +39,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/btnClose" />
 
-        <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+        <ImageView
             android:id="@+id/iv_logo"
             android:layout_width="76dp"
             android:layout_height="76dp"
@@ -57,8 +49,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.218579"
-            app:riv_corner_radius="20dp" />
+            app:layout_constraintVertical_bias="0.218579" />
 
         <ImageView
             android:id="@+id/iv_title"
@@ -138,8 +129,8 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_describe"
             singleClick="@{layout.clickHandler::onClick}"
+            android:id="@+id/ll_describe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="35dp"

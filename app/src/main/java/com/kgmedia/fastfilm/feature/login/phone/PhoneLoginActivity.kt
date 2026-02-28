@@ -41,36 +41,41 @@ class PhoneLoginActivity :
     companion object {
         const val TAG = "PhoneLoginActivity"
 
-        const val BIND = "bind"
-
-        //是否选中了隐私政策
-        const val CHECKED_POLICY = "checkedPolicy"
-
+        //是否同意了隐私政策用户协议这个
+        var checkedPolicy = false
         fun start(
             showToast: Boolean = false,
-            isBind: Boolean = false,
             checkedPolicy: Boolean = false
         ) {
             if (showToast) {
                 "请先登录".showToast()
             }
+            this.checkedPolicy = checkedPolicy
             val activity = topActivity ?: return
-            val intent = Intent(activity, PhoneLoginActivity::class.java).apply {
-                putExtra(BIND, isBind)
-                putExtra(CHECKED_POLICY, checkedPolicy)
-            }
+            val intent = Intent(activity, PhoneLoginActivity::class.java)
             activity.startActivity(intent)
+            activity.overridePendingTransition(
+                R.anim.push_bottom_in,
+                R.anim.push_bottom_out
+            )
         }
     }
 
+    private var enterAnim = 0
+    private var exitAnim = 0
     private val shareManager = ShareManager(this)
     private var dialog: GeneratingDialog? = null
 
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
+        initView()
         //数据更新
         dataUpdate()
+    }
+
+    private fun initView() {
+        mRealVM.checkedPolicy.set(checkedPolicy)
     }
 
     private fun dataUpdate() {
@@ -97,6 +102,8 @@ class PhoneLoginActivity :
             finishOnly()
         }
     }
+
+
 
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
@@ -160,11 +167,11 @@ class PhoneLoginActivity :
                 }
             }
 
-            R.id.btnClose -> {
+            R.id.btnClose->{
                 finishOnly()
             }
 
-            R.id.bt_settings -> {
+            R.id.bt_settings->{
                 SettingsActivity.start(this)
             }
         }
@@ -218,6 +225,8 @@ class PhoneLoginActivity :
      * finish动画处理
      */
     private fun finishOnly() {
+        enterAnim = 0
+        exitAnim = R.anim.push_bottom_out
         finish()
     }
 

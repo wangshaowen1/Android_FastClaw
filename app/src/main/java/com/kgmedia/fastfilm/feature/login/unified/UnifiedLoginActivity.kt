@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
 import com.kgmedia.fastfilm.databinding.ActivityUnifiedLoginBinding
+import com.kgmedia.fastfilm.feature.login.LoginActivity
 import com.kgmedia.fastfilm.feature.login.PrivacyPolicyDialog
 import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginActivity
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
@@ -39,16 +40,26 @@ class UnifiedLoginActivity : BaseViewModelActivity<ActivityUnifiedLoginBinding, 
     ShareManager.UmengLoginListener {
 
     companion object {
+        var checkedPolicy = false
         fun start(showToast: Boolean = false) {
             if (showToast) {
                 "请先登录".showToast()
             }
             val activity = topActivity ?: return
-            activity.startActivity(Intent(activity, UnifiedLoginActivity::class.java))
+            activity.startActivity(Intent(activity, LoginActivity::class.java))
+            activity.overridePendingTransition(
+                R.anim.push_bottom_in,
+                R.anim.push_bottom_out
+            )
         }
     }
 
+
+    private var enterAnim = 0
+    private var exitAnim = 0
     private val shareManager by lazy { ShareManager(this) }
+
+
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
@@ -78,15 +89,15 @@ class UnifiedLoginActivity : BaseViewModelActivity<ActivityUnifiedLoginBinding, 
             }
 
             R.id.btnPhone -> {
+                checkedPolicy = mRealVM.checkedPolicy.get()
                 PhoneLoginActivity.start(false, checkedPolicy = mRealVM.checkedPolicy.get())
                 finishOnly()
             }
 
-            R.id.bt_settings -> {
+            R.id.bt_settings->{
                 SettingsActivity.start(this)
             }
-
-            R.id.ll_describe -> {
+            R.id.ll_describe->{
                 //协议
                 mRealVM.checkedPolicy.set(!mRealVM.checkedPolicy.get())
             }
@@ -117,19 +128,23 @@ class UnifiedLoginActivity : BaseViewModelActivity<ActivityUnifiedLoginBinding, 
         finishOnly()
     }
 
+
     /**
      * finish动画处理
      */
     private fun finishOnly() {
+        enterAnim = 0
+        exitAnim = R.anim.push_bottom_out
         finish()
     }
+
 
     /**
      * 用户协议
      */
     private fun termsOfService() {
         val spannableString =
-            SpannableString("登录即代表同意和《用户协议》和《隐私政策》")
+            SpannableString( "登录即代表同意和《用户协议》和《隐私政策》")
         val userAgreement = "《用户协议》"
         val userAgreementStartIndex = spannableString.indexOf(userAgreement)
         if (userAgreementStartIndex != -1) {
@@ -189,8 +204,16 @@ class UnifiedLoginActivity : BaseViewModelActivity<ActivityUnifiedLoginBinding, 
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
+
+
         binding.tvAgreement.movementMethod = LinkMovementMethod.getInstance()
         binding.tvAgreement.highlightColor = Color.TRANSPARENT
         binding.tvAgreement.text = spannableString
+    }
+
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(enterAnim, exitAnim)
     }
 }

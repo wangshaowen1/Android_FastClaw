@@ -5,6 +5,7 @@ import com.blankj.utilcode.util.AppUtils
 import com.kgmedia.fastfilm.common.Constant
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.User
+import com.kgmedia.fastfilm.feature.login.flash.PhoneLoginDialogActivity
 import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginActivity
 import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginDialog
 import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginActivity
