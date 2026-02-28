@@ -60,7 +60,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
 
     private fun initView() {
         setupCommonBanner(binding.banner.root, binding.banner.banner as BannerViewPager<BannerInfo>) {
-            ApiFactory.apiService.getAppBanner(BannerBody(BannerBody.LOCATION_HOME)).data
+            ApiFactory.apiService.getAppBanner(BannerBody(BannerBody.LOCATION_PERSONAL_HOME)).data
         }
     }
 

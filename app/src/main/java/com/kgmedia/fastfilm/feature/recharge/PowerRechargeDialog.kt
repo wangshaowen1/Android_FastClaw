@@ -42,7 +42,7 @@ class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBi
     override fun onPrepareView() {
         super.onPrepareView()
         setupCommonBanner(binding.banner.root, binding.banner.banner as BannerViewPager<BannerInfo>) {
-            ApiFactory.apiService.getAppBanner(BannerBody(BannerBody.LOCATION_HOME)).data
+            ApiFactory.apiService.getAppBanner(BannerBody(BannerBody.LOCATION_PAY_POPUP)).data
         }
         observeEvents {
             on<Events.UserDataEvent> {
