@@ -24,7 +24,7 @@ data class WorkInfo(
     val workInspiration: String? = null,
     //作品封面图URL（AI生成或默认图）
     val workCoverUrl: String? = null,
-    //作品类型：1-灵感创作 2-小说改编
+    //作品类型：1-灵感创作;2-小说改编;3-小说上传
     val workType: Int? = null,
     //作品状态：草稿（20=剧本生成中 30=资产生成中） 生成中（40=分镜生成中  42=分镜视频生成中 50=待合成） 60=已完成 70=失败
     val workStatus: Int? = null,
@@ -58,6 +58,9 @@ data class WorkInfo(
 
         //作品类型：2-小说创作
         const val NOVEL_CREATION = 2
+
+        //作品类型：3-小说上传
+        const val NOVEL_UPLOAD = 3
 
         //剧本生成中
         const val DRAFT_GEN_STATE = 20

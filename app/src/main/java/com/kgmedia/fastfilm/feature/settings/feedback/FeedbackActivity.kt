@@ -82,14 +82,14 @@ class FeedbackActivity :
                     "请选择类型".showToast()
                     return
                 }
-                if (binding.feedbackInput.text.length < 6) {
-                    "请输入至少6个字的内容".showToast()
+                if (binding.feedbackInput.text.length < 10) {
+                    "请输入至少10个字的内容".showToast()
                     return
                 }
-                if (mRealVM.phoneNumber.value.isNullOrEmpty()) {
-                    "请输入联系方式".showToast()
-                    return
-                }
+                //if (mRealVM.phoneNumber.value.isNullOrEmpty()) {
+                //    "请输入联系方式".showToast()
+                //    return
+                //}
                 mRealVM.feedback(
                     binding.feedbackInput.text.toString(),
                     Utils.toPathList(binding.photoGrid.originalPhotos)
@@ -145,8 +145,6 @@ class FeedbackActivity :
             .autoHideToolbarOnSingleTap(true)
             .forResult(REQUEST_CODE_CHOOSE)
     }
-
-
 
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {

@@ -88,8 +88,8 @@ class ReportActivity :
                     "请选择类型".showToast()
                     return
                 }
-                if (binding.feedbackInput.text.length < 6) {
-                    "请输入至少6个字的内容".showToast()
+                if (binding.feedbackInput.text.length < 10) {
+                    "请输入至少10个字的内容".showToast()
                     return
                 }
                 if (mRealVM.phoneNumber.value.isNullOrEmpty()) {
