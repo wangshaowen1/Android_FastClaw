@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
 import com.kgmedia.fastfilm.databinding.DialogUnifiedLoginBinding
 import com.kgmedia.fastfilm.feature.login.PrivacyPolicyDialog
+import com.kgmedia.fastfilm.feature.login.flash.FlashLoginDialogFragment
 import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginDialog
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
@@ -83,11 +84,12 @@ class UnifiedLoginDialog :
             }
 
             R.id.btnPhone -> {
-                PhoneLoginDialog.show(
-                    false,
-                    checkedPolicy = mRealVM.checkedPolicy.get(),
-                    parentFragmentManager
-                )
+//                PhoneLoginDialog.show(
+//                    false,
+//                    checkedPolicy = mRealVM.checkedPolicy.get(),
+//                    parentFragmentManager
+//                )
+                FlashLoginDialogFragment.show(parentFragmentManager,false, checkedPolicy = mRealVM.checkedPolicy.get())
                 finishOnly()
             }
 

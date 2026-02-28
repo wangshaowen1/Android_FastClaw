@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.flow
  */
 class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
     companion object {
-        //显示加载中
+        //显示加载中-表示走的是一件登录，如果没有手机卡在走手机号登录
         const val SHOW_LOADING = 0
 
         //显示一键登录
@@ -86,6 +86,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
 
     //发送验证码按钮文字
     val sendCodeText = ObservableField(R.string.send_sms_code.getResString())
+
     //验证码
     val code by lazy { MutableLiveData<String?>() }
 
@@ -93,8 +94,14 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        //初始化闪验并获取内容
-        initFlashTest()
+        val loginType = mBundle.getInt(PhoneLoginDialog.LOGIN_TYPE, SHOW_LOADING)
+        if (loginType == SHOW_LOADING || loginType == SHOW_ONE_KEY_LOGIN) {
+            //初始化闪验并获取内容
+            initFlashTest()
+        } else {
+            checkedPolicyChange.value = true
+        }
+        showState.set(loginType)
     }
 
     /**

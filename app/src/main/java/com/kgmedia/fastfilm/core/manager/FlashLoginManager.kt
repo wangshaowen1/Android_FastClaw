@@ -25,6 +25,7 @@ import com.kgmedia.fastfilm.core.databinding.singleClick
 import com.kgmedia.fastfilm.databinding.LayoutShanyanCustomBinding
 import com.nhsd.basic.ext.dp
 import com.nhsd.crop.util.ViewUtils
+import com.umeng.socialize.bean.SHARE_MEDIA
 import org.json.JSONObject
 import java.lang.ref.WeakReference
 
@@ -72,7 +73,7 @@ object FlashLoginManager {
         val screenWidth = ScreenUtils.getScreenWidth()
         val width = SizeUtils.px2dp(screenWidth.toFloat())
         val navHeight = topActivity?.let { SizeUtils.px2dp(ViewUtils.getNavigationBarHeight(it).toFloat()) }
-        val height = width / 375f * (349 + (navHeight ?: 0))
+        val height = width / 375f * (352 + (navHeight ?: 0))
         val customView = LayoutShanyanCustomBinding.inflate(LayoutInflater.from(App.instance))
         binding = customView
         binding?.bg?.layoutParams?.height = height.toInt().dp
@@ -81,7 +82,9 @@ object FlashLoginManager {
             finishAuthActivity()
             onCancel.invoke()
         }
-        singleClick(customView.btnSms) { onOtherLogin.invoke(1) }
+        //手机号登录
+        singleClick(customView.ivLoginMobilePhoneNumber) { onOtherLogin.invoke(1) }
+        singleClick(customView.ivLoginWx) { onOtherLogin.invoke(3) }
         ShanYanUIConfig.Builder()
             .setTextSizeIsdp(true)
             //背景
@@ -93,19 +96,19 @@ object FlashLoginManager {
             //logo图标
             .setLogoHidden(true)
             //号码栏
-            .setNumberColor(Color.BLACK)
-            .setNumFieldOffsetY(80)
+            .setNumberColor(R.color.text_color_1_dark.getResColor())
+            .setNumFieldOffsetY(78)
             .setNumberSize(24)
             .setNumberBold(true)
             //登录按钮（默认高度：46dp）
             .setLogBtnImgPath(R.drawable.btn_common_normal.getResDrawable())
             .setLogBtnText("本机一键登录")
             .setLogBtnTextSize(16)
-            .setLogBtnTextColor(R.color.white.getResColor())
+            .setLogBtnTextColor(R.color.text_color_3_dark.getResColor())
             .setLogBtnTextBold(true)
             .setLogBtnWidth(291)
             .setLogBtnHeight(50)
-            .setLogBtnOffsetY(162)
+            .setLogBtnOffsetY(146)
             //其他登录
             .addCustomView(customView.root, false, false, null)
             //隐私栏
@@ -113,9 +116,9 @@ object FlashLoginManager {
             .setAppPrivacyTwo(R.string.tvSYPrivateService.getResString(), Config.get().privacyUrl)
             .setPrivacySmhHidden(false)
             .setPrivacyTextSize(12)
-            .setAppPrivacyColor(R.color.color_50_000000.getResColor(), Color.BLACK)
+            .setAppPrivacyColor(R.color.text_color_3_dark.getResColor(), R.color.text_color_1_dark.getResColor())
             .setPrivacyOffsetX(30)
-            .setPrivacyOffsetY(272)
+            .setPrivacyOffsetY(274)
             .setPrivacyState(false)
             .setCheckedImgPath(R.drawable.icon_choose_checked.getResDrawable())
             .setUncheckedImgPath(R.drawable.icon_choose_normal_dark.getResDrawable())
@@ -123,7 +126,7 @@ object FlashLoginManager {
             .setcheckBoxOffsetXY(5, 5)
             .setCheckBoxMargin(5, 5, 5, 5)
             .setCheckBoxTipDisable(true)
-            .setPrivacyText("我已阅读并同意", "、", "、", "和", "")
+            .setPrivacyText("登录即代表同意和", "和", "以及", "", "")
             .setPrivacyGravityHorizontalCenter(true)
             .setPrivacyOffsetGravityLeft(true)
             .setPrivacyActivityEnabled(false)
@@ -131,9 +134,9 @@ object FlashLoginManager {
             .setPrivacyTextBold(true)
             //运营商slogan（**提供认证服务）
             .setSloganHidden(false)
-            .setSloganOffsetY(118)
+            .setSloganOffsetY(112)
             .setSloganTextSize(12)
-            .setSloganTextColor(R.color.color_40_000000.getResColor())
+            .setSloganTextColor(R.color.text_color_3_dark.getResColor())
             //底部弹窗
             .setDialogTheme(true, width, height.toInt(), 0, 0, true)
             .build()

@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.login.phone
 
 import android.graphics.Color
+import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextPaint
@@ -42,16 +43,24 @@ class PhoneLoginDialog :
 
         //是否同意了隐私政策用户协议这个
         var checkedPolicy = false
+
+        //登录方式
+        const val LOGIN_TYPE = "loginType"
+
         fun show(
             showToast: Boolean = false,
             checkedPolicy: Boolean = false,
-            manager: FragmentManager
+            manager: FragmentManager,
+            loginType: Int = PhoneLoginViewModel.SHOW_LOADING
         ): PhoneLoginDialog {
             if (showToast) {
                 "请先登录".showToast()
             }
             this.checkedPolicy = checkedPolicy
             val dialog = PhoneLoginDialog()
+            dialog.arguments = Bundle().apply {
+                putInt(LOGIN_TYPE, loginType)
+            }
             dialog.show(manager)
             return dialog
         }

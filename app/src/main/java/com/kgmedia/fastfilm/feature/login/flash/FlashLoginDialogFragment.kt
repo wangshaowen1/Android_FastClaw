@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
@@ -14,6 +15,8 @@ import com.kgmedia.fastfilm.core.manager.FlashLoginManager
 import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.databinding.DialogFlashLoginBinding
 import com.kgmedia.fastfilm.feature.login.LoginActivity
+import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginDialog
+import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginViewModel
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.nhsd.basic.BaseVMDialogFragment
 import com.nhsd.basic.bus.observeEvents
@@ -40,8 +43,13 @@ class FlashLoginDialogFragment :
         /**
          * 闪验登录
          */
-        fun show(showToast: Boolean = false, checkedPolicy: Boolean = false) {
-            val manager = (topActivity as? FragmentActivity)?.supportFragmentManager ?: return
+        fun show(
+            manager: FragmentManager?,
+            showToast: Boolean = false,
+            checkedPolicy: Boolean = false
+        ) {
+            val manager =
+                manager ?: (topActivity as? FragmentActivity)?.supportFragmentManager ?: return
             if (showToast) {
                 "请先登录".showToast()
             }
@@ -65,12 +73,12 @@ class FlashLoginDialogFragment :
 
     private val shareManager by lazy { activity?.let { ShareManager(it) } }
 
-    private var checkedPolicy=false
+    private var checkedPolicy = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FlashLoginManager.setListener(this)
-        checkedPolicy=arguments?.getBoolean(CHECKED_POLICY) ?: false
+        checkedPolicy = arguments?.getBoolean(CHECKED_POLICY) ?: false
     }
 
     override fun onStart() {
@@ -153,7 +161,13 @@ class FlashLoginDialogFragment :
      */
     private fun loginByPhoneDialog(dismiss: Boolean) {
         LoginActivity.checkedPolicy = FlashLoginManager.checkedPolicy
-        PhoneLoginDialogActivity.start(requireActivity(), checkedPolicy = checkedPolicy)
+        PhoneLoginDialog.show(
+            showToast = false,
+            checkedPolicy = FlashLoginManager.checkedPolicy,
+            manager = this.parentFragmentManager,
+            loginType = PhoneLoginViewModel.SHOW_VERIFY_CODE_LOGIN
+        )
+        //PhoneLoginDialogActivity.start(requireActivity(), checkedPolicy = checkedPolicy)
         if (dismiss) {
             isCancelable = true
             shouldDismiss()

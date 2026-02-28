@@ -283,7 +283,7 @@
                         android:paddingStart="@dimen/spacing_m"
                         android:paddingEnd="20dp"
                         android:text="@{layout.sendCodeText}"
-                        android:textColor="@color/enable_theme1_selector"
+                        android:textColor="@color/theme_color_2_dark"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
