@@ -17,7 +17,9 @@ import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.DeleteWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,13 +36,20 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
     var isView = MutableLiveData(true)
 
     //合成中列表数据
-    var workInformationIds =  hashMapOf<String, WorkInfo>()
+    var workInformationIds = hashMapOf<String, WorkInfo>()
+
     //刷新列表
     val isRefresh = MutableLiveData(false)
+
     //当前页面显示状态
     val isShow = AtomicBoolean(false)
+
     //当前选中的数量
     var selectedCount = MutableLiveData(0)
+
+    //作品详情
+    val workDtl = MutableLiveData<WorkInfo?>()
+
     private var checkGeneratingJob: Job? = null
 
     /**
@@ -170,6 +179,20 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
             }
             mRepo.appDatabase.workInformationDao().upsertWorkInformationDao(pictureBooks)
         }
+    }
+
+    /**
+     * 作品详情
+     */
+    fun getWorkDtl(workId: String?) {
+        if (workId.isNullOrEmpty()) return
+        launchWithLoading(
+            block = {
+                mRepo.api.getWorkInfo(WorkIdBody(workId = workId)).data?.let {
+                    workDtl.value = it
+                }
+            }
+        )
     }
 
 

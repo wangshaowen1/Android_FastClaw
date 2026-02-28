@@ -166,6 +166,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         //[10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜生成中 32=分镜视频生成中 35=待合成 40=已完成]
         when (episodeInfo.stepProgress) {
             EpisodeInfo.PROGRESS_COMPLETED -> {
+                //已经完成了，走播放
                 val snapshot = episodeAdapter.snapshot().items
                 onPlayEpisodeClicked(
                     mRealVM.workInfo.value,
@@ -266,7 +267,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
     private fun continueWriting() {
         val workInfo = mRealVM.workInfo.value ?: return
-        if (!workInfo.isInspirationGenerated()) {
+        if (workInfo.workType==WorkInfo.NOVEL_CREATION) {
             //小说改编续写
             ContinueWritingActivity.start(
                 this,

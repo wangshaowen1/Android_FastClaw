@@ -264,7 +264,7 @@ object AppRouter : IRouter {
     }
 
 
-    private fun getModel(workType: Int?, sortNo: Int = 0): Int {
+     fun getModel(workType: Int?, sortNo: Int = 0): Int {
         when (workType) {
             WorkInfo.INSPIRATION_CREATION -> {
                 //作品类型：1-灵感创作

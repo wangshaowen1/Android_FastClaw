@@ -50,6 +50,8 @@ data class WorkInfo(
     val rejectReason: String? = null,
     /**签约评级（S/A/B/C等）*/
     val contractLevel: String? = null,
+    //[枚举]小说上传模式下-第一集是否有剧本(0-没有 1-有)
+    val novelUploadIsOneStoryContentStatus: Int?=null,
 ) : Parcelable {
 
     companion object {
@@ -84,6 +86,16 @@ data class WorkInfo(
         const val FAILED_STATE = 70
     }
 
+
+    /**
+     * 小说上传模式下-第一集是否有剧本
+     * @return Boolean
+     */
+    fun isInspirationUploadMode(): Boolean {
+        return novelUploadIsOneStoryContentStatus == 1
+    }
+
+
     //是否是生成中状态
     fun isGenerating(): Boolean {
         return workStatus == GEN_MUSIC_VIDEO
@@ -102,6 +114,7 @@ data class WorkInfo(
     fun isInspirationGenerated(): Boolean {
         return workType == 1
     }
+
 
     fun isMine(): Boolean {
         return User.get().isSameId(userId)

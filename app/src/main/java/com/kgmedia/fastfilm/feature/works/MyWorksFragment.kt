@@ -21,6 +21,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
 import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
+import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
@@ -142,8 +143,9 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             eventVm.events.collect { event ->
                 when (event) {
                     is MyWorksEvent.ViewDetails -> {
-                        if (event.workInfo?.workType== WorkInfo.NOVEL_UPLOAD){
-                            //作品类型：3-小说上传
+                        if (event.workInfo?.workType == WorkInfo.NOVEL_UPLOAD && event.workInfo.isDraftStatus()) {
+                            //作品类型：3-小说上传 且是草稿状态
+                            mRealVM.getWorkDtl(workId = event.workInfo.workId)
                             return@collect
                         }
                         //查看详情
@@ -157,9 +159,31 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 }
             }
         }
+
+        mRealVM.workDtl.observe(this) {
+            if (it == null) return@observe
+            mRealVM.workDtl.value = null
+            if (it.isInspirationUploadMode()) {
+                //查看详情
+                SeriesActivity.start(workId = it.workId)
+                return@observe
+            }
+            StoryEditorActivity.restore(
+                context = topActivity,
+                step = 1,
+                workId = it.workId,
+                storyId = null,
+                workTitle = it.workTitle,
+                chapterIndex = 1,
+                model = AppRouter.getModel(workType = it.workType, sortNo = 1),
+                videoRatio = it.workRatio,
+            )
+        }
+
         getViewModelOfActivity<MainViewModel>()?.setIsEditing = { status ->
             mRealVM.isView.value = true
         }
+
         mRealVM.isView.observe(this) {
             eventVm.switchStatus(it)
             getViewModelOfActivity<MainViewModel>()?.isEditing?.set(!it)
