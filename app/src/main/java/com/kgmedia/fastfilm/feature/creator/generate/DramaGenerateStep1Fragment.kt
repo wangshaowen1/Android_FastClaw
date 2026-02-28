@@ -157,10 +157,8 @@ class DramaGenerateStep1Fragment :
         }
         binding.btnNext.setOnSingleClickListener {
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
-                mRealVM.sensitiveWordJudgment {
-                    mRealVM.saveTitle {
-                        hostVm?.nextStep(2, mRealVM.workId, "")
-                    }
+                mRealVM.saveTitle {
+                    hostVm?.nextStep(2, mRealVM.workId, "")
                 }
                 return@setOnSingleClickListener
             }

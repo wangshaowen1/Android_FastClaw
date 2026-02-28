@@ -218,23 +218,23 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             }
         }
     }
-
-
-    /**
-     * 敏感词校验
-     */
-    fun sensitiveWordJudgment(callback: () -> Unit) {
-        requestWithLoading(
-            apiBlock = { mRepo.sensitiveWordCheck(mSSEContent.value) },
-            showLoading = true
-        ) {
-            if (data?.isSensitive() == true) {
-                data?.content?.showToast()
-            } else {
-                callback.invoke()
-            }
-        }
-    }
+//
+//
+//    /**
+//     * 敏感词校验
+//     */
+//    fun sensitiveWordJudgment(callback: () -> Unit) {
+//        requestWithLoading(
+//            apiBlock = { mRepo.sensitiveWordCheck(mSSEContent.value) },
+//            showLoading = true
+//        ) {
+//            if (data?.isSensitive() == true) {
+//                data?.content?.showToast()
+//            } else {
+//                callback.invoke()
+//            }
+//        }
+//    }
 
     fun saveTitle(onSuccess: (() -> Unit)? = null) {
         requestWithLoading({
