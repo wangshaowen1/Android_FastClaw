@@ -33,6 +33,13 @@ class DramaGenerateConstants {
          */
         const val MODEL_STORY_URL = 35
 
+
+        /**
+         * 继续创作(小说文档模式)
+         */
+        const val CONTINUE_WRITING_NOVEL_DOCUMENTS = 35
+
+
         /**
          * 剧集梗概
          */
@@ -42,5 +49,7 @@ class DramaGenerateConstants {
          * 优化作品简介
          */
         const val MODEL_OPTIMIZE_DRAMA_DESC = 34
+
+
     }
 }

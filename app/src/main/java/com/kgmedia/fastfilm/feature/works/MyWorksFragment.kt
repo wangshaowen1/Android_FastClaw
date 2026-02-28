@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
@@ -125,6 +126,10 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             eventVm.events.collect { event ->
                 when (event) {
                     is MyWorksEvent.ViewDetails -> {
+                        if (event.workInfo?.workType== WorkInfo.NOVEL_UPLOAD){
+                            //作品类型：3-小说上传
+                            return@collect
+                        }
                         //查看详情
                         SeriesActivity.start(workId = event.workInfo?.workId)
                     }

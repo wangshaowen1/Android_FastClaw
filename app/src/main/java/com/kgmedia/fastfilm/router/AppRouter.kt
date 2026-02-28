@@ -153,7 +153,13 @@ object AppRouter : IRouter {
 
     //workId storyId workTitle workType workRatio
     @JvmStatic
-    fun startStory(workId: String?, storyId: String?, workTitle: String?, workType: Int?, workRatio: String?) {
+    fun startStory(
+        workId: String?,
+        storyId: String?,
+        workTitle: String?,
+        workType: Int?,
+        workRatio: String?
+    ) {
         if (workId.isNullOrEmpty() || storyId.isNullOrEmpty()) {
             return
         }
@@ -259,19 +265,45 @@ object AppRouter : IRouter {
 
 
     private fun getModel(workType: Int?, sortNo: Int = 0): Int {
-        if (workType == WorkInfo.INSPIRATION_CREATION) {
-            if (sortNo <= 1) {
-                //第一集创作(灵感)
-                return DramaGenerateConstants.MODEL_INSPIRATION
+        when (workType) {
+            WorkInfo.INSPIRATION_CREATION -> {
+                //作品类型：1-灵感创作
+                if (sortNo <= 1) {
+                    //第一集创作(灵感)
+                    return DramaGenerateConstants.MODEL_INSPIRATION
+                }
+                //继续创作(灵感)
+                return DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
             }
-            //继续创作(灵感)
-            return DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
+
+            WorkInfo.NOVEL_CREATION -> {
+                //作品类型：2-小说创作
+                if (sortNo <= 1) {
+                    //第一集创作(小说)
+                    return DramaGenerateConstants.MODEL_STORY
+                }
+                //继续创作(小说)
+                return DramaGenerateConstants.MODEL_CONTINUE_STORY
+            }
+
+            WorkInfo.NOVEL_UPLOAD -> {
+                //作品类型：3-上传小说
+                if (sortNo <= 1) {
+                    //第一集创作(小说文档模式)
+                    return DramaGenerateConstants.MODEL_STORY_URL
+                }
+                //继续创作(小说文档模式)
+                return DramaGenerateConstants.CONTINUE_WRITING_NOVEL_DOCUMENTS
+            }
+
+            else -> {
+                if (sortNo <= 1) {
+                    //第一集创作(小说)
+                    return DramaGenerateConstants.MODEL_STORY
+                }
+                //继续创作(小说)
+                return DramaGenerateConstants.MODEL_CONTINUE_STORY
+            }
         }
-        if (sortNo <= 1) {
-            //第一集创作(小说)
-            return DramaGenerateConstants.MODEL_STORY
-        }
-        //继续创作(小说)
-        return DramaGenerateConstants.MODEL_CONTINUE_STORY
     }
 }

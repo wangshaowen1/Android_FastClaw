@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
-import com.kgmedia.fastfilm.common.utils.Utils
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
