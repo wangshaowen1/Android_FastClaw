@@ -214,18 +214,16 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             )
             response(mRepo.api.saveWorkSummary(body)) {
                 onSuccess?.invoke(data?.workId, data?.storyId)
-//                saveDesc(mdContent, data?.workId) {
-//                }
             }
         }
     }
 
-    fun saveDesc(mdContent: String?, workId: String?, onSuccess: (() -> Unit)? = null) {
+    fun saveTitle(onSuccess: (() -> Unit)? = null) {
         requestWithLoading({
             mRepo.api.updateWorkInfo(
                 WorkInfoUpdateBody(
                     workId,
-                    workDesc = parseSeasonOverview(mdContent ?: "")
+                    workTitle = mWorkName.value
                 )
             )
         }) {

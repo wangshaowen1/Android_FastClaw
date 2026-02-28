@@ -130,7 +130,7 @@ class DramaGenerateStep1Fragment :
 //            markDownTextView.stopPrinting(null)
         }
         mRealVM.mWorkName.observe(this) {
-            if (hostVm?.title?.value != it) {
+            if (hostVm?.title?.value.isNullOrEmpty()) {
                 hostVm?.title?.value = it
             }
         }
@@ -153,7 +153,9 @@ class DramaGenerateStep1Fragment :
         }
         binding.btnNext.setOnSingleClickListener {
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
-                hostVm?.nextStep(2, mRealVM.workId, "")
+                mRealVM.saveTitle {
+                    hostVm?.nextStep(2, mRealVM.workId, "")
+                }
                 return@setOnSingleClickListener
             }
             mRealVM.confirmGenerate(markDownTextView.text.toString()) { workId, storyId ->
