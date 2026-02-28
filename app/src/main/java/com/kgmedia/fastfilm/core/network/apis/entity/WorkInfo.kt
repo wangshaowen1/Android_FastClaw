@@ -42,6 +42,14 @@ data class WorkInfo(
     var userId: String? = null,
     //剧集
     var workStoryItemList: List<EpisodeInfo>? = null,
+    /**[枚举]签约状态(0-未申请 1-审核中 2-已通过 3-已驳回)*/
+    val contractStatus: Int? = null,
+    /**[枚举]发行状态(0-未发行 1-待签约 2-发行上架中 3-已发行)*/
+    val publishStatus: Int? = null,
+    /**驳回原因*/
+    val rejectReason: String? = null,
+    /**签约评级（S/A/B/C等）*/
+    val contractLevel: String? = null,
 ) : Parcelable {
 
     companion object {
@@ -256,7 +264,7 @@ data class EpisodeInfo(
      * @return Boolean
      */
     fun isGenerating(): Boolean {
-        return stepProgress  == PROGRESS_STORYBOARD_GENERATING
+        return stepProgress == PROGRESS_STORYBOARD_GENERATING
     }
 
     /**

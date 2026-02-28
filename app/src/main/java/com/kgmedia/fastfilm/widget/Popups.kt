@@ -24,7 +24,7 @@ class SeriesMorePopupView(context: Context) : IPopupView {
 /**
  * 剧集签约失败提示
  */
-class SeriesReleaseFailTipsPopupView(context: Context) : IPopupView {
+class SeriesReleaseFailTipsPopupView(context: Context, content: String?) : IPopupView {
     val binding by lazy { PopupSeriesReleaseFailTipsBinding.inflate(LayoutInflater.from(context), null, false) }
 
     override val root: View
@@ -33,6 +33,10 @@ class SeriesReleaseFailTipsPopupView(context: Context) : IPopupView {
         get() = binding.bg
     override val popup: View
         get() = binding.popup
+
+    init {
+        binding.tvTips.text = content
+    }
 
     override fun updateView(animatedValue: Float): Boolean {
         //默认动画

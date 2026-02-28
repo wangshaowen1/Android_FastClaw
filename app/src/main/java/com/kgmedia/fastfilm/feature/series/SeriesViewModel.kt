@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.series
 
 import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -31,12 +32,6 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
 
     //创建续集信息
     val episodeInfo = MutableLiveData<EpisodeInfo?>()
-
-    /**发行状态*/
-    val releaseStatus by lazy { ObservableInt() }
-
-    /**作品等级图标*/
-    val workLevelIcon by lazy { ObservableInt(R.drawable.icon_work_level_s) }
 
     override fun onCreate() {
         super.onCreate()
@@ -99,16 +94,53 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
         }
     }
 
-    fun releaseStatusFailed(releaseStatus: Int) = when (releaseStatus) {
-        else -> true
-    }
+    fun publishFailed(workInfo: WorkInfo?) = workInfo?.contractStatus == 3
 
     @ColorRes
-    fun releaseStatusColor(releaseStatus: Int) = when (releaseStatus) {
+    fun publishStatusColor(workInfo: WorkInfo?) = when (workInfo?.contractStatus) {
+        /**[枚举]签约状态(0-未申请 1-审核中 2-已通过 3-已驳回)*/
+        0 -> R.color.text_color_3_dark
+        1 -> R.color.func_warning_dark
+        2 -> when (workInfo.publishStatus) {
+            /**[枚举]发行状态(0-未发行 1-待签约 2-发行上架中 3-已发行)*/
+            0 -> R.color.text_color_3_dark
+            1 -> R.color.func_warning_dark
+            2 -> R.color.func_special_dark
+            3 -> R.color.func_success_dark
+            else -> R.color.func_failure_dark
+        }
+
+        3 -> R.color.func_failure_dark
         else -> R.color.func_failure_dark
     }
 
-    fun releaseStatusText(releaseStatus: Int) = when (releaseStatus) {
-        else -> "签约失败"
+    fun publishStatusText(workInfo: WorkInfo?) = when (workInfo?.contractStatus) {
+        /**[枚举]签约状态(0-未申请 1-审核中 2-已通过 3-已驳回)*/
+        0 -> "未发行"
+        1 -> "签约审核中"
+        2 -> when (workInfo.publishStatus) {
+            /**[枚举]发行状态(0-未发行 1-待签约 2-发行上架中 3-已发行)*/
+            0 -> "未发行"
+            1 -> "待签约"
+            2 -> "发行上架中"
+            3 -> "已发行"
+            else -> "未知状态"
+        }
+
+        3 -> "签约失败"
+        else -> "未知状态"
+    }
+
+    /**
+     * @param contractLevel 签约评级（S/A/B/C等）
+     */
+    @DrawableRes
+    fun workLevelIcon(contractLevel: String?) = when (contractLevel) {
+        /**[枚举]签约等级(0-普通 1-专业 2-金牌)*/
+        "S" -> R.drawable.icon_work_level_s
+        "A" -> R.drawable.icon_work_level_a
+        "B" -> R.drawable.icon_work_level_b
+        "C" -> R.drawable.icon_work_level_c
+        else -> 0
     }
 }

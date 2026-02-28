@@ -248,8 +248,9 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             R.id.llReleaseStatus -> {
+                val rejectReason = mRealVM.workInfo.value?.rejectReason ?: return
                 bindingNullable?.tvReleaseStatus?.let {
-                    Popup(SeriesReleaseFailTipsPopupView(this)).showUnder(it)
+                    Popup(SeriesReleaseFailTipsPopupView(this, rejectReason)).showUnder(it)
                 }
             }
 
