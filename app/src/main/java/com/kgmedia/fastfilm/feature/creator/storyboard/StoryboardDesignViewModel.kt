@@ -163,7 +163,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun generateAllStoryboardDescription() {
-        if (arrayOf(STEP_INIT, STEP_DESCRIPTION_GENERATE_FAILED).contains(step.get())) return
+        if (!arrayOf(STEP_INIT, STEP_DESCRIPTION_GENERATE_FAILED).contains(step.get())) return
         generating = true
         launch(block = {
             val allStoryboardDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId)).data }
