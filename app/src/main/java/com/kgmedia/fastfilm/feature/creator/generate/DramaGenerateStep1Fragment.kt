@@ -21,6 +21,7 @@ import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
@@ -34,6 +35,7 @@ class DramaGenerateStep1Fragment :
     BaseViewModelFragment<FragmentDramaGenerateStep1Binding, DramaGenerateStep1ViewModel>() {
 
     companion object {
+        const val TAG = "DramaGenerateStep1Fragment"
         fun newInstance(): DramaGenerateStep1Fragment {
             val fragment = DramaGenerateStep1Fragment()
             val bundle = Bundle()
@@ -85,17 +87,16 @@ class DramaGenerateStep1Fragment :
             }
         }
 
-        val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerView.setLayoutManager(linearLayoutManager)
-
         if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
-            binding.recyclerView.setAdapter(episodeAdapter)
+            binding.recyclerView2.setAdapter(episodeAdapter)
             mRealVM.storySummaryResult.observe(this) {
                 episodeAdapter.submitList(it.structureList?.map { info ->
                     return@map ItemStorySummaryGenerateVm(info)
                 })
             }
         } else {
+            val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)
+            binding.recyclerView.setLayoutManager(linearLayoutManager)
             linearLayoutManager.setStackFromEnd(true)
             binding.recyclerView.setAdapter(object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -120,7 +121,7 @@ class DramaGenerateStep1Fragment :
 //                return@observe
 //            }
 //            markDownTextView.startPrinting(it)
-
+            Logger.d(TAG, "onSSEContent: $it")
             if (!markDownTextView.isStarted) {
                 // 场景 A：第一次生成，或者点击了“重新生成”
                 if (it.isNotEmpty()) {
@@ -137,7 +138,7 @@ class DramaGenerateStep1Fragment :
                     val missingDelta = it.substring(currentText.length)
 
                     // 将差值增量一点一点喂给打字机，满足控件只接受 append 的特性 [cite: 72]
-                    markDownTextView.appendPrinting(missingDelta)
+                    markDownTextView.appendPrinting(missingDelta.replace("\\n","\n"))
                 }
             }
         }
@@ -234,16 +235,12 @@ class DramaGenerateStep1Fragment :
 
     override fun onResume() {
         super.onResume()
-        if (markDownTextView.isStarted) {
-            markDownTextView.resume()
-        }
+        markDownTextView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        if (markDownTextView.isStarted) {
-            markDownTextView.pause()
-        }
+        markDownTextView.pause()
     }
 
     override fun onDestroy() {

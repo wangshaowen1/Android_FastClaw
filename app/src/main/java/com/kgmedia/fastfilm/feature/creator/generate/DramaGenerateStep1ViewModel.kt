@@ -34,9 +34,10 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     companion object {
         const val TAG = "DramaGenerateStep1ViewModel"
-        const val DISPLAY_FAIL = 1
-        const val DISPLAY_CONTENT = 0
     }
+
+    var displayFail = 1
+    var displayContent = 0
 
     val promptGenerating = MutableLiveData<Triple<Boolean, String, String>>()
 
@@ -63,7 +64,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     // 作品名称
     var mWorkName = MutableLiveData<String>()
 
-    val displayChild = ObservableInt(DISPLAY_CONTENT)
+    val displayChild = ObservableInt(0)
     val nextStepEnabled by lazy { ObservableBoolean(false) }
 
     var onSSECompleted: (() -> Unit)? = null
@@ -79,6 +80,12 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     private var sseHandler: SSEStreamHandler? = null
 
     fun isStoryDocumentsMode() = model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS
+
+    override fun onCreate() {
+        super.onCreate()
+        displayContent = if(isStoryDocumentsMode()) 1 else 0
+        displayFail = if(isStoryDocumentsMode()) 2 else 1
+    }
 
     private val progressHelper by lazy {
         AutoProgressSimulator(viewModelScope) { show, title, progress ->
@@ -97,7 +104,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 customEpisodeCount
             )
         )
-        displayChild.set(DISPLAY_CONTENT)
+        displayChild.set(displayContent)
         progressHelper.start(
             "创建故事大纲", "生成故事梗概",
             step = 1,
@@ -122,6 +129,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
                     mFullMarkdown += delta
                     mSSEContent.value = mFullMarkdown
+                    Logger.d("[SSE]", "onMdUpdate：$mFullMarkdown")
                 },
                 onComplete = { originalContent ->
                     Logger.d("[SSE]", "Finished")
@@ -137,7 +145,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
-                    displayChild.set(DISPLAY_FAIL)
+                    displayChild.set(displayFail)
                     onSSECompleted?.invoke()
                     parseMessage(e)?.showToast()
                     progressHelper.stop()
@@ -170,7 +178,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         if (novelSummaryPollingJob?.isActive == true) return
 
         nextStepEnabled.set(false)
-        displayChild.set(DISPLAY_CONTENT)
+        displayChild.set(displayContent)
         progressHelper.start(
             "创建故事大纲", "生成故事梗概",
             step = 1,
@@ -199,7 +207,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 NotificationHelper.sendRecoveryNotification("故事梗概已完成")
             },
             onFail = { _, error ->
-                displayChild.set(DISPLAY_FAIL)
+                displayChild.set(displayFail)
                 progressHelper.stop()
                 NotificationHelper.sendRecoveryNotification("故事梗概生成失败")
             }
