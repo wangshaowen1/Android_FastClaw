@@ -91,9 +91,6 @@ object AppRouter : IRouter {
                     }
                 }
             } else if (schemeUri.startsWith("http")) {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
                 launch(context, schemeUri)
             }
         }
