@@ -3,16 +3,20 @@ package com.kgmedia.fastfilm.feature.creator.storyboard
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
+import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
+import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.RecyclerEditText
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -37,12 +41,12 @@ class ItemStoryboardVM(
     /**
      * 当前应用的分镜描述
      */
-    val genImagePrompt by lazy { ObservableField(data?.genImagePrompt) }
+    val genImagePrompt by lazy { ObservableField<CharSequence>(data?.genImagePrompt) }
 
     /**
      * 编辑中的分镜描述
      */
-    var editingGenImagePromptText: String? = data?.genImagePrompt
+    var editingGenImagePromptText: CharSequence? = data?.genImagePrompt
         private set
     val editingGenImagePrompt by lazy { ObservableBoolean(false) }
     val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
@@ -81,15 +85,15 @@ class ItemStoryboardVM(
 
     fun clickGenerate() {
         if (data.get()?.imageGenerating == true) return
-        val genImagePrompt = if (editingGenImagePrompt.get()) editingGenImagePromptText else this@ItemStoryboardVM.genImagePrompt.get()
-        if (genImagePrompt.isNullOrEmpty()) {
+        val prompt = if (editingGenImagePrompt.get()) editingGenImagePromptText else genImagePrompt.get()
+        if (prompt.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
             return
         }
-        generate(genImagePrompt)
+        generate(prompt.toString())
     }
 
-    fun generate(genImagePrompt: String) {
+    fun generate(prompt: String) {
         if (data.get()?.imageGenerating == true) return
         val preStatus = data.get()?.genStatusImage
         data.get()?.genStatusImage = 1
@@ -97,13 +101,35 @@ class ItemStoryboardVM(
         onItemChanged()
         launch {
             var storyboard = data.get()
-            if (genImagePrompt != storyboard?.genImagePrompt) {
+            if (prompt != storyboard?.genImagePrompt) {
+                val checkPromptRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveWordCheck(ContentBody(prompt)) }
+                val checkPromptData = checkPromptRes.data
+                if (checkPromptRes.isSuccess && checkPromptData != null) {
+                    if (checkPromptData.isSensitive()) {
+                        checkPromptData.content?.showToast()
+                        val sp = SensitiveHighlighter.highlight(
+                            text = prompt,
+                            keywords = checkPromptData.hitWords,
+                            color = R.color.func_failure_dark.getResColor()
+                        )
+                        genImagePrompt.set(sp)
+                        data.get()?.genStatusImage = preStatus
+                        data.notifyChange()
+                        return@launch
+                    }
+                } else {
+                    genImagePrompt.set(data.get()?.genImagePrompt)
+                    (checkPromptRes.msg ?: "敏感词校验失败").showToast()
+                    data.get()?.genStatusImage = preStatus
+                    data.notifyChange()
+                    return@launch
+                }
                 val response = withContext(Dispatchers.IO) {
                     val body = SaveStoryboardBody(
                         workId = workId,
                         storyId = storyId,
                         storyboardId = storyboard?.storyboardId,
-                        genImagePrompt = genImagePrompt
+                        genImagePrompt = prompt
                     )
                     ApiFactory.apiService.workStoryboardSave(body)
                 }
@@ -113,6 +139,7 @@ class ItemStoryboardVM(
                 } else {
                     response.msg?.showToast()
                     data.get()?.genStatusImage = preStatus
+                    data.notifyChange()
                     onItemChanged()
                     return@launch
                 }
@@ -136,6 +163,7 @@ class ItemStoryboardVM(
                 error = {
                     this?.msg?.showToast()
                     data.get()?.genStatusImage = preStatus
+                    data.notifyChange()
                     onItemChanged()
                 })
         }

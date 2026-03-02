@@ -6,15 +6,16 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.App
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.parseMessage
-import com.kgmedia.fastfilm.core.ext.requestWithLoading
-import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImgUrlBody
@@ -22,10 +23,12 @@ import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
+import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getParcelableValue
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.Dispatchers
@@ -63,12 +66,11 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
     var isModify = false
 
     val cover = ObservableField<String>()
-    val name = MutableLiveData<String>()
-    val desc = MutableLiveData<String>()
+    val name = MutableLiveData<CharSequence>()
+    val desc = MutableLiveData<CharSequence>()
 
     //编辑修改成功
     val editAndModify = MutableLiveData<Boolean>(false)
-    val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -80,11 +82,13 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun saveInfo() {
-        if (name.value?.isEmpty() == true) {
+        val title = name.value?.toString()
+        if (title.isNullOrEmpty()) {
             "请完善作品名称".showToast()
             return
         }
-        if (desc.value?.isEmpty() == true) {
+        val content = desc.value?.toString()
+        if (content.isNullOrEmpty()) {
             "请完善作品简介".showToast()
             return
         }
@@ -92,32 +96,66 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
             "封面上传中,请稍等~".showToast()
             return
         }
-        sensitiveWordJudgment(desc.value)
-    }
-
-    fun saveInfoNoCheck(){
-        requestWithLoading(apiBlock = apiBlock@{
+        launchWithLoading {
             val sensitiveCheckRes = withContext(Dispatchers.IO) { mRepo.api.sensitiveImageCheck(ImgUrlBody(cover.get())) }
             val sensitiveCheckData = sensitiveCheckRes.data
             if (sensitiveCheckRes.isSuccess && sensitiveCheckData != null) {
                 if (sensitiveCheckData.isSensitive()) {
                     sensitiveCheckData.content?.showToast()
-                    return@apiBlock null
+                    return@launchWithLoading
                 }
             } else {
                 (sensitiveCheckRes.msg ?: "图片校验失败").showToast()
-                return@apiBlock null
+                return@launchWithLoading
             }
-            mRepo.api.updateWorkInfo(
-                WorkInfoUpdateBody(
-                    workInfo?.workId,
-                    cover.get(),
-                    name.value,
-                    desc.value
+
+            val checkTitleRes = withContext(Dispatchers.IO) { mRepo.api.sensitiveWordCheck(ContentBody(title)) }
+            val checkTitleData = checkTitleRes.data
+            if (checkTitleRes.isSuccess && checkTitleData != null) {
+                if (checkTitleData.isSensitive()) {
+                    checkTitleData.content?.showToast()
+                    val sp = SensitiveHighlighter.highlight(
+                        text = title,
+                        keywords = checkTitleData.hitWords,
+                        color = R.color.func_failure_dark.getResColor()
+                    )
+                    name.value = sp
+                    return@launchWithLoading
+                }
+            } else {
+                (checkTitleRes.msg ?: "敏感词校验失败").showToast()
+                return@launchWithLoading
+            }
+
+            val checkContentRes = withContext(Dispatchers.IO) { mRepo.api.sensitiveWordCheck(ContentBody(content)) }
+            val checkContentData = checkContentRes.data
+            if (checkContentRes.isSuccess && checkContentData != null) {
+                if (checkContentData.isSensitive()) {
+                    checkContentData.content?.showToast()
+                    val sp = SensitiveHighlighter.highlight(
+                        text = content,
+                        keywords = checkContentData.hitWords,
+                        color = R.color.func_failure_dark.getResColor()
+                    )
+                    desc.value = sp
+                    return@launchWithLoading
+                }
+            } else {
+                (checkContentRes.msg ?: "敏感词校验失败").showToast()
+                return@launchWithLoading
+            }
+            response(
+                mRepo.api.updateWorkInfo(
+                    WorkInfoUpdateBody(
+                        workInfo?.workId,
+                        cover.get(),
+                        title,
+                        content
+                    )
                 )
-            )
-        }) {
-            editAndModify.value = true
+            ) {
+                editAndModify.value = true
+            }
         }
     }
 
@@ -126,7 +164,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
     fun sseGenerate() {
         val sseFlow = mRepo.api.sseWorkDescOptimize(
             SSEContentBody(
-                desc.value,
+                desc.value?.toString(),
                 DramaGenerateConstants.MODEL_OPTIMIZE_DRAMA_DESC
             )
         )
@@ -196,17 +234,5 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                 isUploading = false
             }
         })
-    }
-
-    /**
-     * 敏感词校验
-     */
-    fun sensitiveWordJudgment(value: String?) {
-        requestWithLoading(
-            apiBlock = { mRepo.api.sensitiveWordCheck(ContentBody(value)) },
-            showLoading = true
-        ) {
-            sensitiveWordJudgmentResult.value = data
-        }
     }
 }

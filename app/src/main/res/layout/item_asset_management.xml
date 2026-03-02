@@ -148,17 +148,22 @@
             app:layout_constraintStart_toStartOf="@+id/etAssetDesc"
             app:layout_constraintTop_toTopOf="@+id/etAssetDesc" />
 
-        <TextView
+
+        <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etAssetName"
+            content="@{item.assetName}"
+            onTextInputListener="@{item.assetNameInputListener}"
+            setEditing="@{item.editingAssetName}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="6dp"
             android:background="@drawable/fill_color1_r4"
+            android:drawableEnd="@{item.data==null?@drawable/icon_edit_text4_16:null}"
             android:ellipsize="end"
             android:gravity="center_vertical"
+            android:hint="@{item.assetNameHint}"
             android:paddingHorizontal="12dp"
             android:singleLine="true"
-            android:text="@{item.assetName}"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
             android:textColorHint="?attr/textColor4"
@@ -166,7 +171,20 @@
             app:layout_constraintStart_toStartOf="@+id/etAssetDesc"
             app:layout_constraintTop_toBottomOf="@+id/etAssetDesc"
             app:layout_constraintWidth_percent="0.29"
-            tools:text="角色名" />
+            tools:drawableEnd="@drawable/icon_edit_text4_16"
+            tools:hint="角色名" />
+
+        <View
+            android:id="@+id/etAssetNameCover"
+            setEnabled="@{item.data==null}"
+            setVisible="@{!item.editingAssetName}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+            app:layout_constraintBottom_toBottomOf="@+id/etAssetName"
+            app:layout_constraintEnd_toEndOf="@+id/etAssetName"
+            app:layout_constraintStart_toStartOf="@+id/etAssetName"
+            app:layout_constraintTop_toTopOf="@+id/etAssetName" />
 
         <FrameLayout
             android:id="@+id/btnGenerate"

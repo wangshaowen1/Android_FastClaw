@@ -85,6 +85,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private val addSceneItem by lazy { ItemAddVM("添加场景").apply { onItemClick.value = { addScene(this) } } }
     private val addPropItem by lazy { ItemAddVM("添加道具").apply { onItemClick.value = { addProp(this) } } }
     private var editingAssetDescVM: ItemAssetVM<*>? = null
+    private var editingAssetNameVM: ItemAssetVM<*>? = null
     private var loopNextEnabledJob: Job? = null
     private var loopAllAssetDescriptionStatusJob: Job? = null
     private var inputJob: Job? = null
@@ -132,7 +133,9 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 keyboardHeight.set(height)
                 if (height <= 0) {
                     editingAssetDescVM?.exitEditAssetDesc()
+                    editingAssetNameVM?.exitEditAssetName()
                     editingAssetDescVM = null
+                    editingAssetNameVM = null
                 }
             }
         }
@@ -306,7 +309,9 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     inputJob?.cancel()
                     val edit: (delay: Long) -> Unit = { delay ->
                         editingAssetDescVM?.exitEditAssetDesc()
+                        editingAssetNameVM?.exitEditAssetName()
                         editingAssetDescVM = this
+                        editingAssetNameVM = null
                         if (delay > 0) {
                             inputJob = launch {
                                 delay(delay)
@@ -324,6 +329,14 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                             edit.invoke(200)
                         }
                     }
+                }
+
+                R.id.etAssetNameCover -> {
+                    editingAssetDescVM?.exitEditAssetDesc()
+                    editingAssetNameVM?.exitEditAssetName()
+                    editingAssetDescVM = null
+                    editingAssetNameVM = this
+                    editAssetName()
                 }
 
                 R.id.btnDelete -> {
@@ -351,22 +364,17 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     private fun oneKeyGenerate() {
-        val cost = cost.get()
-        if (cost == 0) {
-            calcCost()
-            return
-        }
-        if (PowerRechargeDialog.checkLowBalance(cost)) return
         var notInput = false
-        val notGenerateItems = arrayListOf<Pair<ItemAssetVM<*>, String>>()
+        val notGenerateItems = arrayListOf<Triple<ItemAssetVM<*>, String, String>>()
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemAssetVM<*>) {
                 if (item.status.get() < 1 || item.status.get() == 3) {
                     val assetDesc = if (item.editingAssetDesc.get()) item.editingAssetDescText else item.assetDesc.get()
-                    if (assetDesc.isNullOrEmpty()) {
+                    val assetName = if (item.editingAssetName.get()) item.editingAssetNameText else item.assetName.get()
+                    if (assetDesc.isNullOrEmpty() || assetName.isNullOrEmpty()) {
                         notInput = true
                     } else {
-                        notGenerateItems.add(item to assetDesc)
+                        notGenerateItems.add(Triple(item, assetDesc.toString(), assetName.toString()))
                     }
                 }
             }
@@ -375,7 +383,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             "您还有资产尚未填写描述，请补充后再继续".showToast()
         }
         if (notGenerateItems.isNotEmpty()) {
-            notGenerateItems.forEach { (item, assetDesc) -> item.generate(assetDesc) }
+            notGenerateItems.forEach { (item, assetDesc, assetName) -> item.generate(assetDesc, assetName) }
         }
     }
 

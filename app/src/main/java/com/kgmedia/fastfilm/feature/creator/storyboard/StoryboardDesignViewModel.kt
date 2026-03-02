@@ -360,7 +360,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                     if (genImagePrompt.isNullOrEmpty()) {
                         notInput = true
                     } else {
-                        notGenerateItems.add(item to genImagePrompt)
+                        notGenerateItems.add(item to genImagePrompt.toString())
                     }
                 }
             }
