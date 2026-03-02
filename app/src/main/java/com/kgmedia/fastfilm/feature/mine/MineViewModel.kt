@@ -5,10 +5,12 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
+import com.kgmedia.fastfilm.core.network.apis.response.SimpleBannerInfo
 import com.kgmedia.fastfilm.core.response
 
 /**
@@ -35,6 +37,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      * 账户余额
      */
     val balance by lazy { ObservableField<String>() }
+    val workCourseBanner by lazy { ObservableField<SimpleBannerInfo>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -101,6 +104,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         )
         noLogIn.value = true
         balance.set("0")
+        workCourseBanner.set(Config.get().appConfig.workCourseBanner)
     }
 
     private fun logOn() {
@@ -113,5 +117,6 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
             )
         )
         balance.set(user.computingPower.toString())
+        workCourseBanner.set(if (user.isPurchasedCourse()) null else Config.get().appConfig.workCourseBanner)
     }
 }

@@ -53,13 +53,12 @@
 
                 <include
                     android:id="@+id/banner"
+                    banner="@{layout.workCourseBanner}"
                     layout="@layout/layout_common_banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="visible" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <LinearLayout
                     android:id="@+id/tvPower"

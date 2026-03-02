@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.toPaymentParams
+import com.kgmedia.fastfilm.core.network.apis.response.SimpleBannerInfo
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.details.ComputingPowerDetailsActivity
 import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
@@ -40,6 +41,7 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
     val paymentAdapter by lazy { QuickAdapter<ItemRechargePaymentVM>(paymentItemLayout, emptyList()) }
     private var currentPower: ItemRechargePowerVM? = null
     private var currentPayment: ItemRechargePaymentVM? = null
+    val workCourseBanner by lazy { ObservableField<SimpleBannerInfo>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -50,6 +52,7 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
         super.onResume()
         updateBalance()
         refreshBalance()
+        workCourseBanner.set(if (User.get().isPurchasedCourse()) null else Config.get().appConfig.workCourseBanner)
     }
 
     fun loadConfig() {

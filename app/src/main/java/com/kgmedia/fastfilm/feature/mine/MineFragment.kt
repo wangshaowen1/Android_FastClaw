@@ -10,21 +10,13 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
-import com.kgmedia.fastfilm.core.ext.setupCommonBanner
-import com.kgmedia.fastfilm.core.network.apis.ApiFactory
-import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
-import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
 import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentMineBinding
-import com.kgmedia.fastfilm.feature.recharge.MyBalanceActivity
-import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginActivity
-import com.kgmedia.fastfilm.feature.login.phone.PhoneLoginDialog
-import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginActivity
-import com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginDialog
 import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
+import com.kgmedia.fastfilm.feature.recharge.MyBalanceActivity
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
 import com.kgmedia.fastfilm.router.AppNavigator
@@ -34,7 +26,6 @@ import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.showToast
-import com.zhpan.bannerview.BannerViewPager
 
 /**
  * *****************************************
@@ -54,7 +45,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
 
     override fun onPrepareView() {
         super.onPrepareView()
-        initView()
         //数据更新
         dataUpdate()
     }
@@ -71,13 +61,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
         //更新必要信息
         mRealVM.updateInformation()
     }
-
-    private fun initView() {
-        setupCommonBanner(binding.banner.root, binding.banner.banner as BannerViewPager<BannerInfo>) {
-            ApiFactory.apiService.getAppBanner(BannerBody(BannerBody.LOCATION_PERSONAL_HOME)).data
-        }
-    }
-
 
     private fun dataUpdate() {
         parentVm?.activityConfigCache?.observe(this) {
