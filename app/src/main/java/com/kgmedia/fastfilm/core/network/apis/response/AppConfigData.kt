@@ -127,6 +127,21 @@ class AppConfigData {
      * 作品-小说字数限制数字（500000）
      */
     val workNovelWordLimit: Int? = 500000
+
+    /**
+     * 作品-自己发行流程Url
+     */
+    val workSelfPublishProcessUrl: String? = null
+
+    /**
+     * 作品-发行流程Url
+     */
+    val workPublishProcessUrl: String? = null
+
+    /**
+     * 作品-签约发行页面Url
+     */
+    val workContractPublishPageUrl: String? = null
 }
 
 data class PaymentStatus(

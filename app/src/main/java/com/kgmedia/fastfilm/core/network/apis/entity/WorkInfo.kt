@@ -51,7 +51,9 @@ data class WorkInfo(
     /**签约评级（S/A/B/C等）*/
     val contractLevel: String? = null,
     //[枚举]小说上传模式下-第一集是否有剧本(0-没有 1-有)
-    val novelUploadIsOneStoryContentStatus: Int?=null,
+    val novelUploadIsOneStoryContentStatus: Int? = null,
+    /**发行平台图片 list*/
+    val publishPlatformImageList: List<String>? = null
 ) : Parcelable {
 
     companion object {

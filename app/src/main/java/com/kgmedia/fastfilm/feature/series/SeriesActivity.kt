@@ -8,6 +8,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
@@ -256,18 +257,22 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             R.id.btnSelfIssue -> {
-                // TODO: 自己发行
+                Config.get().appConfig.workSelfPublishProcessUrl?.let {
+                    SimpleBrowserActivity.launch(this, it)
+                }
             }
 
             R.id.btnIssue -> {
-                SimpleBrowserActivity.launch(this, "http://192.168.10.16:5173/pages/issue/issue?nav=1&darkStyle=1")
+                Config.get().appConfig.workContractPublishPageUrl?.replace("{workId}", mRealVM.workId ?: "")?.let {
+                    SimpleBrowserActivity.launch(this, it)
+                }
             }
         }
     }
 
     private fun continueWriting() {
         val workInfo = mRealVM.workInfo.value ?: return
-        if (workInfo.workType==WorkInfo.NOVEL_CREATION) {
+        if (workInfo.workType == WorkInfo.NOVEL_CREATION) {
             //小说改编续写
             ContinueWritingActivity.start(
                 this,

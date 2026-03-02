@@ -45,7 +45,7 @@ object WXUtils {
     }
 
     /**
-     * 跳转微信公众号
+     * 跳转微信公众号（跳转不了）
      */
     fun openWeChatService(account: String) {
         try {
