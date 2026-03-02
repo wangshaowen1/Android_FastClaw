@@ -76,10 +76,12 @@ class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
                 if (sensitiveCheckRes.isSuccess && sensitiveCheckData != null) {
                     if (sensitiveCheckData.isSensitive()) {
                         sensitiveCheckData.content?.showToast()
+                        setLoading(false)
                         return@apiBlock
                     }
                 } else {
                     (sensitiveCheckRes.msg ?: "图片校验失败").showToast()
+                    setLoading(false)
                     return@apiBlock
                 }
             }
