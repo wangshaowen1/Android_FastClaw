@@ -271,9 +271,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
 
             R.id.tabMine -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
                 binding.mrg.check(R.id.rbMine)
                 clickTab(tabId = R.id.tabMine) { diff ->
                     if (diff < CLICK_INTERVAL_TIME) {
@@ -382,8 +379,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
         }
     }
-
-
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {

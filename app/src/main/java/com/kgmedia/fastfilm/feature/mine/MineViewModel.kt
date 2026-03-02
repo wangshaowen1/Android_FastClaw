@@ -100,6 +100,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
             )
         )
         noLogIn.value = true
+        balance.set("0")
     }
 
     private fun logOn() {
