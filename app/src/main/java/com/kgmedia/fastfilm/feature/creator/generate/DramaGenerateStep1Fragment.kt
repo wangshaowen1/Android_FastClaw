@@ -136,7 +136,7 @@ class DramaGenerateStep1Fragment :
                     // 【核心逻辑】：截取打字机错过的“差值增量”
                     val missingDelta = text.substring(currentText.length)
                     // 将差值增量一点一点喂给打字机，满足控件只接受 append 的特性 [cite: 72]
-                    markDownTextView.appendPrinting(missingDelta.replace("\\n","\n"))
+                    markDownTextView.appendPrinting(missingDelta)
                 }
             }
         }
