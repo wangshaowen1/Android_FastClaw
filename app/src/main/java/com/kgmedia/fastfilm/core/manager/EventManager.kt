@@ -137,11 +137,6 @@ object AppEvent {
 
 
     /**
-     * 金果｜点击续写故事的按钮
-     */
-    const val JG_CLICK_CONTINUE_STORY_BUTTON = "jg_click_continue_story_button"
-
-    /**
      * 金果｜点击自己写故事的帮我优化按钮
      * 用户点击自己写故事页面的帮我优化的按钮，点击时上报
      */
@@ -163,29 +158,10 @@ object AppEvent {
         "jg_click_inspiration_story_optimize_button"
 
     /**
-     * 金果｜显示创作的页面
-     * 用户访问了创作页面，不区分灵感故事/自己写故事/续写故事的页面
-     */
-    const val JG_VIEW_WRITE_STORY_PAGE = "jg_view_write_story_page"
-
-    /**
      * 金果｜点击爆款页面的立即创作按钮
      * 用户点击爆款页面的立即创作的按钮，点击时上报
      */
     const val JG_CLICK_FADDISH_PAGE_CREATE_NOW_BUTTON = "jg_click_faddish_page_create_now_button"
-
-    /**
-     * 金果｜访问我的Tab页面
-     * 用户访问我的TAB页面，显示的时候上报
-     */
-    const val JG_VIEW_MY_TAB_PAGE = "jg_view_my_tab_page"
-
-
-    /**
-     * 金果｜访问爆款Tab页面
-     * 用户访问爆款TAB页面，显示的时候上报
-     */
-    const val JG_VIEW_FADDISH_TAB_PAGE = "jg_view_faddish_tab_page"
 
 
 

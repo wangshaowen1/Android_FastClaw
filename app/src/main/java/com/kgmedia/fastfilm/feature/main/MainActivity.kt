@@ -180,7 +180,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
                 R.id.rbWorks -> {
                     //热门
-                    EventManager.onAppTrack(AppEvent.JG_VIEW_FADDISH_TAB_PAGE)
+                    EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(1)
                     supportFragmentManager.switchFragment(
@@ -192,7 +192,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
                 R.id.rbMine -> {
                     //我的
-                    EventManager.onAppTrack(AppEvent.JG_VIEW_MY_TAB_PAGE)
+                    EventManager.onAppTrack(AppEvent.SF_VIEW_MINE_TAB_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(2)
                     supportFragmentManager.switchFragment(R.id.fragment, MineFragment::class.java)

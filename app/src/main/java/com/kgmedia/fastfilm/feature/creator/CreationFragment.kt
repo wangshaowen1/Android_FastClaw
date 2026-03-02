@@ -171,7 +171,8 @@ class CreationFragment :
                     val isFileModel = !fileUrl.isNullOrEmpty()
                     val content = this@CreationFragment.mRealVM.input.value
 
-                    val singleModel = range == VideoConfigInfo.MODE_SINGLE || (range == VideoConfigInfo.MODE_CUSTOM && custom?.toIntOrNull() == 1)
+                    val singleModel =
+                        range == VideoConfigInfo.MODE_SINGLE || (range == VideoConfigInfo.MODE_CUSTOM && custom?.toIntOrNull() == 1)
                     val modelType = when {
                         singleModel -> DramaGenerateConstants.MODEL_STORY_SINGLE
                         this@CreationFragment.mRealVM.inspirationModel() -> DramaGenerateConstants.MODEL_INSPIRATION
@@ -195,7 +196,9 @@ class CreationFragment :
                     }
 
                     if (isFileModel) {
-                        if ((this@CreationFragment.mRealVM.analysisResult?.charCount ?: 0) > 10000) {//大于10000字要显示确认算力弹窗  这里要拿workid去轮询
+                        if ((this@CreationFragment.mRealVM.analysisResult?.charCount
+                                ?: 0) > 10000
+                        ) {//大于10000字要显示确认算力弹窗  这里要拿workid去轮询
                             StoryGenerateConfirmDialog.newInstance(
                                 this@CreationFragment.mRealVM.fileUrl,
                                 this@CreationFragment.mRealVM.analysisResult,
@@ -205,8 +208,8 @@ class CreationFragment :
                                 ratio,
                                 style
                             ).apply {
-                                    onConfirm = { data -> startEditor(data) }
-                                }.show(this@CreationFragment.childFragmentManager)
+                                onConfirm = { data -> startEditor(data) }
+                            }.show(this@CreationFragment.childFragmentManager)
                         } else {//小于10000字直接开始 这里要拿workid去轮询
                             this@CreationFragment.mRealVM.confirmPowerConsume { data ->
                                 if (data?.checkStatus() == true) {
@@ -301,6 +304,11 @@ class CreationFragment :
             }
 
             R.id.btnNext -> {
+                if (mRealVM.creationModel == MODEL_INSPIRATION) {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_STORY_INSPIRATION_NEXT_BUTTON)
+                }else{
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_NOVEL_ADAPTATION_NEXT_BUTTON)
+                }
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }

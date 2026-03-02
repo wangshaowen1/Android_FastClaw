@@ -29,7 +29,7 @@ class CreationRootActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventManager.onAppTrack(AppEvent.JG_VIEW_WRITE_STORY_PAGE)
+        EventManager.onAppTrack(AppEvent.SF_VIEW_STORY_INSPIRATION_PAGE)
         binding.viewPager.adapter = object : FragmentPagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             override fun getItem(position: Int): Fragment {
                 return when (position) {
@@ -57,10 +57,11 @@ class CreationRootActivity :
         })
         binding.rbLeft.setOnClickListener {
             binding.viewPager.currentItem = 0
+            EventManager.onAppTrack(AppEvent.SF_VIEW_STORY_INSPIRATION_TAB)
         }
 
         binding.rbRight.setOnClickListener {
-            EventManager.onAppTrack(AppEvent.JG_CLICK_CONTINUE_STORY_BUTTON)
+            EventManager.onAppTrack(AppEvent.SF_VIEW_NOVEL_ADAPTATION_TAB)
             binding.viewPager.currentItem = 1
         }
     }

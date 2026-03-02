@@ -5,6 +5,8 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.setupCommonBanner
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
@@ -23,6 +25,8 @@ class MyBalanceActivity : BaseViewModelActivity<ActivityMyBalanceBinding, MyBala
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        EventManager.onAppTrack(AppEvent.SF_VIEW_RECHARGE_PAGE)
         observeEvents {
             on<Events.UserDataEvent> {
                 mRealVM.updateBalance()

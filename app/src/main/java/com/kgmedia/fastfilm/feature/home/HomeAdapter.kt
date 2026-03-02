@@ -6,6 +6,8 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.getVm
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ItemHomeDramaBinding
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
@@ -37,6 +39,7 @@ class HomeAdapter() : PagingDataAdapter<WorkInfo, RecyclerView.ViewHolder>(DIFF_
             getItem(position)?.let { item ->
                 val transVM = binding.getVm(position, item, ItemHomeDramaVm::class.java).apply {
                     onItemClick.value = {
+                        EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_RECOMMEND_VIDEO)
                         DramasPlayPagerActivity.start(null, position)
                     }
                 }
