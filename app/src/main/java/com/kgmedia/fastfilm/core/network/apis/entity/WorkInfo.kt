@@ -5,10 +5,7 @@ import androidx.room.TypeConverters
 import com.kgmedia.fastfilm.common.ext.toUnitText
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.convert.Converters
-import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo.Companion.GEN_MUSIC_VIDEO
-import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo.Companion.REPAINT_STATE
 import kotlinx.parcelize.Parcelize
-import kotlin.collections.contains
 
 @Parcelize
 @TypeConverters(Converters::class)
@@ -56,7 +53,13 @@ data class WorkInfo(
     //[枚举]小说上传模式下-第一集是否有剧本(0-没有 1-有)
     val novelUploadIsOneStoryContentStatus: Int? = null,
     /**发行平台图片 list*/
-    val publishPlatformImageList: List<String>? = null
+    val publishPlatformImageList: List<String>? = null,
+    /**作品-自己发行流程Url*/
+    val workSelfPublishProcessUrl: String? = null,
+    /**作品-签约发行页面完整 Url（字典 WORK_CONTRACT_PUBLISH_PAGE_URL 基础地址 + workId 参数，带 Redis 缓存）*/
+    val workContractPublishPageUrl: String? = null,
+    /**是否展示「去发行」按钮（0-不展示 1-展示，总集数 totalEpisodeCnt>=30 时展示）*/
+    val showPublishButton: Int? = null,
 ) : Parcelable {
 
     companion object {
@@ -114,8 +117,8 @@ data class WorkInfo(
         return workStatus in listOf(GEN_MUSIC_VIDEO, REPAINT_STATE)
     }
 
-    fun statusCopy(): String{
-        return when(workStatus){
+    fun statusCopy(): String {
+        return when (workStatus) {
             GEN_MUSIC_VIDEO -> "分镜生成中..."
             REPAINT_STATE -> "视频重绘中..."
             else -> "视频合成中..."
@@ -311,13 +314,14 @@ data class EpisodeInfo(
         return stepProgress in listOf(PROGRESS_STORYBOARD_GENERATING, EPISODE_REPAINT_STATE)
     }
 
-    fun statusCopy(): String{
-        return when(stepProgress){
+    fun statusCopy(): String {
+        return when (stepProgress) {
             PROGRESS_STORYBOARD_GENERATING -> "分镜生成中..."
             EPISODE_REPAINT_STATE -> "视频重绘中..."
             else -> "视频合成中..."
         }
     }
+
     /**
      * 等待合成
      * @return Boolean

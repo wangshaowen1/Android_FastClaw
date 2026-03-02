@@ -17,7 +17,7 @@ object DebugUtils {
         arrayOf(
             "http://192.168.12.177:8088",
             "http://192.168.10.44:8088",
-            "http://192.168.12.176:8088",
+            "http://192.168.12.176:80",
             "https://short-api.mynatapp.cc",
             "http://120.24.240.28:7010",
             "https://kuaichupianjk.kuaigeai.cn"

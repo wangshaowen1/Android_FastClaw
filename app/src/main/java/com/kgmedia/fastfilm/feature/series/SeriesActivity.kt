@@ -249,21 +249,21 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 popup.showUnder(view)
             }
 
-            R.id.llReleaseStatus -> {
+            R.id.llPublishStatus -> {
                 val rejectReason = mRealVM.workInfo.value?.rejectReason ?: return
-                bindingNullable?.tvReleaseStatus?.let {
+                bindingNullable?.tvPublishStatus?.let {
                     Popup(SeriesReleaseFailTipsPopupView(this, rejectReason)).showUnder(it)
                 }
             }
 
-            R.id.btnSelfIssue -> {
-                Config.get().appConfig.workSelfPublishProcessUrl?.let {
+            R.id.btnSelfPublish -> {
+                mRealVM.workInfo.value?.workSelfPublishProcessUrl?.let {
                     SimpleBrowserActivity.launch(this, it)
                 }
             }
 
-            R.id.btnIssue -> {
-                Config.get().appConfig.workContractPublishPageUrl?.replace("{workId}", mRealVM.workId ?: "")?.let {
+            R.id.btnPublish -> {
+                mRealVM.workInfo.value?.workContractPublishPageUrl?.let {
                     SimpleBrowserActivity.launch(this, it)
                 }
             }

@@ -34,7 +34,7 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
 
     //创建续集信息
     val episodeInfo = MutableLiveData<EpisodeInfo?>()
-    val publishedPlatformAdapter by lazy { QuickAdapter<ItemStringVm>(R.layout.item_release_platform, emptyList()) }
+    val publishedPlatformAdapter by lazy { QuickAdapter<ItemStringVm>(R.layout.item_publish_platform, emptyList()) }
 
     override fun onResume() {
         super.onResume()

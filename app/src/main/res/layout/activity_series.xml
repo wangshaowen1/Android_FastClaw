@@ -34,7 +34,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/btnSelfIssue"
+                    android:id="@+id/btnSelfPublish"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/action_bar_size"
@@ -143,7 +143,7 @@
                                     tools:text="已创作 N 集 / 共M集" />
 
                                 <LinearLayout
-                                    android:id="@+id/llReleaseStatus"
+                                    android:id="@+id/llPublishStatus"
                                     singleClick="@{layout.clickHandler::onClick}"
                                     android:layout_width="0dp"
                                     android:layout_height="52dp"
@@ -161,7 +161,7 @@
                                         android:src="@drawable/icon_attention_fail" />
 
                                     <TextView
-                                        android:id="@+id/tvReleaseStatus"
+                                        android:id="@+id/tvPublishStatus"
                                         textColorRes="@{layout.publishStatusColor(layout.workInfo)}"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -179,7 +179,7 @@
                                         android:overScrollMode="never"
                                         android:scrollbars="none"
                                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                                        tools:listitem="@layout/item_release_platform" />
+                                        tools:listitem="@layout/item_publish_platform" />
 
                                 </LinearLayout>
 
@@ -268,14 +268,14 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/btnContainer"
-                    setVisible="@{layout.workInfo.contractStatus != 2}"
+                    setVisible="@{layout.workInfo.showPublishButton == 1 &amp;&amp; layout.workInfo.contractStatus != 2}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="10dp"
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <LinearLayout
-                        android:id="@+id/btnIssue"
+                        android:id="@+id/btnPublish"
                         setEnabled="@{layout.workInfo.contractStatus != 1}"
                         singleClick="@{layout.clickHandler::onClick}"
                         android:layout_width="match_parent"
