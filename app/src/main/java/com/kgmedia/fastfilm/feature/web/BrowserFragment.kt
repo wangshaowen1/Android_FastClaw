@@ -39,6 +39,7 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.createAppPayment
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.core.ext.openWithBrowser
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.core.model.H5PayInfo
 import com.kgmedia.fastfilm.core.model.IdInfo
@@ -62,6 +63,7 @@ import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import com.nhsd.mattise.Matisse
 import com.tencent.bugly.crashreport.CrashReport
+import org.json.JSONObject
 
 class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserViewModel>() {
 
@@ -426,6 +428,25 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
             registerHandler("openWeChatService") { data, _ ->
                 try {
                     GsonUtils.fromJson(data, IdInfo::class.java)?.id?.let { WXUtils.openWeChatService(it) }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            //埋点上报
+            // {
+            //  "event_name": 埋点名称,
+            //  "params": 埋点参数（json）
+            //}
+            registerHandler("trackEvent") { data, _ ->
+                try {
+                    val json = JSONObject(data)
+                    val code = json.getString("event_name")
+                    val params = json.optJSONObject("params")?.let {
+                        val map = mutableMapOf<String, String?>()
+                        it.keys().forEach { key -> map[key] = it.optString(key) }
+                        map
+                    }
+                    EventManager.onAppTrack(code, params)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
