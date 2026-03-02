@@ -56,19 +56,24 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         private const val STEP_DESCRIPTION_GENERATED = 2
 
         /**
+         * 分镜描述生成失败
+         */
+        private const val STEP_DESCRIPTION_GENERATE_FAILED = 3
+
+        /**
          * 分镜图片生成中
          */
-        private const val STEP_IMAGE_GENERATING = 3
+        private const val STEP_IMAGE_GENERATING = 4
 
         /**
          * 分镜图片生成失败
          */
-        private const val STEP_IMAGE_GENERATE_FAILED = 4
+        private const val STEP_IMAGE_GENERATE_FAILED = 5
 
         /**
          * 分镜图片已生成
          */
-        private const val STEP_IMAGE_GENERATED = 5
+        private const val STEP_IMAGE_GENERATED = 6
     }
 
     var workId: String? = null
@@ -151,14 +156,14 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun retry() {
         when (step.get()) {
-            STEP_INIT -> generateAllStoryboardDescription()
+            STEP_INIT, STEP_DESCRIPTION_GENERATE_FAILED -> generateAllStoryboardDescription()
             STEP_DESCRIPTION_GENERATING -> loopAllStoryboardDescriptionStatus()
             STEP_DESCRIPTION_GENERATED -> getStoryboards()
         }
     }
 
     private fun generateAllStoryboardDescription() {
-        if (step.get() > STEP_INIT) return
+        if (arrayOf(STEP_INIT, STEP_DESCRIPTION_GENERATE_FAILED).contains(step.get())) return
         generating = true
         launch(block = {
             val allStoryboardDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId)).data }
@@ -198,6 +203,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
 
                 else -> {
+                    step.set(STEP_DESCRIPTION_GENERATE_FAILED)
                     loadState.set(LoadStateViewHolder.RETRY)
                     generating = false
                 }
