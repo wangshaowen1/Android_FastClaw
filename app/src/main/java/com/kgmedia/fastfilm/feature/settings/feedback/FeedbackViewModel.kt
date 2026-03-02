@@ -8,8 +8,10 @@ import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.KeyValueInfo
 import com.kgmedia.fastfilm.core.network.apis.request.FeedbackBody
+import com.kgmedia.fastfilm.core.network.apis.request.ImgUrlBody
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.showToast
@@ -67,7 +69,20 @@ class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun submit(content: String?, images: List<String>?) {
-        launch({
+        launch(apiBlock@{
+            images?.forEach { image ->
+                val sensitiveCheckRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveImageCheck(ImgUrlBody(image)) }
+                val sensitiveCheckData = sensitiveCheckRes.data
+                if (sensitiveCheckRes.isSuccess && sensitiveCheckData != null) {
+                    if (sensitiveCheckData.isSensitive()) {
+                        sensitiveCheckData.content?.showToast()
+                        return@apiBlock
+                    }
+                } else {
+                    (sensitiveCheckRes.msg ?: "图片校验失败").showToast()
+                    return@apiBlock
+                }
+            }
             val body = FeedbackBody(type.get()?.key, content, images?.joinToString(separator = ","), phoneNumber.value)
             val response = withContext(Dispatchers.IO) { mRepo.api.feedback(body) }
             setLoading(false)

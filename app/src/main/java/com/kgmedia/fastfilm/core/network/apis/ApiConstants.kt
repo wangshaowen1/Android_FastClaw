@@ -655,6 +655,11 @@ object ApiConstants {
     const val SENSITIVE_WORD_CHECK = "ai/content-security/text/check"
 
     /**
+     * 内容安全-图片校验
+     */
+    const val SENSITIVE_IMAGE_CHECK = "ai/content-security/img/check"
+
+    /**
      * 小说上传-生成作品剧集梗概
      */
     const val NOVEL_UPLOAD_SUMMARY = "ai/stream/novel/upload/summary"

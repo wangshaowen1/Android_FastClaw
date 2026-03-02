@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
+import com.kgmedia.fastfilm.core.network.apis.request.ImgUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
@@ -25,6 +26,8 @@ import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
@@ -86,7 +89,18 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
             "封面上传中,请稍等~".showToast()
             return
         }
-        requestWithLoading({
+        requestWithLoading(apiBlock = apiBlock@{
+            val sensitiveCheckRes = withContext(Dispatchers.IO) { mRepo.api.sensitiveImageCheck(ImgUrlBody(cover.get())) }
+            val sensitiveCheckData = sensitiveCheckRes.data
+            if (sensitiveCheckRes.isSuccess && sensitiveCheckData != null) {
+                if (sensitiveCheckData.isSensitive()) {
+                    sensitiveCheckData.content?.showToast()
+                    return@apiBlock null
+                }
+            } else {
+                (sensitiveCheckRes.msg ?: "图片校验失败").showToast()
+                return@apiBlock null
+            }
             mRepo.api.updateWorkInfo(
                 WorkInfoUpdateBody(
                     workInfo?.workId,

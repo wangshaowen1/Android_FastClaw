@@ -55,6 +55,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.FeedbackBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
+import com.kgmedia.fastfilm.core.network.apis.request.ImgUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByFlashMobileBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByPhoneBody
@@ -934,6 +935,12 @@ interface ApiService {
      */
     @POST(ApiConstants.SENSITIVE_WORD_CHECK)
     suspend fun sensitiveWordCheck(@Body body: ContentBody): ApiResponse<SensitiveWordCheckData?>
+
+    /**
+     * 内容安全-图片校验
+     */
+    @POST(ApiConstants.SENSITIVE_IMAGE_CHECK)
+    suspend fun sensitiveImageCheck(@Body body: ImgUrlBody): ApiResponse<SensitiveWordCheckData?>
 
     /**
      * 小说上传-生成作品剧集梗概
