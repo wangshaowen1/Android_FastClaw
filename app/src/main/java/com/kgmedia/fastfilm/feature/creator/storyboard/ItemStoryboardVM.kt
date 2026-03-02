@@ -3,20 +3,17 @@ package com.kgmedia.fastfilm.feature.creator.storyboard
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
-import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
-import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.RecyclerEditText
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -102,27 +99,13 @@ class ItemStoryboardVM(
         launch {
             var storyboard = data.get()
             if (prompt != storyboard?.genImagePrompt) {
-                val checkPromptRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveWordCheck(ContentBody(prompt)) }
-                val checkPromptData = checkPromptRes.data
-                if (checkPromptRes.isSuccess && checkPromptData != null) {
-                    if (checkPromptData.isSensitive()) {
-                        checkPromptData.content?.showToast()
-                        val sp = SensitiveHighlighter.highlight(
-                            text = prompt,
-                            keywords = checkPromptData.hitWords,
-                            color = R.color.func_failure_dark.getResColor()
-                        )
-                        genImagePrompt.set(sp)
+                sensitiveWordCheck(prompt).let { (isPass, highlightText) ->
+                    if (!isPass) {
+                        highlightText?.let { genImagePrompt.set(it) }
                         data.get()?.genStatusImage = preStatus
                         data.notifyChange()
                         return@launch
                     }
-                } else {
-                    genImagePrompt.set(data.get()?.genImagePrompt)
-                    (checkPromptRes.msg ?: "敏感词校验失败").showToast()
-                    data.get()?.genStatusImage = preStatus
-                    data.notifyChange()
-                    return@launch
                 }
                 val response = withContext(Dispatchers.IO) {
                     val body = SaveStoryboardBody(

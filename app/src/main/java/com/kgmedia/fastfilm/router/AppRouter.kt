@@ -235,6 +235,7 @@ object AppRouter : IRouter {
                             workId = workId,
                             storyId = storyId,
                             workTitle = workTitle,
+                            taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
                             chapterIndex = sortNo,
                             model = getModel(workType = workType, sortNo = sortNo),
                             videoRatio = workRatio,

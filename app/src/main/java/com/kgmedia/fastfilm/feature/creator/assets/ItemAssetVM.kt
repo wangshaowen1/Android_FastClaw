@@ -132,4 +132,10 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     abstract suspend fun delete(): ApiResponse<Any>
 
     abstract fun loopGenStatus()
+
+    protected fun updateStatus(status: Int){
+        this.status.set(status)
+        onItemChanged()
+    }
+
 }

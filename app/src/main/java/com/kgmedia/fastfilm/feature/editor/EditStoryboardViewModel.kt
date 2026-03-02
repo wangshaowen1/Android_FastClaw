@@ -5,16 +5,14 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
-import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
@@ -25,7 +23,6 @@ import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.getParcelableValue
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -193,23 +190,11 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
             if (prompt != storyboard.genImagePrompt) {
-                val checkPromptRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveWordCheck(ContentBody(prompt)) }
-                val checkPromptData = checkPromptRes.data
-                if (checkPromptRes.isSuccess && checkPromptData != null) {
-                    if (checkPromptData.isSensitive()) {
-                        checkPromptData.content?.showToast()
-                        val sp = SensitiveHighlighter.highlight(
-                            text = prompt,
-                            keywords = checkPromptData.hitWords,
-                            color = R.color.func_failure_dark.getResColor()
-                        )
-                        genImagePrompt.value = sp
+                sensitiveWordCheck(prompt).let { (isPass, highlightText) ->
+                    if (!isPass) {
+                        highlightText?.let { genImagePrompt.value = it }
                         return@launchWithLoading
                     }
-                } else {
-                    genImagePrompt.value = storyboard.genImagePrompt
-                    (checkPromptRes.msg ?: "敏感词校验失败").showToast()
-                    return@launchWithLoading
                 }
                 val response = withContext(Dispatchers.IO) {
                     val body = SaveStoryboardBody(
@@ -304,23 +289,11 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             return
         }
         launchWithLoading {
-            val checkPromptRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveWordCheck(ContentBody(prompt)) }
-            val checkPromptData = checkPromptRes.data
-            if (checkPromptRes.isSuccess && checkPromptData != null) {
-                if (checkPromptData.isSensitive()) {
-                    checkPromptData.content?.showToast()
-                    val sp = SensitiveHighlighter.highlight(
-                        text = prompt,
-                        keywords = checkPromptData.hitWords,
-                        color = R.color.func_failure_dark.getResColor()
-                    )
-                    genImagePrompt.value = sp
+            sensitiveWordCheck(prompt).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { genImagePrompt.value = it }
                     return@launchWithLoading
                 }
-            } else {
-                genImagePrompt.value = storyboard.genImagePrompt
-                (checkPromptRes.msg ?: "敏感词校验失败").showToast()
-                return@launchWithLoading
             }
             val body = SaveStoryboardBody(
                 workId = storyboard.workId,

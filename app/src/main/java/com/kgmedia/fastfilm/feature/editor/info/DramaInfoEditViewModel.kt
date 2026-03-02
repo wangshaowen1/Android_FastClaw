@@ -6,18 +6,16 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.App
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.parseMessage
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
-import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImgUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
@@ -28,7 +26,6 @@ import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getParcelableValue
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.Dispatchers
@@ -109,40 +106,18 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                 return@launchWithLoading
             }
 
-            val checkTitleRes = withContext(Dispatchers.IO) { mRepo.api.sensitiveWordCheck(ContentBody(title)) }
-            val checkTitleData = checkTitleRes.data
-            if (checkTitleRes.isSuccess && checkTitleData != null) {
-                if (checkTitleData.isSensitive()) {
-                    checkTitleData.content?.showToast()
-                    val sp = SensitiveHighlighter.highlight(
-                        text = title,
-                        keywords = checkTitleData.hitWords,
-                        color = R.color.func_failure_dark.getResColor()
-                    )
-                    name.value = sp
+            sensitiveWordCheck(title).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { name.value = it }
                     return@launchWithLoading
                 }
-            } else {
-                (checkTitleRes.msg ?: "敏感词校验失败").showToast()
-                return@launchWithLoading
             }
 
-            val checkContentRes = withContext(Dispatchers.IO) { mRepo.api.sensitiveWordCheck(ContentBody(content)) }
-            val checkContentData = checkContentRes.data
-            if (checkContentRes.isSuccess && checkContentData != null) {
-                if (checkContentData.isSensitive()) {
-                    checkContentData.content?.showToast()
-                    val sp = SensitiveHighlighter.highlight(
-                        text = content,
-                        keywords = checkContentData.hitWords,
-                        color = R.color.func_failure_dark.getResColor()
-                    )
-                    desc.value = sp
+            sensitiveWordCheck(content).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { desc.value = it }
                     return@launchWithLoading
                 }
-            } else {
-                (checkContentRes.msg ?: "敏感词校验失败").showToast()
-                return@launchWithLoading
             }
             response(
                 mRepo.api.updateWorkInfo(

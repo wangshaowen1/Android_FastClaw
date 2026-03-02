@@ -1,15 +1,13 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import androidx.fragment.app.FragmentActivity
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
-import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
@@ -17,7 +15,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.edit.ReferenceHistoricalImageryDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -57,52 +54,23 @@ class ItemSceneVM(
     override fun generate(scenePrompt: String, sceneName: String, reference: ReferenceImageInfo?) {
         val preStatus = status.get()
         if (preStatus == 1) return
-        status.set(1)
-        onItemChanged()
+        updateStatus(1)
         launch {
             var scene = data.get()
             if (scenePrompt != scene?.scenePrompt || sceneName != scene.sceneName) {
-                val checkPromptRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveWordCheck(ContentBody(scenePrompt)) }
-                val checkPromptData = checkPromptRes.data
-                if (checkPromptRes.isSuccess && checkPromptData != null) {
-                    if (checkPromptData.isSensitive()) {
-                        checkPromptData.content?.showToast()
-                        val sp = SensitiveHighlighter.highlight(
-                            text = scenePrompt,
-                            keywords = checkPromptData.hitWords,
-                            color = R.color.func_failure_dark.getResColor()
-                        )
-                        assetDesc.set(sp)
-                        status.set(preStatus)
-                        onItemChanged()
+                sensitiveWordCheck(scenePrompt).let { (isPass, highlightText) ->
+                    if (!isPass) {
+                        highlightText?.let { assetDesc.set(it) }
+                        updateStatus(preStatus)
                         return@launch
                     }
-                } else {
-                    (checkPromptRes.msg ?: "敏感词校验失败").showToast()
-                    status.set(preStatus)
-                    onItemChanged()
-                    return@launch
                 }
-                val checkNameRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveWordCheck(ContentBody(sceneName)) }
-                val checkNameData = checkNameRes.data
-                if (checkNameRes.isSuccess && checkNameData != null) {
-                    if (checkNameData.isSensitive()) {
-                        checkNameData.content?.showToast()
-                        val sp = SensitiveHighlighter.highlight(
-                            text = sceneName,
-                            keywords = checkNameData.hitWords,
-                            color = R.color.func_failure_dark.getResColor()
-                        )
-                        assetName.set(sp)
-                        status.set(preStatus)
-                        onItemChanged()
+                sensitiveWordCheck(sceneName).let { (isPass, highlightText) ->
+                    if (!isPass) {
+                        highlightText?.let { assetName.set(it) }
+                        updateStatus(preStatus)
                         return@launch
                     }
-                } else {
-                    (checkNameRes.msg ?: "敏感词校验失败").showToast()
-                    status.set(preStatus)
-                    onItemChanged()
-                    return@launch
                 }
                 val response = withContext(Dispatchers.IO) {
                     val body = SaveSceneBody(
@@ -120,8 +88,7 @@ class ItemSceneVM(
                     data.set(response.data)
                 } else {
                     response.msg?.showToast()
-                    status.set(preStatus)
-                    onItemChanged()
+                    updateStatus(preStatus)
                     return@launch
                 }
             }
@@ -141,15 +108,14 @@ class ItemSceneVM(
                     val scene = this@ItemSceneVM.data.get() ?: SimpleSceneInfo()
                     scene.taskId = data?.taskId
                     scene.genStatus = data?.genStatus
-                    data?.genStatus?.let { status.set(it) }
+                    data?.genStatus?.let { updateStatus(it) }
                     this@ItemSceneVM.data.set(scene)
                     loopGenStatus()
                     if (data?.genStatus == 4) PowerRechargeDialog.show(true)
                 },
                 error = {
                     this?.msg?.showToast()
-                    status.set(preStatus)
-                    onItemChanged()
+                    updateStatus(preStatus)
                 })
         }
     }
@@ -171,7 +137,7 @@ class ItemSceneVM(
                     assetImage.set(taskStatus?.result)
                 }
                 data.notifyChange()
-                taskStatus?.genStatus?.let { status.set(it) }
+                taskStatus?.genStatus?.let { updateStatus(it) }
             }
             if (status.get() == 1) {
                 delay(3000)
