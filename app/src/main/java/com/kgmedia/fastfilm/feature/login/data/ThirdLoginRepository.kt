@@ -24,10 +24,10 @@ open class ThirdLoginRepository : AppRepository() {
                 OpenInstall.reportRegister()
             }
 
-            EventManager.onAppTrack(
-                AppEvent.JG_ACTION_USER_LOGIN,
-                mapOf(GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no", GrowingIO.KEY_ALL_LOGIN_TYPE to "wechat")
-            )
+//            EventManager.onAppTrack(
+//                AppEvent.JG_ACTION_USER_LOGIN,
+//                mapOf(GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no", GrowingIO.KEY_ALL_LOGIN_TYPE to "wechat")
+//            )
         }
     }
 }

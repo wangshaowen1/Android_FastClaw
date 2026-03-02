@@ -28,10 +28,10 @@ class FlashLoginRepository : ThirdLoginRepository() {
                 if (isNewRegister && Config.get().installFromOpenInstall()) {
                     OpenInstall.reportRegister()
                 }
-                EventManager.onAppTrack(
-                    AppEvent.JG_ACTION_USER_LOGIN,
-                    mapOf(GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no", GrowingIO.KEY_ALL_LOGIN_TYPE to "phone")
-                )
+//                EventManager.onAppTrack(
+//                    AppEvent.JG_ACTION_USER_LOGIN,
+//                    mapOf(GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no", GrowingIO.KEY_ALL_LOGIN_TYPE to "phone")
+//                )
             }
     }
 
@@ -61,13 +61,13 @@ class FlashLoginRepository : ThirdLoginRepository() {
                 if (isNewRegister && Config.get().installFromOpenInstall()) {
                     OpenInstall.reportRegister()
                 }
-                EventManager.onAppTrack(
-                    AppEvent.JG_ACTION_USER_LOGIN,
-                    mapOf(
-                        GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no",
-                        GrowingIO.KEY_ALL_LOGIN_TYPE to "phone"
-                    )
-                )
+//                EventManager.onAppTrack(
+//                    AppEvent.JG_ACTION_USER_LOGIN,
+//                    mapOf(
+//                        GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no",
+//                        GrowingIO.KEY_ALL_LOGIN_TYPE to "phone"
+//                    )
+//                )
             }
         }
 

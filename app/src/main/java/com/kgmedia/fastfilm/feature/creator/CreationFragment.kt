@@ -154,11 +154,6 @@ class CreationFragment :
             }
             //敏感词没问题，开始下一步
             showVideoSetDialog()
-            if (mRealVM.inspirationModel()) {
-                EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_NEXT_STEP_BUTTON)
-            } else {
-                EventManager.onAppTrack(AppEvent.JG_CLICK_WRITE_OWN_STORY_NEXT_STEP_BUTTON)
-            }
         }
     }
 
@@ -241,11 +236,6 @@ class CreationFragment :
                 if (mRealVM.isStreaming()) {
                     return
                 }
-                if (mRealVM.inspirationModel()) {
-                    EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_OPTIMIZE_BUTTON)
-                } else {
-                    EventManager.onAppTrack(AppEvent.JG_CLICK_WRITE_OWN_STORY_OPTIMIZE_BUTTON)
-                }
                 mRealVM.sseGenerate(SSEContentBody.TYPE_AI_OPTIMIZE_INSPIRATION, "优化中...")
             }
 
@@ -263,7 +253,6 @@ class CreationFragment :
                 if (mRealVM.isStreaming()) {
                     return
                 }
-                EventManager.onAppTrack(AppEvent.JG_CLICK_INSPIRATION_STORY_RANDOM_INSPIRATION_BUTTON)
                 mRealVM.sseGenerate(SSEContentBody.TYPE_RANDOM_INSPIRATION, "灵感生成中...")
             }
 

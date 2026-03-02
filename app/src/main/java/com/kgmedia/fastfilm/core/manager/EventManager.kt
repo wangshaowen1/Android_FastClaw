@@ -102,30 +102,6 @@ object EventManager {
  * App功能使用数据
  */
 object AppEvent {
-
-
-    /**
-     * 金果｜显示生成分镜页面
-     * 显示生成分镜页面，显示时上报
-     */
-    const val JG_VIEW_GENERATE_STORYBOARD_PAGE = "jg_view_generate_storyboard_page"
-
-
-    /**
-     * 金果｜点击自己写故事的下一步按钮
-     * 用户点击自己写故事页面的下一步的按钮，点击时上报
-     */
-    const val JG_CLICK_WRITE_OWN_STORY_NEXT_STEP_BUTTON =
-        "jg_click_write_own_story_next_step_button"
-
-    /**
-     * 金果｜点击灵感故事的下一步按钮
-     * 用户点击灵感故事页面的下一步的按钮，点击时上报
-     */
-    const val JG_CLICK_INSPIRATION_STORY_NEXT_STEP_BUTTON =
-        "jg_click_inspiration_story_next_step_button"
-
-
     /**
      * 金果｜用户登录账号
      * 用户成功登录手机号/微信号/AppleID后上报，是否首次注册登录用户
@@ -134,36 +110,6 @@ object AppEvent {
      * 通用｜用户登录类型	all_login_type	字符串
      */
     const val JG_ACTION_USER_LOGIN = "jg_action_user_login"
-
-
-    /**
-     * 金果｜点击自己写故事的帮我优化按钮
-     * 用户点击自己写故事页面的帮我优化的按钮，点击时上报
-     */
-    const val JG_CLICK_WRITE_OWN_STORY_OPTIMIZE_BUTTON = "jg_click_write_own_story_optimize_button"
-
-
-    /**
-     * 金果｜点击灵感故事的随机灵感按钮
-     * 用户点击灵感故事页面的随机灵感的按钮，点击时上报
-     */
-    const val JG_CLICK_INSPIRATION_STORY_RANDOM_INSPIRATION_BUTTON =
-        "jg_click_inspiration_story_random_inspiration_button"
-
-    /**
-     * 金果｜点击灵感故事的帮我优化按钮
-     * 用户点击灵感故事页面的帮我优化的按钮，点击时上报
-     */
-    const val JG_CLICK_INSPIRATION_STORY_OPTIMIZE_BUTTON =
-        "jg_click_inspiration_story_optimize_button"
-
-    /**
-     * 金果｜点击爆款页面的立即创作按钮
-     * 用户点击爆款页面的立即创作的按钮，点击时上报
-     */
-    const val JG_CLICK_FADDISH_PAGE_CREATE_NOW_BUTTON = "jg_click_faddish_page_create_now_button"
-
-
 
     /**
      * 访问首页｜用户进入App访问首页页面

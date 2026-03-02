@@ -136,7 +136,6 @@ class HomeFragment :
 
         binding.btnCreation.setOnSingleClickListener {
             if (AppNavigator.checkLoginIntercepted()) return@setOnSingleClickListener
-            EventManager.onAppTrack(AppEvent.JG_CLICK_FADDISH_PAGE_CREATE_NOW_BUTTON)
             CreationRootActivity.start(activity)
         }
     }
