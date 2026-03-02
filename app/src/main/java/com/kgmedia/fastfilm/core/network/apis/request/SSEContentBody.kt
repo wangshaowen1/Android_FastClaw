@@ -71,8 +71,8 @@ data class AIExpandBody(
     val storyId: String? = null,
     //作品ID
     val workId: String? = null,
-    //业务类型枚举30=灵感剧集剧本  33=灵感续集剧本
-    val bizType: Int? = null,
+//    //业务类型枚举30=灵感剧集剧本  33=灵感续集剧本
+//    val bizType: Int? = null,
     //小说内容
     val workInspiration: String? = null,
 )

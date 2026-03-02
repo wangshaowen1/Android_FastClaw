@@ -90,7 +90,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
             AIExpandBody(
                 storyId = episodeInfo.value?.storyId,
                 workId = workId,
-                bizType = DramaGenerateConstants.MODEL_CONTINUE_STORY_EXPAND,
+//                bizType = DramaGenerateConstants.MODEL_CONTINUE_STORY_EXPAND,
                 workInspiration = input.value,
             )
         )

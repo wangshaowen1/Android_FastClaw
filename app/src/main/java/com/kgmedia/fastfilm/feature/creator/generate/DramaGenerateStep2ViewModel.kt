@@ -120,7 +120,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     } else {
                         episodeId
                     },
-                    bizType = model,
                 )
                 Logger.d("[SSE]", "MODEL_CONTINUE_INSPIRATION Starting with content body = $body")
                 mRepo.api.sseScriptFromIdea(body)
