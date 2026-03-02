@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
+import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
@@ -80,6 +81,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     // 作品名称
     var mWorkName = MutableLiveData<String>()
+
     //敏感词校验结果
     val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
 
@@ -107,6 +109,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 )
                 Logger.d("[SSE]", "MODEL_STORY Starting with content body = $body")
                 mRepo.api.sseScriptFromStory(body)
+            } else if (model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
+                Logger.d("[SSE]", "MODEL_STORY_SINGLE Starting with content body = $inspiration")
+                mRepo.api.singleWorkGenerate(ContentBody(inspiration))
             } else {
                 val body = AIExpandBody(
                     workId = workId.value,
@@ -204,7 +209,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     ) {
         setLoading(true)
         launch(block = {
-            if (model == DramaGenerateConstants.MODEL_STORY) {
+            if (model == DramaGenerateConstants.MODEL_STORY || model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
                 //第一集创作(小说)
                 val body = CreateStoryWorkBody(
                     workTitle = workTitle,
@@ -215,7 +220,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     totalEpisodeCntCode = episodeRangeCode
                 )
                 response(
-                    bean = mRepo.api.saveStoryEpisodeScript(body),
+                    bean = if (model == DramaGenerateConstants.MODEL_STORY) mRepo.api.saveStoryEpisodeScript(body) else mRepo.api.saveSingleEpisodeScript(
+                        body
+                    ),
                     result = {
                         generateAllAssetDescription(
                             data?.workId,

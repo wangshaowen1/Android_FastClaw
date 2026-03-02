@@ -185,7 +185,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     nextStepEnabled.set(true)
                 }
                 response?.data?.let {
-                    mWorkName.value = ""
+                    mWorkName.value = it.workTitle ?: ""
                     mSSEContent.value = it.result ?: ""
                 }
                 progressHelper.finish()

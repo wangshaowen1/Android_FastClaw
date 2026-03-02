@@ -35,6 +35,7 @@ data class UploadStoryData(
  */
 data class RollNovelSummaryData(
     val genStatus: Int? = null,
+    val workTitle: String? = null,
     val result: String? = null,
     val workId: String? = null
 ) {

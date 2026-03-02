@@ -166,6 +166,11 @@ object ApiConstants {
     const val SAVE_STORY_EPISODE_SCRIPT = "work/production/new/novel/saveStoryContent"
 
     /**
+     *单集作品故事剧本保存（首次创建）
+     */
+    const val SAVE_SINGLE_EPISODE_SCRIPT = "work/production/new/singleEpisode/saveStoryContent"
+
+    /**
      *保存故事剧集剧本（灵感首创/灵感续集/小说续集）
      */
     const val SAVE_EPISODE_SCRIPT = "work/production/new/saveStoryContent"
@@ -658,5 +663,15 @@ object ApiConstants {
      * 轮询查询小说上传生成作品剧集梗概结果
      */
     const val ROLL_NOVEL_SUMMARY = "ai/task/query/novel/upload/summary"
+
+    /**
+     * 单集作品-生成标题/剧本/资产
+     */
+    const val SINGLE_WORK_GENERATE = "ai/stream/script/single/work"
+
+    /**
+     * 单集作品故事剧本保存（首次创建）
+     */
+    const val SINGLE_WORK_SAVE = "work/production/new/singleEpisode/saveStoryContent"
 
 }

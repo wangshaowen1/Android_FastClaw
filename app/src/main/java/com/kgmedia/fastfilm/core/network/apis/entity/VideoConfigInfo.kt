@@ -24,7 +24,16 @@ data class VideoConfigInfo(
     val sortNo: Int? = null
 ) : Parcelable {
     fun isCustomInput(): Boolean {
-        return configCode == "ep_custom"
+        return configCode == MODE_CUSTOM
+    }
+
+    fun isSingleModel(): Boolean {
+        return configCode == MODE_SINGLE
+    }
+
+    companion object {
+        const val MODE_SINGLE = "SINGLE_EPISODE"
+        const val MODE_CUSTOM = "ep_custom"
     }
 }
 

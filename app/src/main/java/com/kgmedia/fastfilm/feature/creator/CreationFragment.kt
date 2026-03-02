@@ -14,6 +14,7 @@ import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.onUserSignOut
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
+import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
@@ -28,7 +29,6 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
-import java.lang.StringBuilder
 
 class CreationFragment :
     BaseViewModelFragment<FragmentCreationBinding, CreationViewModel>() {
@@ -170,7 +170,10 @@ class CreationFragment :
 
                     val isFileModel = !fileUrl.isNullOrEmpty()
                     val content = this@CreationFragment.mRealVM.input.value
+
+                    val singleModel = range == VideoConfigInfo.MODE_SINGLE || (range == VideoConfigInfo.MODE_CUSTOM && custom?.toIntOrNull() == 1)
                     val modelType = when {
+                        singleModel -> DramaGenerateConstants.MODEL_STORY_SINGLE
                         this@CreationFragment.mRealVM.inspirationModel() -> DramaGenerateConstants.MODEL_INSPIRATION
                         isFileModel -> DramaGenerateConstants.MODEL_STORY_URL
                         else -> DramaGenerateConstants.MODEL_STORY

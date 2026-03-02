@@ -39,6 +39,10 @@ class DramaGenerateConstants {
          */
         const val MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS = 36
 
+        /**
+         * 单集短片创作
+         */
+        const val MODEL_STORY_SINGLE = 37
 
         /**
          * 剧集梗概

@@ -346,6 +346,12 @@ interface ApiService {
     suspend fun saveStoryEpisodeScript(@Body body: CreateStoryWorkBody): ApiResponse<WorkIdData?>
 
     /**
+     * 单集作品故事剧本保存（首次创建）
+     */
+    @POST(ApiConstants.SAVE_SINGLE_EPISODE_SCRIPT)
+    suspend fun saveSingleEpisodeScript(@Body body: CreateStoryWorkBody): ApiResponse<WorkIdData?>
+
+    /**
      *保存故事剧集剧本（灵感首创/灵感续集/小说续集）
      */
     @POST(ApiConstants.SAVE_EPISODE_SCRIPT)
@@ -940,4 +946,21 @@ interface ApiService {
      */
     @POST(ApiConstants.ROLL_NOVEL_SUMMARY)
     suspend fun rollNovelSummary(@Body body: WorkIdBody): ApiResponse<RollNovelSummaryData?>
+
+    /**
+     * 单集作品故事剧本保存（首次创建）
+     */
+    @POST(ApiConstants.SINGLE_WORK_SAVE)
+    suspend fun singleWorkSave(@Body body: WorkIdBody): ApiResponse<RollNovelSummaryData?>
+
+    /**
+     *单集作品-故事剧本生成
+     */
+    @Headers(
+        "Accept: text/event-stream",  // 声明 SSE 媒体类型
+        "Cache-Control: no-cache",     // 禁用缓存
+        "Connection: keep-alive"       // 保持长连接
+    )
+    @POST(ApiConstants.SINGLE_WORK_GENERATE)
+    fun singleWorkGenerate(@Body body: ContentBody): Flow<SSEvent>
 }

@@ -70,7 +70,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
                 startFrom.value = 1
             }
 
-            DramaGenerateConstants.MODEL_STORY -> {
+            DramaGenerateConstants.MODEL_STORY, DramaGenerateConstants.MODEL_STORY_SINGLE -> {
                 if (newStep != -1) {
                     step.value = newStep
                 } else {
