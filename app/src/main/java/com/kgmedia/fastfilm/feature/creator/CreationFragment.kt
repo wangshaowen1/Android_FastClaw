@@ -198,7 +198,12 @@ class CreationFragment :
                         if ((this@CreationFragment.mRealVM.analysisResult?.charCount ?: 0) > 10000) {//大于10000字要显示确认算力弹窗  这里要拿workid去轮询
                             StoryGenerateConfirmDialog.newInstance(
                                 this@CreationFragment.mRealVM.fileUrl,
-                                this@CreationFragment.mRealVM.analysisResult
+                                this@CreationFragment.mRealVM.analysisResult,
+                                name,
+                                range,
+                                custom,
+                                ratio,
+                                style
                             ).apply {
                                     onConfirm = { data -> startEditor(data) }
                                 }.show(this@CreationFragment.childFragmentManager)

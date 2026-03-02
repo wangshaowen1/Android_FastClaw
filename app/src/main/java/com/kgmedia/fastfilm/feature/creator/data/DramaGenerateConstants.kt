@@ -24,25 +24,25 @@ class DramaGenerateConstants {
 
         /**
          * 第一集创作(小说)
-         * todo 注意这里不是对应的 bizType值，这里是对应的业务类型
+         * 注意1000开始不是对应的 bizType值，这里是对应的业务类型
          */
-        const val MODEL_STORY = 29
+        const val MODEL_STORY = 1000
 
         /**
          * 第一集创作(小说文档模式)
          */
-        const val MODEL_STORY_URL = 35
+        const val MODEL_STORY_URL = 1001
 
 
         /**
          * 继续创作(小说文档模式)
          */
-        const val MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS = 36
+        const val MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS = 1002
 
         /**
          * 单集短片创作
          */
-        const val MODEL_STORY_SINGLE = 37
+        const val MODEL_STORY_SINGLE = 1003
 
         /**
          * 剧集梗概

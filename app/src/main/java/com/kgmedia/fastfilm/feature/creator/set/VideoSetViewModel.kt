@@ -77,9 +77,9 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
                                 actionId == EditorInfo.IME_ACTION_NEXT ||
                                 (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
                                 val targetCount = input.get()?.toIntOrNull() ?: 0
-                                if (targetCount > 30) {
-                                    "剧集数不可超过30集".showToast()
-                                    input.set("30")
+                                if (targetCount > 60) {
+                                    "剧集数不可超过60集".showToast()
+                                    input.set("60")
                                 }
                                 KeyboardUtils.hideSoftInput(v)
                                 return@setOnEditorActionListener true

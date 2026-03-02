@@ -8,7 +8,12 @@ package com.kgmedia.fastfilm.core.network.apis.request
  */
 data class UploadStoryBody(
     val novelCharCount: Int? = null,
-    val workNovelUrl: String? = null
+    val workNovelUrl: String? = null,
+    val workTitle: String? = null,
+    val totalEpisodeCntCode: String? = null,
+    val totalEpisodeCnt: String? = null,
+    val workRatio: String? = null,
+    val workStyleCode: String? = null,
 ) : UserTokenBody()
 
 /**
