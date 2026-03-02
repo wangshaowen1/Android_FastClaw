@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.PagedProxy
+import com.kgmedia.fastfilm.common.adapter.QuickAdapter
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
@@ -33,9 +34,10 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
 
     //创建续集信息
     val episodeInfo = MutableLiveData<EpisodeInfo?>()
+    val publishedPlatformAdapter by lazy { QuickAdapter<ItemStringVm>(R.layout.item_release_platform, emptyList()) }
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onResume() {
+        super.onResume()
         getWorkDtl()
     }
 
@@ -43,13 +45,13 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
      *作品详情
      */
     fun getWorkDtl() {
-        loadState.set(LoadStateViewHolder.LOADING)
         if (workInfo.value == null) loadState.set(LoadStateViewHolder.LOADING)
         launch(
             block = {
                 mRepo.getWorkInfo(workId).data?.let {
                     it.userId = User.get().userId
                     workInfo.value = it
+                    it.publishPlatformImageList?.map { ItemStringVm(it) }.let { publishedPlatformAdapter.submitList(it) }
                 }
                 updateLoadState()
             },
