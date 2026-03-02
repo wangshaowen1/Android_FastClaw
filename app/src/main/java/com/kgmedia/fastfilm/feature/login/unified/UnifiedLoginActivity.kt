@@ -63,7 +63,6 @@ class UnifiedLoginActivity : BaseViewModelActivity<ActivityUnifiedLoginBinding, 
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
-        EventManager.onAppTrack(AppEvent.JG_VIEW_LOGIN_PAGE)
         termsOfService()
     }
 

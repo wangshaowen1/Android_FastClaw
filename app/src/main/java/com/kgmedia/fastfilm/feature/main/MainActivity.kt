@@ -165,7 +165,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             when (checkedId) {
                 R.id.rbHome -> {
                     //首页
-                    EventManager.onAppTrack(AppEvent.JG_VIEW_HOME_TAB_PAGE)
+                    EventManager.onAppTrack(AppEvent.SF_VIEW_HOME_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(0)
                     supportFragmentManager.switchFragment(

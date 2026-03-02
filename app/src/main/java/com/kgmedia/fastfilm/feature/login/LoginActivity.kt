@@ -41,7 +41,6 @@ class LoginActivity : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventManager.onAppTrack(AppEvent.JG_VIEW_LOGIN_PAGE)
     }
 
     override fun <Data> onClick(view: View?, data: Data?) {

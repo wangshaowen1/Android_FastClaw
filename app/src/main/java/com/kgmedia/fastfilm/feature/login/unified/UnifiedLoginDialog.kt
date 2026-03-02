@@ -59,7 +59,6 @@ class UnifiedLoginDialog :
 
     override fun onPrepareView() {
         super.onPrepareView()
-        EventManager.onAppTrack(AppEvent.JG_VIEW_LOGIN_PAGE)
         termsOfService()
     }
 
