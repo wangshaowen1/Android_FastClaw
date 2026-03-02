@@ -33,6 +33,7 @@ import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
 import com.kgmedia.fastfilm.common.permissions.requestRxPermissions
 import com.kgmedia.fastfilm.common.utils.ImageSaveHelper
 import com.kgmedia.fastfilm.common.utils.IntentUtils
+import com.kgmedia.fastfilm.common.utils.WXUtils
 import com.kgmedia.fastfilm.core.CookieUtils
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.createAppPayment
@@ -40,6 +41,7 @@ import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.core.ext.openWithBrowser
 import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.core.model.H5PayInfo
+import com.kgmedia.fastfilm.core.model.IdInfo
 import com.kgmedia.fastfilm.core.model.PermissionEntity
 import com.kgmedia.fastfilm.core.model.PreviewImageEntity
 import com.kgmedia.fastfilm.core.model.ResultEntity
@@ -416,6 +418,14 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
                 try {
                     val uriEntity = GsonUtils.fromJson(data, UriEntity::class.java)
                     uriEntity.uri.openWithBrowser()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            //跳转微信服务号
+            registerHandler("openWeChatService") { data, _ ->
+                try {
+                    GsonUtils.fromJson(data, IdInfo::class.java)?.id?.let { WXUtils.openWeChatService(it) }
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

@@ -11,7 +11,6 @@ import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.toPaymentParams
 import com.kgmedia.fastfilm.core.model.H5PayInfo
 import com.kgmedia.fastfilm.core.model.H5PayStatusInfo
-import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.feature.web.data.BrowserRepository
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.PaymentResultStrategy
@@ -56,27 +55,18 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
                     }
                     if (response.isSuccess) {
                         orderNo = response.data?.orderNo
-                        responseSender?.sendData(response.data?.toPaymentParams(payment))
+                        response.data?.let { responseSender?.sendData(it.toPaymentParams(payment)) }
                     } else {
-                        responseSender.sendError(null)
+                        responseSender?.sendError(null)
                     }
-                }, onError = { responseSender.sendError(it) })
+                }, onError = { responseSender?.sendError(it) })
             }
             paymentClient.setResultStrategy(object : PaymentResultStrategy() {
-                override fun doWithSuccess(
-                    context: Activity,
-                    method: PaymentClient.PaymentMethod,
-                    paymentData: PaymentParams
-                ) {
+                override fun doWithSuccess(context: Activity?, method: PaymentClient.PaymentMethod?, paymentParams: PaymentParams?) {
                     payStatusCallback.value = H5PayStatusInfo(200, orderNo)
                 }
 
-                override fun doWithFailure(
-                    context: Activity,
-                    method: PaymentClient.PaymentMethod,
-                    paymentData: PaymentParams?,
-                    e: Throwable?
-                ) {
+                override fun doWithFailure(context: Activity?, method: PaymentClient.PaymentMethod?, paymentParams: PaymentParams?, e: Throwable?) {
                     payStatusCallback.value = H5PayStatusInfo(400, orderNo)
                 }
             })

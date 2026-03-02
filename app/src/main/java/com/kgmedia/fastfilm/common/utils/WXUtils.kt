@@ -1,11 +1,15 @@
 package com.kgmedia.fastfilm.common.utils
 
 import android.app.Activity
+import android.content.Intent
+import androidx.core.net.toUri
+import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.BuildConfig
 import com.nhsd.basic.utils.T
 import com.tencent.mm.opensdk.constants.Build
 import com.tencent.mm.opensdk.modelbiz.WXOpenCustomerServiceChat
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
+
 
 /**
  * *****************************************
@@ -37,6 +41,24 @@ object WXUtils {
             // 客服URL
             req.url = kfUrl
             api.sendReq(req)
+        }
+    }
+
+    /**
+     * 跳转微信公众号
+     */
+    fun openWeChatService(account: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, "weixin://dl/officialaccount?officialAccountID=$account".toUri())
+            ActivityUtils.startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, "weixin://profile/$account".toUri())
+                ActivityUtils.startActivity(intent)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

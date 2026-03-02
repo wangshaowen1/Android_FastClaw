@@ -632,12 +632,12 @@ object ApiConstants {
     /**
      * App转发H5支付-微信下单
      */
-    const val H5_PAY_WX = "app/forward/purchase/wx"
+    const val H5_PAY_WX = "app/forward/h5/createAppWechat"
 
     /**
-     * 购买会员-支付宝方式
+     * App转发H5支付-支付宝下单
      */
-    const val H5_PAY_ALIPAY = "app/forward/purchase/alipay"
+    const val H5_PAY_ALIPAY = "app/forward/h5/createAppAliPay"
 
     /**
      * 获取弹窗和浮窗配置信息
