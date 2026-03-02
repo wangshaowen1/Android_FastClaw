@@ -59,6 +59,10 @@ class User : IUser {
     var computingPower: Int
         private set
 
+    /**课程购买状态*/
+    var purchaseCourseStatus: Int?
+        private set
+
     var requestNotificationsPermissionEnable = true
 
     val userInfoStr: String?
@@ -90,6 +94,7 @@ class User : IUser {
         registerStatus = sp.getInt(REGISTER_STATUS, 0)
         token = sp.getString(TOKEN, null)
         computingPower = sp.getInt(COMPUTING_POWER, 0)
+        purchaseCourseStatus = sp.getInt(PURCHASE_COURSE_STATUS, 0)
         requestNotificationsPermissionEnable = sp.getBoolean(REQUEST_NOTIFICATIONS_PERMISSION, true)
     }
 
@@ -106,6 +111,7 @@ class User : IUser {
         storeUserSource(userData.userSource)
         storeRegisterWay(userData.registerWay)
         storeLastLoginTime(userData.lastLoginTime)
+        storePurchaseCourseStatus(userData.purchaseCourseStatus)
         userData.registerStatus?.apply {
             storeRegisterStatus(this)
         }
@@ -124,7 +130,7 @@ class User : IUser {
             "\$basic_gender" to if (gender == FEMALE) "FEMALE" else "MALE",//性别
             "\$basic_name" to nickName,//姓名
         ).filterValues { !it.isNullOrBlank() }
-        GrowingAutotracker.get().setLoginUserAttributes(mutableMap)
+//        GrowingAutotracker.get().setLoginUserAttributes(mutableMap)
     }
 
 
@@ -157,6 +163,8 @@ class User : IUser {
         sp.remove(LAST_LOGIN_TIME)
         registerStatus = null
         sp.remove(REGISTER_STATUS)
+        purchaseCourseStatus = 0
+        sp.remove(PURCHASE_COURSE_STATUS)
         token = null
         sp.remove(TOKEN)
         computingPower = 0
@@ -297,6 +305,11 @@ class User : IUser {
         notifyChange(COMPUTING_POWER)
     }
 
+    fun storePurchaseCourseStatus(purchaseCourseStatus: Int?) {
+        this.purchaseCourseStatus = purchaseCourseStatus
+        sp.putInt(PURCHASE_COURSE_STATUS, this.purchaseCourseStatus ?: 0)
+    }
+
     fun isFemale(): Boolean {
         return gender == FEMALE
     }
@@ -306,6 +319,10 @@ class User : IUser {
             return false
         }
         return TextUtils.equals(userId, this.userId)
+    }
+
+    fun isPurchasedCourse(): Boolean {
+        return purchaseCourseStatus == 1
     }
 
     fun setRequestNotificationsPermissionDisable() {
@@ -348,6 +365,8 @@ class User : IUser {
         const val TOKEN = "token"
 
         const val COMPUTING_POWER = "computingPower"
+
+        const val PURCHASE_COURSE_STATUS = "purchaseCourseStatus"
 
         //性别-男
         const val MALE = 1

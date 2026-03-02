@@ -25,6 +25,11 @@ data class UserHomeData(
     val userSource: Int? = null,
     //注册方式 1-短信验证码 2-闪验 3-微信登录 4-qq登录 5-苹果登录 6-微信小程序 7-账号密码
     val registerWay: Int? = null,
+    /**
+     * 购买状态
+     * 0-未购买  1-已购买
+     */
+    val purchaseCourseStatus: Int? = null,
     //最后登录时间
     val lastLoginTime: String? = null,
     //是否是注册，0-登录，1-是注册

@@ -33,7 +33,7 @@ data class VideoConfigInfo(
 
     companion object {
         const val MODE_SINGLE = "RANGE_1"
-        const val MODE_CUSTOM = "ep_custom"
+        const val MODE_CUSTOM = "RANGE_CUSTOM"
     }
 }
 

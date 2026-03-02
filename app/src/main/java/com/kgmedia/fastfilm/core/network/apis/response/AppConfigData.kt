@@ -127,7 +127,17 @@ class AppConfigData {
      * 作品-小说字数限制数字（500000）
      */
     val workNovelWordLimit: Int? = 500000
+
+    /**
+     * 课程-课程banner
+     */
+    val workCourseBanner: SimpleBannerInfo? = null
 }
+
+data class SimpleBannerInfo(
+    val bannerUrl: String? = null,
+    val jumpUri: String? = null,
+)
 
 data class PaymentStatus(
     val wxpay: PaymentRanking? = null,
