@@ -26,14 +26,56 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/spacing_l"
-                android:paddingTop="20dp"
-                android:stackFromBottom="true" />
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="@dimen/spacing_l"
+                    android:paddingTop="20dp">
+
+                    <TextView
+                        style="@style/Text14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="故事简介"
+                        android:textColor="?attr/textColor1"
+                        android:textStyle="bold"
+                        android:visibility="@{layout.isStoryDocumentsMode?View.VISIBLE:View.GONE}" />
+
+                    <TextView
+                        android:id="@+id/tvStoryDesc"
+                        style="@style/Text14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_m"
+                        android:text="@{layout.storySummaryResult.workDesc}"
+                        android:textColor="?attr/textColor3"
+                        android:visibility="@{layout.isStoryDocumentsMode?View.VISIBLE:View.GONE}"
+                        tools:text="唐三在武魂觉醒仪式上，意外觉醒出被视为“废武魂”的蓝银草，却暗中展现出不寻常的天赋..." />
+
+                    <TextView
+                        style="@style/Text14"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_l"
+                        android:layout_marginBottom="@dimen/spacing_m"
+                        android:text="目录"
+                        android:textColor="?attr/textColor1"
+                        android:textStyle="bold"
+                        android:visibility="@{layout.isStoryDocumentsMode?View.VISIBLE:View.GONE}" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clipToPadding="false"
+                        android:stackFromBottom="true" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
 
             <LinearLayout
                 android:layout_width="match_parent"

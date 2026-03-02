@@ -15,12 +15,14 @@ import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
+import com.kgmedia.fastfilm.core.network.apis.request.RollNovelSummaryResult
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.EpisodeSseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.Job
@@ -68,8 +70,15 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     var originalJson: String? = null
     var mFullMarkdown = ""
 
+    /**
+     * 小说文档模式==》故事梗概结果
+     */
+    var storySummaryResult = MutableLiveData<RollNovelSummaryResult>()
+
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
+
+    fun isStoryDocumentsMode() = model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS
 
     private val progressHelper by lazy {
         AutoProgressSimulator(viewModelScope) { show, title, progress ->
@@ -181,12 +190,10 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 }
             },
             onSuccess = { response ->
-                if (response?.data?.result?.isNotEmpty() == true) {
+                response?.data?.result?.let {
                     nextStepEnabled.set(true)
-                }
-                response?.data?.let {
                     mWorkName.value = it.workTitle ?: ""
-                    mSSEContent.value = it.result ?: ""
+                    storySummaryResult.value = it
                 }
                 progressHelper.finish()
                 NotificationHelper.sendRecoveryNotification("故事梗概已完成")

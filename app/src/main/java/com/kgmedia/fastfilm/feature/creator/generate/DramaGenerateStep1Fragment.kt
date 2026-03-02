@@ -12,7 +12,9 @@ import com.fluid.afm.styles.ParagraphStyle
 import com.fluid.afm.styles.TableStyle
 import com.fluid.afm.styles.TitleStyle
 import com.fluid.afm.utils.ParseUtil
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.adapter.QuickAdapter
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
@@ -43,6 +45,7 @@ class DramaGenerateStep1Fragment :
     val hostVm by lazy { getViewModelOfActivity<StoryEditorViewModel>() }
     val markDownTextView by lazy { PrinterMarkDownTextView(mActivity) }
     var dialog: GeneratingDialog? = null
+    var episodeAdapter = QuickAdapter<ItemStorySummaryGenerateVm>(R.layout.item_story_summary_generate, emptyList())
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -55,7 +58,7 @@ class DramaGenerateStep1Fragment :
             mRealVM.episodeRangeCode = it.getStringExtra(StoryEditorActivity.EPISODE_RANGE_CODE)
             mRealVM.videoStyleId = it.getStringExtra(Constants.Extra.STYLE_ID)
             mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
-            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
+            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 mRealVM.rollNovelSummary()
             } else {
                 mRealVM.sseGenerate()
@@ -67,7 +70,7 @@ class DramaGenerateStep1Fragment :
                 if (dialog == null || !dialog!!.isShowing) {
                     // 只在 Dialog 不存在时创建
                     dialog = GeneratingDialog(requireContext(), it.second, it.third)
-                    if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
+                    if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                         dialog?.setCanceledOnTouchOutside(true)
                         dialog?.setCancelable(true)
                     }
@@ -85,21 +88,31 @@ class DramaGenerateStep1Fragment :
         val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.setLayoutManager(linearLayoutManager)
 
-        linearLayoutManager.setStackFromEnd(true)
-        binding.recyclerView.setAdapter(object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-                return object : RecyclerView.ViewHolder(markDownTextView) {}
+        if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
+            binding.recyclerView.setAdapter(episodeAdapter)
+            mRealVM.storySummaryResult.observe(this) {
+                episodeAdapter.submitList(it.structureList?.map { info ->
+                    return@map ItemStorySummaryGenerateVm(info)
+                })
             }
+        } else {
+            linearLayoutManager.setStackFromEnd(true)
+            binding.recyclerView.setAdapter(object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+                    return object : RecyclerView.ViewHolder(markDownTextView) {}
+                }
 
-            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            }
+                override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+                }
 
-            override fun getItemCount(): Int {
-                return 1
-            }
-        })
-        markDownTextView.init(getCustomUIStyles(), null)
-        markDownTextView.setPrintParams(2, 3)
+                override fun getItemCount(): Int {
+                    return 1
+                }
+            })
+            markDownTextView.init(getCustomUIStyles(), null)
+            markDownTextView.setPrintParams(2, 3)
+        }
+
 
         mRealVM.mSSEContent.observe(this) {
 //            if (markDownTextView.isStarted) {
@@ -145,7 +158,7 @@ class DramaGenerateStep1Fragment :
         }
         binding.btnRegenerate.setOnSingleClickListener {
             markDownTextView.stopPrinting(null)
-            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
+            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 mRealVM.rollNovelSummary()
             } else {
                 mRealVM.sseGenerate()
@@ -156,7 +169,7 @@ class DramaGenerateStep1Fragment :
             "故事生成中，请稍候".showToast()
         }
         binding.btnNext.setOnSingleClickListener {
-            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_URL) {
+            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 mRealVM.saveTitle {
                     hostVm?.nextStep(2, mRealVM.workId, "")
                 }

@@ -287,7 +287,7 @@ object AppRouter : IRouter {
                 //作品类型：3-上传小说
                 if (sortNo <= 1) {
                     //第一集创作(小说文档模式)
-                    return DramaGenerateConstants.MODEL_STORY_URL
+                    return DramaGenerateConstants.MODEL_STORY_DOCUMENTS
                 }
                 //继续创作(小说文档模式)
                 return DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS

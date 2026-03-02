@@ -175,7 +175,7 @@ class CreationFragment :
                     val modelType = when {
                         singleModel -> DramaGenerateConstants.MODEL_STORY_SINGLE
                         this@CreationFragment.mRealVM.inspirationModel() -> DramaGenerateConstants.MODEL_INSPIRATION
-                        isFileModel -> DramaGenerateConstants.MODEL_STORY_URL
+                        isFileModel -> DramaGenerateConstants.MODEL_STORY_DOCUMENTS
                         else -> DramaGenerateConstants.MODEL_STORY
                     }
 

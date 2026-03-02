@@ -40,8 +40,7 @@ data class UploadStoryData(
  */
 data class RollNovelSummaryData(
     val genStatus: Int? = null,
-    val workTitle: String? = null,
-    val result: String? = null,
+    val result: RollNovelSummaryResult? = null,
     val workId: String? = null
 ) {
     fun isSuccess(): Boolean {
@@ -52,3 +51,30 @@ data class RollNovelSummaryData(
         return genStatus == 3
     }
 }
+
+data class RollNovelSummaryResult(
+    val workDesc: String? = null,
+    val workTitle: String? = null,
+    val structureList: List<RollNovelStructure>? = null,
+)
+
+/**
+ * {
+ *             "workTitle": "作品名称",
+ *             "workDesc": "作品简介",
+ *             "structureList": [
+ *                 {
+ *                     "id": "主键ID",
+ *                     "storyId": "剧集ID",
+ *                     "storyTitle": "剧集标题",
+ *                     "storySummary": "剧集梗概"
+ *                 }
+ *             ]
+ *         }
+ */
+data class RollNovelStructure(
+    val id: String? = null,
+    val storyId: String? = null,
+    val storySummary: String? = null,
+    val storyTitle: String? = null
+)

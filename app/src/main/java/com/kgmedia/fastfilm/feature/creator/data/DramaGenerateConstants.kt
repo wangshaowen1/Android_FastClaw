@@ -31,7 +31,7 @@ class DramaGenerateConstants {
         /**
          * 第一集创作(小说文档模式)
          */
-        const val MODEL_STORY_URL = 1001
+        const val MODEL_STORY_DOCUMENTS = 1001
 
 
         /**

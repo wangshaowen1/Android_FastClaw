@@ -61,7 +61,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         //中途恢复界面走这里
         val newStep = mBundle.getInt(StoryEditorActivity.KEY_STEP, -1)
         when (model) {
-            DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_STORY_URL -> {
+            DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_STORY_DOCUMENTS -> {
                 if (newStep != -1) {
                     step.value = newStep
                 } else {
