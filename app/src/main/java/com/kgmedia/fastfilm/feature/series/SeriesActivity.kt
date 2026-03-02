@@ -67,7 +67,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
     private fun initView() {
         val noDataButtonTextAs = "刷新"
-        val noDataAs = "暂无数据"
+        val noDataAs = "暂无作品记录，快去创作你的作品吧"
         binding.recyclerView.apply {
             itemAnimator = null
             addItemDecoration(BottomSpaceDecoration(80.dp))

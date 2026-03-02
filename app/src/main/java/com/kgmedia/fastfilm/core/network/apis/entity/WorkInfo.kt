@@ -5,7 +5,10 @@ import androidx.room.TypeConverters
 import com.kgmedia.fastfilm.common.ext.toUnitText
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.convert.Converters
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo.Companion.GEN_MUSIC_VIDEO
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo.Companion.REPAINT_STATE
 import kotlinx.parcelize.Parcelize
+import kotlin.collections.contains
 
 @Parcelize
 @TypeConverters(Converters::class)
@@ -26,7 +29,7 @@ data class WorkInfo(
     val workCoverUrl: String? = null,
     //作品类型：1-灵感创作;2-小说改编;3-小说上传
     val workType: Int? = null,
-    //作品状态：草稿（20=剧本生成中 30=资产生成中） 生成中（40=分镜生成中  42=分镜视频生成中 50=待合成） 60=已完成 70=失败
+    //作品状态：草稿（20=剧本生成中 30=资产生成中） 生成中（40=分镜生成中  42=分镜视频生成中 50=待合成） 60=已完成 70=失败 80=分镜重绘中
     val workStatus: Int? = null,
     //总集数（规划集数）
     val totalEpisodeCnt: Int? = null,
@@ -86,6 +89,9 @@ data class WorkInfo(
 
         //失败状态
         const val FAILED_STATE = 70
+
+        //分镜重绘中
+        const val REPAINT_STATE = 80
     }
 
 
@@ -102,6 +108,20 @@ data class WorkInfo(
     fun isGenerating(): Boolean {
         return workStatus == GEN_MUSIC_VIDEO
     }
+
+    //是否是分镜生成中，视频合成中，视频重绘中
+    fun isWaitingComposing(): Boolean {
+        return workStatus in listOf(GEN_MUSIC_VIDEO, REPAINT_STATE)
+    }
+
+    fun statusCopy(): String{
+        return when(workStatus){
+            GEN_MUSIC_VIDEO -> "分镜生成中..."
+            REPAINT_STATE -> "视频重绘中..."
+            else -> "视频合成中..."
+        }
+    }
+
 
     //草稿状态
     fun isDraftStatus(): Boolean {
@@ -274,6 +294,9 @@ data class EpisodeInfo(
 
         //已完成
         const val PROGRESS_COMPLETED = 40
+
+        //视频重绘中
+        const val EPISODE_REPAINT_STATE = 50
     }
 
 
@@ -282,9 +305,16 @@ data class EpisodeInfo(
      * @return Boolean
      */
     fun isGenerating(): Boolean {
-        return stepProgress == PROGRESS_STORYBOARD_GENERATING
+        return stepProgress in listOf(PROGRESS_STORYBOARD_GENERATING, EPISODE_REPAINT_STATE)
     }
 
+    fun statusCopy(): String{
+        return when(stepProgress){
+            PROGRESS_STORYBOARD_GENERATING -> "分镜生成中..."
+            EPISODE_REPAINT_STATE -> "视频重绘中..."
+            else -> "视频合成中..."
+        }
+    }
     /**
      * 等待合成
      * @return Boolean

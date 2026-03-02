@@ -35,7 +35,7 @@
         <com.kgmedia.fastfilm.widget.BorderConstraintLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="@{item.data.isGenerating()?View.VISIBLE:View.GONE}"
+            android:visibility="@{item.data.isWaitingComposing()?View.VISIBLE:View.GONE}"
             app:backgroundStartColor="@color/mask_opacity_60_dark"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
@@ -49,7 +49,8 @@
                 android:drawableTop="@drawable/icon_ai"
                 android:drawablePadding="12dp"
                 android:gravity="center"
-                android:text="视频生成中..."
+                android:text="@{item.data.statusCopy}"
+                tools:text="视频生成中..."
                 android:textAppearance="@style/Text12"
                 android:textColor="@color/fixed_white_1"
                 app:layout_constraintBottom_toBottomOf="parent"
