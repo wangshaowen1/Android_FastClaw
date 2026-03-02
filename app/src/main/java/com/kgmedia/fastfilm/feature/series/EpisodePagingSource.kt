@@ -46,8 +46,7 @@ class EpisodePagingSource(private val workId: String?, private val requiredSize:
                 } else {
                     if (items.size < params.loadSize) null else pageNum + 1
                 }
-                //LoadResult.Page(data = items, prevKey, nextKey)
-                LoadResult.Page(data = arrayListOf(), null, null)
+                LoadResult.Page(data = items, prevKey, nextKey)
             } else {
                 LoadResult.Error(ApiException(apiResponse.code, apiResponse.msg))
             }
