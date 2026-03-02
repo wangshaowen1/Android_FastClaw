@@ -51,6 +51,7 @@ class DramaGenerateStep1Fragment :
 
     override fun onPrepareView() {
         super.onPrepareView()
+        EventManager.onAppTrack(AppEvent.SF_VIEW_STORY_OUTLINE_PAGE)
         activity?.intent?.let {
             mRealVM.workId = it.getStringExtra(Constants.Extra.WORK_ID)
             mRealVM.model = it.getIntExtra(Constants.Extra.MODE, 0)

@@ -38,6 +38,7 @@ class DramaGenerateStep2Fragment :
 
     override fun onPrepareView() {
         super.onPrepareView()
+        EventManager.onAppTrack(AppEvent.SF_VIEW_SCRIPT_PAGE)
         activity?.intent?.let {
             mRealVM.workId.value = hostVm?.workId
             //当前正在创作的剧集id
