@@ -10,8 +10,11 @@ import android.view.View
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
+import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.ActivityContinueWritingBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
@@ -19,6 +22,7 @@ import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 
 class ContinueWritingActivity :
@@ -61,6 +65,24 @@ class ContinueWritingActivity :
                 mRealVM.input.value = s.toString()
             }
         })
+
+        mRealVM.sensitiveWordJudgmentResult.observe(this) {
+            if (it == null) return@observe
+            mRealVM.sensitiveWordJudgmentResult.value = null
+            if (it.isSensitive()) {
+                it.content?.showToast()
+                val sp = SensitiveHighlighter.highlight(
+                    text = mRealVM.input.value,
+                    keywords = it.hitWords,
+                    color = R.color.func_failure_dark.getResColor()
+                )
+                binding.inputView.setText(sp)
+                return@observe
+            }
+            toGenerate()
+        }
+
+
         observeEvents {
             on<Events.ConfigChangeEvent> { event ->
                 //mRealVM.refreshConfig()
@@ -117,12 +139,12 @@ class ContinueWritingActivity :
                 }
                 if (mRealVM.episodeInfo.value == null) {
                     mRealVM.getEpisodeInfo {
-                        toGenerate()
+                        mRealVM.sensitiveWordJudgment()
                     }
                     return
                 }
                 if (!mRealVM.isSSEStreaming.get()) {
-                    toGenerate()
+                    mRealVM.sensitiveWordJudgment()
                 }
             }
         }

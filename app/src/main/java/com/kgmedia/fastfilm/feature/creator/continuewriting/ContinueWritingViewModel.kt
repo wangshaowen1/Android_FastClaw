@@ -14,8 +14,10 @@ import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.parseMessage
+import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SaveSequelNovelStoryInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSequelNovelStoryBody
@@ -38,6 +40,8 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.ID) }
     val workName by lazy { mBundle.getString(Constants.Extra.NAME) }
     val input by lazy { MutableLiveData(Global.continueWritingContent[workId]) }
+    //敏感词校验结果
+    val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
     val episodeInfo = MutableLiveData<EpisodeInfo>()
 
     val textLimitNum by lazy { Config.get().appConfig.shortDramas }
@@ -145,6 +149,18 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
 //                append(episode.storyTitle)
 //            }
         })
+    }
+
+    /**
+     * 敏感词校验
+     */
+    fun sensitiveWordJudgment() {
+        requestWithLoading(
+            apiBlock = { mRepo.sensitiveWordCheck(input.value) },
+            showLoading = true
+        ) {
+            sensitiveWordJudgmentResult.value = data
+        }
     }
 
 
