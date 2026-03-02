@@ -119,7 +119,7 @@ class App : BaseApp() {
                     val commonDialog = CommonDialog(
                         context,
                         context.getString(
-                            com.lws.permissionx.R.string.permissionx_default_denied_forever_rationale_message,
+                            R.string.permissionx_default_denied_forever_rationale_message,
                             namesString
                         )
                     )
@@ -306,7 +306,7 @@ class App : BaseApp() {
 
             // 友盟正式初始化
             umInitConfig.init(this, AppRouter)
-//            GrowingAutotracker.get().setDataCollectionEnabled(true)
+            GrowingAutotracker.get().setDataCollectionEnabled(true)
             // QQ官方sdk授权
             // Tencent.setIsPermissionGranted(true);
 
@@ -342,14 +342,14 @@ class App : BaseApp() {
         //GrowingIO埋点库初始化
         val sConfiguration = AutotrackConfiguration("2f313003f3995a31", "growing.${BuildConfig.GROWING_URL_SCHEME}")
             .setDataCollectionServerHost("https://napi.growingio.com/")
-            .setDataSourceId("bd72cad30bb36645")
+            .setDataSourceId("ba330a3932a8625a")
             .setDebugEnabled(BuildConfig.DEBUG)
             .setAndroidIdEnabled(true)
             .setChannel(Session.getInstance().channel)
             .setRequireAppProcessesEnabled(true)
             .setDataCollectionEnabled(hasAgree())
             .setAutotrack(false)
-//        GrowingAutotracker.startWithConfiguration(this, sConfiguration)
+        GrowingAutotracker.startWithConfiguration(this, sConfiguration)
     }
 
     /**

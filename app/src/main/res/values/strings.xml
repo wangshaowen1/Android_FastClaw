@@ -24,6 +24,7 @@
     <string name="view_download_path_tutorial">查看下载路径教程</string>
     <string name="accompaniment">伴奏</string>
     <string name="download_path_tips">1、在手机的"文件管理/音频"中查看\n2、在手机的"文件管理/手机存储/%s"目录中查看</string>
+    <string name="permissionx_default_denied_forever_rationale_message">为正常使用该功能，请前往系统应用设置中开启%s权限</string>
 
 
     <string name="subscription">创作者服务</string>

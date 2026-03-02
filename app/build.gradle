@@ -61,7 +61,7 @@ android {
         buildConfigField "String", "DY_CLIENT_KEY", '"awg154kyqmvhns2f"'
         buildConfigField "String", "WX_APP_ID", '"wxc4c951d1cd1816fc"' //微信AppKey
         buildConfigField "String", "WX_APP_SECRET", '"9d679c3bdc5531e794d7ab83214d40af"'//微信Secret
-        def growingScheme = "b4b9e1a720ce9895"
+        def growingScheme = "09ae0b3ae5497abe"
         buildConfigField "String", "GROWING_URL_SCHEME", '\"' + growingScheme + '\"' //埋点库GROWINGIO的Urlscheme
         manifestPlaceholders = [
                 "GROWING_URL_SCHEME": growingScheme, // 埋点库GROWINGIO的Urlscheme
