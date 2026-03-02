@@ -10,11 +10,13 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.selectSinglePhotoFromAlbums
 import com.kgmedia.fastfilm.common.permissions.requestImages2VideosPermissions
+import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityWorkInfoEditBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.mattise.Matisse
 
@@ -73,6 +75,21 @@ class DramaInfoEditActivity :
             }
         }
 
+        mRealVM.sensitiveWordJudgmentResult.observe(this) {
+            if (it == null) return@observe
+            mRealVM.sensitiveWordJudgmentResult.value = null
+            if (it.isSensitive()) {
+                it.content?.showToast()
+                val sp = SensitiveHighlighter.highlight(
+                    text = mRealVM.desc.value,
+                    keywords = it.hitWords,
+                    color = R.color.func_failure_dark.getResColor()
+                )
+                binding.descInputer.setText(sp)
+                return@observe
+            }
+            mRealVM.saveInfoNoCheck()
+        }
 
         mRealVM.editAndModify.observe(this){
             if (!it)return@observe

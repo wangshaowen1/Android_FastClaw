@@ -14,7 +14,9 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
+import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImgUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
@@ -66,6 +68,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
 
     //编辑修改成功
     val editAndModify = MutableLiveData<Boolean>(false)
+    val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -81,7 +84,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
             "请完善作品名称".showToast()
             return
         }
-        if (name.value?.isEmpty() == true) {
+        if (desc.value?.isEmpty() == true) {
             "请完善作品简介".showToast()
             return
         }
@@ -89,6 +92,10 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
             "封面上传中,请稍等~".showToast()
             return
         }
+        sensitiveWordJudgment(desc.value)
+    }
+
+    fun saveInfoNoCheck(){
         requestWithLoading(apiBlock = apiBlock@{
             val sensitiveCheckRes = withContext(Dispatchers.IO) { mRepo.api.sensitiveImageCheck(ImgUrlBody(cover.get())) }
             val sensitiveCheckData = sensitiveCheckRes.data
@@ -189,5 +196,17 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                 isUploading = false
             }
         })
+    }
+
+    /**
+     * 敏感词校验
+     */
+    fun sensitiveWordJudgment(value: String?) {
+        requestWithLoading(
+            apiBlock = { mRepo.api.sensitiveWordCheck(ContentBody(value)) },
+            showLoading = true
+        ) {
+            sensitiveWordJudgmentResult.value = data
+        }
     }
 }
