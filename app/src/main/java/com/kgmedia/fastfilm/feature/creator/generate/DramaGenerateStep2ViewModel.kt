@@ -153,14 +153,14 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     originalJson = originalContent
                     Logger.d("[SSE]", "Finished originalContent：${originalContent}")
                     // 触发原本结束后的逻辑
-                    NotificationHelper.sendRecoveryNotification("《${mWorkName.value?.ifEmpty { "未命名" }}}》第${chapterIndex}集故事剧本已完成")
+                    NotificationHelper.sendRecoveryNotification("《${mWorkName.value?.ifEmpty { "未命名" }}》第${chapterIndex}集故事剧本已完成")
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
                     sseOutputComplete.value = true
                     sseOutputFail.set(true)
                     parseMessage(e)?.showToast()
-                    NotificationHelper.sendRecoveryNotification("《${mWorkName.value?.ifEmpty { "未命名" }}}》第${chapterIndex}集故事剧本生成失败")
+                    NotificationHelper.sendRecoveryNotification("《${mWorkName.value?.ifEmpty { "未命名" }}》第${chapterIndex}集故事剧本生成失败")
                     promptGenerating.value = false to ""
                     // 根据需要处理特定错误
                 })

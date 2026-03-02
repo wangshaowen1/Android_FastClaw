@@ -51,9 +51,6 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
                 } ?: run { finish() }
                 return
             }
-
-            val toCharsString = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES).signatures?.getOrNull(0)?.toCharsString()
-
             next()
         } catch (e: Throwable) {
             e.printStackTrace()

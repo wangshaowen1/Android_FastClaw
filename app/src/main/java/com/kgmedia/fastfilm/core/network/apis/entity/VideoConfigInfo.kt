@@ -32,8 +32,8 @@ data class VideoConfigInfo(
     }
 
     companion object {
-        const val MODE_SINGLE = "SINGLE_EPISODE"
-        const val MODE_CUSTOM = "CUSTOM_EXACT"
+        const val MODE_SINGLE = "RANGE_1"
+        const val MODE_CUSTOM = "ep_custom"
     }
 }
 
