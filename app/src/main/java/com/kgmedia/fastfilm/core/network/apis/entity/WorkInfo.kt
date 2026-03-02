@@ -253,7 +253,7 @@ data class EpisodeInfo(
     val storyContent: String? = null,
     //序号
     val sortNo: Int? = null,
-    //[枚举]创作流程进度 [10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜生成中 32=分镜视频生成中 35=待合成 40=已完成]
+    //[枚举]创作流程进度 [10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成]
     val stepProgress: Int? = null,
     //[枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败]
     val stepStatus: Int? = null,
@@ -295,8 +295,11 @@ data class EpisodeInfo(
         //已完成
         const val PROGRESS_COMPLETED = 40
 
-        //视频重绘中
-        const val EPISODE_REPAINT_STATE = 50
+        //分镜重绘中
+        const val EPISODE_REPAINT_STATE = 45
+
+        //重绘已完成
+        const val EPISODE_REPAINT_COMPLETED = 50
     }
 
 
