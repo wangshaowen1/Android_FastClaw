@@ -652,7 +652,7 @@ object ApiConstants {
     /**
      * 敏感词校验
      */
-    const val SENSITIVE_WORD_CHECK = "ai/sensitive-word/check"
+    const val SENSITIVE_WORD_CHECK = "ai/content-security/text/check"
 
     /**
      * 小说上传-生成作品剧集梗概
