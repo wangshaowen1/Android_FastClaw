@@ -26,7 +26,7 @@ data class WorkInfo(
     val workCoverUrl: String? = null,
     //作品类型：1-灵感创作;2-小说改编;3-小说上传
     val workType: Int? = null,
-    //作品状态：草稿（20=剧本生成中 30=资产生成中） 生成中（40=分镜生成中  42=分镜视频生成中 50=待合成） 60=已完成 70=失败 80=分镜重绘中
+    //[枚举]作品状态：0=草稿 32=分镜生成中 35待合成 45=视频重绘中 50=视频重绘已完成 60=已完成 70=失败
     val workStatus: Int? = null,
     //总集数（规划集数）
     val totalEpisodeCnt: Int? = null,
@@ -72,20 +72,20 @@ data class WorkInfo(
         //作品类型：3-小说上传
         const val NOVEL_UPLOAD = 3
 
-        //剧本生成中
-        const val DRAFT_GEN_STATE = 20
+        //作品状态 0=草稿
+        const val DRAFT = 0
 
-        //资产生成中
-        const val DRAFT_STATE = 30
+        //作品状态 32=分镜生成中
+        const val MIRROR_GENERATION_IN_PROGRESS = 32
 
-        //分镜生成中
-        const val GEN_MUSIC_BASE = 40
+        //作品状态 35=待合成
+        const val WAIT_STATE = 35
 
-        //分镜视频生成中
-        const val GEN_MUSIC_VIDEO = 42
+        //作品状态 45=视频重绘中
+        const val VIDEO_REDRAWING_IN_PROGRESS = 45
 
-        //待合成状态
-        const val WAIT_STATE = 50
+        //作品状态 50=视频重绘已完成
+        const val VIDEO_REDRAW_COMPLETED = 50
 
         //已完成状态
         const val COMPLETED_STATE = 60
@@ -93,8 +93,6 @@ data class WorkInfo(
         //失败状态
         const val FAILED_STATE = 70
 
-        //分镜重绘中
-        const val REPAINT_STATE = 80
     }
 
 
@@ -107,20 +105,15 @@ data class WorkInfo(
     }
 
 
-    //是否是生成中状态
-    fun isGenerating(): Boolean {
-        return workStatus == GEN_MUSIC_VIDEO
-    }
-
     //是否是分镜生成中，视频合成中，视频重绘中
     fun isWaitingComposing(): Boolean {
-        return workStatus in listOf(GEN_MUSIC_VIDEO, REPAINT_STATE)
+        return workStatus in listOf(MIRROR_GENERATION_IN_PROGRESS, VIDEO_REDRAWING_IN_PROGRESS)
     }
 
     fun statusCopy(): String {
         return when (workStatus) {
-            GEN_MUSIC_VIDEO -> "分镜生成中..."
-            REPAINT_STATE -> "视频重绘中..."
+            MIRROR_GENERATION_IN_PROGRESS -> "分镜生成中..."
+            VIDEO_REDRAWING_IN_PROGRESS -> "视频重绘中..."
             else -> "视频合成中..."
         }
     }
@@ -128,7 +121,7 @@ data class WorkInfo(
 
     //草稿状态
     fun isDraftStatus(): Boolean {
-        return workStatus in listOf(DRAFT_GEN_STATE, DRAFT_STATE, GEN_MUSIC_BASE)
+        return workStatus ==DRAFT
     }
 
     fun seriesIntroduction(index: Int = 0): String? {
