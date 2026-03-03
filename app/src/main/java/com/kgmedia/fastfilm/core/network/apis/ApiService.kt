@@ -26,7 +26,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.SingleEpisodeDetailsInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.TaskStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.UserShareUrlInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
@@ -819,6 +818,12 @@ interface ApiService {
     suspend fun workStoryboardVideoSingleGenerate(@Body body: GenerateStoryboardBody): ApiResponse<TaskStatusInfo?>
 
     /**
+     * 重绘分镜完成后不合成还原
+     */
+    @POST(ApiConstants.WORK_STORYBOARD_RECREATION)
+    suspend fun dropRepaint(@Body body: WorkBody): ApiResponse<Any?>
+
+    /**
      * 分镜视频合成
      */
     @POST(ApiConstants.WORK_STORYBOARD_VIDEO_SYNTHESIS)
@@ -862,7 +867,7 @@ interface ApiService {
      * 查看作品单个剧集详情
      */
     @POST(ApiConstants.SINGLE_EPISODE_DETAILS)
-    suspend fun singleEpisodeDetails(@Body body: WorkBody): ApiResponse<SingleEpisodeDetailsInfo?>
+    suspend fun singleEpisodeDetails(@Body body: WorkBody): ApiResponse<EpisodeInfo?>
 
     /**
      * 查看单集作品的剧集详情

@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
+import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
@@ -18,6 +19,7 @@ import com.kgmedia.fastfilm.core.ext.putAIGCMetadata
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.RetrofitClient
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
@@ -254,6 +256,25 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         if (storyboards.isEmpty()) {
             return
         }
+        getStoryInfo {
+            //重绘已完成
+            if (it?.stepProgress == EpisodeInfo.EPISODE_REPAINT_COMPLETED) {
+                topActivity?.showCommonDialog(
+                    title = "确认合成并覆盖？",
+                    tip = "合成完成后，修改内容将作为作品最新版本发布，原视频版本将被替换且无法恢复",
+                    cancelText = "返回编辑",
+                    cancel = { },
+                    confirmText = "确认合成",
+                    confirm = {
+                        doSynthesis(storyboards)
+                    })
+            } else {
+                doSynthesis(storyboards)
+            }
+        }
+    }
+
+    private fun doSynthesis(storyboards: List<String>) {
         topActivity?.let {
             val dialog = GeneratingDialog(it, "视频合成中...")
             synthesisDialog = dialog
@@ -268,6 +289,22 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     fun updateStoryboard(storyboardInfo: SimpleStoryboardInfo) {
         adapter.items.firstOrNull { it.data.get()?.storyboardId == storyboardInfo.storyboardId }?.data?.set(storyboardInfo)
+    }
+
+    fun getStoryInfo(callback: (story: EpisodeInfo?) -> Unit) {
+        launchWithLoading {
+            response(mRepo.api.singleEpisodeDetails(WorkBody(workId, storyId))) {
+                callback.invoke(data)
+            }
+        }
+    }
+
+    fun dropRepaint() {
+        launchWithLoading {
+            response(mRepo.api.dropRepaint(WorkBody(workId, storyId))) {
+                finish()
+            }
+        }
     }
 
 }

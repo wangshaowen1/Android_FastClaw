@@ -558,6 +558,11 @@ object ApiConstants {
     const val WORK_STORYBOARD_VIDEO_SINGLE_GENERATE = "ai/storyboard/generation/single/video"
 
     /**
+     * 重绘分镜完成后不合成还原
+     */
+    const val WORK_STORYBOARD_RECREATION = "work/storyboard/storyboardRecreation"
+
+    /**
      * 分镜视频合成
      */
     const val WORK_STORYBOARD_VIDEO_SYNTHESIS = "work/storyboard/synthesizeVideo"

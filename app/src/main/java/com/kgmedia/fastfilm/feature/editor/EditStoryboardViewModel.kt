@@ -151,7 +151,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 workId = storyboard.workId,
                 storyId = storyboard.storyId
             )
-            response(ApiFactory.apiService.workStoryboardVideoSingleGenerate(body)) {
+            response(mRepo.api.workStoryboardVideoSingleGenerate(body)) {
                 FlowEventBus.postSync(Events.StoryboardVideoRegenerateEvent(storyboard.workId, storyboard.storyId, storyboard.storyboardId))
                 if (finish && data?.genStatus.let { it == 1 || it == 2 }) {
                     finish()
@@ -204,7 +204,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                         storyboardId = storyboard.storyboardId,
                         genImagePrompt = prompt
                     )
-                    ApiFactory.apiService.workStoryboardSave(body)
+                    mRepo.api.workStoryboardSave(body)
                 }
                 val data = response.data
                 if (response.isSuccess && data != null) {
@@ -220,7 +220,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 workId = storyboard.workId,
                 storyId = storyboard.storyId
             )
-            response(ApiFactory.apiService.workStoryboardSingleGenerate(body)) {
+            response(mRepo.api.workStoryboardSingleGenerate(body)) {
                 this@EditStoryboardViewModel.storyboard.get()?.apply {
                     taskId = data?.taskId
                     genStatusImage = data?.genStatus
@@ -244,7 +244,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         loopImageJob = launch {
             loop@ while (storyboard.get()?.imageGenerating == true) {
                 runCatching {
-                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 71)).data }
+                    val taskStatus = withContext(Dispatchers.IO) { mRepo.api.workStoryboardSingleStatus(TaskIdBody(taskId, 71)).data }
                     storyboard.get()?.apply {
                         genStatusImage = taskStatus?.genStatus
                         imageUrl = taskStatus?.result
@@ -264,7 +264,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         loopVideoJob = launch {
             loop@ while (storyboard.get()?.videoGenerating == true) {
                 runCatching {
-                    val taskStatus = withContext(Dispatchers.IO) { ApiFactory.apiService.workStoryboardSingleStatus(TaskIdBody(taskId, 72)).data }
+                    val taskStatus = withContext(Dispatchers.IO) { mRepo.api.workStoryboardSingleStatus(TaskIdBody(taskId, 72)).data }
                     storyboard.get()?.apply {
                         genStatusVideo = taskStatus?.genStatus
                         videoUrl = taskStatus?.result
@@ -302,7 +302,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 storyboardId = storyboard.storyboardId,
                 genImagePrompt = prompt
             )
-            response(ApiFactory.apiService.workStoryboardSave(body)) {
+            response(mRepo.api.workStoryboardSave(body)) {
                 data?.let {
                     this@EditStoryboardViewModel.storyboard.set(it)
                     FlowEventBus.postSync(Events.StoryboardSavedEvent(it))

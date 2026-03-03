@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardVideoBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
@@ -34,6 +35,25 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
         @JvmStatic
         fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?) {
             topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio)) }
+        }
+    }
+
+    override fun onBackPressed() {
+        mRealVM.getStoryInfo {
+            //重绘已完成
+            if (it?.stepProgress == EpisodeInfo.EPISODE_REPAINT_COMPLETED) {
+                showCommonDialog(
+                    title = "确认退出重绘？",
+                    tip = "当前重绘分镜尚未合成完整视频，退出后本次重绘将不会保留。是否继续退出?",
+                    cancelText = "确认退出",
+                    cancel = {
+                        mRealVM.dropRepaint()
+                    },
+                    confirmText = "继续重绘",
+                    confirm = {})
+            } else {
+                super.onBackPressed()
+            }
         }
     }
 
