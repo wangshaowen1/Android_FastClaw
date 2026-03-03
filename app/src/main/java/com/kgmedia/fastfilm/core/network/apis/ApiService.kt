@@ -853,7 +853,7 @@ interface ApiService {
 
 
     /**
-     * 批量删除我的作品
+     * 轮询查询我的作品状态列表
      */
     @POST(ApiConstants.GET_WORK_STATUS_LIST)
     suspend fun getWorkStatusList(@Body body: UserTokenBody): ApiResponse<List<WorkInfo>>
@@ -863,6 +863,12 @@ interface ApiService {
      */
     @POST(ApiConstants.SINGLE_EPISODE_DETAILS)
     suspend fun singleEpisodeDetails(@Body body: WorkBody): ApiResponse<SingleEpisodeDetailsInfo?>
+
+    /**
+     * 查看单集作品的剧集详情
+     */
+    @POST(ApiConstants.SINGLE_EPISODE_SERIES_DETAILS)
+    suspend fun singleEpisodeSeriesDetails(@Body body: WorkBody): ApiResponse<SingleEpisodeDetailsInfo?>
 
     /**
      * 小说-保存续创剧集（只有小说有）

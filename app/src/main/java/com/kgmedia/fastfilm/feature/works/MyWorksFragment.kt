@@ -148,6 +148,11 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                             mRealVM.getWorkDtl(workId = event.workInfo.workId)
                             return@collect
                         }
+                        if (event.workInfo?.totalEpisodeCnt == 1) {
+                            //这个是单集的
+                            AppRouter.singleEpisodeSeriesDetails(event.workInfo)
+                            return@collect
+                        }
                         //查看详情
                         SeriesActivity.start(workId = event.workInfo?.workId)
                     }
@@ -269,7 +274,11 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
     private fun handleFloatWindow(float: FloatWindowInfo?) {
         if (float != null && float.isShow()) {
             binding.floatingBall.isVisible = true
-            loadGifUrl(binding.ivFloating, float.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
+            loadGifUrl(
+                binding.ivFloating,
+                float.imageUrl,
+                R.drawable.img_default_cover_1_1.getResDrawable()
+            )
             Config.get().activityFloatShowMark(float.id)
             binding.floatingBall.setOnMfClickListener {
                 AppRouter.jump(float.jumpUrl)

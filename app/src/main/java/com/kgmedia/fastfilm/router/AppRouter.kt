@@ -19,6 +19,7 @@ import com.kgmedia.fastfilm.common.utils.Utils
 import com.kgmedia.fastfilm.core.manager.IRouter
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SingleEpisodeDetailsInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
@@ -148,7 +149,6 @@ object AppRouter : IRouter {
         }
     }
 
-    //workId storyId workTitle workType workRatio
     @JvmStatic
     fun startStory(
         workId: String?,
@@ -180,79 +180,55 @@ object AppRouter : IRouter {
                     loading?.dismissAllowingStateLoss()
                     return@launchNoCrash
                 }
-                val singleEpisodeDetailsInfo = res.data
-                val sortNo = singleEpisodeDetailsInfo?.sortNo ?: 1
-                Logger.i("测试一下", "stepProgress:${singleEpisodeDetailsInfo?.stepProgress}")
-                when (singleEpisodeDetailsInfo?.stepProgress) {
-                    EpisodeInfo.PROGRESS_DRAFT -> {
-                        //10=剧本输入
-                        StoryEditorActivity.restore(
-                            context = topActivity,
-                            step = 1,
-                            workId = workId,
-                            storyId = storyId,
-                            workTitle = workTitle,
-                            chapterIndex = sortNo,
-                            model = getModel(workType = workType, sortNo = sortNo),
-                            videoRatio = workRatio,
-                        )
-                    }
+                jumpToTarget(
+                    workId = workId,
+                    workTitle = workTitle,
+                    workType = workType,
+                    singleEpisodeDetailsInfo = res.data
+                )
+                loading?.dismissAllowingStateLoss()
+            },
+            onError = {
+                loading?.dismissAllowingStateLoss()
+            }
+        )
+    }
 
-                    EpisodeInfo.PROGRESS_STORY_GENERATING -> {
-                        //15=剧本生成中
-                        StoryEditorActivity.restore(
-                            context = topActivity,
-                            step = 2,
-                            workId = workId,
-                            storyId = storyId,
-                            workTitle = workTitle,
-                            chapterIndex = sortNo,
-                            model = getModel(workType = workType, sortNo = sortNo),
-                            videoRatio = workRatio,
+    /**
+     *查看单集作品的剧集详情
+     */
+    @JvmStatic
+    fun singleEpisodeSeriesDetails(
+        work: WorkInfo?,
+    ) {
+        if (work == null) {
+            return
+        }
+        val loading = (topActivity as? FragmentActivity)?.supportFragmentManager?.let {
+            val dialog = LoadingDialog2()
+            dialog.show(it)
+            dialog
+        }
+        MainScope().launchNoCrash(
+            block = {
+                val res = withContext(Dispatchers.IO) {
+                    ApiFactory.apiService.singleEpisodeSeriesDetails(
+                        WorkBody(
+                            work.workId, null
                         )
-                    }
-
-                    EpisodeInfo.PROGRESS_ASSET_GENERATING -> {
-                        //20=资产生成中  业务类型 40=生成所有资产描述 70=生成所有分镜描述
-                        StoryEditorActivity.restore(
-                            context = topActivity,
-                            step = 3,
-                            workId = workId,
-                            storyId = storyId,
-                            workTitle = workTitle,
-                            taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
-                            chapterIndex = sortNo,
-                            model = getModel(workType = workType, sortNo = sortNo),
-                            videoRatio = workRatio,
-                        )
-                    }
-
-                    EpisodeInfo.PROGRESS_STORYBOARD_GENERATING_ASSET -> {
-                        //30=分镜生成中
-                        StoryEditorActivity.restore(
-                            context = topActivity,
-                            step = 4,
-                            workId = workId,
-                            storyId = storyId,
-                            workTitle = workTitle,
-                            taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
-                            chapterIndex = sortNo,
-                            model = getModel(workType = workType, sortNo = sortNo),
-                            videoRatio = workRatio,
-                        )
-                    }
-
-                    EpisodeInfo.PROGRESS_STORYBOARD_GENERATING,
-                    EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
-                        //30=分镜生成中 32=分镜视频生成中 35=待合成
-                        EditStoryboardVideoActivity.start(
-                            storyTitle = workTitle?.let { "$it：第${singleEpisodeDetailsInfo.sortNo}集" },
-                            workId = workId,
-                            storyId = storyId,
-                            workRatio = workRatio,
-                        )
-                    }
+                    )
                 }
+                if (!res.isSuccess) {
+                    res.msg?.showToast()
+                    loading?.dismissAllowingStateLoss()
+                    return@launchNoCrash
+                }
+                jumpToTarget(
+                    workId = work.workId,
+                    workTitle = work.workTitle,
+                    workType = work.workType,
+                    singleEpisodeDetailsInfo = res.data
+                )
                 loading?.dismissAllowingStateLoss()
             },
             onError = {
@@ -262,7 +238,94 @@ object AppRouter : IRouter {
     }
 
 
-     fun getModel(workType: Int?, sortNo: Int = 0): Int {
+    /**
+     * 通过条件判断跳转到指定页面
+     * @param workId 作品id
+     * @param workTitle 作品标题
+     * @param workType 作品类型
+     * @param singleEpisodeDetailsInfo 剧集详情
+     */
+    private fun jumpToTarget(
+        workId: String?,
+        workTitle: String?,
+        workType: Int?,
+        singleEpisodeDetailsInfo: SingleEpisodeDetailsInfo?
+    ) {
+        val sortNo = singleEpisodeDetailsInfo?.sortNo ?: 1
+        Logger.i("测试一下", "stepProgress:${singleEpisodeDetailsInfo?.stepProgress}")
+        when (singleEpisodeDetailsInfo?.stepProgress) {
+            EpisodeInfo.PROGRESS_DRAFT -> {
+                //10=剧本输入
+                StoryEditorActivity.restore(
+                    context = topActivity,
+                    step = 1,
+                    workId = workId,
+                    storyId = singleEpisodeDetailsInfo.storyId,
+                    workTitle = workTitle,
+                    chapterIndex = sortNo,
+                    model = getModel(workType = workType, sortNo = sortNo),
+                    videoRatio = singleEpisodeDetailsInfo.workRatio,
+                )
+            }
+
+            EpisodeInfo.PROGRESS_STORY_GENERATING -> {
+                //15=剧本生成中
+                StoryEditorActivity.restore(
+                    context = topActivity,
+                    step = 2,
+                    workId = workId,
+                    storyId = singleEpisodeDetailsInfo.storyId,
+                    workTitle = workTitle,
+                    chapterIndex = sortNo,
+                    model = getModel(workType = workType, sortNo = sortNo),
+                    videoRatio = singleEpisodeDetailsInfo.workRatio,
+                )
+            }
+
+            EpisodeInfo.PROGRESS_ASSET_GENERATING -> {
+                //20=资产生成中  业务类型 40=生成所有资产描述 70=生成所有分镜描述
+                StoryEditorActivity.restore(
+                    context = topActivity,
+                    step = 3,
+                    workId = workId,
+                    storyId = singleEpisodeDetailsInfo.storyId,
+                    workTitle = workTitle,
+                    taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
+                    chapterIndex = sortNo,
+                    model = getModel(workType = workType, sortNo = sortNo),
+                    videoRatio = singleEpisodeDetailsInfo.workRatio,
+                )
+            }
+
+            EpisodeInfo.PROGRESS_STORYBOARD_GENERATING_ASSET -> {
+                //30=分镜生成中
+                StoryEditorActivity.restore(
+                    context = topActivity,
+                    step = 4,
+                    workId = workId,
+                    storyId = singleEpisodeDetailsInfo.storyId,
+                    workTitle = workTitle,
+                    taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
+                    chapterIndex = sortNo,
+                    model = getModel(workType = workType, sortNo = sortNo),
+                    videoRatio = singleEpisodeDetailsInfo.workRatio,
+                )
+            }
+
+            EpisodeInfo.PROGRESS_STORYBOARD_GENERATING,
+            EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
+                //30=分镜生成中 32=分镜视频生成中 35=待合成
+                EditStoryboardVideoActivity.start(
+                    storyTitle = workTitle?.let { "$it：第${singleEpisodeDetailsInfo.sortNo}集" },
+                    workId = workId,
+                    storyId = singleEpisodeDetailsInfo.storyId,
+                    workRatio = singleEpisodeDetailsInfo.workRatio,
+                )
+            }
+        }
+    }
+
+    fun getModel(workType: Int?, sortNo: Int = 0): Int {
         when (workType) {
             WorkInfo.INSPIRATION_CREATION -> {
                 //作品类型：1-灵感创作

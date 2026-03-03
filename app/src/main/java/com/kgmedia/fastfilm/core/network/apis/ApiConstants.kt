@@ -595,6 +595,12 @@ object ApiConstants {
     const val SINGLE_EPISODE_DETAILS = "work/storyDetail"
 
     /**
+     * 查看单集作品的剧集详情
+     */
+    const val SINGLE_EPISODE_SERIES_DETAILS = "work/singleEpisode/storyDetail"
+
+
+    /**
      * 小说-保存续创剧集（只有小说有）
      */
     const val SAVE_SEQUEL_NOVEL_STORY = "work/production/sequel/saveSequelNovelStory"
