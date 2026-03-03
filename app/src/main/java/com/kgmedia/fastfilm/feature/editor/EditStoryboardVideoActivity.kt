@@ -9,6 +9,8 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardVideoBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
@@ -48,6 +50,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                 mRealVM.getStoryboardList()
             }
         }
+        EventManager.onAppTrack(AppEvent.SF_VIEW_VIDEO_GENERATION_PAGE)
     }
 
     override fun <Data> onClick(view: View?, data: Data?) {
@@ -60,6 +63,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     return
                 }
                 EditStoryboardActivity.start(current, mRealVM.workRatio)
+                EventManager.onAppTrack(AppEvent.SF_CLICK_REDRAW_STORYBOARD_BUTTON)
             }
 
             R.id.btnDownload -> {

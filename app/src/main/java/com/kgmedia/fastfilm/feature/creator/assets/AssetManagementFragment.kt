@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.core.Global
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentAssetManagementBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.nhsd.basic.BaseViewModelFragment
@@ -54,6 +56,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
                 }
             }
         })
+        EventManager.onAppTrack(AppEvent.SF_VIEW_ASSET_MANAGEMENT_PAGE)
     }
 
     override fun <Data> onClick(view: View, data: Data?) {

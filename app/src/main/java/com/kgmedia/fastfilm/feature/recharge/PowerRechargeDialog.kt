@@ -5,6 +5,8 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.DialogRechargePowerBinding
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.bus.observeEvents
@@ -36,11 +38,13 @@ class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBi
 
     override fun onPrepareView() {
         super.onPrepareView()
+        mRealVM.isDialog = true
         observeEvents {
             on<Events.UserDataEvent> {
                 mRealVM.updateBalance()
             }
         }
+        EventManager.onAppTrack(AppEvent.SF_SHOW_COMPUTE_RECHARGE_PAYMENT_POPUP)
     }
 
     override fun createViewModel(): MyBalanceViewModel {

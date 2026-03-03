@@ -9,6 +9,7 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
+import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.response.PlayMenuInfo
 import com.kgmedia.fastfilm.databinding.ActivityDramasPlayPagerBinding
@@ -110,6 +111,7 @@ class DramasPlayPagerActivity :
             showCommonDialog(tip = "本集视频重绘后将覆盖原视频,确定重绘吗？", confirmText = "确定") {
                 EditStoryboardVideoActivity.start(currentWork.workTitle, currentWork.workId, currentWork.getEpisodeId(), currentWork.workRatio)
             }
+            EventManager.onAppTrack(AppEvent.SF_CLICK_WORK_REPLAY_REDRAW_BUTTON)
         }
         binding.btnMenu.setOnSingleClickListener {
             showPopupWindow()

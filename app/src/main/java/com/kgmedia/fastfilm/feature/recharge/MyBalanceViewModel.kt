@@ -13,6 +13,8 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.toPaymentParams
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.response.SimpleBannerInfo
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.details.ComputingPowerDetailsActivity
@@ -31,6 +33,8 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
             menuAction = { ComputingPowerDetailsActivity.start(topActivity) }
         )
     }
+
+    var isDialog = false
 
     /**
      * 账户余额
@@ -110,6 +114,9 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
         if (paymentMethod == null) {
             "请选择支付方式".showToast()
             return
+        }
+        if (isDialog){
+            EventManager.onAppTrack(AppEvent.SF_CLICK_COMPUTE_RECHARGE_PAYMENT_BUTTON)
         }
         pay(
             paymentMethod,

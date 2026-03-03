@@ -1,11 +1,9 @@
 package com.kgmedia.fastfilm.core.manager
 
+import com.growingio.android.sdk.autotrack.GrowingAutotracker
 import com.kgmedia.fastfilm.common.ext.ioScope
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
-import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
 import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
-import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
-import com.kgmedia.fastfilm.core.network.apis.request.ShareReportBody
 import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.utils.Logger
 
@@ -16,60 +14,12 @@ import com.nhsd.basic.utils.Logger
  */
 object EventManager {
 
-    var playerInSquare = false
-    private val apiService = ApiFactory.apiService
-
-
-    /**
-     * 用户分享操作上报
-     * @param shareDataId 分享数据id(歌曲id/mvId)
-     * @param shareTargetPlatformType 分享目标平台大类 1.好友(微信好友、朋友圈)  2.其他平台(抖音、小红书、快手)
-     * @param shareTargetPlatformSubType 分享目标平台小类 10-微信好友 11-朋友圈 20-抖音 21-小红书 22-快手
-     */
-    fun onShare(
-        shareDataId: String?,
-        shareTargetPlatformType: Int,
-        shareTargetPlatformSubType: Int
-    ) {
-        ioScope.launchNoCrash {
-            apiService.shareReport(
-                ShareReportBody(
-                    shareDataId,
-                    shareTargetPlatformType,
-                    shareTargetPlatformSubType
-                )
-            )
-        }
-    }
-
-    /**
-     * 歌曲生成来源上报
-     */
-    fun musicGenerateSourceReport(body: MusicGenerateSourceBody) {
-        ioScope.launchNoCrash {
-            ApiFactory.apiService.musicGenerateSourceReport(body)
-        }
-    }
-
-    /**
-     *  爆款推荐点击上报
-     */
-    fun hitRecommendClickReport(popularRecommendDramasId: String?) {
-        ioScope.launchNoCrash {
-            ApiFactory.apiService.recommendClickReport(
-                PopularRecommendDramasIdBody(
-                    popularRecommendDramasId
-                )
-            )
-        }
-    }
-
     /**
      * 作品播放量计数
      */
     fun onPlayEvent(userId: String?, workId: String?, episodeId: String?) {
         ioScope.launchNoCrash {
-            ApiFactory.apiService.playEventReport(PlayEventBody(userId, workId,episodeId))
+            ApiFactory.apiService.playEventReport(PlayEventBody(userId, workId, episodeId))
         }
     }
 
@@ -80,7 +30,7 @@ object EventManager {
     @JvmStatic
     fun onAppTrack(code: String, paramsMap: Map<String, String?>? = null) {
         Logger.d("[onAppTrack] Tracking Event -> Code: $code, Params: $paramsMap")
-        //GrowingAutotracker.get().trackCustomEvent(code, paramsMap)
+        GrowingAutotracker.get().trackCustomEvent(code, paramsMap)
     }
 
     /**
@@ -102,15 +52,6 @@ object EventManager {
  * App功能使用数据
  */
 object AppEvent {
-    /**
-     * 金果｜用户登录账号
-     * 用户成功登录手机号/微信号/AppleID后上报，是否首次注册登录用户
-     *
-     * 通用｜是否为新用户	all_is_new_user	字符串
-     * 通用｜用户登录类型	all_login_type	字符串
-     */
-    const val JG_ACTION_USER_LOGIN = "jg_action_user_login"
-
     /**
      * 访问首页｜用户进入App访问首页页面
      */

@@ -14,6 +14,8 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
@@ -438,6 +440,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             STEP_DESCRIPTION_GENERATED, STEP_IMAGE_GENERATE_FAILED -> {
                 //一键生成、重试失败项
                 oneKeyGenerate()
+                EventManager.onAppTrack(AppEvent.SF_CLICK_ASSET_GENERATE_BUTTON)
             }
 
             STEP_IMAGE_GENERATED -> {

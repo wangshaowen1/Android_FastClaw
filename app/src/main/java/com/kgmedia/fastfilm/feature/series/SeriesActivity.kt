@@ -8,8 +8,9 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
@@ -265,6 +266,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             R.id.btnPublish -> {
                 mRealVM.workInfo.value?.workContractPublishPageUrl?.let {
                     SimpleBrowserActivity.launch(this, it)
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_GO_PUBLISH_BUTTON)
                 }
             }
         }

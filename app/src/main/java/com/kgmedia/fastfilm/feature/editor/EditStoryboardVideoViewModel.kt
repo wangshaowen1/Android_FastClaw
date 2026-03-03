@@ -15,6 +15,8 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.putAIGCMetadata
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.RetrofitClient
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
@@ -261,6 +263,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         synthesisTask = task
         VideoSynthesisManager.synthesis(task)
         loopSynthesisStatus()
+        EventManager.onAppTrack(AppEvent.SF_CLICK_COMBINE_VIDEO_BUTTON)
     }
 
     fun updateStoryboard(storyboardInfo: SimpleStoryboardInfo) {
