@@ -71,6 +71,11 @@ class DramaGenerateStep2Fragment :
             hostVm?.backWarning = true
             mRealVM.sseGenerate()
         }
+        binding.retryBtn.setOnSingleClickListener {
+            if (mRealVM.isStreaming()) return@setOnSingleClickListener
+            hostVm?.backWarning = true
+            mRealVM.sseGenerate()
+        }
         binding.btnNext.setOnSingleClickListener {
             if (mRealVM.isStreaming()) return@setOnSingleClickListener
             //检查敏感词
