@@ -19,7 +19,6 @@ import com.kgmedia.fastfilm.common.utils.Utils
 import com.kgmedia.fastfilm.core.manager.IRouter
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.SingleEpisodeDetailsInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
@@ -249,7 +248,7 @@ object AppRouter : IRouter {
         workId: String?,
         workTitle: String?,
         workType: Int?,
-        singleEpisodeDetailsInfo: SingleEpisodeDetailsInfo?
+        singleEpisodeDetailsInfo: EpisodeInfo?
     ) {
         val sortNo = singleEpisodeDetailsInfo?.sortNo ?: 1
         Logger.i("测试一下", "stepProgress:${singleEpisodeDetailsInfo?.stepProgress}")
@@ -290,7 +289,7 @@ object AppRouter : IRouter {
                     workId = workId,
                     storyId = singleEpisodeDetailsInfo.storyId,
                     workTitle = workTitle,
-                    taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
+                    taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO?.taskId,
                     chapterIndex = sortNo,
                     model = getModel(workType = workType, sortNo = sortNo),
                     videoRatio = singleEpisodeDetailsInfo.workRatio,
@@ -305,7 +304,7 @@ object AppRouter : IRouter {
                     workId = workId,
                     storyId = singleEpisodeDetailsInfo.storyId,
                     workTitle = workTitle,
-                    taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO.taskId,
+                    taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO?.taskId,
                     chapterIndex = sortNo,
                     model = getModel(workType = workType, sortNo = sortNo),
                     videoRatio = singleEpisodeDetailsInfo.workRatio,
