@@ -119,7 +119,8 @@ class ItemStoryboardVM(
                 }
                 if (response.isSuccess && response.data != null) {
                     storyboard = response.data
-                    data.set(response.data)
+                    storyboard?.genStatusImage = 1
+                    data.set(storyboard)
                 } else {
                     response.msg?.showToast()
                     data.get()?.genStatusImage = preStatus

@@ -359,6 +359,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private fun deleteAsset(item: ItemAssetVM<*>) {
         launchWithLoading {
             response(item.delete()) {
+                item.clear()
                 adapter.remove(item)
                 onItemChanged()
             }

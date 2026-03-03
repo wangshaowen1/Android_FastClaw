@@ -338,6 +338,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private fun deleteStoryboard(item: ItemStoryboardVM) {
         launchWithLoading {
             response(mRepo.api.workStoryboardDelete(IdsBody(null, item.data.get()?.storyboardId))) {
+                item.clear()
                 adapter.remove(item)
                 updateItemNo()
             }

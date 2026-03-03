@@ -57,6 +57,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
     private val eventVm by lazy { ItemMultipleChoiceEventsViewModel<SeriesEpisodeEvent, String>() }
     private val episodeAdapter by lazy { EpisodeAdapter(eventVm) }
+    private var isShowPublishRejectReason = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -139,6 +140,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         }
         mRealVM.workInfo.observe(this) {
             episodeAdapter.refresh()
+            if (it.contractStatus == 3 && !isShowPublishRejectReason) showPublishRejectReason()
         }
         mRealVM.episodeInfo.observe(this) {
             if (it == null) return@observe
@@ -251,10 +253,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             R.id.llPublishStatus -> {
-                val rejectReason = mRealVM.workInfo.value?.rejectReason ?: return
-                bindingNullable?.tvPublishStatus?.let {
-                    Popup(SeriesReleaseFailTipsPopupView(this, rejectReason)).showUnder(it)
-                }
+                showPublishRejectReason()
             }
 
             R.id.btnSelfPublish -> {
@@ -268,6 +267,16 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     SimpleBrowserActivity.launch(this, it)
                     EventManager.onAppTrack(AppEvent.SF_CLICK_GO_PUBLISH_BUTTON)
                 }
+            }
+        }
+    }
+
+    private fun showPublishRejectReason() {
+        val rejectReason = mRealVM.workInfo.value?.rejectReason ?: return
+        bindingNullable?.tvPublishStatus?.let {
+            it.post {
+                isShowPublishRejectReason = true
+                Popup(SeriesReleaseFailTipsPopupView(this, rejectReason)).showUnder(it)
             }
         }
     }
