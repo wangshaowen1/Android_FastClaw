@@ -16,6 +16,8 @@ abstract class BaseThrottleSseProcessor(
     @Volatile
     private var completed = false
 
+    protected open fun onSyncInitInternal() {}
+
     protected abstract fun buildSnapshot(): String?
     protected abstract fun onEmit(content: String)
 
@@ -25,6 +27,10 @@ abstract class BaseThrottleSseProcessor(
     override fun onSSEStart() {
         completed = false
         lastEmitTime = 0L
+
+        //数据层面的清理必须立刻、同步执行！绝不能切线程！
+        onSyncInitInternal()
+
         scope.launch(Dispatchers.Main) {
             onStartInternal()
         }
@@ -45,8 +51,8 @@ abstract class BaseThrottleSseProcessor(
     }
 
     override fun onSSEComplete() {
-        completed = true
         tryEmit(force = true)
+        completed = true
         scope.launch(Dispatchers.Main) {
             onCompleteInternal()
         }

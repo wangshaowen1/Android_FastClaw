@@ -26,10 +26,20 @@ class SSEStreamHandler(
     private val _isStreaming = MutableStateFlow(false)
     val isStreaming = _isStreaming.asStateFlow()
 
+    // 1. 新增一个标志位，记录当前流是否已经触发过 Start
+    private var hasTriggeredStart = false
+
+    private fun ensureStartedSafely() {
+        if (!hasTriggeredStart) {
+            hasTriggeredStart = true
+            processor.onSSEStart()
+        }
+    }
+
     fun start(flow: Flow<SSEvent>) {
         cancel() // 开始前先清理上一次的资源
         isFinished.set(false)
-
+        hasTriggeredStart = false
         _isStreaming.value = true
 
         job = scope.launch {
@@ -40,10 +50,12 @@ class SSEStreamHandler(
 
                     when (event) {
                         is SSEvent.Open -> {
-                            processor.onSSEStart()
+                            // 3. 正常收到 Open 时触发
+                            ensureStartedSafely()
                         }
 
                         is SSEvent.Message -> {
+                            ensureStartedSafely()
                             val data = event.data
                             try {
                                 val sseMessage = Json.decodeFromString<SSEMessage>(data)
