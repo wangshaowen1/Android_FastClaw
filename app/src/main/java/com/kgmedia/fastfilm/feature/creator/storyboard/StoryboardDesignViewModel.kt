@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
@@ -411,13 +412,16 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
-            response(mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId))) {
-                if (data?.genStatus == 4) {
-                    PowerRechargeDialog.show(true)
-                    return@response
-                }
-                toNextStep?.invoke(workId, storyId, data?.taskId)
-            }
+            response(
+                bean = mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId)),
+                result = { toNextStep?.invoke(workId, storyId, data?.taskId) },
+                error = {
+                    if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                        PowerRechargeDialog.show(true)
+                    } else {
+                        this?.msg?.showToast()
+                    }
+                })
         }
     }
 

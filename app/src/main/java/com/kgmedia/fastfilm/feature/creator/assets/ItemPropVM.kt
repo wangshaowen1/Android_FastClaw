@@ -115,10 +115,13 @@ class ItemPropVM(
                     data?.genStatus?.let { updateStatus(it) }
                     this@ItemPropVM.data.set(prop)
                     loopGenStatus()
-                    if (data?.genStatus == 4) PowerRechargeDialog.show(true)
                 },
                 error = {
-                    this?.msg?.showToast()
+                    if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                        PowerRechargeDialog.show(true)
+                    } else {
+                        this?.msg?.showToast()
+                    }
                     updateStatus(preStatus)
                 })
         }

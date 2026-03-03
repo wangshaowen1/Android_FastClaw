@@ -4,6 +4,10 @@ package com.kgmedia.fastfilm.core.network.apis;
 public class ApiResponse<T> {
 
     public static final int RESPONSE_CODE_SUCCESS = 200;
+    /**
+     * 算力不足
+     */
+    public static final int RESPONSE_CODE_POWER_NOT_ENOUGH = 300005;
 
     private int code;
     private String msg;

@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
@@ -141,10 +142,13 @@ class ItemStoryboardVM(
                     this@ItemStoryboardVM.data.set(storyboard)
                     this@ItemStoryboardVM.data.notifyChange()
                     loopGenStatus()
-                    if (data?.genStatus == 4) PowerRechargeDialog.show(true)
                 },
                 error = {
-                    this?.msg?.showToast()
+                    if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                        PowerRechargeDialog.show(true)
+                    } else {
+                        this?.msg?.showToast()
+                    }
                     data.get()?.genStatusImage = preStatus
                     data.notifyChange()
                     onItemChanged()
