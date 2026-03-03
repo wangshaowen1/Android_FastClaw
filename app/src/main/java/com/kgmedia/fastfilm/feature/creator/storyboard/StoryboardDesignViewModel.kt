@@ -406,7 +406,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private fun generateStoryboardVideo(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
         val cost = cost.get()
-        if (cost == 0) {
+        if (cost == 0 && genVideoPrice == 0) {
             calcGenVideoCost()
             return
         }
