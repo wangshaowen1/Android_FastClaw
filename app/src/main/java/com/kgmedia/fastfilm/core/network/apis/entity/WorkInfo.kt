@@ -121,7 +121,7 @@ data class WorkInfo(
 
     //草稿状态
     fun isDraftStatus(): Boolean {
-        return workStatus ==DRAFT
+        return workStatus == DRAFT
     }
 
     fun seriesIntroduction(index: Int = 0): String? {
@@ -266,8 +266,22 @@ data class EpisodeInfo(
     //续创剧集id（灵感续创才有的，小说没有，保存剧本需要带回来）
     val sequelStoryId: String? = null,
     //封面
-    val workCoverUrl: String? = null
+    val workCoverUrl: String? = null,
+    //剧集生成任务结果
+    val taskGenResultStoryVO: TaskGenResultStoryVO? = null,
 ) : Parcelable {
+
+    @Parcelize
+    data class TaskGenResultStoryVO(
+        //业务类型 40=生成所有资产描述 70=生成所有分镜描述
+        val bizType: Int? = null,
+        //任务id
+        val taskId: String? = null,
+        //[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
+        val genStatus: Int? = null,
+        //查询单个是直接返回结果,比如资产、分镜图片url等
+        val result: String? = null
+    ) : Parcelable
 
     companion object {
         //剧本输入
@@ -320,7 +334,7 @@ data class EpisodeInfo(
      * @return Boolean
      */
     fun isWaitingComposing(): Boolean {
-        return stepProgress == PROGRESS_WAITING_COMPOSING
+        return stepProgress in listOf(PROGRESS_WAITING_COMPOSING, EPISODE_REPAINT_COMPLETED)
     }
 
     /**

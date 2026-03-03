@@ -86,7 +86,7 @@ data class SimpleStoryboardInfo(
      */
     var genStatusImage: Int? = null,
     /**
-     * [枚举]视频生成状态 0=待生成 1=生成中 2=成功 3=失败
+     * [枚举]视频生成状态 0=待生成 1=生成中 2=成功 3=失败 5=重绘中 6=重绘完成
      */
     var genStatusVideo: Int? = null
 ) : Parcelable {
@@ -94,11 +94,11 @@ data class SimpleStoryboardInfo(
 
     val imageGenerated get() = genStatusImage == 2 || genStatusImage == 99
 
-    val imageGenerateFailed get() = genStatusImage == 3 || genStatusImage == 4
+    val imageGenerateFailed get() = genStatusImage == 3
 
-    val videoGenerating get() = genStatusVideo == 1
+    val videoGenerating get() = genStatusVideo == 1 || genStatusVideo == 5
 
-    val videoGenerated get() = genStatusVideo == 2
+    val videoGenerated get() = genStatusVideo == 2 || genStatusVideo == 6
 
-    val videoGenerateFailed get() = genStatusVideo == 3 || genStatusVideo == 4
+    val videoGenerateFailed get() = genStatusVideo == 3
 }
