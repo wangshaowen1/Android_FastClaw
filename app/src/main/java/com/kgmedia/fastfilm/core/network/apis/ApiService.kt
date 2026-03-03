@@ -873,7 +873,7 @@ interface ApiService {
      * 查看单集作品的剧集详情
      */
     @POST(ApiConstants.SINGLE_EPISODE_SERIES_DETAILS)
-    suspend fun singleEpisodeSeriesDetails(@Body body: WorkBody): ApiResponse<SingleEpisodeDetailsInfo?>
+    suspend fun singleEpisodeSeriesDetails(@Body body: WorkBody): ApiResponse<EpisodeInfo?>
 
     /**
      * 小说-保存续创剧集（只有小说有）
