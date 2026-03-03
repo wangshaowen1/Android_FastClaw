@@ -31,7 +31,7 @@ abstract class BaseThrottleSseProcessor(
         //数据层面的清理必须立刻、同步执行！绝不能切线程！
         onSyncInitInternal()
 
-        scope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.Main.immediate) {
             onStartInternal()
         }
     }
@@ -53,7 +53,7 @@ abstract class BaseThrottleSseProcessor(
     override fun onSSEComplete() {
         tryEmit(force = true)
         completed = true
-        scope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.Main.immediate) {
             onCompleteInternal()
         }
     }

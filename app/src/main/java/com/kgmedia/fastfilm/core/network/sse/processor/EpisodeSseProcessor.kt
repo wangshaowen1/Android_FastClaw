@@ -20,12 +20,12 @@ class EpisodeSseProcessor(
     private val fullSourceAccumulator = StringBuilder()
     private val parser = JsonSseFieldStreamer(
         onTitleUpdate = { title ->
-            scope.launch(Dispatchers.Main) {
+            scope.launch(Dispatchers.Main.immediate) {
                 onTitleUpdate(title)
             }
         },
         onMdUpdate = { md ->
-            scope.launch(Dispatchers.Main) {
+            scope.launch(Dispatchers.Main.immediate) {
                 onMdUpdate(md)
             }
         }
@@ -34,7 +34,7 @@ class EpisodeSseProcessor(
     override fun onSSEStart() {
         fullSourceAccumulator.setLength(0)
         parser.reset()
-        scope.launch(Dispatchers.Main) { onStart() }
+        scope.launch(Dispatchers.Main.immediate) { onStart() }
     }
 
     override fun onSSEChunk(chunk: String) {
@@ -46,14 +46,14 @@ class EpisodeSseProcessor(
     override fun onSSEComplete() {
         parser.finish()
         val fullSource = fullSourceAccumulator.toString()
-        scope.launch(Dispatchers.Main) {
+        scope.launch(Dispatchers.Main.immediate) {
             // 4. 传给回调
             onComplete(fullSource)
         }
     }
 
     override fun onSSEError(e: Throwable?) {
-        scope.launch(Dispatchers.Main) { onErrorCallback(e) }
+        scope.launch(Dispatchers.Main.immediate) { onErrorCallback(e) }
     }
 }
 

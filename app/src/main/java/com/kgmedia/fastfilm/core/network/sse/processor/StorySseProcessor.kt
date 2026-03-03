@@ -25,7 +25,7 @@ class StorySseProcessor(
             onTitleBack.invoke(title)
         },
         onStoryUpdate = { content ->
-            scope.launch(Dispatchers.Main) {
+            scope.launch(Dispatchers.Main.immediate) {
                 Logger.d("StorySseProcessor", "content: $content")
                 onStoryUpdate(content)
             }
@@ -35,7 +35,7 @@ class StorySseProcessor(
 
     override fun onSSEStart() {
         fullSourceAccumulator.setLength(0)
-        scope.launch(Dispatchers.Main) { onStart() }
+        scope.launch(Dispatchers.Main.immediate) { onStart() }
     }
 
     override fun onSSEChunk(chunk: String) {
@@ -47,10 +47,10 @@ class StorySseProcessor(
     override fun onSSEComplete() {
         parser.finish()
         val fullSource = fullSourceAccumulator.toString()
-        scope.launch(Dispatchers.Main) { onComplete(fullSource) }
+        scope.launch(Dispatchers.Main.immediate) { onComplete(fullSource) }
     }
 
     override fun onSSEError(e: Throwable?) {
-        scope.launch(Dispatchers.Main) { onErrorCallback(e) }
+        scope.launch(Dispatchers.Main.immediate) { onErrorCallback(e) }
     }
 }
