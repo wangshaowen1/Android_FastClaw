@@ -191,10 +191,18 @@ class JsonSseFieldStreamer(
             }
 
             Target.MD -> {
+                if (!isFinal && valueBuf.isNotEmpty() && valueBuf.last() == '\\') {
+                    return
+                }
+
                 val now = System.currentTimeMillis()
                 // MD 保持原样：节流 + 增量 (Delta)
                 if ((isFinal || now - lastMdEmitTime >= MD_THROTTLE_MS) && valueBuf.length > lastMdEmittedLength) {
-                    val delta = valueBuf.substring(lastMdEmittedLength)
+                    var delta = valueBuf.substring(lastMdEmittedLength)
+
+                    delta = delta.replace("\\n", "\n")
+                        .replace("\\r", "")
+
                     onMdUpdate?.invoke(delta)
                     lastMdEmittedLength = valueBuf.length
                     lastMdEmitTime = now
@@ -205,7 +213,8 @@ class JsonSseFieldStreamer(
                 val now = System.currentTimeMillis()
                 // Story 保持原样：节流 + 全量 (Full)
                 if (isFinal || now - lastMdEmitTime >= MD_THROTTLE_MS) {
-                    onStoryUpdate?.invoke(valueBuf.toString())
+                    val fullText = valueBuf.toString().replace("\\n", "\n").replace("\\r", "")
+                    onStoryUpdate?.invoke(fullText)
                     lastMdEmitTime = now
                 }
             }

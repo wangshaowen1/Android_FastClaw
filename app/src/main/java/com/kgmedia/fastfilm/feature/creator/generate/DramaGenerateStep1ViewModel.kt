@@ -69,7 +69,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     var onSSECompleted: (() -> Unit)? = null
     var originalJson: String? = null
-    var mFullMarkdown = ""
 
     /**
      * 小说文档模式==》故事梗概结果
@@ -127,9 +126,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 onMdUpdate = { delta ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                    mFullMarkdown += delta
-                    mSSEContent.value = mFullMarkdown
-                    Logger.d("[SSE]", "onMdUpdate：$mFullMarkdown")
+                    mSSEContent.value = delta
+                    Logger.d("[SSE]", "onMdUpdate：$delta")
                 },
                 onComplete = { originalContent ->
                     Logger.d("[SSE]", "Finished")
