@@ -74,7 +74,6 @@ class DramaGenerateStep1Fragment :
                     // 只在 Dialog 不存在时创建
                     dialog = GeneratingDialog(requireContext(), it.second, it.third)
                     if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
-                        dialog?.setCanceledOnTouchOutside(true)
                         dialog?.setCancelable(true)
                     }
                     dialog?.show()
