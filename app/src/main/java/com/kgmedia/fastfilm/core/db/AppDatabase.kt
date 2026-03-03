@@ -28,7 +28,7 @@ import com.nhsd.basic.BaseApp
         WorkInformationInfo::class,
         WorkInfoEntity::class,
         RemoteKeys::class
-    ], version = 13, exportSchema = true
+    ], version = 14, exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
 

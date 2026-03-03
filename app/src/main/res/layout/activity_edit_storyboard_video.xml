@@ -132,7 +132,7 @@
                     <TextView
                         android:id="@+id/btnRetry"
                         setVisible="@{layout.currentStoryboard.data.videoGenerateFailed}"
-                        singleClick="@{() -> layout.currentStoryboard.generate()}"
+                        singleClick="@{() -> layout.currentStoryboard.generate(layout.storyInfo)}"
                         android:layout_width="88dp"
                         android:layout_height="28dp"
                         android:layout_marginTop="12dp"

@@ -83,7 +83,7 @@ public class Constants {
         String DRAMA_NAME = "dramaName";
         String DRAMA_INTRO = "dramaIntro";
         String DRAMA = "drama";
-        String TIMBRE = "timbre";
+        String STATUS = "status";
 
         String STYLE_ID = "STYLE_Id";
         String VIDEO_RATIO = "VIDEO_RATIO";

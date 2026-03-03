@@ -10,37 +10,37 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @TypeConverters(Converters::class)
 data class WorkInfo(
-    //作品ID
+    /**作品ID*/
     val workId: String? = null,
-    //作品名称
+    /**作品名称*/
     val workTitle: String? = null,
-    //作品简介
+    /**作品简介*/
     val workDesc: String? = null,
-    //作品风格code
+    /**作品风格code*/
     val workStyleCode: String? = null,
-    //视频比例：16:9、4:3、1:1、3:4、9:16、21:9、adaptive(自动)
+    /**视频比例：16:9、4:3、1:1、3:4、9:16、21:9、adaptive(自动)*/
     val workRatio: String? = null,
-    //作品灵感
+    /**作品灵感*/
     val workInspiration: String? = null,
-    //作品封面图URL（AI生成或默认图）
+    /**作品封面图URL（AI生成或默认图）*/
     val workCoverUrl: String? = null,
-    //作品类型：1-灵感创作;2-小说改编;3-小说上传
+    /**作品类型：1-灵感创作;2-小说改编;3-小说上传*/
     val workType: Int? = null,
-    //[枚举]作品状态：0=草稿 32=分镜生成中 35待合成 45=视频重绘中 50=视频重绘已完成 60=已完成 70=失败
+    /**[枚举]作品状态：0=草稿 32=分镜生成中 35待合成 45=视频重绘中 50=视频重绘已完成 60=已完成 70=失败*/
     val workStatus: Int? = null,
-    //总集数（规划集数）
+    /**总集数（规划集数）*/
     val totalEpisodeCnt: Int? = null,
-    //已完成集数
+    /**已完成集数*/
     val finishedEpisodeCnt: Int? = null,
-    //最近生成的集数编号
+    /**最近生成的集数编号*/
     val lastEpisodeNo: Int? = null,
-    //最近一次生成时间
+    /**最近一次生成时间*/
     val lastGenerateTime: String? = null,
-    //播放量(初始化1000-10000)
+    /**播放量(初始化1000-10000)*/
     val playCount: Int? = null,
-    //作者用户ID
+    /**作者用户ID*/
     var userId: String? = null,
-    //剧集
+    /**剧集*/
     var workStoryItemList: List<EpisodeInfo>? = null,
     /**[枚举]签约状态(0-未申请 1-审核中 2-已通过 3-已驳回)*/
     val contractStatus: Int? = null,
@@ -50,7 +50,7 @@ data class WorkInfo(
     val rejectReason: String? = null,
     /**签约评级（S/A/B/C等）*/
     val contractLevel: String? = null,
-    //[枚举]小说上传模式下-第一集是否有剧本(0-没有 1-有)
+    /**[枚举]小说上传模式下-第一集是否有剧本(0-没有 1-有)*/
     val novelUploadIsOneStoryContentStatus: Int? = null,
     /**发行平台图片 list*/
     val publishPlatformImageList: List<String>? = null,
@@ -63,34 +63,34 @@ data class WorkInfo(
 ) : Parcelable {
 
     companion object {
-        //作品类型：1-灵感创作
+        /**作品类型：1-灵感创作*/
         const val INSPIRATION_CREATION = 1
 
-        //作品类型：2-小说创作
+        /**作品类型：2-小说创作*/
         const val NOVEL_CREATION = 2
 
-        //作品类型：3-小说上传
+        /**作品类型：3-小说上传*/
         const val NOVEL_UPLOAD = 3
 
-        //作品状态 0=草稿
+        /**作品状态 0=草稿*/
         const val DRAFT = 0
 
-        //作品状态 32=分镜生成中
+        /**作品状态 32=分镜生成中*/
         const val MIRROR_GENERATION_IN_PROGRESS = 32
 
-        //作品状态 35=待合成
+        /**作品状态 35=待合成*/
         const val WAIT_STATE = 35
 
-        //作品状态 45=视频重绘中
+        /**作品状态 45=视频重绘中*/
         const val VIDEO_REDRAWING_IN_PROGRESS = 45
 
-        //作品状态 50=视频重绘已完成
+        /**作品状态 50=视频重绘已完成*/
         const val VIDEO_REDRAW_COMPLETED = 50
 
-        //已完成状态
+        /**已完成状态*/
         const val COMPLETED_STATE = 60
 
-        //失败状态
+        /**失败状态*/
         const val FAILED_STATE = 70
 
     }
@@ -105,7 +105,7 @@ data class WorkInfo(
     }
 
 
-    //是否是分镜生成中，视频合成中，视频重绘中
+    /**是否是分镜生成中，视频合成中，视频重绘中*/
     fun isWaitingComposing(): Boolean {
         return workStatus in listOf(MIRROR_GENERATION_IN_PROGRESS, VIDEO_REDRAWING_IN_PROGRESS)
     }
@@ -239,76 +239,78 @@ data class WorkInfo(
  */
 @Parcelize
 data class EpisodeInfo(
-    //剧集id
+    /**作品ID*/
+    var workId: String? = null,
+    /**剧集id*/
     val storyId: String? = null,
-    //剧集标题
+    /**剧集标题*/
     val storyTitle: String? = null,
-    //剧集梗概
+    /**剧集梗概*/
     val storySummary: String? = null,
-    //剧集剧本内容
+    /**剧集剧本内容*/
     val storyContent: String? = null,
-    //序号
+    /**序号*/
     val sortNo: Int? = null,
-    //[枚举]创作流程进度 [10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成]
+    /**[枚举]创作流程进度 [10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成]*/
     val stepProgress: Int? = null,
-    //[枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败]
+    /**[枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败]*/
     val stepStatus: Int? = null,
-    //分镜数
+    /**分镜数*/
     val storyboardTotal: Int? = null,
-    //当前视频url
+    /**当前视频url*/
     val videoUrl: String? = null,
-    //视频时长(毫秒)
+    /**视频时长(毫秒)*/
     val duration: Long? = null,
-    //视频比例：16:9、4:3、1:1、3:4、9:16、21:9、adaptive(自动)
+    /**视频比例：16:9、4:3、1:1、3:4、9:16、21:9、adaptive(自动)*/
     val workRatio: String? = null,
-    //播放量(初始化1000-10000)
+    /**播放量(初始化1000-10000)*/
     val playCount: Int? = null,
-    //续创剧集id（灵感续创才有的，小说没有，保存剧本需要带回来）
+    /**续创剧集id（灵感续创才有的，小说没有，保存剧本需要带回来）*/
     val sequelStoryId: String? = null,
-    //封面
+    /**封面*/
     val workCoverUrl: String? = null,
-    //剧集生成任务结果
+    /**剧集生成任务结果*/
     val taskGenResultStoryVO: TaskGenResultStoryVO? = null,
 ) : Parcelable {
 
     @Parcelize
     data class TaskGenResultStoryVO(
-        //业务类型 40=生成所有资产描述 70=生成所有分镜描述
+        /**业务类型 40=生成所有资产描述 70=生成所有分镜描述*/
         val bizType: Int? = null,
-        //任务id
+        /**任务id*/
         val taskId: String? = null,
-        //[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]
+        /**[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]*/
         val genStatus: Int? = null,
-        //查询单个是直接返回结果,比如资产、分镜图片url等
+        /**查询单个是直接返回结果,比如资产、分镜图片url等*/
         val result: String? = null
     ) : Parcelable
 
     companion object {
-        //剧本输入
+        /**剧本输入*/
         const val PROGRESS_DRAFT = 10
 
-        //剧本生成中
+        /**剧本生成中*/
         const val PROGRESS_STORY_GENERATING = 15
 
-        //资产生成中
+        /**资产生成中*/
         const val PROGRESS_ASSET_GENERATING = 20
 
-        //分镜生成中
+        /**分镜生成中*/
         const val PROGRESS_STORYBOARD_GENERATING_ASSET = 30
 
-        //分镜视频生成中
+        /**分镜视频生成中*/
         const val PROGRESS_STORYBOARD_GENERATING = 32
 
-        //待合成
+        /**待合成*/
         const val PROGRESS_WAITING_COMPOSING = 35
 
-        //已完成
+        /**已完成*/
         const val PROGRESS_COMPLETED = 40
 
-        //分镜重绘中
+        /**分镜重绘中*/
         const val EPISODE_REPAINT_STATE = 45
 
-        //重绘已完成
+        /**重绘已完成*/
         const val EPISODE_REPAINT_COMPLETED = 50
     }
 
@@ -357,4 +359,6 @@ data class EpisodeInfo(
             PROGRESS_STORYBOARD_GENERATING_ASSET
         )
     }
+
+    val isSynthesised get() = stepProgress in arrayOf(PROGRESS_COMPLETED, EPISODE_REPAINT_STATE, EPISODE_REPAINT_COMPLETED)
 }

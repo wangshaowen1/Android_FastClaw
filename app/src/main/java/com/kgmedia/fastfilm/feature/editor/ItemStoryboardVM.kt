@@ -4,12 +4,12 @@ import androidx.databinding.ObservableBoolean
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.nhsd.basic.ext.showToast
-import com.umeng.analytics.pro.da
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -54,7 +54,7 @@ class ItemStoryboardVM(
             else -> null
         }
 
-    fun generate() {
+    fun generate(storyInfo: EpisodeInfo?) {
         val storyboard = data.get() ?: return
         if (storyboard.videoGenerating) return
         val preStatus = data.get()?.genStatusVideo
@@ -64,7 +64,8 @@ class ItemStoryboardVM(
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
                 workId = workId,
-                storyId = storyId
+                storyId = storyId,
+                operateType = if (storyInfo?.isSynthesised == true) 3 else 2
             )
             response(
                 bean = ApiFactory.apiService.workStoryboardVideoSingleGenerate(body),

@@ -48,6 +48,7 @@ class StoryboardDesignFragment :
                         workId,
                         storyId,
                         hostVm?.videoRatio,
+                        null
                     )
                     activity?.finish()
                 }

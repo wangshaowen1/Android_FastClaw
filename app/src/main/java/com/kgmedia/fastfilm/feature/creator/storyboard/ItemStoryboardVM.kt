@@ -113,7 +113,8 @@ class ItemStoryboardVM(
                         workId = workId,
                         storyId = storyId,
                         storyboardId = storyboard?.storyboardId,
-                        genImagePrompt = prompt
+                        genImagePrompt = prompt,
+                        operateType = 2
                     )
                     ApiFactory.apiService.workStoryboardSave(body)
                 }

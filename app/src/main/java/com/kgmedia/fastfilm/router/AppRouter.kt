@@ -319,6 +319,7 @@ object AppRouter : IRouter {
                     workId = workId,
                     storyId = singleEpisodeDetailsInfo.storyId,
                     workRatio = singleEpisodeDetailsInfo.workRatio,
+                    story = singleEpisodeDetailsInfo
                 )
             }
         }

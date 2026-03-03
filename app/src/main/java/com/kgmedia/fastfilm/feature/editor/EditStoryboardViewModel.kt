@@ -11,7 +11,6 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
-import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
@@ -35,6 +34,13 @@ import kotlinx.coroutines.withContext
 class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
     val storyboard by lazy { ObservableField<SimpleStoryboardInfo>() }
     val workRatio by lazy { mBundle.getString(Constants.Extra.VIDEO_RATIO, "9:16") ?: "9:16" }
+
+    /**
+     * 剧集状态 [枚举]创作流程进度 [10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成]
+     */
+    val storyStatus by lazy { mBundle.getInt(Constants.Extra.STATUS, 0) }
+
+    val isSynthesised by lazy { storyStatus in arrayOf(40, 45, 50) }
 
     val storyboardPlayer by lazy {
         PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
@@ -149,7 +155,8 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
                 workId = storyboard.workId,
-                storyId = storyboard.storyId
+                storyId = storyboard.storyId,
+                operateType = if (isSynthesised) 3 else 2
             )
             response(mRepo.api.workStoryboardVideoSingleGenerate(body)) {
                 FlowEventBus.postSync(Events.StoryboardVideoRegenerateEvent(storyboard.workId, storyboard.storyId, storyboard.storyboardId))
@@ -202,7 +209,8 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                         workId = storyboard.workId,
                         storyId = storyboard.storyId,
                         storyboardId = storyboard.storyboardId,
-                        genImagePrompt = prompt
+                        genImagePrompt = prompt,
+                        operateType = if (isSynthesised) 3 else 2
                     )
                     mRepo.api.workStoryboardSave(body)
                 }
@@ -300,7 +308,8 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 workId = storyboard.workId,
                 storyId = storyboard.storyId,
                 storyboardId = storyboard.storyboardId,
-                genImagePrompt = prompt
+                genImagePrompt = prompt,
+                operateType = if (isSynthesised) 3 else 2
             )
             response(mRepo.api.workStoryboardSave(body)) {
                 data?.let {

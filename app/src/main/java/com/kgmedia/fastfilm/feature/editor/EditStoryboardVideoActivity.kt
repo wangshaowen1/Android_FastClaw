@@ -23,18 +23,19 @@ import com.nhsd.basic.ext.showToast
 class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboardVideoBinding, EditStoryboardVideoViewModel>() {
     companion object {
         @JvmStatic
-        fun launchIntent(activity: Activity, storyTitle: String?, workId: String?, storyId: String?, workRatio: String?): Intent {
+        fun launchIntent(activity: Activity, storyTitle: String?, workId: String?, storyId: String?, workRatio: String?, story: EpisodeInfo?): Intent {
             val intent = Intent(activity, EditStoryboardVideoActivity::class.java)
             intent.putExtra(Constants.Extra.TITLE, storyTitle)
             intent.putExtra(Constants.Extra.WORK_ID, workId)
             intent.putExtra(Constants.Extra.STORY_ID, storyId)
             intent.putExtra(Constants.Extra.VIDEO_RATIO, workRatio)
+            intent.putExtra(Constants.Extra.DATA, story)
             return intent
         }
 
         @JvmStatic
-        fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?) {
-            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio)) }
+        fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?, story: EpisodeInfo?) {
+            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio, story)) }
         }
     }
 
@@ -82,7 +83,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     "视频正在生成中，请稍后再试".showToast()
                     return
                 }
-                EditStoryboardActivity.start(current, mRealVM.workRatio)
+                EditStoryboardActivity.start(current, mRealVM.workRatio, mRealVM.storyInfo?.stepProgress)
                 EventManager.onAppTrack(AppEvent.SF_CLICK_REDRAW_STORYBOARD_BUTTON)
             }
 

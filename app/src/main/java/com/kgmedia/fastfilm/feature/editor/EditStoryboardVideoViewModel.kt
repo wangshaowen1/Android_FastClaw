@@ -30,6 +30,7 @@ import com.kgmedia.fastfilm.kit.media.setPlayUrl
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.kuaige.videoedit.resource.UrlResource
+import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -41,6 +42,8 @@ import java.io.File
  * 编辑分镜视频
  */
 class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardRepository>() {
+    var storyInfo: EpisodeInfo? = null
+        private set
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
     val storyTitle by lazy { mBundle.getString(Constants.Extra.TITLE) }
     val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
@@ -75,7 +78,9 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     override fun onCreate() {
         super.onCreate()
+        storyInfo = mBundle.getParcelableValue(Constants.Extra.DATA, EpisodeInfo::class.java)
         getStoryboardList()
+        getStoryInfo { }
     }
 
     override fun onCleared() {
@@ -294,7 +299,8 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     fun getStoryInfo(callback: (story: EpisodeInfo?) -> Unit) {
         launchWithLoading {
             response(mRepo.api.singleEpisodeDetails(WorkBody(workId, storyId))) {
-                callback.invoke(data)
+                data?.let { storyInfo = it }
+                callback.invoke(storyInfo)
             }
         }
     }

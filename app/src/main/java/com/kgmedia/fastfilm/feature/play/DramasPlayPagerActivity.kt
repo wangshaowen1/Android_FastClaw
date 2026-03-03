@@ -108,8 +108,9 @@ class DramasPlayPagerActivity :
     private fun initView() {
         binding.btnEdit.setOnSingleClickListener {
             val currentWork = mRealVM.currentWork.get() ?: return@setOnSingleClickListener
+            val story = currentWork.workStoryItemList?.firstOrNull() ?: return@setOnSingleClickListener
             showCommonDialog(tip = "本集视频重绘后将覆盖原视频,确定重绘吗？", confirmText = "确定") {
-                EditStoryboardVideoActivity.start(currentWork.workTitle, currentWork.workId, currentWork.getEpisodeId(), currentWork.workRatio)
+                EditStoryboardVideoActivity.start(currentWork.workTitle, story.workId, story.storyId, story.workRatio, story)
             }
             EventManager.onAppTrack(AppEvent.SF_CLICK_WORK_REPLAY_REDRAW_BUTTON)
         }
