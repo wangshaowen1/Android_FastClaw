@@ -14,12 +14,13 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.DeleteWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -49,6 +50,10 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
 
     //作品详情
     val workDtl = MutableLiveData<WorkInfo?>()
+
+    //剧集详情
+    val episodeList = MutableLiveData<List<EpisodeInfo>?>()
+
 
     private var checkGeneratingJob: Job? = null
 
@@ -193,6 +198,19 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
             }
         )
+    }
+
+    /**
+     * 获取剧集列表
+     */
+    fun getEpisodes(workId: String?) {
+        if (workId.isNullOrEmpty()) return
+
+        launchWithLoading {
+            response(mRepo.api.episodeList(WorkIdPagedBody(workId, 1, 20))) {
+                episodeList.value = data?.items
+            }
+        }
     }
 
 

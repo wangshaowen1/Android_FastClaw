@@ -16,6 +16,7 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
@@ -24,6 +25,8 @@ import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
+import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
+import com.kgmedia.fastfilm.feature.play.data.FeedRepository
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
@@ -53,6 +56,8 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         getViewModelOfActivity<MainViewModel>()
     }
 
+    //当前点击的作品信息
+    var workInfo: WorkInfo? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -150,6 +155,12 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                         }
                         if (event.workInfo?.totalEpisodeCnt == 1) {
                             //这个是单集的
+                            if (event.workInfo.workStatus == WorkInfo.COMPLETED_STATE) {
+                                //已经完成了，直接播放
+                                workInfo = event.workInfo
+                                mRealVM.getEpisodes(event.workInfo.workId)
+                                return@collect
+                            }
                             AppRouter.singleEpisodeSeriesDetails(event.workInfo)
                             return@collect
                         }
@@ -221,7 +232,49 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             )
             binding.tvSelectCount.text = spannableString
         }
+
+        mRealVM.episodeList.observe(this) {
+            if (it.isNullOrEmpty()) return@observe
+            mRealVM.episodeList.value = null
+            onPlayEpisodeClicked(workInfo = workInfo, episodes = it, clickPosition = 0)
+        }
     }
+
+    fun onPlayEpisodeClicked(workInfo: WorkInfo?, episodes: List<EpisodeInfo>, clickPosition: Int) {
+        // 1. [核心步骤] 过滤未完成的数据 + 转换为 Adapter 需要的 WorkInfo
+        val validPlayList = episodes
+            .filter { !it.videoUrl.isNullOrEmpty() } // 过滤条件
+            .map { episode ->
+                // 复用父作品信息，包装成 WorkInfo
+                WorkInfo(
+                    workId = episode.storyId ?: "", // 必须唯一
+                    userId = workInfo?.userId,
+                    workTitle = workInfo?.workTitle,
+                    workCoverUrl = workInfo?.workCoverUrl,
+                    workDesc = workInfo?.workDesc,
+                    workStoryItemList = listOf(episode), // 这一集的数据
+                    lastEpisodeNo = episode.sortNo,
+                    totalEpisodeCnt = workInfo?.totalEpisodeCnt,
+                    playCount = episode.playCount,
+                )
+            }
+
+        // 2. 计算修正后的点击位置
+        // 因为过滤了数据，原来的 position 可能变了，需要找到点击的那个 episode 在新列表里的位置
+        val clickedEpisodeId = episodes[clickPosition].storyId
+        val newPosition =
+            validPlayList.indexOfFirst { it.workId == clickedEpisodeId }.coerceAtLeast(0)
+        // 3. 存入 Repository
+        FeedRepository.setPreloadedSeries(workInfo?.workId ?: "", validPlayList)
+
+        // 4. 跳转播放页
+        DramasPlayPagerActivity.start(
+            workId = workInfo?.workId,
+            // 传入修正后的位置
+            position = newPosition
+        )
+    }
+
 
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
