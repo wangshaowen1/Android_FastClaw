@@ -39,12 +39,12 @@ class ItemStoryboardVM(
     /**
      * 当前应用的分镜描述
      */
-    val genImagePrompt by lazy { ObservableField<CharSequence>(data?.genImagePrompt) }
+    val genImagePrompt by lazy { ObservableField<CharSequence>(data?.storyBoardDesc) }
 
     /**
      * 编辑中的分镜描述
      */
-    var editingGenImagePromptText: CharSequence? = data?.genImagePrompt
+    var editingGenImagePromptText: CharSequence? = data?.storyBoardDesc
         private set
     val editingGenImagePrompt by lazy { ObservableBoolean(false) }
     val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
@@ -99,7 +99,7 @@ class ItemStoryboardVM(
         onItemChanged()
         launch {
             var storyboard = data.get()
-            if (prompt != storyboard?.genImagePrompt) {
+            if (prompt != storyboard?.storyBoardDesc) {
                 sensitiveWordCheck(prompt).let { (isPass, highlightText) ->
                     if (!isPass) {
                         highlightText?.let { genImagePrompt.set(it) }
@@ -113,7 +113,7 @@ class ItemStoryboardVM(
                         workId = workId,
                         storyId = storyId,
                         storyboardId = storyboard?.storyboardId,
-                        genImagePrompt = prompt,
+                        storyBoardDesc = prompt,
                         operateType = 2
                     )
                     ApiFactory.apiService.workStoryboardSave(body)

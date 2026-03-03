@@ -24,14 +24,6 @@ data class SaveStoryboardBody(
      */
     val storyBoardDesc: String? = null,
     /**
-     * 图片生成提示词
-     */
-    val genImagePrompt: String? = null,
-    /**
-     * 视频生成提示词
-     */
-    val genVideoPrompt: String? = null,
-    /**
      * 当前图片url
      */
     val imageUrl: String? = null,

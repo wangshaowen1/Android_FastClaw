@@ -33,7 +33,7 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
     }
 
     override fun onBackPressed() {
-        if (mRealVM.genImagePrompt.value != mRealVM.storyboard.get()?.genImagePrompt) {
+        if (mRealVM.genImagePrompt.value != mRealVM.storyboard.get()?.storyBoardDesc) {
             showCommonDialog(
                 tip = "您对分镜信息有修改尚未保存，是否保存修改？",
                 cancelText = "不保存",

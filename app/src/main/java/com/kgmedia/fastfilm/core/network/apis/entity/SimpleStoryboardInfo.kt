@@ -50,14 +50,6 @@ data class SimpleStoryboardInfo(
      */
     val storyBoardDesc: String? = null,
     /**
-     * 图片生成提示词
-     */
-    var genImagePrompt: String? = null,
-    /**
-     * 视频生成提示词
-     */
-    val genVideoPrompt: String? = null,
-    /**
      * 当前图片url
      */
     var imageUrl: String? = null,

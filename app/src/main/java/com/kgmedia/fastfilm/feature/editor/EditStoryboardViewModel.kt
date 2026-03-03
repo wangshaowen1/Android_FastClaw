@@ -80,7 +80,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         }
         getGenPrice()
         storyboard.set(info)
-        genImagePrompt.value = info.genImagePrompt
+        genImagePrompt.value = info.storyBoardDesc
         if (info.videoGenerating) {
             loopVideo(info.taskId)
         } else if (info.imageGenerating) {
@@ -197,7 +197,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         }
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
-            if (prompt != storyboard.genImagePrompt) {
+            if (prompt != storyboard.storyBoardDesc) {
                 sensitiveWordCheck(prompt).let { (isPass, highlightText) ->
                     if (!isPass) {
                         highlightText?.let { genImagePrompt.value = it }
@@ -209,7 +209,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                         workId = storyboard.workId,
                         storyId = storyboard.storyId,
                         storyboardId = storyboard.storyboardId,
-                        genImagePrompt = prompt,
+                        storyBoardDesc = prompt,
                         operateType = if (isSynthesised) 3 else 2
                     )
                     mRepo.api.workStoryboardSave(body)
@@ -308,7 +308,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 workId = storyboard.workId,
                 storyId = storyboard.storyId,
                 storyboardId = storyboard.storyboardId,
-                genImagePrompt = prompt,
+                storyBoardDesc = prompt,
                 operateType = if (isSynthesised) 3 else 2
             )
             response(mRepo.api.workStoryboardSave(body)) {
