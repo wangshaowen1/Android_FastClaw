@@ -228,7 +228,7 @@ class DramasPlayPagerActivity :
     private fun handlePlayEnded() {
         if (!listController.smoothScrollToNext()) {
             "已经是最后一集了".showToast()
-            playerManager.replay()
+            //playerManager.replay()
         }
 //        if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.RECOMMEND) {
 //            if (!listController.smoothScrollToNext()) {
