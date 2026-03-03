@@ -58,8 +58,9 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     val playing by lazy { ObservableBoolean(true) }
 
     val genImagePrompt by lazy { MutableLiveData<CharSequence>() }
-    val genImagePrice by lazy { ObservableInt(0) }
-    val genVideoPrice by lazy { ObservableInt(0) }
+    val genImageCost by lazy { ObservableInt(0) }
+    val genVideoCost by lazy { ObservableInt(0) }
+    private var genVideoPrice = 0
 
     private var loopImageJob: Job? = null
     private var loopVideoJob: Job? = null
@@ -138,8 +139,8 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             "视频正在生成中，请稍后再试".showToast()
             return
         }
-        val cost = genVideoPrice.get()
-        if (cost == 0) {
+        val cost = genVideoCost.get()
+        if (cost == 0 && genVideoPrice == 0) {
             getGenPrice()
             return
         }
@@ -182,7 +183,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             "请先填写分镜描述".showToast()
             return
         }
-        val cost = genImagePrice.get()
+        val cost = genImageCost.get()
         if (cost == 0) {
             getGenPrice()
             return
@@ -316,8 +317,13 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
 
     private fun getGenPrice() {
         launch {
-            withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(2)).data?.pointNum?.let { genImagePrice.set(it) } }
-            withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(3)).data?.pointNum?.let { genVideoPrice.set(it * (storyboard.get()?.duration ?: 0)) } }
+            withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(2)).data?.pointNum?.let { genImageCost.set(it) } }
+            withContext(Dispatchers.IO) {
+                mRepo.api.queryAiPrice(StrategyTypeBody(3)).data?.pointNum?.let {
+                    genVideoPrice = it
+                    genVideoCost.set(it * (storyboard.get()?.duration ?: 0))
+                }
+            }
         }
     }
 

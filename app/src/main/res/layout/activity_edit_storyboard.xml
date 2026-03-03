@@ -254,17 +254,18 @@
                     app:startColor="#68BFF9" />
 
                 <ImageView
-                    setVisible="@{layout.genImagePrice > 0}"
+                    setVisible="@{layout.genImageCost > 0}"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:layout_marginStart="10dp"
                     android:src="@drawable/icon_power" />
 
                 <TextView
-                    setVisible="@{layout.genImagePrice > 0}"
+                    setVisible="@{layout.genImageCost > 0}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
+                    android:text="@{layout.genImageCost+``}"
                     android:textAppearance="@style/Text13"
                     android:textColor="@color/fixed_white_1"
                     tools:text="20" />
@@ -291,17 +292,18 @@
                     android:textColor="@color/fixed_white_1" />
 
                 <ImageView
-                    setVisible="@{layout.genVideoPrice > 0}"
+                    setVisible="@{layout.genVideoCost > 0}"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_marginStart="12dp"
                     android:src="@drawable/icon_power" />
 
                 <TextView
-                    setVisible="@{layout.genVideoPrice > 0}"
+                    setVisible="@{layout.genVideoCost > 0}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
+                    android:text="@{layout.genVideoCost+``}"
                     android:textAppearance="@style/Text16"
                     android:textColor="@color/fixed_white_1"
                     tools:text="20" />

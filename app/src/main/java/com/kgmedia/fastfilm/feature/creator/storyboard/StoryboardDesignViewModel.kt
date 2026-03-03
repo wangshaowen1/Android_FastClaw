@@ -405,6 +405,10 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun generateStoryboardVideo(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
+        if (adapter.items.isEmpty()) {
+            "请先添加分镜".showToast()
+            return
+        }
         val cost = cost.get()
         if (cost == 0 && genVideoPrice == 0) {
             calcGenVideoCost()
