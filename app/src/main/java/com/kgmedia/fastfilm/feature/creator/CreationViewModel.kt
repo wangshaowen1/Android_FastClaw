@@ -48,6 +48,8 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         mBundle.getInt(KEY_MODEL)
     }
 
+    // 缓存当前批次尚未展示的数据池
+    private val unshownInspirations = mutableListOf<InspirationInfo>()
     val inspirationPrompts by lazy { MutableLiveData<List<InspirationInfo>>() }
     val videoSetConfig by lazy { MutableLiveData<VideoConfigData>() }
 
@@ -164,12 +166,38 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
 
     fun randomInspirations(showLoading: Boolean = false) {
+        if (unshownInspirations.isNotEmpty()) {
+            displayNextBatch()
+            return
+        }
         requestWithLoading(
             apiBlock = { mRepo.getInspirationQuickList() },
             showLoading = showLoading
         ) {
-            inspirationPrompts.value = data
+            // 判空并处理新数据
+            data?.let { newData ->
+                unshownInspirations.clear() // 保底清理
+                // 将新拿到的一批数据打乱顺序后放入缓存池，这样后续按顺序取相当于随机抽取
+                unshownInspirations.addAll(newData.shuffled())
+
+                // 数据准备完毕，展示这一批的前5个
+                displayNextBatch()
+            }
         }
+    }
+
+    private fun displayNextBatch() {
+        // 每次取最多 4 个。如果末尾剩余不足 4 个，就全部取出展示
+        val countToTake = minOf(4, unshownInspirations.size)
+
+        // 复制出要展示的数据列表
+        val batchToShow = unshownInspirations.take(countToTake).toList()
+
+        // 从缓存池中剔除已经取出的数据 (使用 subList.clear() 比 removeAll 更安全且性能更好)
+        unshownInspirations.subList(0, countToTake).clear()
+
+        // 更新 LiveData 通知 UI 渲染
+        inspirationPrompts.value = batchToShow
     }
 
     /**
