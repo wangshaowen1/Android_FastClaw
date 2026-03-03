@@ -106,14 +106,15 @@ object AppRouter : IRouter {
         }
 
         when (host) {
-            "retoreCreator" -> {//fastfilm://retoreCreator?workId=%s&storyId=%s&workTitle=%s&workType=%s&workRatio=%s
+            "retoreCreator" -> {//fastfilm://retoreCreator?workId=%s&storyId=%s&workTitle=%s&workType=%s&totalEpisodeCnt=%s&workRatio=%s
                 val workId = uri.getQueryParameter("workId")
                 val storyId = uri.getQueryParameter("storyId")
                 val workTitle = uri.getQueryParameter("workTitle")
                 val workType = uri.getQueryParameter("workType")
                 val workRatio = uri.getQueryParameter("workRatio")
+                val totalEpisodeCnt = uri.getQueryParameter("totalEpisodeCnt")
                 Logger.i("retoreCreator workId=$workId, storyId=$storyId, workTitle=$workTitle, workType=$workType, workRatio=$workRatio")
-                startStory(workId, storyId, workTitle, workType?.toIntOrNull(), workRatio)
+                startStory(workId, storyId, workTitle, workType?.toIntOrNull(), totalEpisodeCnt?.toIntOrNull(), workRatio)
             }
 
             "bookGenerated" -> {
@@ -144,7 +145,7 @@ object AppRouter : IRouter {
     @JvmStatic
     fun startStory(work: WorkInfo?, storyId: String?) {
         work?.apply {
-            startStory(workId, storyId, workTitle, workType, workRatio)
+            startStory(workId, storyId, workTitle, workType, totalEpisodeCnt, workRatio)
         }
     }
 
@@ -154,7 +155,8 @@ object AppRouter : IRouter {
         storyId: String?,
         workTitle: String?,
         workType: Int?,
-        workRatio: String?
+        totalEpisodeCnt:Int?,
+        workRatio: String?,
     ) {
         if (workId.isNullOrEmpty() || storyId.isNullOrEmpty()) {
             return
@@ -183,6 +185,7 @@ object AppRouter : IRouter {
                     workId = workId,
                     workTitle = workTitle,
                     workType = workType,
+                    totalEpisodeCnt = totalEpisodeCnt,
                     singleEpisodeDetailsInfo = res.data
                 )
                 loading?.dismissAllowingStateLoss()
@@ -226,6 +229,7 @@ object AppRouter : IRouter {
                     workId = work.workId,
                     workTitle = work.workTitle,
                     workType = work.workType,
+                    1,
                     singleEpisodeDetailsInfo = res.data
                 )
                 loading?.dismissAllowingStateLoss()
@@ -248,6 +252,7 @@ object AppRouter : IRouter {
         workId: String?,
         workTitle: String?,
         workType: Int?,
+        totalEpisodeCnt: Int?,
         singleEpisodeDetailsInfo: EpisodeInfo?
     ) {
         val sortNo = singleEpisodeDetailsInfo?.sortNo ?: 1
@@ -262,7 +267,7 @@ object AppRouter : IRouter {
                     storyId = singleEpisodeDetailsInfo.storyId,
                     workTitle = workTitle,
                     chapterIndex = sortNo,
-                    model = getModel(workType = workType, sortNo = sortNo),
+                    model = getModel(totalEpisodeCnt,workType = workType, sortNo = sortNo),
                     videoRatio = singleEpisodeDetailsInfo.workRatio,
                 )
             }
@@ -276,7 +281,7 @@ object AppRouter : IRouter {
                     storyId = singleEpisodeDetailsInfo.storyId,
                     workTitle = workTitle,
                     chapterIndex = sortNo,
-                    model = getModel(workType = workType, sortNo = sortNo),
+                    model = getModel(totalEpisodeCnt,workType = workType, sortNo = sortNo),
                     videoRatio = singleEpisodeDetailsInfo.workRatio,
                 )
             }
@@ -291,7 +296,7 @@ object AppRouter : IRouter {
                     workTitle = workTitle,
                     taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO?.taskId,
                     chapterIndex = sortNo,
-                    model = getModel(workType = workType, sortNo = sortNo),
+                    model = getModel(totalEpisodeCnt,workType = workType, sortNo = sortNo),
                     videoRatio = singleEpisodeDetailsInfo.workRatio,
                 )
             }
@@ -306,7 +311,7 @@ object AppRouter : IRouter {
                     workTitle = workTitle,
                     taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO?.taskId,
                     chapterIndex = sortNo,
-                    model = getModel(workType = workType, sortNo = sortNo),
+                    model = getModel(totalEpisodeCnt,workType = workType, sortNo = sortNo),
                     videoRatio = singleEpisodeDetailsInfo.workRatio,
                 )
             }
@@ -323,6 +328,11 @@ object AppRouter : IRouter {
                 )
             }
         }
+    }
+
+    fun getModel(totalEpisodeCnt: Int?, workType: Int?, sortNo: Int = 0): Int {
+        if (totalEpisodeCnt == 1) return DramaGenerateConstants.MODEL_STORY_SINGLE
+        return getModel(workType = workType, sortNo = sortNo)
     }
 
     fun getModel(workType: Int?, sortNo: Int = 0): Int {
