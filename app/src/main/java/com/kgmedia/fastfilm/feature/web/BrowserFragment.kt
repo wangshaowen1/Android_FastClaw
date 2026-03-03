@@ -42,7 +42,6 @@ import com.kgmedia.fastfilm.core.ext.openWithBrowser
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.core.model.H5PayInfo
-import com.kgmedia.fastfilm.core.model.IdInfo
 import com.kgmedia.fastfilm.core.model.PermissionEntity
 import com.kgmedia.fastfilm.core.model.PreviewImageEntity
 import com.kgmedia.fastfilm.core.model.ResultEntity
@@ -424,10 +423,15 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
                     e.printStackTrace()
                 }
             }
-            //跳转微信服务号
+            //跳转微信客服
+            //{
+            //customerServiceJmpUrl: 跳转地址，
+            //enterpriseId： id
+            //}
             registerHandler("openWeChatService") { data, _ ->
                 try {
-                    GsonUtils.fromJson(data, IdInfo::class.java)?.id?.let { WXUtils.openWeChatService(it) }
+                    val json = JSONObject(data)
+                    WXUtils.customerServiceChat(activity, json.optString("customerServiceJmpUrl"), json.optString("enterpriseId"))
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
