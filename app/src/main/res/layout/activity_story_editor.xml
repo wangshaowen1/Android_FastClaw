@@ -52,7 +52,6 @@
                 android:ellipsize="end"
                 android:maxWidth="160dp"
                 android:maxLines="1"
-                android:hint="未命名标题"
                 android:text="@{layout.title}"
                 android:textColor="?attr/textColor3"
                 android:textSize="16sp"
