@@ -160,6 +160,9 @@ class HomeFragment :
     private fun handlePopup(popup: PopupInfo?) {
         popup?.let {
             if (popup.isShow()) {
+                if (popup.businessType == 1) {
+                    EventManager.onAppTrack(AppEvent.SF_SHOW_COURSE_ENROLL_POPUP)
+                }
                 ActivityDialog.show(popup)
                 Config.get().activityPopupShowMark(popup.id)
             }
