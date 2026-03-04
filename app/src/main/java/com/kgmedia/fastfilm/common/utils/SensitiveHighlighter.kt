@@ -1,9 +1,5 @@
 package com.kgmedia.fastfilm.common.utils
 
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.style.ForegroundColorSpan
-
 /**
  * *****************************************
  * 项目名称: FastFilm
@@ -29,33 +25,7 @@ object SensitiveHighlighter {
         text: String?,
         keywords: List<String>?,
         color: Int
-    ): SpannableStringBuilder {
-
-        if (text.isNullOrEmpty() || keywords.isNullOrEmpty()) {
-            return SpannableStringBuilder(text ?: "")
-        }
-        val spannable = SpannableStringBuilder(text)
-
-        keywords
-            .filter { it.isNotEmpty() }
-            .distinct()
-            .forEach { keyword ->
-                var startIndex = 0
-                while (true) {
-                    val index = text.indexOf(keyword, startIndex)
-                    if (index == -1) break
-
-                    val end = index + keyword.length
-
-                    spannable.setSpan(
-                        ForegroundColorSpan(color),
-                        index,
-                        end,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    startIndex = end
-                }
-            }
-        return spannable
+    ): CharSequence? {
+        return text
     }
 }
