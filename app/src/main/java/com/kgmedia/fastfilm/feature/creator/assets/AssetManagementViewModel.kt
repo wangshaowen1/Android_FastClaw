@@ -113,11 +113,11 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 val dialog = generatingDialog
                 if (dialog == null || !dialog.isShowing) {
                     // 只在 Dialog 不存在时创建
-                    generatingDialog = topActivity?.let { activity -> GeneratingDialog(activity, "$title $progress%", "退出后AI会继续生成") }
+                    generatingDialog = topActivity?.let { activity -> GeneratingDialog(activity, "$title （$progress%）", "退出后AI会继续生成") }
                     generatingDialog?.show()
                 } else {
                     // 如果已经在显示，只更新文字内容，不重置 Dialog
-                    dialog.updateContent("$title $progress%", "退出后AI会继续生成")
+                    dialog.updateContent("$title （$progress%）", "退出后AI会继续生成")
                 }
             } else {
                 generatingDialog?.dismiss()

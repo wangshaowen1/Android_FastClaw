@@ -89,7 +89,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     private val progressHelper by lazy {
         AutoProgressSimulator(viewModelScope) { show, title, progress ->
             // 统一处理进度文案更新
-            promptGenerating.value = Triple(show, "$title $progress%", "退出后AI会继续生成")
+            promptGenerating.value = Triple(show, "$title （$progress%）", "退出后AI会继续生成")
         }
     }
 
