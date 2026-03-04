@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.blankj.utilcode.util.AppUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.nhsd.basic.ext.getResString
@@ -16,6 +17,9 @@ object NotificationHelper {
     private const val CHANNEL_NAME = "应用通知"
 
     fun sendRecoveryNotification(content: String?, title: String? = R.string.app_name.getResString()) {
+        if (AppUtils.isAppForeground()) {
+            return
+        }
         val context = topActivity ?: return
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

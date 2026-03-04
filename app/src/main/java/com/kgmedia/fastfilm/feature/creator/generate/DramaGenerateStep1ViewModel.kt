@@ -36,7 +36,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         const val TAG = "DramaGenerateStep1ViewModel"
     }
 
-    var displayFail = 1
+    var displayFail = 2
     var displayContent = 0
 
     val promptGenerating = MutableLiveData<Triple<Boolean, String, String>>()
@@ -83,7 +83,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     override fun onCreate() {
         super.onCreate()
         displayContent = if(isStoryDocumentsMode()) 1 else 0
-        displayFail = if(isStoryDocumentsMode()) 2 else 1
     }
 
     private val progressHelper by lazy {
