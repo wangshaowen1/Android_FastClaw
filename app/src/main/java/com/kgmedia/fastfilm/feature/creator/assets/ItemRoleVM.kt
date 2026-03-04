@@ -126,6 +126,45 @@ class ItemRoleVM(
         )
     }
 
+    override suspend fun save(rolePrompt: String, roleName: String): Boolean {
+        val role = data.get()
+        if (rolePrompt == role?.rolePrompt && roleName == role.roleName) return true
+        if (rolePrompt != role?.rolePrompt) {
+            sensitiveWordCheck(rolePrompt).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { assetDesc.set(it) }
+                    return false
+                }
+            }
+        }
+        if (roleName != role?.roleName) {
+            sensitiveWordCheck(roleName).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { assetName.set(it) }
+                    return false
+                }
+            }
+        }
+        val response = withContext(Dispatchers.IO) {
+            val body = SaveRoleBody(
+                workId = workId,
+                storyId = storyId,
+                roleId = role?.roleId,
+                appearanceId = role?.appearanceId,
+                rolePrompt = rolePrompt,
+                roleName = roleName,
+            )
+            ApiFactory.apiService.workAssetRoleSave(body)
+        }
+        if (response.isSuccess && response.data != null) {
+            data.set(response.data)
+        } else {
+            response.msg?.showToast()
+            return false
+        }
+        return true
+    }
+
     override suspend fun delete(): ApiResponse<Any> {
         return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetRoleDelete(IdsBody(null, data.get()?.appearanceId)) }
     }

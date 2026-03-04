@@ -126,6 +126,45 @@ class ItemSceneVM(
         )
     }
 
+    override suspend fun save(scenePrompt: String, sceneName: String): Boolean {
+        val scene = data.get()
+        if (scenePrompt == scene?.scenePrompt && sceneName == scene.sceneName) return true
+        if (scenePrompt != scene?.scenePrompt) {
+            sensitiveWordCheck(scenePrompt).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { assetDesc.set(it) }
+                    return false
+                }
+            }
+        }
+        if (sceneName != scene?.sceneName) {
+            sensitiveWordCheck(sceneName).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { assetName.set(it) }
+                    return false
+                }
+            }
+        }
+        val response = withContext(Dispatchers.IO) {
+            val body = SaveSceneBody(
+                workId = workId,
+                storyId = storyId,
+                sceneId = scene?.sceneId,
+                appearanceId = scene?.appearanceId,
+                scenePrompt = scenePrompt,
+                sceneName = sceneName,
+            )
+            ApiFactory.apiService.workAssetSceneSave(body)
+        }
+        if (response.isSuccess && response.data != null) {
+            data.set(response.data)
+        } else {
+            response.msg?.showToast()
+            return false
+        }
+        return true
+    }
+
     override suspend fun delete(): ApiResponse<Any> {
         return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetSceneDelete(IdsBody(null, data.get()?.appearanceId)) }
     }

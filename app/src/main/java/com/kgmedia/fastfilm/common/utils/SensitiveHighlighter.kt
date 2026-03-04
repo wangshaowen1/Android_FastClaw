@@ -26,6 +26,6 @@ object SensitiveHighlighter {
         keywords: List<String>?,
         color: Int
     ): CharSequence? {
-        return text
+        return null
     }
 }

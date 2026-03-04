@@ -764,6 +764,12 @@ interface ApiService {
     suspend fun workAssetSingleGenerate(@Body body: GenerateAssetBody): ApiResponse<TaskStatusInfo?>
 
     /**
+     * 一键生成所有资产图片
+     */
+    @POST(ApiConstants.WORK_ASSET_ONE_KEY_GENERATE)
+    suspend fun workAssetOneKeyGenerate(@Body body: WorkBody): ApiResponse<TaskStatusInfo?>
+
+    /**
      * 生成全部分镜描述
      */
     @POST(ApiConstants.GENERATE_ALL_STORYBOARD_DESCRIPTION)

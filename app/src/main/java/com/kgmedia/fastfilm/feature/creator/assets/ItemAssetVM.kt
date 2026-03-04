@@ -127,13 +127,19 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     abstract fun generate(assetDesc: String, assetName: String, reference: ReferenceImageInfo? = null)
 
     /**
+     * 敏感词校验并保存
+     * @return 无需保存或保存成功
+     */
+    abstract suspend fun save(assetDesc: String, assetName: String): Boolean
+
+    /**
      * 调用删除资产接口
      */
     abstract suspend fun delete(): ApiResponse<Any>
 
     abstract fun loopGenStatus()
 
-    protected fun updateStatus(status: Int){
+    protected fun updateStatus(status: Int) {
         this.status.set(status)
         onItemChanged()
     }

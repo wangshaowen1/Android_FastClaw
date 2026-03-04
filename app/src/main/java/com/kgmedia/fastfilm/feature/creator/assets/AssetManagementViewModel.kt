@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
@@ -419,7 +420,49 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             "您还有资产尚未填写描述，请补充后再继续".showToast()
         }
         if (notGenerateItems.isNotEmpty()) {
-            notGenerateItems.forEach { (item, assetDesc, assetName) -> item.generate(assetDesc, assetName) }
+            launchWithLoading {
+                notGenerateItems.forEach { (item, assetDesc, assetName) -> if (!item.save(assetDesc, assetName)) return@launchWithLoading }
+                val response = withContext(Dispatchers.IO) { mRepo.api.workAssetOneKeyGenerate(WorkBody(workId, storyId)) }
+                if (!response.isSuccess) {
+                    if (response.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                        PowerRechargeDialog.show(true)
+                    } else {
+                        response.msg?.showToast()
+                    }
+                    return@launchWithLoading
+                }
+                val rolesDeferred = async { mRepo.workAssetRoleList(null, null, null, storyId, workId).data }
+                val scenesDeferred = async { mRepo.workAssetSceneList(null, null, null, storyId, workId).data }
+                val propsDeferred = async { mRepo.workAssetPropList(null, null, null, storyId, workId).data }
+                val roles = rolesDeferred.await()
+                val scenes = scenesDeferred.await()
+                val props = propsDeferred.await()
+                roles?.forEach { role ->
+                    adapter.items.find { it is ItemRoleVM && it.data.get()?.roleId == role.roleId }?.let {
+                        (it as? ItemRoleVM)?.apply {
+                            data.set(role)
+                            loopGenStatus()
+                        }
+                    }
+                }
+                scenes?.forEach { scene ->
+                    adapter.items.find { it is ItemSceneVM && it.data.get()?.sceneId == scene.sceneId }?.let {
+                        (it as? ItemSceneVM)?.apply {
+                            data.set(scene)
+                            loopGenStatus()
+                        }
+                    }
+                }
+                props?.forEach { prop ->
+                    adapter.items.find { it is ItemPropVM && it.data.get()?.propId == prop.propId }?.let {
+                        (it as? ItemPropVM)?.apply {
+                            data.set(prop)
+                            loopGenStatus()
+                        }
+                    }
+                }
+                onItemChanged()
+            }
         }
     }
 

@@ -130,6 +130,45 @@ class ItemPropVM(
         )
     }
 
+    override suspend fun save(propPrompt: String, propName: String): Boolean {
+        val prop = data.get()
+        if (propPrompt == prop?.propPrompt && propName == prop.propName) return true
+        if (propPrompt != prop?.propPrompt) {
+            sensitiveWordCheck(propPrompt).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { assetDesc.set(it) }
+                    return false
+                }
+            }
+        }
+        if (propName != prop?.propName) {
+            sensitiveWordCheck(propName).let { (isPass, highlightText) ->
+                if (!isPass) {
+                    highlightText?.let { assetName.set(it) }
+                    return false
+                }
+            }
+        }
+        val response = withContext(Dispatchers.IO) {
+            val body = SavePropBody(
+                workId = workId,
+                storyId = storyId,
+                propId = prop?.propId,
+                appearanceId = prop?.appearanceId,
+                propPrompt = propPrompt,
+                propName = propName,
+            )
+            ApiFactory.apiService.workAssetPropSave(body)
+        }
+        if (response.isSuccess && response.data != null) {
+            data.set(response.data)
+        } else {
+            response.msg?.showToast()
+            return false
+        }
+        return true
+    }
+
     override suspend fun delete(): ApiResponse<Any> {
         return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetPropDelete(IdsBody(null, data.get()?.appearanceId)) }
     }

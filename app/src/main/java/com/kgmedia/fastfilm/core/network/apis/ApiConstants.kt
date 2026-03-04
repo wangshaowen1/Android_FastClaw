@@ -513,6 +513,11 @@ object ApiConstants {
     const val WORK_ASSET_SINGLE_GENERATE = "ai/asset/generation/single/image"
 
     /**
+     * 一键生成所有资产图片
+     */
+    const val WORK_ASSET_ONE_KEY_GENERATE = "ai/asset/oneClickGeneration"
+
+    /**
      * 生成全部分镜描述
      */
     const val GENERATE_ALL_STORYBOARD_DESCRIPTION = "ai/storyboard/generation/description"
