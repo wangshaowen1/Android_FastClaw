@@ -185,20 +185,28 @@
                     app:layout_constraintDimensionRatio="345:130"
                     app:layout_constraintStart_toStartOf="@+id/tvStoryboardDesc" />
 
-                <TextView
+                <ScrollView
                     android:id="@+id/tvStoryboardDesc"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="15dp"
                     android:background="@drawable/fill_color2_r8"
-                    android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
-                    android:padding="12dp"
-                    android:text="@{layout.currentStoryboard.data.storyBoardDesc}"
-                    android:textAppearance="@style/Text13"
-                    android:textColor="?attr/textColor2"
+                    android:overScrollMode="never"
+                    android:scrollbars="none"
                     app:layout_constraintBottom_toTopOf="@+id/btnRegenerate"
-                    app:layout_constraintDimensionRatio="345:130"
-                    tools:text="白天，史莱克学院后山茂密的森林，阳光穿透层层叠叠的树叶，在铺满落叶的空地上洒下斑驳光影。唐三与小舞相对而立，清风吹过。唐三微微领首，脚下升起数圈魂环，地面开始震动。唐三..." />
+                    app:layout_constraintDimensionRatio="345:130">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+                        android:padding="12dp"
+                        android:text="@{layout.currentStoryboard.data.storyBoardDesc}"
+                        android:textAppearance="@style/Text13"
+                        android:textColor="?attr/textColor2"
+                        tools:text="白天，史莱克学院后山茂密的森林，阳光穿透层层叠叠的树叶，在铺满落叶的空地上洒下斑驳光影。唐三与小舞相对而立，清风吹过。唐三微微领首，脚下升起数圈魂环，地面开始震动。唐三..." />
+
+                </ScrollView>
 
                 <TextView
                     android:id="@+id/btnRegenerate"
