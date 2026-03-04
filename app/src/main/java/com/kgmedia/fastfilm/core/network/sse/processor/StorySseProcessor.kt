@@ -26,7 +26,7 @@ class StorySseProcessor(
         },
         onStoryUpdate = { content ->
             scope.launch(Dispatchers.Main.immediate) {
-                Logger.d("StorySseProcessor", "content: $content")
+                Logger.d("[SSE]", "content: $content")
                 onStoryUpdate(content)
             }
         },
@@ -39,7 +39,7 @@ class StorySseProcessor(
     }
 
     override fun onSSEChunk(chunk: String) {
-        Logger.d("StorySseProcessor", "Chunk: $chunk")
+        Logger.d("[SSE]", "Chunk: $chunk")
         fullSourceAccumulator.append(chunk) // 记录原始数据
         parser.onChunk(chunk)               // 解析字段
     }
