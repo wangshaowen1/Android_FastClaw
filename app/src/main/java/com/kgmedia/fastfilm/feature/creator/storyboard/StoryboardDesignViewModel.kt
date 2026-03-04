@@ -268,7 +268,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                         adapter.remove(this)
                         updateItemNo()
                     } else {
-                        topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
+                        topActivity?.showCommonDialog(title = "确认删除吗？", tip = "删除后可能影响视频生成", confirmText = "删除") {
                             deleteStoryboard(this)
                         }
                     }

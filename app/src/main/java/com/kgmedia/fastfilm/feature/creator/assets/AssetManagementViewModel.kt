@@ -346,7 +346,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         adapter.remove(this)
                         onItemChanged()
                     } else {
-                        topActivity?.showCommonDialog(tip = "确认删除吗？", confirmText = "删除") {
+                        topActivity?.showCommonDialog(title = "确认删除吗？", tip = "删除后可能影响视频生成", confirmText = "删除") {
                             deleteAsset(this)
                         }
                     }
@@ -428,7 +428,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             STEP_DESCRIPTION_GENERATED -> if (cost > 0) "一键生成  $POWER $cost".replaceSpan(POWER) { powerSpan } else "一键生成"
             STEP_IMAGE_GENERATING -> "图片生成中..."
             STEP_IMAGE_GENERATE_FAILED -> if (cost > 0) "重试失败项  $POWER $cost".replaceSpan(POWER) { powerSpan } else "重试失败项"
-            STEP_IMAGE_GENERATED -> "下一步：生成分镜图片"
+            STEP_IMAGE_GENERATED -> "下一步：分镜设计"
             else -> null
         }
     }
@@ -445,7 +445,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
 
             STEP_IMAGE_GENERATED -> {
-                //下一步：生成分镜图片
+                //下一步：分镜设计
                 generateAllStoryboardDescription(toNextStep)
             }
         }
