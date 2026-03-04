@@ -13,6 +13,7 @@
 
     <com.kgmedia.fastfilm.widget.BorderConstraintLayout
         android:id="@+id/btnAdd"
+        marginTopDp="@{item.marginTopDp}"
         singleClick="@{(v)->item.onItemClick.invoke(v)}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

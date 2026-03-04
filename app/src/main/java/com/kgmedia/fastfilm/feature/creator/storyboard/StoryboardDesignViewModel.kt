@@ -72,7 +72,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
     val adapter by lazy { StoryboardDesignAdapter() }
-    private val addStoryboardItem by lazy { ItemAddVM("添加分镜").apply { onItemClick.value = { addStoryboard(this) } } }
+    private val addStoryboardItem by lazy { ItemAddVM("添加分镜", 16).apply { onItemClick.value = { addStoryboard(this) } } }
     private var editingStoryboardDescVM: ItemStoryboardVM? = null
     private var loopAllStoryboardDescriptionStatusJob: Job? = null
     private var inputJob: Job? = null
