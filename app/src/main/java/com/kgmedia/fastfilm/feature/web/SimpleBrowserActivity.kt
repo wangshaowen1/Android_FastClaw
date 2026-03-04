@@ -118,7 +118,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
             title: String?,
             pushFlag: String? = null,
             interceptBack: Boolean? = false,
-            darkStyle: Boolean = false
+            darkStyle: Boolean = true
         ) {
             context ?: return
             url ?: return
