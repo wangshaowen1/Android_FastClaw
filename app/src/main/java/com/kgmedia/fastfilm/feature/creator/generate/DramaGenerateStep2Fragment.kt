@@ -90,6 +90,42 @@ class DramaGenerateStep2Fragment :
                 binding.vInputConfirm.isVisible = false
             }
         }
+        // 获取系统默认的滑动防误触阈值
+        // 获取系统默认的滑动防误触阈值
+//        val gestureDetector = android.view.GestureDetector(requireContext(), object : android.view.GestureDetector.SimpleOnGestureListener() {
+//            override fun onSingleTapUp(e: android.view.MotionEvent): Boolean {
+//                // 只有系统确认为“干净利落的单次点击”才会走这里，滑动绝对不会触发
+//                if (!mRealVM.isStreaming()) {
+//                    // 构造一个 CANCEL 事件发给底层输入框，撤销它的按下状态，防止软键盘乱弹
+//                    val cancelEvent = android.view.MotionEvent.obtain(e).apply {
+//                        action = android.view.MotionEvent.ACTION_CANCEL
+//                    }
+//                    binding.inputView.dispatchTouchEvent(cancelEvent)
+//                    cancelEvent.recycle()
+//
+//                    // 触发你的确认弹窗
+//                    mActivity.showConfirmPrompt(
+//                        "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.",
+//                        confirmText = "继续编辑"
+//                    ) {
+//                        binding.vInputConfirm.isVisible = false
+//                    }
+//                }
+//                return true
+//            }
+//        })
+//
+//        // 2. 将遮罩层的触摸事件代理给手势识别器
+//        binding.vInputConfirm.setOnTouchListener { _, event ->
+//            // 先让 GestureDetector 识别，如果判定为点击，它内部会返回 true 并拦截
+//            if (gestureDetector.onTouchEvent(event)) {
+//                return@setOnTouchListener true
+//            }
+//
+//            // 如果系统判定不是点击（比如你正在上下滑动），就把事件原封不动透传给底层，让文本正常滚动
+//            binding.inputView.dispatchTouchEvent(event)
+//            true
+//        }
         binding.btnDelete.setOnSingleClickListener {
             if (mRealVM.isStreaming()) return@setOnSingleClickListener
             mRealVM.input.value = ""
@@ -118,7 +154,7 @@ class DramaGenerateStep2Fragment :
         }
 
         mRealVM.mWorkName.observe(this) {
-            if (hostVm?.title?.value != it) {
+            if (hostVm?.title?.value.isNullOrEmpty()) {
                 hostVm?.title?.value = it
             }
         }
