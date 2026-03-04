@@ -33,6 +33,7 @@ class DramaTitleEditDialog() :
         binding.close.setOnClickListener {
             dismissAllowingStateLoss()
         }
+        binding.btnCancel.setOnClickListener { dismissAllowingStateLoss() }
         binding.btnConfirm.setOnClickListener {
             if (binding.nameInputer.text.trim().isEmpty()) {
                 "请输入需要更新的内容".showToast()
