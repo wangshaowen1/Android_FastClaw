@@ -59,72 +59,75 @@ class ItemPropVM(
         val preStatus = status.get()
         if (preStatus == 1) return
         updateStatus(1)
-        launch {
-            var prop = data.get()
-            if (propPrompt != prop?.propPrompt || propName != prop.propName) {
-                sensitiveWordCheck(propPrompt).let { (isPass, highlightText) ->
-                    if (!isPass) {
-                        highlightText?.let { assetDesc.set(it) }
-                        updateStatus(preStatus)
-                        return@launch
+        launch(
+            block = {
+                var prop = data.get()
+                if (propPrompt != prop?.propPrompt || propName != prop.propName) {
+                    sensitiveWordCheck(propPrompt).let { (isPass, highlightText) ->
+                        if (!isPass) {
+                            highlightText?.let { assetDesc.set(it) }
+                            updateStatus(preStatus)
+                            return@launch
+                        }
                     }
-                }
-                sensitiveWordCheck(propName).let { (isPass, highlightText) ->
-                    if (!isPass) {
-                        highlightText?.let { assetName.set(it) }
-                        updateStatus(preStatus)
-                        return@launch
+                    sensitiveWordCheck(propName).let { (isPass, highlightText) ->
+                        if (!isPass) {
+                            highlightText?.let { assetName.set(it) }
+                            updateStatus(preStatus)
+                            return@launch
+                        }
                     }
-                }
-                val response = withContext(Dispatchers.IO) {
-                    val body = SavePropBody(
-                        workId = workId,
-                        storyId = storyId,
-                        propId = prop?.propId,
-                        appearanceId = prop?.appearanceId,
-                        propPrompt = propPrompt,
-                        propName = propName,
-                    )
-                    ApiFactory.apiService.workAssetPropSave(body)
-                }
-                if (response.isSuccess && response.data != null) {
-                    prop = response.data
-                    data.set(response.data)
-                } else {
-                    response.msg?.showToast()
-                    updateStatus(preStatus)
-                    return@launch
-                }
-            }
-            val body = GenerateAssetBody(
-                workId = workId,
-                storyId = storyId,
-                assetId = prop?.propId,
-                appearanceId = prop?.appearanceId,
-                referenceImageId = reference?.id,
-                referenceImageUrl = reference?.referenceImageUrl,
-                referenceImageInStatus = if (reference != null) 1 else 0,
-                bizType = if (reference != null) 52 else 51,
-            )
-            response(
-                bean = ApiFactory.apiService.workAssetSingleGenerate(body),
-                result = {
-                    val prop = this@ItemPropVM.data.get() ?: SimplePropInfo()
-                    prop.taskId = data?.taskId
-                    prop.genStatus = data?.genStatus
-                    data?.genStatus?.let { updateStatus(it) }
-                    this@ItemPropVM.data.set(prop)
-                    loopGenStatus()
-                },
-                error = {
-                    if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                        PowerRechargeDialog.show(true)
+                    val response = withContext(Dispatchers.IO) {
+                        val body = SavePropBody(
+                            workId = workId,
+                            storyId = storyId,
+                            propId = prop?.propId,
+                            appearanceId = prop?.appearanceId,
+                            propPrompt = propPrompt,
+                            propName = propName,
+                        )
+                        ApiFactory.apiService.workAssetPropSave(body)
+                    }
+                    if (response.isSuccess && response.data != null) {
+                        prop = response.data
+                        data.set(response.data)
                     } else {
-                        this?.msg?.showToast()
+                        response.msg?.showToast()
+                        updateStatus(preStatus)
+                        return@launch
                     }
-                    updateStatus(preStatus)
-                })
-        }
+                }
+                val body = GenerateAssetBody(
+                    workId = workId,
+                    storyId = storyId,
+                    assetId = prop?.propId,
+                    appearanceId = prop?.appearanceId,
+                    referenceImageId = reference?.id,
+                    referenceImageUrl = reference?.referenceImageUrl,
+                    referenceImageInStatus = if (reference != null) 1 else 0,
+                    bizType = if (reference != null) 52 else 51,
+                )
+                response(
+                    bean = ApiFactory.apiService.workAssetSingleGenerate(body),
+                    result = {
+                        val prop = this@ItemPropVM.data.get() ?: SimplePropInfo()
+                        prop.taskId = data?.taskId
+                        prop.genStatus = data?.genStatus
+                        data?.genStatus?.let { updateStatus(it) }
+                        this@ItemPropVM.data.set(prop)
+                        loopGenStatus()
+                    },
+                    error = {
+                        if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                            PowerRechargeDialog.show(true)
+                        } else {
+                            this?.msg?.showToast()
+                        }
+                        updateStatus(preStatus)
+                    })
+            },
+            onError = { updateStatus(preStatus) }
+        )
     }
 
     override suspend fun delete(): ApiResponse<Any> {

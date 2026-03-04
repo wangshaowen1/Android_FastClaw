@@ -22,17 +22,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:text="分镜视频"
-                android:textAppearance="@style/Text14"
-                android:textColor="?attr/textColor2"
-                android:textStyle="bold" />
-
             <androidx.recyclerview.widget.RecyclerView
                 setPaddingBottomPx="@{layout.keyboardHeight}"
                 android:layout_width="match_parent"
@@ -45,7 +34,7 @@
                 android:overScrollMode="never"
                 android:scrollbars="none"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_storyboard_design" />
+                tools:listitem="@layout/item_storyboard_design_no_image" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 setVisible="@{layout.buttonText(layout.step,layout.cost).length() > 0}"

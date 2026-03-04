@@ -327,7 +327,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         edit.invoke(0)
                     } else {
                         editConfirm = true
-                        topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
+                        topActivity?.showCommonDialog(title = "确认编辑？", tip = "您想要编辑文字内容，修改内容可能影响AI视频生成质量.", confirmText = "继续编辑") {
                             edit.invoke(200)
                         }
                     }

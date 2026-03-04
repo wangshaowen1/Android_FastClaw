@@ -25,22 +25,30 @@
             android:text="@{`分镜`+item.no}"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor4"
-            app:layout_constraintDimensionRatio="345:130"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/btnDelete"
+            app:layout_constraintTop_toTopOf="@+id/btnDelete"
             tools:text="分镜2" />
+
+        <ImageView
+            android:id="@+id/btnDelete"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
+            android:layout_width="36dp"
+            android:layout_height="42dp"
+            android:layout_marginTop="4dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_delete_text4_16"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etStoryboardDesc"
-            content="@{item.genImagePrompt}"
+            content="@{item.storyBoardDesc}"
             onTextInputListener="@{item.storyboardDescInputListener}"
-            setEditing="@{item.editingGenImagePrompt}"
+            setEditing="@{item.editingStoryBoardDesc}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="15dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="15dp"
             android:background="@drawable/fill_color1_r8"
             android:ellipsize="end"
             android:gravity="top"
@@ -52,11 +60,11 @@
             android:textColorHint="?attr/textColor4"
             app:layout_constraintDimensionRatio="345:100"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvIndex" />
+            app:layout_constraintTop_toBottomOf="@+id/btnDelete" />
 
         <View
             android:id="@+id/etStoryboardDescCover"
-            setVisible="@{!item.editingGenImagePrompt}"
+            setVisible="@{!item.editingStoryBoardDesc}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:onClick="@{(v)->item.onItemClick.invoke(v)}"
@@ -64,33 +72,6 @@
             app:layout_constraintEnd_toEndOf="@+id/etStoryboardDesc"
             app:layout_constraintStart_toStartOf="@+id/etStoryboardDesc"
             app:layout_constraintTop_toTopOf="@+id/etStoryboardDesc" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
-            android:text="备注：本分镜采用融合生成视频，为节省您的积分消耗，无需分镜图"
-            android:textAppearance="@style/Text12"
-            android:textColor="?attr/textColor4"
-            app:layout_constraintEnd_toStartOf="@+id/btnDelete"
-            app:layout_constraintStart_toStartOf="@+id/etStoryboardDesc"
-            app:layout_constraintTop_toBottomOf="@+id/etStoryboardDesc"
-            app:layout_constraintTop_toTopOf="@+id/btnDelete" />
-
-        <ImageView
-            android:id="@+id/btnDelete"
-            singleClick="@{(v)->item.onItemClick.invoke(v)}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/fill_color1_r4"
-            android:scaleType="centerInside"
-            android:src="@drawable/icon_delete_text4_16"
-            app:layout_constraintDimensionRatio="1"
-            app:layout_constraintEnd_toEndOf="@+id/etStoryboardDesc"
-            app:layout_constraintTop_toBottomOf="@+id/etStoryboardDesc"
-            app:layout_constraintWidth_percent="0.085333333333" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

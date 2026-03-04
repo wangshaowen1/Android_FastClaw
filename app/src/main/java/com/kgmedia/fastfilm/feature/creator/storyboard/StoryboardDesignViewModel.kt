@@ -22,7 +22,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.GeneratingDialog
@@ -60,21 +59,6 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
          * 分镜描述生成失败
          */
         private const val STEP_DESCRIPTION_GENERATE_FAILED = 3
-
-        /**
-         * 分镜图片生成中
-         */
-        private const val STEP_IMAGE_GENERATING = 4
-
-        /**
-         * 分镜图片生成失败
-         */
-        private const val STEP_IMAGE_GENERATE_FAILED = 5
-
-        /**
-         * 分镜图片已生成
-         */
-        private const val STEP_IMAGE_GENERATED = 6
     }
 
     var workId: String? = null
@@ -94,7 +78,6 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private var inputJob: Job? = null
     val step by lazy { ObservableInt(STEP_INIT) }
     val cost by lazy { ObservableInt() }
-    private var genImagePrice = 0
     private var genVideoPrice = 0
     val keyboardHeight by lazy { ObservableInt() }
     private var generatingDialog: GeneratingDialog? = null
@@ -151,7 +134,6 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     override fun onCleared() {
         loopAllStoryboardDescriptionStatusJob?.cancel()
         inputJob?.cancel()
-        adapter.items.forEach { if (it is ItemStoryboardVM) it.clear() }
         super.onCleared()
     }
 
@@ -235,11 +217,11 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         )
     }
 
-    private fun SimpleStoryboardInfo.toItemStoryboardVM() = ItemStoryboardVM(workId, storyId, ::onItemChanged, this).applyConfig()
+    private fun SimpleStoryboardInfo.toItemStoryboardVM() = ItemStoryboardVM(workId, storyId, this).applyConfig()
 
     fun addStoryboard(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        adapter.add(index, ItemStoryboardVM(workId, storyId, ::onItemChanged, SimpleStoryboardInfo(genStatusImage = 0)).applyConfig())
+        adapter.add(index, ItemStoryboardVM(workId, storyId, SimpleStoryboardInfo()).applyConfig())
         updateItemNo()
     }
 
@@ -251,51 +233,12 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 item.no.set(storyboardNum)
             }
         }
-        onItemChanged()
-    }
-
-    private fun onItemChanged() {
-        var newNum = 0
-        var generatingNum = 0
-        var generatedNum = 0
-        var failedNum = 0
-        adapter.items.forEachIndexed { index, item ->
-            if (item is ItemStoryboardVM) {
-                //图片生成状态 0=待生成 1=生成中 2=成功 3=失败 99=无需生成
-                when (item.data.get()?.genStatusImage) {
-                    0 -> newNum++
-                    1 -> generatingNum++
-                    2, 99 -> generatedNum++
-                    3 -> failedNum++
-                }
-            }
-        }
-        when {
-            generatingNum > 0 -> step.set(STEP_IMAGE_GENERATING)
-            newNum > 0 -> {
-                step.set(STEP_DESCRIPTION_GENERATED)
-                calcGenImageCost()
-            }
-
-            failedNum > 0 -> {
-                step.set(STEP_IMAGE_GENERATE_FAILED)
-                calcGenImageCost()
-            }
-
-            else -> {
-                step.set(STEP_IMAGE_GENERATED)
-                calcGenVideoCost()
-            }
-        }
+        calcCost()
     }
 
     private fun ItemStoryboardVM.applyConfig(): ItemStoryboardVM {
         onItemClick.value = { view ->
             when (view?.id) {
-                R.id.ivCover -> {
-                    data.get()?.imageUrl?.let { PhotoPagerActivity.launch(topActivity, it) }
-                }
-
                 R.id.etStoryboardDescCover -> {
                     inputJob?.cancel()
                     val edit: (delay: Long) -> Unit = { delay ->
@@ -310,11 +253,11 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                             editStoryboardDesc()
                         }
                     }
-                    if (genImagePrompt.get().isNullOrEmpty() || editConfirm) {
+                    if (storyBoardDesc.get().isNullOrEmpty() || editConfirm) {
                         edit.invoke(0)
                     } else {
                         editConfirm = true
-                        topActivity?.showCommonDialog(tip = "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.", confirmText = "继续编辑") {
+                        topActivity?.showCommonDialog(title = "确认编辑？", tip = "您想要编辑文字内容，修改内容可能影响AI视频生成质量.", confirmText = "继续编辑") {
                             edit.invoke(200)
                         }
                     }
@@ -338,59 +281,13 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private fun deleteStoryboard(item: ItemStoryboardVM) {
         launchWithLoading {
             response(mRepo.api.workStoryboardDelete(IdsBody(null, item.data.get()?.storyboardId))) {
-                item.clear()
                 adapter.remove(item)
                 updateItemNo()
             }
         }
     }
 
-    private fun oneKeyGenerate() {
-        val cost = cost.get()
-        if (cost == 0) {
-            calcGenImageCost()
-            return
-        }
-        if (PowerRechargeDialog.checkLowBalance(cost)) return
-        var notInput = false
-        val notGenerateItems = arrayListOf<Pair<ItemStoryboardVM, String>>()
-        adapter.items.forEachIndexed { index, item ->
-            if (item is ItemStoryboardVM) {
-                val genStatusImage = item.data.get()?.genStatusImage ?: 1
-                if (genStatusImage < 1 || genStatusImage == 3) {
-                    val genImagePrompt = if (item.editingGenImagePrompt.get()) item.editingGenImagePromptText else item.genImagePrompt.get()
-                    if (genImagePrompt.isNullOrEmpty()) {
-                        notInput = true
-                    } else {
-                        notGenerateItems.add(item to genImagePrompt.toString())
-                    }
-                }
-            }
-        }
-        if (notInput) {
-            "您还有分镜尚未填写描述，请补充后再继续".showToast()
-        }
-        if (notGenerateItems.isNotEmpty()) {
-            notGenerateItems.forEach { (item, genImagePrompt) -> item.generate(genImagePrompt) }
-        }
-    }
-
-    private fun calcGenImageCost() {
-        cost.set(0)
-        launch {
-            if (genImagePrice <= 0) {
-                withContext(Dispatchers.IO) {
-                    mRepo.api.queryAiPrice(StrategyTypeBody(2)).data?.pointNum?.let { genImagePrice = it }
-                }
-            }
-            if (genImagePrice > 0) {
-                val num = adapter.items.count { it is ItemStoryboardVM && it.data.get()?.genStatusImage?.let { status -> status < 1 || status == 3 } == true }
-                cost.set(genImagePrice * num)
-            }
-        }
-    }
-
-    private fun calcGenVideoCost() {
+    private fun calcCost() {
         cost.set(0)
         launch {
             if (genVideoPrice <= 0) {
@@ -412,11 +309,12 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
         val cost = cost.get()
         if (cost == 0 && genVideoPrice == 0) {
-            calcGenVideoCost()
+            calcCost()
             return
         }
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
+            adapter.items.forEach { if (it is ItemStoryboardVM && !it.save()) return@launchWithLoading }
             response(
                 bean = mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId)),
                 result = { toNextStep?.invoke(workId, storyId, data?.taskId) },
@@ -431,15 +329,12 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun buttonEnable(step: Int): Boolean {
-        return step == STEP_DESCRIPTION_GENERATED || step == STEP_IMAGE_GENERATE_FAILED || step == STEP_IMAGE_GENERATED
+        return step == STEP_DESCRIPTION_GENERATED
     }
 
     fun buttonText(step: Int, cost: Int): CharSequence? {
         return when (step) {
-            STEP_DESCRIPTION_GENERATED -> if (cost > 0) "一键生成  $POWER $cost".replaceSpan(POWER) { powerSpan } else "一键生成"
-            STEP_IMAGE_GENERATING -> "图片生成中..."
-            STEP_IMAGE_GENERATE_FAILED -> if (cost > 0) "重试失败项  $POWER $cost".replaceSpan(POWER) { powerSpan } else "重试失败项"
-            STEP_IMAGE_GENERATED -> if (cost > 0) "生成分镜视频  $POWER $cost".replaceSpan(POWER) { powerSpan } else "生成分镜视频"
+            STEP_DESCRIPTION_GENERATED -> if (cost > 0) "生成分镜视频  $POWER $cost".replaceSpan(POWER) { powerSpan } else "生成分镜视频"
             else -> null
         }
     }
@@ -449,12 +344,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     fun clickNext(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {
         when (step.get()) {
-            STEP_DESCRIPTION_GENERATED, STEP_IMAGE_GENERATE_FAILED -> {
-                //一键生成、重试失败项
-                oneKeyGenerate()
-            }
-
-            STEP_IMAGE_GENERATED -> {
+            STEP_DESCRIPTION_GENERATED -> {
                 //下一步：生成分镜图片
                 generateStoryboardVideo(toNextStep)
             }

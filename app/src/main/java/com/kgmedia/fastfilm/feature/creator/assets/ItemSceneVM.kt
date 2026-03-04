@@ -55,72 +55,75 @@ class ItemSceneVM(
         val preStatus = status.get()
         if (preStatus == 1) return
         updateStatus(1)
-        launch {
-            var scene = data.get()
-            if (scenePrompt != scene?.scenePrompt || sceneName != scene.sceneName) {
-                sensitiveWordCheck(scenePrompt).let { (isPass, highlightText) ->
-                    if (!isPass) {
-                        highlightText?.let { assetDesc.set(it) }
-                        updateStatus(preStatus)
-                        return@launch
+        launch(
+            block = {
+                var scene = data.get()
+                if (scenePrompt != scene?.scenePrompt || sceneName != scene.sceneName) {
+                    sensitiveWordCheck(scenePrompt).let { (isPass, highlightText) ->
+                        if (!isPass) {
+                            highlightText?.let { assetDesc.set(it) }
+                            updateStatus(preStatus)
+                            return@launch
+                        }
                     }
-                }
-                sensitiveWordCheck(sceneName).let { (isPass, highlightText) ->
-                    if (!isPass) {
-                        highlightText?.let { assetName.set(it) }
-                        updateStatus(preStatus)
-                        return@launch
+                    sensitiveWordCheck(sceneName).let { (isPass, highlightText) ->
+                        if (!isPass) {
+                            highlightText?.let { assetName.set(it) }
+                            updateStatus(preStatus)
+                            return@launch
+                        }
                     }
-                }
-                val response = withContext(Dispatchers.IO) {
-                    val body = SaveSceneBody(
-                        workId = workId,
-                        storyId = storyId,
-                        sceneId = scene?.sceneId,
-                        appearanceId = scene?.appearanceId,
-                        scenePrompt = scenePrompt,
-                        sceneName = sceneName,
-                    )
-                    ApiFactory.apiService.workAssetSceneSave(body)
-                }
-                if (response.isSuccess && response.data != null) {
-                    scene = response.data
-                    data.set(response.data)
-                } else {
-                    response.msg?.showToast()
-                    updateStatus(preStatus)
-                    return@launch
-                }
-            }
-            val body = GenerateAssetBody(
-                workId = workId,
-                storyId = storyId,
-                assetId = scene?.sceneId,
-                appearanceId = scene?.appearanceId,
-                referenceImageId = reference?.id,
-                referenceImageUrl = reference?.referenceImageUrl,
-                referenceImageInStatus = if (reference != null) 1 else 0,
-                bizType = if (reference != null) 62 else 61,
-            )
-            response(
-                bean = ApiFactory.apiService.workAssetSingleGenerate(body),
-                result = {
-                    val scene = this@ItemSceneVM.data.get() ?: SimpleSceneInfo()
-                    scene.taskId = data?.taskId
-                    scene.genStatus = data?.genStatus
-                    data?.genStatus?.let { updateStatus(it) }
-                    this@ItemSceneVM.data.set(scene)
-                    loopGenStatus()
-                },
-                error = {
-                    if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                        PowerRechargeDialog.show(true)
+                    val response = withContext(Dispatchers.IO) {
+                        val body = SaveSceneBody(
+                            workId = workId,
+                            storyId = storyId,
+                            sceneId = scene?.sceneId,
+                            appearanceId = scene?.appearanceId,
+                            scenePrompt = scenePrompt,
+                            sceneName = sceneName,
+                        )
+                        ApiFactory.apiService.workAssetSceneSave(body)
+                    }
+                    if (response.isSuccess && response.data != null) {
+                        scene = response.data
+                        data.set(response.data)
                     } else {
-                        this?.msg?.showToast()
+                        response.msg?.showToast()
+                        updateStatus(preStatus)
+                        return@launch
                     }
-                    updateStatus(preStatus)
-                })
-        }
+                }
+                val body = GenerateAssetBody(
+                    workId = workId,
+                    storyId = storyId,
+                    assetId = scene?.sceneId,
+                    appearanceId = scene?.appearanceId,
+                    referenceImageId = reference?.id,
+                    referenceImageUrl = reference?.referenceImageUrl,
+                    referenceImageInStatus = if (reference != null) 1 else 0,
+                    bizType = if (reference != null) 62 else 61,
+                )
+                response(
+                    bean = ApiFactory.apiService.workAssetSingleGenerate(body),
+                    result = {
+                        val scene = this@ItemSceneVM.data.get() ?: SimpleSceneInfo()
+                        scene.taskId = data?.taskId
+                        scene.genStatus = data?.genStatus
+                        data?.genStatus?.let { updateStatus(it) }
+                        this@ItemSceneVM.data.set(scene)
+                        loopGenStatus()
+                    },
+                    error = {
+                        if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                            PowerRechargeDialog.show(true)
+                        } else {
+                            this?.msg?.showToast()
+                        }
+                        updateStatus(preStatus)
+                    })
+            },
+            onError = { updateStatus(preStatus) }
+        )
     }
 
     override suspend fun delete(): ApiResponse<Any> {

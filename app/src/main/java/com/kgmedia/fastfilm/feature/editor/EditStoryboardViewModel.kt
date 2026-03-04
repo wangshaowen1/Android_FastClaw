@@ -63,12 +63,9 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     }
     val playing by lazy { ObservableBoolean(true) }
 
-    val genImagePrompt by lazy { MutableLiveData<CharSequence>() }
-    val genImageCost by lazy { ObservableInt(0) }
+    val storyBoardDesc by lazy { MutableLiveData<CharSequence>() }
     val genVideoCost by lazy { ObservableInt(0) }
     private var genVideoPrice = 0
-
-    private var loopImageJob: Job? = null
     private var loopVideoJob: Job? = null
 
     override fun onCreate() {
@@ -80,13 +77,12 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         }
         getGenPrice()
         storyboard.set(info)
-        genImagePrompt.value = info.storyBoardDesc
+        storyBoardDesc.value = info.storyBoardDesc
         if (info.videoGenerating) {
             loopVideo(info.taskId)
-        } else if (info.imageGenerating) {
-            loopImage(info.taskId)
+        } else {
+            play()
         }
-        play()
     }
 
     override fun onCleared() {
@@ -137,12 +133,13 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
      */
     fun retryGenerateVideo(finish: Boolean = false) {
         val storyboard = storyboard.get() ?: return
-        if (storyboard.imageGenerating) {
-            "图片正在生成中，请稍后再试".showToast()
-            return
-        }
         if (storyboard.videoGenerating) {
             "视频正在生成中，请稍后再试".showToast()
+            return
+        }
+        val prompt = storyBoardDesc.value?.toString()
+        if (prompt.isNullOrEmpty()) {
+            "请先填写分镜描述".showToast()
             return
         }
         val cost = genVideoCost.get()
@@ -152,6 +149,31 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         }
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
+            if (prompt != storyboard.storyBoardDesc) {
+                sensitiveWordCheck(prompt).let { (isPass, highlightText) ->
+                    if (!isPass) {
+                        highlightText?.let { storyBoardDesc.value = it }
+                        return@launchWithLoading
+                    }
+                }
+                val response = withContext(Dispatchers.IO) {
+                    val body = SaveStoryboardBody(
+                        workId = storyboard.workId,
+                        storyId = storyboard.storyId,
+                        storyboardId = storyboard.storyboardId,
+                        storyBoardDesc = prompt
+                    )
+                    mRepo.api.workStoryboardSave(body)
+                }
+                val data = response.data
+                if (response.isSuccess && data != null) {
+                    this@EditStoryboardViewModel.storyboard.set(data)
+                    FlowEventBus.postSync(Events.StoryboardSavedEvent(data))
+                } else {
+                    response.msg?.showToast()
+                    return@launchWithLoading
+                }
+            }
             val body = GenerateStoryboardBody(
                 storyboardId = storyboard.storyboardId,
                 workId = storyboard.workId,
@@ -173,98 +195,10 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     }
 
     /**
-     * 重新生成图片
-     */
-    fun reGenerateImage() {
-        val storyboard = storyboard.get() ?: return
-        if (storyboard.imageGenerating) {
-            "图片正在生成中，请稍后再试".showToast()
-            return
-        }
-        if (storyboard.videoGenerating) {
-            "视频正在生成中，请稍后再试".showToast()
-            return
-        }
-        val prompt = genImagePrompt.value?.toString()
-        if (prompt.isNullOrEmpty()) {
-            "请先填写分镜描述".showToast()
-            return
-        }
-        val cost = genImageCost.get()
-        if (cost == 0) {
-            getGenPrice()
-            return
-        }
-        if (PowerRechargeDialog.checkLowBalance(cost)) return
-        launchWithLoading {
-            if (prompt != storyboard.storyBoardDesc) {
-                sensitiveWordCheck(prompt).let { (isPass, highlightText) ->
-                    if (!isPass) {
-                        highlightText?.let { genImagePrompt.value = it }
-                        return@launchWithLoading
-                    }
-                }
-                val response = withContext(Dispatchers.IO) {
-                    val body = SaveStoryboardBody(
-                        workId = storyboard.workId,
-                        storyId = storyboard.storyId,
-                        storyboardId = storyboard.storyboardId,
-                        storyBoardDesc = prompt,
-                        operateType = if (isSynthesised) 3 else 2
-                    )
-                    mRepo.api.workStoryboardSave(body)
-                }
-                val data = response.data
-                if (response.isSuccess && data != null) {
-                    this@EditStoryboardViewModel.storyboard.set(data)
-                    FlowEventBus.postSync(Events.StoryboardSavedEvent(data))
-                } else {
-                    response.msg?.showToast()
-                    return@launchWithLoading
-                }
-            }
-            val body = GenerateStoryboardBody(
-                storyboardId = storyboard.storyboardId,
-                workId = storyboard.workId,
-                storyId = storyboard.storyId
-            )
-            response(mRepo.api.workStoryboardSingleGenerate(body)) {
-                this@EditStoryboardViewModel.storyboard.get()?.apply {
-                    taskId = data?.taskId
-                    genStatusImage = data?.genStatus
-                }
-                this@EditStoryboardViewModel.storyboard.notifyChange()
-                loopImage(data?.taskId)
-                FlowEventBus.postSync(Events.StoryboardImageRegenerateEvent(storyboard.workId, storyboard.storyId, storyboard.storyboardId))
-            }
-        }
-    }
-
-    /**
      * 重新生成视频
      */
     fun reGenerateVideo() {
         retryGenerateVideo(true)
-    }
-
-    private fun loopImage(taskId: String?) {
-        loopImageJob?.cancel()
-        loopImageJob = launch {
-            loop@ while (storyboard.get()?.imageGenerating == true) {
-                runCatching {
-                    val taskStatus = withContext(Dispatchers.IO) { mRepo.api.workStoryboardSingleStatus(TaskIdBody(taskId, 71)).data }
-                    storyboard.get()?.apply {
-                        genStatusImage = taskStatus?.genStatus
-                        imageUrl = taskStatus?.result
-                    }
-                    storyboard.notifyChange()
-                }
-                if (storyboard.get()?.imageGenerating != true) {
-                    break@loop
-                }
-                delay(3000)
-            }
-        }
     }
 
     private fun loopVideo(taskId: String?) {
@@ -292,7 +226,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
 
     fun save(finish: Boolean = false) {
         val storyboard = storyboard.get() ?: return
-        val prompt = genImagePrompt.value?.toString()
+        val prompt = storyBoardDesc.value?.toString()
         if (prompt.isNullOrEmpty()) {
             "请先填写分镜描述".showToast()
             return
@@ -300,7 +234,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         launchWithLoading {
             sensitiveWordCheck(prompt).let { (isPass, highlightText) ->
                 if (!isPass) {
-                    highlightText?.let { genImagePrompt.value = it }
+                    highlightText?.let { storyBoardDesc.value = it }
                     return@launchWithLoading
                 }
             }
@@ -308,8 +242,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 workId = storyboard.workId,
                 storyId = storyboard.storyId,
                 storyboardId = storyboard.storyboardId,
-                storyBoardDesc = prompt,
-                operateType = if (isSynthesised) 3 else 2
+                storyBoardDesc = prompt
             )
             response(mRepo.api.workStoryboardSave(body)) {
                 data?.let {
@@ -326,7 +259,6 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
 
     private fun getGenPrice() {
         launch {
-            withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(2)).data?.pointNum?.let { genImageCost.set(it) } }
             withContext(Dispatchers.IO) {
                 mRepo.api.queryAiPrice(StrategyTypeBody(3)).data?.pointNum?.let {
                     genVideoPrice = it
@@ -337,7 +269,6 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     }
 
     override fun onDestroy() {
-        loopImageJob?.cancel()
         loopVideoJob?.cancel()
         super.onDestroy()
     }

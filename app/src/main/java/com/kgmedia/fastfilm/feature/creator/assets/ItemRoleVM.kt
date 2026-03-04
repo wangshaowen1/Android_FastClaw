@@ -55,72 +55,75 @@ class ItemRoleVM(
         val preStatus = status.get()
         if (preStatus == 1) return
         updateStatus(1)
-        launch {
-            var role = data.get()
-            if (rolePrompt != role?.rolePrompt || roleName != role.roleName) {
-                sensitiveWordCheck(rolePrompt).let { (isPass, highlightText) ->
-                    if (!isPass) {
-                        highlightText?.let { assetDesc.set(it) }
-                        updateStatus(preStatus)
-                        return@launch
+        launch(
+            block = {
+                var role = data.get()
+                if (rolePrompt != role?.rolePrompt || roleName != role.roleName) {
+                    sensitiveWordCheck(rolePrompt).let { (isPass, highlightText) ->
+                        if (!isPass) {
+                            highlightText?.let { assetDesc.set(it) }
+                            updateStatus(preStatus)
+                            return@launch
+                        }
                     }
-                }
-                sensitiveWordCheck(roleName).let { (isPass, highlightText) ->
-                    if (!isPass) {
-                        highlightText?.let { assetName.set(it) }
-                        updateStatus(preStatus)
-                        return@launch
+                    sensitiveWordCheck(roleName).let { (isPass, highlightText) ->
+                        if (!isPass) {
+                            highlightText?.let { assetName.set(it) }
+                            updateStatus(preStatus)
+                            return@launch
+                        }
                     }
-                }
-                val response = withContext(Dispatchers.IO) {
-                    val body = SaveRoleBody(
-                        workId = workId,
-                        storyId = storyId,
-                        roleId = role?.roleId,
-                        appearanceId = role?.appearanceId,
-                        rolePrompt = rolePrompt,
-                        roleName = roleName,
-                    )
-                    ApiFactory.apiService.workAssetRoleSave(body)
-                }
-                if (response.isSuccess && response.data != null) {
-                    role = response.data
-                    data.set(response.data)
-                } else {
-                    response.msg?.showToast()
-                    updateStatus(preStatus)
-                    return@launch
-                }
-            }
-            val body = GenerateAssetBody(
-                workId = workId,
-                storyId = storyId,
-                assetId = role?.roleId,
-                appearanceId = role?.appearanceId,
-                referenceImageId = reference?.id,
-                referenceImageUrl = reference?.referenceImageUrl,
-                referenceImageInStatus = if (reference != null) 1 else 0,
-                bizType = if (reference != null) 42 else 41,
-            )
-            response(
-                bean = ApiFactory.apiService.workAssetSingleGenerate(body),
-                result = {
-                    val role = this@ItemRoleVM.data.get() ?: SimpleRoleInfo()
-                    role.taskId = data?.taskId
-                    role.genStatus = data?.genStatus
-                    data?.genStatus?.let { updateStatus(it) }
-                    this@ItemRoleVM.data.set(role)
-                    loopGenStatus()
-                },
-                error = {
-                    if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                        PowerRechargeDialog.show(true)
+                    val response = withContext(Dispatchers.IO) {
+                        val body = SaveRoleBody(
+                            workId = workId,
+                            storyId = storyId,
+                            roleId = role?.roleId,
+                            appearanceId = role?.appearanceId,
+                            rolePrompt = rolePrompt,
+                            roleName = roleName,
+                        )
+                        ApiFactory.apiService.workAssetRoleSave(body)
+                    }
+                    if (response.isSuccess && response.data != null) {
+                        role = response.data
+                        data.set(response.data)
                     } else {
-                        this?.msg?.showToast()
+                        response.msg?.showToast()
+                        updateStatus(preStatus)
+                        return@launch
                     }
-                    updateStatus(preStatus)
-                })
-        }
+                }
+                val body = GenerateAssetBody(
+                    workId = workId,
+                    storyId = storyId,
+                    assetId = role?.roleId,
+                    appearanceId = role?.appearanceId,
+                    referenceImageId = reference?.id,
+                    referenceImageUrl = reference?.referenceImageUrl,
+                    referenceImageInStatus = if (reference != null) 1 else 0,
+                    bizType = if (reference != null) 42 else 41,
+                )
+                response(
+                    bean = ApiFactory.apiService.workAssetSingleGenerate(body),
+                    result = {
+                        val role = this@ItemRoleVM.data.get() ?: SimpleRoleInfo()
+                        role.taskId = data?.taskId
+                        role.genStatus = data?.genStatus
+                        data?.genStatus?.let { updateStatus(it) }
+                        this@ItemRoleVM.data.set(role)
+                        loopGenStatus()
+                    },
+                    error = {
+                        if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                            PowerRechargeDialog.show(true)
+                        } else {
+                            this?.msg?.showToast()
+                        }
+                        updateStatus(preStatus)
+                    })
+            },
+            onError = { updateStatus(preStatus) }
+        )
     }
 
     override suspend fun delete(): ApiResponse<Any> {

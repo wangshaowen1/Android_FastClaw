@@ -11,8 +11,6 @@ import kotlinx.parcelize.Parcelize
  *     "sortNo": "序号",
  *     "creationMode": "[枚举]创作模式 [1=图生视频 2=首尾帧视频 3=融合生视频]",
  *     "storyBoardDesc": "分镜描述",
- *     "genImagePrompt": "图片生成提示词",
- *     "genVideoPrompt": "视频生成提示词",
  *     "imageUrl": "当前图片url",
  *     "videoUrl": "当前视频url",
  *     "stepStatus": "[枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]",
@@ -42,17 +40,9 @@ data class SimpleStoryboardInfo(
      */
     val sortNo: Int? = null,
     /**
-     * [枚举]创作模式 [1=图生视频 2=首尾帧视频 3=融合生视频]
-     */
-    val creationMode: Int? = null,
-    /**
      * 分镜描述
      */
     val storyBoardDesc: String? = null,
-    /**
-     * 当前图片url
-     */
-    var imageUrl: String? = null,
     /**
      * 当前视频url
      */
@@ -74,19 +64,10 @@ data class SimpleStoryboardInfo(
      */
     private val taskType: Int? = null,
     /**
-     * [枚举]图片生成状态 0=待生成 1=生成中 2=成功 3=失败 99=无需生成
-     */
-    var genStatusImage: Int? = null,
-    /**
      * [枚举]视频生成状态 0=待生成 1=生成中 2=成功 3=失败 5=重绘中 6=重绘完成
      */
     var genStatusVideo: Int? = null
 ) : Parcelable {
-    val imageGenerating get() = genStatusImage == 1
-
-    val imageGenerated get() = genStatusImage == 2 || genStatusImage == 99
-
-    val imageGenerateFailed get() = genStatusImage == 3
 
     val videoGenerating get() = genStatusVideo == 1 || genStatusVideo == 5
 

@@ -12,14 +12,12 @@ import com.nhsd.basic.item.QuickViewHolder
 class StoryboardDesignAdapter : BaseMultiItemAdapter<AppItemViewModel<*>>() {
 
     init {
-        addItemType(1, MultiItemAdapterListener(R.layout.item_storyboard_design))
-        addItemType(2, MultiItemAdapterListener(R.layout.item_storyboard_design_no_image))
-        addItemType(3, MultiItemAdapterListener(R.layout.item_add_button))
+        addItemType(1, MultiItemAdapterListener(R.layout.item_storyboard_design_no_image))
+        addItemType(2, MultiItemAdapterListener(R.layout.item_add_button))
         onItemViewType { position, list ->
             val item = list[position]
             when (item) {
-                is ItemAddVM -> 3
-                is ItemStoryboardVM -> if (item.data.get()?.creationMode == 3) 2 else 1
+                is ItemAddVM -> 2
                 else -> 1
             }
         }
