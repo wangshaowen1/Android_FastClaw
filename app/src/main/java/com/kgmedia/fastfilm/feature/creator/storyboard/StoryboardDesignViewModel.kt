@@ -221,7 +221,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun addStoryboard(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        adapter.add(index, ItemStoryboardVM(workId, storyId, SimpleStoryboardInfo()).applyConfig())
+        adapter.add(index, ItemStoryboardVM(workId, storyId, null).applyConfig())
         updateItemNo()
     }
 
