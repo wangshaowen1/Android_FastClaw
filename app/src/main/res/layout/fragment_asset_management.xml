@@ -31,6 +31,7 @@
 
                 <RadioButton
                     android:id="@+id/rbRoles"
+                    setVisible="@{layout.hasRole}"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:button="@null"
@@ -44,6 +45,7 @@
 
                 <RadioButton
                     android:id="@+id/rbScenes"
+                    setVisible="@{layout.hasScene}"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:button="@null"
@@ -56,6 +58,7 @@
 
                 <RadioButton
                     android:id="@+id/rbProps"
+                    setVisible="@{layout.hasProp}"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:button="@null"

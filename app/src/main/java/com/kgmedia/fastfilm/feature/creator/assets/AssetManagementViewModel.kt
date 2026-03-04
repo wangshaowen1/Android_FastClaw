@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
+import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.KeyboardUtils
@@ -127,6 +128,9 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
     private val powerSpan by lazy { CenterImageSpan(App.instance, R.drawable.icon_power).apply { setDrawableSize(16.dp, 16.dp) } }
     private var editConfirm = false
+    val hasRole by lazy { ObservableBoolean(false) }
+    val hasScene by lazy { ObservableBoolean(false) }
+    val hasProp by lazy { ObservableBoolean(false) }
 
     override fun onResume() {
         super.onResume()
@@ -219,19 +223,42 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         generating = true
         launch(
             block = {
-                val rolesDeferred = async { mRepo.workAssetRoleList(null, null, null, storyId, workId).data }
-                val scenesDeferred = async { mRepo.workAssetSceneList(null, null, null, storyId, workId).data }
-                val propsDeferred = async { mRepo.workAssetPropList(null, null, null, storyId, workId).data }
-                val roles = rolesDeferred.await()
-                val scenes = scenesDeferred.await()
-                val props = propsDeferred.await()
+                val rolesDeferred = async { mRepo.workAssetRoleList(null, null, null, storyId, workId) }
+                val scenesDeferred = async { mRepo.workAssetSceneList(null, null, null, storyId, workId) }
+                val propsDeferred = async { mRepo.workAssetPropList(null, null, null, storyId, workId) }
+                val rolesResponse = rolesDeferred.await()
+                val scenesResponse = scenesDeferred.await()
+                val propsResponse = propsDeferred.await()
+                if (arrayOf(rolesResponse, scenesResponse, propsResponse).any { !it.isSuccess }) {
+                    loadState.set(LoadStateViewHolder.RETRY)
+                    generating = false
+                    return@launch
+                }
                 val items = mutableListOf<AppItemViewModel<*>>()
-                roles?.mapIndexed { index, info -> info.toItemAssetVM(index) }?.let { items.addAll(it) }
-                items.add(addRoleItem)
-                scenes?.mapIndexed { index, info -> info.toItemAssetVM(index) }?.let { items.addAll(it) }
-                items.add(addSceneItem)
-                props?.mapIndexed { index, info -> info.toItemAssetVM(index) }?.let { items.addAll(it) }
-                items.add(addPropItem)
+                val roles = rolesResponse.data?.mapIndexed { index, info -> info.toItemAssetVM(index) }
+                if (roles.isNullOrEmpty()) {
+                    hasRole.set(false)
+                } else {
+                    hasRole.set(true)
+                    items.addAll(roles)
+                    items.add(addRoleItem)
+                }
+                val scenes = scenesResponse.data?.mapIndexed { index, info -> info.toItemAssetVM(index) }
+                if (scenes.isNullOrEmpty()) {
+                    hasScene.set(false)
+                } else {
+                    hasScene.set(true)
+                    items.addAll(scenes)
+                    items.add(addSceneItem)
+                }
+                val props = propsResponse.data?.mapIndexed { index, info -> info.toItemAssetVM(index) }
+                if (props.isNullOrEmpty()) {
+                    hasProp.set(false)
+                } else {
+                    hasProp.set(true)
+                    items.addAll(props)
+                    items.add(addPropItem)
+                }
                 adapter.submitList(items)
                 onItemChanged()
                 loadState.set(LoadStateViewHolder.CONTENT)
