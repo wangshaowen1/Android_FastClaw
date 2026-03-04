@@ -141,8 +141,8 @@ data class WorkInfo(
     val stripedTrickTitle
         get() = workTitle?.replace("\n", "")?.replace("\r", "")
 
-    fun getDuring(index: Int = 0): Long? {
-        return workStoryItemList?.getOrNull(index)?.duration
+    fun getDuring(index: Int = 0): Long {
+        return (workStoryItemList?.getOrNull(index)?.duration ?: 0L) * 1000L
     }
 
     fun getVideoCoverUrl(): String? {
@@ -259,7 +259,7 @@ data class EpisodeInfo(
     val storyboardTotal: Int? = null,
     /**当前视频url*/
     val videoUrl: String? = null,
-    /**视频时长(毫秒)*/
+    /**视频时长(秒)*/
     val duration: Long? = null,
     /**视频比例：16:9、4:3、1:1、3:4、9:16、21:9、adaptive(自动)*/
     val workRatio: String? = null,

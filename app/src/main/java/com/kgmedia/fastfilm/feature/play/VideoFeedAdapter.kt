@@ -89,7 +89,7 @@ class VideoFeedAdapter(private val interactionListener: InteractionListener) :
                 // [补充] 初始设置数据给 PlayerView，防止 DataBinding 延迟
                 binding.playerView.setTrack(item)
                 binding.seekbar.currentPosition = 0
-                binding.seekbar.duration = item.getDuring() ?: 0
+                binding.seekbar.duration = item.getDuring()
                 binding.btnPause.visibility = View.GONE
             }
         }
