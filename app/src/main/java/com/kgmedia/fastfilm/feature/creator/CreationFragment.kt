@@ -169,9 +169,9 @@ class CreationFragment :
                     val singleModel =
                         range == VideoConfigInfo.MODE_SINGLE || (range == VideoConfigInfo.MODE_CUSTOM && custom?.toIntOrNull() == 1)
                     val modelType = when {
+                        isFileModel -> DramaGenerateConstants.MODEL_STORY_DOCUMENTS
                         singleModel -> DramaGenerateConstants.MODEL_STORY_SINGLE
                         this@CreationFragment.mRealVM.inspirationModel() -> DramaGenerateConstants.MODEL_INSPIRATION
-                        isFileModel -> DramaGenerateConstants.MODEL_STORY_DOCUMENTS
                         else -> DramaGenerateConstants.MODEL_STORY
                     }
 
