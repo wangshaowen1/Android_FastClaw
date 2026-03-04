@@ -11,6 +11,8 @@ import kotlinx.parcelize.Parcelize
 data class UserHomeData(
     //用户ID
     val userId: String? = null,
+    //仅展示用
+    val userUid: String? = null,
     //手机号
     val phoneNum: String? = null,
     //用户名

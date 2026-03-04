@@ -23,8 +23,8 @@ class User : IUser {
     //手机号
     var phoneNum: String?
 
-    //用户名,其实是uid
-    var userName: String?
+    //uid
+    var userUid: String?
 
     //用户昵称
     var nickName: String?
@@ -84,7 +84,7 @@ class User : IUser {
         sp = SP("USER_DATA")
         userId = sp.getString(USER_ID, null)
         phoneNum = sp.getString(PHONE_NUM, null)
-        userName = sp.getString(USER_NAME, null)
+        userUid = sp.getString(U_ID, null)
         nickName = sp.getString(NICK_NAME, null)
         gender = sp.getInt(GENDER, 0)
         avatarUrl = sp.getString(AVATAR_URL, null)
@@ -104,7 +104,7 @@ class User : IUser {
             storeUserId(this)
         }
         storePhoneNum(userData.phoneNum)
-        storeUserName(userData.userName)
+        storeUid(userData.userUid)
         storeNickname(userData.nickName)
         storeNickname(userData.gender)
         storeAvatar(userData.avatarUrl)
@@ -217,9 +217,9 @@ class User : IUser {
      * 用户名
      * @param userName 用户名
      */
-    fun storeUserName(userName: String?) {
-        this.userName = userName
-        sp.putString(USER_NAME, userName)
+    fun storeUid(uid: String?) {
+        this.userUid = uid
+        sp.putString(U_ID, uid)
     }
 
 
@@ -338,7 +338,7 @@ class User : IUser {
         const val PHONE_NUM = "phoneNum"
 
         //用户名
-        const val USER_NAME = "userName"
+        const val U_ID = "uid"
 
         //用户昵称
         const val NICK_NAME = "nickName"
