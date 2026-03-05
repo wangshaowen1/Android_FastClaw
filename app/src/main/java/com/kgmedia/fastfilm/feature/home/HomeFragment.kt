@@ -23,6 +23,7 @@ import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
+import com.kgmedia.fastfilm.widget.decoration.StaggeredGridSpaceItemDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
@@ -104,7 +105,7 @@ class HomeFragment :
 
         binding.recyclerView.apply {
             isFocusable = false
-            addItemDecoration(GridSpacingItemDecoration(2, 10.dp, 0))
+            addItemDecoration(StaggeredGridSpaceItemDecoration(2, 10.dp, 0,0))
             adapter = homeAdapter.withLoadStateFooter(
                 MyMultiStatePagingFooterAdapter(
                     hostAdapter = homeAdapter,
