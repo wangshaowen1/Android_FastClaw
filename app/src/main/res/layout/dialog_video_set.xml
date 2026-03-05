@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/spacing_xs"
-            android:text="填写基础信息，A自动生成剧情和视频让你轻松当导演"
+            android:text="填写基础信息，AI自动生成剧情和视频让你轻松当导演"
             android:textColor="?attr/textColor4" />
 
         <TextView
