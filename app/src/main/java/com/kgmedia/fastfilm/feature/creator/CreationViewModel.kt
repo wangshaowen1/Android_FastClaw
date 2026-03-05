@@ -212,9 +212,9 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         }
     }
 
-    fun confirmPowerConsume(callback: (UploadStoryData?) -> Unit) {
+    fun confirmPowerConsume(body: UploadStoryBody, callback: (UploadStoryData?) -> Unit) {
         requestWithLoading(
-            apiBlock = { mRepo.api.novelUploadSummary(UploadStoryBody(analysisResult?.charCount, fileUrl)) }
+            apiBlock = { mRepo.api.novelUploadSummary(body) }
         ) {
             callback.invoke(data)
         }

@@ -1,20 +1,26 @@
 package com.kgmedia.fastfilm.core.network.apis.request
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * {
  *     "workNovelUrl": "小说地址",
  *     "novelCharCount": "小说字符数"
  * }
  */
+@Parcelize
 data class UploadStoryBody(
     val novelCharCount: Int? = null,
     val workNovelUrl: String? = null,
+    val novelFileName: String? = null,//小说文件名
+    val novelFileType: String? = null,//小说文件类型
     val workTitle: String? = null,
     val totalEpisodeCntCode: String? = null,
     val totalEpisodeCnt: String? = null,
     val workRatio: String? = null,
     val workStyleCode: String? = null,
-) : UserTokenBody()
+) : Parcelable
 
 /**
  *  {

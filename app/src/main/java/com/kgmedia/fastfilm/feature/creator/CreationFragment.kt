@@ -16,6 +16,7 @@ import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
@@ -191,22 +192,23 @@ class CreationFragment :
                     }
 
                     if (isFileModel) {
-                        if ((this@CreationFragment.mRealVM.analysisResult?.charCount
-                                ?: 0) > 10000
-                        ) {//大于10000字要显示确认算力弹窗  这里要拿workid去轮询
-                            StoryGenerateConfirmDialog.newInstance(
-                                this@CreationFragment.mRealVM.fileUrl,
-                                this@CreationFragment.mRealVM.analysisResult,
-                                name,
-                                range,
-                                custom,
-                                ratio,
-                                style
-                            ).apply {
+                        this@CreationFragment.mRealVM
+                        val charCount = this@CreationFragment.mRealVM.analysisResult?.charCount ?: 0
+                        val body = UploadStoryBody(
+                            charCount,
+                            fileUrl,
+                            this@CreationFragment.mRealVM.fileName,
+                            "txt",
+                            name,
+                            range,
+                            custom, ratio, style
+                        )
+                        if (charCount > 10000) {//大于10000字要显示确认算力弹窗  这里要拿workid去轮询
+                            StoryGenerateConfirmDialog.newInstance(body, this@CreationFragment.mRealVM.analysisResult).apply {
                                 onConfirm = { data -> startEditor(data) }
                             }.show(this@CreationFragment.childFragmentManager)
                         } else {//小于10000字直接开始 这里要拿workid去轮询
-                            this@CreationFragment.mRealVM.confirmPowerConsume { data ->
+                            this@CreationFragment.mRealVM.confirmPowerConsume(body) { data ->
                                 if (data?.checkStatus() == true) {
                                     startEditor(data)
                                 } else {
