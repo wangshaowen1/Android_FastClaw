@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.marginEnd
+import androidx.core.view.marginStart
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
@@ -15,6 +17,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardVideoBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
+import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -60,6 +63,19 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mRealVM.scrollToItem.observe(this) { itemPosition ->
+            if (itemPosition > -1 && isActive) {
+                mRealVM.scrollToItem.value = -1
+                bindingNullable?.rvStoryboard?.apply {
+                    val itemView = getChildAt(0) ?: return@apply
+                    val scrollX = computeHorizontalScrollOffset()
+                    val itemWidth = itemView.width
+                    val itemDividerWidth = itemView.marginStart + itemView.marginEnd
+                    val left = paddingLeft + itemPosition * (itemWidth + itemDividerWidth) + itemView.marginStart - (width - itemWidth) / 2
+                    smoothScrollBy(left - scrollX, 0)
+                }
+            }
+        }
         observeEvents {
             on<Events.StoryboardSavedEvent> {
                 mRealVM.updateStoryboard(it.storyboardInfo)

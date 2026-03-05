@@ -44,6 +44,10 @@ data class SimpleStoryboardInfo(
      */
     val storyBoardDesc: String? = null,
     /**
+     * 当前图片url
+     */
+    val imageUrl: String? = null,
+    /**
      * 当前视频url
      */
     var videoUrl: String? = null,
