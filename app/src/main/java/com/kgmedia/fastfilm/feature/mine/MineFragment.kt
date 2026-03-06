@@ -110,7 +110,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 //复制
                 User.get().userUid?.let {
                     ClipboardUtils.copyText(it)
-                    getString(R.string.toast_copied).showToast()
+                    getString(R.string.copy_success).showToast()
                 }
             }
 
