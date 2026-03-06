@@ -210,6 +210,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 else -> {
+                    step.set(STEP_INIT)
                     loadState.set(LoadStateViewHolder.RETRY)
                     generating = false
                 }
