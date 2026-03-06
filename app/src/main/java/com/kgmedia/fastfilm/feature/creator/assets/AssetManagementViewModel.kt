@@ -237,27 +237,30 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     return@launch
                 }
                 val items = mutableListOf<AppItemViewModel<*>>()
-                val roles = rolesResponse.data?.mapIndexed { index, info -> info.toItemAssetVM(index) }
+                val roles = rolesResponse.data?.map { info -> info.toItemAssetVM() }
                 if (roles.isNullOrEmpty()) {
                     hasRole.set(false)
                 } else {
                     hasRole.set(true)
+                    items.add(ItemTitleVM("角色"))
                     items.addAll(roles)
                     items.add(addRoleItem)
                 }
-                val scenes = scenesResponse.data?.mapIndexed { index, info -> info.toItemAssetVM(index) }
+                val scenes = scenesResponse.data?.map { info -> info.toItemAssetVM() }
                 if (scenes.isNullOrEmpty()) {
                     hasScene.set(false)
                 } else {
                     hasScene.set(true)
+                    items.add(ItemTitleVM("场景"))
                     items.addAll(scenes)
                     items.add(addSceneItem)
                 }
-                val props = propsResponse.data?.mapIndexed { index, info -> info.toItemAssetVM(index) }
+                val props = propsResponse.data?.map { info -> info.toItemAssetVM() }
                 if (props.isNullOrEmpty()) {
                     hasProp.set(false)
                 } else {
                     hasProp.set(true)
+                    items.add(ItemTitleVM("道具"))
                     items.addAll(props)
                     items.add(addPropItem)
                 }
@@ -273,27 +276,27 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         )
     }
 
-    private fun SimpleRoleInfo.toItemAssetVM(index: Int) = ItemRoleVM(index, workId, storyId, ::onItemChanged, this).applyConfig()
+    private fun SimpleRoleInfo.toItemAssetVM() = ItemRoleVM(workId, storyId, ::onItemChanged, this).applyConfig()
 
-    private fun SimpleSceneInfo.toItemAssetVM(index: Int) = ItemSceneVM(index, workId, storyId, ::onItemChanged, this).applyConfig()
+    private fun SimpleSceneInfo.toItemAssetVM() = ItemSceneVM(workId, storyId, ::onItemChanged, this).applyConfig()
 
-    private fun SimplePropInfo.toItemAssetVM(index: Int) = ItemPropVM(index, workId, storyId, ::onItemChanged, this).applyConfig()
+    private fun SimplePropInfo.toItemAssetVM() = ItemPropVM(workId, storyId, ::onItemChanged, this).applyConfig()
 
     fun addRole(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        adapter.add(index, ItemRoleVM(adapter.items.count { it is ItemRoleVM }, workId, storyId, ::onItemChanged, null).applyConfig())
+        adapter.add(index, ItemRoleVM(workId, storyId, ::onItemChanged, null).applyConfig())
         onItemChanged()
     }
 
     fun addScene(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        adapter.add(index, ItemSceneVM(adapter.items.count { it is ItemSceneVM }, workId, storyId, ::onItemChanged, null).applyConfig())
+        adapter.add(index, ItemSceneVM(workId, storyId, ::onItemChanged, null).applyConfig())
         onItemChanged()
     }
 
     fun addProp(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        adapter.add(index, ItemPropVM(adapter.items.count { it is ItemPropVM }, workId, storyId, ::onItemChanged, null).applyConfig())
+        adapter.add(index, ItemPropVM(workId, storyId, ::onItemChanged, null).applyConfig())
         onItemChanged()
     }
 

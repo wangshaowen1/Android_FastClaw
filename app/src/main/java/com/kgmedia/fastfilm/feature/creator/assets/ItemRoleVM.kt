@@ -21,12 +21,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class ItemRoleVM(
-    index: Int,
     workId: String?,
     storyId: String?,
     onItemChanged: () -> Unit,
     data: SimpleRoleInfo?
-) : ItemAssetVM<SimpleRoleInfo>(index, workId, storyId, onItemChanged, data) {
+) : ItemAssetVM<SimpleRoleInfo>(workId, storyId, onItemChanged, data) {
 
     override val assetType: String = "角色"
     override val assetDescHint: String = "角色描述词"

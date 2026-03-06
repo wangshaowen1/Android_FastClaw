@@ -21,12 +21,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class ItemSceneVM(
-    index: Int,
     workId: String?,
     storyId: String?,
     onItemChanged: () -> Unit,
     data: SimpleSceneInfo?
-) : ItemAssetVM<SimpleSceneInfo>(index, workId, storyId, onItemChanged, data) {
+) : ItemAssetVM<SimpleSceneInfo>(workId, storyId, onItemChanged, data) {
 
     override val assetType: String = "场景"
     override val assetDescHint: String = "场景描述词"

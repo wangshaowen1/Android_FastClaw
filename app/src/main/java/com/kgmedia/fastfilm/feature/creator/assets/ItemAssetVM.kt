@@ -11,7 +11,6 @@ import com.kgmedia.fastfilm.widget.RecyclerEditText
 import kotlinx.coroutines.Job
 
 abstract class ItemAssetVM<Item : SimpleAsset>(
-    val index: Int,
     /**
      * 作品 ID
      */

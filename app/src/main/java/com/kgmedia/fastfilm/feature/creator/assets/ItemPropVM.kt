@@ -21,12 +21,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class ItemPropVM(
-    index: Int,
     workId: String?,
     storyId: String?,
     onItemChanged: () -> Unit,
     data: SimplePropInfo?
-) : ItemAssetVM<SimplePropInfo>(index, workId, storyId, onItemChanged, data) {
+) : ItemAssetVM<SimplePropInfo>(workId, storyId, onItemChanged, data) {
 
     override val assetType: String = "道具"
     override val assetDescHint: String = "道具描述词"

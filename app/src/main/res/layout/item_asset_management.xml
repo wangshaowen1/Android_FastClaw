@@ -18,18 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/tvAssetType"
-            setVisible="@{item.index == 0}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{item.assetType}"
-            android:textAppearance="@style/Text14"
-            android:textColor="?attr/textColor3"
-            app:layout_constraintStart_toStartOf="@+id/ivCover"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="角色" />
-
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
             loadHQThumbnailUri="@{item.assetImage}"
@@ -38,15 +26,13 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="16dp"
             android:scaleType="centerCrop"
             android:src="?attr/fillColor1"
             android:visibility="@{item.status == 2 ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintDimensionRatio="108:152"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvAssetType"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.288"
-            app:layout_goneMarginTop="0dp"
             app:riv_corner_radius="8dp"
             tools:src="@drawable/img_default_cover_3_4" />
 

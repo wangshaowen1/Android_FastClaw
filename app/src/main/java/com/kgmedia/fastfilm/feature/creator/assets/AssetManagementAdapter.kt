@@ -13,9 +13,11 @@ class AssetManagementAdapter : BaseMultiItemAdapter<AppItemViewModel<*>>() {
     init {
         addItemType(1, MultiItemAdapterListener(R.layout.item_asset_management))
         addItemType(2, MultiItemAdapterListener(R.layout.item_add_button))
+        addItemType(3, MultiItemAdapterListener(R.layout.item_asset_management_title))
         onItemViewType { position, list ->
             when (list[position]) {
                 is ItemAddVM -> 2
+                is ItemTitleVM -> 3
                 else -> 1
             }
         }
