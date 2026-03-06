@@ -160,7 +160,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     sseOutputComplete.value = true
                     sseOutputFail.set(true)
                     parseMessage(e)?.showToast()
-                    NotificationHelper.sendRecoveryNotification("《${mWorkName.value?.ifEmpty { "未命名" }}》第${chapterIndex}集故事剧本生成失败")
+                    val workName = mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
+                    NotificationHelper.sendRecoveryNotification("《${workName}》第${chapterIndex}集故事剧本生成失败")
                     promptGenerating.value = false to ""
                     // 根据需要处理特定错误
                 })
