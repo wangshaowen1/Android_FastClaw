@@ -15,7 +15,7 @@ import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
-import com.kgmedia.fastfilm.core.network.apis.request.RollNovelSummaryResult
+import com.kgmedia.fastfilm.core.network.apis.request.RollNovelSummaryData
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
@@ -74,7 +74,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     /**
      * 小说文档模式==》故事梗概结果
      */
-    var storySummaryResult = MutableLiveData<RollNovelSummaryResult>()
+    var storySummaryResult = MutableLiveData<RollNovelSummaryData>()
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
@@ -199,8 +199,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 response?.data?.result?.let {
                     nextStepEnabled.set(true)
                     mWorkName.value = it.workTitle ?: ""
-                    storySummaryResult.value = it
                 }
+                storySummaryResult.value = response?.data
                 progressHelper.finish()
                 NotificationHelper.sendRecoveryNotification("故事梗概已完成")
                 isSummaryLoading.set(false)

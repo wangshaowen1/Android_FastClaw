@@ -21,7 +21,6 @@ import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
-import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
@@ -90,7 +89,7 @@ class DramaGenerateStep1Fragment :
         if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
             binding.recyclerView2.setAdapter(episodeAdapter)
             mRealVM.storySummaryResult.observe(this) {
-                episodeAdapter.submitList(it.structureList?.map { info ->
+                episodeAdapter.submitList(it.result?.structureList?.map { info ->
                     return@map ItemStorySummaryGenerateVm(info)
                 })
             }
@@ -113,7 +112,6 @@ class DramaGenerateStep1Fragment :
             markDownTextView.init(getCustomUIStyles(), null)
             markDownTextView.setPrintParams(2, 3)
         }
-
 
         mRealVM.mSSEContent.observe(this) {
             if (it.isEmpty()) return@observe

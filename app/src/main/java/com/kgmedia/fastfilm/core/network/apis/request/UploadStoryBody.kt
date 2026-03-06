@@ -46,6 +46,8 @@ data class UploadStoryData(
  */
 data class RollNovelSummaryData(
     val genStatus: Int? = null,
+    val toastTextProgress: String? = null,//用户提示-进度文本;例如正在读取小说内容
+    val toastTextTime: String? = null,//用户提示-剩余时间文本;例如12-15分钟
     val result: RollNovelSummaryResult? = null,
     val workId: String? = null
 ) {

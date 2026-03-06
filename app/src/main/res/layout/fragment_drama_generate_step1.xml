@@ -27,14 +27,14 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!--            <androidx.recyclerview.widget.RecyclerView-->
-            <!--                android:id="@+id/recyclerView"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:clipToPadding="false"-->
-            <!--                android:paddingHorizontal="@dimen/spacing_l"-->
-            <!--                android:paddingTop="20dp"-->
-            <!--                android:stackFromBottom="true" />-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/spacing_l"
+                android:paddingTop="20dp"
+                android:stackFromBottom="true" />
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -91,7 +91,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/spacing_m"
-                            android:text="正在读取小说内容..."
+                            android:text="@{layout.storySummaryResult.toastTextProgress}"
+                            tools:text="正在读取小说内容..."
                             android:textColor="?attr/textColor1" />
 
                         <LinearLayout
@@ -113,6 +114,7 @@
                                 android:layout_height="wrap_content"
                                 android:textColor="?attr/textColor1"
                                 android:textStyle="bold"
+                                android:text="@{layout.storySummaryResult.toastTextTime}"
                                 tools:text="12-15分钟" />
                         </LinearLayout>
 

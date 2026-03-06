@@ -676,14 +676,14 @@ object ApiConstants {
     const val SENSITIVE_IMAGE_CHECK = "ai/content-security/img/check"
 
     /**
-     * 小说上传-生成作品剧集梗概
+     * 小说上传-创建任务
      */
-    const val NOVEL_UPLOAD_SUMMARY = "ai/stream/novel/upload/summary"
+    const val NOVEL_UPLOAD_SUMMARY = "ai/novel/upload/task/create"
 
     /**
      * 轮询查询小说上传生成作品剧集梗概结果
      */
-    const val ROLL_NOVEL_SUMMARY = "ai/task/query/novel/upload/summary"
+    const val ROLL_NOVEL_SUMMARY = "ai/novel/upload/task/query"
 
     /**
      * 单集作品-生成标题/剧本/资产

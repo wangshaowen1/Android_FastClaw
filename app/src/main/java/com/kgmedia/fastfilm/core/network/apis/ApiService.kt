@@ -960,7 +960,7 @@ interface ApiService {
     suspend fun sensitiveImageCheck(@Body body: ImgUrlBody): ApiResponse<SensitiveWordCheckData?>
 
     /**
-     * 小说上传-生成作品剧集梗概
+     * 小说上传-创建任务
      */
     @POST(ApiConstants.NOVEL_UPLOAD_SUMMARY)
     suspend fun novelUploadSummary(@Body body: UploadStoryBody): ApiResponse<UploadStoryData?>
