@@ -41,6 +41,10 @@ class ItemSceneVM(
             "请先填写场景描述".showToast()
             return
         }
+        if (sceneName.isNullOrEmpty()) {
+            "请先填写场景名称".showToast()
+            return
+        }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
         if (data.get()?.hasHistory == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.sceneId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_SCENE_IMAGE)

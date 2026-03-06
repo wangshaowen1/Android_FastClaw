@@ -41,6 +41,10 @@ class ItemRoleVM(
             "请先填写角色描述".showToast()
             return
         }
+        if (roleName.isNullOrEmpty()) {
+            "请先填写角色名称".showToast()
+            return
+        }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
         if (data.get()?.hasHistory == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.roleId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_ROLE_IMAGE)
