@@ -62,7 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_m"
-                        android:text="@{layout.storySummaryResult.workDesc}"
+                        android:text="@{layout.storySummaryResult.result.workDesc}"
                         android:textColor="?attr/textColor3"
                         android:visibility="@{layout.isStoryDocumentsMode&amp;&amp;!layout.isSummaryLoading?View.VISIBLE:View.GONE}"
                         tools:text="唐三在武魂觉醒仪式上，意外觉醒出被视为“废武魂”的蓝银草，却暗中展现出不寻常的天赋..." />
@@ -148,7 +148,7 @@
                             android:layout_height="wrap_content"
                             android:visibility="@{layout.isSummaryLoading?View.VISIBLE : View.GONE}"
                             app:shimmer_base_alpha="0.7"
-                            app:shimmer_drop_off="0.5"
+                            app:shimmer_dropoff="0.5"
                             app:shimmer_duration="1500"
                             app:shimmer_highlight_alpha="0.3">
 

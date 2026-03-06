@@ -83,7 +83,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     override fun onCreate() {
         super.onCreate()
-        displayContent = if(isStoryDocumentsMode()) 1 else 0
+        displayContent = if (isStoryDocumentsMode()) 1 else 0
     }
 
     private val progressHelper by lazy {
@@ -202,13 +202,15 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 }
                 storySummaryResult.value = response?.data
                 progressHelper.finish()
-                NotificationHelper.sendRecoveryNotification("故事梗概已完成")
+                val workName = mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
+                NotificationHelper.sendRecoveryNotification("《${workName}》故事梗概已完成")
                 isSummaryLoading.set(false)
             },
             onFail = { _, error ->
                 displayChild.set(displayFail)
                 progressHelper.stop()
-                NotificationHelper.sendRecoveryNotification("故事梗概生成失败")
+                val workName = mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
+                NotificationHelper.sendRecoveryNotification("《${workName}》故事梗概生成失败")
                 isSummaryLoading.set(false)
             }
         )
