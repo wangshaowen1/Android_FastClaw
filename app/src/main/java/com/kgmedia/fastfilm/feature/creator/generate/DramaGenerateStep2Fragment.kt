@@ -158,6 +158,11 @@ class DramaGenerateStep2Fragment :
                 hostVm?.title?.value = it
             }
         }
+        hostVm?.title?.observe(this) {
+            if (it != mRealVM.mWorkName.value) {
+                mRealVM.mWorkName.value = it
+            }
+        }
 
         mRealVM.sensitiveWordJudgmentResult.observe(this) {
             if (it == null) return@observe
