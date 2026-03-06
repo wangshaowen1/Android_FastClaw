@@ -139,7 +139,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     originalJson = originalContent
                     // 触发原本结束后的逻辑
                     onSSECompleted?.invoke()
-                    NotificationHelper.sendRecoveryNotification("故事梗概已完成")
+                    val workName = mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
+                    NotificationHelper.sendRecoveryNotification("《${workName}》故事梗概已完成")
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
@@ -147,7 +148,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     onSSECompleted?.invoke()
                     parseMessage(e)?.showToast()
                     progressHelper.stop()
-                    NotificationHelper.sendRecoveryNotification("故事梗概生成失败")
+                    val workName = mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
+                    NotificationHelper.sendRecoveryNotification("《${workName}》故事梗概生成失败")
                 })
         )
 
