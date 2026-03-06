@@ -379,4 +379,6 @@ dependencies {
     api 'com.atlassian.commonmark:commonmark:0.13.0'
     api 'com.atlassian.commonmark:commonmark-ext-gfm-tables:0.13.0'
     /*markdown库的依赖*/
+
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
 }

@@ -65,6 +65,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     var mWorkName = MutableLiveData<String>()
 
     val displayChild = ObservableInt(0)
+    val isSummaryLoading = ObservableBoolean(true)
     val nextStepEnabled by lazy { ObservableBoolean(false) }
 
     var onSSECompleted: (() -> Unit)? = null
@@ -173,7 +174,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     fun rollNovelSummary() {
         // 防抖与去重：如果已经在轮询中，直接 return
         if (novelSummaryPollingJob?.isActive == true) return
-
+        isSummaryLoading.set(true)
         nextStepEnabled.set(false)
         displayChild.set(displayContent)
         progressHelper.start(
@@ -202,11 +203,13 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 }
                 progressHelper.finish()
                 NotificationHelper.sendRecoveryNotification("故事梗概已完成")
+                isSummaryLoading.set(false)
             },
             onFail = { _, error ->
                 displayChild.set(displayFail)
                 progressHelper.stop()
                 NotificationHelper.sendRecoveryNotification("故事梗概生成失败")
+                isSummaryLoading.set(false)
             }
         )
     }
