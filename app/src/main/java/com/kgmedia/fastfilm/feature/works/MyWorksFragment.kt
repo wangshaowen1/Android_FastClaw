@@ -248,7 +248,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 // 复用父作品信息，包装成 WorkInfo
                 WorkInfo(
                     workId = episode.storyId ?: "", // 必须唯一
-                    userId = workInfo?.userId,
+                    userId = User.get().userId,
                     workTitle = workInfo?.workTitle,
                     workCoverUrl = workInfo?.workCoverUrl,
                     workDesc = workInfo?.workDesc,
