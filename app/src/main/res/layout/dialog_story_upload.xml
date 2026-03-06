@@ -102,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_m"
-                android:text="仅支持text格式，最大支持50万字"
+                android:text="仅支持txt格式，最大支持50万字"
                 android:textColor="?attr/textColor3"
                 android:textStyle="bold" />
         </LinearLayout>
