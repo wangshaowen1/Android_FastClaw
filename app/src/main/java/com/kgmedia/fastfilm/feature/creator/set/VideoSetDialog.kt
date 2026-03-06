@@ -13,9 +13,10 @@ import com.nhsd.basic.ext.showToast
 class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, VideoSetViewModel>() {
 
     companion object {
-        fun newInstance(list: VideoConfigData?): VideoSetDialog {
+        fun newInstance(workTitle: String?, list: VideoConfigData?): VideoSetDialog {
             val fragment = VideoSetDialog()
             fragment.arguments = bundleOf(
+                Constants.Extra.TITLE to workTitle,
                 Constants.Extra.DATA to list
             )
             return fragment
@@ -29,7 +30,12 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.nameInputer.setText(mRealVM.workTitle)
         binding.btnConfirm.setOnClickListener {
+            if (binding.nameInputer.text.isNullOrEmpty()) {
+                "请输入作品名称".showToast()
+                return@setOnClickListener
+            }
             if (mRealVM.checkedEpisodeSet == null) {
                 "请设置故事总集数".showToast()
                 return@setOnClickListener
@@ -59,7 +65,8 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
         }
 
         binding.btnAllStyle.setOnSingleClickListener {
-            val newInstance = CreationStyleChooseDialog.newInstance(mRealVM.checkedStyle?.data?.get()?.styleCode, mRealVM.configsData?.styleItemVOList)
+            val newInstance =
+                CreationStyleChooseDialog.newInstance(mRealVM.checkedStyle?.data?.get()?.styleCode, mRealVM.configsData?.styleItemVOList)
             newInstance.onSuccess = {
                 it?.let {
                     mRealVM.styleVms.find { vm -> vm.data.get()?.styleCode == it.styleCode }?.let { vm ->

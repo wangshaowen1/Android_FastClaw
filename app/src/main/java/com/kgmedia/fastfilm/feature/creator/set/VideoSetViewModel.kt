@@ -28,6 +28,7 @@ import com.nhsd.basic.ext.showToast
  */
 class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
     val configsData by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, VideoConfigData::class.java) }
+    val workTitle by lazy { mBundle.getString(Constants.Extra.TITLE) }
 
     var checkedRatio: ItemVideoConfigVm? = null
     var checkedEpisodeSet: ItemVideoConfigVm? = null

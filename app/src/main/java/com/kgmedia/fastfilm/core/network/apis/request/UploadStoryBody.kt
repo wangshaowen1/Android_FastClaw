@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class UploadStoryBody(
     val novelCharCount: Int? = null,
-    val workNovelUrl: String? = null,
+    val novelFileUrl: String? = null,
     val novelFileName: String? = null,//小说文件名
     val novelFileType: String? = null,//小说文件类型
     val workTitle: String? = null,

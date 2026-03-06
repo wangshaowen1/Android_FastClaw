@@ -8,7 +8,6 @@ import android.view.View
 import com.blankj.utilcode.util.ClipboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
-import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.onUserSignOut
@@ -28,7 +27,6 @@ import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
 
 class CreationFragment :
@@ -139,29 +137,12 @@ class CreationFragment :
                 }
             }
         }
-
-        mRealVM.sensitiveWordJudgmentResult.observe(this) {
-            if (it == null) return@observe
-            mRealVM.sensitiveWordJudgmentResult.value = null
-            if (it.isSensitive()) {
-                it.content?.showToast()
-                val sp = SensitiveHighlighter.highlight(
-                    text = mRealVM.input.value,
-                    keywords = it.hitWords,
-                    color = R.color.func_failure_dark.getResColor()
-                )
-                binding.inputView.setText(sp)
-                return@observe
-            }
-            //敏感词没问题，开始下一步
-            showVideoSetDialog()
-        }
     }
 
-    fun showVideoSetDialog(fileUrl: String? = null) {
+    fun showVideoSetDialog(workTitle: String? = null, fileUrl: String? = null) {
         mRealVM.videoSetConfig(true) {
             val config = mRealVM.videoSetConfig.value
-            VideoSetDialog.newInstance(config).apply {
+            VideoSetDialog.newInstance(workTitle,config).apply {
                 onSuccess = { range, custom, ratio, style, name ->
 
                     val isFileModel = !fileUrl.isNullOrEmpty()
@@ -280,7 +261,7 @@ class CreationFragment :
                     mRealVM.fileName = fileName
                     mRealVM.fileUrl = fileUrl
                     mRealVM.analysisResult = analysisResult
-                    showVideoSetDialog(mRealVM.fileUrl)
+                    showVideoSetDialog(fileName?.substringBeforeLast("."), mRealVM.fileUrl)
                 }
             }
 
@@ -297,7 +278,7 @@ class CreationFragment :
             R.id.btnNext -> {
                 if (mRealVM.creationModel == MODEL_INSPIRATION) {
                     EventManager.onAppTrack(AppEvent.SF_CLICK_STORY_INSPIRATION_NEXT_BUTTON)
-                }else{
+                } else {
                     EventManager.onAppTrack(AppEvent.SF_CLICK_NOVEL_ADAPTATION_NEXT_BUTTON)
                 }
                 if (AppNavigator.checkLoginIntercepted(true)) {
@@ -311,7 +292,12 @@ class CreationFragment :
                     return
                 }
                 //检查敏感词
-                mRealVM.sensitiveWordJudgment()
+                mRealVM.sensitiveWordJudgment(mRealVM.input.value) {
+                    if (it) {
+                        return@sensitiveWordJudgment
+                    }
+                    showVideoSetDialog(workTitle = mRealVM.extractStoryName(mRealVM.input.value))
+                }
             }
         }
     }

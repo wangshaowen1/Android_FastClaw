@@ -53,9 +53,6 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     val inspirationPrompts by lazy { MutableLiveData<List<InspirationInfo>>() }
     val videoSetConfig by lazy { MutableLiveData<VideoConfigData>() }
 
-    //敏感词校验结果
-    val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
-
     fun inspirationModel(): Boolean {
         return creationModel == MODEL_INSPIRATION
     }
@@ -200,23 +197,24 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         inspirationPrompts.value = batchToShow
     }
 
-    /**
-     * 敏感词校验
-     */
-    fun sensitiveWordJudgment() {
-        requestWithLoading(
-            apiBlock = { mRepo.sensitiveWordCheck(input.value) },
-            showLoading = true
-        ) {
-            sensitiveWordJudgmentResult.value = data
-        }
-    }
-
     fun confirmPowerConsume(body: UploadStoryBody, callback: (UploadStoryData?) -> Unit) {
         requestWithLoading(
             apiBlock = { mRepo.api.novelUploadSummary(body) }
         ) {
             callback.invoke(data)
         }
+    }
+
+    fun extractStoryName(input: String?): String? {
+        if (input.isNullOrBlank()) return null
+        // 正则表达式解释：
+        // 故事名称\s*[:：]\s* -> 匹配“故事名称”后跟可选空格，以及中英文冒号，再跟可选空格
+        // 《(.*?)》            -> 匹配书名号，并捕获其中的内容（懒惰匹配）
+        val regex = """故事名称\s*[:：]\s*《(.*?)》""".toRegex()
+
+        val matchResult = regex.find(input)
+
+        // 如果匹配成功，返回第一个捕获组的内容
+        return matchResult?.groups?.get(1)?.value
     }
 }
