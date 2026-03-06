@@ -2,11 +2,15 @@ package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.os.Bundle
 import android.text.Editable
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
+import com.kgmedia.fastfilm.common.utils.KeyboardUtils
 import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
@@ -17,6 +21,7 @@ import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+
 
 /**
  *  故事剧本生成
@@ -81,54 +86,40 @@ class DramaGenerateStep2Fragment :
             //检查敏感词
             mRealVM.sensitiveWordJudgment()
         }
-        binding.vInputConfirm.setOnSingleClickListener {
-            if (mRealVM.isStreaming()) return@setOnSingleClickListener
-            mActivity.showConfirmPrompt(
-                "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.",
-                confirmText = "继续编辑"
-            ) {
-                binding.vInputConfirm.isVisible = false
+        val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                if (mRealVM.isStreaming()) return super.onSingleTapConfirmed(e)
+                mActivity.showConfirmPrompt(
+                    "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.",
+                    confirmText = "继续编辑"
+                ) {
+                    enterEditMode()
+                }
+                return true
             }
-        }
-        // 获取系统默认的滑动防误触阈值
-        // 获取系统默认的滑动防误触阈值
-//        val gestureDetector = android.view.GestureDetector(requireContext(), object : android.view.GestureDetector.SimpleOnGestureListener() {
-//            override fun onSingleTapUp(e: android.view.MotionEvent): Boolean {
-//                // 只有系统确认为“干净利落的单次点击”才会走这里，滑动绝对不会触发
-//                if (!mRealVM.isStreaming()) {
-//                    // 构造一个 CANCEL 事件发给底层输入框，撤销它的按下状态，防止软键盘乱弹
-//                    val cancelEvent = android.view.MotionEvent.obtain(e).apply {
-//                        action = android.view.MotionEvent.ACTION_CANCEL
-//                    }
-//                    binding.inputView.dispatchTouchEvent(cancelEvent)
-//                    cancelEvent.recycle()
-//
-//                    // 触发你的确认弹窗
-//                    mActivity.showConfirmPrompt(
-//                        "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.",
-//                        confirmText = "继续编辑"
-//                    ) {
-//                        binding.vInputConfirm.isVisible = false
-//                    }
-//                }
-//                return true
-//            }
-//        })
-//
-//        // 2. 将遮罩层的触摸事件代理给手势识别器
-//        binding.vInputConfirm.setOnTouchListener { _, event ->
-//            // 先让 GestureDetector 识别，如果判定为点击，它内部会返回 true 并拦截
-//            if (gestureDetector.onTouchEvent(event)) {
-//                return@setOnTouchListener true
-//            }
-//
-//            // 如果系统判定不是点击（比如你正在上下滑动），就把事件原封不动透传给底层，让文本正常滚动
-//            binding.inputView.dispatchTouchEvent(event)
-//            true
-//        }
+        })
+        binding.inputView.setOnTouchListener({ v, event ->
+            val consumed = gestureDetector.onTouchEvent(event)
+            consumed
+        })
+
         binding.btnDelete.setOnSingleClickListener {
             if (mRealVM.isStreaming()) return@setOnSingleClickListener
             mRealVM.input.value = ""
+        }
+    }
+
+    private fun enterEditMode() {
+        binding.inputView.let { editText ->
+            editText.setOnTouchListener(null)
+            editText.setFocusable(true)
+            editText.setFocusableInTouchMode(true)
+            editText.setCursorVisible(true)
+
+            editText.requestFocus()
+            editText.postDelayed({
+                KeyboardUtils.showKeyboard(editText)
+            }, 100)
         }
     }
 
@@ -144,7 +135,8 @@ class DramaGenerateStep2Fragment :
         }
 
         mRealVM.input.observe(this) {
-            if (mRealVM.input.value != binding.inputView.text) {
+            val text = binding.inputView.text.toString()
+            if (mRealVM.input.value != text) {
                 binding.inputView.setText(mRealVM.input.value)
             }
         }

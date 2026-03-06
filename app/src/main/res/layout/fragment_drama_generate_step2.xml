@@ -37,37 +37,22 @@
             android:layout_weight="1"
             android:background="@drawable/bg_fill_color_1_r8">
 
-            <com.kgmedia.fastfilm.widget.CounterInputLayout
+            <EditText
                 android:id="@+id/inputView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginBottom="@dimen/spacing_m"
                 android:background="@null"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
+                android:focusable="false"
+                android:cursorVisible="false"
                 android:gravity="top|start"
-                app:inputCounterGravity="right"
-                app:inputCounterRightMargin="0dp"
-                app:inputCounterTextColor="?attr/textColor4"
-                app:inputCounterTextSize="12sp"
-                app:inputCounterVisible="false"
-                app:inputHorizontalPadding="@dimen/spacing_m"
-                app:inputTextColor="?attr/textColor2"
-                app:inputTextColorHint="?attr/textColor4"
-                app:inputTextSize="14sp"
-                app:inputVerticalPadding="@dimen/spacing_m"
+                android:maxLength="@{layout.maxInputLength}"
+                android:padding="@dimen/spacing_m"
+                android:textColor="?attr/textColor2"
+                android:textColorHint="?attr/textColor4"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@id/llBottom"
-                app:layout_constraintTop_toTopOf="parent"
-                app:maxLength="@{layout.maxInputLength}" />
-
-            <View
-                android:id="@+id/v_input_confirm"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="@id/inputView"
-                app:layout_constraintEnd_toEndOf="@id/inputView"
-                app:layout_constraintStart_toStartOf="@id/inputView"
-                app:layout_constraintTop_toTopOf="@id/inputView" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
                 singleClick="@{layout.clickHandler::onClick}"
@@ -98,10 +83,10 @@
                 <TextView
                     android:id="@+id/retry_btn"
                     style="@style/Button.Bold"
+                    singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
                     android:layout_marginTop="24dp"
-                    singleClick="@{layout.clickHandler::onClick}"
                     android:background="@drawable/btn_theme1_r50"
                     android:gravity="center"
                     android:paddingHorizontal="40dp"
