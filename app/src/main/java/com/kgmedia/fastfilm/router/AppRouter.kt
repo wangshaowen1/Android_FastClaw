@@ -257,6 +257,7 @@ object AppRouter : IRouter {
     ) {
         val sortNo = singleEpisodeDetailsInfo?.sortNo ?: 1
         Logger.i("测试一下", "stepProgress:${singleEpisodeDetailsInfo?.stepProgress}")
+        //枚举创作流程进度 10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成
         when (singleEpisodeDetailsInfo?.stepProgress) {
             EpisodeInfo.PROGRESS_DRAFT -> {
                 //10=剧本输入
@@ -287,7 +288,7 @@ object AppRouter : IRouter {
             }
 
             EpisodeInfo.PROGRESS_ASSET_GENERATING -> {
-                //20=资产生成中  业务类型 40=生成所有资产描述 70=生成所有分镜描述
+                //20=资产生成中
                 StoryEditorActivity.restore(
                     context = topActivity,
                     step = 3,
@@ -302,7 +303,7 @@ object AppRouter : IRouter {
             }
 
             EpisodeInfo.PROGRESS_STORYBOARD_GENERATING_ASSET -> {
-                //30=分镜生成中
+                //30=分镜描述中
                 StoryEditorActivity.restore(
                     context = topActivity,
                     step = 4,
@@ -317,8 +318,10 @@ object AppRouter : IRouter {
             }
 
             EpisodeInfo.PROGRESS_STORYBOARD_GENERATING,
-            EpisodeInfo.PROGRESS_WAITING_COMPOSING -> {
-                //30=分镜生成中 32=分镜视频生成中 35=待合成
+            EpisodeInfo.PROGRESS_WAITING_COMPOSING,
+            EpisodeInfo.EPISODE_REPAINT_STATE,
+            EpisodeInfo.EPISODE_REPAINT_COMPLETED -> {
+                //32=分镜视频生成中 35待合成 45=分镜重绘中 50=重绘已完成
                 EditStoryboardVideoActivity.start(
                     storyTitle = workTitle?.let { "$it：第${singleEpisodeDetailsInfo.sortNo}集" },
                     workId = workId,
