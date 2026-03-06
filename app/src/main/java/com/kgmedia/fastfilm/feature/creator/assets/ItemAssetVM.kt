@@ -144,4 +144,11 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
         onItemChanged()
     }
 
+    override fun equals(other: Any?): Boolean {
+        return hashCode() == other?.hashCode()
+    }
+
+    override fun hashCode(): Int {
+        return data.hashCode()
+    }
 }
