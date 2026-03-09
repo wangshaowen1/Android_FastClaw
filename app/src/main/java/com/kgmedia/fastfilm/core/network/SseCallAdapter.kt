@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.core.User
 import com.tencent.bugly.crashreport.CrashReport
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -59,19 +60,19 @@ class SseCallAdapter(private val responseType: Type) :
         val request = call.request()
         val listener = object : EventSourceListener() {
             override fun onClosed(eventSource: EventSource) {
-                Logger.d("[SSE] 服务器主动关闭连接")
-                trySend(SSEvent.Close(true))
+                Logger.e("[SSE] 服务器主动关闭连接")
+                trySendBlocking(SSEvent.Close(true))
                 close() // 正常关闭通道
             }
 
             override fun onOpen(source: EventSource, response: Response) {
                 try {
                     if (!isClosedForSend) { // 检查通道状态
-                        trySend(SSEvent.Open(response))
+                        trySendBlocking(SSEvent.Open(response))
                     }
                 } catch (e: Exception) {
-                    Logger.d("[SSE] onOpen发送异常: ${e.stackTraceToString()}")
-                    trySend(SSEvent.Close(false))
+                    Logger.e("[SSE] onOpen发送异常: ${e.stackTraceToString()}")
+                    trySendBlocking(SSEvent.Close(false))
                     close(e)
                 }
             }
@@ -79,49 +80,54 @@ class SseCallAdapter(private val responseType: Type) :
             override fun onEvent(source: EventSource, id: String?, type: String?, data: String) {
                 try {
                     if (!isClosedForSend) { // 检查通道状态
-                        trySend(SSEvent.Message(data, type, id))
+                        val result =trySendBlocking(SSEvent.Message(data, type, id))
+                        if (result.isFailure) {
+                            Logger.e("[SSE] 警告：Flow 缓冲区已满，可能发生丢包！")
+                        }
                     }
                 } catch (e: Exception) {
-                    Logger.d("[SSE] onEvent发送异常: ${e.stackTraceToString()}")
+                    Logger.e("[SSE] onEvent发送异常: ${e.stackTraceToString()}")
                 }
             }
 
             override fun onFailure(source: EventSource, t: Throwable?, response: Response?) {
                 try {
-                    Logger.d("[SSE] 链接失败 ：onFailure=>response=${response},e=${t}")
+                    Logger.e("[SSE] 链接失败 ：onFailure=>response=${response},e=${t}")
                     val exception = t ?: IOException("Unknown error")
                     when {
                         response?.code == 204 -> {
-                            trySend(SSEvent.Close(true))
+                            trySendBlocking(SSEvent.Close(true))
                             close()
                         }
 
                         exception is StreamResetException && exception.errorCode == ErrorCode.CANCEL -> {
-                            Logger.d("连接已提前关闭，忽略异常StreamResetException")
-                            trySend(SSEvent.Close(true))
+                            Logger.e("连接已提前关闭，忽略异常StreamResetException")
+                            trySendBlocking(SSEvent.Close(true))
                             close()
                         }
 
                         // 明确处理 Socket 已关闭的情况
                         exception.message?.contains("Socket is closed") == true -> {
-                            Logger.d("连接已提前关闭，忽略异常")
-                            return
+                            Logger.e("连接已提前关闭，作为异常处理并关闭通道")
+                            trySendBlocking(SSEvent.Error(exception)) // 1. 通知下游报错
+                            close(exception) // 2. 必须关闭 Flow 通道！释放内存
                         }
 
                         exception.message?.contains("Socket closed") == true -> {
-                            Logger.d("连接已提前关闭，忽略异常")
-                            return
+                            Logger.e("连接已提前关闭，作为异常处理并关闭通道")
+                            trySendBlocking(SSEvent.Error(exception)) // 1. 通知下游报错
+                            close(exception) // 2. 必须关闭 Flow 通道！释放内存
                         }
 
                         else -> {
-                            trySend(SSEvent.Error(exception))
+                            trySendBlocking(SSEvent.Error(exception))
                             close(exception)
                             CrashReport.postCatchedException(exception)
                         }
                     }
                 } catch (e: Exception) {
                     CrashReport.postCatchedException(e)
-                    Logger.d("[SSE] onFailure处理异常: ${e.stackTraceToString()}")
+                    Logger.e("[SSE] onFailure处理异常: ${e.stackTraceToString()}")
                 }
             }
         }
@@ -129,7 +135,7 @@ class SseCallAdapter(private val responseType: Type) :
         try {
             eventSource = factory.newEventSource(request, listener)
         } catch (e: Exception) {
-            Logger.d("[SSE] 初始化异常: ${e.stackTraceToString()}")
+            Logger.e("[SSE] 初始化异常: ${e.stackTraceToString()}")
             close(e)
         }
 
@@ -137,10 +143,10 @@ class SseCallAdapter(private val responseType: Type) :
             try {
                 if (!isClosedForSend) { // 双重检查
                     eventSource?.cancel()
-                    Logger.d("[SSE] 客户端主动关闭连接")
+                    Logger.e("[SSE] 客户端主动关闭连接")
                 }
             } catch (e: Exception) {
-                Logger.d("[SSE] awaitClose异常: ${e.stackTraceToString()}")
+                Logger.e("[SSE] awaitClose异常: ${e.stackTraceToString()}")
             }
         }
     }

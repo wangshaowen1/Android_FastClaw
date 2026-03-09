@@ -6,6 +6,7 @@ import com.kgmedia.fastfilm.core.network.SSEvent
 import com.kgmedia.fastfilm.core.network.apis.ApiException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,8 @@ class SSEStreamHandler(
     // 1. 新增一个标志位，记录当前流是否已经触发过 Start
     private var hasTriggeredStart = false
 
+    private var hasReceivedBusinessOver = false
+
     private fun ensureStartedSafely() {
         if (!hasTriggeredStart) {
             hasTriggeredStart = true
@@ -41,8 +44,8 @@ class SSEStreamHandler(
         isFinished.set(false)
         hasTriggeredStart = false
         _isStreaming.value = true
-
-        job = scope.launch {
+        hasReceivedBusinessOver = false
+        job = scope.launch(Dispatchers.Main) {
             try {
                 flow.collect { event ->
                     // 只要标记结束，立即丢弃后续僵尸数据
@@ -64,6 +67,8 @@ class SSEStreamHandler(
                                     handleError(ApiException(-1, sseMessage.content))
                                 } else {
                                     if (sseMessage.isOver()) {
+                                        hasReceivedBusinessOver = true
+                                        Log.e("[SSE]", "receive msg: sseMessage.isOver")
                                         handleComplete()
                                     } else {
                                         processor.onSSEChunk(sseMessage.content ?: "")
@@ -80,7 +85,12 @@ class SSEStreamHandler(
                         }
 
                         is SSEvent.Close -> {
-                            handleComplete()
+                            if (hasReceivedBusinessOver) {
+                                handleComplete()
+                            } else {
+                                Log.e("[SSE]", "❌ HTTP 流已关闭，但未收到 isOver，属于异常中断！")
+                                handleError(ApiException(-1, "服务端异常断开连接，内容未生成完整"))
+                            }
                         }
                     }
                 }
@@ -94,7 +104,11 @@ class SSEStreamHandler(
                 // 优化2：兜底处理服务端静默断开（EOF）的情况
                 // 如果走到 finally 时既没有触发报错，也没有触发 Complete，说明是异常中断，在此强行触发结束
                 if (isFinished.compareAndSet(false, true)) {
-                    processor.onSSEComplete()
+                    if (hasReceivedBusinessOver) {
+                        processor.onSSEComplete()
+                    } else {
+                        processor.onSSEError(ApiException(-1, "流异常意外终止"))
+                    }
                 }
                 _isStreaming.value = false
             }
@@ -107,7 +121,7 @@ class SSEStreamHandler(
             _isStreaming.value = false
             processor.onSSEComplete()
             // 彻底断开流连接
-            job?.cancel()
+//            job?.cancel()
         }
     }
 
