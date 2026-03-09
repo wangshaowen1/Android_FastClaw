@@ -13,7 +13,6 @@ import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.storyboard.StoryboardDesignFragment
 import com.kgmedia.fastfilm.feature.editor.info.DramaTitleEditDialog
 import com.nhsd.basic.BaseViewModelActivity
-import kotlin.String
 
 /**
  * 作品生成根界面（灵感模式有5步，小说模式只有4步，从剧本生成开始）
@@ -136,6 +135,11 @@ class StoryEditorActivity :
                 super.onBackPressed()
             }
         } else {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.container)
+            if (currentFragment is OnBackPressedHandler) {
+                val isHandled = currentFragment.handleBackPressed()
+                if (isHandled) return // 如果 Fragment 返回 true，表示它拦截了退出，Activity 直接 return
+            }
             super.onBackPressed()
         }
     }

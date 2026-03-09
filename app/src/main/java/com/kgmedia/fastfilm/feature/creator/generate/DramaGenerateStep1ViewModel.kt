@@ -74,7 +74,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     /**
      * 小说文档模式==》故事梗概结果
      */
-    var storySummaryResult = MutableLiveData<RollNovelSummaryData>()
+    var storySummaryResult = MutableLiveData<RollNovelSummaryData?>()
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
@@ -177,6 +177,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         isSummaryLoading.set(true)
         nextStepEnabled.set(false)
         displayChild.set(displayContent)
+        storySummaryResult.value = null
 
         novelSummaryPollingJob = launchPolling(
             intervalMs = 3000L,
@@ -200,8 +201,9 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 //                sendRecoveryNotification("故事梗概已完成")
                 isSummaryLoading.set(false)
             },
-            onFail = { _, error ->
+            onFail = { response, error ->
                 displayChild.set(displayFail)
+                storySummaryResult.value = response?.data
 //                sendRecoveryNotification("故事梗概生成失败")
                 isSummaryLoading.set(false)
             }

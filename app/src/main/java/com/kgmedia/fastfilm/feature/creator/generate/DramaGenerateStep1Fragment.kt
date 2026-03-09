@@ -34,7 +34,7 @@ import com.nhsd.basic.utils.Logger
  * 故事梗概生成
  */
 class DramaGenerateStep1Fragment :
-    BaseViewModelFragment<FragmentDramaGenerateStep1Binding, DramaGenerateStep1ViewModel>() {
+    BaseViewModelFragment<FragmentDramaGenerateStep1Binding, DramaGenerateStep1ViewModel>(), OnBackPressedHandler {
 
     companion object {
         const val TAG = "DramaGenerateStep1Fragment"
@@ -50,7 +50,7 @@ class DramaGenerateStep1Fragment :
     val markDownTextView by lazy { PrinterMarkDownTextView(mActivity) }
     var dialog: GeneratingDialog? = null
     var episodeAdapter = QuickAdapter<ItemStorySummaryGenerateVm>(R.layout.item_story_summary_generate, emptyList())
-    private var lastProcessedText: String = ""
+    private var showBackToast = false
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -65,6 +65,7 @@ class DramaGenerateStep1Fragment :
             mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 mRealVM.rollNovelSummary()
+                showBackToast = true
             } else {
                 mRealVM.sseGenerate()
                 hostVm?.backWarning = true
@@ -92,6 +93,8 @@ class DramaGenerateStep1Fragment :
         if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
             binding.recyclerView2.setAdapter(episodeAdapter)
             mRealVM.storySummaryResult.observe(this) {
+                if (it == null) return@observe
+                showBackToast = false
                 if (it.isSuccess()) {
                     episodeAdapter.submitList(it.result?.structureList?.map { info ->
                         return@map ItemStorySummaryGenerateVm(info)
@@ -154,6 +157,7 @@ class DramaGenerateStep1Fragment :
             markDownTextView.stopPrinting(null)
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 mRealVM.rollNovelSummary()
+                showBackToast = true
             } else {
                 mRealVM.sseGenerate()
                 hostVm?.backWarning = true
@@ -173,6 +177,11 @@ class DramaGenerateStep1Fragment :
                 hostVm?.nextStep(2, workId, storyId)
             }
         }
+    }
+
+    fun getDuringToast(): String {
+        val workName = mRealVM.mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
+        return "《${workName}》AI正在制作中\n已自动为您保存为草稿"
     }
 
     fun getCustomUIStyles(): MarkdownStyles {
@@ -241,5 +250,12 @@ class DramaGenerateStep1Fragment :
             markDownTextView.stopPrinting("")
         }
         super.onDestroy()
+    }
+
+    override fun handleBackPressed(): Boolean {
+        if (showBackToast) {
+            getDuringToast().showToast()
+        }
+        return false
     }
 }
