@@ -245,6 +245,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         val validPlayList = episodes
             .filter { !it.videoUrl.isNullOrEmpty() } // 过滤条件
             .map { episode ->
+                episode.workId = workInfo?.workId
                 // 复用父作品信息，包装成 WorkInfo
                 WorkInfo(
                     workId = episode.storyId ?: "", // 必须唯一
