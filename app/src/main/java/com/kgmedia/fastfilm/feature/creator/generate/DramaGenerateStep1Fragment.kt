@@ -24,6 +24,8 @@ import com.kgmedia.fastfilm.feature.creator.StoryReuploadDialog
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
@@ -130,12 +132,12 @@ class DramaGenerateStep1Fragment :
             markDownTextView.setPrintParams(2, 3)
         }
 
-        mRealVM.mSSEContent.observe(this) {
-            if (it.isEmpty()) return@observe
+        mRealVM.mSSEContent.observe(this) { delta ->
+            if (delta.isEmpty()) return@observe
             if (!markDownTextView.isStarted) {
-                markDownTextView.startPrinting(it)
+                markDownTextView.startPrinting(delta)
             } else {
-                markDownTextView.appendPrinting(it)
+                markDownTextView.appendPrinting(delta)
             }
         }
         mRealVM.onSSECompleted = {
@@ -191,7 +193,7 @@ class DramaGenerateStep1Fragment :
         styles.paragraphStyle(
             ParagraphStyle.create()
                 .fontSize(ParseUtil.parseDp("30rpx").toFloat())
-                .fontColor(-2829100) // 约等于 #D4D4D4，更亮一些
+                .fontColor(R.color.text_color_1_dark.getResColor()) // 约等于 #D4D4D4，更亮一些
                 .lineHeight(ParseUtil.parseDp("52rpx"))
                 .paragraphSpacing(ParseUtil.parseDp("12px"))
         )
@@ -200,10 +202,11 @@ class DramaGenerateStep1Fragment :
         // 这里将引用的竖线颜色调亮，文字调为亮灰
         styles.blockQuoteStyle(
             BlockQuoteStyle.create()
-                .lineColor(-12303292) // 细线颜色 #444444
-                .fontColor(-4473925) // 文字颜色 #BBBBBB
-                .lineWidth(ParseUtil.parseDp("6rpx"))
-                .lineMargin(ParseUtil.parseDp("20rpx"))
+                .lineColor(R.color.text_color_4_dark.getResColor())
+                .lineWidth(4f.dp)
+                .lineCornerRadius(2f.dp)
+                .lineMargin(12f.dp)
+                .fontColor(R.color.text_color_3_dark.getResColor())
         )
 
         // 3. 表格样式（如果你的目录是用表格实现的）

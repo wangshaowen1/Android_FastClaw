@@ -76,6 +76,7 @@
             app:inputHint="给你的作品取个名字吧～"
             app:inputHorizontalPadding="@dimen/spacing_m"
             app:inputMaxLength="20"
+            app:inputMaxLines="1"
             app:inputTextColor="?attr/textColor2"
             app:inputTextColorHint="?attr/textColor4"
             app:inputTextSize="14sp"
