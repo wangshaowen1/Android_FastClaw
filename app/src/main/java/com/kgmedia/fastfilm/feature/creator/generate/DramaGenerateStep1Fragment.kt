@@ -194,8 +194,7 @@ class DramaGenerateStep1Fragment :
             ParagraphStyle.create()
                 .fontSize(ParseUtil.parseDp("30rpx").toFloat())
                 .fontColor(R.color.text_color_1_dark.getResColor()) // 约等于 #D4D4D4，更亮一些
-                .lineHeight(ParseUtil.parseDp("52rpx"))
-                .paragraphSpacing(ParseUtil.parseDp("12px"))
+                .paragraphSpacing(20f.dp)
         )
 
         // 2. 引用/卡片样式：UI图中每一集看起来像卡片，可以用 BlockQuote 或自定义段落背景模拟
@@ -205,7 +204,7 @@ class DramaGenerateStep1Fragment :
                 .lineColor(R.color.text_color_4_dark.getResColor())
                 .lineWidth(4f.dp)
                 .lineCornerRadius(2f.dp)
-                .lineMargin(12f.dp)
+                .lineMargin(4f.dp)
                 .fontColor(R.color.text_color_3_dark.getResColor())
         )
 
@@ -221,9 +220,9 @@ class DramaGenerateStep1Fragment :
         ) // UI图中通常不带生硬的边框
 
         // 4. 标题样式：加大加亮，突出“第1集”这种层级
-        styles.setTitleStyle(0, TitleStyle.create(1.5F))
-            .setTitleStyle(1, TitleStyle.create(1.3F))
-            .setTitleStyle(2, TitleStyle.create(1.1F));
+        styles.setTitleStyle(0, TitleStyle.create(1.2F).paragraphSpacing(12f.dp))
+            .setTitleStyle(1, TitleStyle.create(1F).paragraphSpacing(12f.dp))
+            .setTitleStyle(2, TitleStyle.create(1F).paragraphSpacing(12f.dp))
 
         // 5. 代码块（如果简介中有代码样式，调整背景为深色圆角块）
         styles.codeStyle(
