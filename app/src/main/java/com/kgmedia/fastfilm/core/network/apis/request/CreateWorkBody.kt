@@ -52,7 +52,7 @@ data class SaveEpisodeScriptBody(
     val workTitle: String? = null,
     //作品简介
     val workDesc: String? = null,
-    //作品类型：1-灵感创作 2-小说
+    //作品类型：1-灵感创作 2-小说 3-小说文档
     val workType: Int? = null,
     //剧集剧本内容完整 json
     val storyContentComplete: String? = null,

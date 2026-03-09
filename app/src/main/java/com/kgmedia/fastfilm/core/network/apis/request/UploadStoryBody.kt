@@ -104,6 +104,7 @@ data class NovelScriptGenerateBody(
 
 data class PollNovelScriptData(
     val workId: String? = null,
+    val storyId: String? = null,
     val sortNo: Int? = null,//集数序号
     val genStatus: Int? = null,//[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败 4=算力不足，请充值]
     val storyContent: String? = null,

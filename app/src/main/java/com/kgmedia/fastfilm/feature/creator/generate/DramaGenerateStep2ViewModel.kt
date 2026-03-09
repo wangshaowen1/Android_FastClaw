@@ -225,7 +225,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     nextStepEnabled.set(true)
                     input.value = it
                 }
+                episodeId = response?.data?.storyId
                 sseOutputComplete.value = true
+                chapterIndex = response?.data?.sortNo
                 storyScriptResult.value = response?.data
                 isScriptLoading.set(false)
             },
@@ -306,7 +308,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     storyContentComplete = originalJson,
                     workId = workId.value,
                     storyId = episodeId,
-                    workType = if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) 2 else 1
+                    workType = if (isNovelDocuments()) 3 else if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) 2 else 1
                 )
                 response(
                     bean = mRepo.api.saveEpisodeScript(body),
