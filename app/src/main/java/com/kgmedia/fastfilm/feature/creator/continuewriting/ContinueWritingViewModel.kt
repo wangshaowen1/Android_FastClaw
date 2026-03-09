@@ -25,7 +25,6 @@ import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
-import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 
@@ -40,6 +39,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.ID) }
     val workName by lazy { mBundle.getString(Constants.Extra.NAME) }
     val input by lazy { MutableLiveData(Global.continueWritingContent[workId]) }
+
     //敏感词校验结果
     val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
     val episodeInfo = MutableLiveData<EpisodeInfo>()
@@ -89,48 +89,59 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
 
     fun sseGenerate() {
-        promptGenerating.value = true to ("AI扩写中...")
-        val sseFlow = mRepo.api.sseContentAIExpand(
-            AIExpandBody(
-                storyId = episodeInfo.value?.storyId,
-                workId = workId,
+        val sseWork = {
+            promptGenerating.value = true to ("AI扩写中...")
+            val sseFlow = mRepo.api.sseContentAIExpand(
+                AIExpandBody(
+                    storyId = episodeInfo.value?.storyId,
+                    workId = workId,
 //                bizType = DramaGenerateConstants.MODEL_CONTINUE_STORY_EXPAND,
-                workInspiration = input.value,
+                    workInspiration = input.value,
+                )
             )
-        )
-        // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
-        sseHandler?.cancel()
-        sseHandler = SSEStreamHandler(
-            scope = viewModelScope, // 传入协程作用域
-            processor = PlainTextSseProcessor(
-                scope = viewModelScope,
-                onStart = {
-                    isSSEStreaming.set(true)
-                    promptGenerating.value = false to ""
-                    Logger.d("[SSE]", "Open")
-                    input.value = ""
-                },
-                onUpdate = { fullContent ->
-                    Logger.d("[SSE]", "Update: $fullContent")
-                    // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                    input.value = fullContent
-                },
-                onComplete = {
-                    Logger.d("[SSE]", "Finished")
-                    // 触发原本结束后的逻辑
-                    isSSEStreaming.set(false)
-                },
-                onErrorCallback = { e ->
-                    Log.e("[SSE]", "Error: $e")
-                    // 根据需要处理特定错误
-                    promptGenerating.value = false to ""
-                    parseMessage(e)?.showToast()
-                    isSSEStreaming.set(false)
-                })
-        )
-        // 3. 启动
-        Logger.d("[SSE]", "Starting with content body = $input")
-        sseHandler?.start(sseFlow)
+            // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
+            sseHandler?.cancel()
+            sseHandler = SSEStreamHandler(
+                scope = viewModelScope, // 传入协程作用域
+                processor = PlainTextSseProcessor(
+                    scope = viewModelScope,
+                    onStart = {
+                        isSSEStreaming.set(true)
+                        promptGenerating.value = false to ""
+                        Logger.d("[SSE]", "Open")
+                        input.value = ""
+                    },
+                    onUpdate = { fullContent ->
+                        Logger.d("[SSE]", "Update: $fullContent")
+                        // 这里自动包含了 50ms 的节流逻辑，直接设置即可
+                        input.value = fullContent
+                    },
+                    onComplete = {
+                        Logger.d("[SSE]", "Finished")
+                        // 触发原本结束后的逻辑
+                        isSSEStreaming.set(false)
+                    },
+                    onErrorCallback = { e ->
+                        Log.e("[SSE]", "Error: $e")
+                        // 根据需要处理特定错误
+                        promptGenerating.value = false to ""
+                        parseMessage(e)?.showToast()
+                        isSSEStreaming.set(false)
+                    })
+            )
+            // 3. 启动
+            Logger.d("[SSE]", "Starting with content body = $input")
+            sseHandler?.start(sseFlow)
+        }
+        if (input.value.isNullOrEmpty()) {
+            sseWork.invoke()
+            return
+        }
+        sensitiveWordJudgment(input.value) {
+            if (!it) {
+                sseWork.invoke()
+            }
+        }
     }
 
 
