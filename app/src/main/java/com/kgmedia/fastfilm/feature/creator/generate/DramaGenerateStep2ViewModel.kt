@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.common.utils.NotificationHelper
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.parseMessage
@@ -19,6 +20,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
+import com.kgmedia.fastfilm.core.network.apis.request.RollNovelSummaryData
 import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
@@ -42,7 +44,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         const val DISPLAY_CONTENT = 2
     }
 
-    val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
+    val promptGenerating = MutableLiveData<Triple<Boolean, String, String>>()
     val minInputLength = 10
     val maxInputLength by lazy {
         ObservableInt(2000)
@@ -89,12 +91,25 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     val nextStepEnabled by lazy { ObservableBoolean(false) }
     val sseOutputComplete by lazy { MutableLiveData(false) }
     val sseOutputFail by lazy { ObservableBoolean(false) }
+    val isSummaryLoading = ObservableBoolean(true)
+
+    /**
+     * 小说文档模式==》故事内容结果
+     */
+    var storySummaryResult = MutableLiveData<RollNovelSummaryData?>()
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
 
     //剧集剧本内容
     var originalJson: String? = null
+
+    private val progressHelper by lazy {
+        AutoProgressSimulator(viewModelScope) { show, title, progress ->
+            // 统一处理进度文案更新
+            promptGenerating.value = Triple(show, "$title $progress%", "退出后AI会继续生成")
+        }
+    }
 
     fun isStreaming() = sseHandler?.isStreaming?.value == true
 
@@ -124,7 +139,11 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 Logger.d("[SSE]", "MODEL_CONTINUE_INSPIRATION Starting with content body = $body")
                 mRepo.api.sseScriptFromIdea(body)
             }
-        promptGenerating.value = true to "内容生成中..."
+        progressHelper.start(
+            "生成故事剧本",
+            step = 2,
+            intervalMs = 100L
+        )
         nextStepEnabled.set(false)
         sseOutputComplete.value = false
         sseOutputFail.set(false)
@@ -135,22 +154,24 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             processor = StorySseProcessor(
                 scope = viewModelScope,
                 onStart = {
-                    promptGenerating.value = false to ""
                     input.value = ""
                     originalJson = ""
                     Logger.d("[SSE]", "Open")
                 },
                 onTitleBack = { title ->
+                    progressHelper.finish()
                     mWorkName.value = parseCleanTitle(title)
                 },
                 onStoryUpdate = { fullContent ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
                     input.value = fullContent
+                    progressHelper.stop()
                 },
                 onComplete = { originalContent ->
                     nextStepEnabled.set(true)
                     sseOutputComplete.value = true
                     originalJson = originalContent
+                    progressHelper.stop()
                     Logger.d("[SSE]", "Finished originalContent：${originalContent}")
                     // 触发原本结束后的逻辑
                     NotificationHelper.sendRecoveryNotification("《${mWorkName.value?.ifEmpty { "未命名" }}》第${chapterIndex}集故事剧本已完成")
@@ -159,10 +180,10 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     Log.e("[SSE]", "Error: $e")
                     sseOutputComplete.value = true
                     sseOutputFail.set(true)
+                    progressHelper.stop()
                     parseMessage(e)?.showToast()
                     val workName = mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
                     NotificationHelper.sendRecoveryNotification("《${workName}》第${chapterIndex}集故事剧本生成失败")
-                    promptGenerating.value = false to ""
                     // 根据需要处理特定错误
                 })
         )
