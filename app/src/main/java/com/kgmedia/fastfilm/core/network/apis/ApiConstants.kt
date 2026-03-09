@@ -686,6 +686,11 @@ object ApiConstants {
     const val ROLL_NOVEL_SUMMARY = "ai/novel/upload/task/query"
 
     /**
+     * 小说上传-剧集剧本-查询单集
+     */
+    const val POLL_NOVEL_SCRIPT = "ai/novel/upload/story/content/query"
+
+    /**
      * 小说上传-删除作品草稿
      */
     const val NOVEL_UPLOAD_DELETE = "ai/novel/upload/draft/delete"

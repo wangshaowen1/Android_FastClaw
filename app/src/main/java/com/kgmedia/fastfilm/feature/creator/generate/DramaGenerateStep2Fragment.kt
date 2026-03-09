@@ -4,21 +4,16 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.inputmethod.InputMethodManager
-import androidx.core.view.isVisible
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.utils.KeyboardUtils
-import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
@@ -59,12 +54,21 @@ class DramaGenerateStep2Fragment :
             mRealVM.videoStyleId = it.getStringExtra(Constants.Extra.STYLE_ID)
             mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
             mRealVM.chapterIndex = it.getIntExtra(Constants.Extra.CHAPTER_INDEX, 1)
-            mRealVM.sseGenerate()
-            hostVm?.backWarning = true
+            scriptGenerate()
         }
         initView()
         //数据更新
         dataUpdate()
+    }
+
+    fun scriptGenerate() {
+        if (mRealVM.isNovelDocuments()) {
+            mRealVM.pollNovelScript()
+            showBackToast = true
+        } else {
+            mRealVM.sseGenerate()
+            hostVm?.backWarning = true
+        }
     }
 
     private fun initView() {
@@ -75,18 +79,22 @@ class DramaGenerateStep2Fragment :
         })
         binding.btnRegenerate.setOnSingleClickListener {
             if (mRealVM.isStreaming()) return@setOnSingleClickListener
-            hostVm?.backWarning = true
-            mRealVM.sseGenerate()
+            scriptGenerate()
         }
         binding.retryBtn.setOnSingleClickListener {
             if (mRealVM.isStreaming()) return@setOnSingleClickListener
-            hostVm?.backWarning = true
-            mRealVM.sseGenerate()
+            scriptGenerate()
         }
         binding.btnNext.setOnSingleClickListener {
             if (mRealVM.isStreaming()) return@setOnSingleClickListener
             //检查敏感词
-            mRealVM.sensitiveWordJudgment()
+            mRealVM.sensitiveWordJudgment(mRealVM.input.value) {
+                if (!it) {
+                    mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId, taskId ->
+                        hostVm?.nextStep(3, workId, storyId, taskId)
+                    }
+                }
+            }
         }
         val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -131,7 +139,7 @@ class DramaGenerateStep2Fragment :
                 if (dialog == null || !dialog!!.isShowing) {
                     // 只在 Dialog 不存在时创建
                     dialog = GeneratingDialog(requireContext(), it.second, it.third)
-                    if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
+                    if (mRealVM.isNovelDocuments()) {
                         dialog?.setCancelable(true)
                     }
                     dialog?.show()
@@ -152,6 +160,10 @@ class DramaGenerateStep2Fragment :
             }
         }
 
+        mRealVM.storyScriptResult.observe(this) {
+            showBackToast = false
+        }
+
         mRealVM.sseOutputComplete.observe(this) {
             hostVm?.backWarning = false
         }
@@ -164,25 +176,6 @@ class DramaGenerateStep2Fragment :
         hostVm?.title?.observe(this) {
             if (it != mRealVM.mWorkName.value) {
                 mRealVM.mWorkName.value = it
-            }
-        }
-
-        mRealVM.sensitiveWordJudgmentResult.observe(this) {
-            if (it == null) return@observe
-            mRealVM.sensitiveWordJudgmentResult.value = null
-            if (it.isSensitive()) {
-                it.content?.showToast()
-                val sp = SensitiveHighlighter.highlight(
-                    text = mRealVM.input.value,
-                    keywords = it.hitWords,
-                    color = R.color.func_failure_dark.getResColor()
-                )
-                binding.inputView.setText(sp)
-                return@observe
-            }
-            //敏感词没问题，开始下一步
-            mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId, taskId ->
-                hostVm?.nextStep(3, workId, storyId, taskId)
             }
         }
     }

@@ -12,15 +12,16 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.common.utils.NotificationHelper
+import com.kgmedia.fastfilm.core.ext.PollingState
 import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.ext.launchPolling
 import com.kgmedia.fastfilm.core.ext.parseMessage
-import com.kgmedia.fastfilm.core.ext.requestWithLoading
-import com.kgmedia.fastfilm.core.network.apis.entity.SensitiveWordCheckData
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
-import com.kgmedia.fastfilm.core.network.apis.request.RollNovelSummaryData
+import com.kgmedia.fastfilm.core.network.apis.request.NovelScriptGenerateBody
+import com.kgmedia.fastfilm.core.network.apis.request.PollNovelScriptData
 import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
@@ -31,6 +32,7 @@ import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
+import kotlinx.coroutines.Job
 
 /**
  * 故事剧本生成
@@ -84,19 +86,15 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     // 作品名称
     var mWorkName = MutableLiveData<String>()
 
-    //敏感词校验结果
-    val sensitiveWordJudgmentResult by lazy { MutableLiveData<SensitiveWordCheckData?>() }
-
-
     val nextStepEnabled by lazy { ObservableBoolean(false) }
     val sseOutputComplete by lazy { MutableLiveData(false) }
     val sseOutputFail by lazy { ObservableBoolean(false) }
-    val isSummaryLoading = ObservableBoolean(true)
+    val isScriptLoading = ObservableBoolean(true)
 
     /**
      * 小说文档模式==》故事内容结果
      */
-    var storySummaryResult = MutableLiveData<RollNovelSummaryData?>()
+    var storyScriptResult = MutableLiveData<PollNovelScriptData?>()
 
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
@@ -110,6 +108,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             promptGenerating.value = Triple(show, "$title $progress%", "退出后AI会继续生成")
         }
     }
+
+    fun isNovelDocuments() =
+        model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS || model == DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS
 
     fun isStreaming() = sseHandler?.isStreaming?.value == true
 
@@ -193,6 +194,49 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         sseHandler?.start(sseFlow)
     }
 
+    private var novelScriptPollingJob: Job? = null
+
+    /**
+     * 轮询小说文档模式下的故事内容
+     */
+    fun pollNovelScript() {
+        // 防抖与去重：如果已经在轮询中，直接 return
+        if (novelScriptPollingJob?.isActive == true) return
+        isScriptLoading.set(true)
+        nextStepEnabled.set(false)
+        sseOutputFail.set(false)
+        sseOutputComplete.value = false
+        storyScriptResult.value = null
+
+        novelScriptPollingJob = launchPolling(
+            intervalMs = 3000L,
+            retryOnNetworkError = true, // 遇到断网等异常直接结束，不重试
+            apiBlock = { mRepo.api.pollNovelScript(NovelScriptGenerateBody(workId.value, chapterIndex ?: 1)) },
+            checkState = { response ->
+                val data = response?.data
+                when {
+                    data?.isSuccess() == true -> PollingState.SUCCESS
+                    data?.isFail() == true -> PollingState.FAIL
+                    else -> PollingState.CONTINUE
+                }
+            },
+            onSuccess = { response ->
+                response?.data?.storyContent?.let {
+                    nextStepEnabled.set(true)
+                    input.value = it
+                }
+                sseOutputComplete.value = true
+                storyScriptResult.value = response?.data
+                isScriptLoading.set(false)
+            },
+            onFail = { response, error ->
+                storyScriptResult.value = response?.data
+                isScriptLoading.set(false)
+                sseOutputFail.set(true)
+            }
+        )
+    }
+
 
     fun parseCleanTitle(rawTitle: String): String {
         // 正则解释：
@@ -218,6 +262,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     override fun onCleared() {
         super.onCleared()
         sseHandler?.cancel()
+        novelScriptPollingJob?.cancel()
     }
 
     /**
@@ -298,19 +343,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     setLoading(false)
                     this?.msg?.showToast()
                 })
-        }
-    }
-
-
-    /**
-     * 敏感词校验
-     */
-    fun sensitiveWordJudgment() {
-        requestWithLoading(
-            apiBlock = { mRepo.sensitiveWordCheck(input.value) },
-            showLoading = true
-        ) {
-            sensitiveWordJudgmentResult.value = data
         }
     }
 }

@@ -61,11 +61,13 @@ import com.kgmedia.fastfilm.core.network.apis.request.LoginByPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
 import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
+import com.kgmedia.fastfilm.core.network.apis.request.NovelScriptGenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeContentData
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeRoleImageDescBody
 import com.kgmedia.fastfilm.core.network.apis.request.OrderStatusBody
 import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
+import com.kgmedia.fastfilm.core.network.apis.request.PollNovelScriptData
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
@@ -970,6 +972,12 @@ interface ApiService {
      */
     @POST(ApiConstants.ROLL_NOVEL_SUMMARY)
     suspend fun rollNovelSummary(@Body body: WorkIdBody): ApiResponse<RollNovelSummaryData?>
+
+    /**
+     * 小说上传-剧集剧本-查询单集
+     */
+    @POST(ApiConstants.POLL_NOVEL_SCRIPT)
+    suspend fun pollNovelScript(@Body body: NovelScriptGenerateBody): ApiResponse<PollNovelScriptData?>
 
     /**
      *小说上传-删除作品草稿

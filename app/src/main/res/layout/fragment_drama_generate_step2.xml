@@ -95,6 +95,66 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/fill_color1_r16"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@id/inputView"
+                app:layout_constraintEnd_toEndOf="@id/inputView"
+                app:layout_constraintStart_toStartOf="@id/inputView"
+                app:layout_constraintTop_toTopOf="@id/inputView"
+                android:visibility="@{layout.isScriptLoading?View.VISIBLE : View.GONE}">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/loading_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="loading_ball/loading_ball.json"
+                    app:lottie_imageAssetsFolder="loading_ball/images"
+                    app:lottie_loop="true"
+                    app:lottie_repeatMode="reverse" />
+
+                <TextView
+                    style="@style/Text16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:text="正在生成故事剧本..."
+                    android:textColor="?attr/textColor1" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:gravity="center">
+
+                    <TextView
+                        style="@style/Text13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="预计还需  "
+                        android:textColor="?attr/textColor4" />
+
+                    <TextView
+                        style="@style/Text13"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/textColor1"
+                        android:textStyle="bold"
+                        android:text="2-3分钟" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/Text13"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="退出后AI会继续生成"
+                    android:textColor="?attr/textColor4" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/llBottom"

@@ -96,3 +96,23 @@ data class RollNovelStructure(
     val storySummary: String? = null,
     val storyTitle: String? = null
 ) : Parcelable
+
+data class NovelScriptGenerateBody(
+    val workId: String? = null,
+    val sortNo: Int? = null,
+)
+
+data class PollNovelScriptData(
+    val workId: String? = null,
+    val sortNo: Int? = null,//集数序号
+    val genStatus: Int? = null,//[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败 4=算力不足，请充值]
+    val storyContent: String? = null,
+){
+    fun isSuccess(): Boolean {
+        return genStatus == 2
+    }
+
+    fun isFail(): Boolean {
+        return genStatus == 3
+    }
+}
