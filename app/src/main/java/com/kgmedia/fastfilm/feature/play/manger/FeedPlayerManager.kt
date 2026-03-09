@@ -9,9 +9,11 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.exoplayer.ExoPlayer
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.widget.CoverPlayerView
+import com.nhsd.basic.ext.getResString
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -118,11 +120,11 @@ class FeedPlayerManager(
 
                 if (isStartupError) {
                     // 对应右图：全屏错误缺省页
-                    _playerState.value = FeedPlayerState.Error(isNoCache = true, msg = "网络错误，请检查网络后重试")
+                    _playerState.value = FeedPlayerState.Error(isNoCache = true, msg = R.string.toast_empty_network.getResString())
                 } else {
                     // 对应左图逻辑延伸：画面保持（ExoPlayer特性），UI 保持 Buffering 或 Toast 提示
                     // 此时不切换成全屏 Error，以免用户丢失观看上下文
-                    _playerState.value = FeedPlayerState.Error(isNoCache = false, msg = "网络连接异常")
+                    _playerState.value = FeedPlayerState.Error(isNoCache = false, msg = R.string.toast_empty_network.getResString())
                 }
             }
         })
