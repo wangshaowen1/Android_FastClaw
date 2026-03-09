@@ -699,10 +699,4 @@ object ApiConstants {
      * 单集作品-生成标题/剧本/资产
      */
     const val SINGLE_WORK_GENERATE = "ai/stream/script/single/work"
-
-    /**
-     * 单集作品故事剧本保存（首次创建）
-     */
-    const val SINGLE_WORK_SAVE = "work/production/new/singleEpisode/saveStoryContent"
-
 }

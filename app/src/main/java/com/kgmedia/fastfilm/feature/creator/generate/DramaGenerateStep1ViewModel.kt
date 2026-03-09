@@ -122,7 +122,9 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 onTitleUpdate = { title ->
                     progressHelper.finish()
-                    mWorkName.value = title
+                    if (mWorkName.value.isNullOrBlank()) {
+                        mWorkName.value = title
+                    }
                 },
                 onMdUpdate = { delta ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可

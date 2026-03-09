@@ -89,7 +89,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     val nextStepEnabled by lazy { ObservableBoolean(false) }
     val sseOutputComplete by lazy { MutableLiveData(false) }
     val sseOutputFail by lazy { ObservableBoolean(false) }
-    val isScriptLoading = ObservableBoolean(true)
+    val isScriptLoading = ObservableBoolean(false)
 
     /**
      * 小说文档模式==》故事内容结果
@@ -161,7 +161,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 },
                 onTitleBack = { title ->
                     progressHelper.finish()
-                    mWorkName.value = parseCleanTitle(title)
+                    if (mWorkName.value.isNullOrBlank()) {
+                        mWorkName.value = title
+                    }
                 },
                 onStoryUpdate = { fullContent ->
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可

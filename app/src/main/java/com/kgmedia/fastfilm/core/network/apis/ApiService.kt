@@ -986,12 +986,6 @@ interface ApiService {
     suspend fun novelUploadDelete(@Body body: WorkIdBody): ApiResponse<Any>
 
     /**
-     * 单集作品故事剧本保存（首次创建）
-     */
-    @POST(ApiConstants.SINGLE_WORK_SAVE)
-    suspend fun singleWorkSave(@Body body: WorkIdBody): ApiResponse<RollNovelSummaryData?>
-
-    /**
      *单集作品-故事剧本生成
      */
     @Headers(
