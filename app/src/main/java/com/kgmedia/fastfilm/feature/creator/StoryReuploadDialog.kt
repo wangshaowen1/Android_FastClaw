@@ -3,11 +3,10 @@ package com.kgmedia.fastfilm.feature.creator
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.formatPlays
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.common.utils.FileCountUtils
 import com.kgmedia.fastfilm.databinding.DialogStoryReuploadBinding
 import com.nhsd.basic.BaseVMDialogFragment
-import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.setOnSingleClickListener
 
 /**
@@ -16,29 +15,41 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 class StoryReuploadDialog : BaseVMDialogFragment<DialogStoryReuploadBinding, StoryUploadViewModel>() {
 
     companion object {
+
+        const val KEY_TOTAL_CHAR_COUNT = "totalCharCount"
+        const val KEY_TOTAL_SENSITIVE_COUNT = "totalSensitiveCount"
+
         fun show(
-            fileName: String?,
-            fileUrl: String?,
-            result: FileCountUtils.AnalysisResult?,
-            callback: (String?, String?, FileCountUtils.AnalysisResult?) -> Unit
+            fileName: String?, totalCharCount: Int?, totalSensitiveCount: String?,
+            callback: () -> Unit
         ) {
             val activity = topActivity as? FragmentActivity ?: return
             StoryReuploadDialog().apply {
-                arguments = bundleOf(Constants.Extra.NAME to fileName, Constants.Extra.URL to fileUrl, Constants.Extra.RESULT to result)
-                this.uploadCallback = callback
+                arguments = bundleOf(
+                    Constants.Extra.NAME to fileName,
+                    KEY_TOTAL_CHAR_COUNT to totalCharCount,
+                    KEY_TOTAL_SENSITIVE_COUNT to totalSensitiveCount
+                )
+                this.reuploadCallback = callback
             }.show(activity.supportFragmentManager)
         }
     }
 
-    var uploadCallback: (String?, String?, FileCountUtils.AnalysisResult?) -> Unit = { _, _, _ -> }
-    var analyzeResult: FileCountUtils.AnalysisResult? = null
+    var reuploadCallback: () -> Unit = {}
 
     override fun onPrepareView() {
         super.onPrepareView()
-        analyzeResult = arguments?.getParcelableValue(Constants.Extra.RESULT, FileCountUtils.AnalysisResult::class.java)
+        arguments?.apply {
+            val fileName = getString(Constants.Extra.NAME)
+            val totalCharCount = getInt(KEY_TOTAL_CHAR_COUNT)
+            val totalSensitiveCount = getString(KEY_TOTAL_SENSITIVE_COUNT)
+            binding.fileName.text = fileName
+            binding.totalCharCount.text = "总计${totalCharCount.formatPlays()}字"
+            binding.errorTip.text = totalSensitiveCount
+        }
 
         binding.confirm.setOnSingleClickListener {
-            uploadCallback?.invoke(mRealVM.fileName.get(), mRealVM.fileUrl, analyzeResult)
+            reuploadCallback.invoke()
             dismissAllowingStateLoss()
         }
     }

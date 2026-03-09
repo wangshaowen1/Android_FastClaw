@@ -177,11 +177,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         isSummaryLoading.set(true)
         nextStepEnabled.set(false)
         displayChild.set(displayContent)
-        progressHelper.start(
-            "创建故事大纲", "生成故事梗概",
-            step = 1,
-            intervalMs = 6000L
-        )
 
         novelSummaryPollingJob = launchPolling(
             intervalMs = 3000L,
@@ -191,24 +186,23 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 val data = response?.data
                 when {
                     data?.isSuccess() == true -> PollingState.SUCCESS
+                    data?.isSensitive() == true -> PollingState.SUCCESS
                     data?.isFail() == true -> PollingState.FAIL
                     else -> PollingState.CONTINUE
                 }
             },
             onSuccess = { response ->
                 response?.data?.result?.let {
-                    nextStepEnabled.set(true)
+                    nextStepEnabled.set(response.data?.isSensitive() == false)
                     mWorkName.value = it.workTitle ?: ""
                 }
                 storySummaryResult.value = response?.data
-                progressHelper.finish()
-                sendRecoveryNotification("故事梗概已完成")
+//                sendRecoveryNotification("故事梗概已完成")
                 isSummaryLoading.set(false)
             },
             onFail = { _, error ->
                 displayChild.set(displayFail)
-                progressHelper.stop()
-                sendRecoveryNotification("故事梗概生成失败")
+//                sendRecoveryNotification("故事梗概生成失败")
                 isSummaryLoading.set(false)
             }
         )
@@ -238,6 +232,13 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             }
         }
     }
+
+    fun reuploadStory(onSuccess: (() -> Unit)? = null) {
+        requestWithLoading({ mRepo.api.novelUploadDelete(WorkIdBody(workId)) }) {
+            onSuccess?.invoke()
+        }
+    }
+
 //
 //
 //    /**

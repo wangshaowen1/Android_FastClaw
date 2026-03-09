@@ -20,7 +20,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
     var workId: String? = null
 
     //作品标题
-    val title = MutableLiveData("未命名标题")
+    val title = MutableLiveData("")
 
     //当前处于的步骤序号1-5
     val step = MutableLiveData<Int>()
@@ -50,7 +50,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        title.value = mBundle.getString(Constants.Extra.TITLE, "未命名标题")
+        title.value = mBundle.getString(Constants.Extra.TITLE, "")
         workId = mBundle.getString(Constants.Extra.WORK_ID)
         storyId = mBundle.getString(Constants.Extra.STORY_ID)
         taskId = mBundle.getString(Constants.Extra.TASK_ID)

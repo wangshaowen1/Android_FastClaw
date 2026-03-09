@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.ActivityUtils
 import com.fluid.afm.markdown.widget.PrinterMarkDownTextView
 import com.fluid.afm.styles.BlockQuoteStyle
 import com.fluid.afm.styles.CodeStyle
@@ -18,6 +19,8 @@ import com.kgmedia.fastfilm.common.adapter.QuickAdapter
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
+import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
+import com.kgmedia.fastfilm.feature.creator.StoryReuploadDialog
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
@@ -89,9 +92,20 @@ class DramaGenerateStep1Fragment :
         if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
             binding.recyclerView2.setAdapter(episodeAdapter)
             mRealVM.storySummaryResult.observe(this) {
-                episodeAdapter.submitList(it.result?.structureList?.map { info ->
-                    return@map ItemStorySummaryGenerateVm(info)
-                })
+                if (it.isSuccess()) {
+                    episodeAdapter.submitList(it.result?.structureList?.map { info ->
+                        return@map ItemStorySummaryGenerateVm(info)
+                    })
+                } else if (it.isSensitive()) {
+                    StoryReuploadDialog.show(it.novelFileName, it.novelCharCount, it.toastTextAuditFailed) {
+                        mRealVM.reuploadStory {
+                            if (!ActivityUtils.isActivityExistsInStack(CreationRootActivity::class.java)) {
+                                CreationRootActivity.start(mActivity)
+                            }
+                            mActivity.finish()
+                        }
+                    }
+                }
             }
         } else {
             val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)

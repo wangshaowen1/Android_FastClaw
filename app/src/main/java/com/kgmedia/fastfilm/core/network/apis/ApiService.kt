@@ -972,6 +972,12 @@ interface ApiService {
     suspend fun rollNovelSummary(@Body body: WorkIdBody): ApiResponse<RollNovelSummaryData?>
 
     /**
+     *小说上传-删除作品草稿
+     */
+    @POST(ApiConstants.NOVEL_UPLOAD_DELETE)
+    suspend fun novelUploadDelete(@Body body: WorkIdBody): ApiResponse<Any>
+
+    /**
      * 单集作品故事剧本保存（首次创建）
      */
     @POST(ApiConstants.SINGLE_WORK_SAVE)
