@@ -115,7 +115,16 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 val dialog = generatingDialog
                 if (dialog == null || !dialog.isShowing) {
                     // 只在 Dialog 不存在时创建
-                    generatingDialog = topActivity?.let { activity -> GeneratingDialog(activity, "$title $progress%", "退出后AI会继续生成") }
+                    generatingDialog = topActivity?.let { activity ->
+                        GeneratingDialog(activity, "$title $progress%", "退出后AI会继续生成", true).apply {
+                            setOnCancelListener {
+                                if (generating) {
+                                    loopAllAssetDescriptionStatusJob?.cancel()
+                                    finish()
+                                }
+                            }
+                        }
+                    }
                     generatingDialog?.show()
                 } else {
                     // 如果已经在显示，只更新文字内容，不重置 Dialog
@@ -324,6 +333,9 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
 
             failedNum > 0 -> {
+                if (step.get() != STEP_IMAGE_GENERATE_FAILED) {
+                    "部分资产生成失败，请重新生成".showToast()
+                }
                 step.set(STEP_IMAGE_GENERATE_FAILED)
                 calcCost()
             }

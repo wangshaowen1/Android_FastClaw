@@ -3,10 +3,12 @@ package com.kgmedia.fastfilm.feature.creator.storyboard
 import android.view.View
 import androidx.databinding.Observable
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.ext.showConfirmDialog
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentStoryboardDesignBinding
+import com.kgmedia.fastfilm.feature.creator.generate.OnBackPressedHandler
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
 import com.nhsd.basic.BaseViewModelFragment
@@ -16,7 +18,7 @@ import com.nhsd.basic.ext.getParentViewModel
  * 分镜设计
  */
 class StoryboardDesignFragment :
-    BaseViewModelFragment<FragmentStoryboardDesignBinding, StoryboardDesignViewModel>() {
+    BaseViewModelFragment<FragmentStoryboardDesignBinding, StoryboardDesignViewModel>(), OnBackPressedHandler {
 
     companion object {
         fun newInstance() = StoryboardDesignFragment()
@@ -54,6 +56,17 @@ class StoryboardDesignFragment :
                 }
             }
         }
+    }
+
+    override fun handleBackPressed(): Boolean {
+        activity?.showConfirmDialog(
+            title = null,
+            tips = "退出后，当前内容将继续生成，不会影响您的创作进度。您可随时返回继续创作。",
+            confirm = {
+                activity?.finish()
+            }
+        )
+        return true
     }
 
 }

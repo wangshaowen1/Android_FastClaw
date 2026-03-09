@@ -34,6 +34,7 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
             showCommonDialog(
                 tip = "您对分镜信息有修改尚未保存，是否保存修改？",
                 cancelText = "不保存",
+                cancel = { super.onBackPressed() },
                 confirmText = "保存并退出",
                 confirm = { mRealVM.save(true) })
         } else {

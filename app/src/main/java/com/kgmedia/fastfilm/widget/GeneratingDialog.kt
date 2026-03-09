@@ -17,7 +17,7 @@ class GeneratingDialog @JvmOverloads constructor(
 
     init {
         setContentView(binding.root)
-        setCanceledOnTouchOutside(backEnable)
+        setCanceledOnTouchOutside(false)
         setCancelable(backEnable)
         updateContent(title, tips)
     }

@@ -50,13 +50,13 @@
                 android:drawablePadding="12dp"
                 android:gravity="center"
                 android:text="@{item.data.statusCopy}"
-                tools:text="视频生成中..."
                 android:textAppearance="@style/Text12"
                 android:textColor="@color/fixed_white_1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="视频生成中..." />
 
         </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 
@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ellipsize="end"
-            android:lines="1"
+            android:lines="2"
             android:text="@{item.data.workTitle}"
             android:textAppearance="@style/Text12"
             android:textColor="?textColor2"
