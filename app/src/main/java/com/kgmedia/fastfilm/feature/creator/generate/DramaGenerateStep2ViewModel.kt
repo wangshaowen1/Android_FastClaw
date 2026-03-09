@@ -142,8 +142,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             }
         progressHelper.start(
             "生成故事剧本",
-            step = 2,
-            intervalMs = 100L
+            step = 1,
+            intervalMs = 200L
         )
         nextStepEnabled.set(false)
         sseOutputComplete.value = false

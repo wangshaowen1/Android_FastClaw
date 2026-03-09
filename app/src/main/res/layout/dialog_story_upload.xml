@@ -91,8 +91,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_m"
-                android:text="@{layout.uploadStatus==0?`点击上传文件`:`重新选择`}"
-                android:textColor="?attr/themeColor1"
+                android:text="@{layout.uploadStatus==0?`点击选择文件`:`重新选择`}"
+                android:textColor="?attr/themeColor2"
                 android:textStyle="bold"
                 android:visibility="@{layout.uploadStatus==1?View.GONE:View.VISIBLE}"
                 tools:text="点击上传文件" />
