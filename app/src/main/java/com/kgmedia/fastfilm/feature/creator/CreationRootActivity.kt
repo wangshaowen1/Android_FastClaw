@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.utils.KeyboardUtils
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
@@ -20,9 +21,10 @@ class CreationRootActivity :
 
     companion object {
         @JvmStatic
-        fun start(context: Context?) {
+        fun start(context: Context?, index: Int? = null) {
             if (context == null) return
             val starter = Intent(context, CreationRootActivity::class.java)
+            starter.putExtra(Constants.Extra.INDEX, index)
             context.startActivity(starter)
         }
     }
@@ -55,6 +57,9 @@ class CreationRootActivity :
             override fun onPageScrollStateChanged(state: Int) {
             }
         })
+        intent.getIntExtra(Constants.Extra.INDEX, 0).let {
+            binding.viewPager.currentItem = it
+        }
         binding.rbLeft.setOnClickListener {
             binding.viewPager.currentItem = 0
             EventManager.onAppTrack(AppEvent.SF_VIEW_STORY_INSPIRATION_TAB)

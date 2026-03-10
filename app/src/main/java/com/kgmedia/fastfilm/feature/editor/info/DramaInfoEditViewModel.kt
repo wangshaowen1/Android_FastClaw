@@ -143,54 +143,44 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
         if (isSSEGenerating) return
         isSSEGenerating = true
         setLoading(true)
-        val sseWork = {
-            val sseFlow = mRepo.api.sseWorkDescOptimize(
-                SSEContentBody(
-                    desc.value?.toString(),
-                    DramaGenerateConstants.MODEL_OPTIMIZE_DRAMA_DESC
-                )
+        val sseFlow = mRepo.api.sseWorkDescOptimize(
+            SSEContentBody(
+                desc.value?.toString(),
+                DramaGenerateConstants.MODEL_OPTIMIZE_DRAMA_DESC
             )
-            // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
-            sseHandler?.cancel()
-            sseHandler = SSEStreamHandler(
-                scope = viewModelScope, // 传入协程作用域
-                processor = PlainTextSseProcessor(
-                    scope = viewModelScope,
-                    onStart = {
-                        Logger.d("[SSE]", "Open")
-                        desc.value = ""
-                        setLoading(false)
-                    },
-                    onUpdate = { fullContent ->
-                        // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                        desc.value = fullContent
-                    },
-                    onComplete = {
-                        Logger.d("[SSE]", "Finished")
-                        // 触发原本结束后的逻辑
-                        isSSEGenerating = false
-                        setLoading(false)
-                    },
-                    onErrorCallback = { e ->
-                        Log.e("[SSE]", "Error: $e")
-                        isSSEGenerating = false
-                        // 根据需要处理特定错误
-                        e?.message?.showToast()
-                        setLoading(false)
-                    })
-            )
-            // 3. 启动
-            Logger.d("[SSE]", "Starting with content body = $desc")
-            sseHandler?.start(sseFlow)
-        }
-        if (desc.value.isNullOrEmpty()) {
-            sseWork.invoke()
-        }
-        sensitiveWordJudgment(desc.value.toString()) {
-            if (!it) {
-                sseWork.invoke()
-            }
-        }
+        )
+        // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
+        sseHandler?.cancel()
+        sseHandler = SSEStreamHandler(
+            scope = viewModelScope, // 传入协程作用域
+            processor = PlainTextSseProcessor(
+                scope = viewModelScope,
+                onStart = {
+                    Logger.d("[SSE]", "Open")
+                    desc.value = ""
+                    setLoading(false)
+                },
+                onUpdate = { fullContent ->
+                    // 这里自动包含了 50ms 的节流逻辑，直接设置即可
+                    desc.value = fullContent
+                },
+                onComplete = {
+                    Logger.d("[SSE]", "Finished")
+                    // 触发原本结束后的逻辑
+                    isSSEGenerating = false
+                    setLoading(false)
+                },
+                onErrorCallback = { e ->
+                    Log.e("[SSE]", "Error: $e")
+                    isSSEGenerating = false
+                    // 根据需要处理特定错误
+                    e?.message?.showToast()
+                    setLoading(false)
+                })
+        )
+        // 3. 启动
+        Logger.d("[SSE]", "Starting with content body = $desc")
+        sseHandler?.start(sseFlow)
     }
 
     /**

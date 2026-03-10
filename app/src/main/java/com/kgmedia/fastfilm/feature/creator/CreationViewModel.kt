@@ -88,53 +88,42 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
 
     fun sseGenerate(bizType: Int? = null, promptGeneratingContent: String?) {
-        val sseWork = {
-            promptGenerating.value = true to (promptGeneratingContent ?: "")
-            val sseFlow =
-                if (bizType == SSEContentBody.TYPE_RANDOM_INSPIRATION) mRepo.api.sseContentRandom(
-                    UserTokenBody()
-                ) else mRepo.api.sseContentOptimize(
-                    SSEContentBody(input.value, bizType)
-                )
-            // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
-            sseHandler?.cancel()
-            sseHandler = SSEStreamHandler(
-                scope = viewModelScope, // 传入协程作用域
-                processor = PlainTextSseProcessor(
-                    scope = viewModelScope,
-                    onStart = {
-                        promptGenerating.value = false to ""
-                        Logger.d("[SSE]", "Open")
-                        input.value = ""
-                    },
-                    onUpdate = { fullContent ->
-                        // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                        input.value = fullContent
-                    },
-                    onComplete = {
-                        Logger.d("[SSE]", "Finished")
-                        // 触发原本结束后的逻辑
-                    },
-                    onErrorCallback = { e ->
-                        Log.e("[SSE]", "Error: $e")
-                        // 根据需要处理特定错误
-                        e?.message?.showToast()
-                        promptGenerating.value = false to ""
-                    })
+        promptGenerating.value = true to (promptGeneratingContent ?: "")
+        val sseFlow =
+            if (bizType == SSEContentBody.TYPE_RANDOM_INSPIRATION) mRepo.api.sseContentRandom(
+                UserTokenBody()
+            ) else mRepo.api.sseContentOptimize(
+                SSEContentBody(input.value, bizType)
             )
-            // 3. 启动
-            Logger.d("[SSE]", "Starting with content body = $input")
-            sseHandler?.start(sseFlow)
-        }
-        if (input.value.isNullOrEmpty()) {
-            sseWork.invoke()
-            return
-        }
-        sensitiveWordJudgment(input.value) {
-            if (!it) {
-                sseWork.invoke()
-            }
-        }
+        // 2. 初始化处理器 (如果还没初始化，或者想每次重建也可以)
+        sseHandler?.cancel()
+        sseHandler = SSEStreamHandler(
+            scope = viewModelScope, // 传入协程作用域
+            processor = PlainTextSseProcessor(
+                scope = viewModelScope,
+                onStart = {
+                    promptGenerating.value = false to ""
+                    Logger.d("[SSE]", "Open")
+                    input.value = ""
+                },
+                onUpdate = { fullContent ->
+                    // 这里自动包含了 50ms 的节流逻辑，直接设置即可
+                    input.value = fullContent
+                },
+                onComplete = {
+                    Logger.d("[SSE]", "Finished")
+                    // 触发原本结束后的逻辑
+                },
+                onErrorCallback = { e ->
+                    Log.e("[SSE]", "Error: $e")
+                    // 根据需要处理特定错误
+                    e?.message?.showToast()
+                    promptGenerating.value = false to ""
+                })
+        )
+        // 3. 启动
+        Logger.d("[SSE]", "Starting with content body = $input")
+        sseHandler?.start(sseFlow)
     }
 
     /**

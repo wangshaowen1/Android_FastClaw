@@ -132,6 +132,15 @@ class AppConfigData {
      * 课程-课程banner
      */
     val workCourseBanner: SimpleBannerInfo? = null
+
+    /**
+     * APP-是否审核中，审核要关闭敏感词标红（0-否，1-是）
+     */
+    val appIsUnderReview: Int? = null
+
+    fun isReview(): Boolean {
+        return appIsUnderReview == 1
+    }
 }
 
 data class SimpleBannerInfo(

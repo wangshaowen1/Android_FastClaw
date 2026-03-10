@@ -152,8 +152,6 @@ fun <T> BaseViewModel.launchPolling(
                     }
                     PollingState.FAIL -> {
                         isPolling = false
-                        // 假设 ApiResponse 实体类中有 msg 字段
-                        if (showToastError) response?.msg?.showToast()
                         onFail(response, null)
                     }
                     PollingState.CONTINUE -> {

@@ -3,13 +3,16 @@ package com.kgmedia.fastfilm.feature.creator.set
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.databinding.DialogVideoSetBinding
 import com.kgmedia.fastfilm.feature.creator.set.allstyle.CreationStyleChooseDialog
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.launch
 
 
 class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, VideoSetViewModel>() {
@@ -69,8 +72,8 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
                 "请选择视频风格".showToast()
                 return@setOnClickListener
             }
-            mRealVM.sensitiveWordJudgment(binding.nameInputer.text.toString()) {
-                if (!it) {
+            lifecycleScope.launch {
+                sensitiveWordCheck(binding.nameInputer.text.toString(), {
                     onSuccess?.invoke(
                         mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
                         mRealVM.checkedEpisodeSet?.input?.get(),
@@ -79,7 +82,11 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
                         binding.nameInputer.text
                     )
                     dismissAllowingStateLoss()
-                }
+                }, {
+                    it?.let {
+                        binding.nameInputer.setText(it)
+                    }
+                })
             }
         }
 

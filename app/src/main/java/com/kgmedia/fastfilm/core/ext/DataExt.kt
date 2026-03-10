@@ -197,16 +197,34 @@ fun PaymentData.toPaymentParams(method: PaymentClient.PaymentMethod): PaymentPar
         }
 }
 
+suspend fun sensitiveWordCheck(content: String?, passBlock: () -> Unit, notPassBlock: (CharSequence?) -> Unit, needHighlight: Boolean? = true) {
+    val pair = sensitiveWordCheck(content, needHighlight)
+    withContext(Dispatchers.Main) {
+        if (pair.first) {
+            passBlock()
+        } else {
+            notPassBlock(pair.second)
+        }
+    }
+}
+
 /**
  * 敏感词校验
  * @return 校验结果 Pair<是否通过校验, 高亮未通过文字>
  */
-suspend fun sensitiveWordCheck(content: String): Pair<Boolean, CharSequence?> {
+suspend fun sensitiveWordCheck(content: String?, needHighlight: Boolean? = true): Pair<Boolean, CharSequence?> {
+    if (content.isNullOrBlank()) {
+        return true to null
+    }
     val checkRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveWordCheck(ContentBody(content)) }
     val checkData = checkRes.data
     if (checkRes.isSuccess && checkData != null) {
         if (checkData.isSensitive()) {
             checkData.content?.showToast()
+            val review = Config.get().appConfig.isReview()
+            if (needHighlight == false || review) {
+                return false to content
+            }
             val sp = SensitiveHighlighter.highlight(
                 text = content,
                 keywords = checkData.hitWords,

@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.GestureDetector
 import android.view.MotionEvent
+import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.utils.KeyboardUtils
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
@@ -17,6 +19,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.launch
 
 
 /**
@@ -88,12 +91,16 @@ class DramaGenerateStep2Fragment :
         binding.btnNext.setOnSingleClickListener {
             if (mRealVM.isStreaming()) return@setOnSingleClickListener
             //检查敏感词
-            mRealVM.sensitiveWordJudgment(mRealVM.input.value) {
-                if (!it) {
+            lifecycleScope.launch {
+                sensitiveWordCheck(mRealVM.input.value, {
                     mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId, taskId ->
                         hostVm?.nextStep(3, workId, storyId, taskId)
                     }
-                }
+                }, {
+                    it?.let {
+                        binding.inputView.setText(it)
+                    }
+                })
             }
         }
         val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {

@@ -7,14 +7,17 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.MotionEvent
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
+import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.databinding.ActivityContinueWritingBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
@@ -24,6 +27,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.launch
 
 class ContinueWritingActivity :
     BaseViewModelActivity<ActivityContinueWritingBinding, ContinueWritingViewModel>() {
@@ -66,23 +70,6 @@ class ContinueWritingActivity :
             }
         })
 
-        mRealVM.sensitiveWordJudgmentResult.observe(this) {
-            if (it == null) return@observe
-            mRealVM.sensitiveWordJudgmentResult.value = null
-            if (it.isSensitive()) {
-                it.content?.showToast()
-                val sp = SensitiveHighlighter.highlight(
-                    text = mRealVM.input.value,
-                    keywords = it.hitWords,
-                    color = R.color.func_failure_dark.getResColor()
-                )
-                binding.inputView.setText(sp)
-                return@observe
-            }
-            toGenerate()
-        }
-
-
         observeEvents {
             on<Events.ConfigChangeEvent> { event ->
                 //mRealVM.refreshConfig()
@@ -121,7 +108,15 @@ class ContinueWritingActivity :
                     return
                 }
                 if (!mRealVM.isSSEStreaming.get()) {
-                    mRealVM.sseGenerate()
+                    lifecycleScope.launch {
+                        sensitiveWordCheck(mRealVM.input.value, {
+                            mRealVM.sseGenerate()
+                        }, {
+                            it?.let {
+                                binding.inputView.setText(it)
+                            }
+                        })
+                    }
                 }
             }
 
@@ -137,14 +132,25 @@ class ContinueWritingActivity :
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
                 }
+                val checkJob = {
+                    lifecycleScope.launch {
+                        sensitiveWordCheck(mRealVM.input.value, {
+                            toGenerate()
+                        }, {
+                            it?.let {
+                                binding.inputView.setText(it)
+                            }
+                        })
+                    }
+                }
                 if (mRealVM.episodeInfo.value == null) {
                     mRealVM.getEpisodeInfo {
-                        mRealVM.sensitiveWordJudgment()
+                        checkJob.invoke()
                     }
                     return
                 }
                 if (!mRealVM.isSSEStreaming.get()) {
-                    mRealVM.sensitiveWordJudgment()
+                    checkJob.invoke()
                 }
             }
         }

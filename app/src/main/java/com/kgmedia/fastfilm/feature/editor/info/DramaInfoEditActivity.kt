@@ -4,18 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.text.Editable
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.selectSinglePhotoFromAlbums
 import com.kgmedia.fastfilm.common.permissions.requestImages2VideosPermissions
 import com.kgmedia.fastfilm.core.Events
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityWorkInfoEditBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.showToast
 import com.nhsd.mattise.Matisse
+import kotlinx.coroutines.launch
 
 /**
  * @Introduce:专辑-编辑详情，简介之类
@@ -93,7 +96,15 @@ class DramaInfoEditActivity :
             }
 
             R.id.btnOptimize -> {
-                mRealVM.sseGenerate()
+                lifecycleScope.launch {
+                    sensitiveWordCheck(mRealVM.desc.value.toString(), {
+                        mRealVM.sseGenerate()
+                    }, {
+                        it?.let {
+                            binding.descInputer.setText(it)
+                        }
+                    })
+                }
             }
 
             R.id.btnDelete -> {

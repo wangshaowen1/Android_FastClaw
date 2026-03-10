@@ -10,16 +10,4 @@ import com.nhsd.basic.viewmodel.BaseRepositoryViewModel
 abstract class AppRepositoryViewModel<T : AppRepository> : BaseRepositoryViewModel<T>(){
     override fun id(): Int = BR.layout
 
-    fun sensitiveWordJudgment(content: String?, callback: (Boolean) -> Unit) {
-        requestWithLoading(
-            apiBlock = { mRepo.api.sensitiveWordCheck(ContentBody(content)) },
-            showLoading = true
-        ) {
-            val isSensitive = data?.isSensitive() == true
-            callback.invoke(isSensitive)
-            if (isSensitive) {
-                data?.content?.showToast()
-            }
-        }
-    }
  }

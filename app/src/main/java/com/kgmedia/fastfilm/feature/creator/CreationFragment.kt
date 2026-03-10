@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.MotionEvent
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ClipboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.onUserSignOut
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
@@ -28,6 +30,7 @@ import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.launch
 
 class CreationFragment :
     BaseViewModelFragment<FragmentCreationBinding, CreationViewModel>() {
@@ -219,7 +222,15 @@ class CreationFragment :
                 if (mRealVM.isStreaming()) {
                     return
                 }
-                mRealVM.sseGenerate(SSEContentBody.TYPE_AI_OPTIMIZE_INSPIRATION, "优化中...")
+                lifecycleScope.launch {
+                    sensitiveWordCheck(mRealVM.input.value, {
+                        mRealVM.sseGenerate(SSEContentBody.TYPE_AI_OPTIMIZE_INSPIRATION, "优化中...")
+                    }, {
+                        it?.let {
+                            binding.inputView.setText(it)
+                        }
+                    })
+                }
             }
 
             R.id.randomInspirations -> {
@@ -236,7 +247,15 @@ class CreationFragment :
                 if (mRealVM.isStreaming()) {
                     return
                 }
-                mRealVM.sseGenerate(SSEContentBody.TYPE_RANDOM_INSPIRATION, "灵感生成中...")
+                lifecycleScope.launch {
+                    sensitiveWordCheck(mRealVM.input.value, {
+                        mRealVM.sseGenerate(SSEContentBody.TYPE_RANDOM_INSPIRATION, "灵感生成中...")
+                    }, {
+                        it?.let {
+                            binding.inputView.setText(it)
+                        }
+                    })
+                }
             }
 
             R.id.btnDelete -> {
@@ -292,11 +311,14 @@ class CreationFragment :
                     return
                 }
                 //检查敏感词
-                mRealVM.sensitiveWordJudgment(mRealVM.input.value) {
-                    if (it) {
-                        return@sensitiveWordJudgment
-                    }
-                    showVideoSetDialog(workTitle = mRealVM.extractStoryName(mRealVM.input.value))
+                lifecycleScope.launch {
+                    sensitiveWordCheck(mRealVM.input.value, {
+                        showVideoSetDialog(workTitle = mRealVM.extractStoryName(mRealVM.input.value))
+                    }, {
+                        it?.let {
+                            binding.inputView.setText(it)
+                        }
+                    })
                 }
             }
         }
