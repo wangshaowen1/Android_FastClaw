@@ -188,7 +188,7 @@ class CreationFragment :
                             range,
                             custom, ratio, style
                         )
-                        if (Config.get().notifyPowerConsume()) {
+                        if (Config.get().notifyPowerConsume(StoryGenerateConfirmDialog.SCENE_TXT_UPLOAD)) {
                             StoryGenerateConfirmDialog.newInstance(body, this@CreationFragment.mRealVM.analysisResult).apply {
                                 onConfirm = { data -> startEditor(data) }
                             }.show(this@CreationFragment.childFragmentManager)

@@ -15,6 +15,7 @@ import kotlin.math.roundToInt
 class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGenerateConfirmBinding, StoryGenerateConfirmViewModel>() {
 
     companion object {
+        const val SCENE_TXT_UPLOAD = 2
         fun newInstance(
             body: UploadStoryBody?,
             result: TextEncodingUtil.AnalysisResult?): StoryGenerateConfirmDialog {
@@ -37,7 +38,7 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
             mRealVM.confirmPowerConsume { data ->
                 if (data?.checkStatus() == true) {
                     if (mRealVM.checkedPolicy.get()) {
-                        Config.get().notifyPowerConsumeClose()
+                        Config.get().notifyPowerConsumeClose(SCENE_TXT_UPLOAD)
                     }
                     onConfirm.invoke(data)
                     dismissAllowingStateLoss()
