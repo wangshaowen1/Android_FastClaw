@@ -23,8 +23,9 @@
 
             <com.kgmedia.fastfilm.widget.CoverPlayerView
                 android:id="@+id/playerView"
-                setCoverUrl="@{item.data.videoCoverUrl}"
                 track="@{item.data}"
+                android:background="?attr/bgColor1"
+                app:shutter_background_color="?attr/bgColor1"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:saveEnabled="false"
@@ -61,7 +62,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.42" />
+                app:layout_constraintVertical_bias="0.5" />
 
             <LinearLayout
                 android:id="@+id/pbBuffering"
@@ -74,7 +75,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.42">
+                app:layout_constraintVertical_bias="0.5">
 
                 <ImageView
                     android:id="@+id/animBuffering"

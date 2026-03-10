@@ -14,7 +14,7 @@ class StoryGenerateConfirmViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 协议是否勾选
      */
-    val checkedPolicy by lazy { ObservableBoolean(false) }
+    val checkedPolicy by lazy { ObservableBoolean(true) }
     val body by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, UploadStoryBody::class.java) }
     fun confirmPowerConsume(callback: (UploadStoryData?) -> Unit) {
         if (body == null) return
