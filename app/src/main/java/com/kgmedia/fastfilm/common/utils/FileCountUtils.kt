@@ -23,7 +23,7 @@ object FileCountUtils {
     data class AnalysisResult(
         val charCount: Int,
         val tokenCount: Int,
-        val estimatedPower: Double
+        var estimatedPower: Double
     ) : Parcelable
 
     // 内部累加器，用于在流式读取时同时统计两项数据

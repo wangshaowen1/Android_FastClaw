@@ -60,8 +60,11 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
             dismissAllowingStateLoss()
         }
         binding.confirm.setOnSingleClickListener {
-            uploadCallback?.invoke(mRealVM.fileName.get(), mRealVM.fileUrl, analyzeResult)
-            dismissAllowingStateLoss()
+            mRealVM.powerCalculate(analyzeResult?.charCount){
+                analyzeResult?.estimatedPower = it?.toDouble() ?: 0.0
+                uploadCallback?.invoke(mRealVM.fileName.get(), mRealVM.fileUrl, analyzeResult)
+                dismissAllowingStateLoss()
+            }
         }
     }
 

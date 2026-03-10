@@ -69,6 +69,8 @@ import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
 import com.kgmedia.fastfilm.core.network.apis.request.PollNovelScriptData
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateBody
+import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateData
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReportSubmissionBody
@@ -995,4 +997,10 @@ interface ApiService {
     )
     @POST(ApiConstants.SINGLE_WORK_GENERATE)
     fun singleWorkGenerate(@Body body: ContentBody): Flow<SSEvent>
+
+    /**
+     *算力预估
+     */
+    @POST(ApiConstants.POWER_CALCULATE)
+    suspend fun powerCalculate(@Body body: PowerCalculateBody): ApiResponse<PowerCalculateData>
 }

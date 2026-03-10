@@ -699,4 +699,9 @@ object ApiConstants {
      * 单集作品-生成标题/剧本/资产
      */
     const val SINGLE_WORK_GENERATE = "ai/stream/script/single/work"
+
+    /**
+     * 算力预估
+     */
+    const val POWER_CALCULATE = "trade/point/estimate/calculate"
 }

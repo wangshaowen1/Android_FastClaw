@@ -10,6 +10,8 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.formatW
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.Config
+import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateBody
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getResDrawable
@@ -53,6 +55,12 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
             STATE_UPLOAD_FAIL -> R.drawable.img_text_error
             else -> R.drawable.icon_loading2
         }.getResDrawable()
+    }
+
+    fun powerCalculate(totalCharCount: Int?, callback: (Long?) -> Unit) {
+        requestWithLoading({ mRepo.api.powerCalculate(PowerCalculateBody(4, totalCharCount)) }) {
+            callback.invoke(data?.pointCost)
+        }
     }
 
     fun startUpload(path: String?) {
