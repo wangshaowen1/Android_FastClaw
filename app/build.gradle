@@ -381,4 +381,6 @@ dependencies {
     /*markdown库的依赖*/
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    // 经典的字符探测库，体积小，零外部依赖
+    implementation("com.googlecode.juniversalchardet:juniversalchardet:1.0.3")
 }

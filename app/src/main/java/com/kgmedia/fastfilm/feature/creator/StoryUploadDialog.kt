@@ -12,10 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.getFileMeta
-import com.kgmedia.fastfilm.common.ext.getTempFilePathFromUri
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
 import com.kgmedia.fastfilm.common.utils.FileCountUtils
+import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.databinding.DialogStoryUploadBinding
 import com.kgmedia.fastfilm.feature.creator.StoryUploadViewModel.Companion.STATE_UPLOAD_FAIL
 import com.nhsd.basic.BaseVMDialogFragment
@@ -105,7 +105,8 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                             return@launch
                         }
                     }
-                    val pathFromUri = uri.getTempFilePathFromUri(mActivity)
+                    val pathFromUri = TextEncodingUtil.createUtf8TempFile(mActivity, uri)?.absolutePath
+//                    val pathFromUri = uri.getTempFilePathFromUri(mActivity)
                     withContext(Dispatchers.Main) {
                         if ((analyzeResult?.charCount ?: 0) > FileCountUtils.MAX_CHAR_COUNT) {
                             mRealVM.uploadErrorType.set(StoryUploadViewModel.UPLOAD_ERROR_TYPE_FILE_TOO_LARGE)

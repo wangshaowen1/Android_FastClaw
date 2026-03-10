@@ -71,7 +71,7 @@ fun Uri.getFileMeta(context: Context?): Pair<String, String> {
 
     // 4. 最终拆分
     val extension = fullName.substringAfterLast(".", "").lowercase(Locale.getDefault())
-    val nameWithoutExt = fullName.substringBeforeLast(".", fullName)
+    val nameWithoutExt = fullName.substringBeforeLast(".", fullName).replace("《", "").replace("》", "")
 
     return nameWithoutExt to extension
 }
