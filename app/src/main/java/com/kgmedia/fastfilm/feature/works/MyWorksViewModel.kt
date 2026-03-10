@@ -88,6 +88,7 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
                     launch {
                         //删除数据库中的
                         mRepo.appDatabase.workInformationDao().deleteByWorkIds(workIds)
+                        isView.value = true
                     }
                 })
         }
