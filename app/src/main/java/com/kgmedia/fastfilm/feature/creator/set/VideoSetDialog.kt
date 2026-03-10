@@ -1,5 +1,7 @@
 package com.kgmedia.fastfilm.feature.creator.set
 
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
@@ -31,6 +33,19 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
     override fun onPrepareView() {
         super.onPrepareView()
         binding.nameInputer.setText(mRealVM.workTitle)
+        binding.btnConfirm.alpha = if (mRealVM.workTitle.isNullOrEmpty()) 0.6f else 1f
+        binding.nameInputer.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                binding.btnConfirm.alpha = if (mRealVM.workTitle.isNullOrEmpty()) 0.6f else 1f
+            }
+        })
         binding.btnConfirm.setOnClickListener {
             if (binding.nameInputer.text.isNullOrEmpty()) {
                 "请输入作品名称".showToast()
@@ -54,14 +69,18 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
                 "请选择视频风格".showToast()
                 return@setOnClickListener
             }
-            onSuccess?.invoke(
-                mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
-                mRealVM.checkedEpisodeSet?.input?.get(),
-                mRealVM.checkedRatio?.data?.get()?.configValue,
-                mRealVM.checkedStyle?.data?.get()?.styleCode,
-                binding.nameInputer.text
-            )
-            dismissAllowingStateLoss()
+            mRealVM.sensitiveWordJudgment(binding.nameInputer.text.toString()) {
+                if (!it) {
+                    onSuccess?.invoke(
+                        mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
+                        mRealVM.checkedEpisodeSet?.input?.get(),
+                        mRealVM.checkedRatio?.data?.get()?.configValue,
+                        mRealVM.checkedStyle?.data?.get()?.styleCode,
+                        binding.nameInputer.text
+                    )
+                    dismissAllowingStateLoss()
+                }
+            }
         }
 
         binding.btnAllStyle.setOnSingleClickListener {
