@@ -43,7 +43,7 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                binding.btnConfirm.alpha = if (mRealVM.workTitle.isNullOrEmpty()) 0.6f else 1f
+                binding.btnConfirm.alpha = if (binding.nameInputer.text.isNullOrEmpty()) 0.6f else 1f
             }
         })
         binding.btnConfirm.setOnClickListener {
