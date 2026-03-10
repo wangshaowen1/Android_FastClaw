@@ -184,8 +184,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/spacing_m"
-                    android:text="@{layout.desc.length()+`/500`}"
+                    android:text="@{layout.desc.length()+`/200`}"
                     android:textColor="?attr/textColor4"
+                    android:maxLength="200"
                     tools:text="0/200" />
             </LinearLayout>
 

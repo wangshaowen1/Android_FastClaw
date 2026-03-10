@@ -68,6 +68,9 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
     //编辑修改成功
     val editAndModify = MutableLiveData<Boolean>(false)
 
+    //正在走流
+    var isSSEGenerating = false
+
     override fun onCreate() {
         super.onCreate()
         workInfo?.apply {
@@ -93,7 +96,8 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
             return
         }
         launchWithLoading {
-            val sensitiveCheckRes = withContext(Dispatchers.IO) { mRepo.api.sensitiveImageCheck(ImgUrlBody(cover.get())) }
+            val sensitiveCheckRes =
+                withContext(Dispatchers.IO) { mRepo.api.sensitiveImageCheck(ImgUrlBody(cover.get())) }
             val sensitiveCheckData = sensitiveCheckRes.data
             if (sensitiveCheckRes.isSuccess && sensitiveCheckData != null) {
                 if (sensitiveCheckData.isSensitive()) {
@@ -136,6 +140,9 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
     private var sseHandler: SSEStreamHandler? = null
 
     fun sseGenerate() {
+        if (isSSEGenerating) return
+        isSSEGenerating = true
+        setLoading(true)
         val sseWork = {
             val sseFlow = mRepo.api.sseWorkDescOptimize(
                 SSEContentBody(
@@ -152,6 +159,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                     onStart = {
                         Logger.d("[SSE]", "Open")
                         desc.value = ""
+                        setLoading(false)
                     },
                     onUpdate = { fullContent ->
                         // 这里自动包含了 50ms 的节流逻辑，直接设置即可
@@ -160,11 +168,15 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                     onComplete = {
                         Logger.d("[SSE]", "Finished")
                         // 触发原本结束后的逻辑
+                        isSSEGenerating = false
+                        setLoading(false)
                     },
                     onErrorCallback = { e ->
                         Log.e("[SSE]", "Error: $e")
+                        isSSEGenerating = false
                         // 根据需要处理特定错误
                         e?.message?.showToast()
+                        setLoading(false)
                     })
             )
             // 3. 启动
