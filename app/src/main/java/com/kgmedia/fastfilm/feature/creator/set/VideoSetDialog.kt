@@ -18,11 +18,12 @@ import kotlinx.coroutines.launch
 class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, VideoSetViewModel>() {
 
     companion object {
-        fun newInstance(workTitle: String?, list: VideoConfigData?): VideoSetDialog {
+        fun newInstance(workTitle: String?, list: VideoConfigData?, charCount: Int? = null): VideoSetDialog {
             val fragment = VideoSetDialog()
             fragment.arguments = bundleOf(
                 Constants.Extra.TITLE to workTitle,
-                Constants.Extra.DATA to list
+                Constants.Extra.DATA to list,
+                Constants.Extra.COUNT to charCount
             )
             return fragment
         }

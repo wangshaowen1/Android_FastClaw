@@ -139,6 +139,7 @@ public class Constants {
         String REWARD_TYPE = "rewardType";
         String SELECT_MODE = "SELECT_MODE";
         String INDEX = "INDEX";
+        String COUNT = "COUNT";
         String SHOW_SHARE_DIALOG = "showShareDialog";
         String EXTRA_ID = "EXTRA_ID";
         String TEMPLATE = "template";

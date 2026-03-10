@@ -43,9 +43,19 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
         episodeVms.clear()
         ratioVms.clear()
         styleVms.clear()
-        configsData?.totalEpisodeCntItemVoList?.forEach {
-            episodeVms.add(initEpisodeVm(it))
+        val charCount = mBundle.getInt(Constants.Extra.COUNT)
+        if (charCount > 0) {
+            configsData?.novelRecommendEpisodeGroupList?.find {
+                charCount > (it.minCount ?: 0) && charCount < (it.maxCount ?: 0)
+            }?.itemList?.forEach {
+                episodeVms.add(initEpisodeVm(it))
+            }
+        } else {
+            configsData?.totalEpisodeCntItemVoList?.forEach {
+                episodeVms.add(initEpisodeVm(it))
+            }
         }
+
         configsData?.ratioItemVoList?.forEach {
             ratioVms.add(initRatioVm(it))
         }

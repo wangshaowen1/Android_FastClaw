@@ -58,5 +58,14 @@ data class VideoStyleConfigInfo(
 data class VideoConfigData(
     val totalEpisodeCntItemVoList: List<VideoConfigInfo>?,
     val ratioItemVoList: List<VideoConfigInfo>?,
-    val styleItemVOList: List<VideoStyleConfigInfo>?
+    val styleItemVOList: List<VideoStyleConfigInfo>?,
+    val novelRecommendEpisodeGroupList: List<NovelRecommendEpisodeConfig>?
+) : Parcelable
+
+@Parcelize
+data class NovelRecommendEpisodeConfig(
+    val extraConfig: String? = null,//extra_config 值，标识字数区间，如：NOVEL_RANGE_10_12=10-12万字, NOVEL_RANGE_12_20=12-20万字, NOVEL_RANGE_20_30=20-30万字NOVEL_RANGE_30_40=30-40万字, NOVEL_RANGE_40_50=40-50万字, NOVEL_RANGE_50_60=50-60万字
+    val minCount: Int? = null,//区间最小字数（字），如 100000
+    val maxCount: Int? = null,//区间最大字数（字），如 120000
+    val itemList: List<VideoConfigInfo>?,//该区间下的推荐集数选项
 ) : Parcelable

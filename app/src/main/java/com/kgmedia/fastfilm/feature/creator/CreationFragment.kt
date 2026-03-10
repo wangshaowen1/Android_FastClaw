@@ -146,7 +146,7 @@ class CreationFragment :
     fun showVideoSetDialog(workTitle: String? = null, fileUrl: String? = null) {
         mRealVM.videoSetConfig(true) {
             val config = mRealVM.videoSetConfig.value
-            VideoSetDialog.newInstance(workTitle,config).apply {
+            VideoSetDialog.newInstance(workTitle, config, if (!fileUrl.isNullOrEmpty()) mRealVM.analysisResult?.charCount else null).apply {
                 onSuccess = { range, custom, ratio, style, name ->
 
                     val isFileModel = !fileUrl.isNullOrEmpty()

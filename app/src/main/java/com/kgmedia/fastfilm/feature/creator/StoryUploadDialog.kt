@@ -22,6 +22,7 @@ import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -116,6 +117,7 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                             mRealVM.uploadErrorType.set(StoryUploadViewModel.UPLOAD_ERROR_TYPE_FILE_CHAT_LIMIT)
                             mRealVM.uploadStatus.set(STATE_UPLOAD_FAIL)
                         } else {
+                            delay(300)
                             mRealVM.startUpload(result.tempFile?.absolutePath)
                         }
                     }
