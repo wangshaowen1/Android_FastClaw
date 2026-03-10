@@ -96,6 +96,7 @@ public class PushManager {
          */
         mPushAgent.setNotificationClickHandler(notificationClickHandler);
         mPushAgent.setDisplayNotificationNumber(5);
+        mPushAgent.setNotificationOnForeground(false);
         mPushAgent.setThirdTokenCallback((type, token) -> Logger.e(TAG, "厂商token：-------->  " + ",token:" + token));
         UPushNotificationChannel.getDefaultMode(mContext);
         MiPushRegistar.register(mContext, "2882303761520335315", "5282033524315", false);
