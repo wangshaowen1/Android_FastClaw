@@ -12,9 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.getFileMeta
+import com.kgmedia.fastfilm.common.ext.getTempFilePathFromUri
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
-import com.kgmedia.fastfilm.common.utils.FileCountUtils
 import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.databinding.DialogStoryUploadBinding
 import com.kgmedia.fastfilm.feature.creator.StoryUploadViewModel.Companion.STATE_UPLOAD_FAIL
@@ -35,8 +35,8 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
         fun show(
             fileName: String?,
             fileUrl: String?,
-            result: FileCountUtils.AnalysisResult?,
-            callback: (String?, String?, FileCountUtils.AnalysisResult?) -> Unit
+            result: TextEncodingUtil.AnalysisResult?,
+            callback: (String?, String?, TextEncodingUtil.AnalysisResult?) -> Unit
         ) {
             val activity = topActivity as? FragmentActivity ?: return
             StoryUploadDialog().apply {
@@ -46,12 +46,12 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
         }
     }
 
-    var uploadCallback: (String?, String?, FileCountUtils.AnalysisResult?) -> Unit = { _, _, _ -> }
-    var analyzeResult: FileCountUtils.AnalysisResult? = null
+    var uploadCallback: (String?, String?, TextEncodingUtil.AnalysisResult?) -> Unit = { _, _, _ -> }
+    var analyzeResult: TextEncodingUtil.AnalysisResult? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
-        analyzeResult = arguments?.getParcelableValue(Constants.Extra.RESULT, FileCountUtils.AnalysisResult::class.java)
+        analyzeResult = arguments?.getParcelableValue(Constants.Extra.RESULT, TextEncodingUtil.AnalysisResult::class.java)
         binding.btnChoose.paintFlags = binding.btnChoose.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         binding.btnChoose.setOnSingleClickListener {
             openFilePicker()
@@ -96,8 +96,6 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
             uri?.let {
                 // 在协程中处理，防止卡顿
                 lifecycleScope.launch(Dispatchers.IO) {
-                    analyzeResult = FileCountUtils.getFileAnalysis(context, it)
-
                     it.getFileMeta(context).let { meta ->
                         mRealVM.fileName.set(meta.first + "." + meta.second)
                         val allowedExtensions = listOf("txt")//, "doc", "docx"
@@ -108,14 +106,15 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                             return@launch
                         }
                     }
-                    val pathFromUri = TextEncodingUtil.createUtf8TempFile(mActivity, uri)?.absolutePath
+                    val result = TextEncodingUtil.createUtf8TempFileAndAnalyze(mActivity, uri)
+                    analyzeResult = result.analysisResult
 //                    val pathFromUri = uri.getTempFilePathFromUri(mActivity)
                     withContext(Dispatchers.Main) {
-                        if ((analyzeResult?.charCount ?: 0) > FileCountUtils.MAX_CHAR_COUNT) {
+                        if ((analyzeResult?.charCount ?: 0) > TextEncodingUtil.MAX_CHAR_COUNT) {
                             mRealVM.uploadErrorType.set(StoryUploadViewModel.UPLOAD_ERROR_TYPE_FILE_TOO_LARGE)
                             mRealVM.uploadStatus.set(STATE_UPLOAD_FAIL)
                         } else {
-                            mRealVM.startUpload(pathFromUri)
+                            mRealVM.startUpload(result.tempFile?.absolutePath)
                         }
                     }
                 }

@@ -2,7 +2,7 @@ package com.kgmedia.fastfilm.feature.creator.set
 
 import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.common.utils.FileCountUtils
+import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.databinding.DialogStoryGenerateConfirmBinding
@@ -16,7 +16,7 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
     companion object {
         fun newInstance(
             body: UploadStoryBody?,
-            result: FileCountUtils.AnalysisResult?): StoryGenerateConfirmDialog {
+            result: TextEncodingUtil.AnalysisResult?): StoryGenerateConfirmDialog {
             val fragment = StoryGenerateConfirmDialog()
             fragment.arguments = bundleOf(
                 Constants.Extra.DATA to body,
@@ -30,7 +30,7 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
 
     override fun onPrepareView() {
         super.onPrepareView()
-        val result = arguments?.getParcelableValue(Constants.Extra.RESULT, FileCountUtils.AnalysisResult::class.java)
+        val result = arguments?.getParcelableValue(Constants.Extra.RESULT, TextEncodingUtil.AnalysisResult::class.java)
         binding.tvPower.text = result?.estimatedPower?.roundToInt().toString()
         binding.btnConfirm.setOnClickListener {
             mRealVM.confirmPowerConsume { data ->

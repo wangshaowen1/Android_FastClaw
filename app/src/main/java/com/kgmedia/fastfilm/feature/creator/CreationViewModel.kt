@@ -11,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.common.utils.FileCountUtils
+import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
@@ -33,7 +33,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     val input by lazy { MutableLiveData<String?>() }
     var fileName: String? = null
     var fileUrl: String? = null
-    var analysisResult: FileCountUtils.AnalysisResult? = null
+    var analysisResult: TextEncodingUtil.AnalysisResult? = null
     val minInputLength = 10
     val maxInputLength by lazy {
         ObservableInt(1000)

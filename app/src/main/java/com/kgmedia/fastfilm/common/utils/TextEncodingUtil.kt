@@ -2,115 +2,153 @@ package com.kgmedia.fastfilm.common.utils
 
 import android.content.Context
 import android.net.Uri
+import android.os.Parcelable
+import com.kgmedia.fastfilm.core.Config
+import com.nhsd.basic.utils.Logger
+import kotlinx.parcelize.Parcelize
 import org.mozilla.universalchardet.UniversalDetector
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.io.PushbackInputStream
+import java.io.*
 import java.nio.charset.Charset
-import java.nio.charset.StandardCharsets
 
 object TextEncodingUtil {
+    private const val TAG = "TextEncodingUtil"
+
+    // 保留你原本的 50万字 熔断上限
+    val MAX_CHAR_COUNT: Int
+        get() = Config.get().appConfig.workNovelWordLimit ?: 500000
 
     /**
-     * 主方法：将用户选择的 TXT 转换为 UTF-8 编码的临时文件
-     * * @param context 上下文
-     * @param inputUri 用户选择的文件的 Uri (通常通过 SAF 获取)
-     * @return 转换后的 UTF-8 格式的临时 File 对象，如果出错则返回 null
+     * 分析结果：同时包含 字符数、Token数、预估算力
      */
-    fun createUtf8TempFile(context: Context?, inputUri: Uri): File? {
-        if (context == null) return null
-        // 先生成临时文件的引用
-        val tempFile = File(context.cacheDir, "upload_temp_${System.currentTimeMillis()}.txt")
+    @Parcelize
+    data class AnalysisResult(
+        val charCount: Int,
+        val tokenCount: Int,
+        var estimatedPower: Double
+    ) : Parcelable
 
-        return try {
-            val originalEncoding = detectEncoding(context, inputUri) // 你的探测方法
+    /**
+     * 整合后的处理结果
+     */
+    data class ProcessResult(
+        val tempFile: File?,
+        val analysisResult: AnalysisResult?
+    )
 
-            //使用底层的 Charset.forName 做严谨比对，无视各种别名差异
-            val isUtf8 = try {
-                Charset.forName(originalEncoding) == StandardCharsets.UTF_8
-            } catch (e: Exception) {
-                // 如果遇到不支持的编码名，降级为字符串比对
-                originalEncoding.equals("UTF-8", ignoreCase = true)
-            }
+    /**
+     * 将用户选择的 TXT 转换为 UTF-8 编码的临时文件 边转换编码，边统计字数 (采用 CharArray 块读取，防止 OOM 并保留原格式)
+     */
+    fun createUtf8TempFileAndAnalyze(context: Context?, inputUri: Uri): ProcessResult {
+        val ctx = context ?: return ProcessResult(null, null)
+        val tempFile = File(ctx.cacheDir, "upload_temp_${System.currentTimeMillis()}.txt")
 
-            //阻断 Null 安全陷阱！如果拿不到流，立刻终止，绝不返回假文件
-            val inputStream = context.contentResolver.openInputStream(inputUri) ?: return null
+        var charCount = 0
+        var tokenCount = 0
+        var isExceedLimit = false // 标记是否超限
 
-            // 这里流一定不为空，放心使用 .use
-            inputStream.use { stream ->
-                FileOutputStream(tempFile).use { outputStream ->
+        try {
+            // 1. 探测编码
+            val encoding = detectEncoding(ctx, inputUri)
+            val limit = MAX_CHAR_COUNT
 
-                    if (isUtf8) {
-                        val pushbackStream = PushbackInputStream(stream, 3)
-                        val bom = ByteArray(3)
-                        val bytesRead = pushbackStream.read(bom)
+            // 2. 块读取转换并统计
+            ctx.contentResolver.openInputStream(inputUri)?.use { inputStream ->
+                tempFile.outputStream().use { fos ->
+                    inputStream.bufferedReader(Charset.forName(encoding)).use { reader ->
+                        fos.bufferedWriter(Charsets.UTF_8).use { writer ->
 
-                        // 过滤 BOM 头逻辑保持不变，这是对的
-                        if (bytesRead == 3 && bom[0] == 0xEF.toByte() && bom[1] == 0xBB.toByte() && bom[2] == 0xBF.toByte()) {
-                            pushbackStream.copyTo(outputStream)
-                        } else {
-                            if (bytesRead > 0) {
-                                pushbackStream.unread(bom, 0, bytesRead)
+                            val buffer = CharArray(8192) // 每次读取 8K 字符
+                            var readLen: Int
+                            var isFirstRead = true
+
+                            while (reader.read(buffer).also { readLen = it } != -1) {
+                                var startIndex = 0
+
+                                // 处理 UTF-8 的 BOM 头 (\uFEFF)
+                                if (isFirstRead && readLen > 0 && buffer[0] == '\uFEFF') {
+                                    startIndex = 1
+                                }
+                                isFirstRead = false
+
+                                // 统计有效字数（剔除 \n 和 \r）
+                                var validCharCountInBlock = 0
+                                for (i in startIndex until readLen) {
+                                    val c = buffer[i]
+                                    if (c != '\n' && c != '\r') {
+                                        validCharCountInBlock++
+                                    }
+                                }
+
+                                charCount += validCharCountInBlock
+                                tokenCount += validCharCountInBlock
+
+                                // 熔断保护：如果已经超限
+                                if (charCount > limit) {
+                                    charCount = limit + 1
+                                    tokenCount = charCount
+                                    isExceedLimit = true
+                                    break // 停止读取和写入
+                                }
+
+                                // 按照读取的实际长度，原样写入文件（完美保留原始换行符）
+                                writer.write(buffer, startIndex, readLen - startIndex)
                             }
-                            pushbackStream.copyTo(outputStream)
                         }
-                    } else {
-                        // 正常做字符集转换
-                        val reader = InputStreamReader(stream, originalEncoding)
-                        val writer = OutputStreamWriter(outputStream, StandardCharsets.UTF_8)
-
-                        val buffer = CharArray(4096)
-                        var read: Int
-                        while (reader.read(buffer).also { read = it } != -1) {
-                            writer.write(buffer, 0, read)
-                        }
-                        writer.flush()
                     }
                 }
             }
 
-            //终极保险：确保文件真实存在才返回，否则删掉脏数据
-            if (tempFile.exists()) {
-                tempFile
-            } else {
-                tempFile.delete()
-                null
+            val analysis = AnalysisResult(
+                charCount = charCount,
+                tokenCount = tokenCount,
+                estimatedPower = calculateEstimatedPower(tokenCount)
+            )
+
+            // 3. 结果处理
+            if (isExceedLimit) {
+                // 如果超限了，反正也不会触发上传，直接删掉临时文件释放空间
+                if (tempFile.exists()) tempFile.delete()
+                // 返回 null 的文件路径，但保留超限的分析结果，供外部判断弹窗
+                return ProcessResult(null, analysis)
+            }
+
+            if (tempFile.exists() && tempFile.length() > 0) {
+                return ProcessResult(tempFile, analysis)
             }
 
         } catch (e: Exception) {
             e.printStackTrace()
-            // 发生异常时，清理可能写了一半的废文件
             if (tempFile.exists()) tempFile.delete()
-            null
         }
+
+        return ProcessResult(null, null)
     }
 
-    /**
-     * 探测文件编码
-     * 为了内存安全，只读取前 8KB 数据进行识别
-     */
     private fun detectEncoding(context: Context, uri: Uri): String {
-        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+        return context.contentResolver.openInputStream(uri)?.use { inputStream ->
             val detector = UniversalDetector(null)
-            val buffer = ByteArray(8192) // 每次读取 8KB
+            val buffer = ByteArray(8192)
             var bytesRead: Int
 
-            // 边读边喂给探测器，只要探测器没说 "探测完了"，就继续读
+            Logger.d(TAG, "正在探测编码...")
             while (inputStream.read(buffer).also { bytesRead = it } > 0 && !detector.isDone) {
                 detector.handleData(buffer, 0, bytesRead)
             }
-            // 告诉探测器数据结束了
             detector.dataEnd()
 
-            // 获取探测结果
             val encoding = detector.detectedCharset
             detector.reset()
 
-            // 如果识别出来了就返回，如果实在识别不出来，默认当做 UTF-8 处理
-            return encoding ?: "UTF-8"
-        }
-        return "UTF-8"
+            val result = encoding ?: "UTF-8"
+            Logger.d(TAG, "探测器返回结果: ${encoding ?: "Unknown (Fallback to UTF-8)"}")
+            result
+        } ?: "UTF-8"
+    }
+
+    /**
+     * 计算预估算力值
+     */
+    fun calculateEstimatedPower(tokenCount: Int): Double {
+        return (tokenCount.toDouble() / 1_000_000.0) * 50.0
     }
 }

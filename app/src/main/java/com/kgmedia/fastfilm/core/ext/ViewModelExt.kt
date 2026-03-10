@@ -86,6 +86,7 @@ fun <T> BaseViewModel.requestWithLoading(
             try {
                 // response 方法内部包含了 withContext(Dispatchers.IO)
                 response(apiBlock, onSuccess) {
+                    if (showToastError) this?.msg?.showToast()
                     onError(this?.apiException)
                 }
             } finally {
