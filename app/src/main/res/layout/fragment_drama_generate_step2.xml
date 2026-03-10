@@ -18,6 +18,7 @@
         android:id="@+id/inputLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:keepScreenOn="true"
         android:orientation="vertical">
 
         <TextView
@@ -43,8 +44,8 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="@dimen/spacing_m"
                 android:background="@null"
-                android:focusable="false"
                 android:cursorVisible="false"
+                android:focusable="false"
                 android:gravity="top|start"
                 android:maxLength="@{layout.maxInputLength}"
                 android:padding="@dimen/spacing_m"
@@ -101,11 +102,11 @@
                 android:background="@drawable/fill_color1_r16"
                 android:gravity="center"
                 android:orientation="vertical"
+                android:visibility="@{layout.isScriptLoading?View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/inputView"
                 app:layout_constraintEnd_toEndOf="@id/inputView"
                 app:layout_constraintStart_toStartOf="@id/inputView"
-                app:layout_constraintTop_toTopOf="@id/inputView"
-                android:visibility="@{layout.isScriptLoading?View.VISIBLE : View.GONE}">
+                app:layout_constraintTop_toTopOf="@id/inputView">
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/loading_image"
@@ -142,9 +143,9 @@
                         style="@style/Text13"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="2-3分钟"
                         android:textColor="?attr/textColor1"
-                        android:textStyle="bold"
-                        android:text="2-3分钟" />
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <TextView
