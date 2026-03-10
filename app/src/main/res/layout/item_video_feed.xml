@@ -29,6 +29,7 @@
                 android:layout_height="0dp"
                 android:saveEnabled="false"
                 app:coverScaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="H,9:16"
                 app:layout_constraintTop_toTopOf="parent"
                 app:resize_mode="fit"
