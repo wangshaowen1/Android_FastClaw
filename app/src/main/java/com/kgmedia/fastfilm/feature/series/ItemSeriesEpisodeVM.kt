@@ -56,9 +56,8 @@ class ItemSeriesEpisodeVM(
     fun formatDuration(): String {
         val millis=data.get()?.duration?:0L
         if (millis <= 0L) return "0"
-        val totalSeconds = millis / 1000
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
+        val minutes = millis / 60
+        val seconds = millis % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
 }
