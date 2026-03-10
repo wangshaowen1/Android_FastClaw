@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ClipboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.onUserSignOut
@@ -187,11 +188,11 @@ class CreationFragment :
                             range,
                             custom, ratio, style
                         )
-                        if (charCount > 10000) {//大于10000字要显示确认算力弹窗  这里要拿workid去轮询
+                        if (Config.get().notifyPowerConsume()) {
                             StoryGenerateConfirmDialog.newInstance(body, this@CreationFragment.mRealVM.analysisResult).apply {
                                 onConfirm = { data -> startEditor(data) }
                             }.show(this@CreationFragment.childFragmentManager)
-                        } else {//小于10000字直接开始 这里要拿workid去轮询
+                        } else {
                             this@CreationFragment.mRealVM.confirmPowerConsume(body) { data ->
                                 if (data?.checkStatus() == true) {
                                     startEditor(data)

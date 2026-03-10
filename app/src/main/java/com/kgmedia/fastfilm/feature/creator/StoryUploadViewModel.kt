@@ -8,8 +8,8 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.formatW
+import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.core.AppRepository
-import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateBody
 import com.kuaige.oss.OnUploadListener
@@ -27,7 +27,9 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
     val uploadErrorType by lazy { ObservableInt() }
     val uploadProgress by lazy { ObservableField<String>() }
 
-    val limitErrorText = "上传失败，字数超${(Config.get().appConfig.workNovelWordLimit ?: 500000).formatW()}字"
+//    val limitErrorText = "上传失败，字数超${TextEncodingUtil.MAX_CHAR_COUNT.formatW()}字"
+    val limitErrorText = "字数不符合要求，需调整后重新上传"
+    val limitText = "仅支持txt文本，限制${TextEncodingUtil.MIN_CHAR_COUNT.formatW()}万-${TextEncodingUtil.MAX_CHAR_COUNT.formatW()}字"
 
     companion object {
         const val STATE_NONE = 0
@@ -35,7 +37,7 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
         const val STATE_UPLOAD_SUCCESS = 2
         const val STATE_UPLOAD_FAIL = 3
 
-        const val UPLOAD_ERROR_TYPE_FILE_TOO_LARGE = 1
+        const val UPLOAD_ERROR_TYPE_FILE_CHAT_LIMIT = 1
         const val UPLOAD_ERROR_TYPE_OTHER = 2
     }
 

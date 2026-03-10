@@ -15,7 +15,10 @@ object TextEncodingUtil {
 
     // 保留你原本的 50万字 熔断上限
     val MAX_CHAR_COUNT: Int
-        get() = Config.get().appConfig.workNovelWordLimit ?: 500000
+        get() = Config.get().appConfig.workNovelWordLimit ?: 600000
+
+    val MIN_CHAR_COUNT: Int
+        get() = 100000
 
     /**
      * 分析结果：同时包含 字符数、Token数、预估算力

@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.creator.set
 import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.databinding.DialogStoryGenerateConfirmBinding
@@ -35,6 +36,9 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
         binding.btnConfirm.setOnClickListener {
             mRealVM.confirmPowerConsume { data ->
                 if (data?.checkStatus() == true) {
+                    if (mRealVM.checkedPolicy.get()) {
+                        Config.get().notifyPowerConsumeClose()
+                    }
                     onConfirm.invoke(data)
                     dismissAllowingStateLoss()
                 } else {

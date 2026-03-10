@@ -379,6 +379,14 @@ class Config : NetworkChangedListener {
         return sp.getLong("activity_float_show_time_$id", 0L)
     }
 
+    fun notifyPowerConsume(): Boolean {
+        return sp.getBoolean("notifyPowerConsume", true)
+    }
+
+    fun notifyPowerConsumeClose(): Boolean {
+        return sp.getBoolean("notifyPowerConsume", false)
+    }
+
 
     companion object {
         const val FIRST_OPEN_APP: String = "firstOpenApp"

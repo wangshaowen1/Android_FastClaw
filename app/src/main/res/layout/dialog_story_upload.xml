@@ -83,7 +83,7 @@
                 android:text="@{layout.uploadErrorType==1?layout.limitErrorText:`上传失败`}"
                 android:textColor="?attr/funcColorFailure"
                 android:visibility="@{layout.uploadStatus==3?View.VISIBLE:View.GONE}"
-                tools:text="上传失败，字数超50万字" />
+                tools:text="字数不符合要求，需调整后重新上传" />
 
             <TextView
                 android:id="@+id/btnChoose"
@@ -102,9 +102,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_m"
-                android:text="仅支持txt格式，最大支持50万字"
+                android:text="@{layout.limitText}"
                 android:textColor="?attr/textColor3"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="仅支持txt文本，限制10万-60万字" />
         </LinearLayout>
 
         <LinearLayout
