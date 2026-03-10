@@ -79,11 +79,12 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     // 定义为成员变量
     private var sseHandler: SSEStreamHandler? = null
 
-    fun isStoryDocumentsMode() = model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS
+    val isStoryDocumentsMode = ObservableBoolean(false)
 
-    override fun onCreate() {
-        super.onCreate()
-        displayContent = if (isStoryDocumentsMode()) 1 else 0
+    fun refreshDisplayContent() {
+        val isDoc = model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS
+        isStoryDocumentsMode.set(isDoc)
+        displayContent = if (isDoc) 1 else 0
     }
 
     private val progressHelper by lazy {
@@ -208,6 +209,9 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                 storySummaryResult.value = response?.data
 //                sendRecoveryNotification("故事梗概生成失败")
                 isSummaryLoading.set(false)
+            },
+            onPolling = { response ->
+                storySummaryResult.value = response?.data
             }
         )
     }

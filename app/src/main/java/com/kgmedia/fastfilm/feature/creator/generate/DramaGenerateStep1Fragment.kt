@@ -65,6 +65,7 @@ class DramaGenerateStep1Fragment :
             mRealVM.episodeRangeCode = it.getStringExtra(StoryEditorActivity.EPISODE_RANGE_CODE)
             mRealVM.videoStyleId = it.getStringExtra(Constants.Extra.STYLE_ID)
             mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
+            mRealVM.refreshDisplayContent()
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 mRealVM.rollNovelSummary()
                 showBackToast = true
@@ -103,12 +104,7 @@ class DramaGenerateStep1Fragment :
                     })
                 } else if (it.isSensitive()) {
                     StoryReuploadDialog.show(it.novelFileName, it.novelCharCount, it.toastTextAuditFailed) {
-                        mRealVM.reuploadStory {
-                            if (!ActivityUtils.isActivityExistsInStack(CreationRootActivity::class.java)) {
-                                CreationRootActivity.start(mActivity)
-                            }
-                            mActivity.finish()
-                        }
+                        reuploadStory()
                     }
                 }
             }
@@ -158,8 +154,7 @@ class DramaGenerateStep1Fragment :
         binding.btnRegenerate.setOnSingleClickListener {
             markDownTextView.stopPrinting(null)
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
-                mRealVM.rollNovelSummary()
-                showBackToast = true
+                reuploadStory()
             } else {
                 mRealVM.sseGenerate()
                 hostVm?.backWarning = true
@@ -178,6 +173,18 @@ class DramaGenerateStep1Fragment :
             mRealVM.confirmGenerate(markDownTextView.text.toString()) { workId, storyId ->
                 hostVm?.nextStep(2, workId, storyId)
             }
+        }
+    }
+
+    /**
+     * 重新上传/重试  删除本地草稿，打开小说文档上传界面重新上传
+     */
+    fun reuploadStory() {
+        mRealVM.reuploadStory {
+            if (!ActivityUtils.isActivityExistsInStack(CreationRootActivity::class.java)) {
+                CreationRootActivity.start(mActivity, 1)
+            }
+            mActivity.finish()
         }
     }
 

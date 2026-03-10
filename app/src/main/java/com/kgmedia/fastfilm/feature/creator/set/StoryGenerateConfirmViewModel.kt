@@ -11,12 +11,12 @@ import com.nhsd.basic.ext.getParcelableValue
 
 class StoryGenerateConfirmViewModel : AppRepositoryViewModel<AppRepository>() {
 
-    val body = mBundle.getParcelableValue(Constants.Extra.DATA, UploadStoryBody::class.java)
+    val body by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, UploadStoryBody::class.java) }
     fun confirmPowerConsume(callback: (UploadStoryData?) -> Unit) {
         if (body == null) return
         requestWithLoading(
             apiBlock = {
-                mRepo.api.novelUploadSummary(body)
+                mRepo.api.novelUploadSummary(body!!)
             }
         ) {
             callback.invoke(data)

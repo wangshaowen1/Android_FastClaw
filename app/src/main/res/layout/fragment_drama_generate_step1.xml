@@ -156,13 +156,10 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
-
                                 <include layout="@layout/item_skeleton_story_summary" />
-
                                 <include layout="@layout/item_skeleton_story_summary" />
-
                                 <include layout="@layout/item_skeleton_story_summary" />
-
+                                <include layout="@layout/item_skeleton_story_summary" />
                                 <include layout="@layout/item_skeleton_story_summary" />
                             </LinearLayout>
                         </com.facebook.shimmer.ShimmerFrameLayout>
