@@ -383,8 +383,8 @@ class Config : NetworkChangedListener {
         return sp.getBoolean("notifyPowerConsume$scene", true)
     }
 
-    fun notifyPowerConsumeClose(scene:Int): Boolean {
-        return sp.getBoolean("notifyPowerConsume$scene", false)
+    fun notifyPowerConsumeClose(scene: Int) {
+        sp.putBoolean("notifyPowerConsume$scene", false)
     }
 
 

@@ -32,6 +32,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class CreationFragment :
     BaseViewModelFragment<FragmentCreationBinding, CreationViewModel>() {
@@ -189,7 +190,8 @@ class CreationFragment :
                             custom, ratio, style
                         )
                         if (Config.get().notifyPowerConsume(StoryGenerateConfirmDialog.SCENE_TXT_UPLOAD)) {
-                            StoryGenerateConfirmDialog.newInstance(body, this@CreationFragment.mRealVM.analysisResult).apply {
+                            StoryGenerateConfirmDialog.newInstance(body, this@CreationFragment.mRealVM.analysisResult?.estimatedPower?.roundToInt())
+                                .apply {
                                 onConfirm = { data -> startEditor(data) }
                             }.show(this@CreationFragment.childFragmentManager)
                         } else {

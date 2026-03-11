@@ -2,14 +2,12 @@ package com.kgmedia.fastfilm.feature.creator.set
 
 import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.databinding.DialogStoryGenerateConfirmBinding
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
-import com.nhsd.basic.ext.getParcelableValue
 import kotlin.math.roundToInt
 
 class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGenerateConfirmBinding, StoryGenerateConfirmViewModel>() {
@@ -18,11 +16,12 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
         const val SCENE_TXT_UPLOAD = 2
         fun newInstance(
             body: UploadStoryBody?,
-            result: TextEncodingUtil.AnalysisResult?): StoryGenerateConfirmDialog {
+            powerConsume: Int?
+        ): StoryGenerateConfirmDialog {
             val fragment = StoryGenerateConfirmDialog()
             fragment.arguments = bundleOf(
                 Constants.Extra.DATA to body,
-                Constants.Extra.RESULT to result,
+                Constants.Extra.COST to powerConsume,
             )
             return fragment
         }
@@ -32,8 +31,8 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
 
     override fun onPrepareView() {
         super.onPrepareView()
-        val result = arguments?.getParcelableValue(Constants.Extra.RESULT, TextEncodingUtil.AnalysisResult::class.java)
-        binding.tvPower.text = result?.estimatedPower?.roundToInt().toString()
+        val powerConsume = arguments?.getInt(Constants.Extra.COST)
+        binding.tvPower.text = powerConsume?.toString()
         binding.btnConfirm.setOnClickListener {
             mRealVM.confirmPowerConsume { data ->
                 if (data?.checkStatus() == true) {
