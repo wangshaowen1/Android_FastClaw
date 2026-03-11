@@ -65,6 +65,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.loadState.setNoDataIcon(0)
         binding.root.applySmartFocusManager()
         binding.loadState.setNoDataButton("生成分镜视频") {
             mRealVM.regenerateStoryboards()

@@ -251,7 +251,7 @@ data class EpisodeInfo(
     val storyContent: String? = null,
     /**序号*/
     val sortNo: Int? = null,
-    /**[枚举]创作流程进度 [10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成]*/
+    /**[枚举]创作流程进度 [0=待创建 10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述生成中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成]20260311加0=待创建的状态，逻辑变更返回所有剧集*/
     val stepProgress: Int? = null,
     /**[枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败]*/
     val stepStatus: Int? = null,
@@ -286,6 +286,9 @@ data class EpisodeInfo(
     ) : Parcelable
 
     companion object {
+        /**待创建*/
+        const val NOT_CREATED = 0
+
         /**剧本输入*/
         const val PROGRESS_DRAFT = 10
 

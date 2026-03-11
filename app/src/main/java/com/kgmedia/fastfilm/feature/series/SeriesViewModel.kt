@@ -76,7 +76,7 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
                 initialLoadSize = PagedProxy.DEFAULT_PAGE_SIZE * 3,
                 pageSize = PagedProxy.DEFAULT_PAGE_SIZE
             ),
-            pagingSourceFactory = { EpisodePagingSource(workId, workInfo.value?.totalEpisodeCnt ?: 0) }
+            pagingSourceFactory = { EpisodePagingSource(workId) }
         ).flow.cachedIn(viewModelScope)
     }
 
