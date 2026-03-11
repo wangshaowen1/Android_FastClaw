@@ -106,7 +106,7 @@ data class VideoSynthesisTask(
         changeStatus(STATUS_SAVING)
         ioScope.launchNoCrash(
             block = {
-                val duration = runCatching { FFmpegHelper.parseDuration(file.path) }.getOrNull()
+                val duration = runCatching { FFmpegHelper.parseDuration(file.path) / 1000 }.getOrNull()
                 val response = ApiFactory.apiService.workStoryboardVideoSynthesis(VideoSynthesisBody(workId, storyId, videoUrl, duration))
                 if (response.isSuccess) {
                     changeStatus(STATUS_SUCCESS)

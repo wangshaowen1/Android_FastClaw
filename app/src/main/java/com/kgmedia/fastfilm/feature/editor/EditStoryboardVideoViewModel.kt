@@ -243,9 +243,10 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         }
     }
 
+    val isSynthesised get() = storyInfo?.stepProgress in arrayOf(40, 45, 50)
     fun deleteCurrentStoryboard() {
         launchWithLoading {
-            response(mRepo.api.workStoryboardDelete(IdsBody(null, currentStoryboard.get()?.data?.get()?.storyboardId))) {
+            response(mRepo.api.workStoryboardDelete(IdsBody(null, currentStoryboard.get()?.data?.get()?.storyboardId, if (isSynthesised) 4 else null))) {
                 val currentStoryboard = currentStoryboard.get()
                 playNext()
                 currentStoryboard?.let {
