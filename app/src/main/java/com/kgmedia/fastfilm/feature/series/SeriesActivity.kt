@@ -246,6 +246,10 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     //编辑剧本信息
                     DramaInfoEditActivity.start(this, mRealVM.workInfo.value)
                 }
+                if (mRealVM.workInfo.value?.finishedEpisodeCnt == 0) {
+                    popupView.binding.btnManage.isEnabled = false
+                    popupView.binding.btnManage.alpha = 0.5f
+                }
                 popupView.binding.btnManage.setOnSingleClickListener {
                     popup.dismiss()
                     WorksManagementActivity.start(this, workId = mRealVM.workId)
