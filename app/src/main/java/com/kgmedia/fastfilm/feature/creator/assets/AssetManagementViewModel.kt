@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.creator.assets
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.KeyboardUtils
 import com.drake.spannable.replaceSpan
@@ -28,7 +29,6 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
-import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.showToast
@@ -99,7 +99,6 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     val cost by lazy { ObservableInt() }
     private var aiPrice = 0
     val keyboardHeight by lazy { ObservableInt(100) }
-    private var generatingDialog: GeneratingDialog? = null
     private var generating = false
         set(value) {
             if (field != value) {
@@ -113,32 +112,10 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
     private val progressHelper by lazy {
         AutoProgressSimulator(viewModelScope) { show, title, progress ->
-            if (show) {
-                val dialog = generatingDialog
-                if (dialog == null || !dialog.isShowing) {
-                    // 只在 Dialog 不存在时创建
-                    generatingDialog = topActivity?.let { activity ->
-                        GeneratingDialog(activity, "$title $progress%", "退出后AI会继续生成", true).apply {
-                            window?.setDimAmount(0f)
-                            setOnCancelListener {
-                                if (generating) {
-                                    loopAllAssetDescriptionStatusJob?.cancel()
-                                    finish()
-                                }
-                            }
-                        }
-                    }
-                    generatingDialog?.show()
-                } else {
-                    // 如果已经在显示，只更新文字内容，不重置 Dialog
-                    dialog.updateContent("$title $progress%", "退出后AI会继续生成")
-                }
-            } else {
-                generatingDialog?.dismiss()
-                generatingDialog = null
-            }
+            promptGenerating.value = Triple(show, title, progress)
         }
     }
+    val promptGenerating by lazy { MutableLiveData<Triple<Boolean, String, Int>>() }
     private val powerSpan by lazy { CenterImageSpan(App.instance, R.drawable.icon_power).apply { setDrawableSize(16.dp, 16.dp) } }
     private var editConfirm = false
     val hasRole by lazy { ObservableBoolean(false) }

@@ -12,6 +12,7 @@ import com.kgmedia.fastfilm.databinding.FragmentStoryboardDesignBinding
 import com.kgmedia.fastfilm.feature.creator.generate.OnBackPressedHandler
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
+import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getParentViewModel
 
@@ -26,6 +27,7 @@ class StoryboardDesignFragment :
     }
 
     private val hostVm by lazy { getParentViewModel<StoryEditorViewModel>() }
+    private var generatingDialog: GeneratingDialog? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -38,6 +40,27 @@ class StoryboardDesignFragment :
                 Global.refreshBalance()
             }
         })
+        mRealVM.promptGenerating.observe(this) { (show, title, progress) ->
+            if (show) {
+                val dialog = generatingDialog
+                if (dialog == null || !dialog.isShowing) {
+                    // 只在 Dialog 不存在时创建
+                    generatingDialog = activity?.let { activity ->
+                        GeneratingDialog(activity, "$title $progress%", "退出后AI会继续生成", true).apply {
+                            window?.setDimAmount(0f)
+                            setOnCancelListener { activity.finish() }
+                        }
+                    }
+                    generatingDialog?.show()
+                } else {
+                    // 如果已经在显示，只更新文字内容，不重置 Dialog
+                    dialog.updateContent("$title $progress%", "退出后AI会继续生成")
+                }
+            } else {
+                generatingDialog?.dismiss()
+                generatingDialog = null
+            }
+        }
         mRealVM.retry()
         EventManager.onAppTrack(AppEvent.SF_VIEW_STORYBOARD_DESIGN_PAGE)
     }
