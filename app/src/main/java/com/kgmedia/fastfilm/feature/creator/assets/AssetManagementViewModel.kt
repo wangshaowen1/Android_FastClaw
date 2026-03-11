@@ -117,6 +117,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     // 只在 Dialog 不存在时创建
                     generatingDialog = topActivity?.let { activity ->
                         GeneratingDialog(activity, "$title $progress%", "退出后AI会继续生成", true).apply {
+                            window?.setDimAmount(0f)
                             setOnCancelListener {
                                 if (generating) {
                                     loopAllAssetDescriptionStatusJob?.cancel()
