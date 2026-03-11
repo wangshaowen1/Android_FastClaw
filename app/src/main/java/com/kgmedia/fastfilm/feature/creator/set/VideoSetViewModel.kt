@@ -55,6 +55,11 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
                 episodeVms.add(initEpisodeVm(it))
             }
         }
+        checkedEpisodeSet?.checked?.set(false)
+        checkedEpisodeSet = episodeVms.maxByOrNull {//找最大的默认
+            it.data.get()?.configValue?.toIntOrNull() ?: Int.MIN_VALUE
+        }
+        checkedEpisodeSet?.checked?.set(true)
 
         configsData?.ratioItemVoList?.forEach {
             ratioVms.add(initRatioVm(it))
@@ -66,10 +71,6 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun initEpisodeVm(ratio: VideoConfigInfo): ItemVideoConfigVm {
         return ItemVideoConfigVm(ratio).apply {
-            if (checkedEpisodeSet == null) {
-                checked.set(true)
-                checkedEpisodeSet = this
-            }
             onItemClick.value = { view ->
                 if (checkedEpisodeSet != this) {
                     checkedEpisodeSet?.checked?.set(false)
@@ -86,7 +87,8 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
                             // 只要是点击了右下角的确认、完成、搜索等键，都会触发
                             if (actionId == EditorInfo.IME_ACTION_DONE ||
                                 actionId == EditorInfo.IME_ACTION_NEXT ||
-                                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+                            ) {
                                 val targetCount = input.get()?.toIntOrNull() ?: 0
                                 if (targetCount > 60) {
                                     "剧集数不可超过60集".showToast()
