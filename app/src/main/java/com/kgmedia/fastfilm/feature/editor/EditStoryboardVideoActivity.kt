@@ -10,6 +10,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
@@ -114,7 +115,11 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     return
                 }
                 if (current.videoGenerated) {
-                    current.videoUrl?.let { mRealVM.download(current, it) }
+                    requestRead2WritePermissions { granted ->
+                        if (granted) {
+                            current.videoUrl?.let { mRealVM.download(current, it) }
+                        }
+                    }
                 }
             }
 
