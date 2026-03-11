@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.manager.AppEvent
@@ -25,6 +26,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
+import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
@@ -417,6 +419,16 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             calcCost()
             return
         }
+        if (Config.get().notifyPowerConsume(PowerConsumeConfirmDialog.SCENE_GENERATE_ASSETS_IMAGE)) {
+            PowerConsumeConfirmDialog.show(PowerConsumeConfirmDialog.SCENE_GENERATE_ASSETS_IMAGE, cost)?.apply {
+                onConfirm = { generate(cost) }
+            }
+        } else {
+            generate(cost)
+        }
+    }
+
+    private fun generate(cost: Int) {
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         var notInput = false
         val notGenerateItems = arrayListOf<Triple<ItemAssetVM<*>, String, String>>()

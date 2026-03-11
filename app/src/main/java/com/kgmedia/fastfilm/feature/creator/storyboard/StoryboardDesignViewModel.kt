@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
@@ -23,6 +24,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
+import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
@@ -322,6 +324,16 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
             calcCost()
             return
         }
+        if (Config.get().notifyPowerConsume(PowerConsumeConfirmDialog.SCENE_GENERATE_STORYBOARD_VIDEO)) {
+            PowerConsumeConfirmDialog.show(PowerConsumeConfirmDialog.SCENE_GENERATE_STORYBOARD_VIDEO, cost)?.apply {
+                onConfirm = { generate(cost, toNextStep) }
+            }
+        } else {
+            generate(cost, toNextStep)
+        }
+    }
+
+    private fun generate(cost: Int, toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
         if (PowerRechargeDialog.checkLowBalance(cost)) return
         launchWithLoading {
             adapter.items.forEach { if (it is ItemStoryboardVM && !it.save()) return@launchWithLoading }
