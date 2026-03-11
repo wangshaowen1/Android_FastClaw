@@ -29,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
+            android:visibility="@{item.data.stepProgress == 0 ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundStyle_r8"
