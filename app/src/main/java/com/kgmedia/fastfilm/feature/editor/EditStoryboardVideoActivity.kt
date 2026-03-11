@@ -64,6 +64,9 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.loadState.setNoDataButton("生成分镜视频") {
+            mRealVM.regenerateStoryboards()
+        }
         mRealVM.scrollToItem.observe(this) { itemPosition ->
             if (itemPosition > -1 && isActive) {
                 mRealVM.scrollToItem.value = -1

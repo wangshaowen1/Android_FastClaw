@@ -19,11 +19,14 @@ import com.kgmedia.fastfilm.core.ext.putAIGCMetadata
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.RetrofitClient
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
+import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.kgmedia.fastfilm.kit.media.setPlayUrl
@@ -114,27 +117,29 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         launch(
             block = {
                 val list = withContext(Dispatchers.IO) { mRepo.api.workStoryboardList(WorkBody(workId, storyId)).data }
-                if (list.isNullOrEmpty()) {
-                    updateLoadState()
-                    return@launch
-                }
-                list.mapIndexed { index, info ->
-                    ItemStoryboardVM(workId, storyId, info).apply {
-                        onItemClick.value = { v ->
-                            if (this != currentStoryboard.get()) {
-                                select()
+                if (list == null) {
+                    loadState.set(LoadStateViewHolder.RETRY)
+                } else if (list.isEmpty()) {
+                    loadState.set(LoadStateViewHolder.NO_DATA)
+                } else {
+                    list.mapIndexed { index, info ->
+                        ItemStoryboardVM(workId, storyId, info).apply {
+                            onItemClick.value = { v ->
+                                if (this != currentStoryboard.get()) {
+                                    select()
+                                }
                             }
                         }
+                    }.let {
+                        adapter.items.forEach { it.clear() }
+                        adapter.submitList(it)
                     }
-                }.let {
-                    adapter.items.forEach { it.clear() }
-                    adapter.submitList(it)
+                    nextStepEnabled.set(allStoryboardGenerated())
+                    if (currentStoryboard.get() == null) {
+                        adapter.items.firstOrNull()?.select()
+                    }
+                    updateLoadState()
                 }
-                nextStepEnabled.set(allStoryboardGenerated())
-                if (currentStoryboard.get() == null) {
-                    adapter.items.firstOrNull()?.select()
-                }
-                updateLoadState()
             },
             onError = {
                 updateLoadState()
@@ -243,7 +248,12 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
             response(mRepo.api.workStoryboardDelete(IdsBody(null, currentStoryboard.get()?.data?.get()?.storyboardId))) {
                 val currentStoryboard = currentStoryboard.get()
                 playNext()
-                currentStoryboard?.let { adapter.remove(it) }
+                currentStoryboard?.let {
+                    adapter.remove(it)
+                    if (adapter.items.isEmpty()) {
+                        loadState.set(LoadStateViewHolder.NO_DATA)
+                    }
+                }
             }
         }
     }
@@ -310,6 +320,78 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
             response(mRepo.api.dropRepaint(WorkBody(workId, storyId))) {
                 finish()
             }
+        }
+    }
+
+    private var cleared = false
+
+    /**
+     * 重新生成分镜
+     */
+    fun regenerateStoryboards() {
+        launch {
+            loadState.set(LoadStateViewHolder.LOADING)
+            //先查询分镜列表
+            val res = runCatching { withContext(Dispatchers.IO) { mRepo.api.workStoryboardList(WorkBody(workId, storyId)) } }.getOrNull()
+            if (res?.isSuccess == true) {
+                //分镜列表为空，开始生成分镜描述
+                if (res.data.isNullOrEmpty()) {
+                    val task = runCatching {
+                        withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId)).data }
+                    }.getOrNull()
+                    //分镜描述生成失败
+                    if (task == null || task.genStatus == 3) {
+                        loadState.set(LoadStateViewHolder.NO_DATA)
+                        return@launch
+                    }
+                    //轮询描述生成状态
+                    var generatingDescription = true
+                    while (generatingDescription && !cleared) {
+                        delay(3000)
+                        val task = runCatching {
+                            withContext(Dispatchers.IO) { mRepo.api.generateAllStoryboardDescriptionStatus(TaskIdBody(taskId, null)).data }
+                        }.getOrNull()
+                        when (task?.genStatus) {
+                            2 -> {
+                                //分镜描述生成成功
+                                generatingDescription = false
+                            }
+
+                            3 -> {
+                                //分镜描述生成失败
+                                loadState.set(LoadStateViewHolder.NO_DATA)
+                                generatingDescription = false
+                                return@launch
+                            }
+                        }
+                    }
+                }
+                if (cleared) return@launch
+                //获取分镜列表
+                val storyboards = runCatching { withContext(Dispatchers.IO) { mRepo.api.workStoryboardList(WorkBody(workId, storyId)).data } }.getOrNull()
+                if (storyboards.isNullOrEmpty()) {
+                    loadState.set(LoadStateViewHolder.NO_DATA)
+                } else {
+//                    val cost = runCatching {
+//                        val price = withContext(Dispatchers.IO) { mRepo.api.queryAiPrice(StrategyTypeBody(3)).data?.pointNum ?: 0 }
+//                        storyboards.sumOf { it.duration ?: 0 } * price
+//                    }.getOrNull()
+                    response(
+                        bean = mRepo.api.workStoryboardVideoGenerate(WorkBody(workId, storyId)),
+                        result = { getStoryboardList() },
+                        error = {
+                            if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                                PowerRechargeDialog.show(true)
+                            } else {
+                                this?.msg?.showToast()
+                            }
+                            loadState.set(LoadStateViewHolder.NO_DATA)
+                        })
+                }
+            } else {
+                loadState.set(LoadStateViewHolder.NO_DATA)
+            }
+
         }
     }
 

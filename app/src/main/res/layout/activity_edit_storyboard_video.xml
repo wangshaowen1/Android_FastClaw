@@ -19,10 +19,13 @@
         android:layout_height="match_parent">
 
         <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+            android:id="@+id/loadState"
             displayChild="@{layout.loadState}"
             onRetry="@{()->layout.getStoryboardList()}"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:noData="暂无分镜视频"
+            app:noDataSrc="0">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
