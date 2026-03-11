@@ -20,7 +20,7 @@
 
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
-            loadHQThumbnailUri="@{item.assetImage}"
+            loadThumbnailUri="@{item.assetImage}"
             placeHolder="@{@drawable/img_default_cover_3_4}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="0dp"
@@ -59,6 +59,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/icon_loading1"
+            app:duration="3000"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
