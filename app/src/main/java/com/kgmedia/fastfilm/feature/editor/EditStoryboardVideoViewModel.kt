@@ -344,6 +344,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                         loadState.set(LoadStateViewHolder.NO_DATA)
                         return@launch
                     }
+                    val taskId = task.taskId
                     //轮询描述生成状态
                     var generatingDescription = true
                     while (generatingDescription && !cleared) {
