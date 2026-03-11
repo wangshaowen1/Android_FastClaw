@@ -8,6 +8,7 @@ import androidx.core.view.marginEnd
 import androidx.core.view.marginStart
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.permissions.requestRead2WritePermissions
@@ -64,6 +65,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding.root.applySmartFocusManager()
         binding.loadState.setNoDataButton("生成分镜视频") {
             mRealVM.regenerateStoryboards()
         }
