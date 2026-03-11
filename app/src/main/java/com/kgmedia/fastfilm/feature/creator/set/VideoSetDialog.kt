@@ -3,8 +3,11 @@ package com.kgmedia.fastfilm.feature.creator.set
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.os.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.databinding.DialogVideoSetBinding
@@ -36,6 +39,7 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.root.applySmartFocusManager()
         binding.nameInputer.setText(mRealVM.workTitle)
         binding.btnConfirm.alpha = if (mRealVM.workTitle.isNullOrEmpty()) 0.6f else 1f
         binding.nameInputer.addTextChangedListener(object : TextWatcher {

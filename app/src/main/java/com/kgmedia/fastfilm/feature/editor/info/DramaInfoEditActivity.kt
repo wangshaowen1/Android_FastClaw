@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.selectSinglePhotoFromAlbums
 import com.kgmedia.fastfilm.common.permissions.requestImages2VideosPermissions
 import com.kgmedia.fastfilm.core.Events
@@ -45,6 +46,7 @@ class DramaInfoEditActivity :
     }
 
     private fun initView() {
+        binding.root.applySmartFocusManager()
         binding.nameInputer.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.toString() != mRealVM.name.value) {

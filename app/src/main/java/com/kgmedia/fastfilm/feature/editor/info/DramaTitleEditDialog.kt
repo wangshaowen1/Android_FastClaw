@@ -6,6 +6,7 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.databinding.DialogDramaTitleEditBinding
 import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.ext.showToast
@@ -29,6 +30,7 @@ class DramaTitleEditDialog() :
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.root.applySmartFocusManager()
         binding.nameInputer.setTextNoSelection(arguments?.getString(Constants.Extra.TITLE))
         binding.close.setOnClickListener {
             dismissAllowingStateLoss()

@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.databinding.DialogDramaDescEditBinding
 import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.ext.showToast
@@ -16,6 +17,7 @@ class DramaDescEditDialog() :
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.root.applySmartFocusManager()
         binding.inputView.setTextNoSelection("")
         binding.close.setOnClickListener {
             dismissAllowingStateLoss()

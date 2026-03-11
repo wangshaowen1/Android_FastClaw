@@ -5,6 +5,7 @@ import androidx.databinding.Observable
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
@@ -36,6 +37,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.root.applySmartFocusManager()
         mRealVM.workId = hostVm?.workId
         mRealVM.storyId = hostVm?.storyId
         mRealVM.taskId = hostVm?.taskId

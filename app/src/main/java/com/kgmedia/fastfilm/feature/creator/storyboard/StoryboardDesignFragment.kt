@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.creator.storyboard
 import android.view.View
 import androidx.databinding.Observable
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showConfirmDialog
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.manager.AppEvent
@@ -28,6 +29,7 @@ class StoryboardDesignFragment :
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.root.applySmartFocusManager()
         mRealVM.workId = hostVm?.workId
         mRealVM.storyId = hostVm?.storyId
         mRealVM.taskId = hostVm?.taskId

@@ -2,7 +2,9 @@ package com.kgmedia.fastfilm.feature.editor
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
@@ -27,6 +29,11 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
         fun start(info: SimpleStoryboardInfo, workRatio: String?, storyStatus: Int?) {
             topActivity?.let { it.startActivity(launchIntent(it, info, workRatio, storyStatus)) }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding.root.applySmartFocusManager()
     }
 
     override fun onBackPressed() {

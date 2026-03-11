@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
+import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.utils.KeyboardUtils
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
@@ -43,6 +44,7 @@ class DramaGenerateStep2Fragment :
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.root.applySmartFocusManager()
         EventManager.onAppTrack(AppEvent.SF_VIEW_SCRIPT_PAGE)
         activity?.intent?.let {
             mRealVM.workId.value = hostVm?.workId
