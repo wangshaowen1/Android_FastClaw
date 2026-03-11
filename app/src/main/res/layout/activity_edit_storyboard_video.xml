@@ -110,12 +110,16 @@
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
                     tools:layout_constraintDimensionRatio="9:16">
 
-                    <ImageView
+                    <com.airbnb.lottie.LottieAnimationView
                         setVisible="@{layout.currentStoryboard.data.videoGenerating}"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:layout_marginBottom="12dp"
-                        android:src="@drawable/icon_ai" />
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="loading_star/loading_star.json"
+                        app:lottie_imageAssetsFolder="loading_star/images"
+                        app:lottie_loop="true"
+                        app:lottie_repeatMode="reverse" />
 
                     <TextView
                         android:layout_width="wrap_content"
