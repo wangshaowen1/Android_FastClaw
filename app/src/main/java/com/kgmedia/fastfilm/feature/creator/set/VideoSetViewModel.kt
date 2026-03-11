@@ -1,10 +1,12 @@
 package com.kgmedia.fastfilm.feature.creator.set
 
 import android.view.KeyEvent
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.core.widget.doAfterTextChanged
 import com.blankj.utilcode.util.KeyboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.RecyclerViewVM
@@ -83,27 +85,32 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
                         EditText::class.java,
                         AppCompatEditText::class.java
                     )?.let {
-                        (it as? EditText)?.setOnEditorActionListener { v, actionId, event ->
-                            // 只要是点击了右下角的确认、完成、搜索等键，都会触发
-                            if (actionId == EditorInfo.IME_ACTION_DONE ||
-                                actionId == EditorInfo.IME_ACTION_NEXT ||
-                                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
-                            ) {
-                                val targetCount = input.get()?.toIntOrNull() ?: 0
-                                if (targetCount > 60) {
-                                    "剧集数不可超过60集".showToast()
-                                    input.set("60")
+                        val editText = it as? EditText
+                        editText?.apply {
+                            // 1. 处理失去焦点时的逻辑
+                            onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                                if (!hasFocus) {
+                                    val num = text.toString().toIntOrNull() ?: 0
+                                    if (num > 60) {
+                                        "剧集数不可超过60集".showToast()
+                                        input.set("60")
+                                    }
                                 }
-                                KeyboardUtils.hideSoftInput(v)
-                                return@setOnEditorActionListener true
                             }
-                            false
+                            setOnEditorActionListener { v, actionId, _ ->
+                                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                    val num = text.toString().toIntOrNull() ?: 0
+                                    if (num > 60) {
+                                        "剧集数不可超过60集".showToast()
+                                        input.set("60")
+                                    }
+                                    clearFocus() // 触发上面的 onFocusChangeListener
+                                    KeyboardUtils.hideSoftInput(v)
+                                    true
+                                } else false
+                            }
                         }
-                        KeyboardUtils.showSoftInput(it)
-                        it.requestFocus()
-                        (it as? EditText)?.setSelection(it.length())
                     }
-
                 } else {
                     view?.let { KeyboardUtils.hideSoftInput(it) }
                 }
