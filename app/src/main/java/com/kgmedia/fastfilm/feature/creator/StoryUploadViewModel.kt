@@ -29,7 +29,7 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
 
 //    val limitErrorText = "上传失败，字数超${TextEncodingUtil.MAX_CHAR_COUNT.formatW()}字"
     val limitErrorText = "字数不符合要求，需调整后重新上传"
-    val limitText = "仅支持txt文本，限制${TextEncodingUtil.MIN_CHAR_COUNT.formatW()}万-${TextEncodingUtil.MAX_CHAR_COUNT.formatW()}字"
+    val limitText = "仅支持txt文本，限制${TextEncodingUtil.MIN_CHAR_COUNT.formatW()}-${TextEncodingUtil.MAX_CHAR_COUNT.formatW()}字"
 
     companion object {
         const val STATE_NONE = 0

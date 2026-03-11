@@ -35,10 +35,11 @@ class ContinueWritingActivity :
     companion object {
 
         @JvmStatic
-        fun start(context: Context?, workId: String?, workTitle: String?) {
+        fun start(context: Context?, workId: String?, storyId: String?, workTitle: String?) {
             if (context == null) return
             val starter = Intent(context, ContinueWritingActivity::class.java)
-            starter.putExtra(Constants.Extra.ID, workId)
+            starter.putExtra(Constants.Extra.WORK_ID, workId)
+            starter.putExtra(Constants.Extra.STORY_ID, storyId)
             starter.putExtra(Constants.Extra.NAME, workTitle)
             context.startActivity(starter)
         }

@@ -99,7 +99,7 @@ data class RollNovelStructure(
 
 data class NovelScriptGenerateBody(
     val workId: String? = null,
-    val sortNo: Int? = null,
+    val storyId: String? = null
 )
 
 data class PollNovelScriptData(

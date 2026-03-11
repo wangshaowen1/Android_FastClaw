@@ -271,6 +271,8 @@ data class EpisodeInfo(
     val workCoverUrl: String? = null,
     /**剧集生成任务结果*/
     val taskGenResultStoryVO: TaskGenResultStoryVO? = null,
+    /**是否首次创建（0=否删除过，1=是首次创建）*/
+    val isRecreate: Int? = null,
 ) : Parcelable {
 
     @Parcelize
@@ -361,6 +363,22 @@ data class EpisodeInfo(
             PROGRESS_ASSET_GENERATING,
             PROGRESS_STORYBOARD_GENERATING_ASSET
         )
+    }
+
+    /**
+     * 是否是首次创建
+     * @return Boolean
+     */
+    fun isFirstCreated(): Boolean {
+        return isRecreate == 1
+    }
+
+    /**
+     * 是否是未创建
+     * @return Boolean
+     */
+    fun isNotCreated(): Boolean {
+        return stepProgress == NOT_CREATED
     }
 
     val isSynthesised get() = stepProgress in arrayOf(PROGRESS_COMPLETED, EPISODE_REPAINT_STATE, EPISODE_REPAINT_COMPLETED)

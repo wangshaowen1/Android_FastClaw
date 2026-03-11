@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.nhsd.basic.utils.Logger
 
 class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
@@ -60,6 +61,9 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
         //中途恢复界面走这里
         val newStep = mBundle.getInt(StoryEditorActivity.KEY_STEP, -1)
+
+        Logger.d("打印参数：model = $model ,newStep = $newStep ")
+
         when (model) {
             DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_STORY_DOCUMENTS -> {
                 if (newStep != -1) {

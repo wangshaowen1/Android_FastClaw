@@ -213,7 +213,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         novelScriptPollingJob = launchPolling(
             intervalMs = 3000L,
             retryOnNetworkError = true, // 遇到断网等异常直接结束，不重试
-            apiBlock = { mRepo.api.pollNovelScript(NovelScriptGenerateBody(workId.value, chapterIndex ?: 1)) },
+            apiBlock = { mRepo.api.pollNovelScript(NovelScriptGenerateBody(workId.value, episodeId)) },
             checkState = { response ->
                 val data = response?.data
                 when {
@@ -287,7 +287,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     workRatio = videoRatio,
                     storyContentComplete = originalJson,
                     totalEpisodeCnt = customEpisodeCount,
-                    totalEpisodeCntCode = episodeRangeCode
+                    totalEpisodeCntCode = episodeRangeCode,
+                    inPutStoryContent = input.value
                 )
                 response(
                     bean = if (model == DramaGenerateConstants.MODEL_STORY) mRepo.api.saveStoryEpisodeScript(body) else mRepo.api.saveSingleEpisodeScript(
@@ -308,6 +309,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 val body = SaveEpisodeScriptBody(
                     workTitle = workTitle,
                     storyContentComplete = originalJson,
+                    inPutStoryContent = input.value,
                     workId = workId.value,
                     storyId = episodeId,
                     workType = if (isNovelDocuments()) 3 else if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) 2 else 1

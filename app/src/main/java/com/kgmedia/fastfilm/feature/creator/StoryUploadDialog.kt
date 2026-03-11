@@ -117,7 +117,7 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                             mRealVM.uploadErrorType.set(StoryUploadViewModel.UPLOAD_ERROR_TYPE_FILE_CHAT_LIMIT)
                             mRealVM.uploadStatus.set(STATE_UPLOAD_FAIL)
                         } else {
-                            delay(300)
+                            delay(1000)
                             mRealVM.startUpload(result.tempFile?.absolutePath)
                         }
                     }

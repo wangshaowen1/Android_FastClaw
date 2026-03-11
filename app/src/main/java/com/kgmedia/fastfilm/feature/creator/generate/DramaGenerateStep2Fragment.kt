@@ -14,7 +14,6 @@ import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
-import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
@@ -47,9 +46,9 @@ class DramaGenerateStep2Fragment :
         binding.root.applySmartFocusManager()
         EventManager.onAppTrack(AppEvent.SF_VIEW_SCRIPT_PAGE)
         activity?.intent?.let {
-            mRealVM.workId.value = hostVm?.workId
+            mRealVM.workId.value = hostVm?.workId ?: it.getStringExtra(Constants.Extra.WORK_ID)
             //当前正在创作的剧集id
-            mRealVM.episodeId = hostVm?.storyId
+            mRealVM.episodeId = hostVm?.storyId ?: it.getStringExtra(Constants.Extra.STORY_ID)
             //上一集的剧集id,只有续写的时候才有
             mRealVM.previousStoryId = hostVm?.previousStoryId
             mRealVM.inspiration = it.getStringExtra(Constants.Extra.CONTENT)

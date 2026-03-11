@@ -34,6 +34,8 @@ data class CreateStoryWorkBody(
     val totalEpisodeCnt: String? = null,
     //剧集剧本内容
     val storyContentComplete: String? = null,
+    //用户修改后的剧本内容
+    val inPutStoryContent: String? = null,
 ) : UserTokenBody()
 
 
@@ -60,4 +62,6 @@ data class SaveEpisodeScriptBody(
     val workId: String? = null,
     //剧集 id
     val storyId: String? = null,
+    //用户修改后的剧本内容
+    val inPutStoryContent: String? = null,
 )

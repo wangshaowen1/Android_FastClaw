@@ -143,9 +143,11 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             if (it.contractStatus == 3 && !isShowPublishRejectReason) showPublishRejectReason()
         }
         mRealVM.episodeInfo.observe(this) {
-            if (it == null) return@observe
-            mRealVM.episodeInfo.value = null
+            if (it == null) {
+                return@observe
+            }
             val workInfo = mRealVM.workInfo.value ?: return@observe
+            mRealVM.episodeInfo.value = null
             Logger.d("[SSE]", "上一集的剧集id = ${it.storyId}")
             Logger.d("[SSE]", "当前集的剧集id = ${it.sequelStoryId}")
             //灵感创作续写
@@ -156,9 +158,18 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 storyId = it.sequelStoryId,
                 previousStoryId = it.storyId,
                 chapterIndex = (it.sortNo ?: 0) + 1,
-                model = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
+                model = getModel(workInfo.workType),
                 videoRatio = it.workRatio
             )
+        }
+    }
+
+    fun getModel(workType: Int?): Int? {
+        return when (workType) {
+            WorkInfo.INSPIRATION_CREATION -> DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION
+            WorkInfo.NOVEL_CREATION -> DramaGenerateConstants.MODEL_CONTINUE_STORY
+            WorkInfo.NOVEL_UPLOAD -> DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS
+            else -> null
         }
     }
 
@@ -167,7 +178,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
      */
     private fun clickToView(episodeInfo: EpisodeInfo?, position: Int) {
         if (episodeInfo == null) return
-        //[10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜生成中 32=分镜视频生成中 35=待合成 40=已完成]
+        //[0未创建 10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜生成中 32=分镜视频生成中 35=待合成 40=已完成]
         when (episodeInfo.stepProgress) {
             EpisodeInfo.PROGRESS_COMPLETED -> {
                 //已经完成了，走播放
@@ -179,22 +190,51 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 )
             }
 
-            else -> {
-                if (episodeInfo.storyId.isNullOrEmpty()) {
-                    val lastEpisode = episodeAdapter.snapshot().lastOrNull { !it?.storyId.isNullOrEmpty() }
-                    //仅当上一集内容已进入“分镜视频生成”环节，下一集才可开始创建。
-                    //若上一集还未进入“分镜视频生成”环节，此时点击“创建下一集”，则toast提示“请先完成上一集的内容制作”；
-                    if (lastEpisode == null) {
-                        // TODO: 没有剧集的情况
-                    } else if ((lastEpisode.stepProgress ?: 0) >= EpisodeInfo.PROGRESS_STORYBOARD_GENERATING) {
-                        continueWriting()
-                    } else {
-                        "请先完成上一集的内容制作".showToast()
-                    }
+            EpisodeInfo.NOT_CREATED -> {
+                val snapshot = episodeAdapter.snapshot().items
+                // 1. 寻找前置阻断点
+                val blocker = findFirstBlocker(snapshot, position)
+
+                if (blocker != null) {
+                    // 2. 存在阻断，提示用户
+                    "请先完成第${blocker.sortNo}集的内容制作".showToast()
                 } else {
-                    AppRouter.startStory(mRealVM.workInfo.value, episodeInfo.storyId)
+                    // 3. 校验通过，允许创建
+                    // 传入上一集作为上下文（如果是第一集则为 null）
+                    val prevEp = snapshot.getOrNull(position - 1)
+                    continueWriting(prevEp, episodeInfo)
                 }
             }
+
+            else -> {
+                AppRouter.startStory(mRealVM.workInfo.value, episodeInfo.storyId)
+            }
+        }
+    }
+
+    /**
+     * 寻找断档后的第一个故障点
+     */
+    private fun findFirstBlocker(items: List<EpisodeInfo>, position: Int): EpisodeInfo? {
+        if (position <= 0) return null
+
+        // 在当前位置之前，找到最后一个“达标”的集数索引
+        // 达标：已创建 且 进度 >= 32 (PROGRESS_STORYBOARD_GENERATING)
+        val lastValidIndex = items.take(position).indexOfLast {
+            it.stepProgress != EpisodeInfo.NOT_CREATED &&
+                    (it.stepProgress?:0) >= EpisodeInfo.PROGRESS_STORYBOARD_GENERATING
+        }
+
+        // 计算拦截点索引：
+        // 如果前面没有一个达标的，则卡在第 1 集 (index 0)
+        // 如果有达标的，则卡在达标集数的下一集 (lastValidIndex + 1)
+        val blockerIndex = if (lastValidIndex == -1) 0 else lastValidIndex + 1
+
+        // 如果拦截点在当前点击位置之前，说明需要拦截
+        return if (blockerIndex < position) {
+            items.getOrNull(blockerIndex)
+        } else {
+            null
         }
     }
 
@@ -286,18 +326,29 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         }
     }
 
-    private fun continueWriting() {
+    private fun continueWriting(lastInfo: EpisodeInfo?, info: EpisodeInfo?) {
         val workInfo = mRealVM.workInfo.value ?: return
-        if (workInfo.workType == WorkInfo.NOVEL_CREATION) {
+        if ((info?.sortNo ?: 0) > 1 && workInfo.workType == WorkInfo.NOVEL_CREATION) {
             //小说改编续写
             ContinueWritingActivity.start(
                 this,
                 workId = mRealVM.workId,
+                storyId = info?.storyId,
                 workTitle = workInfo.workTitle
             )
             return
         }
+        StoryEditorActivity.startContinue(
+            this,
+            workId = mRealVM.workId,
+            workTitle = workInfo.workTitle,
+            storyId = info?.storyId,
+            previousStoryId = lastInfo?.storyId,
+            chapterIndex = info?.sortNo ?: 1,
+            model = getModel(workInfo.workType),
+            videoRatio = workInfo.workRatio
+        )
         //需要拿到上一集的剧集信息，所以先调用一下
-        mRealVM.getEpisodeInfo()
+//        mRealVM.getEpisodeInfo(workInfo.workType)
     }
 }

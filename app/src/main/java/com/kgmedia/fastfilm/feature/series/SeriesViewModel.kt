@@ -83,12 +83,12 @@ class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
     /**
      *获取剧集最新一集剧本详情
      */
-    fun getEpisodeInfo() {
+    fun getEpisodeInfo(workType: Int?) {
         launchWithLoading {
             response(
                 mRepo.api.latestEpisode(
                     LatestEpisodeBody(
-                        workType = LatestEpisodeBody.WORK_TYPE_INSPIRATION,
+                        workType = workType,
                         workId = workId
                     )
                 )

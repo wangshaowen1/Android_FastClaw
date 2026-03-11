@@ -34,7 +34,8 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
         background = Color.TRANSPARENT,
     )
 
-    val workId by lazy { mBundle.getString(Constants.Extra.ID) }
+    val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
     val workName by lazy { mBundle.getString(Constants.Extra.NAME) }
     val input by lazy { MutableLiveData(Global.continueWritingContent[workId]) }
 
@@ -73,7 +74,8 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
                 mRepo.api.latestEpisode(
                     LatestEpisodeBody(
                         workType = LatestEpisodeBody.WORK_TYPE_NOVEL,
-                        workId = workId
+                        workId = workId,
+                        storyId = storyId
                     )
                 )
             ) {
