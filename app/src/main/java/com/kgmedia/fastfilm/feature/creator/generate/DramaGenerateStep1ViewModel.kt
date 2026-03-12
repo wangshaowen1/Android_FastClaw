@@ -128,6 +128,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
                     }
                 },
                 onMdUpdate = { delta ->
+                    progressHelper.finish()
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
                     mSSEContent.value = delta
                     Logger.d("[SSE]", "onMdUpdate：$delta")

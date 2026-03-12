@@ -166,6 +166,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                     }
                 },
                 onStoryUpdate = { fullContent ->
+                    progressHelper.finish()
                     // 这里自动包含了 50ms 的节流逻辑，直接设置即可
                     input.value = fullContent
                     progressHelper.stop()
