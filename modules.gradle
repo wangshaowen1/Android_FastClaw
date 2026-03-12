@@ -18,8 +18,8 @@ ext {
             oss        : [
                     groupId   : 'com.kuaige',
                     artifactId: 'oss',
-                    version   : '1.0.2',
-                    gav       : 'com.kuaige:oss:1.0.2'
+                    version   : '1.0.3',
+                    gav       : 'com.kuaige:oss:1.0.3'
             ],
             payment    : [
                     groupId   : 'com.kuaige',
