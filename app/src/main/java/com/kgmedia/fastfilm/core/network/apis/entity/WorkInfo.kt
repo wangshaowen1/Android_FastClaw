@@ -26,7 +26,7 @@ data class WorkInfo(
     val workCoverUrl: String? = null,
     /**作品类型：1-灵感创作;2-小说改编;3-小说上传*/
     val workType: Int? = null,
-    /**[枚举]作品状态：0=草稿 32=分镜生成中 35待合成 45=视频重绘中 50=视频重绘已完成 60=已完成 70=失败*/
+    /**[枚举]作品状态：0=未创建剧集 5-开始草稿 32=分镜生成中 35待合成 45=视频重绘中 50=视频重绘已完成 60=已完成 70=失败*/
     val workStatus: Int? = null,
     /**总集数（规划集数）*/
     val totalEpisodeCnt: Int? = null,
@@ -72,8 +72,11 @@ data class WorkInfo(
         /**作品类型：3-小说上传*/
         const val NOVEL_UPLOAD = 3
 
+        /**作品状态 0=剧集未生成*/
+        const val NOT_CREATED_EPISODE = 0
+
         /**作品状态 0=草稿*/
-        const val DRAFT = 0
+        const val DRAFT = 5
 
         /**作品状态 32=分镜生成中*/
         const val MIRROR_GENERATION_IN_PROGRESS = 32
@@ -117,7 +120,9 @@ data class WorkInfo(
             else -> "视频合成中..."
         }
     }
-
+    fun isNotCreatedEpisode(): Boolean {
+        return workStatus == NOT_CREATED_EPISODE
+    }
 
     //草稿状态
     fun isDraftStatus(): Boolean {
@@ -272,7 +277,7 @@ data class EpisodeInfo(
     /**剧集生成任务结果*/
     val taskGenResultStoryVO: TaskGenResultStoryVO? = null,
     /**是否首次创建（0=否删除过，1=是首次创建）*/
-    val isRecreate: Int? = null,
+    val firstCreationFlag: Int? = null,
 ) : Parcelable {
 
     @Parcelize
@@ -370,7 +375,7 @@ data class EpisodeInfo(
      * @return Boolean
      */
     fun isFirstCreated(): Boolean {
-        return isRecreate == 1
+        return firstCreationFlag == 1
     }
 
     /**
