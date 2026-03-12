@@ -221,7 +221,7 @@ suspend fun sensitiveWordCheck(content: String?, needHighlight: Boolean? = true)
     if (checkRes.isSuccess && checkData != null) {
         if (checkData.isSensitive()) {
             checkData.content?.showToast()
-            val review = Config.get().appConfig.isReview()
+            val review = Config.get().isInReview
             if (needHighlight == false || review) {
                 return false to content
             }

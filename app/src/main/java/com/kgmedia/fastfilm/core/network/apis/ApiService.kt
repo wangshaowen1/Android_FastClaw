@@ -121,6 +121,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.FollowingData
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBook
 import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
 import com.kgmedia.fastfilm.core.network.apis.response.PointConfigData
+import com.kgmedia.fastfilm.core.network.apis.response.ShelfStatusData
 import com.kgmedia.fastfilm.core.network.apis.response.ShortLikeData
 import com.kgmedia.fastfilm.core.network.apis.response.StoryboardListData
 import com.kgmedia.fastfilm.core.network.apis.response.UpgradeData
@@ -144,6 +145,12 @@ interface ApiService {
      */
     @POST(ApiConstants.TIP_OFF)
     suspend fun tipOff(@Body body: TipOffBody): ApiResponse<Any>
+
+    /**
+     * 查询指定版本上架状态
+     */
+    @POST(ApiConstants.GET_APP_SHELF_STATUS)
+    suspend fun getAppShelfStatus(): ApiResponse<ShelfStatusData?>
 
     /**
      * 第三方登录

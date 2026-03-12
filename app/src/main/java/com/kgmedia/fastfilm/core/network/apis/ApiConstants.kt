@@ -16,6 +16,9 @@ object ApiConstants {
     //用户举报
     const val TIP_OFF = "user/tipOff"
 
+    //查询指定版本上架状态
+    const val GET_APP_SHELF_STATUS = "app/getVersionShelfStatus"
+
     /**
      * 获取用户主页信息接口
      */
