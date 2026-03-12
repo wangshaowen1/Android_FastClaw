@@ -212,7 +212,7 @@
                 android:textColor="@{layout.getLimitColor(layout.input.length)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="0/2000" />
+                tools:text="0/3000" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
