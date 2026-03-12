@@ -126,7 +126,7 @@ data class WorkInfo(
 
     //草稿状态
     fun isDraftStatus(): Boolean {
-        return workStatus == DRAFT
+        return workStatus == DRAFT || workStatus == NOT_CREATED_EPISODE
     }
 
     fun seriesIntroduction(index: Int = 0): String? {
@@ -296,8 +296,8 @@ data class EpisodeInfo(
         /**待创建*/
         const val NOT_CREATED = 0
 
-        /**剧本输入*/
-        const val PROGRESS_DRAFT = 10
+        /**剧本梗概生成*/
+        const val PROGRESS_SUMMARY_GENERATING = 10
 
         /**剧本生成中*/
         const val PROGRESS_STORY_GENERATING = 15
@@ -363,8 +363,6 @@ data class EpisodeInfo(
      */
     fun isDraft(): Boolean {
         return stepProgress in listOf(
-            PROGRESS_DRAFT,
-            PROGRESS_STORY_GENERATING,
             PROGRESS_ASSET_GENERATING,
             PROGRESS_STORYBOARD_GENERATING_ASSET
         )
@@ -383,7 +381,7 @@ data class EpisodeInfo(
      * @return Boolean
      */
     fun isNotCreated(): Boolean {
-        return stepProgress == NOT_CREATED
+        return stepProgress == NOT_CREATED || stepProgress == PROGRESS_SUMMARY_GENERATING || stepProgress == PROGRESS_STORY_GENERATING
     }
 
     val isSynthesised get() = stepProgress in arrayOf(PROGRESS_COMPLETED, EPISODE_REPAINT_STATE, EPISODE_REPAINT_COMPLETED)

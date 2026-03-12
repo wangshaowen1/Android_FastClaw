@@ -190,7 +190,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 )
             }
 
-            EpisodeInfo.NOT_CREATED -> {
+            EpisodeInfo.NOT_CREATED, EpisodeInfo.PROGRESS_SUMMARY_GENERATING, EpisodeInfo.PROGRESS_STORY_GENERATING -> {
                 val snapshot = episodeAdapter.snapshot().items
                 // 1. 寻找前置阻断点
                 val blocker = findFirstBlocker(snapshot, position)

@@ -259,7 +259,7 @@ object AppRouter : IRouter {
         Logger.d("打印参数：jumpToTarget singleEpisodeDetailsInfo?.stepProgress = ${singleEpisodeDetailsInfo?.stepProgress}")
         //枚举创作流程进度 0=待创建 10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成
         when (singleEpisodeDetailsInfo?.stepProgress) {
-            EpisodeInfo.PROGRESS_DRAFT -> {
+            EpisodeInfo.PROGRESS_SUMMARY_GENERATING -> {
                 //10=剧本输入
                 StoryEditorActivity.restore(
                     context = topActivity,

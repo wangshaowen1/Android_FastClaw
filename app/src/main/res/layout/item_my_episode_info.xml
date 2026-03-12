@@ -25,11 +25,11 @@
             android:id="@+id/ivCover"
             loadUri="@{item.data.workCoverUrl}"
             placeHolder="@{@drawable/img_default_cover_3_4}"
-            setVisible="@{item.data.stepProgress > 0}"
+            setVisible="@{!item.data.notCreated}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
-            android:visibility="@{item.data.stepProgress == 0 ? View.INVISIBLE : View.VISIBLE}"
+            android:visibility="@{item.data.notCreated ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintDimensionRatio="107:142"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/roundStyle_r8"
@@ -64,7 +64,7 @@
         </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 
         <com.kgmedia.fastfilm.widget.BorderConstraintLayout
-            setVisible="@{item.data.stepProgress == 0}"
+            setVisible="@{item.data.notCreated}"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:backgroundStartColor="?attr/fillColor1"

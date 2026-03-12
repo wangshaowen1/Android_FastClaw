@@ -31,8 +31,8 @@ import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
-import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
+import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
@@ -148,7 +148,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             eventVm.events.collect { event ->
                 when (event) {
                     is MyWorksEvent.ViewDetails -> {
-                        if (event.workInfo?.workType == WorkInfo.NOVEL_UPLOAD && event.workInfo.isDraftStatus()) {
+                        if (event.workInfo?.workType == WorkInfo.NOVEL_UPLOAD && event.workInfo.isNotCreatedEpisode()) {
                             //作品类型：3-小说上传 且是草稿状态
                             mRealVM.getWorkDtl(workId = event.workInfo.workId)
                             return@collect
