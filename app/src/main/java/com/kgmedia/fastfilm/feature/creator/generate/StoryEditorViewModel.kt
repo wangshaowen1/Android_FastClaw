@@ -66,42 +66,45 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
         when (model) {
             DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_STORY_DOCUMENTS -> {
+                startFrom.value = 1
                 if (newStep != -1) {
                     step.value = newStep
                 } else {
                     step.value = 1
                 }
-                startFrom.value = 1
             }
 
             DramaGenerateConstants.MODEL_STORY, DramaGenerateConstants.MODEL_STORY_SINGLE -> {
+                startFrom.value = 2
                 if (newStep != -1) {
                     step.value = newStep
                 } else {
                     step.value = 2
                 }
-                startFrom.value = 2
             }
 
             DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION, DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS -> {
+                startFrom.value = 2
                 if (newStep != -1) {
                     step.value = newStep
                 } else {
                     step.value = 2
                 }
-                startFrom.value = 2
             }
 
             DramaGenerateConstants.MODEL_CONTINUE_STORY -> {
+                startFrom.value = 2
                 if (newStep != -1) {
                     step.value = newStep
                 } else {
                     step.value = 2
                 }
-                startFrom.value = 2
             }
 
-            else -> step.value = 1
+            else -> {
+                step.value = 1
+                startFrom.value = 1
+            }
         }
     }
 

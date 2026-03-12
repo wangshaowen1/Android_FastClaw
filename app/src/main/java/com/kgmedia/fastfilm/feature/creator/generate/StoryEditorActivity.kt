@@ -152,9 +152,15 @@ class StoryEditorActivity :
         mRealVM.step.observe(this) {
             when (it) {
                 1 -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, DramaGenerateStep1Fragment.newInstance())
-                        .commitAllowingStateLoss()
+                    if (mRealVM.startFrom.value == 2) {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.container, DramaGenerateStep2Fragment.newInstance())
+                            .commitAllowingStateLoss()
+                    } else {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.container, DramaGenerateStep1Fragment.newInstance())
+                            .commitAllowingStateLoss()
+                    }
                 }
 
                 2 -> {
