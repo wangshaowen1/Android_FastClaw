@@ -5,6 +5,7 @@ import androidx.room.TypeConverters
 import com.kgmedia.fastfilm.common.ext.toUnitText
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.convert.Converters
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo.Companion.PROGRESS_STORY_GENERATING
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -363,6 +364,7 @@ data class EpisodeInfo(
      */
     fun isDraft(): Boolean {
         return stepProgress in listOf(
+            PROGRESS_STORY_GENERATING,
             PROGRESS_ASSET_GENERATING,
             PROGRESS_STORYBOARD_GENERATING_ASSET
         )
@@ -381,7 +383,7 @@ data class EpisodeInfo(
      * @return Boolean
      */
     fun isNotCreated(): Boolean {
-        return stepProgress == NOT_CREATED || stepProgress == PROGRESS_SUMMARY_GENERATING || stepProgress == PROGRESS_STORY_GENERATING
+        return stepProgress == NOT_CREATED || stepProgress == PROGRESS_SUMMARY_GENERATING
     }
 
     val isSynthesised get() = stepProgress in arrayOf(PROGRESS_COMPLETED, EPISODE_REPAINT_STATE, EPISODE_REPAINT_COMPLETED)

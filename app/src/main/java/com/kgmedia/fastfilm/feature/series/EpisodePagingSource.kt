@@ -16,7 +16,7 @@ class EpisodePagingSource(private val workId: String?) : PagingSource<Int, Episo
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, EpisodeInfo> {
         return try {
             val pageNum = params.key ?: 1
-            val body = WorkIdPagedBody(workId, pageNum, params.loadSize)
+            val body = WorkIdPagedBody(workId, pageNum, 30)
             val apiResponse = ApiFactory.apiService.episodeList(body)
             if (apiResponse.isSuccess) {
                 val prevKey = if (pageNum > 1) pageNum - 1 else null

@@ -47,7 +47,7 @@ class WorksManagementViewModel : AppRepositoryViewModel<SeriesRepository>() {
         return Pager(
             config = PagingConfig(
                 initialLoadSize = PagedProxy.DEFAULT_PAGE_SIZE * 3,
-                pageSize = PagedProxy.DEFAULT_PAGE_SIZE
+                pageSize = PagedProxy.DEFAULT_PAGE_SIZE * 3
             ),
             pagingSourceFactory = {
                 EpisodePagingSource(workId)
