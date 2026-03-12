@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.FileInputStream
 
 /**
  * 微信客服二维码
@@ -108,6 +109,24 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                     }
                     val result = TextEncodingUtil.createUtf8TempFileAndAnalyze(mActivity, uri)
                     analyzeResult = result.analysisResult
+
+                    // 增强型就绪检查：最多尝试 5 次，总计 1.5 秒
+                    var isFileReady = false
+                    val tempFile = result.tempFile
+                    if (tempFile != null && tempFile.exists()) {
+                        repeat(5) {
+                            try {
+                                // 只要这行不报错，说明文件已经物理闭合且可读
+                                FileInputStream(tempFile).use { stream -> stream.read() }
+                                isFileReady = true
+                                return@repeat // 成功了就跳出循环，不用死等
+                            } catch (e: Exception) {
+                                delay(300) // 没好就再等 300ms
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+
 //                    val pathFromUri = uri.getTempFilePathFromUri(mActivity)
                     withContext(Dispatchers.Main) {
                         if ((analyzeResult?.charCount ?: 0) > TextEncodingUtil.MAX_CHAR_COUNT) {
@@ -117,8 +136,7 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                             mRealVM.uploadErrorType.set(StoryUploadViewModel.UPLOAD_ERROR_TYPE_FILE_CHAT_LIMIT)
                             mRealVM.uploadStatus.set(STATE_UPLOAD_FAIL)
                         } else {
-                            delay(1000)
-                            mRealVM.startUpload(result.tempFile?.absolutePath)
+                            mRealVM.startUpload(tempFile?.absolutePath)
                         }
                     }
                 }
