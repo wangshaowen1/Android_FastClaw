@@ -5,6 +5,7 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import com.kgmedia.fastfilm.R
 import com.nhsd.basic.ext.getResColor
+import java.util.regex.Pattern
 
 /**
  * *****************************************
@@ -27,24 +28,34 @@ object SensitiveHighlighter {
         }
         val spannable = SpannableStringBuilder(text)
 
+        // 定义“干扰字符”正则：匹配任意非字母、非数字的字符（涵盖了所有中英文标点、符号、空格和换行）
+        val noisePattern = "[^\\p{L}\\p{N}]*"
+
         keywords
-            .filter { it.isNotBlank() } // 防御：过滤纯空格
+            .filter { it.isNotBlank() }
             .distinct()
             .forEach { keyword ->
-                var startIndex = 0
-                while (true) {
-                    // 修复：忽略大小写，防止命中词和输入词大小写不一致导致高亮失败
-                    val index = text.indexOf(keyword, startIndex, ignoreCase = true)
-                    if (index == -1) break
+                // 1. 过滤掉 API 敏感词本身可能携带的干扰符号，只保留纯文字或数字
+                val validChars = keyword.filter { it.isLetterOrDigit() }
+                if (validChars.isEmpty()) return@forEach
 
-                    val end = index + keyword.length
+                // 2. 将敏感词拆解，并在每个字符之间插入“干扰字符”正则
+                // 例如 "分裂中国" 会变成: 分[^\\p{L}\\p{N}]*裂[^\\p{L}\\p{N}]*中[^\\p{L}\\p{N}]*国
+                val regexPattern = validChars
+                    .map { Pattern.quote(it.toString()) } // 防御：对特殊字符转义
+                    .joinToString(separator = noisePattern)
+
+                // 3. 构建正则对象，忽略大小写
+                val regex = Regex(regexPattern, RegexOption.IGNORE_CASE)
+
+                // 4. 在原文本中查找所有匹配项并高亮
+                regex.findAll(text).forEach { matchResult ->
                     spannable.setSpan(
                         ForegroundColorSpan(color),
-                        index,
-                        end,
+                        matchResult.range.first,       // 起始索引（包含）
+                        matchResult.range.last + 1,    // 结束索引（排除，Kotlin Range 是闭区间，所以需要 +1）
                         Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    startIndex = end
                 }
             }
         return spannable
