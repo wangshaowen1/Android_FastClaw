@@ -21,7 +21,7 @@ data class UpgradeData(
     /**
      * 版本描叙
      */
-    val versionDesc: String?,
+    val appVersion: String?,
     /**
      * 版本状态：0-不升级 1-强制升级 2-建议升级
      */
