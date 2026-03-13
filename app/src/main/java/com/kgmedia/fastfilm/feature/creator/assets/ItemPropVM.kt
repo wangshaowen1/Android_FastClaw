@@ -45,7 +45,7 @@ class ItemPropVM(
             return
         }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-        if (data.get()?.showReference == true && fragmentManager != null) {
+        if (data.get()?.hasHistory == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.propId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_PROP_IMAGE)
                 .apply { onUserReference = { generate(propPrompt.toString(), propName.toString(), it) } }
                 .show(fragmentManager)
