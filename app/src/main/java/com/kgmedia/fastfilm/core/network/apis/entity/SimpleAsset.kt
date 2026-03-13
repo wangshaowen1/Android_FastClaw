@@ -5,4 +5,5 @@ interface SimpleAsset {
     val assetDesc: String?
     val assetName: String?
     val assetImage: String?
+    val showReference: Boolean
 }

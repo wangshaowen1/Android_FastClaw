@@ -45,7 +45,7 @@ class ItemSceneVM(
             return
         }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-        if (data.get()?.hasHistory == true && fragmentManager != null) {
+        if (data.get()?.showReference == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.sceneId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_SCENE_IMAGE)
                 .apply { onUserReference = { generate(scenePrompt.toString(), sceneName.toString(), it) } }
                 .show(fragmentManager)
@@ -101,8 +101,8 @@ class ItemSceneVM(
                     storyId = storyId,
                     assetId = scene?.sceneId,
                     appearanceId = scene?.appearanceId,
-                    referenceImageId = reference?.id,
-                    referenceImageUrl = reference?.referenceImageUrl,
+                    referenceImageId = reference?.appearanceId,
+                    referenceImageUrl = reference?.imageUrl,
                     referenceImageInStatus = if (reference != null) 1 else 0,
                     bizType = if (reference != null) 62 else 61,
                 )

@@ -45,7 +45,7 @@ class ItemRoleVM(
             return
         }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-        if (data.get()?.hasHistory == true && fragmentManager != null) {
+        if (data.get()?.showReference == true && fragmentManager != null) {
             ReferenceHistoricalImageryDialog.newInstance(data.get()?.roleId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_ROLE_IMAGE)
                 .apply { onUserReference = { generate(rolePrompt.toString(), roleName.toString(), it) } }
                 .show(fragmentManager)
@@ -101,8 +101,8 @@ class ItemRoleVM(
                     storyId = storyId,
                     assetId = role?.roleId,
                     appearanceId = role?.appearanceId,
-                    referenceImageId = reference?.id,
-                    referenceImageUrl = reference?.referenceImageUrl,
+                    referenceImageId = reference?.appearanceId,
+                    referenceImageUrl = reference?.imageUrl,
                     referenceImageInStatus = if (reference != null) 1 else 0,
                     bizType = if (reference != null) 42 else 41,
                 )

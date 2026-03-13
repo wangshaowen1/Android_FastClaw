@@ -24,7 +24,7 @@
         app:showBorder="@{item.checked}">
 
         <com.kgmedia.fastfilm.widget.CropShapeImageView
-            loadThumbnailUri="@{item.data.referenceImageUrl}"
+            loadThumbnailUri="@{item.data.imageUrl}"
             placeHolder="@{@drawable/img_default_cover_3_4}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

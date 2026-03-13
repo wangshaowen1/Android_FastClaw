@@ -53,4 +53,6 @@ data class SimplePropInfo(
         get() = propName
     override val assetImage: String?
         get() = imageUrl
+    override val showReference: Boolean
+        get() = hasHistory == true || !imageUrl.isNullOrEmpty()
 }
