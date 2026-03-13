@@ -2,11 +2,8 @@ package com.kgmedia.fastfilm.widget
 
 import android.content.Context
 import android.text.Editable
-import android.text.InputFilter
-import android.text.Spanned
 import android.text.TextWatcher
 import android.util.AttributeSet
-import kotlin.toString
 
 /**
  * 歌词编辑控件
@@ -42,16 +39,8 @@ class RecyclerEditText : XEditText {
 
     private fun init(context: Context, attrs: AttributeSet?) {
         setNoNextLine(true)
-        setNoEmoji()
         removeTextChangedListener(textWatcher)
         addTextChangedListener(textWatcher)
-    }
-
-    fun setNoEmoji() {
-        val filter = InputFilter { source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int ->
-            if (isEmoji(source)) "" else null
-        }
-        filters = arrayOf(filter)
     }
 
     interface OnTextInputListener {
