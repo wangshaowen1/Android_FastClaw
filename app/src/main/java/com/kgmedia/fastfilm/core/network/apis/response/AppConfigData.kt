@@ -49,9 +49,14 @@ class AppConfigData {
     val ossDomainList: List<String>? = null
 
     /**
-     * 支付协议/付费协议
+     * 用户端-支付协议
      */
     val clientPaymentProtocolUrl: String? = null
+
+    /**
+     * 用户端-服务购买须知
+     */
+    val clientTermsOfServiceUrl: String? = null
 
     /**
      * 个人信息收集清单

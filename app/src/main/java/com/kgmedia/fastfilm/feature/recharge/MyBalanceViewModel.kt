@@ -142,7 +142,7 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
 
     fun viewServicePurchaseInstructions() {
         val activity = topActivity ?: return
-        val url = Config.get().appConfig.clientPaymentProtocolUrl ?: return
+        val url = Config.get().appConfig.clientTermsOfServiceUrl ?: return
         SimpleBrowserActivity.launch(activity, url)
     }
 
