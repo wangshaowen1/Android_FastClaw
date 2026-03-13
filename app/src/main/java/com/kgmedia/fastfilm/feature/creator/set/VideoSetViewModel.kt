@@ -81,36 +81,44 @@ class VideoSetViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
 
                 if (ratio.isCustomInput()) {
-                    (view as? ViewGroup)?.getChildByType(
+                    val editText = (view as? ViewGroup)?.getChildByType(
                         EditText::class.java,
                         AppCompatEditText::class.java
-                    )?.let {
-                        val editText = it as? EditText
-                        editText?.apply {
-                            // 1. 处理失去焦点时的逻辑
-                            onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-                                if (!hasFocus) {
-                                    val num = text.toString().toIntOrNull() ?: 0
-                                    if (num > 60) {
-                                        "剧集数不可超过60集".showToast()
-                                        input.set("60")
-                                    }
+                    ) as? EditText
+
+                    editText?.apply {
+                        onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                            if (!hasFocus) {
+                                val num = text.toString().toIntOrNull() ?: 0
+                                if (num > 60) {
+                                    "剧集数不可超过60集".showToast()
+                                    input.set("60")
                                 }
                             }
-                            setOnEditorActionListener { v, actionId, _ ->
-                                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                                    val num = text.toString().toIntOrNull() ?: 0
-                                    if (num > 60) {
-                                        "剧集数不可超过60集".showToast()
-                                        input.set("60")
-                                    }
-                                    clearFocus() // 触发上面的 onFocusChangeListener
-                                    KeyboardUtils.hideSoftInput(v)
-                                    true
-                                } else false
-                            }
+                        }
+                        setOnEditorActionListener { v, actionId, _ ->
+                            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                                val num = text.toString().toIntOrNull() ?: 0
+                                if (num > 60) {
+                                    "剧集数不可超过60集".showToast()
+                                    input.set("60")
+                                }
+                                clearFocus()
+                                KeyboardUtils.hideSoftInput(v)
+                                true
+                            } else false
                         }
                     }
+
+                    // 仅仅使用 post 等待 DataBinding 把 FrameLayout 设为 VISIBLE
+                    view?.post {
+                        // 直接请求焦点弹键盘
+                        // 此时，因为 EditText 已经是 90dp 宽了，
+                        // Android 原生的焦点追踪会平滑且完美地把这 90dp 全部推到屏幕内！
+                        editText?.requestFocus()
+                        editText?.let { KeyboardUtils.showSoftInput(it) }
+                    }
+
                 } else {
                     view?.let { KeyboardUtils.hideSoftInput(it) }
                 }
