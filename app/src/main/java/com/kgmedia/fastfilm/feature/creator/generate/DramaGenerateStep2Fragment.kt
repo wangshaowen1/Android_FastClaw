@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.creator.generate
 
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.text.Editable
 import android.view.GestureDetector
@@ -140,7 +141,7 @@ class DramaGenerateStep2Fragment :
             }, 100)
         }
     }
-
+    var scrollAnimator: ObjectAnimator? = null
     private fun dataUpdate() {
         mRealVM.promptGenerating.observe(this) {
             if (it.first) {
@@ -162,9 +163,45 @@ class DramaGenerateStep2Fragment :
         }
 
         mRealVM.input.observe(this) {
-            val text = binding.inputView.text.toString()
-            if (mRealVM.input.value != text) {
-                binding.inputView.setText(mRealVM.input.value)
+            val newText = it ?: ""
+            val currentText = binding.inputView.text.toString()
+
+            if (newText != currentText) {
+                // 【优化1：尽量使用增量追加】
+                // 如果新文本包含了旧文本（标准的流式追加），使用 append 能避免全量重绘，极大减少闪烁
+                if (newText.startsWith(currentText)) {
+                    val appendText = newText.substring(currentText.length)
+                    binding.inputView.append(appendText)
+                } else {
+                    // 如果发生了清空或非追加的改变，再使用 setText
+                    binding.inputView.setText(newText)
+                }
+
+                binding.inputView.post {
+                    val layout = binding.inputView.layout ?: return@post
+
+                    val contentHeight = layout.getLineTop(binding.inputView.lineCount)
+                    val targetScrollY = contentHeight + binding.inputView.paddingTop + binding.inputView.paddingBottom - binding.inputView.height
+
+                    if (targetScrollY > 0) {
+                        // 【优化2：对于高频流式输出，直接 scrollTo 效果往往比动画更好】
+                        // 因为文字逐个蹦出本身就自带了动效节奏。直接贴底是最丝滑的。
+                        // 如果你想试试无动画的清爽感，可以直接解除下面这行的注释，并删掉动画代码：
+                        // binding.inputView.scrollTo(0, targetScrollY)
+
+                        // 【优化3：如果坚持要用动画，必须取消上一次未完成的动画】
+                        scrollAnimator?.cancel()
+                        scrollAnimator = ObjectAnimator.ofInt(binding.inputView, "scrollY", binding.inputView.scrollY, targetScrollY).apply {
+                            // 时长改短，匹配 SSE 频率，避免积压
+                            duration = 60
+                            // 使用线性插值器，避免默认插值器(加速减速)带来的顿挫感
+                            interpolator = android.view.animation.LinearInterpolator()
+                            start()
+                        }
+                    } else {
+                        binding.inputView.scrollTo(0, 0)
+                    }
+                }
             }
         }
 
