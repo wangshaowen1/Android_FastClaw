@@ -107,8 +107,11 @@ class DramaGenerateStep2Fragment :
         }
         val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                if (mRealVM.isStreaming()) return super.onSingleTapConfirmed(e)
-                if (mRealVM.input.value?.trim().isNullOrEmpty()) return super.onSingleTapConfirmed(e)
+                if (mRealVM.isStreaming() || mRealVM.isScriptLoading.get()) return super.onSingleTapConfirmed(e)
+                if (mRealVM.input.value?.trim().isNullOrEmpty()) {
+                    enterEditMode()
+                    return super.onSingleTapConfirmed(e)
+                }
                 mActivity.showConfirmPrompt(
                     "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.",
                     confirmText = "继续编辑"
