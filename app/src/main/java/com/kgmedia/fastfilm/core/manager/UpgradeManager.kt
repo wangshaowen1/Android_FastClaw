@@ -194,7 +194,7 @@ class UpgradeManager(private val context: BaseActivity) {
         dialog = UpgradeDialogFragment.show(
             context.supportFragmentManager,
             upgradeData.appVersion,
-            upgradeData.upgradeDesc,
+            upgradeData.appVersionDesc,
             upgradeData.isNeedForceUpdate()
         )
         dialog?.onUpgradeClick = {
@@ -220,7 +220,7 @@ class UpgradeManager(private val context: BaseActivity) {
         dialog = UpgradeDialogFragment.show(
             context.supportFragmentManager,
             data.appVersion,
-            data.upgradeDesc,
+            data.appVersionDesc,
             data.isNeedForceUpdate()
         )
         dialog?.onUpgradeClick = {

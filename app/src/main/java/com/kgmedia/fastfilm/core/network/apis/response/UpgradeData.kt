@@ -13,7 +13,7 @@ data class UpgradeData(
     /**
      * 升级描叙
      */
-    val upgradeDesc: String?,
+    val appVersionDesc: String?,
     /**
      * 升级地址
      */
