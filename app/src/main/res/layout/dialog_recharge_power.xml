@@ -168,18 +168,35 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="充值即代表同意"
+                        android:text="购买即表示同意"
                         android:textAppearance="@style/Text12"
                         android:textColor="?attr/textColor3" />
 
                     <TextView
-                        singleClick="@{(v)->layout.viewPolicy()}"
+                        singleClick="@{(v)->layout.viewPaymentAgreement()}"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingVertical="12dp"
-                        android:text="《充值协议》"
+                        android:text="《支付协议》"
                         android:textAppearance="@style/Text12"
                         android:textColor="?attr/textColor1" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="和"
+                        android:textAppearance="@style/Text12"
+                        android:textColor="?attr/textColor1" />
+
+                    <TextView
+                        singleClick="@{(v)->layout.viewServicePurchaseInstructions()}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="12dp"
+                        android:text="《服务购买须知》"
+                        android:textAppearance="@style/Text12"
+                        android:textColor="?attr/textColor1" />
+
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
