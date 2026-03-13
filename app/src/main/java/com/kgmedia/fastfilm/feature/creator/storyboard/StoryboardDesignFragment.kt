@@ -5,6 +5,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.Observable
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
+import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.showConfirmDialog
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.manager.AppEvent
@@ -69,6 +70,15 @@ class StoryboardDesignFragment :
     }
 
     override fun handleBackPressed(): Boolean {
+        if (mRealVM.notSaved()) {
+            activity?.showCommonDialog(
+                tip = "您对分镜信息有修改尚未保存，是否保存修改？",
+                cancelText = "不保存",
+                cancel = { activity?.finish() },
+                confirmText = "保存并退出",
+                confirm = { mRealVM.saveAndFinish() })
+            return true
+        }
         activity?.showConfirmDialog(
             title = null,
             tips = "退出后，当前内容将继续生成，不会影响您的创作进度。您可随时返回继续创作。",

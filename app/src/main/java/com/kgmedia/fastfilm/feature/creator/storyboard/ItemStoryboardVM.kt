@@ -57,14 +57,26 @@ class ItemStoryboardVM(
     }
 
     /**
+     * 是否有未保存的分镜描述
+     */
+    fun notSaved(): Boolean {
+        val storyboard = data.get()
+        val prompt = (if (editingStoryBoardDesc.get()) editingStoryBoardDescText else storyBoardDesc.get())?.toString()
+        if (prompt.isNullOrEmpty()) {
+            return false
+        }
+        return prompt != storyboard?.storyBoardDesc
+    }
+
+    /**
      * 敏感词校验并保存
      * @return 无需保存或保存成功
      */
-    suspend fun save(): Boolean {
+    suspend fun save(toast: Boolean = true): Boolean {
         var storyboard = data.get()
         val prompt = (if (editingStoryBoardDesc.get()) editingStoryBoardDescText else storyBoardDesc.get())?.toString()
         if (prompt.isNullOrEmpty()) {
-            "您还有分镜尚未填写描述，请补充后再继续".showToast()
+            if (toast) "您还有分镜尚未填写描述，请补充后再继续".showToast()
             return false
         }
         if (prompt != storyboard?.storyBoardDesc) {

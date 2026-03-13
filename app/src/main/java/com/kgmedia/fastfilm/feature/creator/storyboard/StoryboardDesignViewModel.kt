@@ -349,4 +349,15 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
             }
         }
     }
+
+    fun notSaved(): Boolean {
+        return adapter.items.any { it is ItemStoryboardVM && it.notSaved() }
+    }
+
+    fun saveAndFinish() {
+        launchWithLoading {
+            adapter.items.forEach { if (it is ItemStoryboardVM) it.save(false) }
+            finish()
+        }
+    }
 }
