@@ -129,7 +129,7 @@ class Config : NetworkChangedListener {
                     storeAppConfig(response.getData())
                 }
                 val shelfStatusData = apiService.getAppShelfStatus().data
-                storeInReview(shelfStatusData?.shelfStatus == 1)
+                storeInReview(shelfStatusData?.shelfStatus == 2)
                 isRequesting = false
             }, onError = {
                 isRequesting = false
