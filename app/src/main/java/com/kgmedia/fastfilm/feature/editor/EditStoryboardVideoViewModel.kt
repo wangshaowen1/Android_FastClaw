@@ -203,8 +203,9 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         this?.selected?.set(true)
         currentStoryboard.set(this)
         adapter.items.indexOf(this).takeIf { it > -1 }?.let { scrollToItem.value = it }
-        val videoUrl = currentStoryboard.get()?.data?.get()?.videoUrl
-        if (videoUrl.isNullOrEmpty().not()) {
+        val storyboard = currentStoryboard.get()?.data?.get()
+        val videoUrl = storyboard?.videoUrl
+        if (storyboard?.videoGenerated == true && videoUrl.isNullOrEmpty().not()) {
             if (playing.get()) {
                 storyboardPlayer.play(videoUrl)
             } else {
