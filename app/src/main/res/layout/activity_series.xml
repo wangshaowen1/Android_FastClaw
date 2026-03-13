@@ -38,7 +38,7 @@
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/action_bar_size"
-                    android:drawableStart="@drawable/icon_gold_coin"
+                    android:drawableStart="@drawable/icon_self_publish"
                     android:gravity="center_vertical"
                     android:text="自己发行"
                     android:textAppearance="@style/Text14"
