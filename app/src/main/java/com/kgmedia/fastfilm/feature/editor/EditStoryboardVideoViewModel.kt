@@ -135,8 +135,11 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                         adapter.submitList(it)
                     }
                     nextStepEnabled.set(allStoryboardGenerated())
-                    if (currentStoryboard.get() == null) {
+                    val currentStoryboard = currentStoryboard.get()
+                    if (currentStoryboard == null) {
                         adapter.items.firstOrNull()?.select()
+                    } else {
+                        adapter.items.firstOrNull { it.data.get()?.storyboardId == currentStoryboard.data.get()?.storyboardId }?.select()
                     }
                     updateLoadState()
                 }

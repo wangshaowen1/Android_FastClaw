@@ -52,16 +52,20 @@
             app:layout_constraintStart_toStartOf="@+id/ivCover"
             tools:text="分镜1" />
 
-        <ImageView
+        <com.airbnb.lottie.LottieAnimationView
             setVisible="@{item.data.videoGenerating}"
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:src="@drawable/icon_ai"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover"
-            app:layout_constraintVertical_bias="0.4" />
+            app:layout_constraintVertical_bias="0.4"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="loading_star/loading_star.json"
+            app:lottie_imageAssetsFolder="loading_star/images"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="reverse" />
 
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 </layout>
