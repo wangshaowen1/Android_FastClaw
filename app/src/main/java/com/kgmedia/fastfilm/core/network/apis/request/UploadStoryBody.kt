@@ -25,17 +25,13 @@ data class UploadStoryBody(
 /**
  *  {
  *         "workId": "作品ID",
- *         "genStatus": "[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败 4=算力不足，请充值]"
+ *         "genStatus": "[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]"
  *     }
  */
 data class UploadStoryData(
     val genStatus: Int? = null,
     val workId: String? = null
-) {
-    fun checkStatus(): Boolean {
-        return genStatus != 4
-    }
-}
+)
 
 /**
  * {

@@ -25,7 +25,6 @@ import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.creator.set.StoryGenerateConfirmDialog
 import com.kgmedia.fastfilm.feature.creator.set.VideoSetDialog
-import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
@@ -196,11 +195,7 @@ class CreationFragment :
                             }.show(this@CreationFragment.childFragmentManager)
                         } else {
                             this@CreationFragment.mRealVM.confirmPowerConsume(body) { data ->
-                                if (data?.checkStatus() == true) {
-                                    startEditor(data)
-                                } else {
-                                    PowerRechargeDialog.show()
-                                }
+                                startEditor(data)
                             }
                         }
                     } else {//非小说文档走这里

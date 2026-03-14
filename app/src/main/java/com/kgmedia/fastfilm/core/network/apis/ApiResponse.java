@@ -71,6 +71,6 @@ public class ApiResponse<T> {
     }
 
     public ApiException getApiException() {
-        return new ApiException(errorCode, errorMsg);
+        return new ApiException(code, msg);
     }
 }

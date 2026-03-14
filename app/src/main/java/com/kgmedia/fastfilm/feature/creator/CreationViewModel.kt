@@ -14,6 +14,8 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.network.apis.ApiException
+import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
@@ -25,6 +27,7 @@ import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.KEY_MODEL
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.MODEL_INSPIRATION
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
@@ -197,10 +200,22 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     fun confirmPowerConsume(body: UploadStoryBody, callback: (UploadStoryData?) -> Unit) {
         requestWithLoading(
-            apiBlock = { mRepo.api.novelUploadSummary(body) }
-        ) {
-            callback.invoke(data)
-        }
+            apiBlock = {
+                mRepo.api.novelUploadSummary(body)
+            },
+            onSuccess = { callback.invoke(data) },
+            onError = {
+                if (it is ApiException) {
+                    if (it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                        PowerRechargeDialog.show()
+                    } else {
+                        it.message?.showToast()
+                    }
+                } else {
+                    it?.message?.showToast()
+                }
+            }
+        )
     }
 
     fun extractStoryName(input: String?): String? {
