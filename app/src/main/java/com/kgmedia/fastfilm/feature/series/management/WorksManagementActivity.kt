@@ -117,9 +117,10 @@ class WorksManagementActivity :
                     return
                 }
                 topActivity?.showConfirmPrompt(
-                    title = "是否删除该剧集吗",
+                    title = "删除剧集",
+                    tip = "删除后，该集的剧本、资产图、分镜视频等将被清空，已消耗算力将无法恢复",
                     cancelText = "取消",
-                    confirmText = "确定"
+                    confirmText = "删除"
                 ) {
                     mRealVM.delete(eventVm.getSelectedItems().toList())
                 }
