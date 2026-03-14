@@ -166,7 +166,7 @@ class DramaGenerateStep1Fragment :
         binding.btnNext.setOnSingleClickListener {
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 mRealVM.saveTitle {
-                    hostVm?.nextStep(2, mRealVM.workId, null)
+                    hostVm?.nextStep(2, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.getFirstStoryId())
                 }
                 return@setOnSingleClickListener
             }

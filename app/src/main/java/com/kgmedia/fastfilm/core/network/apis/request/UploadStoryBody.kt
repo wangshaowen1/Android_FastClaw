@@ -73,7 +73,11 @@ data class RollNovelSummaryResult(
     val workDesc: String? = null,
     val workTitle: String? = null,
     val structureList: List<RollNovelStructure>? = null,
-) : Parcelable
+) : Parcelable{
+    fun getFirstStoryId(): String? {
+        return structureList?.get(0)?.storyId
+    }
+}
 
 /**
  * {
