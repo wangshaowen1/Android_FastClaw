@@ -326,7 +326,7 @@ fun loadGifUrl(imageView: ImageView, path: String?, placeHolder: Drawable? = nul
         GlideApp.with(imageView).asGif().load(path).placeholder(placeHolder).skipMemoryCache(true)
             .into(imageView)
     } else {
-        loadUri(imageView, path, placeHolder)
+        GlideImageLoader.with(imageView).display(path, placeHolder)
     }
 }
 
