@@ -161,6 +161,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private fun generateAllAssetDescription() {
         if (step.get() > STEP_INIT) return
         generating = true
+        loadState.set(LoadStateViewHolder.CONTENT)
         launch(block = {
             val allAssetDescriptionStatus = withContext(Dispatchers.IO) { mRepo.api.generateAllAssetDescription(WorkBody(workId, storyId)).data }
             taskId = allAssetDescriptionStatus?.taskId
