@@ -290,7 +290,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         onItemChanged()
     }
 
-    private fun onItemChanged() {
+    private fun onItemChanged(showToast: Boolean = true) {
         var newNum = 0
         var generatingNum = 0
         var generatedNum = 0
@@ -314,7 +314,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
 
             failedNum > 0 -> {
-                if (step.get() != STEP_IMAGE_GENERATE_FAILED) {
+                if (showToast && step.get() != STEP_IMAGE_GENERATE_FAILED) {
                     "部分资产生成失败，请重新生成".showToast()
                 }
                 step.set(STEP_IMAGE_GENERATE_FAILED)
@@ -369,7 +369,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 R.id.btnDelete -> {
                     if (data.get() == null) {
                         adapter.remove(this)
-                        onItemChanged()
+                        onItemChanged(false)
                     } else {
                         topActivity?.showCommonDialog(title = "确认删除吗？", tip = "删除后可能影响视频生成", confirmText = "删除") {
                             deleteAsset(this)
@@ -386,7 +386,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             response(item.delete()) {
                 item.clear()
                 adapter.remove(item)
-                onItemChanged()
+                onItemChanged(false)
             }
         }
     }
