@@ -44,8 +44,8 @@ fun UserHomeData?.loginToast() {
     val newRegister = this?.isNewRegistration() == true
     Global.needCompleteProfile = newRegister
     if (!newRegister) {
-        "登录成功，开始创作吧~".showToastDelay(100)
     }
+        "登录成功，开始创作吧~".showToastDelay(100)
 }
 
 /**
