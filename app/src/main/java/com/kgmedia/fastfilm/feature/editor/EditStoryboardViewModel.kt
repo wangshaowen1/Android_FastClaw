@@ -149,7 +149,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             getGenPrice()
             return
         }
-        if (cost > 0 && Config.get().notifyPowerConsume(PowerConsumeConfirmDialog.SCENE_REGENERATE_STORYBOARD_VIDEO)) {
+        if (cost > 0 && Config.get().notifyPowerConsume()) {
             PowerConsumeConfirmDialog.show(PowerConsumeConfirmDialog.SCENE_REGENERATE_STORYBOARD_VIDEO, cost)?.apply {
                 onConfirm = { generate(storyboard, prompt, cost, finish) }
             }

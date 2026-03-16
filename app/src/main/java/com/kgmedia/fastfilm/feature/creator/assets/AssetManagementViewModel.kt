@@ -397,7 +397,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             calcCost()
             return
         }
-        if (cost > 0 && Config.get().notifyPowerConsume(PowerConsumeConfirmDialog.SCENE_GENERATE_ASSETS_IMAGE)) {
+        if (cost > 0 && Config.get().notifyPowerConsume()) {
             PowerConsumeConfirmDialog.show(PowerConsumeConfirmDialog.SCENE_GENERATE_ASSETS_IMAGE, cost)?.apply {
                 onConfirm = { generate(cost) }
             }
