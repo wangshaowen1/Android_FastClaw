@@ -66,7 +66,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
 
     /**
-     *获取剧集最新一集剧本详情
+     *获取剧集上一集剧本详情
      */
     fun getEpisodeInfo(function: (() -> Unit)? = null) {
         launchWithLoading {
@@ -160,7 +160,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
                     SaveSequelNovelStoryBody(
                         storySummary = input.value,
                         workId = workId,
-                        storyId = episodeInfo.value?.storyId
+                        storyId = storyId
                     )
                 )
             ) {
