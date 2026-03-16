@@ -116,7 +116,7 @@ public class Constants {
         String PAGE = "page";
 
         @Nullable
-        String FROM_MV = "fromMv";
+        String FROM_PAGE = "fromPage";
         @Nullable
         String MODE = "mode";
 

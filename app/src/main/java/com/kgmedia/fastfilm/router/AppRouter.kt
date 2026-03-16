@@ -143,9 +143,9 @@ object AppRouter : IRouter {
     }
 
     @JvmStatic
-    fun startStory(work: WorkInfo?, storyId: String?) {
+    fun startStory(work: WorkInfo?, storyId: String?, from: String? = null) {
         work?.apply {
-            startStory(workId, storyId, workTitle, workType, totalEpisodeCnt, workRatio)
+            startStory(workId, storyId, workTitle, workType, totalEpisodeCnt, workRatio, from)
         }
     }
 
@@ -157,6 +157,7 @@ object AppRouter : IRouter {
         workType: Int?,
         totalEpisodeCnt:Int?,
         workRatio: String?,
+        from: String? = null,
     ) {
         if (workId.isNullOrEmpty() || storyId.isNullOrEmpty()) {
             return
@@ -186,7 +187,8 @@ object AppRouter : IRouter {
                     workTitle = workTitle,
                     workType = workType,
                     totalEpisodeCnt = totalEpisodeCnt,
-                    singleEpisodeDetailsInfo = res.data
+                    singleEpisodeDetailsInfo = res.data,
+                    from = from
                 )
                 loading?.dismissAllowingStateLoss()
             },
@@ -253,81 +255,57 @@ object AppRouter : IRouter {
         workTitle: String?,
         workType: Int?,
         totalEpisodeCnt: Int?,
-        singleEpisodeDetailsInfo: EpisodeInfo?
+        singleEpisodeDetailsInfo: EpisodeInfo?,
+        from: String? = null
     ) {
-        val sortNo = singleEpisodeDetailsInfo?.sortNo ?: 1
-        Logger.d("打印参数：jumpToTarget singleEpisodeDetailsInfo?.stepProgress = ${singleEpisodeDetailsInfo?.stepProgress}")
-        //枚举创作流程进度 0=待创建 10=剧本输入 15=剧本生成中 20=资产生成中 30=分镜描述中 32=分镜视频生成中35待合成 40=已完成 45=分镜重绘中 50=重绘已完成
-        when (singleEpisodeDetailsInfo?.stepProgress) {
-            EpisodeInfo.PROGRESS_SUMMARY_GENERATING -> {
-                //10=剧本输入
-                StoryEditorActivity.restore(
-                    context = topActivity,
-                    step = 1,
-                    workId = workId,
-                    storyId = singleEpisodeDetailsInfo.storyId,
-                    workTitle = workTitle,
-                    chapterIndex = sortNo,
-                    model = getModel(totalEpisodeCnt,workType = workType, sortNo = sortNo, firstCreated = singleEpisodeDetailsInfo.isFirstCreated()),
-                    videoRatio = singleEpisodeDetailsInfo.workRatio,
-                )
-            }
+        val info = singleEpisodeDetailsInfo ?: return
 
-            EpisodeInfo.PROGRESS_STORY_GENERATING -> {
-                //15=剧本生成中
-                StoryEditorActivity.restore(
-                    context = topActivity,
-                    step = 2,
-                    workId = workId,
-                    storyId = singleEpisodeDetailsInfo.storyId,
-                    workTitle = workTitle,
-                    chapterIndex = sortNo,
-                    model = getModel(totalEpisodeCnt,workType = workType, sortNo = sortNo, firstCreated = singleEpisodeDetailsInfo.isFirstCreated()),
-                    videoRatio = singleEpisodeDetailsInfo.workRatio,
-                )
-            }
+        // 获取安全的集数索引，后续拼接和传参直接使用该非空值
+        val sortNo = info.sortNo ?: 1
+        Logger.d("打印参数：jumpToTarget singleEpisodeDetailsInfo?.stepProgress = ${info.stepProgress}")
 
-            EpisodeInfo.PROGRESS_ASSET_GENERATING -> {
-                //20=资产生成中
-                StoryEditorActivity.restore(
-                    context = topActivity,
-                    step = 3,
-                    workId = workId,
-                    storyId = singleEpisodeDetailsInfo.storyId,
-                    workTitle = workTitle,
-                    taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO?.taskId,
-                    chapterIndex = sortNo,
-                    model = getModel(totalEpisodeCnt,workType = workType, sortNo = sortNo, firstCreated = singleEpisodeDetailsInfo.isFirstCreated()),
-                    videoRatio = singleEpisodeDetailsInfo.workRatio,
-                )
-            }
-
+        when (info.stepProgress) {
+            // 10=剧本输入, 15=剧本生成中, 20=资产生成中, 30=分镜描述中
+            EpisodeInfo.PROGRESS_SUMMARY_GENERATING,
+            EpisodeInfo.PROGRESS_STORY_GENERATING,
+            EpisodeInfo.PROGRESS_ASSET_GENERATING,
             EpisodeInfo.PROGRESS_STORYBOARD_GENERATING_ASSET -> {
-                //30=分镜描述中
+
+                // 提取出唯一不同的 step 参数
+                val targetStep = when (info.stepProgress) {
+                    EpisodeInfo.PROGRESS_SUMMARY_GENERATING -> 1
+                    EpisodeInfo.PROGRESS_STORY_GENERATING -> 2
+                    EpisodeInfo.PROGRESS_ASSET_GENERATING -> 3
+                    else -> 4 // EpisodeInfo.PROGRESS_STORYBOARD_GENERATING_ASSET
+                }
+
                 StoryEditorActivity.restore(
                     context = topActivity,
-                    step = 4,
+                    step = targetStep,
                     workId = workId,
-                    storyId = singleEpisodeDetailsInfo.storyId,
+                    storyId = info.storyId,
                     workTitle = workTitle,
-                    taskId = singleEpisodeDetailsInfo.taskGenResultStoryVO?.taskId,
+                    taskId = info.taskGenResultStoryVO?.taskId,
                     chapterIndex = sortNo,
-                    model = getModel(totalEpisodeCnt,workType = workType, sortNo = sortNo, firstCreated = singleEpisodeDetailsInfo.isFirstCreated()),
-                    videoRatio = singleEpisodeDetailsInfo.workRatio,
+                    model = getModel(totalEpisodeCnt, workType, sortNo, info.isFirstCreated()),
+                    videoRatio = info.workRatio,
+                    from = from
                 )
             }
 
+            // 32=分镜视频生成中 35=待合成 45=分镜重绘中 50=重绘已完成
             EpisodeInfo.PROGRESS_STORYBOARD_GENERATING,
             EpisodeInfo.PROGRESS_WAITING_COMPOSING,
             EpisodeInfo.EPISODE_REPAINT_STATE,
             EpisodeInfo.EPISODE_REPAINT_COMPLETED -> {
-                //32=分镜视频生成中 35待合成 45=分镜重绘中 50=重绘已完成
                 EditStoryboardVideoActivity.start(
-                    storyTitle = workTitle?.let { "$it：第${singleEpisodeDetailsInfo.sortNo}集" },
+                    // 优化：原代码使用了可能为空的 info.sortNo，这里直接使用兜底过的非空 sortNo
+                    storyTitle = workTitle?.let { "$it：第${sortNo}集" },
                     workId = workId,
-                    storyId = singleEpisodeDetailsInfo.storyId,
-                    workRatio = singleEpisodeDetailsInfo.workRatio,
-                    story = singleEpisodeDetailsInfo
+                    storyId = info.storyId,
+                    workRatio = info.workRatio,
+                    story = info,
+                    from = from
                 )
             }
         }

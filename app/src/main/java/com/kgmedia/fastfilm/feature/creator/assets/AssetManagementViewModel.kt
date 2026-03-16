@@ -99,7 +99,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     val cost by lazy { ObservableInt() }
     private var aiPrice = 0
     val keyboardHeight by lazy { ObservableInt(100) }
-    private var generating = false
+    var generating = false
         set(value) {
             if (field != value) {
                 field = value

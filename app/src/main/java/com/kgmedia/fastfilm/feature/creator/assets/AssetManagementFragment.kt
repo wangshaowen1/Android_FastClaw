@@ -11,14 +11,18 @@ import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentAssetManagementBinding
+import com.kgmedia.fastfilm.feature.creator.generate.OnBackPressedHandler
+import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
+import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getParentViewModel
+import com.nhsd.basic.ext.showToast
 
 /**
  * 资产管理
  */
-class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBinding, AssetManagementViewModel>() {
+class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBinding, AssetManagementViewModel>(), OnBackPressedHandler {
 
     companion object {
         fun newInstance() = AssetManagementFragment()
@@ -35,6 +39,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
         }
     private val layoutManager get() = bindingNullable?.rvAssets?.layoutManager as? LinearLayoutManager
     private val hostVm by lazy { getParentViewModel<StoryEditorViewModel>() }
+    val from by lazy { hostVm?.from }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -108,6 +113,19 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
         mRealVM.adapter.items.indexOfFirst { it is ItemPropVM }.takeIf { it > -1 }?.let {
             layoutManager?.scrollToPositionWithOffset(it, 0)
         }
+    }
+
+    override fun handleBackPressed(): Boolean {
+        if (mRealVM.generating) {
+            "AI正在生成中，已自动保存为草稿".showToast()
+        } else {
+            "已自动保存为草稿".showToast()
+        }
+        if (from != StoryEditorActivity.FROM_SERIES) {
+            SeriesActivity.start(mRealVM.workId)
+        }
+        mActivity.finish()
+        return true
     }
 
 }

@@ -27,6 +27,7 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
 import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
+import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.showToast
@@ -82,7 +83,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     val cost by lazy { ObservableInt() }
     private var genVideoPrice = 0
     val keyboardHeight by lazy { ObservableInt() }
-    private var generating = false
+    var generating = false
         set(value) {
             if (field != value) {
                 field = value
@@ -354,10 +355,10 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         return adapter.items.any { it is ItemStoryboardVM && it.notSaved() }
     }
 
-    fun saveAndFinish() {
+    fun saveAndFinish(callback: () -> Unit) {
         launchWithLoading {
             adapter.items.forEach { if (it is ItemStoryboardVM) it.save(false) }
-            finish()
+            callback.invoke()
         }
     }
 }

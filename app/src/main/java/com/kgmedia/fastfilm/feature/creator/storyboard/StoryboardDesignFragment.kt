@@ -6,16 +6,18 @@ import androidx.databinding.Observable
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
-import com.kgmedia.fastfilm.common.ext.showConfirmDialog
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentStoryboardDesignBinding
 import com.kgmedia.fastfilm.feature.creator.generate.OnBackPressedHandler
+import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.kgmedia.fastfilm.feature.editor.EditStoryboardVideoActivity
+import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getParentViewModel
+import com.nhsd.basic.ext.showToast
 
 /**
  * 分镜设计
@@ -28,6 +30,7 @@ class StoryboardDesignFragment :
     }
 
     private val hostVm by lazy { getParentViewModel<StoryEditorViewModel>() }
+    val from by lazy { hostVm?.from }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -61,7 +64,8 @@ class StoryboardDesignFragment :
                         workId,
                         storyId,
                         hostVm?.videoRatio,
-                        null
+                        null,
+                         from = from
                     )
                     activity?.finish()
                 }
@@ -74,19 +78,33 @@ class StoryboardDesignFragment :
             activity?.showCommonDialog(
                 tip = "您对分镜信息有修改尚未保存，是否保存修改？",
                 cancelText = "不保存",
-                cancel = { activity?.finish() },
+                cancel = {
+                    toSeries()
+                    activity?.finish()
+                },
                 confirmText = "保存并退出",
-                confirm = { mRealVM.saveAndFinish() })
+                confirm = {
+                    mRealVM.saveAndFinish {
+                        toSeries()
+                        activity?.finish()
+                    }
+                })
             return true
         }
-        activity?.showConfirmDialog(
-            title = null,
-            tips = "退出后，当前内容将继续生成，不会影响您的创作进度。您可随时返回继续创作。",
-            confirm = {
-                activity?.finish()
-            }
-        )
+        if (mRealVM.generating) {
+            "AI正在生成中，已自动保存为草稿".showToast()
+        } else {
+            "已自动保存为草稿".showToast()
+        }
+        toSeries()
+        mActivity.finish()
         return true
+    }
+
+    fun toSeries() {
+        if (from != StoryEditorActivity.FROM_SERIES) {
+            SeriesActivity.start(mRealVM.workId)
+        }
     }
 
 }

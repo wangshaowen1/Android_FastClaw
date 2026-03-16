@@ -340,6 +340,19 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     return@on
                 }
             }
+            on<Events.MainTabEvent> { event->
+                when (event.type) {
+                    Events.MainTabEvent.TAB_HOME -> {
+                        toHome()
+                    }
+                    Events.MainTabEvent.TAB_MY_WORKS -> {
+                        binding.mrg.check(R.id.rbWorks)
+                    }
+                    Events.MainTabEvent.TAB_MINE -> {
+                        binding.mrg.check(R.id.rbMine)
+                    }
+                }
+            }
             on<Events.UserChangedEvent> { event ->
                 if (event.eventType == Events.UserChangedEvent.TOKEN_EXPIRED) {
                     AppNavigator.forceLogoutAndRestart()

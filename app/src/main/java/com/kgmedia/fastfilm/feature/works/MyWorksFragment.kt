@@ -7,11 +7,13 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Config
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
@@ -24,6 +26,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.main.ActivityDialog
+import com.kgmedia.fastfilm.feature.main.MainActivity
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.kgmedia.fastfilm.feature.play.data.FeedRepository
@@ -34,6 +37,7 @@ import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResDrawable
@@ -42,6 +46,15 @@ import kotlinx.coroutines.launch
 
 class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksViewModel>() {
 
+
+    companion object{
+        const val TAG = "MyWorksFragment"
+        @JvmStatic
+        fun start() {
+            FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_MY_WORKS))
+            ActivityUtils.finishToActivity(MainActivity::class.java, false)
+        }
+    }
 
     //上一个的登录id
     private var userId: String? = null
@@ -193,6 +206,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 chapterIndex = 1,
                 model = AppRouter.getModel(workType = it.workType, sortNo = 1),
                 videoRatio = it.workRatio,
+                from = StoryEditorActivity.FROM_MY_WORKS
             )
         }
 

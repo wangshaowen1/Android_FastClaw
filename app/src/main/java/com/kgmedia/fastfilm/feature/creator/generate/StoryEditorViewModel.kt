@@ -29,6 +29,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
     //从1还是从2开始，从2开始就是4步创作流程
     val startFrom = MutableLiveData<Int>()
     val model by lazy { mBundle.getInt(Constants.Extra.MODE) }
+    val from by lazy { mBundle.getString(Constants.Extra.FROM_PAGE) }
 
     //子界面在流式输出的时候 用户要退出的时候需要弹出提示
     var backWarning = false

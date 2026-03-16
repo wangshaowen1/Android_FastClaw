@@ -11,6 +11,26 @@ import com.nhsd.basic.bus.AppEvent;
  */
 public class Events {
 
+    public static class MainTabEvent implements AppEvent {
+        public static int TAB_HOME = 1;
+        public static int TAB_MY_WORKS = 2;
+        public static int TAB_MINE = 3;
+
+        private int type;
+
+        public MainTabEvent(int type) {
+            this.type = type;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public void setType(int type) {
+            this.type = type;
+        }
+    }
+
     public static class PurchaseEvent implements AppEvent {
         //购买类型会员
         public static int VIP = 1;

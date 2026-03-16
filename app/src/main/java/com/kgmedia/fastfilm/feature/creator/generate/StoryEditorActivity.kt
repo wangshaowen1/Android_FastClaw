@@ -30,6 +30,11 @@ class StoryEditorActivity :
         //自定义集数
         const val CUSTOM_EPISODE_COUNT = "customEpisodeCount"
 
+        //来源 来自剧集详情
+        const val FROM_SERIES = "fromSeries"
+        //来源 来自我的作品
+        const val FROM_MY_WORKS = "fromMyWorks"
+
         /**
          * 从头开始生成
          * @param workId 作品id（首次生成==》目前仅小说文档上传的情况下有值）
@@ -84,6 +89,7 @@ class StoryEditorActivity :
             dramaContent: String? = null,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
             videoRatio: String? = null,
+            from: String? = null
         ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
@@ -95,6 +101,7 @@ class StoryEditorActivity :
             starter.putExtra(Constants.Extra.CHAPTER_INDEX, chapterIndex)
             starter.putExtra(Constants.Extra.CONTENT, dramaContent)
             starter.putExtra(Constants.Extra.VIDEO_RATIO, videoRatio)
+            starter.putExtra(Constants.Extra.FROM_PAGE,from)
             context.startActivity(starter)
         }
 
@@ -113,6 +120,7 @@ class StoryEditorActivity :
             chapterIndex: Int? = 1,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
             videoRatio: String? = null,
+            from: String? = null
         ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
@@ -125,6 +133,7 @@ class StoryEditorActivity :
             starter.putExtra(Constants.Extra.CHAPTER_INDEX, chapterIndex)
             starter.putExtra(Constants.Extra.MODE, model)
             starter.putExtra(Constants.Extra.VIDEO_RATIO, videoRatio)
+            starter.putExtra(Constants.Extra.FROM_PAGE,from)
             context.startActivity(starter)
         }
     }

@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
+import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
@@ -41,6 +42,7 @@ class DramaGenerateStep2Fragment :
     val hostVm by lazy { getViewModelOfActivity<StoryEditorViewModel>() }
     var dialog: GeneratingDialog? = null
     private var showBackToast = false
+    val from by lazy { hostVm?.from }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -236,9 +238,15 @@ class DramaGenerateStep2Fragment :
 
 
     override fun handleBackPressed(): Boolean {
-        if (showBackToast) {
-            getDuringToast().showToast()
+        if (mRealVM.isScriptLoading.get()) {
+            "AI正在生成中，已自动保存为草稿".showToast()
+        } else {
+            "已自动保存为草稿".showToast()
         }
-        return false
+        if (from != StoryEditorActivity.FROM_SERIES) {
+            SeriesActivity.start(mRealVM.workId.value)
+        }
+        mActivity.finish()
+        return true
     }
 }

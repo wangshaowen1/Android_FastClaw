@@ -44,12 +44,11 @@ import kotlinx.coroutines.launch
  */
 class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewModel>() {
     companion object {
-        fun start(workId: String?, newlyPublish: Boolean = false) {
+        fun start(workId: String?) {
             val activity = topActivity ?: return
             activity.startActivity(
                 Intent(activity, SeriesActivity::class.java).apply {
                     putExtra(Constants.Extra.ID, workId)
-                    putExtra(Constants.Extra.NEWLY_PUBLISH, newlyPublish)
                 }
             )
         }
@@ -159,7 +158,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 previousStoryId = it.storyId,
                 chapterIndex = (it.sortNo ?: 0) + 1,
                 model = getModel(workInfo.workType),
-                videoRatio = it.workRatio
+                videoRatio = it.workRatio,
+                from = StoryEditorActivity.FROM_SERIES
             )
         }
     }
@@ -207,7 +207,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             else -> {
-                AppRouter.startStory(mRealVM.workInfo.value, episodeInfo.storyId)
+                AppRouter.startStory(mRealVM.workInfo.value, episodeInfo.storyId, from = StoryEditorActivity.FROM_SERIES)
             }
         }
     }
@@ -346,7 +346,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             previousStoryId = lastInfo?.storyId,
             chapterIndex = info?.sortNo ?: 1,
             model = getModel(workInfo.workType),
-            videoRatio = workInfo.workRatio
+            videoRatio = workInfo.workRatio,
+            from = StoryEditorActivity.FROM_SERIES
         )
         //需要拿到上一集的剧集信息，所以先调用一下
 //        mRealVM.getEpisodeInfo(workInfo.workType)

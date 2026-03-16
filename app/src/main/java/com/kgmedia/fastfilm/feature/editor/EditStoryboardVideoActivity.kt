@@ -17,6 +17,8 @@ import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardVideoBinding
+import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
+import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.isActive
@@ -28,21 +30,32 @@ import com.nhsd.basic.ext.showToast
 class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboardVideoBinding, EditStoryboardVideoViewModel>() {
     companion object {
         @JvmStatic
-        fun launchIntent(activity: Activity, storyTitle: String?, workId: String?, storyId: String?, workRatio: String?, story: EpisodeInfo?): Intent {
+        fun launchIntent(
+            activity: Activity,
+            storyTitle: String?,
+            workId: String?,
+            storyId: String?,
+            workRatio: String?,
+            story: EpisodeInfo?,
+            from: String? = null
+        ): Intent {
             val intent = Intent(activity, EditStoryboardVideoActivity::class.java)
             intent.putExtra(Constants.Extra.TITLE, storyTitle)
             intent.putExtra(Constants.Extra.WORK_ID, workId)
             intent.putExtra(Constants.Extra.STORY_ID, storyId)
             intent.putExtra(Constants.Extra.VIDEO_RATIO, workRatio)
             intent.putExtra(Constants.Extra.DATA, story)
+            intent.putExtra(Constants.Extra.FROM_PAGE, from)
             return intent
         }
 
         @JvmStatic
-        fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?, story: EpisodeInfo?) {
-            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio, story)) }
+        fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?, story: EpisodeInfo?, from: String? = null) {
+            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio, story, from)) }
         }
     }
+
+    val from by lazy { intent?.getStringExtra(Constants.Extra.FROM_PAGE) }
 
     override fun onBackPressed() {
         mRealVM.getStoryInfo {
@@ -58,6 +71,14 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     confirmText = "继续重绘",
                     confirm = {})
             } else {
+                if (mRealVM.anyStoryboardGenerating()) {
+                    "AI正在生成中，已自动保存为草稿".showToast()
+                } else {
+                    "已自动保存为草稿".showToast()
+                }
+                if (from != StoryEditorActivity.FROM_SERIES) {
+                    SeriesActivity.start(mRealVM.workId)
+                }
                 super.onBackPressed()
             }
         }

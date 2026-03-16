@@ -22,6 +22,7 @@ import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
 import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
 import com.kgmedia.fastfilm.feature.creator.StoryReuploadDialog
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
@@ -53,6 +54,7 @@ class DramaGenerateStep1Fragment :
     var dialog: GeneratingDialog? = null
     var episodeAdapter = QuickAdapter<ItemStorySummaryGenerateVm>(R.layout.item_story_summary_generate, emptyList())
     private var showBackToast = false
+    val from by lazy { hostVm?.from }
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -188,11 +190,6 @@ class DramaGenerateStep1Fragment :
         }
     }
 
-    fun getDuringToast(): String {
-        val workName = mRealVM.mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
-        return "《${workName}》AI正在制作中\n已自动为您保存为草稿"
-    }
-
     fun getCustomUIStyles(): MarkdownStyles {
         val styles = MarkdownStyles()
 
@@ -262,9 +259,16 @@ class DramaGenerateStep1Fragment :
     }
 
     override fun handleBackPressed(): Boolean {
-        if (showBackToast) {
-            getDuringToast().showToast()
+        if (mRealVM.isSummaryLoading.get()) {
+            "AI正在生成中，已自动保存为草稿".showToast()
+        } else {
+            "已自动保存为草稿".showToast()
         }
-        return false
+        if (from != StoryEditorActivity.FROM_MY_WORKS) {
+            MyWorksFragment.start()
+        } else {
+            mActivity.finish()
+        }
+        return true
     }
 }
