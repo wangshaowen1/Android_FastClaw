@@ -19,6 +19,7 @@ import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.recharge.MyBalanceActivity
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
+import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelFragment
@@ -96,6 +97,10 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             R.id.tv_name -> {
                 //个人资料
                 AppNavigator.checkLoginIntercepted(false)
+            }
+
+            R.id.ll_qa -> {
+                SimpleBrowserActivity.launch(activity, Config.get().appConfig.appHelpCenterUrl)
             }
 
             R.id.ll_settings -> {

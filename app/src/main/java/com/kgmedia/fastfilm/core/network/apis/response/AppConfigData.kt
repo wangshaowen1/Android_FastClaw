@@ -137,6 +137,10 @@ class AppConfigData {
      * 课程-课程banner
      */
     val workCourseBanner: SimpleBannerInfo? = null
+    /**
+     * 帮助中心
+     */
+    val appHelpCenterUrl: String? = null
 }
 
 data class SimpleBannerInfo(

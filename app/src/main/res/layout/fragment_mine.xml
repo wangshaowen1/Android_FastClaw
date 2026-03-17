@@ -160,6 +160,37 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/ll_qa"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/spacing_l">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_mine_feedback_suggestions" />
+
+                    <TextView
+                        style="@style/Text14"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_m"
+                        android:layout_weight="1"
+                        android:text="帮助中心"
+                        android:textColor="?attr/textColor3" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/arrow_right_gray36" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/suggestions_feedback"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
