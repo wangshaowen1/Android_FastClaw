@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.recharge
 import androidx.annotation.LayoutRes
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
@@ -22,7 +23,11 @@ import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable.isActive
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : PaymentViewModel<PowerRepository>() {
     val toolbar by lazy {
@@ -71,6 +76,9 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
                 pointConfigList?.items?.map { ItemRechargePowerVM(it).apply { onItemClick.value = { select() } } }.let { vms ->
                     powerAdapter.submitList(vms)
                     (vms?.firstOrNull { it.data.get()?.isDefault == 1 } ?: vms?.firstOrNull())?.select()
+                    vms?.find { it.data.get()?.isDiscountValid() == true }?.let {
+                        startGlobalCountDown()
+                    }
                 }
                 paymentConfigList?.items?.map { ItemRechargePaymentVM(it).apply { onItemClick.value = { select() } } }.let { vms ->
                     paymentAdapter.submitList(vms)
@@ -115,7 +123,7 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
             "请选择支付方式".showToast()
             return
         }
-        if (isDialog){
+        if (isDialog) {
             EventManager.onAppTrack(AppEvent.SF_CLICK_COMPUTE_RECHARGE_PAYMENT_BUTTON)
         }
         pay(
@@ -152,6 +160,26 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
 
     private fun refreshBalance() {
         Global.refreshBalance()
+    }
+
+    private var countDownJob: Job? = null
+
+    fun startGlobalCountDown() {
+        countDownJob?.cancel()
+        countDownJob = viewModelScope.launch {
+            while (isActive) {
+                // 每秒通知所有 Item 更新时间
+                powerAdapter.items.forEach { vm ->
+                    vm.updateTime()
+                }
+                delay(1000)
+            }
+        }
+    }
+
+    override fun onCleared() {
+        countDownJob?.cancel()
+        super.onCleared()
     }
 
 }

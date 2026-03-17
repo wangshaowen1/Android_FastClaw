@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.recharge
 
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.entity.PointConfigInfo
 
@@ -9,4 +10,17 @@ import com.kgmedia.fastfilm.core.network.apis.entity.PointConfigInfo
  */
 class ItemRechargePowerVM(info: PointConfigInfo) : AppItemViewModel<PointConfigInfo>(info) {
     val isChecked by lazy { ObservableBoolean(false) }
+    val discountText by lazy {
+        ObservableField<String>()
+    }
+    fun updateTime() {
+        val info = data.get() ?: return
+        val discountValid = info.isDiscountValid()
+        if (discountValid) {
+            val countDownText = info.getCountDownText()
+            if (countDownText.isNotEmpty()) {
+                discountText.set(countDownText)
+            }
+        }
+    }
 }
