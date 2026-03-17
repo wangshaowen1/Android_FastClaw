@@ -68,7 +68,7 @@
 
         <View
             android:id="@+id/view_progress_bar"
-            android:layout_width="0dp"
+            android:layout_width="5dp"
             android:layout_height="6dp"
             android:background="@drawable/guide_step3_progress_style"
             app:layout_constraintBottom_toBottomOf="@+id/view_track_bg"

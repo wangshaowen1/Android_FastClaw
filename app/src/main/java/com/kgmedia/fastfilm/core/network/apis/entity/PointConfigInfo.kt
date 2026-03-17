@@ -19,5 +19,7 @@ data class PointConfigInfo(
     /**
      * 是否默认选中（0-非默认、1-默认）
      */
-    val isDefault: Int?
+    val isDefault: Int?,
+    val pointMarketingTime: Long?,//算力营销倒计时截止时间.空则代表不需要受限制
+    val pointMarketingText: String?,//算力营销倒计时文本
 )

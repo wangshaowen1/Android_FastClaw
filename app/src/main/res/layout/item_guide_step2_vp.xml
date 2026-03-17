@@ -12,20 +12,25 @@
         <import type="android.view.View" />
     </data>
 
-    <com.lihang.ShadowLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/selector_item_stroke"
         android:onClick="@{(v)->item.onItemClick.invoke(v)}"
-        app:hl_cornerRadius="32dp"
-        app:hl_shadowColor="#57ffffff"
-        app:hl_shadowLimit="20dp">
+        android:outlineAmbientShadowColor="@color/color_50_ffffff"
+        android:outlineSpotShadowColor="@color/color_50_ffffff"
+        android:theme="@style/Theme.Material3.DayNight.NoActionBar"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="20dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="false"
+        app:strokeWidth="0dp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/llImage"
             loadUri="@{item.data.workCoverUrl}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="centerCrop"
             app:shapeAppearance="@style/roundStyle_r32" />
 
         <TextView
@@ -38,8 +43,8 @@
             android:paddingVertical="7dp"
             android:paddingStart="20dp"
             android:paddingEnd="@dimen/spacing_l"
-            android:textColor="?attr/textColor1"
-            android:text="限时0元" />
+            android:text="限时0元"
+            android:textColor="?attr/textColor1" />
 
         <TextView
             android:id="@+id/tvName"
@@ -69,5 +74,5 @@
             android:textColor="?attr/textColor3"
             android:textStyle="bold"
             tools:text="原来那个帮她扛快递、陪她吃路边摊的穷邻居，竟是身价千亿的集团总裁？" />
-    </com.lihang.ShadowLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

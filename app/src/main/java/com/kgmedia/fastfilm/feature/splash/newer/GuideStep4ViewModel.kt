@@ -5,7 +5,6 @@ import androidx.media3.common.Player
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
-import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.entity.ExampleWorkInfo
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
@@ -17,20 +16,12 @@ class GuideStep4ViewModel : AppRepositoryViewModel<AppRepository>() {
     val playing by lazy { ObservableBoolean(true) }
 
     val player by lazy {
-        PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
-            addListener(object : Player.Listener {
-                override fun onPlaybackStateChanged(playbackState: Int) {
-                    super.onPlaybackStateChanged(playbackState)
-                    when (playbackState) {
-                        Player.STATE_READY -> {
-                        }
+        PlayerFactory.createPlayer(true, autoAudioFocus = true)
+    }
 
-                        Player.STATE_ENDED -> {
-                        }
-                    }
-                }
-            })
-        }
+    override fun onCreate() {
+        super.onCreate()
+        play()
     }
 
     fun play() {
@@ -61,5 +52,9 @@ class GuideStep4ViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
+    override fun onCleared() {
+        player.release()
+        super.onCleared()
+    }
 
 }

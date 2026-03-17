@@ -9,6 +9,7 @@ import com.kgmedia.fastfilm.common.ext.setGalleryEffect
 import com.kgmedia.fastfilm.databinding.ActivityGuideStep2StorySelectBinding
 import com.kgmedia.fastfilm.feature.main.MainActivity
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 
 
@@ -19,7 +20,7 @@ class GuideStep2StorySelectActivity : BaseViewModelActivity<ActivityGuideStep2St
     companion object {
         @JvmStatic
         fun start(context: Context) {
-            val starter = Intent(context, GuideStep3GeneratingActivity::class.java)
+            val starter = Intent(context, GuideStep2StorySelectActivity::class.java)
             context.startActivity(starter)
         }
     }

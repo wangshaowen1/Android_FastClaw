@@ -24,7 +24,6 @@
             android:layout_height="40dp"
             tools:background="@drawable/bg_30_5a6afe_r14"
             android:background="@{item.iconBg}"
-            android:padding="8dp"
             android:src="@{item.data.icon}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

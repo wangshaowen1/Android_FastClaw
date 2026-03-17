@@ -7,4 +7,10 @@ import com.nhsd.basic.BaseVMDialogFragment
 class FirstRechargeDialog : BaseVMDialogFragment<DialogFirstRechargeBinding, FirstRechargeViewModel>() {
 
 
+    override fun onPrepareView() {
+        super.onPrepareView()
+
+
+    }
+
 }

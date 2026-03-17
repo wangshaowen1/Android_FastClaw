@@ -14,8 +14,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/img_splash"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:gravity="center_horizontal"
         android:orientation="vertical">
+
+        <com.kgmedia.fastfilm.widget.StatusBarView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/btnIgnore"
@@ -64,7 +70,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false" />
 
         <com.kgmedia.fastfilm.widget.PillIndicatorView
             android:id="@+id/iv_indicator"

@@ -6,59 +6,19 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.network.apis.entity.ExampleWorkInfo
+import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.nhsd.basic.ext.getParcelableValue
 
-class FirstRechargeViewModel : AppRepositoryViewModel<AppRepository>() {
+class FirstRechargeViewModel : PaymentViewModel<AppRepository>() {
 
     val example by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, ExampleWorkInfo::class.java) }
-    val playing by lazy { ObservableBoolean(true) }
 
-    val player by lazy {
-        PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
-            addListener(object : Player.Listener {
-                override fun onPlaybackStateChanged(playbackState: Int) {
-                    super.onPlaybackStateChanged(playbackState)
-                    when (playbackState) {
-                        Player.STATE_READY -> {
-                        }
 
-                        Player.STATE_ENDED -> {
-                        }
-                    }
-                }
-            })
-        }
+
+    fun wxPay(){
+
     }
-
-    fun play() {
-        if (player.isPlaying) {
-            player.pause()
-            playing.set(false)
-        } else {
-            when (player.playbackState) {
-                Player.STATE_IDLE -> {
-                    val videoUrl = example?.videoUrl
-                    if (videoUrl.isNullOrEmpty().not()) {
-                        player.play(videoUrl)
-                        playing.set(true)
-                    }
-                }
-
-                Player.STATE_ENDED -> {
-                    player.seekTo(0)
-                    player.play()
-                    playing.set(true)
-                }
-
-                else -> {
-                    player.play()
-                    playing.set(true)
-                }
-            }
-        }
-    }
-
 
 }

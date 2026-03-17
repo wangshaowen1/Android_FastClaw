@@ -220,6 +220,7 @@
 
         <ImageView
             android:id="@+id/btnPay"
+            singleClick="@{()->layout.wxPay()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="19dp"
@@ -232,6 +233,7 @@
             android:id="@+id/btnClose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="@{()->layout.dismiss()}"
             android:layout_marginTop="25dp"
             android:src="@drawable/icon_dialog_bottom_close"
             app:layout_constraintEnd_toEndOf="@id/bg"
