@@ -349,5 +349,6 @@
     <string name="go_put_it_on_the_shelves">去上架</string>
     <string name="terms_of_service">服务协议</string>
     <string name="generation_failed">加载失败</string>
+    <string name="text_guide_step1">AI生成作品，一站式发行到<font color="#E6ffffff">抖音/红果/腾讯平台，</font>\n<font color="#ffffff"><strong>轻松开启内容变现</strong></font></string>
 </resources>
 

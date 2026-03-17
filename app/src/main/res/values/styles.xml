@@ -444,6 +444,11 @@
         <item name="cornerSize">4dp</item>
     </style>
 
+    <style name="roundStyle_r32">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">32dp</item>
+    </style>
+
     <style name="roundStyle_circle">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>

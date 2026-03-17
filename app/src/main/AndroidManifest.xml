@@ -331,6 +331,10 @@
         <activity
             android:name=".feature.recharge.MyBalanceActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".feature.splash.newer.GuideStep1AdActivity"   android:screenOrientation="portrait" />
+        <activity android:name=".feature.splash.newer.GuideStep2StorySelectActivity"  android:screenOrientation="portrait"/>
+        <activity android:name=".feature.splash.newer.GuideStep3GeneratingActivity"  android:screenOrientation="portrait"/>
+        <activity android:name=".feature.splash.newer.GuideStep4VideoActivity"  android:screenOrientation="portrait"/>
     </application>
     <queries>
         <intent>
