@@ -83,7 +83,7 @@
                 android:visibility="@{item.isLoadingVisible}"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
-                app:lottie_rawRes="@raw/lottie_loading" />
+                app:lottie_rawRes="@raw/loading_guide" />
         </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

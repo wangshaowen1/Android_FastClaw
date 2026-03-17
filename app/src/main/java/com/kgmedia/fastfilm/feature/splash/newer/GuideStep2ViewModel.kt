@@ -17,10 +17,10 @@ class GuideStep2ViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun getExamples() {
-        examples.value = testWorkList
-//        requestWithLoading({ mRepo.api.getNewerExampleWorkList() }) {
-//            examples.value = data
-//        }
+//        examples.value = testWorkList
+        requestWithLoading({ mRepo.api.getNewerExampleWorkList() }) {
+            examples.value = data
+        }
     }
 
     val testWorkList = listOf(

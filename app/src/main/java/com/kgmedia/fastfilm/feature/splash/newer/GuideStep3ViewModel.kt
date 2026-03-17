@@ -65,14 +65,7 @@ class GuideStep3ViewModel : AppRepositoryViewModel<AppRepository>() {
     )
 
     val step3Adapter =
-        RecyclerViewVM().Builder().setQuickAdapter(R.layout.item_generation_step, ratioVms)
-            .setItemDecoration(
-                GridSpacingItemDecoration(
-                    1, // 注意：列表是单列的，这里应该是 1 而不是 2 吧？
-                    12.dp,
-                    0
-                )
-            ).build()
+        RecyclerViewVM().Builder().setQuickAdapter(R.layout.item_generation_step, ratioVms).build()
 
     // 启动生成流程
     fun startGenerationProcess() {
