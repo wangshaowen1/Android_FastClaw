@@ -27,6 +27,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SubtitleTaskStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.TaskStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.UserShareUrlInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
@@ -54,6 +55,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.DramasTimbreBody
 import com.kgmedia.fastfilm.core.network.apis.request.FeedbackBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
+import com.kgmedia.fastfilm.core.network.apis.request.GenerateSubtitleBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImgUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
@@ -98,6 +100,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SeriesSetPriceBody
 import com.kgmedia.fastfilm.core.network.apis.request.ShareReportBody
 import com.kgmedia.fastfilm.core.network.apis.request.ShortLikeBody
 import com.kgmedia.fastfilm.core.network.apis.request.ShotSegmentIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.StoryboardIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.SynthesisUploadBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
@@ -1017,4 +1020,16 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_NEWER_EXAMPLE_WORK_LIST)
     suspend fun getNewerExampleWorkList(): ApiResponse<List<ExampleWorkInfo>>
+
+    /**
+     * 字幕-触发分镜字幕生成
+     */
+    @POST(ApiConstants.GENERATE_SUBTITLE)
+    suspend fun generateSubtitle(@Body body: GenerateSubtitleBody): ApiResponse<Any?>
+
+    /**
+     * 字幕-查询分镜字幕状态及内容
+     */
+    @POST(ApiConstants.SUBTITLE_TASK_STATUS)
+    suspend fun subtitleTaskStatus(@Body body: StoryboardIdBody): ApiResponse<SubtitleTaskStatusInfo?>
 }

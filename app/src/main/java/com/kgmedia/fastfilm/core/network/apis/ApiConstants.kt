@@ -712,4 +712,14 @@ object ApiConstants {
      * 获取新手创作流程作品列表
      */
     const val GET_NEWER_EXAMPLE_WORK_LIST = "app/creative/work/list"
+
+    /**
+     * 字幕-触发分镜字幕生成
+     */
+    const val GENERATE_SUBTITLE = "work/subtitle/generate"
+
+    /**
+     * 字幕-查询分镜字幕状态及内容
+     */
+    const val SUBTITLE_TASK_STATUS = "work/subtitle/query"
 }
