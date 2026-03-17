@@ -159,10 +159,7 @@ class FeedbackActivity :
     }
 
     private fun updateButtonEnable() {
-        binding.commit.alpha =
-            if (mRealVM.phoneNumber.value?.isNotEmpty() == true && mRealVM.type.get() != null && (binding.feedbackInput.text?.length
-                    ?: 0) >= 6
-            ) {
+        binding.commit.alpha = if ( mRealVM.type.get() != null && (binding.feedbackInput.text?.length ?: 0) >= 6) {
                 1f
             } else {
                 0.5f

@@ -122,7 +122,7 @@
                 app:inputCounterTextSize="12sp"
                 app:inputCounterVisible="false"
                 app:inputHorizontalPadding="@dimen/spacing_m"
-                app:inputMaxLength="500"
+                app:inputMaxLength="200"
                 app:inputTextColor="?attr/textColor2"
                 app:inputTextColorHint="?attr/textColor4"
                 app:inputTextSize="14sp"
