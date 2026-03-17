@@ -4,11 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.kgmedia.fastfilm.R
-import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
 import com.kgmedia.fastfilm.common.ext.setGalleryEffect
-import com.kgmedia.fastfilm.core.network.apis.entity.ExampleWorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityGuideStep2StorySelectBinding
+import com.kgmedia.fastfilm.feature.main.MainActivity
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 
@@ -34,12 +33,18 @@ class GuideStep2StorySelectActivity : BaseViewModelActivity<ActivityGuideStep2St
                 binding.banner.adapter = QuickAdapter(R.layout.item_guide_step2_vp, it.map { info ->
                     ItemGuideStep2Vm(info)
                 })
+                binding.ivIndicator.attachToViewPager2(binding.banner)
             }
         }
 
         binding.btnConfirm.setOnSingleClickListener {
             val exampleWorkInfo = mRealVM.examples.value?.getOrNull(binding.banner.currentItem)
             GuideStep3GeneratingActivity.start(this, exampleWorkInfo)
+            finish()
+        }
+
+        binding.btnIgnore.setOnSingleClickListener {
+            MainActivity.start(this, null)
             finish()
         }
 

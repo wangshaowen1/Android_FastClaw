@@ -44,7 +44,7 @@
             app:layout_constraintEnd_toStartOf="@+id/fl_status_indicator"
             app:layout_constraintStart_toEndOf="@+id/iv_step_icon"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_setVerticalChainStyle="packed"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="创作故事剧本" />
 
         <TextView

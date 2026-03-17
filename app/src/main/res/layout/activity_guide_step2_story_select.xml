@@ -18,6 +18,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/btnIgnore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -65,13 +66,17 @@
             android:layout_marginTop="20dp"
             android:layout_weight="1" />
 
-        <com.zhpan.indicator.IndicatorView
+        <com.kgmedia.fastfilm.widget.PillIndicatorView
             android:id="@+id/iv_indicator"
             android:layout_width="wrap_content"
-            android:layout_height="7dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
-            android:orientation="horizontal" />
+            app:pi_activeColor="?attr/textColor1"
+            app:pi_activeWidth="20dp"
+            app:pi_inactiveColor="@color/color_20_ffffff"
+            app:pi_indicatorHeight="7dp"
+            app:pi_indicatorSpacing="8dp" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

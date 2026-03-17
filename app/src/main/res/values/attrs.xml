@@ -1039,4 +1039,12 @@
         <attr name="dc_text_top_margin" format="dimension|reference" />
         <!--<attr name="dc_bezier_threshold" format="dimension|reference"/>-->
     </declare-styleable>
+
+    <declare-styleable name="PillIndicatorView">
+        <attr name="pi_activeColor" format="color" />
+        <attr name="pi_inactiveColor" format="color" />
+        <attr name="pi_indicatorHeight" format="dimension" />
+        <attr name="pi_activeWidth" format="dimension" />
+        <attr name="pi_indicatorSpacing" format="dimension" />
+    </declare-styleable>
 </resources>
