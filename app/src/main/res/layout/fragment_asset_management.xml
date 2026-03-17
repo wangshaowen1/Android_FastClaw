@@ -12,8 +12,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:keepScreenOn="true"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:keepScreenOn="true">
 
         <com.kgmedia.fastfilm.widget.LoadStateViewHolder
             displayChild="@{layout.loadState}"
@@ -121,14 +121,16 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/loadingLayout"
+            setVisible="@{layout.promptGenerating}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="true"
             android:focusable="true">
 
             <include
-                android:id="@+id/loading"
-                layout="@layout/dialog_loading"
+                duration="@{`15-30秒`}"
+                layout="@layout/layout_description_generating"
+                tips="@{`正在生成资产信息...`}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"

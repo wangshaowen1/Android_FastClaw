@@ -1,7 +1,7 @@
 package com.kgmedia.fastfilm.feature.creator.storyboard
 
+import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.KeyboardUtils
 import com.drake.spannable.replaceSpan
@@ -27,7 +27,6 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
 import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
-import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.showToast
@@ -94,12 +93,8 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
             }
         }
-    private val progressHelper by lazy {
-        AutoProgressSimulator(viewModelScope) { show, title, progress ->
-            promptGenerating.value = Triple(show, title, progress)
-        }
-    }
-    val promptGenerating by lazy { MutableLiveData<Triple<Boolean, String, Int>>() }
+    private val progressHelper by lazy { AutoProgressSimulator(viewModelScope) { show, title, progress -> promptGenerating.set(show) } }
+    val promptGenerating by lazy { ObservableBoolean() }
     private val powerSpan by lazy { CenterImageSpan(App.instance, R.drawable.icon_power).apply { setDrawableSize(16.dp, 16.dp) } }
     private var editConfirm = false
 

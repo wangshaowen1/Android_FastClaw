@@ -2,7 +2,6 @@ package com.kgmedia.fastfilm.feature.creator.assets
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.KeyboardUtils
 import com.drake.spannable.replaceSpan
@@ -110,12 +109,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
             }
         }
-    private val progressHelper by lazy {
-        AutoProgressSimulator(viewModelScope) { show, title, progress ->
-            promptGenerating.value = Triple(show, title, progress)
-        }
-    }
-    val promptGenerating by lazy { MutableLiveData<Triple<Boolean, String, Int>>() }
+    private val progressHelper by lazy { AutoProgressSimulator(viewModelScope) { show, title, progress -> promptGenerating.set(show) } }
+    val promptGenerating by lazy { ObservableBoolean() }
     private val powerSpan by lazy { CenterImageSpan(App.instance, R.drawable.icon_power).apply { setDrawableSize(16.dp, 16.dp) } }
     private var editConfirm = false
     val hasRole by lazy { ObservableBoolean(false) }

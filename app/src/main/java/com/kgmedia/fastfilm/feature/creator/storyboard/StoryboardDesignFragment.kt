@@ -1,7 +1,6 @@
 package com.kgmedia.fastfilm.feature.creator.storyboard
 
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.databinding.Observable
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
@@ -43,13 +42,6 @@ class StoryboardDesignFragment :
                 Global.refreshBalance()
             }
         })
-        mRealVM.promptGenerating.observe(this) { (show, title, progress) ->
-            bindingNullable?.apply {
-                loadingLayout.isVisible = show
-                loading.title.text = "$title $progress%"
-                loading.tips.text = "退出后AI会继续生成"
-            }
-        }
         mRealVM.retry()
         EventManager.onAppTrack(AppEvent.SF_VIEW_STORYBOARD_DESIGN_PAGE)
     }
@@ -65,7 +57,7 @@ class StoryboardDesignFragment :
                         storyId,
                         hostVm?.videoRatio,
                         null,
-                         from = from
+                        from = from
                     )
                     activity?.finish()
                 }

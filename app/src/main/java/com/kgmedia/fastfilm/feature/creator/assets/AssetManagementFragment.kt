@@ -1,7 +1,6 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.databinding.Observable
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -52,13 +51,6 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
                 Global.refreshBalance()
             }
         })
-        mRealVM.promptGenerating.observe(this) { (show, title, progress) ->
-            bindingNullable?.apply {
-                loadingLayout.isVisible = show
-                loading.title.text = "$title $progress%"
-                loading.tips.text = "退出后AI会继续生成"
-            }
-        }
         mRealVM.retry()
         binding.rvAssets.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

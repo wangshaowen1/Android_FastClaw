@@ -298,7 +298,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     private fun doSynthesis(storyboards: List<String>) {
         topActivity?.let {
-            val dialog = GeneratingDialog(it, "视频合成中...")
+            val dialog = GeneratingDialog(it, "视频合成中...", "请勿退出 或 锁屏")
             synthesisDialog = dialog
             dialog.show()
         }
