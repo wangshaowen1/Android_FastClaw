@@ -350,5 +350,6 @@
     <string name="terms_of_service">服务协议</string>
     <string name="generation_failed">加载失败</string>
     <string name="text_guide_step1">AI生成作品，一站式发行到<font color="#E6ffffff">抖音/红果/腾讯平台，</font>\n<font color="#ffffff"><strong>轻松开启内容变现</strong></font></string>
+    <string name="text_sensitive_warning">请确保文本不包含<font color="#E6ffffff">色情、暴力、涉政</font>等违规内容</string>
 </resources>
 

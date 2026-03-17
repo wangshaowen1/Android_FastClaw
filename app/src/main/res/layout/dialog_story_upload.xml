@@ -108,11 +108,20 @@
                 tools:text="仅支持txt文本，限制10万-60万字" />
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/spacing_m"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:text="@string/text_sensitive_warning"
+            android:textColor="?attr/textColor4"
+            android:textSize="11sp" />
+
         <LinearLayout
             android:id="@+id/llBottom"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginVertical="20dp"
+            android:layout_marginBottom="20dp"
             android:orientation="horizontal">
 
             <Button
