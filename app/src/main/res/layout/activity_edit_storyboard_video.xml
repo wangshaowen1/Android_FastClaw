@@ -42,8 +42,8 @@
                     android:layout_height="@dimen/action_bar_size"
                     android:layout_marginStart="@dimen/action_bar_size"
                     android:layout_marginEnd="16dp"
-                    android:gravity="center_vertical"
                     android:ellipsize="end"
+                    android:gravity="center_vertical"
                     android:lines="1"
                     android:text="@{layout.storyTitle}"
                     android:textAppearance="@style/Text16"
@@ -62,9 +62,21 @@
                     app:layout_constraintBottom_toTopOf="@+id/rvStoryboard"
                     app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
+                <androidx.constraintlayout.widget.Placeholder
+                    android:id="@+id/playerArea"
+                    setDimensionRatio="@{layout.workRatio}"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/previewArea"
+                    app:layout_constraintEnd_toEndOf="@+id/previewArea"
+                    app:layout_constraintStart_toStartOf="@+id/previewArea"
+                    app:layout_constraintTop_toTopOf="@+id/previewArea"
+                    tools:layout_constraintDimensionRatio="16:9" />
+
                 <androidx.media3.ui.PlayerView
                     android:id="@+id/storyboardPlayer"
                     player="@{layout.storyboardPlayer}"
+                    setDimensionRatio="@{layout.workRatio}"
                     setVisible="@{layout.currentStoryboard.data.videoGenerated}"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -74,7 +86,7 @@
                     app:layout_constraintStart_toStartOf="@+id/previewArea"
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
                     app:use_controller="false"
-                    tools:layout_constraintDimensionRatio="9:16"
+                    tools:layout_constraintDimensionRatio="16:9"
                     tools:visibility="invisible" />
 
                 <ImageView
@@ -108,7 +120,7 @@
                     app:layout_constraintEnd_toEndOf="@+id/previewArea"
                     app:layout_constraintStart_toStartOf="@+id/previewArea"
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
-                    tools:layout_constraintDimensionRatio="9:16">
+                    tools:layout_constraintDimensionRatio="16:9">
 
                     <com.airbnb.lottie.LottieAnimationView
                         setVisible="@{layout.currentStoryboard.data.videoGenerating}"
@@ -160,6 +172,93 @@
                     android:background="?attr/fillColor1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/rvStoryboard" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toTopOf="@+id/rvStoryboard"
+                    app:layout_constraintTop_toBottomOf="@+id/playerArea">
+
+                    <ImageView
+                        rotateLoading="@{true}"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/icon_loading2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="字幕正在生成中，视频可正常播放"
+                        android:textAppearance="@style/Text13"
+                        android:textColor="?attr/textColor1" />
+
+                </LinearLayout>
+
+                <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="12dp"
+                    android:paddingVertical="6dp"
+                    app:backgroundEndColor="#2E781212"
+                    app:backgroundStartColor="#38B41E1E"
+                    app:borderStartColor="#52FF544F"
+                    app:borderWidth="1dp"
+                    app:layout_constraintBottom_toTopOf="@+id/rvStoryboard"
+                    app:roundCornerRadius="10dp">
+
+                    <ImageView
+                        android:id="@+id/ivFailed"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="12dp"
+                        android:src="@drawable/icon_subtitle_failed"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvFailed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="字幕生成失败"
+                        android:textAppearance="@style/Text13"
+                        android:textColor="?attr/textColor1"
+                        app:layout_constraintBottom_toTopOf="@+id/tvFailedTip"
+                        app:layout_constraintStart_toEndOf="@+id/ivFailed"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
+
+                    <TextView
+                        android:id="@+id/tvFailedTip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="视频已生成，字幕生成失败"
+                        android:textAppearance="@style/Text13"
+                        android:textColor="?attr/textColor1"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/tvFailed"
+                        app:layout_constraintTop_toBottomOf="@+id/tvFailed" />
+
+                    <TextView
+                        android:id="@+id/btnRetrySubtitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/bg_08_ffffff_r20"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:text="点击重试"
+                        android:textAppearance="@style/Text12"
+                        android:textColor="?attr/textColor1"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvStoryboard"
