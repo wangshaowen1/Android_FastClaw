@@ -53,6 +53,7 @@
             android:gravity="top"
             android:hint="分镜描述词"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+            android:maxLength="1000"
             android:onClick="@{(v)->item.onItemClick.invoke(v)}"
             android:padding="12dp"
             android:textAppearance="@style/Text13"
