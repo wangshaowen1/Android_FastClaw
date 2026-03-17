@@ -1,15 +1,38 @@
 package com.kgmedia.fastfilm.feature.splash.newer
 
-import com.kgmedia.fastfilm.databinding.ActivityGuideStep1AdBinding
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.core.network.apis.entity.ExampleWorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityGuideStep4VideoBinding
-import com.kgmedia.fastfilm.feature.splash.SplashViewModel
+import com.kgmedia.fastfilm.feature.main.MainActivity
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.setOnSingleClickListener
 
 
 /**
  * 新手创作流程 第4步
  */
-class GuideStep4VideoActivity : BaseViewModelActivity<ActivityGuideStep4VideoBinding, SplashViewModel>() {
+class GuideStep4VideoActivity : BaseViewModelActivity<ActivityGuideStep4VideoBinding, GuideStep4ViewModel>() {
 
+    companion object {
+        @JvmStatic
+        fun start(context: Context, exampleWorkInfo: ExampleWorkInfo?) {
+            val starter = Intent(context, GuideStep4VideoActivity::class.java)
+                .putExtra(Constants.Extra.DATA, exampleWorkInfo)
+            context.startActivity(starter)
+        }
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding.btnNext.setOnSingleClickListener {
+            MainActivity.start(this, null)
+            finish()
+        }
+    }
 
 }

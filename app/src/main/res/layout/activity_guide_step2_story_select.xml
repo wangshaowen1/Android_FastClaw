@@ -6,7 +6,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.splash.SplashViewModel" />
+            type="com.kgmedia.fastfilm.feature.splash.newer.GuideStep2ViewModel" />
 
     </data>
 
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_s"
-            android:text="一键生成专属于你的故事短片"
+            android:text="一键式生成可变现的AI短剧"
             android:textColor="?attr/textColor3"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -53,7 +53,7 @@
             android:background="@drawable/bg_ffffff_stroke_round"
             android:paddingHorizontal="18dp"
             android:paddingVertical="6dp"
-            android:text="请选择一个故事"
+            android:text="请选择一个模板"
             android:textColor="?attr/textColor2"
             android:textSize="12sp"
             android:textStyle="bold" />

@@ -131,7 +131,7 @@ class AppConfigData {
     /**
      * 作品-小说字数限制数字（500000）
      */
-    val workNovelWordLimit: Int? = 500000
+    val workNovelWordLimit: Int? = 600000
 
     /**
      * 课程-课程banner

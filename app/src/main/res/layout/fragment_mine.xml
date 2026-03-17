@@ -172,7 +172,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:importantForAccessibility="no"
-                        android:src="@drawable/ic_mine_feedback_suggestions" />
+                        android:src="@drawable/icon_doubt" />
 
                     <TextView
                         style="@style/Text14"

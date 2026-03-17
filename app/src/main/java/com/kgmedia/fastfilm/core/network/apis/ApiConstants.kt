@@ -707,4 +707,9 @@ object ApiConstants {
      * 算力预估
      */
     const val POWER_CALCULATE = "trade/point/estimate/calculate"
+
+    /**
+     * 获取新手创作流程作品列表
+     */
+    const val GET_NEWER_EXAMPLE_WORK_LIST = "app/creative/work/list"
 }

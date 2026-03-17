@@ -9,6 +9,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.ContentInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.CreationStyleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.DubbingGenStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.ExampleWorkInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.LogOffStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.MyTvSeriesListInfo
@@ -1010,4 +1011,10 @@ interface ApiService {
      */
     @POST(ApiConstants.POWER_CALCULATE)
     suspend fun powerCalculate(@Body body: PowerCalculateBody): ApiResponse<PowerCalculateData>
+
+    /**
+     *获取新手创作流程作品列表
+     */
+    @POST(ApiConstants.GET_NEWER_EXAMPLE_WORK_LIST)
+    suspend fun getNewerExampleWorkList(): ApiResponse<List<ExampleWorkInfo>>
 }
