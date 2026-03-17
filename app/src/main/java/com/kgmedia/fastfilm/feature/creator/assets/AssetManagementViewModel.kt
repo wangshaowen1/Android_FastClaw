@@ -332,7 +332,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     assetImage.get()?.let { PhotoPagerActivity.launch(topActivity, it) }
                 }
 
-                R.id.etAssetDescCover -> {
+                R.id.etAssetDesc -> {
                     inputJob?.cancel()
                     val edit: (delay: Long) -> Unit = { delay ->
                         editingAssetDescVM?.exitEditAssetDesc()

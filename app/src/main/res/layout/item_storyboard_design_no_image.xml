@@ -24,8 +24,8 @@
             android:text="@{`分镜`+item.no}"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor4"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/btnDelete"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btnDelete"
             tools:text="分镜2" />
 
@@ -53,6 +53,7 @@
             android:gravity="top"
             android:hint="分镜描述词"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
             android:padding="12dp"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
@@ -60,17 +61,6 @@
             app:layout_constraintDimensionRatio="345:100"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnDelete" />
-
-        <View
-            android:id="@+id/etStoryboardDescCover"
-            setVisible="@{!item.editingStoryBoardDesc}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
-            app:layout_constraintBottom_toBottomOf="@+id/etStoryboardDesc"
-            app:layout_constraintEnd_toEndOf="@+id/etStoryboardDesc"
-            app:layout_constraintStart_toStartOf="@+id/etStoryboardDesc"
-            app:layout_constraintTop_toTopOf="@+id/etStoryboardDesc" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

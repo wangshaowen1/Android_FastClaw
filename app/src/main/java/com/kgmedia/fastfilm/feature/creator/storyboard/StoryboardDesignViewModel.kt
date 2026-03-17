@@ -229,7 +229,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     private fun ItemStoryboardVM.applyConfig(): ItemStoryboardVM {
         onItemClick.value = { view ->
             when (view?.id) {
-                R.id.etStoryboardDescCover -> {
+                R.id.etStoryboardDesc -> {
                     inputJob?.cancel()
                     val edit: (delay: Long) -> Unit = { delay ->
                         editingStoryboardDescVM?.exitEditStoryboardDesc()

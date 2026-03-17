@@ -113,6 +113,7 @@
             android:gravity="top"
             android:hint="@{item.assetDescHint}"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
             android:padding="12dp"
             android:textAppearance="@style/Text13"
             android:textColor="?attr/textColor2"
@@ -122,18 +123,6 @@
             app:layout_constraintStart_toEndOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover"
             tools:hint="角色描述词" />
-
-        <View
-            android:id="@+id/etAssetDescCover"
-            setVisible="@{!item.editingAssetDesc}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:onClick="@{(v)->item.onItemClick.invoke(v)}"
-            app:layout_constraintBottom_toBottomOf="@+id/etAssetDesc"
-            app:layout_constraintEnd_toEndOf="@+id/etAssetDesc"
-            app:layout_constraintStart_toStartOf="@+id/etAssetDesc"
-            app:layout_constraintTop_toTopOf="@+id/etAssetDesc" />
-
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etAssetName"
