@@ -193,6 +193,8 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     private fun playNext() {
         val current = currentStoryboard.get()
+        val storyboard = current?.data?.get()
+        if (storyboard?.videoUrl.isNullOrEmpty()) return
         val currentIndex = adapter.items.indexOf(current)
         val next = if (currentIndex > -1 && currentIndex < adapter.items.size - 1) adapter.getItem(currentIndex + 1) else adapter.getItem(0)
         next.select()
