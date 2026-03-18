@@ -116,7 +116,7 @@ class ItemStoryboardVM(
         val storyboard = data.get()
         val storyboardId = storyboard?.storyboardId
         if (storyboardId.isNullOrEmpty()) return
-        storyboard.subtitle?.genStatus == 1
+        storyboard.subtitle?.genStatus = 1
         data.notifyChange()
         launch {
             val body = GenerateSubtitleBody(storyboardId, storyboard.videoUrl, User.get().userId, workId, storyId)
@@ -125,7 +125,7 @@ class ItemStoryboardVM(
                 result = { loopGenSubtitleStatus() },
                 error = {
                     this?.msg?.showToast()
-                    storyboard.subtitle?.genStatus == 3
+                    storyboard.subtitle?.genStatus = 3
                     data.notifyChange()
                 })
         }

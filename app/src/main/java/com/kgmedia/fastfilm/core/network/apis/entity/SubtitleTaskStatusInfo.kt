@@ -28,17 +28,14 @@ package com.kgmedia.fastfilm.core.network.apis.entity
  * }
  */
 data class SubtitleTaskStatusInfo(
-    val subtitleTaskId: String?,
     val workId: String?,
     val storyId: String?,
     val storyboardId: String?,
-    val channelId: String?,
     val videoUrl: String?,
-    val externalTaskId: String?,
     /**
      * 生成状态 0=待生成 1=生成中 2=成功 3=失败
      */
-    val genStatus: Int?,
+    var genStatus: Int?,
     val subtitleContent: String?,
 ) {
     val generating get() = genStatus == 1

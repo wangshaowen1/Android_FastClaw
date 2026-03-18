@@ -238,9 +238,10 @@
                         android:id="@+id/tvFailedTip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
                         android:text="视频已生成，字幕生成失败"
-                        android:textAppearance="@style/Text13"
-                        android:textColor="?attr/textColor1"
+                        android:textColor="?attr/textColor4"
+                        android:textSize="11sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tvFailed"
                         app:layout_constraintTop_toBottomOf="@+id/tvFailed" />
