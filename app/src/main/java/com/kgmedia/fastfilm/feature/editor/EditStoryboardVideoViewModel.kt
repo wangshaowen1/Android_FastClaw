@@ -4,6 +4,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
 import androidx.media3.common.text.Cue
 import com.blankj.utilcode.util.FileUtils
@@ -17,6 +18,7 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.putAIGCMetadata
+import com.kgmedia.fastfilm.core.ext.showRechargeDialog
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.RetrofitClient
@@ -39,6 +41,7 @@ import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -431,7 +434,9 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                         result = { getStoryboardList() },
                         error = {
                             if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                                PowerRechargeDialog.show(true)
+                                viewModelScope.launch {
+                                    showRechargeDialog(true)
+                                }
                             } else {
                                 this?.msg?.showToast()
                             }

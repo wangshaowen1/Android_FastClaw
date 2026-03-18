@@ -6,14 +6,17 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.core.AppRepository
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.DramasInfoData
+import com.kgmedia.fastfilm.core.network.apis.response.FirstRechargeDialogData
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.play.more.ShareShortDramaViewModel
+import com.kgmedia.fastfilm.feature.splash.newer.FirstRechargeDialog
 
 /**
  * *****************************************
@@ -48,11 +51,12 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
 
     val generating = ObservableField<DramasInfoData>()
     val activityConfigCache = MutableLiveData<ActivityConfigData>()
+    val firstRechargeCache = MutableLiveData<FirstRechargeDialogData>()
 
     fun initialization() {
         //获取用户主页信息接口
         fetchUserInfo()
-        getActivityConfig()
+        initHomeConfig()
     }
 
     override fun onResume() {
@@ -105,14 +109,36 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
         return if (showTab == 0) R.color.main_tab_txt_color_dark else R.color.main_tab_txt_color
     }
 
-    fun getActivityConfig() {
+    // 是否本次显示的充值弹窗 优先级最高
+    var isFirstRechargeLogicActive = false
+    //true 表示有活动弹窗需要显示 但因为优先级原因本次没显示 下一次显示
+    var hasActivityConfig = false
+
+    fun initHomeConfig() {
         launch {
-            response(
-                bean = mRepo.api.activityConfig(UserTokenBody()),
-                result = {
-                    activityConfigCache.value = this.data
+            // 1. 检查本地和登录状态，提前拦截
+            val canShowFirstRecharge = !User.get().hasPaid() && !Config.get().isFirstRechargeShown(FirstRechargeDialog.SCENE_HOME)
+
+            if (canShowFirstRecharge) {
+                // 2. 请求首充接口 (这里必须先于活动配置完成)
+                val firstRechargeResponse = mRepo.api.getFirstRechargeDialogInfo()
+                if (firstRechargeResponse.data != null) {
+                    isFirstRechargeLogicActive = true
+                    firstRechargeCache.value = firstRechargeResponse.data
+                } else {
+                    isFirstRechargeLogicActive = false
                 }
-            )
+            } else {
+                isFirstRechargeLogicActive = false
+            }
+
+            // 3. 首充判断结束后，再请求/分发活动配置
+            val activityResponse = mRepo.api.activityConfig()
+            // 这里赋值后，HomeFragment 会收到通知，此时 isFirstRechargeLogicActive 状态已经确定了
+            activityConfigCache.value = activityResponse.data
+            if (isFirstRechargeLogicActive && activityResponse.data != null) {
+                hasActivityConfig = true
+            }
         }
     }
 }

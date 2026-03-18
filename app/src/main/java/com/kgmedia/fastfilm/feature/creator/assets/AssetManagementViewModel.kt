@@ -16,6 +16,7 @@ import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.showRechargeDialog
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
@@ -428,7 +429,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 val response = withContext(Dispatchers.IO) { mRepo.api.workAssetOneKeyGenerate(WorkBody(workId, storyId)) }
                 if (!response.isSuccess) {
                     if (response.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                        PowerRechargeDialog.show(true)
+                        showRechargeDialog(true)
                     } else {
                         response.msg?.showToast()
                     }

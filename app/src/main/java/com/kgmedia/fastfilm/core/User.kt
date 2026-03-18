@@ -63,6 +63,12 @@ class User : IUser {
     var purchaseCourseStatus: Int?
         private set
 
+    /**
+     * 1-新客（未购买过用户）2-老客（已购买过用户）
+     */
+    var isPaid: Int?
+        private set
+
     var requestNotificationsPermissionEnable = true
 
     val userInfoStr: String?
@@ -95,6 +101,7 @@ class User : IUser {
         token = sp.getString(TOKEN, null)
         computingPower = sp.getInt(COMPUTING_POWER, 0)
         purchaseCourseStatus = sp.getInt(PURCHASE_COURSE_STATUS, 0)
+        isPaid = sp.getInt(IS_PAID, 0)
         requestNotificationsPermissionEnable = sp.getBoolean(REQUEST_NOTIFICATIONS_PERMISSION, true)
     }
 
@@ -112,6 +119,7 @@ class User : IUser {
         storeRegisterWay(userData.registerWay)
         storeLastLoginTime(userData.lastLoginTime)
         storePurchaseCourseStatus(userData.purchaseCourseStatus)
+        storePaid(userData.userTag)
         userData.registerStatus?.apply {
             storeRegisterStatus(this)
         }
@@ -165,6 +173,8 @@ class User : IUser {
         sp.remove(REGISTER_STATUS)
         purchaseCourseStatus = 0
         sp.remove(PURCHASE_COURSE_STATUS)
+        isPaid = null
+        sp.remove(IS_PAID)
         token = null
         sp.remove(TOKEN)
         computingPower = 0
@@ -310,6 +320,15 @@ class User : IUser {
         sp.putInt(PURCHASE_COURSE_STATUS, this.purchaseCourseStatus ?: 0)
     }
 
+    fun hasPaid(): Boolean {
+        return isPaid == 2
+    }
+
+    fun storePaid(isPaid: Int?) {
+        this.isPaid = isPaid
+        sp.putInt(IS_PAID, this.isPaid ?: 0)
+    }
+
     fun isFemale(): Boolean {
         return gender == FEMALE
     }
@@ -367,6 +386,8 @@ class User : IUser {
         const val COMPUTING_POWER = "computingPower"
 
         const val PURCHASE_COURSE_STATUS = "purchaseCourseStatus"
+
+        const val IS_PAID = "IS_PAID"
 
         //性别-男
         const val MALE = 1

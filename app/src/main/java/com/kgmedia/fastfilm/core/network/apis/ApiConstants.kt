@@ -752,4 +752,9 @@ object ApiConstants {
      * 字幕-查询分镜字幕状态及内容
      */
     const val SUBTITLE_TASK_STATUS = "work/subtitle/query"
+
+    /**
+     * 获取新人专享礼
+     */
+    const val GET_FIRST_RECHARGE_DIALOG_INFO = "app/window/newUserGift"
 }

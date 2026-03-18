@@ -36,6 +36,10 @@ data class UserHomeData(
     val lastLoginTime: String? = null,
     //是否是注册，0-登录，1-是注册
     val registerStatus: Int? = null,
+    /**
+     * 1-新客（未购买过用户）2-老客（已购买过用户）
+     */
+    val userTag: Int? = null,
     //访问令牌
     val token: String? = null,
 ) : Parcelable {

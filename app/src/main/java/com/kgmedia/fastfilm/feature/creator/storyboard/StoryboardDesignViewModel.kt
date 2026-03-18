@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.ext.showRechargeDialog
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
@@ -34,6 +35,7 @@ import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
@@ -317,7 +319,9 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 result = { toNextStep?.invoke(workId, storyId, data?.taskId) },
                 error = {
                     if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                        PowerRechargeDialog.show(true)
+                        viewModelScope.launch {
+                            showRechargeDialog(true)
+                        }
                     } else {
                         this?.msg?.showToast()
                     }

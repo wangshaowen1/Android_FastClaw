@@ -29,6 +29,7 @@ import com.kgmedia.fastfilm.databinding.ActivityMainBinding
 import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
 import com.kgmedia.fastfilm.feature.home.HomeFragment
 import com.kgmedia.fastfilm.feature.mine.MineFragment
+import com.kgmedia.fastfilm.feature.splash.newer.FirstRechargeDialog
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
@@ -331,6 +332,16 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     }
 
     private fun observeEvents() {
+        mRealVM.firstRechargeCache.observe(this) { data ->
+            data?.let {
+                FirstRechargeDialog.show(it)?.apply {
+                    setOnDismissListener {
+                        this@MainActivity.mRealVM.isFirstRechargeLogicActive = false
+                    }
+                }
+                Config.get().markFirstRechargeShown(FirstRechargeDialog.SCENE_HOME)
+            }
+        }
         observeEvents {
             on<Events.ApkRenewal> { event ->
                 //用户日活记录
@@ -340,14 +351,16 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     return@on
                 }
             }
-            on<Events.MainTabEvent> { event->
+            on<Events.MainTabEvent> { event ->
                 when (event.type) {
                     Events.MainTabEvent.TAB_HOME -> {
                         toHome()
                     }
+
                     Events.MainTabEvent.TAB_MY_WORKS -> {
                         binding.mrg.check(R.id.rbWorks)
                     }
+
                     Events.MainTabEvent.TAB_MINE -> {
                         binding.mrg.check(R.id.rbMine)
                     }

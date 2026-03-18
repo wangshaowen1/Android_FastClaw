@@ -22,7 +22,6 @@ import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
-import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.kgmedia.fastfilm.widget.decoration.StaggeredGridSpaceItemDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
@@ -31,6 +30,7 @@ import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.utils.Logger
 import com.nhsd.crop.util.ViewUtils
 import com.zhpan.bannerview.BaseBannerAdapter
 import com.zhpan.bannerview.BaseViewHolder
@@ -105,7 +105,7 @@ class HomeFragment :
 
         binding.recyclerView.apply {
             isFocusable = false
-            addItemDecoration(StaggeredGridSpaceItemDecoration(2, 10.dp, 0,0))
+            addItemDecoration(StaggeredGridSpaceItemDecoration(2, 10.dp, 0, 0))
             adapter = homeAdapter.withLoadStateFooter(
                 MyMultiStatePagingFooterAdapter(
                     hostAdapter = homeAdapter,
@@ -152,9 +152,25 @@ class HomeFragment :
             binding.banner.refreshData(it)
         }
 
-        parentVm?.activityConfigCache?.observe(this) {
-            handlePopup(it.getPopupInfo(ActivityConfigData.TAB_HOME))
-            handleFloatWindow(it.getFloatWindowInfo(ActivityConfigData.TAB_HOME))
+        parentVm?.activityConfigCache?.observe(this) { config ->
+            // 悬浮窗：始终显示
+            handleFloatWindow(config.getFloatWindowInfo(ActivityConfigData.TAB_HOME))
+            // 弹窗逻辑
+            val popup = config.getPopupInfo(ActivityConfigData.TAB_HOME)
+            // 关键拦截：只有首充没弹，才处理活动弹窗
+            if (parentVm?.isFirstRechargeLogicActive == true) {
+                Logger.d("Dialog", "拦截活动弹窗，等待下次回到首页再弹")
+            } else {
+                handlePopup(popup)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (parentVm?.isFirstRechargeLogicActive == false && parentVm?.hasActivityConfig == true) {
+            handlePopup(parentVm?.activityConfigCache?.value?.getPopupInfo(ActivityConfigData.TAB_HOME))
+            parentVm?.hasActivityConfig = false
         }
     }
 

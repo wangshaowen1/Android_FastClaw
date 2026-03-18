@@ -389,6 +389,14 @@ class Config : NetworkChangedListener {
         sp.putBoolean("notifyPowerConsume", false)
     }
 
+    fun isFirstRechargeShown(scene: Int): Boolean {
+        return sp.getBoolean("firstRechargeShown$scene", false)
+    }
+
+    fun markFirstRechargeShown(scene: Int) {
+        sp.putBoolean("firstRechargeShown$scene", true)
+    }
+
 
     companion object {
         const val FIRST_OPEN_APP: String = "firstOpenApp"

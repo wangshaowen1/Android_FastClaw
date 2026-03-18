@@ -13,6 +13,8 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.ext.showFirstRecharge
+import com.kgmedia.fastfilm.core.ext.showRechargeDialog
 import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
@@ -32,6 +34,7 @@ import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
+import kotlinx.coroutines.launch
 
 class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     val input by lazy { MutableLiveData<String?>() }
@@ -200,14 +203,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
                     else -> null
                 }
             },
-            onSuccess = { callback.invoke(data) },
-            onError = {
-                if (it is ApiException && it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                    PowerRechargeDialog.show()
-                } else {
-                    it?.message?.showToast()
-                }
-            }
+            onSuccess = { callback.invoke(data) }
         )
     }
 
@@ -219,7 +215,9 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
             onSuccess = { callback.invoke(data) },
             onError = {
                 if (it is ApiException && it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                    PowerRechargeDialog.show()
+                    viewModelScope.launch {
+                        showRechargeDialog(true)
+                    }
                 } else {
                     it?.message?.showToast()
                 }

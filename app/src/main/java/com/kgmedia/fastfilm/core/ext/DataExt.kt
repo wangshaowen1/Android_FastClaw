@@ -21,6 +21,8 @@ import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
+import com.kgmedia.fastfilm.feature.splash.newer.FirstRechargeDialog
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.entity.AliPayParams
@@ -45,7 +47,7 @@ fun UserHomeData?.loginToast() {
     Global.needCompleteProfile = newRegister
     if (!newRegister) {
     }
-        "登录成功，开始创作吧~".showToastDelay(100)
+    "登录成功，开始创作吧~".showToastDelay(100)
 }
 
 /**
@@ -237,4 +239,25 @@ suspend fun sensitiveWordCheck(content: String?, needHighlight: Boolean? = true)
         return false to null
     }
     return true to null
+}
+
+suspend fun showRechargeDialog(showToast: Boolean = false){
+    if(!showFirstRecharge()){
+        PowerRechargeDialog.show(showToast)
+    }
+}
+
+/**
+ * 显示首充弹窗
+ * @return 是否显示成功
+ */
+suspend fun showFirstRecharge(): Boolean {
+    val canShowFirstRecharge = !User.get().hasPaid() && !Config.get().isFirstRechargeShown(FirstRechargeDialog.SCENE_OTHER)
+    if (!canShowFirstRecharge) return false
+    val firstRechargeDialogData = withContext(Dispatchers.IO) {
+        ApiFactory.apiService.getFirstRechargeDialogInfo()
+    }.data
+    if (firstRechargeDialogData == null) return false
+    FirstRechargeDialog.show(firstRechargeDialogData)
+    return true
 }

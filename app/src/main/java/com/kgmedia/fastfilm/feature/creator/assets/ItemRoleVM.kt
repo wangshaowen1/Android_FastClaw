@@ -1,9 +1,11 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
+import com.kgmedia.fastfilm.core.ext.showRechargeDialog
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
@@ -18,6 +20,7 @@ import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ItemRoleVM(
@@ -118,7 +121,9 @@ class ItemRoleVM(
                     },
                     error = {
                         if (this?.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                            PowerRechargeDialog.show(true)
+                            viewModelScope.launch {
+                                showRechargeDialog(true)
+                            }
                         } else {
                             this?.msg?.showToast()
                         }

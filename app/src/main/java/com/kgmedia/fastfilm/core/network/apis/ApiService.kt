@@ -122,6 +122,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.CharacterListData
 import com.kgmedia.fastfilm.core.network.apis.response.ComputingPowerDetailsInfo
 import com.kgmedia.fastfilm.core.network.apis.response.DramasIdData
 import com.kgmedia.fastfilm.core.network.apis.response.DramasSeriesIdData
+import com.kgmedia.fastfilm.core.network.apis.response.FirstRechargeDialogData
 import com.kgmedia.fastfilm.core.network.apis.response.FollowingData
 import com.kgmedia.fastfilm.core.network.apis.response.PictureBook
 import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
@@ -961,7 +962,7 @@ interface ApiService {
      * 获取弹窗和浮窗配置信息
      */
     @POST(ApiConstants.ACTIVITY_CONFIG)
-    suspend fun activityConfig(@Body body: UserTokenBody): ApiResponse<ActivityConfigData?>
+    suspend fun activityConfig(): ApiResponse<ActivityConfigData?>
 
     /**
      * 敏感词校验
@@ -1069,4 +1070,10 @@ interface ApiService {
      */
     @POST(ApiConstants.SUBTITLE_TASK_STATUS)
     suspend fun subtitleTaskStatus(@Body body: StoryboardIdBody): ApiResponse<SubtitleTaskStatusInfo?>
+
+    /**
+     * 获取新人专享礼
+     */
+    @POST(ApiConstants.GET_FIRST_RECHARGE_DIALOG_INFO)
+    suspend fun getFirstRechargeDialogInfo(): ApiResponse<FirstRechargeDialogData?>
 }

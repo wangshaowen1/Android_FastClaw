@@ -1,5 +1,8 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * {
  *     "pointConfigId": "算力信息配置ID",
@@ -10,6 +13,7 @@ package com.kgmedia.fastfilm.core.network.apis.entity
  *     "isDefault": "是否默认选中（0-非默认、1-默认）"
  * }
  */
+@Parcelize
 data class PointConfigInfo(
     val pointConfigId: String?,
     val pointConfigCode: String?,
@@ -22,7 +26,7 @@ data class PointConfigInfo(
     val isDefault: Int?,
     val pointMarketingTime: Long?,//算力营销倒计时截止时间.空则代表不需要受限制
     val pointMarketingText: String?,//算力营销倒计时文本
-) {
+) : Parcelable {
 
     fun isDiscountValid(): Boolean {
         return pointMarketingTime != null && pointMarketingTime > System.currentTimeMillis()
