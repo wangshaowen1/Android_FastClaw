@@ -36,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
+            android:text="@{tips}"
             android:textColor="?attr/textColor1"
             tools:text="正在生成资产信息..." />
 
@@ -56,6 +57,7 @@
                 style="@style/Text13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@{duration}"
                 android:textColor="?attr/textColor1"
                 android:textStyle="bold"
                 tools:text="15-30秒" />
