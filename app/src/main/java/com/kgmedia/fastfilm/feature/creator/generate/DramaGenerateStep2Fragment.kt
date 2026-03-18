@@ -105,7 +105,7 @@ class DramaGenerateStep2Fragment :
     private fun handleNextStep() {
         lifecycleScope.launch {
             sensitiveWordCheck(mRealVM.input.value, {
-                mRealVM.confirmGenerate(hostVm?.title?.value) { workId, storyId, taskId ->
+                mRealVM.confirmGenerate { workId, storyId, taskId ->
                     hostVm?.nextStep(3, workId, storyId, taskId)
                 }
             }, {

@@ -8,6 +8,7 @@ import com.kgmedia.fastfilm.common.utils.NotificationHelper
 import com.kgmedia.fastfilm.core.ext.PollingState
 import com.kgmedia.fastfilm.core.ext.launchPolling
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.network.apis.request.ContinueTaskBody
 import com.kgmedia.fastfilm.core.network.apis.request.PollSummaryData
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
@@ -52,10 +53,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         isStoryDocumentsMode.set(isDoc)
     }
 
-    fun sseGenerate() {
-
-    }
-
     /**
      * 页面销毁或需要重置时调用
      */
@@ -69,7 +66,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     /**
      * 轮询小说文档模式下的故事梗概
      */
-    fun rollNovelSummary() {
+    fun pollSummary() {
         // 防抖与去重：如果已经在轮询中，直接 return
         if (novelSummaryPollingJob?.isActive == true) return
         isSummaryLoading.set(true)
@@ -118,6 +115,15 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
     fun sendRecoveryNotification(content: String?) {
         val workName = mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
         NotificationHelper.sendRecoveryNotification("《${workName}》${content}")
+    }
+
+    /**
+     * 灵感故事梗概失败重新创建任务
+     */
+    fun retrySummary(onSuccess: (() -> Unit)? = null) {
+        requestWithLoading({ mRepo.api.retrySummaryTaskFromInspiration(ContinueTaskBody(workId, workType = 1)) }) {
+            onSuccess?.invoke()
+        }
     }
 
     fun reuploadStory(onSuccess: (() -> Unit)? = null) {

@@ -40,6 +40,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
 import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
+import com.kgmedia.fastfilm.core.network.apis.request.ContinueTaskBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreatePointOrderBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
@@ -107,7 +108,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SynthesisUploadBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.TipOffBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
-import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
+import com.kgmedia.fastfilm.core.network.apis.request.SaveScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserShareUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.VideoSynthesisBody
@@ -115,6 +116,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.AppConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.BalanceData
@@ -980,7 +982,7 @@ interface ApiService {
      * 小说上传-创建任务
      */
     @POST(ApiConstants.NOVEL_UPLOAD_SUMMARY)
-    suspend fun novelUploadSummary(@Body body: UploadStoryBody): ApiResponse<CreateTaskData?>
+    suspend fun novelUploadSummary(@Body body: UploadStoryBody): ApiResponse<WorkTaskData?>
 
     /**
      * 轮询查询小说上传生成作品剧集梗概结果
@@ -993,6 +995,12 @@ interface ApiService {
      */
     @POST(ApiConstants.POLL_SUMMARY_RESULT)
     suspend fun pollSummaryResult(@Body body: WorkIdBody): ApiResponse<PollSummaryData?>
+
+    /**
+     * 查询任务概要结果-通用
+     */
+    @POST(ApiConstants.SAVE_SCRIPT)
+    suspend fun saveScript(@Body body: SaveScriptBody): ApiResponse<WorkTaskData?>
 
     /**
      * 小说上传-剧集剧本-查询单集
@@ -1039,25 +1047,43 @@ interface ApiService {
      * 创建小说-生成剧集剧本（首创/续集）任务
      */
     @POST(ApiConstants.CREATE_TASK_FROM_NOVEL)
-    suspend fun createTaskFromNovel(@Body body: CreateTaskBody): ApiResponse<CreateTaskData?>
+    suspend fun createTaskFromNovel(@Body body: CreateTaskBody): ApiResponse<WorkTaskData?>
+
+    /**
+     * 创建小说-生成剧集剧本-续写任务
+     */
+    @POST(ApiConstants.CONTINUE_TASK_FROM_NOVEL)
+    suspend fun continueTaskFromNovel(@Body body: ContinueTaskBody): ApiResponse<WorkTaskData?>
 
     /**
      * 创建灵感故事剧本（基于灵感写剧本/灵感续写）任务
      */
     @POST(ApiConstants.CREATE_TASK_FROM_INSPIRATION)
-    suspend fun createTaskFromInspiration(@Body body: CreateTaskBody): ApiResponse<CreateTaskData?>
+    suspend fun createTaskFromInspiration(@Body body: ContinueTaskBody): ApiResponse<WorkTaskData?>
 
     /**
      * 创建灵感故事梗概生成任务
      */
     @POST(ApiConstants.CREATE_SUMMARY_TASK_FROM_INSPIRATION)
-    suspend fun createSummaryTaskFromInspiration(@Body body: CreateTaskBody): ApiResponse<CreateTaskData?>
+    suspend fun createSummaryTaskFromInspiration(@Body body: CreateTaskBody): ApiResponse<WorkTaskData?>
+
+    /**
+     * 重试灵感故事梗概生成任务
+     */
+    @POST(ApiConstants.RETRY_SUMMARY_TASK_FROM_INSPIRATION)
+    suspend fun retrySummaryTaskFromInspiration(@Body body: ContinueTaskBody): ApiResponse<WorkTaskData?>
 
     /**
      * 创建单集生成任务
      */
     @POST(ApiConstants.CREATE_TASK_FROM_SINGLE_EPISODE)
-    suspend fun createTaskFromSingleEpisode(@Body body: CreateTaskBody): ApiResponse<CreateTaskData?>
+    suspend fun createTaskFromSingleEpisode(@Body body: CreateTaskBody): ApiResponse<WorkTaskData?>
+
+    /**
+     *  单集生成任务-重试任务
+     */
+    @POST(ApiConstants.RETRY_TASK_FROM_SINGLE_EPISODE)
+    suspend fun retryTaskFromSingleEpisode(@Body body: ContinueTaskBody): ApiResponse<WorkTaskData?>
 
     /**
      * 字幕-触发分镜字幕生成

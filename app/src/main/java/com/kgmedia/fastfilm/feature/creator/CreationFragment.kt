@@ -18,7 +18,7 @@ import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
-import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
+import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
@@ -152,7 +152,7 @@ class CreationFragment :
                         else -> DramaGenerateConstants.MODEL_STORY
                     }
 
-                    val startEditor: (CreateTaskData?) -> Unit = { data ->
+                    val startEditor: (WorkTaskData?) -> Unit = { data ->
                         //只有小说文档模式有data
                         StoryEditorActivity.start(
                             context = mActivity,

@@ -16,6 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:onClick="@{(v)->item.onItemClick.invoke(v)}"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:strokeColor="@android:color/transparent"
         android:outlineAmbientShadowColor="@color/color_50_ffffff"
         android:outlineSpotShadowColor="@color/color_50_ffffff"
         android:theme="@style/Theme.Material3.DayNight.NoActionBar"

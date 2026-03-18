@@ -232,7 +232,7 @@ fun loadUri(
     } else if (drawableAsHolder) {
         holder = imageView.getBitmapDrawableCopyOrNull()
     }
-    GlideImageLoader.with(imageView).crossFade(200).display(path, holder)
+    GlideImageLoader.with(imageView).display(path, holder)
 }
 
 @BindingAdapter("loadAnimatedWebp", "placeHolder", requireAll = false)

@@ -3,6 +3,9 @@ package com.kgmedia.fastfilm.feature.splash.newer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import androidx.viewpager2.widget.ViewPager2
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
 import com.kgmedia.fastfilm.common.ext.setGalleryEffect
@@ -35,8 +38,22 @@ class GuideStep2StorySelectActivity : BaseViewModelActivity<ActivityGuideStep2St
                     ItemGuideStep2Vm(info)
                 })
                 binding.ivIndicator.attachToViewPager2(binding.banner)
+                startAutoScroll()
             }
         }
+
+        binding.banner.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+                when (state) {
+                    // 当用户手指按住并开始拖拽时，停止计时
+                    ViewPager2.SCROLL_STATE_DRAGGING -> stopAutoScroll()
+
+                    // 当滑动停止（手指抬起且动画结束）时，重新开始 3s 计时
+                    ViewPager2.SCROLL_STATE_IDLE -> startAutoScroll()
+                }
+            }
+        })
 
         binding.btnConfirm.setOnSingleClickListener {
             val exampleWorkInfo = mRealVM.examples.value?.getOrNull(binding.banner.currentItem)
@@ -49,5 +66,42 @@ class GuideStep2StorySelectActivity : BaseViewModelActivity<ActivityGuideStep2St
             finish()
         }
 
+    }
+
+    private fun startAutoScroll() {
+        autoScrollHandler.removeCallbacks(autoScrollRunnable)
+        autoScrollHandler.postDelayed(autoScrollRunnable, 3000)
+    }
+
+    private fun stopAutoScroll() {
+        autoScrollHandler.removeCallbacks(autoScrollRunnable)
+    }
+
+    // 4. 生命周期管理：避免内存泄漏或后台继续滚动
+    override fun onResume() {
+        super.onResume()
+        if (binding.banner.adapter != null) {
+            startAutoScroll()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopAutoScroll()
+    }
+
+    private val autoScrollHandler = Handler(Looper.getMainLooper())
+    private val autoScrollRunnable = object : Runnable {
+        override fun run() {
+            val adapter = binding.banner.adapter ?: return
+            val itemCount = adapter.itemCount
+            if (itemCount > 1) {
+                // 计算下一页：如果是最后一页则回到第 0 页
+                val nextItem = (binding.banner.currentItem + 1) % itemCount
+                binding.banner.setCurrentItem(nextItem, true)
+            }
+            // 每 3000 毫秒执行一次
+            autoScrollHandler.postDelayed(this, 3000)
+        }
     }
 }

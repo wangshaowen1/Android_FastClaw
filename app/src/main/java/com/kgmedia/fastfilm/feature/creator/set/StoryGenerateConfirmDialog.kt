@@ -4,7 +4,7 @@ import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
-import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
+import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.databinding.DialogStoryGenerateConfirmBinding
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 
@@ -24,7 +24,7 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
         }
     }
 
-    var onConfirm: (CreateTaskData?) -> Unit = {}
+    var onConfirm: (WorkTaskData?) -> Unit = {}
 
     override fun onPrepareView() {
         super.onPrepareView()

@@ -168,6 +168,17 @@ class HomeFragment :
 
     override fun onResume() {
         super.onResume()
+        resumePopup()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            resumePopup()
+        }
+    }
+
+    fun resumePopup(){
         if (parentVm?.isFirstRechargeLogicActive == false && parentVm?.hasActivityConfig == true) {
             handlePopup(parentVm?.activityConfigCache?.value?.getPopupInfo(ActivityConfigData.TAB_HOME))
             parentVm?.hasActivityConfig = false

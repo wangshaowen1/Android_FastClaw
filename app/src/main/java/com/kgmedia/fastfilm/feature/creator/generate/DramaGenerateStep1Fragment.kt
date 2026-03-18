@@ -2,13 +2,6 @@ package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.os.Bundle
 import com.blankj.utilcode.util.ActivityUtils
-import com.fluid.afm.styles.BlockQuoteStyle
-import com.fluid.afm.styles.CodeStyle
-import com.fluid.afm.styles.MarkdownStyles
-import com.fluid.afm.styles.ParagraphStyle
-import com.fluid.afm.styles.TableStyle
-import com.fluid.afm.styles.TitleStyle
-import com.fluid.afm.utils.ParseUtil
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
@@ -20,8 +13,6 @@ import com.kgmedia.fastfilm.feature.creator.StoryReuploadDialog
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.nhsd.basic.BaseViewModelFragment
-import com.nhsd.basic.ext.dp
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
@@ -55,7 +46,7 @@ class DramaGenerateStep1Fragment :
             mRealVM.workId = it.getStringExtra(Constants.Extra.WORK_ID)
             mRealVM.model = it.getIntExtra(Constants.Extra.MODE, 0)
             mRealVM.refreshDisplayContent()
-            mRealVM.rollNovelSummary()
+            mRealVM.pollSummary()
             showBackToast = true
         }
 
@@ -88,8 +79,10 @@ class DramaGenerateStep1Fragment :
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 reuploadStory()
             } else {
-                mRealVM.sseGenerate()
-                hostVm?.backWarning = true
+                mRealVM.retrySummary {
+                    mRealVM.pollSummary()
+                    showBackToast = true
+                }
             }
         }
         binding.btnNextDisable.setOnSingleClickListener {
@@ -104,6 +97,7 @@ class DramaGenerateStep1Fragment :
             }
         }
     }
+
 
     /**
      * 重新上传/重试  删除本地草稿，打开小说文档上传界面重新上传

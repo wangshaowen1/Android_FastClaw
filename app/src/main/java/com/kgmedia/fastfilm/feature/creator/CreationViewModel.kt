@@ -13,14 +13,13 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
-import com.kgmedia.fastfilm.core.ext.showFirstRecharge
 import com.kgmedia.fastfilm.core.ext.showRechargeDialog
 import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
-import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
+import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
@@ -30,7 +29,6 @@ import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.KEY_MODEL
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.MODEL_INSPIRATION
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
-import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
@@ -184,7 +182,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         inspirationPrompts.value = batchToShow
     }
 
-    fun createTask(modelType: Int, body: CreateTaskBody, callback: (CreateTaskData?) -> Unit) {
+    fun createTask(modelType: Int, body: CreateTaskBody, callback: (WorkTaskData?) -> Unit) {
         requestWithLoading(
             apiBlock = {
                 when (modelType) {
@@ -207,7 +205,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         )
     }
 
-    fun confirmPowerConsume(body: UploadStoryBody, callback: (CreateTaskData?) -> Unit) {
+    fun confirmPowerConsume(body: UploadStoryBody, callback: (WorkTaskData?) -> Unit) {
         requestWithLoading(
             apiBlock = {
                 mRepo.api.novelUploadSummary(body)

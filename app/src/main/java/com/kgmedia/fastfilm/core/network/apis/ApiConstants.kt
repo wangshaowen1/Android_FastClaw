@@ -716,12 +716,17 @@ object ApiConstants {
     /**
      * 创建小说-生成剧集剧本（首创/续集）任务
      */
-    const val CREATE_TASK_FROM_NOVEL = "ai/story/script/createFromNovel"
+    const val CREATE_TASK_FROM_NOVEL = "ai/story/script/createFromNovelFirstTask"
+
+    /**
+     * 创建小说-生成剧集剧本-续写任务
+     */
+    const val CONTINUE_TASK_FROM_NOVEL = "ai/story/script/createFromNovelContinueTask"
 
     /**
      * 创建灵感故事剧本（基于灵感写剧本/灵感续写）任务
      */
-    const val CREATE_TASK_FROM_INSPIRATION = "ai/story/script/createFromIdeaTask"
+    const val CREATE_TASK_FROM_INSPIRATION = "ai/story/script/createFromIdeaFirstTask"
 
     /**
      * 创建灵感故事梗概生成任务
@@ -729,9 +734,19 @@ object ApiConstants {
     const val CREATE_SUMMARY_TASK_FROM_INSPIRATION = "ai/story/script/createSynopsisTask"
 
     /**
+     * 重试灵感故事梗概生成任务
+     */
+    const val RETRY_SUMMARY_TASK_FROM_INSPIRATION = "ai/story/script/retrySynopsisTask"
+
+    /**
      * 创建单集生成任务
      */
     const val CREATE_TASK_FROM_SINGLE_EPISODE = "ai/story/script/single/createWorkTask"
+
+    /**
+     * 单集生成任务-重试任务
+     */
+    const val RETRY_TASK_FROM_SINGLE_EPISODE = "ai/story/script/single/retryWorkTask"
 
     /**
      * 查询任务剧本结果
@@ -742,6 +757,11 @@ object ApiConstants {
      * 查询任务概要结果-通用
      */
     const val POLL_SUMMARY_RESULT = "ai/story/script/outline/result"
+
+    /**
+     * 保存剧本内容
+     */
+    const val SAVE_SCRIPT = "ai/story/script/saveContent"
 
     /**
      * 字幕-触发分镜字幕生成

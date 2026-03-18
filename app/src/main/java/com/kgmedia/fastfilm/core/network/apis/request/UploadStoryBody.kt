@@ -28,7 +28,7 @@ data class UploadStoryBody(
  *         "genStatus": "[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]"
  *     }
  */
-data class CreateTaskData(
+data class WorkTaskData(
     val genStatus: Int? = null,
     val workId: String? = null
 )

@@ -2,7 +2,6 @@ package com.kgmedia.fastfilm.feature.splash
 
 import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -11,14 +10,14 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.bytedance.ads.convert.BDConvert.init
 import com.bytedance.ads.convert.callback.BDConvertLifecycleCallback
 import com.bytedance.ads.convert.config.BDConvertConfig
+import com.gyf.immersionbar.ImmersionBar
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.BuildConfig
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.databinding.ActivitySplashBinding
 import com.kgmedia.fastfilm.feature.main.MainActivity
-import com.kgmedia.fastfilm.router.AppRouter
-import com.gyf.immersionbar.ImmersionBar
 import com.kgmedia.fastfilm.feature.splash.newer.GuideStep1AdActivity
+import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.delay
@@ -73,8 +72,12 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
 
     private fun jumpToTheHomepage() {
         val it = intent.data?.takeIf { !TextUtils.isEmpty(it.host) } ?: ""
-//        MainActivity.start(this@SplashActivity, it.toString())
-        GuideStep1AdActivity.start(this)
+        if (Config.get().isFirstOpenApp) {
+            GuideStep1AdActivity.start(this)
+            Config.get().markAppOpenedWithNotify()
+        } else {
+            MainActivity.start(this@SplashActivity, it.toString())
+        }
         finish()
     }
 
@@ -189,7 +192,6 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
 
     override fun onAgreePolicy(dialog: PolicyDialog) {
         dialog.dismissAllowingStateLoss()
-        Config.get().markAppOpenedWithNotify()
         initAdsReporter()
         App.instance.initSdkAfterAgreeLicense()
         jumpToTheHomepage()
