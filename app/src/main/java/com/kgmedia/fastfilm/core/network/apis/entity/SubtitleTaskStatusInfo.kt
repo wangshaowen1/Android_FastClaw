@@ -1,5 +1,11 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
+import com.blankj.utilcode.util.GsonUtils
+import com.google.gson.reflect.TypeToken
+import com.kgmedia.fastfilm.feature.download.resource.JsonToAssResource
+import com.kgmedia.fastfilm.feature.download.resource.JsonToAssResource.SubtitleItem
+import java.io.File
+
 /**
  * {
  *     "id": "",
@@ -38,6 +44,18 @@ data class SubtitleTaskStatusInfo(
     var genStatus: Int?,
     val subtitleContent: String?,
 ) {
+    var subtitle: List<JsonToAssResource.SubtitleItem>? = null
+        get() {
+            if (field.isNullOrEmpty()) {
+                runCatching {
+                    val type = object : TypeToken<List<SubtitleItem>>() {}.type
+                    val subtitleList: List<SubtitleItem> = GsonUtils.fromJson(subtitleContent, type)
+                    field = subtitleList
+                }
+            }
+            return field
+        }
+    var assFile: File? = null
     val generating get() = genStatus == 1
     val generated get() = genStatus == 2
     val generateFailed get() = genStatus == 3

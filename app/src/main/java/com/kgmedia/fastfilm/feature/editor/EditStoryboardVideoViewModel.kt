@@ -5,6 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
+import androidx.media3.common.text.Cue
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.kgmedia.fastfilm.R
@@ -38,6 +39,7 @@ import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -57,6 +59,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     val scrollToItem by lazy { MutableLiveData<Int>(-1) }
     val adapter by lazy { QuickAdapter<ItemStoryboardVM>(R.layout.item_short_drama_editor_segment, emptyList()) }
     val nextStepEnabled by lazy { ObservableBoolean(false) }
+    val cues by lazy { ObservableField<List<Cue>>() }
     val storyboardPlayer by lazy {
         PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
             addListener(object : Player.Listener {
@@ -67,8 +70,21 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                         }
 
                         Player.STATE_ENDED -> {
+                            progressJob?.cancel()
                             playNext()
                         }
+                    }
+                }
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    if (isPlaying) {
+                        // 只要 isPlaying 为 true，说明视频已经在动了，必须隐藏 loading
+                        // 这能解决缓存命中时，STATE_READY 没能及时更新 UI 的问题
+                        startProgressUpdater()
+                    } else {
+                        progressJob?.cancel()
+                        // 注意：这里不要盲目设为 Pause，因为 isPlaying=false 可能是 Buffering
                     }
                 }
             })
@@ -78,6 +94,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     private var synthesisDialog: GeneratingDialog? = null
     private var synthesisTask: VideoSynthesisTask? = null
     private var loopSynthesisStatusJob: Job? = null
+    private var progressJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -87,6 +104,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     }
 
     override fun onCleared() {
+        progressJob?.cancel()
         loopSynthesisStatusJob?.cancel()
         adapter.items.forEach { it.clear() }
         super.onCleared()
@@ -108,6 +126,30 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                     synthesisDialog?.dismiss()
                     task.reason?.showToast()
                 }
+            }
+        }
+    }
+
+    private fun startProgressUpdater() {
+        progressJob?.cancel()
+        progressJob = launch {
+            while (isActive) {
+                if (storyboardPlayer.isPlaying) {
+                    // 每当播放进度改变或发生事件时触发
+                    val currentTime = storyboardPlayer.currentPosition
+
+                    // 找到当前时间点应该显示的字幕
+                    val currentLine = currentStoryboard.get()?.data?.get()?.subtitle?.subtitle?.find {
+                        currentTime in (it.startTime ?: 0)..(it.endTime ?: 0)
+                    }?.text
+
+                    if (currentLine != null) {
+                        cues.set(Cue.Builder().setText(currentLine).build().let { listOf(it) })
+                    } else {
+                        cues.set(null)
+                    }
+                }
+                delay(200)
             }
         }
     }

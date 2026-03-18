@@ -87,7 +87,14 @@
                     app:layout_constraintTop_toTopOf="@+id/previewArea"
                     app:use_controller="false"
                     tools:layout_constraintDimensionRatio="16:9"
-                    tools:visibility="invisible" />
+                    tools:visibility="invisible">
+
+                    <androidx.media3.ui.SubtitleView
+                        cues="@{layout.cues}"
+                        android:id="@id/exo_subtitles"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </androidx.media3.ui.PlayerView>
 
                 <ImageView
                     setVisible="@{layout.currentStoryboard.data.videoGenerated}"
