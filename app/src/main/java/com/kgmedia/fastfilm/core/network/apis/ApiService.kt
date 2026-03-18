@@ -42,6 +42,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
 import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreatePointOrderBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateStoryWorkBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreateWorkBody
 import com.kgmedia.fastfilm.core.network.apis.request.CreationGeneratePreBody
 import com.kgmedia.fastfilm.core.network.apis.request.DeleteWorkBody
@@ -64,13 +65,13 @@ import com.kgmedia.fastfilm.core.network.apis.request.LoginByPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
 import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
-import com.kgmedia.fastfilm.core.network.apis.request.NovelScriptGenerateBody
+import com.kgmedia.fastfilm.core.network.apis.request.PollScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeContentData
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeRoleImageDescBody
 import com.kgmedia.fastfilm.core.network.apis.request.OrderStatusBody
 import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
-import com.kgmedia.fastfilm.core.network.apis.request.PollNovelScriptData
+import com.kgmedia.fastfilm.core.network.apis.request.PollScriptData
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateBody
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateData
@@ -80,7 +81,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.ReportSubmissionBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
-import com.kgmedia.fastfilm.core.network.apis.request.RollNovelSummaryData
+import com.kgmedia.fastfilm.core.network.apis.request.PollSummaryData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
@@ -106,7 +107,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SynthesisUploadBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.TipOffBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
-import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
+import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
 import com.kgmedia.fastfilm.core.network.apis.request.UserShareUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.VideoSynthesisBody
@@ -978,19 +979,31 @@ interface ApiService {
      * 小说上传-创建任务
      */
     @POST(ApiConstants.NOVEL_UPLOAD_SUMMARY)
-    suspend fun novelUploadSummary(@Body body: UploadStoryBody): ApiResponse<UploadStoryData?>
+    suspend fun novelUploadSummary(@Body body: UploadStoryBody): ApiResponse<CreateTaskData?>
 
     /**
      * 轮询查询小说上传生成作品剧集梗概结果
      */
     @POST(ApiConstants.ROLL_NOVEL_SUMMARY)
-    suspend fun rollNovelSummary(@Body body: WorkIdBody): ApiResponse<RollNovelSummaryData?>
+    suspend fun pollNovelDocsSummary(@Body body: WorkIdBody): ApiResponse<PollSummaryData?>
+
+    /**
+     * 查询任务概要结果-通用
+     */
+    @POST(ApiConstants.POLL_SUMMARY_RESULT)
+    suspend fun pollSummaryResult(@Body body: WorkIdBody): ApiResponse<PollSummaryData?>
 
     /**
      * 小说上传-剧集剧本-查询单集
      */
     @POST(ApiConstants.POLL_NOVEL_SCRIPT)
-    suspend fun pollNovelScript(@Body body: NovelScriptGenerateBody): ApiResponse<PollNovelScriptData?>
+    suspend fun pollNovelScript(@Body body: PollScriptBody): ApiResponse<PollScriptData?>
+
+    /**
+     * 查询任务剧本结果- 通用
+     */
+    @POST(ApiConstants.POLL_SCRIPT_RESULT)
+    suspend fun pollScriptResult(@Body body: PollScriptBody): ApiResponse<PollScriptData?>
 
     /**
      *小说上传-删除作品草稿
@@ -1020,6 +1033,30 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_NEWER_EXAMPLE_WORK_LIST)
     suspend fun getNewerExampleWorkList(): ApiResponse<List<ExampleWorkInfo>>
+
+    /**
+     * 创建小说-生成剧集剧本（首创/续集）任务
+     */
+    @POST(ApiConstants.CREATE_TASK_FROM_NOVEL)
+    suspend fun createTaskFromNovel(@Body body: CreateTaskBody): ApiResponse<CreateTaskData?>
+
+    /**
+     * 创建灵感故事剧本（基于灵感写剧本/灵感续写）任务
+     */
+    @POST(ApiConstants.CREATE_TASK_FROM_INSPIRATION)
+    suspend fun createTaskFromInspiration(@Body body: CreateTaskBody): ApiResponse<CreateTaskData?>
+
+    /**
+     * 创建灵感故事梗概生成任务
+     */
+    @POST(ApiConstants.CREATE_SUMMARY_TASK_FROM_INSPIRATION)
+    suspend fun createSummaryTaskFromInspiration(@Body body: CreateTaskBody): ApiResponse<CreateTaskData?>
+
+    /**
+     * 创建单集生成任务
+     */
+    @POST(ApiConstants.CREATE_TASK_FROM_SINGLE_EPISODE)
+    suspend fun createTaskFromSingleEpisode(@Body body: CreateTaskBody): ApiResponse<CreateTaskData?>
 
     /**
      * 字幕-触发分镜字幕生成

@@ -714,6 +714,36 @@ object ApiConstants {
     const val GET_NEWER_EXAMPLE_WORK_LIST = "app/creative/work/list"
 
     /**
+     * 创建小说-生成剧集剧本（首创/续集）任务
+     */
+    const val CREATE_TASK_FROM_NOVEL = "ai/story/script/createFromNovel"
+
+    /**
+     * 创建灵感故事剧本（基于灵感写剧本/灵感续写）任务
+     */
+    const val CREATE_TASK_FROM_INSPIRATION = "ai/story/script/createFromIdeaTask"
+
+    /**
+     * 创建灵感故事梗概生成任务
+     */
+    const val CREATE_SUMMARY_TASK_FROM_INSPIRATION = "ai/story/script/createSynopsisTask"
+
+    /**
+     * 创建单集生成任务
+     */
+    const val CREATE_TASK_FROM_SINGLE_EPISODE = "ai/story/script/single/createWorkTask"
+
+    /**
+     * 查询任务剧本结果
+     */
+    const val POLL_SCRIPT_RESULT = "ai/story/script/script/result"
+
+    /**
+     * 查询任务概要结果-通用
+     */
+    const val POLL_SUMMARY_RESULT = "ai/story/script/outline/result"
+
+    /**
      * 字幕-触发分镜字幕生成
      */
     const val GENERATE_SUBTITLE = "work/subtitle/generate"

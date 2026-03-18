@@ -18,6 +18,7 @@ import com.kgmedia.fastfilm.databinding.ActivitySplashBinding
 import com.kgmedia.fastfilm.feature.main.MainActivity
 import com.kgmedia.fastfilm.router.AppRouter
 import com.gyf.immersionbar.ImmersionBar
+import com.kgmedia.fastfilm.feature.splash.newer.GuideStep1AdActivity
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.delay
@@ -72,7 +73,8 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
 
     private fun jumpToTheHomepage() {
         val it = intent.data?.takeIf { !TextUtils.isEmpty(it.host) } ?: ""
-        MainActivity.start(this@SplashActivity, it.toString())
+//        MainActivity.start(this@SplashActivity, it.toString())
+        GuideStep1AdActivity.start(this)
         finish()
     }
 

@@ -1,11 +1,7 @@
 package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.os.Bundle
-import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.ActivityUtils
-import com.fluid.afm.markdown.widget.PrinterMarkDownTextView
 import com.fluid.afm.styles.BlockQuoteStyle
 import com.fluid.afm.styles.CodeStyle
 import com.fluid.afm.styles.MarkdownStyles
@@ -23,14 +19,12 @@ import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
 import com.kgmedia.fastfilm.feature.creator.StoryReuploadDialog
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
-import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
-import com.nhsd.basic.utils.Logger
 
 
 /**
@@ -50,8 +44,6 @@ class DramaGenerateStep1Fragment :
     }
 
     val hostVm by lazy { getViewModelOfActivity<StoryEditorViewModel>() }
-    val markDownTextView by lazy { PrinterMarkDownTextView(mActivity) }
-    var dialog: GeneratingDialog? = null
     var episodeAdapter = QuickAdapter<ItemStorySummaryGenerateVm>(R.layout.item_story_summary_generate, emptyList())
     private var showBackToast = false
     val from by lazy { hostVm?.from }
@@ -62,87 +54,26 @@ class DramaGenerateStep1Fragment :
         activity?.intent?.let {
             mRealVM.workId = it.getStringExtra(Constants.Extra.WORK_ID)
             mRealVM.model = it.getIntExtra(Constants.Extra.MODE, 0)
-            mRealVM.inspiration = it.getStringExtra(Constants.Extra.CONTENT)
-            mRealVM.customEpisodeCount = it.getStringExtra(StoryEditorActivity.CUSTOM_EPISODE_COUNT)
-            mRealVM.episodeRangeCode = it.getStringExtra(StoryEditorActivity.EPISODE_RANGE_CODE)
-            mRealVM.videoStyleId = it.getStringExtra(Constants.Extra.STYLE_ID)
-            mRealVM.videoRatio = it.getStringExtra(Constants.Extra.VIDEO_RATIO)
             mRealVM.refreshDisplayContent()
-            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
-                mRealVM.rollNovelSummary()
-                showBackToast = true
-            } else {
-                mRealVM.sseGenerate()
-                hostVm?.backWarning = true
-            }
+            mRealVM.rollNovelSummary()
+            showBackToast = true
         }
-        mRealVM.promptGenerating.observe(this) {
-            if (it.first) {
-                if (dialog == null || !dialog!!.isShowing) {
-                    // 只在 Dialog 不存在时创建
-                    dialog = GeneratingDialog(requireContext(), it.second, it.third)
-                    if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
-                        dialog?.setCancelable(true)
-                    }
-                    dialog?.show()
-                } else {
-                    // 如果已经在显示，只更新文字内容，不重置 Dialog
-                    dialog?.updateContent(it.second, it.third)
+
+        binding.recyclerView.setAdapter(episodeAdapter)
+        mRealVM.storySummaryResult.observe(this) {
+            if (it == null) return@observe
+            showBackToast = false
+            if (it.isSuccess()) {
+                episodeAdapter.submitList(it.result?.structureList?.map { info ->
+                    return@map ItemStorySummaryGenerateVm(info)
+                })
+            } else if (it.isSensitive()) {
+                StoryReuploadDialog.show(it.novelFileName, it.novelCharCount, it.toastTextAuditFailed) {
+                    reuploadStory()
                 }
-            } else {
-                dialog?.dismiss()
-                dialog = null
             }
         }
 
-        if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
-            binding.recyclerView2.setAdapter(episodeAdapter)
-            mRealVM.storySummaryResult.observe(this) {
-                if (it == null) return@observe
-                showBackToast = false
-                if (it.isSuccess()) {
-                    episodeAdapter.submitList(it.result?.structureList?.map { info ->
-                        return@map ItemStorySummaryGenerateVm(info)
-                    })
-                } else if (it.isSensitive()) {
-                    StoryReuploadDialog.show(it.novelFileName, it.novelCharCount, it.toastTextAuditFailed) {
-                        reuploadStory()
-                    }
-                }
-            }
-        } else {
-            val linearLayoutManager = LinearLayoutManager(mActivity, LinearLayoutManager.VERTICAL, false)
-            binding.recyclerView.setLayoutManager(linearLayoutManager)
-            linearLayoutManager.setStackFromEnd(true)
-            binding.recyclerView.setAdapter(object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-                    return object : RecyclerView.ViewHolder(markDownTextView) {}
-                }
-
-                override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-                }
-
-                override fun getItemCount(): Int {
-                    return 1
-                }
-            })
-            markDownTextView.init(getCustomUIStyles(), null)
-            markDownTextView.setPrintParams(2, 3)
-        }
-
-        mRealVM.mSSEContent.observe(this) { delta ->
-            if (delta.isEmpty()) return@observe
-            if (!markDownTextView.isStarted) {
-                markDownTextView.startPrinting(delta)
-            } else {
-                markDownTextView.appendPrinting(delta)
-            }
-        }
-        mRealVM.onSSECompleted = {
-            Logger.d("[SSE] stopPrinting")
-//            hostVm?.backWarning = false
-//            markDownTextView.stopPrinting(null)
-        }
         mRealVM.mWorkName.observe(this) {
             if (hostVm?.title?.value.isNullOrEmpty()) {
                 hostVm?.title?.value = it
@@ -154,7 +85,6 @@ class DramaGenerateStep1Fragment :
             }
         }
         binding.btnRegenerate.setOnSingleClickListener {
-            markDownTextView.stopPrinting(null)
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 reuploadStory()
             } else {
@@ -172,9 +102,6 @@ class DramaGenerateStep1Fragment :
                 }
                 return@setOnSingleClickListener
             }
-            mRealVM.confirmGenerate(markDownTextView.text.toString()) { workId, storyId ->
-                hostVm?.nextStep(2, workId, storyId)
-            }
         }
     }
 
@@ -190,73 +117,6 @@ class DramaGenerateStep1Fragment :
         }
     }
 
-    fun getCustomUIStyles(): MarkdownStyles {
-        val styles = MarkdownStyles()
-
-        // 1. 段落样式：调亮文字颜色（从暗灰改为接近白色），增加行高
-        styles.paragraphStyle(
-            ParagraphStyle.create()
-                .fontSize(ParseUtil.parseDp("30rpx").toFloat())
-                .fontColor(R.color.text_color_1_dark.getResColor()) // 约等于 #D4D4D4，更亮一些
-                .paragraphSpacing(20f.dp)
-        )
-
-        // 2. 引用/卡片样式：UI图中每一集看起来像卡片，可以用 BlockQuote 或自定义段落背景模拟
-        // 这里将引用的竖线颜色调亮，文字调为亮灰
-        styles.blockQuoteStyle(
-            BlockQuoteStyle.create()
-                .lineColor(R.color.text_color_4_dark.getResColor())
-                .lineWidth(4f.dp)
-                .lineCornerRadius(2f.dp)
-                .lineMargin(4f.dp)
-                .fontColor(R.color.text_color_3_dark.getResColor())
-        )
-
-        // 3. 表格样式（如果你的目录是用表格实现的）
-        styles.tableStyle(
-            TableStyle.create()
-                .tableBlockRadius(ParseUtil.parseDp("16rpx"))
-                .fontColor(-2829100)
-                .titleFontColor(-1) // 纯白标题
-                .titleBackgroundColor(-14540254) // 深灰背景 #222222
-                .bodyBackgroundColor(-13619152) // 稍浅的背景 #303030
-                .drawBorder(false)
-        ) // UI图中通常不带生硬的边框
-
-        // 4. 标题样式：加大加亮，突出“第1集”这种层级
-        styles.setTitleStyle(0, TitleStyle.create(1.2F).paragraphSpacing(12f.dp))
-            .setTitleStyle(1, TitleStyle.create(1F).paragraphSpacing(12f.dp))
-            .setTitleStyle(2, TitleStyle.create(1F).paragraphSpacing(12f.dp))
-
-        // 5. 代码块（如果简介中有代码样式，调整背景为深色圆角块）
-        styles.codeStyle(
-            CodeStyle.create()
-                .inlineFontColor(-2171170)
-                .inlineCodeBackgroundColor(855638016) // 半透明深色
-                .codeFontColor(-2829100)
-                .codeFontSize(ParseUtil.parseDp("28rpx"))
-                .drawBorder(false)
-        )
-
-        return styles
-    }
-
-    override fun onResume() {
-        super.onResume()
-        markDownTextView.resume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        markDownTextView.pause()
-    }
-
-    override fun onDestroy() {
-        if (markDownTextView.isStarted) {
-            markDownTextView.stopPrinting("")
-        }
-        super.onDestroy()
-    }
 
     override fun handleBackPressed(): Boolean {
         if (mRealVM.isSummaryLoading.get()) {

@@ -38,6 +38,19 @@
             android:layout_weight="1"
             android:background="@drawable/bg_fill_color_1_r8">
 
+            <TextView
+                android:id="@+id/tvEpisodeTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/spacing_m"
+                android:layout_marginTop="@dimen/spacing_m"
+                android:text="@{`《`+layout.MWorkName+`》第`+layout.chapterIndex+`集`}"
+                android:textColor="?attr/textColor2"
+                android:textColorHint="?attr/textColor4"
+                android:textSize="14sp"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="《时代之光》第1集" />
+
             <EditText
                 android:id="@+id/inputView"
                 android:layout_width="match_parent"
@@ -46,15 +59,15 @@
                 android:background="@null"
                 android:cursorVisible="false"
                 android:focusable="false"
-                android:isScrollContainer="true"
                 android:gravity="top|start"
+                android:isScrollContainer="true"
                 android:maxLength="@{layout.maxInputLength}"
                 android:padding="@dimen/spacing_m"
                 android:textColor="?attr/textColor2"
                 android:textColorHint="?attr/textColor4"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@id/llBottom"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/tvEpisodeTitle" />
 
             <LinearLayout
                 singleClick="@{layout.clickHandler::onClick}"
@@ -62,7 +75,7 @@
                 android:layout_height="0dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="@{layout.sseOutputFail?View.VISIBLE:View.GONE}"
+                android:visibility="@{layout.outputFail?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/inputView"
                 app:layout_constraintEnd_toEndOf="@id/inputView"
                 app:layout_constraintStart_toStartOf="@id/inputView"
@@ -163,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:visibility="@{layout.sseOutputComplete?View.VISIBLE:View.GONE}"
+                android:visibility="@{layout.outputComplete?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/tvContentLength"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tvContentLength">

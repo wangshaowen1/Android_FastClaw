@@ -38,37 +38,21 @@ class StoryEditorActivity :
         /**
          * 从头开始生成
          * @param workId 作品id（首次生成==》目前仅小说文档上传的情况下有值）
-         * @param content 故事内容
          * @param name 故事名称
-         * @param styleId 故事风格ID
-         * @param videoRatio 视频比例
          * @param model 故事生成方式
-         * @param otherExtraId 续写(剧集id)，同款（剧本id）
          */
         @JvmStatic
         fun start(
             context: Context?,
             workId: String?,
-            content: String?,
             name: String?,
-            episodeRangeCode: String? = null,
-            customEpisodeCount: String? = null,
-            videoRatio: String? = null,
-            styleId: String? = null,
             model: Int? = DramaGenerateConstants.MODEL_INSPIRATION,
-            otherExtraId: String? = null,
         ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
-            starter.putExtra(Constants.Extra.EXTRA_ID, otherExtraId)
             starter.putExtra(Constants.Extra.MODE, model)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
-            starter.putExtra(Constants.Extra.CONTENT, content)
             starter.putExtra(Constants.Extra.TITLE, name)
-            starter.putExtra(EPISODE_RANGE_CODE, episodeRangeCode)
-            starter.putExtra(CUSTOM_EPISODE_COUNT, customEpisodeCount)
-            starter.putExtra(Constants.Extra.STYLE_ID, styleId)
-            starter.putExtra(Constants.Extra.VIDEO_RATIO, videoRatio)
             context.startActivity(starter)
         }
 

@@ -8,7 +8,7 @@ import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
-import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
+import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.showToast
@@ -20,7 +20,7 @@ class StoryGenerateConfirmViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     val checkedPolicy by lazy { ObservableBoolean(true) }
     val body by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, UploadStoryBody::class.java) }
-    fun confirmPowerConsume(callback: (UploadStoryData?) -> Unit) {
+    fun confirmPowerConsume(callback: (CreateTaskData?) -> Unit) {
         if (body == null) return
         requestWithLoading(
             apiBlock = {

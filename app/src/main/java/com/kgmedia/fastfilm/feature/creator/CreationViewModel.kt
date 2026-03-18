@@ -3,7 +3,6 @@ package com.kgmedia.fastfilm.feature.creator
 import android.graphics.Color
 import android.util.Log
 import androidx.annotation.ColorInt
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
@@ -18,15 +17,17 @@ import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
+import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
-import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.KEY_MODEL
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.MODEL_INSPIRATION
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
@@ -43,7 +44,6 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
 
-    val isVip = ObservableBoolean(true)
     val hint = ObservableField<String>()
     val creationModel by lazy {
         mBundle.getInt(KEY_MODEL)
@@ -70,11 +70,6 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         videoSetConfig {
 
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        refreshConfig()
     }
 
     @ColorInt
@@ -137,18 +132,6 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         sseHandler?.cancel()
     }
 
-    fun refreshConfig() {
-//        isVip.set(User.get().isVip)
-//        val maxLength =
-//            if (inspirationModel()) textLimitNum?.shortDramasInspirationWriteStoryLimitNum else (if (isVip.get()) textLimitNum?.shortDramasWriteStoryLimitNumForVip else textLimitNum?.shortDramasWriteStoryLimitNum)
-//        maxInputLength.set(maxLength ?: (if (isVip.get()) 5000 else 1000))
-//        hint.set(
-//            if (inspirationModel()) textLimitNum?.shortDramasInspirationStoryRemindText
-//                ?: getString(R.string.hint_inspiration_input) else textLimitNum?.shortDramasWriteStoryRemindText
-//                ?: "请输入你想写的故事。例如：穿成恶毒女配，我决定躺平摆烂，每天在心里直播吐槽。没想到那个阴鸷狠戾的反派大佬，居然能听见我的心声。当我骂他“疯批”时，他却低声轻笑：“骂得好，再骂几句。”"
-//        )
-    }
-
     fun videoSetConfig(showLoading: Boolean = false, function: (() -> Unit)? = null) {
         if (videoSetConfig.value != null) {
             function?.invoke()
@@ -198,19 +181,45 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
         inspirationPrompts.value = batchToShow
     }
 
-    fun confirmPowerConsume(body: UploadStoryBody, callback: (UploadStoryData?) -> Unit) {
+    fun createTask(modelType: Int, body: CreateTaskBody, callback: (CreateTaskData?) -> Unit) {
+        requestWithLoading(
+            apiBlock = {
+                when (modelType) {
+                    DramaGenerateConstants.MODEL_STORY_SINGLE -> {
+                        mRepo.api.createTaskFromSingleEpisode(body)
+                    }
+
+                    DramaGenerateConstants.MODEL_INSPIRATION -> {
+                        mRepo.api.createSummaryTaskFromInspiration(body)
+                    }
+
+                    DramaGenerateConstants.MODEL_STORY -> {
+                        mRepo.api.createTaskFromNovel(body)
+                    }
+
+                    else -> null
+                }
+            },
+            onSuccess = { callback.invoke(data) },
+            onError = {
+                if (it is ApiException && it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                    PowerRechargeDialog.show()
+                } else {
+                    it?.message?.showToast()
+                }
+            }
+        )
+    }
+
+    fun confirmPowerConsume(body: UploadStoryBody, callback: (CreateTaskData?) -> Unit) {
         requestWithLoading(
             apiBlock = {
                 mRepo.api.novelUploadSummary(body)
             },
             onSuccess = { callback.invoke(data) },
             onError = {
-                if (it is ApiException) {
-                    if (it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                        PowerRechargeDialog.show()
-                    } else {
-                        it.message?.showToast()
-                    }
+                if (it is ApiException && it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                    PowerRechargeDialog.show()
                 } else {
                     it?.message?.showToast()
                 }

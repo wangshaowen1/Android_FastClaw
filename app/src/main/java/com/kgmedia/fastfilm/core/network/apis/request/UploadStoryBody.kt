@@ -28,7 +28,7 @@ data class UploadStoryBody(
  *         "genStatus": "[枚举]生成状态 [0=待生成 1=生成中 2=成功 3=失败]"
  *     }
  */
-data class UploadStoryData(
+data class CreateTaskData(
     val genStatus: Int? = null,
     val workId: String? = null
 )
@@ -41,7 +41,7 @@ data class UploadStoryData(
  *     }
  */
 @Parcelize
-data class RollNovelSummaryData(
+data class PollSummaryData(
     val genStatus: Int? = null,
     val toastTextProgress: String? = null,//用户提示-进度文本;例如正在读取小说内容
     val toastTextTime: String? = null,//用户提示-剩余时间文本;例如12-15分钟
@@ -97,12 +97,12 @@ data class RollNovelStructure(
     val storyTitle: String? = null
 ) : Parcelable
 
-data class NovelScriptGenerateBody(
+data class PollScriptBody(
     val workId: String? = null,
     val storyId: String? = null
 )
 
-data class PollNovelScriptData(
+data class PollScriptData(
     val workId: String? = null,
     val storyId: String? = null,
     val sortNo: Int? = null,//集数序号

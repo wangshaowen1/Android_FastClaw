@@ -4,11 +4,9 @@ import androidx.core.os.bundleOf
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
-import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
+import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
 import com.kgmedia.fastfilm.databinding.DialogStoryGenerateConfirmBinding
-import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
-import kotlin.math.roundToInt
 
 class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGenerateConfirmBinding, StoryGenerateConfirmViewModel>() {
 
@@ -26,7 +24,7 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
         }
     }
 
-    var onConfirm: (UploadStoryData?) -> Unit = {}
+    var onConfirm: (CreateTaskData?) -> Unit = {}
 
     override fun onPrepareView() {
         super.onPrepareView()

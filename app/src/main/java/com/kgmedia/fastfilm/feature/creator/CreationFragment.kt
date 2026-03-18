@@ -17,9 +17,10 @@ import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
+import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
+import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
-import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryData
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
@@ -59,13 +60,6 @@ class CreationFragment :
         initView()
         //数据更新
         dataUpdate()
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden) {
-            mRealVM.refreshConfig()
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -129,9 +123,6 @@ class CreationFragment :
         }
 
         observeEvents {
-            on<Events.ConfigChangeEvent> { event ->
-                mRealVM.refreshConfig()
-            }
             onUserSignOut {
                 mRealVM.input.value = ""
             }
@@ -161,17 +152,12 @@ class CreationFragment :
                         else -> DramaGenerateConstants.MODEL_STORY
                     }
 
-                    val startEditor: (UploadStoryData?) -> Unit = { data ->
+                    val startEditor: (CreateTaskData?) -> Unit = { data ->
                         //只有小说文档模式有data
                         StoryEditorActivity.start(
                             context = mActivity,
                             workId = data?.workId,
-                            content = content,
                             name = name,
-                            episodeRangeCode = range,
-                            customEpisodeCount = custom,
-                            videoRatio = ratio,
-                            styleId = style,
                             model = modelType
                         )
                     }
@@ -191,15 +177,26 @@ class CreationFragment :
                         if (Config.get().notifyPowerConsume()) {
                             StoryGenerateConfirmDialog.newInstance(body, this@CreationFragment.mRealVM.analysisResult?.estimatedPower?.roundToInt())
                                 .apply {
-                                onConfirm = { data -> startEditor(data) }
-                            }.show(this@CreationFragment.childFragmentManager)
+                                    onConfirm = { data -> startEditor(data) }
+                                }.show(this@CreationFragment.childFragmentManager)
                         } else {
                             this@CreationFragment.mRealVM.confirmPowerConsume(body) { data ->
                                 startEditor(data)
                             }
                         }
                     } else {//非小说文档走这里
-                        startEditor(null)
+                        val body = CreateTaskBody(
+                            workInspiration = content,
+                            content = content,
+                            workTitle = name,
+                            totalEpisodeCntCode = range,
+                            totalEpisodeCnt = custom,
+                            workRatio = ratio,
+                            workStyleCode = style
+                        )
+                        this@CreationFragment.mRealVM.createTask(modelType, body) {
+                            startEditor(it)
+                        }
                     }
                 }
             }.show(childFragmentManager)
