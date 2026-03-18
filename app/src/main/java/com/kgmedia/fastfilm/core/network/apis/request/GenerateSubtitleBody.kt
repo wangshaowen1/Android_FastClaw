@@ -10,6 +10,10 @@ data class GenerateSubtitleBody(
      */
     val videoUrl: String?,
     /**
+     * 用户ID
+     */
+    val userId: String?,
+    /**
      * 作品ID
      */
     val workId: String?,

@@ -2,11 +2,14 @@ package com.kgmedia.fastfilm.feature.editor
 
 import androidx.databinding.ObservableBoolean
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
+import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
+import com.kgmedia.fastfilm.core.network.apis.request.GenerateSubtitleBody
+import com.kgmedia.fastfilm.core.network.apis.request.StoryboardIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.nhsd.basic.ext.showToast
@@ -28,19 +31,23 @@ class ItemStoryboardVM(
 ) : AppItemViewModel<SimpleStoryboardInfo>(data) {
     val selected by lazy { ObservableBoolean(false) }
     private var loopGenStatusJob: Job? = null
+    private var loopSubtitleGenStatusJob: Job? = null
 
     init {
         if (data?.videoGenerating == true) {
             loopGenStatus()
+        } else if (data?.videoGenerated == true) {
+            loopGenSubtitleStatus()
         }
     }
 
     fun clear() {
         loopGenStatusJob?.cancel()
+        loopSubtitleGenStatusJob?.cancel()
     }
 
     override fun onCleared() {
-        loopGenStatusJob?.cancel()
+        clear()
         super.onCleared()
     }
 
@@ -99,6 +106,45 @@ class ItemStoryboardVM(
             if (storyboard.videoGenerating) {
                 delay(3000)
                 loopGenStatus()
+            } else if (storyboard.videoGenerated) {
+                loopGenSubtitleStatus()
+            }
+        }
+    }
+
+    fun generateSubtitle() {
+        val storyboard = data.get()
+        val storyboardId = storyboard?.storyboardId
+        if (storyboardId.isNullOrEmpty()) return
+        storyboard.subtitle?.genStatus == 1
+        data.notifyChange()
+        launch {
+            val body = GenerateSubtitleBody(storyboardId, storyboard.videoUrl, User.get().userId, workId, storyId)
+            response(
+                bean = ApiFactory.apiService.generateSubtitle(body),
+                result = { loopGenSubtitleStatus() },
+                error = {
+                    this?.msg?.showToast()
+                    storyboard.subtitle?.genStatus == 3
+                    data.notifyChange()
+                })
+        }
+    }
+
+    private fun loopGenSubtitleStatus() {
+        loopSubtitleGenStatusJob?.cancel()
+        val storyboard = data.get()
+        val storyboardId = storyboard?.storyboardId
+        if (storyboardId.isNullOrEmpty()) return
+        loopSubtitleGenStatusJob = launch {
+            runCatching {
+                val subtitleInfo = withContext(Dispatchers.IO) { ApiFactory.apiService.subtitleTaskStatus(StoryboardIdBody(storyboardId)).data }
+                storyboard.subtitle = subtitleInfo
+                data.notifyChange()
+            }
+            if (storyboard.subtitleGenerating) {
+                delay(3000)
+                loopGenSubtitleStatus()
             }
         }
     }

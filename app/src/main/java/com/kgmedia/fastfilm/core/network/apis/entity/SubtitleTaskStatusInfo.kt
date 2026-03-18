@@ -35,6 +35,13 @@ data class SubtitleTaskStatusInfo(
     val channelId: String?,
     val videoUrl: String?,
     val externalTaskId: String?,
-    val genStatus: String?,
+    /**
+     * 生成状态 0=待生成 1=生成中 2=成功 3=失败
+     */
+    val genStatus: Int?,
     val subtitleContent: String?,
-)
+) {
+    val generating get() = genStatus == 1
+    val generated get() = genStatus == 2
+    val generateFailed get() = genStatus == 3
+}

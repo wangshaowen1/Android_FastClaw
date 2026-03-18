@@ -25,6 +25,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
+import com.kgmedia.fastfilm.feature.creator.assets.ItemAssetVM
 import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
@@ -190,6 +191,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 val items = mutableListOf<AppItemViewModel<*>>()
                 storyboards?.map { it.toItemStoryboardVM() }?.let { items.addAll(it) }
                 items.add(addStoryboardItem)
+                adapter.items.forEach { if (it is ItemAssetVM<*>) it.clear() }
                 adapter.submitList(items)
                 updateItemNo()
                 loadState.set(LoadStateViewHolder.CONTENT)

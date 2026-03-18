@@ -249,6 +249,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     items.addAll(props)
                     items.add(addPropItem)
                 }
+                adapter.items.forEach { if (it is ItemAssetVM<*>) it.clear() }
                 adapter.submitList(items)
                 onItemChanged()
                 loadState.set(LoadStateViewHolder.CONTENT)

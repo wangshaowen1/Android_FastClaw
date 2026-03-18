@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
 import android.os.Parcelable
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -78,4 +79,14 @@ data class SimpleStoryboardInfo(
     val videoGenerated get() = genStatusVideo == 2 || genStatusVideo == 6
 
     val videoGenerateFailed get() = genStatusVideo == 3
+
+    @IgnoredOnParcel
+    var subtitle: SubtitleTaskStatusInfo? = null
+
+    val subtitleGenerating get() = subtitle?.generating == true
+
+    val subtitleGenerated get() = subtitle?.generated == true
+
+    val subtitleGenerateFailed get() = subtitle?.generateFailed == true
+
 }
