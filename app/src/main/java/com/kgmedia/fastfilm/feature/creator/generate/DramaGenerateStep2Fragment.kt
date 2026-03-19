@@ -185,6 +185,11 @@ class DramaGenerateStep2Fragment :
         hostVm?.title?.observe(this) {
             if (it != mRealVM.mWorkName.value) {
                 mRealVM.mWorkName.value = it
+                if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
+                    mRealVM.episodeTitle.set("《$it》")
+                } else {
+                    mRealVM.episodeTitle.set("《$it》第${mRealVM.chapterIndex}集")
+                }
             }
         }
     }

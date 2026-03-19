@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.creator.generate
 import android.graphics.Color
 import androidx.annotation.ColorInt
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.R
@@ -67,6 +68,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
      * 小说文档模式==》故事内容结果
      */
     var storyScriptResult = MutableLiveData<PollScriptData?>()
+    var episodeTitle = ObservableField<String>()
 
     fun isNovelDocuments() =
         model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS || model == DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS
