@@ -48,22 +48,53 @@
                 app:layout_constraintDimensionRatio="375:356"
                 app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
-            <androidx.media3.ui.PlayerView
-                android:id="@+id/storyboardPlayer"
-                player="@{layout.storyboardPlayer}"
+            <androidx.constraintlayout.widget.Placeholder
+                android:id="@+id/playerArea"
                 setDimensionRatio="@{layout.workRatio}"
-                setVisible="@{layout.storyboard.videoGenerated}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:onClick="@{(v)->layout.play()}"
-                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="@+id/previewArea"
                 app:layout_constraintEnd_toEndOf="@+id/previewArea"
                 app:layout_constraintStart_toStartOf="@+id/previewArea"
                 app:layout_constraintTop_toTopOf="@+id/previewArea"
+                tools:layout_constraintDimensionRatio="16:9" />
+
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/storyboardPlayer"
+                player="@{layout.storyboardPlayer}"
+                setVisible="@{layout.storyboard.videoGenerated}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:onClick="@{(v)->layout.play()}"
+                app:layout_constraintBottom_toBottomOf="@+id/playerArea"
+                app:layout_constraintEnd_toEndOf="@+id/playerArea"
+                app:layout_constraintStart_toStartOf="@+id/playerArea"
+                app:layout_constraintTop_toTopOf="@+id/playerArea"
                 app:use_controller="false"
-                tools:layout_constraintDimensionRatio="9:16"
                 tools:visibility="invisible" />
+
+            <TextView
+                setTextSizeDp="@{TextUtils.equals(layout.workRatio,`16:9`)?15f:10f}"
+                setVerticalBias="@{TextUtils.equals(layout.workRatio,`16:9`)?0.9148936f:0.83263598f}"
+                setVisible="@{layout.subtitle.length()>0}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="12dp"
+                android:shadowColor="@color/fixed_black_1"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="3"
+                android:text="@{layout.subtitle}"
+                android:textColor="@color/fixed_white_1"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/storyboardPlayer"
+                app:layout_constraintEnd_toEndOf="@+id/storyboardPlayer"
+                app:layout_constraintStart_toStartOf="@+id/storyboardPlayer"
+                app:layout_constraintTop_toTopOf="@+id/storyboardPlayer"
+                tools:layout_constraintVertical_bias="0.9148936"
+                tools:text="恭喜你，完成初步觉醒"
+                tools:textSize="15dp" />
 
             <ImageView
                 setVisible="@{layout.storyboard.videoGenerated}"
@@ -85,18 +116,16 @@
                 app:layout_constraintTop_toTopOf="@+id/previewArea" />
 
             <LinearLayout
-                setDimensionRatio="@{layout.workRatio}"
                 setVisible="@{!layout.storyboard.videoGenerated}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="?attr/fillColor1"
                 android:gravity="center"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@+id/previewArea"
-                app:layout_constraintEnd_toEndOf="@+id/previewArea"
-                app:layout_constraintStart_toStartOf="@+id/previewArea"
-                app:layout_constraintTop_toTopOf="@+id/previewArea"
-                tools:layout_constraintDimensionRatio="9:16">
+                app:layout_constraintBottom_toBottomOf="@+id/playerArea"
+                app:layout_constraintEnd_toEndOf="@+id/playerArea"
+                app:layout_constraintStart_toStartOf="@+id/playerArea"
+                app:layout_constraintTop_toTopOf="@+id/playerArea">
 
                 <com.airbnb.lottie.LottieAnimationView
                     setVisible="@{layout.storyboard.videoGenerating}"
@@ -115,11 +144,16 @@
                     android:text="@{layout.videoGenStatusText(layout.storyboard.genStatusVideo)}"
                     android:textAppearance="@style/Text12"
                     android:textColor="@color/fixed_white_1"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="图片生成排队中" />
+
+                <TextView
+                    setVisible="@{layout.storyboard.videoGenerating}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="退出后视频会继续生成"
+                    android:textAppearance="@style/Text10"
+                    android:textColor="?attr/textColor4" />
 
                 <TextView
                     android:id="@+id/btnRetry"
@@ -134,9 +168,6 @@
                     android:textAppearance="@style/Text12"
                     android:textColor="@color/fixed_white_1"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvStoryboardStatus"
                     tools:visibility="visible" />
             </LinearLayout>
 
@@ -150,7 +181,6 @@
                 android:textAppearance="@style/Text14"
                 android:textColor="?attr/textColor2"
                 android:textStyle="bold"
-                app:layout_constraintDimensionRatio="345:130"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/previewArea" />
 

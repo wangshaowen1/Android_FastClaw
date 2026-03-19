@@ -6,7 +6,6 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
-import androidx.media3.common.text.Cue
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.kgmedia.fastfilm.R
@@ -62,7 +61,6 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     val scrollToItem by lazy { MutableLiveData<Int>(-1) }
     val adapter by lazy { QuickAdapter<ItemStoryboardVM>(R.layout.item_short_drama_editor_segment, emptyList()) }
     val nextStepEnabled by lazy { ObservableBoolean(false) }
-    val cues by lazy { ObservableField<List<Cue>>() }
     val storyboardPlayer by lazy {
         PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
             addListener(object : Player.Listener {
@@ -74,6 +72,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
                         Player.STATE_ENDED -> {
                             progressJob?.cancel()
+                            subtitle.set(null)
                             playNext()
                         }
                     }
@@ -98,6 +97,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     private var synthesisTask: VideoSynthesisTask? = null
     private var loopSynthesisStatusJob: Job? = null
     private var progressJob: Job? = null
+    val subtitle by lazy { ObservableField<String>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -145,12 +145,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
                     val currentLine = currentStoryboard.get()?.data?.get()?.subtitle?.subtitle?.find {
                         currentTime in (it.startTime ?: 0)..(it.endTime ?: 0)
                     }?.text
-
-                    if (currentLine != null) {
-                        cues.set(Cue.Builder().setText(currentLine).build().let { listOf(it) })
-                    } else {
-                        cues.set(null)
-                    }
+                    subtitle.set(currentLine)
                 }
                 delay(200)
             }

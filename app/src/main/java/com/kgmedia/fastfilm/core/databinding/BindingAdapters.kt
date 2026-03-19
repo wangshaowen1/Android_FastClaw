@@ -924,6 +924,11 @@ fun setTextSizeSp(view: TextView, sp: Float) {
     view.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp)
 }
 
+@BindingAdapter("setTextSizeDp")
+fun setTextSizeDp(view: TextView, dp: Float) {
+    view.setTextSize(TypedValue.COMPLEX_UNIT_DIP, dp)
+}
+
 @BindingAdapter("setSelected")
 fun setSelected(view: View, isSelected: Boolean) {
     view.isSelected = isSelected

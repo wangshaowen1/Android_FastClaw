@@ -76,25 +76,39 @@
                 <androidx.media3.ui.PlayerView
                     android:id="@+id/storyboardPlayer"
                     player="@{layout.storyboardPlayer}"
-                    setDimensionRatio="@{layout.workRatio}"
                     setVisible="@{layout.currentStoryboard.data.videoGenerated}"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:onClick="@{(v)->layout.play()}"
-                    app:layout_constraintBottom_toBottomOf="@+id/previewArea"
-                    app:layout_constraintEnd_toEndOf="@+id/previewArea"
-                    app:layout_constraintStart_toStartOf="@+id/previewArea"
-                    app:layout_constraintTop_toTopOf="@+id/previewArea"
+                    app:layout_constraintBottom_toBottomOf="@+id/playerArea"
+                    app:layout_constraintEnd_toEndOf="@+id/playerArea"
+                    app:layout_constraintStart_toStartOf="@+id/playerArea"
+                    app:layout_constraintTop_toTopOf="@+id/playerArea"
                     app:use_controller="false"
-                    tools:layout_constraintDimensionRatio="16:9"
-                    tools:visibility="invisible">
+                    tools:visibility="invisible" />
 
-                    <androidx.media3.ui.SubtitleView
-                        cues="@{layout.cues}"
-                        android:id="@id/exo_subtitles"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </androidx.media3.ui.PlayerView>
+                <TextView
+                    setTextSizeDp="@{TextUtils.equals(layout.workRatio,`16:9`)?15f:10f}"
+                    setVerticalBias="@{TextUtils.equals(layout.workRatio,`16:9`)?0.9148936f:0.83263598f}"
+                    setVisible="@{layout.subtitle.length()>0}"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="12dp"
+                    android:shadowColor="@color/fixed_black_1"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="3"
+                    android:text="@{layout.subtitle}"
+                    android:textColor="@color/fixed_white_1"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/storyboardPlayer"
+                    app:layout_constraintEnd_toEndOf="@+id/storyboardPlayer"
+                    app:layout_constraintStart_toStartOf="@+id/storyboardPlayer"
+                    app:layout_constraintTop_toTopOf="@+id/storyboardPlayer"
+                    tools:layout_constraintVertical_bias="0.9148936"
+                    tools:text="恭喜你，完成初步觉醒"
+                    tools:textSize="15dp" />
 
                 <ImageView
                     setVisible="@{layout.currentStoryboard.data.videoGenerated}"
@@ -110,24 +124,22 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_short_drama_editor_play"
-                    app:layout_constraintBottom_toBottomOf="@+id/previewArea"
-                    app:layout_constraintEnd_toEndOf="@+id/previewArea"
-                    app:layout_constraintStart_toStartOf="@+id/previewArea"
-                    app:layout_constraintTop_toTopOf="@+id/previewArea" />
+                    app:layout_constraintBottom_toBottomOf="@+id/storyboardPlayer"
+                    app:layout_constraintEnd_toEndOf="@+id/storyboardPlayer"
+                    app:layout_constraintStart_toStartOf="@+id/storyboardPlayer"
+                    app:layout_constraintTop_toTopOf="@+id/storyboardPlayer" />
 
                 <LinearLayout
-                    setDimensionRatio="@{layout.workRatio}"
                     setVisible="@{layout.currentStoryboard.data != null &amp;&amp; !layout.currentStoryboard.data.videoGenerated}"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:background="?attr/fillColor1"
                     android:gravity="center"
                     android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="@+id/previewArea"
-                    app:layout_constraintEnd_toEndOf="@+id/previewArea"
-                    app:layout_constraintStart_toStartOf="@+id/previewArea"
-                    app:layout_constraintTop_toTopOf="@+id/previewArea"
-                    tools:layout_constraintDimensionRatio="16:9">
+                    app:layout_constraintBottom_toBottomOf="@+id/playerArea"
+                    app:layout_constraintEnd_toEndOf="@+id/playerArea"
+                    app:layout_constraintStart_toStartOf="@+id/playerArea"
+                    app:layout_constraintTop_toTopOf="@+id/playerArea">
 
                     <com.airbnb.lottie.LottieAnimationView
                         setVisible="@{layout.currentStoryboard.data.videoGenerating}"
@@ -181,7 +193,7 @@
                     app:layout_constraintTop_toTopOf="@+id/rvStoryboard" />
 
                 <LinearLayout
-                    setVisible="@{layout.currentStoryboard.data.subtitleGenerating}"
+                    setVisible="@{layout.currentStoryboard.data.videoGenerated &amp;&amp; layout.currentStoryboard.data.subtitleGenerating}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -206,7 +218,7 @@
                 </LinearLayout>
 
                 <com.kgmedia.fastfilm.widget.BorderConstraintLayout
-                    setVisible="@{layout.currentStoryboard.data.subtitleGenerateFailed}"
+                    setVisible="@{layout.currentStoryboard.data.videoGenerated &amp;&amp; layout.currentStoryboard.data.subtitleGenerateFailed}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="12dp"
@@ -298,7 +310,6 @@
                     android:textColor="?attr/textColor1"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/tvStoryboardDesc"
-                    app:layout_constraintDimensionRatio="345:130"
                     app:layout_constraintStart_toStartOf="@+id/tvStoryboardDesc" />
 
                 <ScrollView

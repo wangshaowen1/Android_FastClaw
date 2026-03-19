@@ -11,12 +11,15 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
+import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
+import com.kgmedia.fastfilm.core.network.apis.request.StoryboardIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
+import com.kgmedia.fastfilm.feature.download.resource.JsonToSrtResource
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
@@ -26,6 +29,7 @@ import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 
 /**
@@ -52,10 +56,23 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                         }
 
                         Player.STATE_ENDED -> {
+                            subtitle.set(null)
                             seekTo(0)
                             play()
                             playing.set(true)
                         }
+                    }
+                }
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    if (isPlaying) {
+                        // 只要 isPlaying 为 true，说明视频已经在动了，必须隐藏 loading
+                        // 这能解决缓存命中时，STATE_READY 没能及时更新 UI 的问题
+                        startProgressUpdater()
+                    } else {
+                        progressJob?.cancel()
+                        // 注意：这里不要盲目设为 Pause，因为 isPlaying=false 可能是 Buffering
                     }
                 }
             })
@@ -67,6 +84,9 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     val genVideoCost by lazy { ObservableInt(0) }
     private var genVideoPrice = 0
     private var loopVideoJob: Job? = null
+    private var loopSubtitleGenStatusJob: Job? = null
+    private var progressJob: Job? = null
+    val subtitle by lazy { ObservableField<String>() }
 
     override fun onCreate() {
         super.onCreate()
@@ -80,13 +100,17 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         storyBoardDesc.value = info.storyBoardDesc
         if (info.videoGenerating) {
             loopVideo(info.taskId)
-        } else {
+        } else if (info.videoGenerated){
+            loopGenSubtitleStatus()
             play()
         }
     }
 
     override fun onCleared() {
         super.onCleared()
+        loopVideoJob?.cancel()
+        loopSubtitleGenStatusJob?.cancel()
+        progressJob?.cancel()
         storyboardPlayer.release()
     }
 
@@ -114,6 +138,25 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                     storyboardPlayer.play()
                     playing.set(true)
                 }
+            }
+        }
+    }
+
+    private fun startProgressUpdater() {
+        progressJob?.cancel()
+        progressJob = launch {
+            while (isActive) {
+                if (storyboardPlayer.isPlaying) {
+                    // 每当播放进度改变或发生事件时触发
+                    val currentTime = storyboardPlayer.currentPosition
+
+                    // 找到当前时间点应该显示的字幕
+                    val currentLine = storyboard.get()?.subtitle?.subtitle?.find {
+                        currentTime in (it.startTime ?: 0)..(it.endTime ?: 0)
+                    }?.text
+                    subtitle.set(currentLine)
+                }
+                delay(200)
             }
         }
     }
@@ -219,11 +262,36 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 }
                 if (storyboard.get()?.videoGenerating != true) {
                     if (storyboard.get()?.videoGenerated == true) {
+                        loopGenSubtitleStatus()
                         play()
                     }
                     break@loop
                 }
                 delay(3000)
+            }
+        }
+    }
+
+    private fun loopGenSubtitleStatus() {
+        loopSubtitleGenStatusJob?.cancel()
+        val storyboard = storyboard.get()
+        val storyboardId = storyboard?.storyboardId
+        if (storyboardId.isNullOrEmpty()) return
+        loopSubtitleGenStatusJob = launch {
+            runCatching {
+                val subtitleInfo = withContext(Dispatchers.IO) {
+                    ApiFactory.apiService.subtitleTaskStatus(StoryboardIdBody(storyboardId)).data?.apply {
+                        if (generated) {
+                            runCatching { assFile = JsonToSrtResource(storyboardId, subtitleContent ?: "").download { } }
+                        }
+                    }
+                }
+                storyboard.subtitle = subtitleInfo
+                this@EditStoryboardViewModel.storyboard.notifyChange()
+            }
+            if (storyboard.subtitleGenerating) {
+                delay(3000)
+                loopGenSubtitleStatus()
             }
         }
     }
