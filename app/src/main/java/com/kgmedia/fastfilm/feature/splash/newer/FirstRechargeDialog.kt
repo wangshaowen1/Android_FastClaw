@@ -7,9 +7,12 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.getScreenWidth
+import com.kgmedia.fastfilm.core.User
+import com.kgmedia.fastfilm.core.ext.onUserSignIn
 import com.kgmedia.fastfilm.core.network.apis.response.FirstRechargeDialogData
 import com.kgmedia.fastfilm.databinding.DialogFirstRechargeBinding
 import com.nhsd.basic.BaseVMDialogFragment
+import com.nhsd.basic.bus.observeEvents
 
 
 class FirstRechargeDialog : BaseVMDialogFragment<DialogFirstRechargeBinding, FirstRechargeViewModel>() {
@@ -44,5 +47,13 @@ class FirstRechargeDialog : BaseVMDialogFragment<DialogFirstRechargeBinding, Fir
     override fun onPrepareView() {
         super.onPrepareView()
         binding.bg.minimumHeight = getScreenWidth()
+
+        observeEvents {
+            onUserSignIn {
+                if (User.get().hasPaid()) {
+                    dismissAllowingStateLoss()
+                }
+            }
+        }
     }
 }
