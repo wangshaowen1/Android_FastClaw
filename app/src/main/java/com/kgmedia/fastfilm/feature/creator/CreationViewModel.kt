@@ -19,10 +19,10 @@ import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigData
 import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
-import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.KEY_MODEL
@@ -75,8 +75,12 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     @ColorInt
     fun getLimitColor(length: Int?): Int {
+        val isMax = length == maxInputLength.get()
+        if (isMax) {
+            "输入字数已达上限".showToast()
+        }
         val attr =
-            if (length == maxInputLength.get()) R.attr.funcColorFailure else R.attr.textColor4
+            if (isMax) R.attr.funcColorFailure else R.attr.textColor4
         return topActivity?.getThemeColor(attr) ?: Color.BLACK
     }
 
