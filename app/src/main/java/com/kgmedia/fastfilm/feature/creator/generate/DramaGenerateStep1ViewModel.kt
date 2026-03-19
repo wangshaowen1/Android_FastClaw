@@ -10,6 +10,7 @@ import com.kgmedia.fastfilm.core.ext.launchPolling
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
 import com.kgmedia.fastfilm.core.network.apis.request.ContinueTaskBody
 import com.kgmedia.fastfilm.core.network.apis.request.PollSummaryData
+import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkInfoUpdateBody
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
@@ -30,6 +31,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     //小说文档扣费后生成的workId，用于轮询
     var workId: String? = null
+    //任务Id
+    var taskId: String? = null
 
     //业务类型
     var model: Int? = null
@@ -65,6 +68,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     /**
      * 轮询小说文档模式下的故事梗概
+     * @param callback 是否是文档模式
      */
     fun pollSummary() {
         // 防抖与去重：如果已经在轮询中，直接 return
@@ -79,8 +83,8 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
             retryOnNetworkError = true, // 遇到断网等异常直接结束，不重试
             apiBlock = {
                 if (isStoryDocumentsMode.get()) mRepo.api.pollNovelDocsSummary(WorkIdBody(workId)) else mRepo.api.pollSummaryResult(
-                    WorkIdBody(
-                        workId
+                    TaskIdBody(
+                        taskId
                     )
                 )
             },
@@ -122,6 +126,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
      */
     fun retrySummary(onSuccess: (() -> Unit)? = null) {
         requestWithLoading({ mRepo.api.retrySummaryTaskFromInspiration(ContinueTaskBody(workId, workType = 1)) }) {
+            taskId = data?.taskId
             onSuccess?.invoke()
         }
     }

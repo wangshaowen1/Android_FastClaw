@@ -121,9 +121,7 @@ class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
         storyId?.let {
             this.storyId = it
         }
-        taskId?.let {
-            this.taskId = it
-        }
+        this.taskId = taskId
         this.step.value = step
     }
 }

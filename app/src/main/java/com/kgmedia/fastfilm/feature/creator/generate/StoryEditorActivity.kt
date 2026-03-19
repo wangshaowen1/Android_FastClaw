@@ -45,12 +45,14 @@ class StoryEditorActivity :
         fun start(
             context: Context?,
             workId: String?,
+            taskId: String?,
             name: String?,
             model: Int? = DramaGenerateConstants.MODEL_INSPIRATION,
         ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
             starter.putExtra(Constants.Extra.MODE, model)
+            starter.putExtra(Constants.Extra.TASK_ID, taskId)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
             starter.putExtra(Constants.Extra.TITLE, name)
             context.startActivity(starter)

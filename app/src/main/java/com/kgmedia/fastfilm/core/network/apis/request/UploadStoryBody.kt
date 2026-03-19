@@ -30,7 +30,8 @@ data class UploadStoryBody(
  */
 data class WorkTaskData(
     val genStatus: Int? = null,
-    val workId: String? = null
+    val workId: String? = null,
+    val taskId: String? = null
 )
 
 /**
