@@ -121,7 +121,7 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
      * 灵感故事梗概失败重新创建任务
      */
     fun retrySummary(onSuccess: (() -> Unit)? = null) {
-        requestWithLoading({ mRepo.api.retrySummaryTaskFromInspiration(ContinueTaskBody(workId, workType = 1)) }) {
+        requestWithLoading({ mRepo.api.retrySummaryTaskFromInspiration(ContinueTaskBody(workId = workId)) }) {
             onSuccess?.invoke()
         }
     }

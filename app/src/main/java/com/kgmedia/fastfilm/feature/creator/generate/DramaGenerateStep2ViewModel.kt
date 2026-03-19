@@ -75,9 +75,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         requestWithLoading({
             val body =
                 ContinueTaskBody(
-                    if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) continueInputContent else null,
-                    workId.value,
-                    episodeId,
+                    workInspiration = if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) continueInputContent else null,
+                    workId = workId.value,
+                    storyId = episodeId,
                     forceCreation = retry
                 )
             when (model) {
