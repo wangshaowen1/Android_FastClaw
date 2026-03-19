@@ -55,7 +55,6 @@ data class SubtitleTaskStatusInfo(
             }
             return field
         }
-    var assFile: File? = null
     val generating get() = genStatus == 1
     val generated get() = genStatus == 2
     val generateFailed get() = genStatus == 3

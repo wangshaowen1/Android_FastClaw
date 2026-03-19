@@ -6,6 +6,7 @@ import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.common.ext.ioScope
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.VideoSynthesisBody
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
@@ -23,7 +24,7 @@ import java.io.File
 data class VideoSynthesisTask(
     val workId: String?,
     val storyId: String?,
-    private val storyboards: List<String>,
+    private val storyboards: List<SimpleStoryboardInfo>,
     var status: Int = STATUS_INIT,
     var reason: String? = ""
 ) {

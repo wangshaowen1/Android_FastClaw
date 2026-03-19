@@ -19,7 +19,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.StoryboardIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.download.resource.JsonToSrtResource
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
@@ -280,11 +279,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         loopSubtitleGenStatusJob = launch {
             runCatching {
                 val subtitleInfo = withContext(Dispatchers.IO) {
-                    ApiFactory.apiService.subtitleTaskStatus(StoryboardIdBody(storyboardId)).data?.apply {
-                        if (generated) {
-                            runCatching { assFile = JsonToSrtResource(storyboardId, subtitleContent ?: "").download { } }
-                        }
-                    }
+                    ApiFactory.apiService.subtitleTaskStatus(StoryboardIdBody(storyboardId)).data
                 }
                 storyboard.subtitle = subtitleInfo
                 this@EditStoryboardViewModel.storyboard.notifyChange()

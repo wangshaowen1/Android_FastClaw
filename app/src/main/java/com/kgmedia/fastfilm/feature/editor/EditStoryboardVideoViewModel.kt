@@ -314,7 +314,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
             "视频生成失败，请重新生成".showToast()
             return
         }
-        val storyboards = adapter.items.mapNotNull { it.data.get()?.videoUrl }
+        val storyboards = adapter.items.mapNotNull { it.data.get() }
         if (storyboards.isEmpty()) {
             return
         }
@@ -336,7 +336,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         }
     }
 
-    private fun doSynthesis(storyboards: List<String>) {
+    private fun doSynthesis(storyboards: List<SimpleStoryboardInfo>) {
         topActivity?.let {
             val dialog = GeneratingDialog(it, "视频合成中...", "请勿退出 或 锁屏")
             synthesisDialog = dialog

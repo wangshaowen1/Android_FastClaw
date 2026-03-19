@@ -12,7 +12,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.GenerateSubtitleBody
 import com.kgmedia.fastfilm.core.network.apis.request.StoryboardIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.download.resource.JsonToSrtResource
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -140,11 +139,7 @@ class ItemStoryboardVM(
         loopSubtitleGenStatusJob = launch {
             runCatching {
                 val subtitleInfo = withContext(Dispatchers.IO) {
-                    ApiFactory.apiService.subtitleTaskStatus(StoryboardIdBody(storyboardId)).data?.apply {
-                        if (generated) {
-                            runCatching { assFile = JsonToSrtResource(storyboardId, subtitleContent ?: "").download { } }
-                        }
-                    }
+                    ApiFactory.apiService.subtitleTaskStatus(StoryboardIdBody(storyboardId)).data
                 }
                 storyboard.subtitle = subtitleInfo
                 data.notifyChange()

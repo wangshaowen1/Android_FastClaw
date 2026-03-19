@@ -1,33 +1,38 @@
 package com.kgmedia.fastfilm.feature.editor
 
 import com.kgmedia.fastfilm.core.network.RetrofitClient
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kuaige.videoedit.ffmpeg.BaseFFmpegTransform
 import com.kuaige.videoedit.ffmpeg.FFmpegCommandBuilder
+import com.kuaige.videoedit.ffmpeg.FFmpegHelper
 import com.kuaige.videoedit.resource.Resource
-import com.kuaige.videoedit.resource.UrlResource
 import java.io.File
 
 /**
  * 音乐视频 (FFmpeg 实现)
  */
 class VideoSynthesisTransform(
-    storyboards: List<String>
+    storyboards: List<SimpleStoryboardInfo>
 ) : BaseFFmpegTransform() {
 
-    override val resourceManager by lazy { VideoSynthesisResourceManager(storyboards.map { UrlResource(it, RetrofitClient.httpClient) }) }
+    override val resourceManager by lazy {
+        VideoSynthesisResourceManager(storyboards.mapNotNull { storyboard ->
+            storyboard.videoUrl?.let { VideoStoryboardResource(it, storyboard, RetrofitClient.httpClient) }
+        })
+    }
 
     override val outputFileName: String
         get() = "VideoSynthesis_${System.nanoTime()}.mp4"
 
     override suspend fun generateCommand(outputFile: File): Pair<String, Long> {
-        // 资源校验：此时所有 Resource 应该都已经下载完成了
         val videos = resourceManager.storyboards?.takeIf { it.isNotEmpty() }
             ?: throw kotlin.IllegalStateException("Video materials missing")
         val builder = FFmpegCommandBuilder()
         val fileListFile = generateConcatFile(videos, outputFile)
         builder.addInput(fileListFile.absolutePath, "-f concat -safe 0")
         val extra = "-c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
-        return builder.build(outputFile.absolutePath, extra) to 300
+        val duration = videos.sumOf { FFmpegHelper.parseDuration(it.file.absolutePath) } / 1000
+        return builder.build(outputFile.absolutePath, extra) to duration
     }
 
     private fun generateConcatFile(videos: List<Resource>, outputFile: File): File {

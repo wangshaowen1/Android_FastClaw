@@ -12,7 +12,15 @@ import java.util.Locale
 /**
  * 字幕转换（JSON -> ASS）
  */
-class JsonToAssResource(private val storyboardId: String, private val json: String, private val assTemplate: String = "lyrics_template.ass") : Resource() {
+class JsonToAssResource(
+    private val storyboardId: String,
+    private val json: String,
+    private val assTemplate: String = "ass_template.ass",
+    private val videoWidth: Int = 1280,
+    private val videoHeight: Int = 720,
+    private val fontSize: Int = 60,
+    private val marginBottom: Int = 100,
+) : Resource() {
 
     // 定义JSON对应的实体类
     data class SubtitleItem(
@@ -46,12 +54,12 @@ class JsonToAssResource(private val storyboardId: String, private val json: Stri
         // 读取 ASS 模板
         val subtitle = runCatching {
             val template = ResourceUtils.readAssets2String(assTemplate)
-//                .replace("#PlayResX#", vw.toString())
-//                .replace("#PlayResY#", vh.toString())
-//                .replace("#Fontsize#", config.subtitleTextSize.toString())
-//                .replace("#MarginV#", config.subtitleMarginBottom.toString())
+                .replace("#PlayResX#", videoWidth.toString())
+                .replace("#PlayResY#", videoHeight.toString())
+                .replace("#Fontsize#", fontSize.toString())
+                .replace("#MarginV#", marginBottom.toString())
             StringBuilder().appendLine(template)
-        }.getOrNull() ?: throw IllegalStateException("Assets 中缺少 lyrics_template.ass")
+        }.getOrNull() ?: throw IllegalStateException("Assets 中缺少 $assTemplate")
 
         // 遍历生成字幕行
         subtitleList.forEachIndexed { index, item ->
