@@ -102,6 +102,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 else -> null
             }
         }) {
+            resetPollingState()
             callBack.invoke()
         }
     }
