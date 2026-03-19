@@ -161,7 +161,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             eventVm.events.collect { event ->
                 when (event) {
                     is MyWorksEvent.ViewDetails -> {
-                        if (event.workInfo?.workType == WorkInfo.NOVEL_UPLOAD && event.workInfo.isNotCreatedEpisode()) {
+                        if (event.workInfo?.isNotCreatedEpisode() == true) {
                             //作品类型：3-小说上传 且是草稿状态
                             mRealVM.getWorkDtl(workId = event.workInfo.workId)
                             return@collect
