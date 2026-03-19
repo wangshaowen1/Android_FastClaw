@@ -22,6 +22,7 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.nhsd.basic.ext.getThemeColor
+import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Job
 
 /**
@@ -171,7 +172,12 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     @ColorInt
     fun getLimitColor(length: Int?): Int {
-        val attr = if (length == maxInputLength.get()) R.attr.funcColorFailure else R.attr.textColor4
+        val isMax = length == maxInputLength.get()
+        if (isMax) {
+            "输入字数已达上限".showToast()
+        }
+        val attr =
+            if (isMax) R.attr.funcColorFailure else R.attr.textColor4
         return topActivity?.getThemeColor(attr) ?: Color.BLACK
     }
 

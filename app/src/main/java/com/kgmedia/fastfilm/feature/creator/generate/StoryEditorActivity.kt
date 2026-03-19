@@ -24,12 +24,6 @@ class StoryEditorActivity :
     companion object {
         const val KEY_STEP = "step"
 
-        //集数范围
-        const val EPISODE_RANGE_CODE = "episodeRangeCode"
-
-        //自定义集数
-        const val CUSTOM_EPISODE_COUNT = "customEpisodeCount"
-
         //来源 来自剧集详情
         const val FROM_SERIES = "fromSeries"
         //来源 来自我的作品
