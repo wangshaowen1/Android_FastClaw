@@ -89,11 +89,8 @@ class DramaGenerateStep1Fragment :
             "故事生成中，请稍候".showToast()
         }
         binding.btnNext.setOnSingleClickListener {
-            if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
-                mRealVM.saveTitle {
-                    hostVm?.nextStep(2, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.getFirstStoryId())
-                }
-                return@setOnSingleClickListener
+            mRealVM.saveTitle {
+                hostVm?.nextStep(2, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.getFirstStoryId())
             }
         }
     }
