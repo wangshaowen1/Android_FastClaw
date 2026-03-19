@@ -994,7 +994,7 @@ interface ApiService {
      * 查询任务概要结果-通用
      */
     @POST(ApiConstants.POLL_SUMMARY_RESULT)
-    suspend fun pollSummaryResult(@Body body: TaskIdBody): ApiResponse<PollSummaryData?>
+    suspend fun pollSummaryResult(@Body body: WorkIdBody): ApiResponse<PollSummaryData?>
 
     /**
      * 查询任务概要结果-通用
@@ -1012,7 +1012,7 @@ interface ApiService {
      * 查询任务剧本结果- 通用
      */
     @POST(ApiConstants.POLL_SCRIPT_RESULT)
-    suspend fun pollScriptResult(@Body body: TaskIdBody): ApiResponse<PollScriptData?>
+    suspend fun pollScriptResult(@Body body: PollScriptBody): ApiResponse<PollScriptData?>
 
     /**
      *小说上传-删除作品草稿

@@ -157,7 +157,6 @@ class CreationFragment :
                         StoryEditorActivity.start(
                             context = mActivity,
                             workId = data?.workId,
-                            taskId = data?.taskId,
                             name = name,
                             model = modelType
                         )

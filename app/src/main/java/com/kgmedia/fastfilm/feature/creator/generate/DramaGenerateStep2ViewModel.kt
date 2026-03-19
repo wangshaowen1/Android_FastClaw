@@ -16,7 +16,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.ContinueTaskBody
 import com.kgmedia.fastfilm.core.network.apis.request.PollScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.PollScriptData
 import com.kgmedia.fastfilm.core.network.apis.request.SaveScriptBody
-import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
@@ -47,11 +46,9 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     //作品ID
     var workId = MutableLiveData<String>()
-    var taskId: String? = null
 
     //剧集id
     var episodeId: String? = null
-    var continueContent: String? = null
 
     //上一集的剧集id,只有续写的时候才有
     var previousStoryId: String? = null
@@ -69,13 +66,15 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
      */
     var storyScriptResult = MutableLiveData<PollScriptData?>()
 
+    //剧集剧本内容
+    var originalJson: String? = null
+
     fun isNovelDocuments() =
         model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS || model == DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS
 
     fun createScriptTask(callBack: () -> Unit) {
         requestWithLoading({
-            //作品类型：1-灵感创作;2-小说改编;3-小说上传;
-            val body = ContinueTaskBody(continueContent, workId.value, episodeId)
+            val body = ContinueTaskBody()
             when (model) {
                 DramaGenerateConstants.MODEL_STORY_DOCUMENTS, DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS -> mRepo.api.continueTaskFromNovelDoc(body)
                 DramaGenerateConstants.MODEL_STORY_SINGLE -> mRepo.api.retryTaskFromSingleEpisode(body)
@@ -87,7 +86,6 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
                 else -> null
             }
         }) {
-            taskId = data?.taskId
             callBack.invoke()
         }
     }
@@ -106,11 +104,18 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             intervalMs = 3000L,
             retryOnNetworkError = true,
             apiBlock = {
+                val bizType = when (model) {
+                    DramaGenerateConstants.MODEL_STORY_SINGLE -> 13
+                    DramaGenerateConstants.MODEL_STORY, DramaGenerateConstants.MODEL_CONTINUE_STORY -> 31
+                    DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION -> 30
+                    else -> null
+                }
+                //业务类型13-单集作品-生成标题/剧本/资产、 30=灵感 31=小说剧集剧本 32=扩写剧集剧本
+                val body = PollScriptBody(workId.value, episodeId, bizType = bizType)
                 if (isNovelDocuments()) {
-                    val body = PollScriptBody(workId.value, episodeId)
                     mRepo.api.pollNovelScript(body)
                 } else {
-                    mRepo.api.pollScriptResult(TaskIdBody(taskId))
+                    mRepo.api.pollScriptResult(body)
                 }
             },
             checkState = { response ->

@@ -58,17 +58,15 @@ class DramaGenerateStep2Fragment :
         activity?.intent?.let { intent ->
             mRealVM.workId.value = hostVm?.workId ?: intent.getStringExtra(Constants.Extra.WORK_ID)
             mRealVM.episodeId = hostVm?.storyId ?: intent.getStringExtra(Constants.Extra.STORY_ID)
-            mRealVM.continueContent = intent.getStringExtra(Constants.Extra.CONTENT)
             mRealVM.previousStoryId = hostVm?.previousStoryId
             mRealVM.model = intent.getIntExtra(Constants.Extra.MODE, 0)
-            mRealVM.taskId = hostVm?.taskId
             mRealVM.chapterIndex = intent.getIntExtra(Constants.Extra.CHAPTER_INDEX, 1)
 
-            scriptGenerate(mRealVM.taskId)
+            scriptGenerate()
         }
     }
 
-    private fun scriptGenerate(taskId: String? = null, retry: Boolean = false) {
+    private fun scriptGenerate(retry: Boolean = false) {
         if (mRealVM.isNovelDocuments()) {
             if (retry) {
                 mRealVM.createScriptTask { startPolling() }
@@ -76,10 +74,6 @@ class DramaGenerateStep2Fragment :
             }
             startPolling()
         } else {
-            if (taskId != null) {//已开启过任务，直接恢复查询
-                startPolling()
-                return
-            }
             mRealVM.createScriptTask { startPolling() }
         }
     }
@@ -96,10 +90,10 @@ class DramaGenerateStep2Fragment :
             }
         })
         binding.btnRegenerate.setOnSingleClickListener {
-            scriptGenerate(null,true)
+            scriptGenerate(true)
         }
         binding.retryBtn.setOnSingleClickListener {
-            scriptGenerate(null,true)
+            scriptGenerate(true)
         }
         binding.btnDelete.setOnSingleClickListener {
             if (mRealVM.isScriptLoading.get()) return@setOnSingleClickListener
@@ -126,17 +120,16 @@ class DramaGenerateStep2Fragment :
         }
     }
 
-    var isNotified = false
     private fun setupTouchInterceptor() {
         val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                 if (mRealVM.isScriptLoading.get()) return super.onSingleTapConfirmed(e)
 
-                if (mRealVM.input.value?.trim().isNullOrEmpty() || isNotified) {
+                if (mRealVM.input.value?.trim().isNullOrEmpty()) {
                     enterEditMode()
                     return super.onSingleTapConfirmed(e)
                 }
-                isNotified = true
+
                 mActivity.showConfirmPrompt(
                     "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.",
                     confirmText = "继续编辑"

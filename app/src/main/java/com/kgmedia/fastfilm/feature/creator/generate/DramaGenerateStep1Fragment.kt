@@ -44,7 +44,6 @@ class DramaGenerateStep1Fragment :
         EventManager.onAppTrack(AppEvent.SF_VIEW_STORY_OUTLINE_PAGE)
         activity?.intent?.let {
             mRealVM.workId = it.getStringExtra(Constants.Extra.WORK_ID)
-            mRealVM.taskId = it.getStringExtra(Constants.Extra.TASK_ID)
             mRealVM.model = it.getIntExtra(Constants.Extra.MODE, 0)
             mRealVM.refreshDisplayContent()
             mRealVM.pollSummary()
@@ -92,7 +91,7 @@ class DramaGenerateStep1Fragment :
         binding.btnNext.setOnSingleClickListener {
             if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS) {
                 mRealVM.saveTitle {
-                    hostVm?.nextStep(2, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.getFirstStoryId(), null)
+                    hostVm?.nextStep(2, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.getFirstStoryId())
                 }
                 return@setOnSingleClickListener
             }
