@@ -101,10 +101,12 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
                 else -> null
             }
-        }) {
+        }, onSuccess = {
             resetPollingState()
             callBack.invoke()
-        }
+        }, onError = {
+            handlePollingFail(null)
+        })
     }
 
     private var scriptPollingJob: Job? = null
@@ -146,6 +148,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     }
 
     private fun resetPollingState() {
+        input.value = ""
         isScriptLoading.set(true)
         nextStepEnabled.set(false)
         outputFail.set(false)
@@ -166,6 +169,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     }
 
     private fun handlePollingFail(data: PollScriptData?) {
+        nextStepEnabled.set(false)
+        input.value = ""
         storyScriptResult.value = data
         isScriptLoading.set(false)
         outputFail.set(true)
