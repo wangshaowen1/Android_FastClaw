@@ -30,7 +30,7 @@ class GuideStep4VideoActivity : BaseViewModelActivity<ActivityGuideStep4VideoBin
         super.onCreate(savedInstanceState)
 
         binding.btnNext.setOnSingleClickListener {
-            MainActivity.start(this, null)
+            MainActivity.startFromNewer(this)
             finish()
         }
     }

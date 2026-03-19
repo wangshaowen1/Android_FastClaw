@@ -17,6 +17,7 @@ import com.fm.openinstall.model.AppData
 import com.google.gson.Gson
 import com.kgmedia.fastfilm.App
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.permissions.requestRxPermissions
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
@@ -62,6 +63,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         val clicks = SparseArray<Long>()
         const val CLICK_INTERVAL_TIME: Long = 500
         private const val KEY_SCHEME = "KEY_SCHEME"
+        const val FROM_NEWER = "Newer"
 
         fun start(activity: Activity?, scheme: String?) {
             if (activity == null) return
@@ -69,6 +71,13 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             scheme?.let {
                 intent.putExtra(KEY_SCHEME, scheme)
             }
+            activity.startActivity(intent)
+        }
+
+        fun startFromNewer(activity: Activity?) {
+            if (activity == null) return
+            val intent = Intent(activity, MainActivity::class.java)
+            intent.putExtra(Constants.Extra.FROM_PAGE, FROM_NEWER)
             activity.startActivity(intent)
         }
     }

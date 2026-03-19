@@ -5,6 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
@@ -34,6 +35,7 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
 
     //是否登录
     val isLogin by lazy { ObservableBoolean(false) }
+    val fromPage by lazy { mBundle.getString(Constants.Extra.FROM_PAGE) }
 
     private var fetchingUserInfo = false
 
@@ -116,22 +118,22 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
 
     fun initHomeConfig() {
         launch {
-            // 1. 检查本地和登录状态，提前拦截
-            val canShowFirstRecharge = !User.get().hasPaid() && !Config.get().isFirstRechargeShown(FirstRechargeDialog.SCENE_HOME)
-
-            if (canShowFirstRecharge) {
-                // 2. 请求首充接口 (这里必须先于活动配置完成)
-                val firstRechargeResponse = mRepo.api.getFirstRechargeDialogInfo()
-                if (firstRechargeResponse.data != null) {
-                    isFirstRechargeLogicActive = true
-                    firstRechargeCache.value = firstRechargeResponse.data
+            if (fromPage == MainActivity.FROM_NEWER) {
+                // 1. 检查本地和登录状态，提前拦截
+                val canShowFirstRecharge = !User.get().hasPaid() && !Config.get().isFirstRechargeShown(FirstRechargeDialog.SCENE_HOME)
+                if (canShowFirstRecharge) {
+                    // 2. 请求首充接口 (这里必须先于活动配置完成)
+                    val firstRechargeResponse = mRepo.api.getFirstRechargeDialogInfo()
+                    if (firstRechargeResponse.data != null) {
+                        isFirstRechargeLogicActive = true
+                        firstRechargeCache.value = firstRechargeResponse.data
+                    } else {
+                        isFirstRechargeLogicActive = false
+                    }
                 } else {
                     isFirstRechargeLogicActive = false
                 }
-            } else {
-                isFirstRechargeLogicActive = false
             }
-
             // 3. 首充判断结束后，再请求/分发活动配置
             val activityResponse = mRepo.api.activityConfig()
             // 这里赋值后，HomeFragment 会收到通知，此时 isFirstRechargeLogicActive 状态已经确定了
