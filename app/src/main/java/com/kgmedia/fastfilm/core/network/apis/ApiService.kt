@@ -1086,6 +1086,12 @@ interface ApiService {
     suspend fun retryTaskFromSingleEpisode(@Body body: ContinueTaskBody): ApiResponse<WorkTaskData?>
 
     /**
+     *  小说上传-剧集剧本-创建任务
+     */
+    @POST(ApiConstants.CONTINUE_TASK_FROM_NOVEL_DOC)
+    suspend fun continueTaskFromNovelDoc(@Body body: ContinueTaskBody): ApiResponse<WorkTaskData?>
+
+    /**
      * 字幕-触发分镜字幕生成
      */
     @POST(ApiConstants.GENERATE_SUBTITLE)

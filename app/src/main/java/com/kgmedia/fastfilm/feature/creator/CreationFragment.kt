@@ -174,7 +174,7 @@ class CreationFragment :
                             range,
                             custom, ratio, style
                         )
-                        if (Config.get().notifyPowerConsume()) {
+                        if (Config.get().notifyPowerConsume(0)) {
                             StoryGenerateConfirmDialog.newInstance(body, this@CreationFragment.mRealVM.analysisResult?.estimatedPower?.roundToInt())
                                 .apply {
                                     onConfirm = { data -> startEditor(data) }

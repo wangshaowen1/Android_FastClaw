@@ -14,7 +14,6 @@ import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
 import com.kgmedia.fastfilm.core.AppRepository
-import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.showRechargeDialog
@@ -27,7 +26,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAddVM
 import com.kgmedia.fastfilm.feature.creator.assets.ItemAssetVM
-import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.dp
@@ -301,13 +299,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
             calcCost()
             return
         }
-        if (cost > 0 && Config.get().notifyPowerConsume()) {
-            PowerConsumeConfirmDialog.show(PowerConsumeConfirmDialog.SCENE_GENERATE_STORYBOARD_VIDEO, cost)?.apply {
-                onConfirm = { generate(cost, toNextStep) }
-            }
-        } else {
-            generate(cost, toNextStep)
-        }
+        generate(cost, toNextStep)
     }
 
     private fun generate(cost: Int, toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {

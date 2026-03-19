@@ -99,7 +99,8 @@ data class RollNovelStructure(
 
 data class PollScriptBody(
     val workId: String? = null,
-    val storyId: String? = null
+    val storyId: String? = null,
+    val bizType: Int? = null//业务类型13-单集作品-生成标题/剧本/资产、30=灵感、31=小说剧集剧本 32=扩写剧集剧本
 )
 
 data class PollScriptData(

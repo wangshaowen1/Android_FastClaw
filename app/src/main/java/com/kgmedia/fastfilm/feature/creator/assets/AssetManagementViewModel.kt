@@ -13,7 +13,6 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
-import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.showRechargeDialog
@@ -27,7 +26,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
-import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.dp
@@ -263,27 +261,28 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         )
     }
 
-    private fun SimpleRoleInfo.toItemAssetVM() = ItemRoleVM(workId, storyId, ::onItemChanged, this).applyConfig()
+    private fun SimpleRoleInfo.toItemAssetVM() =
+        ItemRoleVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
 
-    private fun SimpleSceneInfo.toItemAssetVM() = ItemSceneVM(workId, storyId, ::onItemChanged, this).applyConfig()
+    private fun SimpleSceneInfo.toItemAssetVM() = ItemSceneVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
 
-    private fun SimplePropInfo.toItemAssetVM() = ItemPropVM(workId, storyId, ::onItemChanged, this).applyConfig()
+    private fun SimplePropInfo.toItemAssetVM() = ItemPropVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
 
     fun addRole(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        adapter.add(index, ItemRoleVM(workId, storyId, ::onItemChanged, null).applyConfig())
+        adapter.add(index, ItemRoleVM(workId, storyId, ::onItemChanged, null, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig())
         onItemChanged()
     }
 
     fun addScene(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        adapter.add(index, ItemSceneVM(workId, storyId, ::onItemChanged, null).applyConfig())
+        adapter.add(index, ItemSceneVM(workId, storyId, ::onItemChanged, null, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig())
         onItemChanged()
     }
 
     fun addProp(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
-        adapter.add(index, ItemPropVM(workId, storyId, ::onItemChanged, null).applyConfig())
+        adapter.add(index, ItemPropVM(workId, storyId, ::onItemChanged, null, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig())
         onItemChanged()
     }
 
@@ -394,13 +393,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             calcCost()
             return
         }
-        if (cost > 0 && Config.get().notifyPowerConsume()) {
-            PowerConsumeConfirmDialog.show(PowerConsumeConfirmDialog.SCENE_GENERATE_ASSETS_IMAGE, cost)?.apply {
-                onConfirm = { generate(cost) }
-            }
-        } else {
-            generate(cost)
-        }
+        generate(cost)
     }
 
     private fun generate(cost: Int) {
@@ -473,16 +466,27 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private fun calcCost() {
         cost.set(0)
         launch {
-            if (aiPrice <= 0) {
-                withContext(Dispatchers.IO) {
-                    mRepo.api.queryAiPrice(StrategyTypeBody(1)).data?.pointNum?.let { aiPrice = it }
-                }
-            }
+            getOrRequestAiPrice()
             if (aiPrice > 0) {
                 val num = adapter.items.count { it is ItemAssetVM<*> && it.status.get().let { status -> status < 1 || status == 3 } }
                 cost.set(aiPrice * num)
             }
         }
+    }
+
+    /**
+     * 确保获取到有效的 AI 价格
+     */
+    suspend fun getOrRequestAiPrice(): Int {
+        if (aiPrice <= 0) {
+            return withContext(Dispatchers.IO) {
+                val response = mRepo.api.queryAiPrice(StrategyTypeBody(1))
+                val price = response.data?.pointNum ?: 0
+                aiPrice = price
+                price
+            }
+        }
+        return aiPrice
     }
 
     private fun generateAllStoryboardDescription(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)?) {

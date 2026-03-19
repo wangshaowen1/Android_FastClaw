@@ -66,8 +66,12 @@ class DramaGenerateStep2Fragment :
         }
     }
 
-    private fun scriptGenerate() {
+    private fun scriptGenerate(retry: Boolean = false) {
         if (mRealVM.isNovelDocuments()) {
+            if (retry) {
+                mRealVM.createScriptTask { startPolling() }
+                return
+            }
             startPolling()
         } else {
             mRealVM.createScriptTask { startPolling() }
@@ -86,10 +90,10 @@ class DramaGenerateStep2Fragment :
             }
         })
         binding.btnRegenerate.setOnSingleClickListener {
-            scriptGenerate()
+            scriptGenerate(true)
         }
         binding.retryBtn.setOnSingleClickListener {
-            scriptGenerate()
+            scriptGenerate(true)
         }
         binding.btnDelete.setOnSingleClickListener {
             if (mRealVM.isScriptLoading.get()) return@setOnSingleClickListener

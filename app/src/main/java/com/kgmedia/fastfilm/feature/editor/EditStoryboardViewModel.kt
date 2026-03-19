@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
-import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
@@ -18,7 +17,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
@@ -149,13 +147,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
             getGenPrice()
             return
         }
-        if (cost > 0 && Config.get().notifyPowerConsume()) {
-            PowerConsumeConfirmDialog.show(PowerConsumeConfirmDialog.SCENE_REGENERATE_STORYBOARD_VIDEO, cost)?.apply {
-                onConfirm = { generate(storyboard, prompt, cost, finish) }
-            }
-        } else {
-            generate(storyboard, prompt, cost, finish)
-        }
+        generate(storyboard, prompt, cost, finish)
     }
 
     private fun generate(storyboard: SimpleStoryboardInfo, prompt: String, cost: Int, finish: Boolean = false) {

@@ -74,7 +74,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="#9A90FF"
                 android:textSize="12sp"
+                android:text="@{item.data.pointMarketingText}"
                 setVisible="@{item.data.discountValid}"
+                tools:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/tvPrice"
                 app:layout_constraintEnd_toEndOf="@+id/scope"
                 app:layout_constraintStart_toStartOf="@+id/scope"
@@ -105,6 +107,7 @@
             android:paddingVertical="3dp"
             android:text="@{item.discountText}"
             android:textColor="@color/white"
+            android:fontFamily="monospace"
             android:textSize="10sp"
             tools:text="赠30% 23:59:59" />
     </FrameLayout>

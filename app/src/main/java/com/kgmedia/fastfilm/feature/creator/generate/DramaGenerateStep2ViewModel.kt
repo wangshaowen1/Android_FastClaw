@@ -76,6 +76,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         requestWithLoading({
             val body = ContinueTaskBody()
             when (model) {
+                DramaGenerateConstants.MODEL_STORY_DOCUMENTS, DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS -> mRepo.api.continueTaskFromNovelDoc(body)
                 DramaGenerateConstants.MODEL_STORY_SINGLE -> mRepo.api.retryTaskFromSingleEpisode(body)
                 DramaGenerateConstants.MODEL_STORY, DramaGenerateConstants.MODEL_CONTINUE_STORY -> mRepo.api.continueTaskFromNovel(body)
                 DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION -> mRepo.api.createTaskFromInspiration(
@@ -103,7 +104,14 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             intervalMs = 3000L,
             retryOnNetworkError = true,
             apiBlock = {
-                val body = PollScriptBody(workId.value, episodeId)
+                val bizType = when (model) {
+                    DramaGenerateConstants.MODEL_STORY_SINGLE -> 13
+                    DramaGenerateConstants.MODEL_STORY, DramaGenerateConstants.MODEL_CONTINUE_STORY -> 31
+                    DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION -> 30
+                    else -> null
+                }
+                //业务类型13-单集作品-生成标题/剧本/资产、 30=灵感 31=小说剧集剧本 32=扩写剧集剧本
+                val body = PollScriptBody(workId.value, episodeId, bizType = bizType)
                 if (isNovelDocuments()) {
                     mRepo.api.pollNovelScript(body)
                 } else {

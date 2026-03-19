@@ -30,11 +30,10 @@ class PowerConsumeConfirmDialog : BaseBottomPushVMDialogFragment<DialogPowerCons
          */
         const val SCENE_REGENERATE_STORYBOARD_VIDEO = 5
 
-        fun show(scene: Int, cost: Int): PowerConsumeConfirmDialog? {
+        fun show(cost: Int): PowerConsumeConfirmDialog? {
             val manager = (topActivity as? FragmentActivity)?.supportFragmentManager ?: return null
             val fragment = PowerConsumeConfirmDialog()
             fragment.arguments = Bundle().apply {
-                putInt(Constants.Extra.TYPE, scene)
                 putInt(Constants.Extra.COST, cost)
             }
             fragment.show(manager)
@@ -49,7 +48,7 @@ class PowerConsumeConfirmDialog : BaseBottomPushVMDialogFragment<DialogPowerCons
         binding.btnConfirm.setOnSingleClickListener {
             if (PowerRechargeDialog.checkLowBalance(mRealVM.cost)) return@setOnSingleClickListener
             if (mRealVM.checkedPolicy.get()) {
-                Config.get().notifyPowerConsumeClose()
+                Config.get().notifyPowerConsumeClose(1)
             }
             onConfirm.invoke()
             dismissAllowingStateLoss()

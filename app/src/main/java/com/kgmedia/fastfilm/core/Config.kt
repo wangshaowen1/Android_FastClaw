@@ -381,12 +381,12 @@ class Config : NetworkChangedListener {
         return sp.getLong("activity_float_show_time_$id", 0L)
     }
 
-    fun notifyPowerConsume(): Boolean {
-        return sp.getBoolean("notifyPowerConsume", true)
+    fun notifyPowerConsume(scene: Int): Boolean {
+        return sp.getBoolean("notifyPowerConsume$scene", true)
     }
 
-    fun notifyPowerConsumeClose() {
-        sp.putBoolean("notifyPowerConsume", false)
+    fun notifyPowerConsumeClose(scene: Int) {
+        sp.putBoolean("notifyPowerConsume$scene", false)
     }
 
     fun isFirstRechargeShown(scene: Int): Boolean {

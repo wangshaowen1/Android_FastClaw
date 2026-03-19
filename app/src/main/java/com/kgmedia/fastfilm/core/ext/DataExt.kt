@@ -259,5 +259,6 @@ suspend fun showFirstRecharge(): Boolean {
     }.data
     if (firstRechargeDialogData == null) return false
     FirstRechargeDialog.show(firstRechargeDialogData)
+    Config.get().markFirstRechargeShown(FirstRechargeDialog.SCENE_OTHER)
     return true
 }

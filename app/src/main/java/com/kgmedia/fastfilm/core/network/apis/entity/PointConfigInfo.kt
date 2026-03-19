@@ -26,6 +26,7 @@ data class PointConfigInfo(
     val isDefault: Int?,
     val pointMarketingTime: Long?,//算力营销倒计时截止时间.空则代表不需要受限制
     val pointMarketingText: String?,//算力营销倒计时文本
+    val pointMarketingTag: String?,//算力营销倒计时文本
 ) : Parcelable {
 
     fun isDiscountValid(): Boolean {
@@ -43,6 +44,8 @@ data class PointConfigInfo(
         val hour = time / 1000 / 60 / 60
         val minute = time / 1000 / 60 % 60
         val second = time / 1000 % 60
-        return String.format("$pointMarketingText %02d:%02d:%02d", hour, minute, second)
+
+        // 将 tag 作为第一个参数传入，这样它包含什么特殊字符都不会报错
+        return String.format("%s %02d:%02d:%02d", pointMarketingTag ?: "", hour, minute, second)
     }
 }

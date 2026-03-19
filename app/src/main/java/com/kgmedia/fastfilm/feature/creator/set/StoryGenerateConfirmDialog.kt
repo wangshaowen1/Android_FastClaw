@@ -33,7 +33,7 @@ class StoryGenerateConfirmDialog : BaseBottomPushVMDialogFragment<DialogStoryGen
         binding.btnConfirm.setOnClickListener {
             mRealVM.confirmPowerConsume { data ->
                     if (mRealVM.checkedPolicy.get()) {
-                        Config.get().notifyPowerConsumeClose()
+                        Config.get().notifyPowerConsumeClose(0)
                     }
                     onConfirm.invoke(data)
                     dismissAllowingStateLoss()

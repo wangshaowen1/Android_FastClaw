@@ -42,7 +42,7 @@ class DramaGenerateConstants {
         /**
          * 单集短片创作
          */
-        const val MODEL_STORY_SINGLE = 1003
+        const val MODEL_STORY_SINGLE = 13
 
         /**
          * 剧集梗概

@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.creator.assets
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.ext.showRechargeDialog
@@ -16,7 +17,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.edit.ReferenceHistoricalImageryDialog
-import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
+import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -27,7 +28,8 @@ class ItemSceneVM(
     workId: String?,
     storyId: String?,
     onItemChanged: () -> Unit,
-    data: SimpleSceneInfo?
+    data: SimpleSceneInfo?,
+    private val getAiPriceProvider: suspend () -> Int
 ) : ItemAssetVM<SimpleSceneInfo>(workId, storyId, onItemChanged, data) {
 
     override val assetType: String = "场景"
@@ -47,13 +49,33 @@ class ItemSceneVM(
             "请先填写场景名称".showToast()
             return
         }
-        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-        if (data.get()?.hasHistory == true && fragmentManager != null) {
-            ReferenceHistoricalImageryDialog.newInstance(data.get()?.sceneId, storyId, workId, ReferenceHistoricalImageryDialog.BIZ_TYPE_SCENE_IMAGE)
-                .apply { onUserReference = { generate(scenePrompt.toString(), sceneName.toString(), it) } }
-                .show(fragmentManager)
+        val generateTask = {
+            val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
+            if (data.get()?.hasHistory == true && fragmentManager != null) {
+                ReferenceHistoricalImageryDialog.newInstance(
+                    data.get()?.sceneId,
+                    storyId,
+                    workId,
+                    ReferenceHistoricalImageryDialog.BIZ_TYPE_SCENE_IMAGE
+                )
+                    .apply { onUserReference = { generate(scenePrompt.toString(), sceneName.toString(), it) } }
+                    .show(fragmentManager)
+            } else {
+                generate(scenePrompt.toString(), sceneName.toString())
+            }
+        }
+
+        if (Config.get().notifyPowerConsume(1)) {
+            launch {
+                val cost = getAiPriceProvider()
+                PowerConsumeConfirmDialog.show(cost)?.apply {
+                    onConfirm = {
+                        generateTask()
+                    }
+                }
+            }
         } else {
-            generate(scenePrompt.toString(), sceneName.toString())
+            generateTask()
         }
     }
 
