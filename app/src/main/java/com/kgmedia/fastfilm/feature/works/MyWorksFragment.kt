@@ -204,6 +204,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 storyId = null,
                 workTitle = it.workTitle,
                 chapterIndex = 1,
+                workType = it.workType,
                 model = AppRouter.getModel(workType = it.workType, sortNo = 1),
                 videoRatio = it.workRatio,
                 from = StoryEditorActivity.FROM_MY_WORKS

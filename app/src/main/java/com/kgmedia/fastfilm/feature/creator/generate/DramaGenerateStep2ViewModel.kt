@@ -40,12 +40,14 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
 
     //业务类型
     var model: Int? = null
+    var workType: Int? = null
 
     //章节序号
     var chapterIndex: Int? = 1
 
     //作品ID
     var workId = MutableLiveData<String>()
+    var continueInputContent: String? = null
 
     //剧集id
     var episodeId: String? = null
@@ -66,17 +68,23 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
      */
     var storyScriptResult = MutableLiveData<PollScriptData?>()
 
-    //剧集剧本内容
-    var originalJson: String? = null
-
     fun isNovelDocuments() =
         model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS || model == DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS
 
-    fun createScriptTask(callBack: () -> Unit) {
+    fun createScriptTask(retry: Boolean = false, callBack: () -> Unit) {
         requestWithLoading({
-            val body = ContinueTaskBody()
+            val body =
+                ContinueTaskBody(
+                    if (model == DramaGenerateConstants.MODEL_CONTINUE_STORY) continueInputContent else null,
+                    workId.value,
+                    episodeId,
+                    forceCreation = retry
+                )
             when (model) {
-                DramaGenerateConstants.MODEL_STORY_DOCUMENTS, DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS -> mRepo.api.continueTaskFromNovelDoc(body)
+                DramaGenerateConstants.MODEL_STORY_DOCUMENTS, DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS -> mRepo.api.continueTaskFromNovelDoc(
+                    body
+                )
+
                 DramaGenerateConstants.MODEL_STORY_SINGLE -> mRepo.api.retryTaskFromSingleEpisode(body)
                 DramaGenerateConstants.MODEL_STORY, DramaGenerateConstants.MODEL_CONTINUE_STORY -> mRepo.api.continueTaskFromNovel(body)
                 DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION -> mRepo.api.createTaskFromInspiration(
@@ -104,14 +112,8 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
             intervalMs = 3000L,
             retryOnNetworkError = true,
             apiBlock = {
-                val bizType = when (model) {
-                    DramaGenerateConstants.MODEL_STORY_SINGLE -> 13
-                    DramaGenerateConstants.MODEL_STORY, DramaGenerateConstants.MODEL_CONTINUE_STORY -> 31
-                    DramaGenerateConstants.MODEL_INSPIRATION, DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION -> 30
-                    else -> null
-                }
-                //业务类型13-单集作品-生成标题/剧本/资产、 30=灵感 31=小说剧集剧本 32=扩写剧集剧本
-                val body = PollScriptBody(workId.value, episodeId, bizType = bizType)
+                //作品类型：1-灵感创作;2-小说改编;
+                val body = PollScriptBody(workId.value, episodeId, workType = workType)
                 if (isNovelDocuments()) {
                     mRepo.api.pollNovelScript(body)
                 } else {

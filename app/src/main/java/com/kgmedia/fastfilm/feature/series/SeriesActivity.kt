@@ -157,6 +157,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                 storyId = it.sequelStoryId,
                 previousStoryId = it.storyId,
                 chapterIndex = (it.sortNo ?: 0) + 1,
+                workType = workInfo.workType,
                 model = getModel(workInfo.workType),
                 videoRatio = it.workRatio,
                 from = StoryEditorActivity.FROM_SERIES
@@ -345,6 +346,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             storyId = info?.storyId,
             previousStoryId = lastInfo?.storyId,
             chapterIndex = info?.sortNo ?: 1,
+            workType = workInfo.workType,
             model = getModel(workInfo.workType),
             videoRatio = workInfo.workRatio,
             from = StoryEditorActivity.FROM_SERIES

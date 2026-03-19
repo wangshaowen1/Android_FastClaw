@@ -746,7 +746,7 @@ object ApiConstants {
     /**
      * 单集生成任务-重试任务
      */
-    const val RETRY_TASK_FROM_SINGLE_EPISODE = "ai/story/script/single/retryWorkTask"
+    const val RETRY_TASK_FROM_SINGLE_EPISODE = "ai/story/script/single/retry/createWorkTask"
 
     /**
      * 小说上传-剧集剧本-创建任务

@@ -20,5 +20,5 @@ data class ContinueTaskBody(
     val workInspiration: String? = null,//作品灵感（小说内容）小说续写得时候传
     val workId: String? = null,
     val storyId: String? = null,
-    val workType: Int? = null,//作品类型：1-灵感创作;2-小说改编;3-小说上传;
+    val forceCreation: Boolean? = null,//是否强制创建，默认为false
 ) : Parcelable

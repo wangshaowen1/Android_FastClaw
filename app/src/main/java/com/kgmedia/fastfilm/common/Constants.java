@@ -90,8 +90,7 @@ public class Constants {
         @NotNull
         String CONTENT = "content";
 
-        //歌曲信息
-        String TRACK = "track";
+        String WORK_TYPE = "WORK_TYPE";
         //举报场景  1-音乐播放界面举报
         String REPORT_SCENE = "reportScene";
         //举报关联ID，举报音乐则是音乐ID

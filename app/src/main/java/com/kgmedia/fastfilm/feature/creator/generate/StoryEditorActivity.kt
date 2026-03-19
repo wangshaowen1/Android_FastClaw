@@ -46,12 +46,14 @@ class StoryEditorActivity :
             context: Context?,
             workId: String?,
             name: String?,
+            workType: Int? = null,
             model: Int? = DramaGenerateConstants.MODEL_INSPIRATION,
         ) {
             val context = context ?: return
             val starter = Intent(context, StoryEditorActivity::class.java)
             starter.putExtra(Constants.Extra.MODE, model)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
+            starter.putExtra(Constants.Extra.WORK_TYPE, workType)
             starter.putExtra(Constants.Extra.TITLE, name)
             context.startActivity(starter)
         }
@@ -71,6 +73,7 @@ class StoryEditorActivity :
             chapterIndex: Int? = 1,
             //剧集内容，续写小说的时候需要
             dramaContent: String? = null,
+            workType: Int? = null,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
             videoRatio: String? = null,
             from: String? = null
@@ -80,6 +83,7 @@ class StoryEditorActivity :
             starter.putExtra(Constants.Extra.MODE, model)
             starter.putExtra(Constants.Extra.TITLE, workTitle)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
+            starter.putExtra(Constants.Extra.WORK_TYPE, workType)
             starter.putExtra(Constants.Extra.STORY_ID, storyId)
             starter.putExtra(Constants.Extra.PREVIOUS_STORY_ID, previousStoryId)
             starter.putExtra(Constants.Extra.CHAPTER_INDEX, chapterIndex)
@@ -102,6 +106,7 @@ class StoryEditorActivity :
             workTitle: String? = null,
             //当前章节的序号
             chapterIndex: Int? = 1,
+            workType: Int? = null,
             model: Int? = DramaGenerateConstants.MODEL_CONTINUE_INSPIRATION,
             videoRatio: String? = null,
             from: String? = null
@@ -115,6 +120,7 @@ class StoryEditorActivity :
             starter.putExtra(Constants.Extra.TITLE, workTitle)
             starter.putExtra(Constants.Extra.RESTORE, true)
             starter.putExtra(Constants.Extra.CHAPTER_INDEX, chapterIndex)
+            starter.putExtra(Constants.Extra.WORK_TYPE, workType)
             starter.putExtra(Constants.Extra.MODE, model)
             starter.putExtra(Constants.Extra.VIDEO_RATIO, videoRatio)
             starter.putExtra(Constants.Extra.FROM_PAGE,from)

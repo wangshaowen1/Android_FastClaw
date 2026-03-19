@@ -287,6 +287,7 @@ object AppRouter : IRouter {
                     workTitle = workTitle,
                     taskId = info.taskGenResultStoryVO?.taskId,
                     chapterIndex = sortNo,
+                    workType = workType,
                     model = getModel(totalEpisodeCnt, workType, sortNo, info.isFirstCreated()),
                     videoRatio = info.workRatio,
                     from = from

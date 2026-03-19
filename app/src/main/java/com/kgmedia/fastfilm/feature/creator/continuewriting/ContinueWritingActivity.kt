@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.databinding.ActivityContinueWritingBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
@@ -166,6 +167,7 @@ class ContinueWritingActivity :
                 storyId = saveSequelNovelStory.storyId,
                 chapterIndex = (mRealVM.episodeInfo.value?.sortNo ?: 0) + 1,
                 previousStoryId = mRealVM.episodeInfo.value?.storyId,
+                workType = WorkInfo.NOVEL_CREATION,
                 model = DramaGenerateConstants.MODEL_CONTINUE_STORY,
                 dramaContent = mRealVM.input.value,
                 videoRatio = mRealVM.episodeInfo.value?.workRatio

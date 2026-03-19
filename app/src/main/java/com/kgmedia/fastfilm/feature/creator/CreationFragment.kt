@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
@@ -151,6 +152,11 @@ class CreationFragment :
                         this@CreationFragment.mRealVM.inspirationModel() -> DramaGenerateConstants.MODEL_INSPIRATION
                         else -> DramaGenerateConstants.MODEL_STORY
                     }
+                    val workType = when {
+                        isFileModel -> WorkInfo.NOVEL_UPLOAD
+                        this@CreationFragment.mRealVM.inspirationModel() -> WorkInfo.INSPIRATION_CREATION
+                        else -> WorkInfo.NOVEL_CREATION
+                    }
 
                     val startEditor: (WorkTaskData?) -> Unit = { data ->
                         //只有小说文档模式有data
@@ -158,6 +164,7 @@ class CreationFragment :
                             context = mActivity,
                             workId = data?.workId,
                             name = name,
+                            workType = workType,
                             model = modelType
                         )
                     }
