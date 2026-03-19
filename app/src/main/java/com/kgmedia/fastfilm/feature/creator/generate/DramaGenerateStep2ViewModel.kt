@@ -72,6 +72,11 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
         model == DramaGenerateConstants.MODEL_STORY_DOCUMENTS || model == DramaGenerateConstants.MODE_CONTINUE_WRITING_NOVEL_DOCUMENTS
 
     fun createScriptTask(retry: Boolean = false, callBack: () -> Unit) {
+        if (model == DramaGenerateConstants.MODEL_STORY_SINGLE && !retry) {
+            callBack.invoke()
+            return
+        }
+
         requestWithLoading({
             val body =
                 ContinueTaskBody(
