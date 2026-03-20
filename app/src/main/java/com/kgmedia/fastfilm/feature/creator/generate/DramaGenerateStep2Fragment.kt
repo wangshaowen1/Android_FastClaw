@@ -1,16 +1,11 @@
 package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.animation.ObjectAnimator
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.animation.LinearInterpolator
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
@@ -53,49 +48,7 @@ class DramaGenerateStep2Fragment :
 
     override fun onPrepareView() {
         super.onPrepareView()
-//        binding.root.applySmartFocusManager()
-
-        // 1. 替代 applySmartFocusManager 的点击空白处清理焦点功能
-        binding.root.setOnClickListener {
-            val focusedChild = binding.root.findFocus()
-            if (focusedChild is EditText) {
-                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                imm?.hideSoftInputFromWindow(focusedChild.windowToken, 0)
-                focusedChild.clearFocus()
-            }
-        }
-
-        // 2. 合并的 WindowInsets 监听（同时处理“布局推顶”和“收起清理焦点”）
-        var isKeyboardOpen = false
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
-            val isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-
-            // --- 逻辑 A：处理键盘高度，动态推顶布局 ---
-            if (isKeyboardVisible) {
-                view.setPadding(systemBars.left,0, systemBars.right, imeInsets.bottom)
-            } else {
-                view.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
-            }
-
-            // --- 逻辑 B：处理键盘收起时的焦点清理（原 applySmartFocusManager 里的逻辑）---
-            if (isKeyboardOpen && !isKeyboardVisible) {
-                val focusedChild = view.findFocus()
-                if (focusedChild is EditText) {
-                    view.post {
-                        if (view.isAttachedToWindow) {
-                            focusedChild.clearFocus()
-                        }
-                    }
-                }
-            }
-            isKeyboardOpen = isKeyboardVisible
-
-            insets
-        }
-
-
+        binding.root.applySmartFocusManager()
         EventManager.onAppTrack(AppEvent.SF_VIEW_SCRIPT_PAGE)
         parseIntentData()
         initView()
