@@ -11,6 +11,8 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateStoryboardBody
@@ -99,7 +101,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         storyBoardDesc.value = info.storyBoardDesc
         if (info.videoGenerating) {
             loopVideo(info.taskId)
-        } else if (info.videoGenerated){
+        } else if (info.videoGenerated) {
             loopGenSubtitleStatus()
             play()
         }
@@ -283,6 +285,9 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                 }
                 storyboard.subtitle = subtitleInfo
                 this@EditStoryboardViewModel.storyboard.notifyChange()
+                if (subtitleInfo?.generateFailed == true) {
+                    EventManager.onAppTrack(AppEvent.SF_VIEW_SUBTITLE_FAIL_PROMT)
+                }
             }
             if (storyboard.subtitleGenerating) {
                 delay(3000)

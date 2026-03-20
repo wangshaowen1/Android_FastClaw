@@ -4,6 +4,8 @@ import androidx.databinding.ObservableBoolean
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
@@ -129,6 +131,7 @@ class ItemStoryboardVM(
                     data.notifyChange()
                 })
         }
+        EventManager.onAppTrack(AppEvent.SF_CLICK_SUBTITLE_FAIL_PROMT_BUTTON)
     }
 
     private fun loopGenSubtitleStatus() {
@@ -143,6 +146,9 @@ class ItemStoryboardVM(
                 }
                 storyboard.subtitle = subtitleInfo
                 data.notifyChange()
+                if (subtitleInfo?.generateFailed == true) {
+                    EventManager.onAppTrack(AppEvent.SF_VIEW_SUBTITLE_FAIL_PROMT)
+                }
             }
             if (storyboard.subtitleGenerating) {
                 delay(3000)
