@@ -203,6 +203,11 @@ object AppEvent {
     const val SF_VIEW_SIGN_PUBLISH_MAIN_PAGE = "sf_view_sign_publish_main_page"
 
     /**
+     *快出片｜课程页面支付成功
+     */
+    const val SF_CLICK_COURSE_PAYMENT_BUTTON_PAYSUCCESS = "sf_click_course_payment_button_paysuccess"
+
+    /**
      *快出片｜算力商城页面支付成功
      */
     const val SF_CLICK_RECHARGE_PAGE_PAYSUCCESS = "sf_click_recharge_page_paysuccess"

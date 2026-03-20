@@ -72,9 +72,9 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     confirm = {})
             } else {
                 if (mRealVM.anyStoryboardGenerating()) {
-                    "AI正在生成中，已自动保存为草稿".showToast()
+                    "AI正在生成中，已自动保存".showToast()
                 } else {
-                    "已自动保存为草稿".showToast()
+                    "已自动保存".showToast()
                 }
                 if (from != StoryEditorActivity.FROM_SERIES) {
                     SeriesActivity.start(mRealVM.workId)
