@@ -3,6 +3,8 @@ package com.kgmedia.fastfilm.feature.splash.newer
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.ActivityGuideStep1AdBinding
 import com.kgmedia.fastfilm.feature.splash.SplashViewModel
 import com.nhsd.basic.BaseViewModelActivity
@@ -23,8 +25,9 @@ class GuideStep1AdActivity : BaseViewModelActivity<ActivityGuideStep1AdBinding, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        EventManager.onAppTrack(AppEvent.SF_VIEW_BEGINNER_CREATION_GUIDE_PAGE)
         binding.btnNext.setOnSingleClickListener {
+            EventManager.onAppTrack(AppEvent.SF_CLICK_BEGINNER_CREATION_GUIDE_PAGE_BUTTON)
             GuideStep2StorySelectActivity.start(this)
             finish()
         }

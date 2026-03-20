@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.ExampleWorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityGuideStep4VideoBinding
 import com.kgmedia.fastfilm.feature.main.MainActivity
@@ -28,8 +30,9 @@ class GuideStep4VideoActivity : BaseViewModelActivity<ActivityGuideStep4VideoBin
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        EventManager.onAppTrack(AppEvent.SF_VIEW_BEGINNER_CREATION_RESULT_PAGE)
         binding.btnNext.setOnSingleClickListener {
+            EventManager.onAppTrack(AppEvent.SF_CLICK_BEGINNER_CREATION_RESULT_PAGE_BUTTON)
             MainActivity.startFromNewer(this)
             finish()
         }

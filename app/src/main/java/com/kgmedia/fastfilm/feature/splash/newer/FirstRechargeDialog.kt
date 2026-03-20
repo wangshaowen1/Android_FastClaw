@@ -23,10 +23,10 @@ class FirstRechargeDialog : BaseVMDialogFragment<DialogFirstRechargeBinding, Fir
         const val SCENE_HOME = 0
         const val SCENE_OTHER = 1
 
-        fun show(firstRechargeDialogData: FirstRechargeDialogData?): FirstRechargeDialog? {
+        fun show(scene: Int = SCENE_OTHER, firstRechargeDialogData: FirstRechargeDialogData?): FirstRechargeDialog? {
             val activity = ActivityUtils.getTopActivity() as? FragmentActivity ?: return null
             val dialog = FirstRechargeDialog().apply {
-                arguments = bundleOf(Constants.Extra.DATA to firstRechargeDialogData)
+                arguments = bundleOf(Constants.Extra.DATA to firstRechargeDialogData, Constants.Extra.FROM_PAGE to scene)
             }
             dialog.show(activity.supportFragmentManager)
             return dialog

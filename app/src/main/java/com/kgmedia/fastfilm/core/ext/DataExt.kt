@@ -14,6 +14,8 @@ import com.kgmedia.fastfilm.common.utils.WXUtils
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.model.PhotoItem
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
@@ -258,7 +260,8 @@ suspend fun showFirstRecharge(): Boolean {
         ApiFactory.apiService.getFirstRechargeDialogInfo()
     }.data
     if (firstRechargeDialogData == null) return false
-    FirstRechargeDialog.show(firstRechargeDialogData)
+    EventManager.onAppTrack(AppEvent.SF_VIEW_CREATE_NEWCOMER_GIFTPACK_PAGE)
+    FirstRechargeDialog.show(FirstRechargeDialog.SCENE_OTHER, firstRechargeDialogData)
     Config.get().markFirstRechargeShown(FirstRechargeDialog.SCENE_OTHER)
     return true
 }

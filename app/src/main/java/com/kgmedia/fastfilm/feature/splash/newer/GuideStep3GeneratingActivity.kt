@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.animation.LinearInterpolator
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.ExampleWorkInfo
 import com.kgmedia.fastfilm.databinding.ActivityGuideStep3GeneratingBinding
 import com.nhsd.basic.BaseViewModelActivity
@@ -29,7 +31,7 @@ class GuideStep3GeneratingActivity : BaseViewModelActivity<ActivityGuideStep3Gen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        EventManager.onAppTrack(AppEvent.SF_VIEW_BEGINNER_CREATION_GENERATE_PAGE)
         mRealVM.progressEvent.observe(this) { targetPercent ->
             val trackBg = binding.viewTrackBg
             val progressBar = binding.viewProgressBar

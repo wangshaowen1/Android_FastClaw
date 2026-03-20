@@ -114,7 +114,6 @@ public class Constants {
         @Nullable
         String PAGE = "page";
 
-        @Nullable
         String FROM_PAGE = "fromPage";
         @Nullable
         String MODE = "mode";

@@ -137,6 +137,11 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
             },
             item,
             { paymentData ->
+                if (isDialog) {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_COMPUTE_RECHARGE_PAYMENT_POPUP_PAYSUCCESS)
+                } else {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_RECHARGE_PAGE_PAYSUCCESS)
+                }
                 refreshBalance()
             },
             { error, paymentData -> })

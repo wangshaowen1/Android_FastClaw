@@ -224,7 +224,7 @@ object AppEvent {
     const val SF_VIEW_SUBTITLE_FAIL_PROMT = "sf_view_subtitle_fail_promt"
 
     /**
-     *快出片｜创作流程新人礼包支付成功人数
+     *快出片｜创作流程新人礼包支付成功
      */
     const val SF_CLICK_CREATE_NEWCOMER_GIFTPACK_PAYSUCCESS = "sf_click_create_newcomer_giftpack_paysuccess"
 

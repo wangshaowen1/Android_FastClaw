@@ -343,7 +343,8 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     private fun observeEvents() {
         mRealVM.firstRechargeCache.observe(this) { data ->
             data?.let {
-                FirstRechargeDialog.show(it)?.apply {
+                EventManager.onAppTrack(AppEvent.SF_VIEW_HOME_NEWCOMER_GIFTPACK_PAGE)
+                FirstRechargeDialog.show(FirstRechargeDialog.SCENE_HOME, it)?.apply {
                     setOnDismissListener {
                         this@MainActivity.mRealVM.isFirstRechargeLogicActive = false
                     }

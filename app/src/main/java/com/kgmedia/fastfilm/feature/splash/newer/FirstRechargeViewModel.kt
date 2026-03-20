@@ -4,15 +4,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.Global
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.toPaymentParams
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.response.FirstRechargeDialogData
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
 import com.kgmedia.fastfilm.feature.recharge.PowerRepository
 import com.kgmedia.fastfilm.router.AppNavigator
-import com.kgmedia.fastfilm.router.AppRouter
 import com.kuaige.payment.PaymentClient
 import com.nhsd.basic.ext.getParcelableValue
 import kotlinx.coroutines.Job
@@ -22,13 +22,17 @@ import kotlinx.coroutines.launch
 class FirstRechargeViewModel : PaymentViewModel<PowerRepository>() {
 
     val data by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, FirstRechargeDialogData::class.java) }
-
+    val scene by lazy { mBundle.getInt(Constants.Extra.FROM_PAGE, FirstRechargeDialog.SCENE_OTHER) }
 
     val hourStr = MutableLiveData("00")
     val minuteStr = MutableLiveData("00")
     val secondStr = MutableLiveData("00")
 
     private var countDownJob: Job? = null
+
+    fun isFromHome(): Boolean {
+        return scene == FirstRechargeDialog.SCENE_HOME
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -80,6 +84,11 @@ class FirstRechargeViewModel : PaymentViewModel<PowerRepository>() {
     fun wxPay() {
         if (AppNavigator.checkLoginIntercepted()) return
         val item = data?.pointConfigVO ?: return
+        if (isFromHome()) {
+            EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_NEWCOMER_GIFTPACK_PAGE)
+        } else {
+            EventManager.onAppTrack(AppEvent.SF_CLICK_CREATE_NEWCOMER_GIFTPACK_PAGE)
+        }
         pay(
             PaymentClient.PaymentMethod.WxPay,
             { paymentMethod, requestBody, responseSender ->
@@ -91,6 +100,11 @@ class FirstRechargeViewModel : PaymentViewModel<PowerRepository>() {
             },
             item,
             { paymentData ->
+                if (isFromHome()) {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_NEWCOMER_GIFTPACK_PAYSUCCESS)
+                } else {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_CREATE_NEWCOMER_GIFTPACK_PAYSUCCESS)
+                }
                 refreshBalance()
                 dismiss()
             },
