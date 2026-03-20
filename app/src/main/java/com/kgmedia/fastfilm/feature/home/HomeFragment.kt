@@ -168,12 +168,17 @@ class HomeFragment :
 
     override fun onResume() {
         super.onResume()
-        resumePopup()
+        if (isFragmentVisible) {
+            resumePopup()
+        }
     }
+
+    private var isFragmentVisible = false // 记录当前 Tab 是否是选中状态
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden) {
+        isFragmentVisible = !hidden
+        if (isFragmentVisible) {
             resumePopup()
         }
     }
