@@ -63,7 +63,7 @@ class VideoStoryboardResource(private val url: String, private val storyboard: S
                 builder.addFilter("[$lastVideoStreamName]subtitles='${subtitleFile.absolutePath}':force_style='Outline=1,Shadow=0,PrimaryColour=&H00FFFFFF,SecondaryColour=&H80000000'[$outName]")
                 lastVideoStreamName = outName
             }
-            val extra = "-map \"[$lastVideoStreamName]\" -c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
+            val extra = "-map \"[$lastVideoStreamName]\" -map 0:a? -c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
             val command = builder.build(cacheFile.absolutePath, extra)
             val videoDuration = FFmpegHelper.parseDuration(videoFile.absolutePath) / 1000
             FFmpegHelper.execute(command, videoDuration) { ffmpegProgress ->
