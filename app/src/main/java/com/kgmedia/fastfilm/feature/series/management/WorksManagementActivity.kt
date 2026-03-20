@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.filter
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Events
+import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.databinding.ActivityWorksManagementBinding
 import com.kgmedia.fastfilm.feature.series.EpisodeAdapter
 import com.kgmedia.fastfilm.feature.series.SeriesEpisodeEvent
@@ -19,7 +21,6 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.dp
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 /**
  * *****************************************
@@ -69,7 +70,7 @@ class WorksManagementActivity :
                     noDataButtonDisplay = false,
                     requestButtonDisplay = false,
                     noDataButtonText = noDataButtonTextAs,
-                    noMoreThreshold=1000,
+                    noMoreThreshold = 1000,
                     refresh = { refresh() },
                     requestButtonTextAndImg = false,
                 )
@@ -90,7 +91,7 @@ class WorksManagementActivity :
     private fun dataUpdate() {
         lifecycleScope.launch {
             mRealVM.episodeList().collect {
-                episodeAdapter.submitData(it)
+                episodeAdapter.submitData(it.filter { (it.stepProgress ?: 0) > EpisodeInfo.NOT_CREATED })
             }
         }
 

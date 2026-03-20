@@ -2,9 +2,6 @@ package com.kgmedia.fastfilm.core.network.apis.entity
 
 import com.blankj.utilcode.util.GsonUtils
 import com.google.gson.reflect.TypeToken
-import com.kgmedia.fastfilm.feature.download.resource.JsonToAssResource
-import com.kgmedia.fastfilm.feature.download.resource.JsonToAssResource.SubtitleItem
-import java.io.File
 
 /**
  * {
@@ -44,7 +41,7 @@ data class SubtitleTaskStatusInfo(
     var genStatus: Int?,
     val subtitleContent: String?,
 ) {
-    var subtitle: List<JsonToAssResource.SubtitleItem>? = null
+    var subtitle: List<SubtitleItem>? = null
         get() {
             if (field.isNullOrEmpty()) {
                 runCatching {

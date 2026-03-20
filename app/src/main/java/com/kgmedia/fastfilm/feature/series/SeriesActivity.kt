@@ -223,7 +223,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         // 达标：已创建 且 进度 >= 32 (PROGRESS_STORYBOARD_GENERATING)
         val lastValidIndex = items.take(position).indexOfLast {
             it.stepProgress != EpisodeInfo.NOT_CREATED &&
-                    (it.stepProgress?:0) >= EpisodeInfo.PROGRESS_STORYBOARD_GENERATING
+                    (it.stepProgress ?: 0) >= EpisodeInfo.PROGRESS_STORYBOARD_GENERATING
         }
 
         // 计算拦截点索引：
@@ -287,7 +287,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
                     //编辑剧本信息
                     DramaInfoEditActivity.start(this, mRealVM.workInfo.value)
                 }
-                if (mRealVM.workInfo.value?.finishedEpisodeCnt == 0) {
+                //没有剧集
+                if (!episodeAdapter.snapshot().items.any { (it.stepProgress ?: 0) > EpisodeInfo.NOT_CREATED }) {
                     popupView.binding.btnManage.isEnabled = false
                     popupView.binding.btnManage.alpha = 0.5f
                 }

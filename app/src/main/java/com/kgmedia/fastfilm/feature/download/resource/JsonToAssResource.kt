@@ -4,8 +4,8 @@ import android.text.format.DateUtils
 import com.blankj.utilcode.util.FileIOUtils
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ResourceUtils
-import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
+import com.kgmedia.fastfilm.core.network.apis.entity.SubtitleItem
 import com.kuaige.videoedit.resource.Resource
 import java.util.Locale
 
@@ -21,24 +21,6 @@ class JsonToAssResource(
     private val fontSize: Int = 60,
     private val marginBottom: Int = 100,
 ) : Resource() {
-
-    // 定义JSON对应的实体类
-    data class SubtitleItem(
-        val text: String?,
-        @SerializedName("start_time")
-        val startTime: Int?,
-        @SerializedName("end_time")
-        val endTime: Int?,
-        val words: List<WordItem>?
-    )
-
-    data class WordItem(
-        val text: String?,
-        @SerializedName("start_time")
-        val startTime: Int?,
-        @SerializedName("end_time")
-        val endTime: Int?
-    )
 
     // 生成一个唯一的文件名
     override val filename by lazy {
