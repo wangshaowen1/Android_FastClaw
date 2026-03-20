@@ -288,6 +288,7 @@
 -keep class com.unicom.online.account.kernel.** {*;}
 -dontwarn org.bouncycastle.**
 -keep class org.bouncycastle.** { *;}
+-keep class com.chuanglan.shanyan_sdk.**{*;}
 
 #穿山甲
 -keep class com.bytedance.sdk.openadsdk.**{*;}
