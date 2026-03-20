@@ -51,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/spacing_m"
                 android:layout_marginTop="@dimen/spacing_m"
+                android:visibility="@{layout.outputComplete?View.VISIBLE:View.INVISIBLE}"
                 android:text="@{layout.episodeTitle}"
                 android:textColor="?attr/textColor2"
                 android:textColorHint="?attr/textColor4"
