@@ -63,6 +63,16 @@ class ItemStoryboardVM(
             else -> null
         }
 
+    /**
+     * [枚举]创作流程状态 [0=草稿 1=生成中 2=已完成 3=生成失败 4=已合成]
+     */
+    fun genStatus(info: SimpleStoryboardInfo?) =
+        when {
+            info?.videoGenerating == true -> "制作中"
+            info?.videoGenerateFailed == true -> "加载失败"
+            else -> "分镜${info?.sortNo}"
+        }
+
     fun generate(storyInfo: EpisodeInfo?) {
         val storyboard = data.get() ?: return
         if (storyboard.videoGenerating) return

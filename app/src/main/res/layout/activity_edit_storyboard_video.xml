@@ -141,6 +141,14 @@
                     app:layout_constraintStart_toStartOf="@+id/playerArea"
                     app:layout_constraintTop_toTopOf="@+id/playerArea">
 
+                    <ImageView
+                        setVisible="@{layout.currentStoryboard.data.videoGenerateFailed}"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="12dp"
+                        android:alpha="0.5"
+                        android:src="@drawable/icon_image_fail" />
+
                     <com.airbnb.lottie.LottieAnimationView
                         setVisible="@{layout.currentStoryboard.data.videoGenerating}"
                         android:layout_width="30dp"

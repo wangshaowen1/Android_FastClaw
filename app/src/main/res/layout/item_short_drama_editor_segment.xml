@@ -42,7 +42,7 @@
             android:layout_height="0dp"
             android:background="@drawable/bg_mask_opacity_60_dark_br8"
             android:gravity="center"
-            android:text="@{item.data.videoGenerating ? `制作中` : (`分镜`+item.data.sortNo)}"
+            android:text="@{item.genStatus(item.data)}"
             android:textAppearance="@style/Text12"
             android:textColor="?attr/textColor1"
             android:textSize="10dp"
@@ -66,6 +66,18 @@
             app:lottie_imageAssetsFolder="loading_star/images"
             app:lottie_loop="true"
             app:lottie_repeatMode="reverse" />
+
+        <ImageView
+            setVisible="@{item.data.videoGenerateFailed}"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:alpha="0.5"
+            android:src="@drawable/icon_image_fail"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintStart_toStartOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:layout_constraintVertical_bias="0.32" />
 
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
 </layout>
