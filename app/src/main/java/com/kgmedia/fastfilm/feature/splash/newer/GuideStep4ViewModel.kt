@@ -16,7 +16,17 @@ class GuideStep4ViewModel : AppRepositoryViewModel<AppRepository>() {
     val playing by lazy { ObservableBoolean(true) }
 
     val player by lazy {
-        PlayerFactory.createPlayer(true, autoAudioFocus = true)
+        PlayerFactory.createPlayer(true, autoAudioFocus = true).apply {
+            addListener(object : Player.Listener {
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    if (playbackState == Player.STATE_ENDED) {
+                        seekTo(1)
+                        playWhenReady = false
+                        prepare()
+                    }
+                }
+            })
+        }
     }
 
     override fun onCreate() {
