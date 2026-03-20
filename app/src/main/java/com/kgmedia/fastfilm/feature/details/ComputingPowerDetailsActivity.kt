@@ -47,7 +47,7 @@ class ComputingPowerDetailsActivity :
             this,
             listOf(
                 "全部",
-                "充值明细",
+                "收入明细",
                 "消耗明细"
             ),
             binding.viewPager,
