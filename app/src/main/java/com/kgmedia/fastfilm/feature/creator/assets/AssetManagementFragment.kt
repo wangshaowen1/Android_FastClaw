@@ -110,7 +110,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
     }
 
     override fun handleBackPressed(): Boolean {
-        if (mRealVM.generating) {
+        if (mRealVM.generating || mRealVM.step.get() == AssetManagementViewModel.STEP_IMAGE_GENERATING) {
             "AI正在生成中，已自动保存为草稿".showToast()
         } else {
             "已自动保存为草稿".showToast()

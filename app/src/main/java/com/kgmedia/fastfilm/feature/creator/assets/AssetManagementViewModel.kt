@@ -61,7 +61,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         /**
          * 资产图片生成中
          */
-        private const val STEP_IMAGE_GENERATING = 3
+        const val STEP_IMAGE_GENERATING = 3
 
         /**
          * 资产图片生成失败

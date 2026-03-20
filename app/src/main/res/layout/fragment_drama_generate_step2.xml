@@ -134,10 +134,10 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="@{layout.isScriptLoading?View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="@id/inputView"
-                app:layout_constraintEnd_toEndOf="@id/inputView"
-                app:layout_constraintStart_toStartOf="@id/inputView"
-                app:layout_constraintTop_toTopOf="@id/inputView">
+                app:layout_constraintBottom_toBottomOf="@id/scrollContainer"
+                app:layout_constraintEnd_toEndOf="@id/scrollContainer"
+                app:layout_constraintStart_toStartOf="@id/scrollContainer"
+                app:layout_constraintTop_toTopOf="@id/scrollContainer">
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/loading_image"
