@@ -50,33 +50,33 @@ class ItemRoleVM(
             return
         }
 
-        val generateTask = {
-            val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-            if (data.get()?.hasHistory == true && fragmentManager != null) {
-                ReferenceHistoricalImageryDialog.newInstance(
-                    data.get()?.roleId,
-                    storyId,
-                    workId,
-                    ReferenceHistoricalImageryDialog.BIZ_TYPE_ROLE_IMAGE
-                )
-                    .apply { onUserReference = { generate(rolePrompt.toString(), roleName.toString(), it) } }
-                    .show(fragmentManager)
-            } else {
-                generate(rolePrompt.toString(), roleName.toString())
-            }
+        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
+        if (data.get()?.hasHistory == true && fragmentManager != null) {
+            ReferenceHistoricalImageryDialog.newInstance(
+                data.get()?.roleId,
+                storyId,
+                workId,
+                ReferenceHistoricalImageryDialog.BIZ_TYPE_ROLE_IMAGE
+            )
+                .apply { onUserReference = { notifyPowerConsume { generate(rolePrompt.toString(), roleName.toString(), it) } } }
+                .show(fragmentManager)
+        } else {
+            notifyPowerConsume { generate(rolePrompt.toString(), roleName.toString()) }
         }
+    }
 
+    fun notifyPowerConsume(callback: () -> Unit) {
         if (Config.get().notifyPowerConsume(1)) {
             launch {
                 val cost = getAiPriceProvider()
                 PowerConsumeConfirmDialog.show(cost)?.apply {
                     onConfirm = {
-                        generateTask()
+                        callback.invoke()
                     }
                 }
             }
         } else {
-            generateTask()
+            callback.invoke()
         }
     }
 

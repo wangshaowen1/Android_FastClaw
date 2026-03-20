@@ -49,33 +49,36 @@ class ItemPropVM(
             "请先填写道具名称".showToast()
             return
         }
-        val generateTask = {
-            val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
-            if (data.get()?.hasHistory == true && fragmentManager != null) {
-                ReferenceHistoricalImageryDialog.newInstance(
-                    data.get()?.propId,
-                    storyId,
-                    workId,
-                    ReferenceHistoricalImageryDialog.BIZ_TYPE_PROP_IMAGE
-                )
-                    .apply { onUserReference = { generate(propPrompt.toString(), propName.toString(), it) } }
-                    .show(fragmentManager)
-            } else {
+
+        val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager
+        if (data.get()?.hasHistory == true && fragmentManager != null) {
+            ReferenceHistoricalImageryDialog.newInstance(
+                data.get()?.propId,
+                storyId,
+                workId,
+                ReferenceHistoricalImageryDialog.BIZ_TYPE_PROP_IMAGE
+            )
+                .apply { onUserReference = { notifyPowerConsume { generate(propPrompt.toString(), propName.toString(), it) } } }
+                .show(fragmentManager)
+        } else {
+            notifyPowerConsume {
                 generate(propPrompt.toString(), propName.toString())
             }
         }
+    }
 
+    fun notifyPowerConsume(callback: () -> Unit) {
         if (Config.get().notifyPowerConsume(1)) {
             launch {
                 val cost = getAiPriceProvider()
                 PowerConsumeConfirmDialog.show(cost)?.apply {
                     onConfirm = {
-                        generateTask()
+                        callback.invoke()
                     }
                 }
             }
         } else {
-            generateTask()
+            callback.invoke()
         }
     }
 
