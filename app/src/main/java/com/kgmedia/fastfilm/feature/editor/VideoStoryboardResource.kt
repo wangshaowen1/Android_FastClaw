@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.editor
 
 import android.media.MediaMetadataRetriever
 import android.util.Size
+import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
@@ -10,11 +11,17 @@ import com.kuaige.videoedit.ffmpeg.FFmpegCommandBuilder
 import com.kuaige.videoedit.ffmpeg.FFmpegHelper
 import com.kuaige.videoedit.resource.Resource
 import com.kuaige.videoedit.resource.UrlResource
+import com.nhsd.basic.BaseApp
 import okhttp3.OkHttpClient
 import java.io.File
 import java.io.IOException
 
 class VideoStoryboardResource(private val url: String, private val storyboard: SimpleStoryboardInfo, private val httpClient: OkHttpClient) : Resource() {
+    init {
+        // 配置字体目录，防止添加字幕时出错
+        FFmpegKitConfig.setFontDirectoryList(BaseApp.getInstance(), listOf("/system/fonts"), emptyMap())
+    }
+
     override val filename by lazy { "${url.urlToFilename()}_${storyboard.subtitle?.subtitleContent.hashCode()}.mp4" }
     private val cacheFile by lazy {
         val path = "${PathUtils.getExternalAppCachePath()}${File.separator}source_material${File.separator}${filename}"
