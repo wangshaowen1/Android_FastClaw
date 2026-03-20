@@ -73,8 +73,9 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
     private fun jumpToTheHomepage() {
         val it = intent.data?.takeIf { !TextUtils.isEmpty(it.host) } ?: ""
         if (Config.get().isFirstOpenApp) {
-            GuideStep1AdActivity.start(this)
             Config.get().markAppOpenedWithNotify()
+            App.instance.initSdkAfterAgreeLicense()
+            GuideStep1AdActivity.start(this)
         } else {
             MainActivity.start(this@SplashActivity, it.toString())
         }
@@ -193,7 +194,6 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
     override fun onAgreePolicy(dialog: PolicyDialog) {
         dialog.dismissAllowingStateLoss()
         initAdsReporter()
-        App.instance.initSdkAfterAgreeLicense()
         jumpToTheHomepage()
     }
 
