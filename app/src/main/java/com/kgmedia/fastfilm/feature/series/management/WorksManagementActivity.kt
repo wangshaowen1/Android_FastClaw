@@ -2,6 +2,10 @@ package com.kgmedia.fastfilm.feature.series.management
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.filter
@@ -91,7 +95,9 @@ class WorksManagementActivity :
     private fun dataUpdate() {
         lifecycleScope.launch {
             mRealVM.episodeList().collect {
-                episodeAdapter.submitData(it.filter { (it.stepProgress ?: 0) > EpisodeInfo.NOT_CREATED })
+                episodeAdapter.submitData(it.filter {
+                    (it.stepProgress ?: 0) > EpisodeInfo.NOT_CREATED
+                })
             }
         }
 
@@ -99,8 +105,40 @@ class WorksManagementActivity :
             if (!it) return@observe
             mRealVM.deleteCompleted.value = false
             eventVm.clearAllSelection()
+            mRealVM.selectedCount.value = eventVm.getSelectedItems().size
             FlowEventBus.postSync(Events.DeleteTVSeriesEvent(mRealVM.workId))
             refresh()
+        }
+
+        mRealVM.selectedCount.observe(this) {
+            if (it <= 0) {
+                binding.tvSelectCount.text = "已选择 0 个"
+                return@observe
+            }
+            val spannableString = SpannableString("已选择${it}个")
+            spannableString.setSpan(
+                ForegroundColorSpan(
+                    Color.WHITE
+                ), 3, spannableString.length - 1,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            binding.tvSelectCount.text = spannableString
+        }
+
+        lifecycleScope.launch {
+            eventVm.events.collect { event ->
+                when (event) {
+                    is SeriesEpisodeEvent.ComposeState -> {
+                        if (event.status) {
+                            mRealVM.selectedCount.value = mRealVM.selectedCount.value?.plus(1)
+                        } else {
+                            mRealVM.selectedCount.value = mRealVM.selectedCount.value?.minus(1)
+                        }
+                    }
+
+                    else -> {}
+                }
+            }
         }
     }
 
@@ -125,6 +163,19 @@ class WorksManagementActivity :
                 ) {
                     mRealVM.delete(eventVm.getSelectedItems().toList())
                 }
+            }
+
+            R.id.btnSelectAll -> {
+                //全选
+                val ids = hashSetOf<String>()
+                val items: List<EpisodeInfo> = episodeAdapter.snapshot().items
+                items.forEach { w -> ids.add(w.storyId ?: "") }
+                eventVm.setSelectedItems(ids)
+                mRealVM.selectedCount.value = ids.size
+            }
+
+            R.id.btnComplete -> {
+                    finish()
             }
         }
     }
