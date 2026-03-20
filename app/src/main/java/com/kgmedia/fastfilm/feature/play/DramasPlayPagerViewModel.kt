@@ -81,7 +81,7 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>(), D
     }
 
     fun downloadVideo(url: String) {
-        launch {
+        launch(block = {
             downloadProgress.set(0)
             downloading.value = true
             val resource = UrlResource(url, RetrofitClient.httpClient)
@@ -99,7 +99,10 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>(), D
                 "视频下载失败，请重试".showToast()
             }
             downloading.value = false
-        }
+        }, onError = {
+            "视频下载失败，请重试".showToast()
+            downloading.value = false
+        })
     }
 
 }
