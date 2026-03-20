@@ -205,6 +205,7 @@ suspend fun sensitiveWordCheck(content: String?, passBlock: () -> Unit, notPassB
     val pair = sensitiveWordCheck(content, needHighlight)
     withContext(Dispatchers.Main) {
         if (pair.first) {
+            notPassBlock(content)
             passBlock()
         } else {
             notPassBlock(pair.second)
