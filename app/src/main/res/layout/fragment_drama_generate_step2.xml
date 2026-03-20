@@ -12,7 +12,8 @@
         <import type="android.view.View" />
 
         <import type="android.text.TextUtils" />
-        <import type="com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants"/>
+
+        <import type="com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -67,20 +68,20 @@
                 android:layout_height="0dp"
                 android:layout_marginBottom="@dimen/spacing_m"
                 android:fillViewport="true"
-                app:layout_constraintTop_toBottomOf="@id/tvEpisodeTitle"
-                app:layout_constraintBottom_toTopOf="@id/llBottom">
+                app:layout_constraintBottom_toTopOf="@id/llBottom"
+                app:layout_constraintTop_toBottomOf="@id/tvEpisodeTitle">
 
                 <EditText
                     android:id="@+id/inputView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="200dp"
                     android:background="@null"
                     android:cursorVisible="false"
                     android:focusable="false"
                     android:gravity="top|start"
-                    android:padding="@dimen/spacing_m"
                     android:maxLength="@{layout.maxInputLength}"
+                    android:minHeight="200dp"
+                    android:padding="@dimen/spacing_m"
                     android:textColor="?attr/textColor2"
                     android:textColorHint="?attr/textColor4"
                     android:textSize="14sp" />
@@ -129,15 +130,15 @@
             </LinearLayout>
 
             <LinearLayout
+                setVisible="@{layout.isScriptLoading()}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="@{layout.isScriptLoading?View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toBottomOf="@id/scrollContainer"
-                app:layout_constraintEnd_toEndOf="@id/scrollContainer"
-                app:layout_constraintStart_toStartOf="@id/scrollContainer"
-                app:layout_constraintTop_toTopOf="@id/scrollContainer">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.airbnb.lottie.LottieAnimationView
                     android:id="@+id/loading_image"
