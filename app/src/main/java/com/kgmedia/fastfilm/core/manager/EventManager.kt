@@ -202,6 +202,101 @@ object AppEvent {
      */
     const val SF_VIEW_SIGN_PUBLISH_MAIN_PAGE = "sf_view_sign_publish_main_page"
 
+    /**
+     *快出片｜算力商城页面支付成功
+     */
+    const val SF_CLICK_RECHARGE_PAGE_PAYSUCCESS = "sf_click_recharge_page_paysuccess"
+
+    /**
+     *快出片｜算力充值支付弹窗支付成功
+     */
+    const val SF_CLICK_COMPUTE_RECHARGE_PAYMENT_POPUP_PAYSUCCESS = "sf_click_compute_recharge_payment_popup_paysuccess"
+
+    /**
+     *
+     * 快出片｜分镜视频字幕生成失败点击“重试按钮”
+     */
+    const val SF_CLICK_SUBTITLE_FAIL_PROMT_BUTTON = "sf_click_subtitle_fail_promt_button"
+
+    /**
+     *快出片｜分镜视频字幕生成失败
+     */
+    const val SF_VIEW_SUBTITLE_FAIL_PROMT = "sf_view_subtitle_fail_promt"
+
+    /**
+     *快出片｜创作流程新人礼包支付成功人数
+     */
+    const val SF_CLICK_CREATE_NEWCOMER_GIFTPACK_PAYSUCCESS = "sf_click_create_newcomer_giftpack_paysuccess"
+
+    /**
+     *
+     * 快出片｜创作流程新人礼包点击“立即支付”按钮
+     */
+    const val SF_CLICK_CREATE_NEWCOMER_GIFTPACK_PAGE = "sf_click_create_newcomer_giftpack_page"
+
+    /**
+     *快出片｜创作流程新人礼包曝光
+     */
+    const val SF_VIEW_CREATE_NEWCOMER_GIFTPACK_PAGE = "sf_view_create_newcomer_giftpack_page"
+
+    /**
+     *快出片｜首页新人礼包支付成功
+     */
+    const val SF_CLICK_HOME_NEWCOMER_GIFTPACK_PAYSUCCESS = "sf_click_home_newcomer_giftpack_paysuccess"
+
+    /**
+     *快出片｜首页新人礼包点击 "立即支付"
+     */
+    const val SF_CLICK_HOME_NEWCOMER_GIFTPACK_PAGE = "sf_click_home_newcomer_giftpack_page"
+
+    /**
+     *
+     * 快出片｜新手创作营引导首页"立即体验"按钮
+     */
+    const val SF_CLICK_BEGINNER_CREATION_GUIDE_PAGE_BUTTON = "sf_click_beginner_creation_guide_page_button"
+
+    /**
+     *快出片｜新手创作营故事选择页曝光
+     */
+    const val SF_VIEW_BEGINNER_CREATION_STORY_PAGE = "sf_view_beginner_creation_story_page"
+
+    /**
+     *
+     * 快出片｜新手创作营故事选择页点击 “跳过”按钮
+     */
+    const val SF_CLICK_BEGINNER_CREATION_STORY_PAGE_SKIP = "sf_click_beginner_creation_story_page_skip"
+
+    /**
+     *快出片｜新手创作营故事选择页“立即生成”按钮
+     */
+    const val SF_CLICK_BEGINNER_CREATION_STORY_PAGE_BUTTON = "sf_click_beginner_creation_story_page_button"
+
+    /**
+     *
+     * 快出片｜新手创作营故事生成页曝光
+     */
+    const val SF_VIEW_BEGINNER_CREATION_GENERATE_PAGE = "sf_view_beginner_creation_generate_page"
+
+    /**
+     *快出片｜新手创作营成片结果页曝光
+     */
+    const val SF_VIEW_BEGINNER_CREATION_RESULT_PAGE = "sf_view_beginner_creation_result_page"
+
+    /**
+     *快出片 | 新手创作营成片结果页点击“开启我的创作变现”按钮
+     */
+    const val SF_CLICK_BEGINNER_CREATION_RESULT_PAGE_BUTTON = "sf_click_beginner_creation_result_page_button"
+
+    /**
+     *快出片 | 首页新人礼包曝光
+     */
+    const val SF_VIEW_HOME_NEWCOMER_GIFTPACK_PAGE = "sf_view_home_newcomer_giftpack_page"
+
+    /**
+     *
+     * 快出片 | 新手创作营首页曝光
+     */
+    const val SF_VIEW_BEGINNER_CREATION_GUIDE_PAGE = "sf_view_beginner_creation_guide_page"
 }
 
 
