@@ -17,8 +17,10 @@ import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardVideoBinding
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
+import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.isActive
@@ -37,7 +39,8 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
             storyId: String?,
             workRatio: String?,
             story: EpisodeInfo?,
-            from: String? = null
+            from: String? = null,
+            model: Int? = null
         ): Intent {
             val intent = Intent(activity, EditStoryboardVideoActivity::class.java)
             intent.putExtra(Constants.Extra.TITLE, storyTitle)
@@ -46,12 +49,13 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
             intent.putExtra(Constants.Extra.VIDEO_RATIO, workRatio)
             intent.putExtra(Constants.Extra.DATA, story)
             intent.putExtra(Constants.Extra.FROM_PAGE, from)
+            intent.putExtra(Constants.Extra.MODE, model)
             return intent
         }
 
         @JvmStatic
-        fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?, story: EpisodeInfo?, from: String? = null) {
-            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio, story, from)) }
+        fun start(storyTitle: String?, workId: String?, storyId: String?, workRatio: String?, story: EpisodeInfo?, from: String? = null, model: Int? = null) {
+            topActivity?.let { it.startActivity(launchIntent(it, storyTitle, workId, storyId, workRatio, story, from, model)) }
         }
     }
 
@@ -76,10 +80,19 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                 } else {
                     "已自动保存".showToast()
                 }
-                if (from != StoryEditorActivity.FROM_SERIES) {
-                    SeriesActivity.start(mRealVM.workId)
+
+                if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
+                    if (from != StoryEditorActivity.FROM_MY_WORKS) {
+                        MyWorksFragment.start()
+                    } else {
+                        finish()
+                    }
+                } else {
+                    if (from != StoryEditorActivity.FROM_SERIES) {
+                        SeriesActivity.start(mRealVM.workId)
+                    }
+                    finish()
                 }
-                super.onBackPressed()
             }
         }
     }

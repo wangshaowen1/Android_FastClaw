@@ -306,7 +306,8 @@ object AppRouter : IRouter {
                     storyId = info.storyId,
                     workRatio = info.workRatio,
                     story = info,
-                    from = from
+                    from = from,
+                    model = getModel(totalEpisodeCnt, workType, sortNo, info.isFirstCreated())
                 )
             }
         }

@@ -55,6 +55,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     val taskId by lazy { mBundle.getString(Constants.Extra.TASK_ID) }
     val workRatio by lazy { mBundle.getString(Constants.Extra.VIDEO_RATIO, "9:16") ?: "9:16" }
     val loadState by lazy { ObservableInt() }
+    val model by lazy { mBundle.getInt(Constants.Extra.MODE) }
     val currentStoryboard by lazy { ObservableField<ItemStoryboardVM>() }
     val scrollToItem by lazy { MutableLiveData<Int>(-1) }
     val adapter by lazy { QuickAdapter<ItemStoryboardVM>(R.layout.item_short_drama_editor_segment, emptyList()) }

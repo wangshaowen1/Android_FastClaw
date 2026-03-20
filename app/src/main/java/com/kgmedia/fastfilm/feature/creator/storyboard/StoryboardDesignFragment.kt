@@ -59,7 +59,8 @@ class StoryboardDesignFragment :
                         storyId,
                         hostVm?.videoRatio,
                         null,
-                        from = from
+                        from = from,
+                        model = hostVm?.model
                     )
                     activity?.finish()
                 }
