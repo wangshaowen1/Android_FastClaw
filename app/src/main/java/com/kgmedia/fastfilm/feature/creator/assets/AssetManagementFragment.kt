@@ -10,10 +10,12 @@ import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentAssetManagementBinding
+import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.OnBackPressedHandler
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
+import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getParentViewModel
 import com.nhsd.basic.ext.showToast
@@ -113,10 +115,18 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
         } else {
             "已自动保存为草稿".showToast()
         }
-        if (from != StoryEditorActivity.FROM_SERIES) {
-            SeriesActivity.start(mRealVM.workId)
+        if (hostVm?.model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
+            if (from != StoryEditorActivity.FROM_MY_WORKS) {
+                MyWorksFragment.start()
+            } else {
+                mActivity.finish()
+            }
+        } else {
+            if (from != StoryEditorActivity.FROM_SERIES) {
+                SeriesActivity.start(mRealVM.workId)
+            }
+            mActivity.finish()
         }
-        mActivity.finish()
         return true
     }
 
