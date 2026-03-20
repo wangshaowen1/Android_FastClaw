@@ -28,20 +28,18 @@ import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
-import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.kgmedia.fastfilm.kit.media.setPlayUrl
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
-import com.kuaige.videoedit.resource.UrlResource
 import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -276,7 +274,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     fun download(storyboard: SimpleStoryboardInfo, videoUrl: String) {
         launchWithLoading {
-            val resource = UrlResource(videoUrl, RetrofitClient.httpClient)
+            val resource = VideoStoryboardResource(videoUrl, storyboard, RetrofitClient.httpClient)
             resource.download { }
             val destFile = File(PathUtils.getExternalDownloadsPath(), resource.file.name)
             val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(resource.file.putAIGCMetadata(storyboard), destFile) }
