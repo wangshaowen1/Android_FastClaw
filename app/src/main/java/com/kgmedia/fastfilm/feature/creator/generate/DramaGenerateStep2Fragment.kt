@@ -228,6 +228,12 @@ class DramaGenerateStep2Fragment :
         }
     }
 
+    override fun onDestroy() {
+        scrollAnimator?.cancel()
+        scrollAnimator = null
+        super.onDestroy()
+    }
+
     override fun handleBackPressed(): Boolean {
         if (mRealVM.isScriptLoading.get()) {
             "AI正在生成中，已自动保存为草稿".showToast()
