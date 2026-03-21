@@ -214,9 +214,6 @@ class CreationFragment :
         super.onClick(view, data)
         when (view.id) {
             R.id.btnOptimize -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
@@ -236,16 +233,10 @@ class CreationFragment :
             }
 
             R.id.randomInspirations -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
                 mRealVM.randomInspirations(true)
             }
 
             R.id.btnRandomPrompt -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
                 if (mRealVM.isStreaming()) {
                     return
                 }
@@ -261,9 +252,6 @@ class CreationFragment :
             }
 
             R.id.btnDelete -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
                 if (mRealVM.isStreaming()) {
                     return
                 }
@@ -287,9 +275,6 @@ class CreationFragment :
             }
 
             R.id.btnPaste -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
                 if (mRealVM.isStreaming()) {
                     return
                 }
