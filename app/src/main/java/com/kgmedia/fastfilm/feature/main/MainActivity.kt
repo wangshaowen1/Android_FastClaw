@@ -258,39 +258,57 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         super.onClick(view, data)
         when (view?.id) {
             R.id.tabHome -> {
-                binding.mrg.check(R.id.rbHome)
-                clickTab(tabId = R.id.tabHome) { diff ->
-                    if (diff < CLICK_INTERVAL_TIME) {
-                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
-                        true
-                    } else false
+                clickTab(
+                    tabId = R.id.rbHome,
+                    null
+                ) {
+                    binding.mrg.check(R.id.rbHome) // 真正执行切换
                 }
+//                binding.mrg.check(R.id.rbHome)
+//                clickTab(tabId = R.id.tabHome) { diff ->
+//                    if (diff < CLICK_INTERVAL_TIME) {
+//                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
+//                        true
+//                    } else false
+//                }
             }
 
             R.id.tabWorks -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
+                clickTab(
+                    tabId = R.id.rbWorks,
+                    interceptor = { AppNavigator.checkLoginIntercepted(true) } // 传入拦截逻辑
+                ) {
+                    binding.mrg.check(R.id.rbWorks) // 真正执行切换
                 }
-                binding.mrg.check(R.id.rbWorks)
-                clickTab(tabId = R.id.tabWorks) { diff ->
-                    if (diff < CLICK_INTERVAL_TIME) {
-                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_WORKS))
-                        true
-                    } else false
-                }
+//                if (AppNavigator.checkLoginIntercepted(true)) {
+//                    return
+//                }
+//                binding.mrg.check(R.id.rbWorks)
+//                clickTab(tabId = R.id.tabWorks) { diff ->
+//                    if (diff < CLICK_INTERVAL_TIME) {
+//                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_WORKS))
+//                        true
+//                    } else false
+//                }
             }
 
             R.id.tabMine -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
+                clickTab(
+                    tabId = R.id.tabMine,
+                    interceptor = { AppNavigator.checkLoginIntercepted(true) } // 传入拦截逻辑
+                ) {
+                    binding.mrg.check(R.id.rbMine) // 真正执行切换
                 }
-                binding.mrg.check(R.id.rbMine)
-                clickTab(tabId = R.id.tabMine) { diff ->
-                    if (diff < CLICK_INTERVAL_TIME) {
-                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MINE))
-                        true
-                    } else false
-                }
+//                if (AppNavigator.checkLoginIntercepted(true)) {
+//                    return
+//                }
+//                clickTab(tabId = R.id.tabMine) { diff ->
+//                    if (diff < CLICK_INTERVAL_TIME) {
+//                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MINE))
+//                        true
+//                    } else false
+//                }
+//                binding.mrg.check(R.id.rbMine)
             }
         }
     }
@@ -301,6 +319,47 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         if (!clickAction(current - clicks.getOrDefault(tabId, 0))) {
             clicks.put(tabId, current)
         }
+    }
+
+    /**
+     * @param tabId 对应 R.id
+     * @param interceptor 拦截逻辑，返回 true 表示被拦截（不更新时间戳，不执行 action）
+     * @param action 正常点击逻辑
+     */
+    private fun clickTab(
+        tabId: Int,
+        interceptor: (() -> Boolean)? = null,
+        action: () -> Unit
+    ) {
+        val current = System.currentTimeMillis()
+        val lastClick = clicks.getOrDefault(tabId, 0L)
+        val diff = current - lastClick
+
+        // 无论是否登录，短时间内（如 500ms）这段代码只会往下走一次
+        if (diff < CLICK_INTERVAL_TIME) {
+            when (tabId) {
+                R.id.tabMine -> {
+                    FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MINE))
+                }
+                R.id.tabHome -> {
+                    FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
+                }
+                else -> {
+                    FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_WORKS))
+                }
+            }
+            return // 连续点击直接拦截，不再执行拦截器 check
+        }
+
+        // 只有过了防抖期，才更新时间，保证下一次连击被拦截
+        clicks.put(tabId, current)
+
+        if (interceptor?.invoke() == true) {
+            return
+        }
+
+        // 4. 【执行切换】
+        action()
     }
 
     // 添加常亮状态管理
