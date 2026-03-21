@@ -47,6 +47,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.animation.addListener
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.GridLayoutManager
@@ -1782,5 +1783,14 @@ fun setRotateLoading(view: ImageView, show: Boolean) {
     } else {
         view.visibility = View.GONE
         view.clearAnimation()
+    }
+}
+
+@BindingAdapter("isScrollable")
+fun setScrollable(view: NestedScrollView, isScrollable: Boolean) {
+    view.setOnTouchListener { _, _ ->
+        // 如果 isScrollable 为 false，返回 true 消费事件，阻止滚动
+        // 如果 isScrollable 为 true，返回 false 不处理事件，交给原生逻辑
+        !isScrollable
     }
 }
