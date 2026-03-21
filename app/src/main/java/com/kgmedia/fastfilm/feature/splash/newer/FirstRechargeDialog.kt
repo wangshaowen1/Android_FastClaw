@@ -24,6 +24,7 @@ class FirstRechargeDialog : BaseVMDialogFragment<DialogFirstRechargeBinding, Fir
         const val SCENE_OTHER = 1
 
         fun show(scene: Int = SCENE_OTHER, firstRechargeDialogData: FirstRechargeDialogData?): FirstRechargeDialog? {
+            if (firstRechargeDialogData?.isNeedShow() == false) return null
             val activity = ActivityUtils.getTopActivity() as? FragmentActivity ?: return null
             val dialog = FirstRechargeDialog().apply {
                 arguments = bundleOf(Constants.Extra.DATA to firstRechargeDialogData, Constants.Extra.FROM_PAGE to scene)

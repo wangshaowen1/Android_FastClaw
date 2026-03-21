@@ -13,4 +13,8 @@ data class FirstRechargeDialogData(
     val popupInvalidTime: Long? = null,
     val pricePointText: String? = null,
     val pointConfigVO: PointConfigInfo? = null,
-) : Parcelable
+) : Parcelable {
+    fun isNeedShow(): Boolean {
+        return needShow == true
+    }
+}
