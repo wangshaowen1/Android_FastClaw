@@ -19,9 +19,9 @@ import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.VideoConfigInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.CreateTaskBody
-import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
 import com.kgmedia.fastfilm.databinding.FragmentCreationBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
@@ -214,6 +214,9 @@ class CreationFragment :
         super.onClick(view, data)
         when (view.id) {
             R.id.btnOptimize -> {
+                if (AppNavigator.checkLoginIntercepted(true)) {
+                    return
+                }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
@@ -240,15 +243,7 @@ class CreationFragment :
                 if (mRealVM.isStreaming()) {
                     return
                 }
-                lifecycleScope.launch {
-                    sensitiveWordCheck(mRealVM.input.value, {
-                        mRealVM.sseGenerate(SSEContentBody.TYPE_RANDOM_INSPIRATION, "灵感生成中...")
-                    }, {
-                        it?.let {
-                            binding.inputView.setText(it)
-                        }
-                    })
-                }
+                mRealVM.sseGenerate(SSEContentBody.TYPE_RANDOM_INSPIRATION, "灵感生成中...")
             }
 
             R.id.btnDelete -> {
