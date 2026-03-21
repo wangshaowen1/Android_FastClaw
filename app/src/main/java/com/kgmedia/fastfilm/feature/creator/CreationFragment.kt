@@ -297,11 +297,6 @@ class CreationFragment :
             }
 
             R.id.btnNext -> {
-                if (mRealVM.creationModel == MODEL_INSPIRATION) {
-                    EventManager.onAppTrack(AppEvent.SF_CLICK_STORY_INSPIRATION_NEXT_BUTTON)
-                } else {
-                    EventManager.onAppTrack(AppEvent.SF_CLICK_NOVEL_ADAPTATION_NEXT_BUTTON)
-                }
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
@@ -311,6 +306,11 @@ class CreationFragment :
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {
                     "请输入至少${mRealVM.minInputLength}个字".showToast()
                     return
+                }
+                if (mRealVM.creationModel == MODEL_INSPIRATION) {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_STORY_INSPIRATION_NEXT_BUTTON)
+                } else {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_NOVEL_ADAPTATION_NEXT_BUTTON)
                 }
                 //检查敏感词
                 lifecycleScope.launch {

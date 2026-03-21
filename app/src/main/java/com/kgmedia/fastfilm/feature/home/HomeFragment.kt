@@ -136,7 +136,7 @@ class HomeFragment :
         }
 
         binding.btnCreation.setOnSingleClickListener {
-            if (AppNavigator.checkLoginIntercepted()) return@setOnSingleClickListener
+            //if (AppNavigator.checkLoginIntercepted()) return@setOnSingleClickListener
             CreationRootActivity.start(activity)
         }
     }
