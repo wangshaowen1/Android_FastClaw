@@ -59,7 +59,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/icon_loading1"
-            app:duration="3000"
+            app:duration="2000"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
