@@ -46,7 +46,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     val textLimitNum by lazy { Config.get().appConfig.shortDramas }
     val minInputLength = 10
     val maxInputLength by lazy {
-        ObservableInt(1000)
+        ObservableInt(5000)
     }
     val promptGenerating = MutableLiveData<Pair<Boolean, String>>()
 
