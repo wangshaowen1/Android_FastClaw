@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.play.menu
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +47,8 @@ class ListPopupWindow<T : SelectableItem>(
         isFocusable = true
         isOutsideTouchable = true
         // 添加这行来设置带阴影的背景
-        setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.popup_background_with_shadow))
+//        setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.popup_background_with_shadow))
+        setBackgroundDrawable(ColorDrawable())
 
         // 创建内容视图
         val contentView = LayoutInflater.from(context).inflate(R.layout.popup_list_layout, null,false)
