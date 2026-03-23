@@ -304,11 +304,12 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
         }
         when {
-            generatingNum > 0 -> step.set(STEP_IMAGE_GENERATING)
             newNum > 0 -> {
                 step.set(STEP_DESCRIPTION_GENERATED)
                 calcCost()
             }
+
+            generatingNum > 0 -> step.set(STEP_IMAGE_GENERATING)
 
             failedNum > 0 -> {
                 if (showToast && step.get() != STEP_IMAGE_GENERATE_FAILED) {
@@ -349,8 +350,10 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         edit.invoke(0)
                     } else {
                         editConfirm = true
-                        topActivity?.showCommonDialog(title = R.string.confirm_edit.getResString(), tip = R.string.edit_text_warning.getResString(), confirmText =
-                            R.string.continue_editing.getResString()) {
+                        topActivity?.showCommonDialog(
+                            title = R.string.confirm_edit.getResString(), tip = R.string.edit_text_warning.getResString(), confirmText =
+                                R.string.continue_editing.getResString()
+                        ) {
                             edit.invoke(200)
                         }
                     }
@@ -523,9 +526,11 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     R.string.btn_one_click_generate.getResString()
                 }
             }
+
             STEP_IMAGE_GENERATING -> {
                 R.string.btn_image_generating.getResString()
             }
+
             STEP_IMAGE_GENERATE_FAILED -> {
                 if (cost > 0) {
                     R.string.btn_retry_failed_cost.getResString(POWER, cost)
@@ -534,9 +539,11 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     R.string.btn_retry_failed.getResString()
                 }
             }
+
             STEP_IMAGE_GENERATED -> {
                 R.string.btn_next_step_storyboard.getResString()
             }
+
             else -> null
         }
     }
