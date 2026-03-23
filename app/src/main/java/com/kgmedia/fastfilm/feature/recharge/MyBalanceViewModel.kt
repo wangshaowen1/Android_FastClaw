@@ -143,6 +143,7 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
                 } else {
                     EventManager.onAppTrack(AppEvent.SF_CLICK_RECHARGE_PAGE_PAYSUCCESS)
                 }
+                loadConfig()
                 refreshBalance()
             },
             { error, paymentData -> })
