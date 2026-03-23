@@ -10,6 +10,7 @@
             type="com.kgmedia.fastfilm.feature.recharge.ItemRechargePowerVM" />
 
         <import type="com.kgmedia.fastfilm.R" />
+
         <import type="android.view.View" />
     </data>
 
@@ -70,18 +71,18 @@
 
             <TextView
                 android:id="@+id/tvGivePower"
+                setVisible="@{item.data.discountValid}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@{item.data.pointMarketingText}"
                 android:textColor="#9A90FF"
                 android:textSize="12sp"
-                android:text="@{item.data.pointMarketingText}"
-                setVisible="@{item.data.discountValid}"
-                tools:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@id/tvPrice"
                 app:layout_constraintEnd_toEndOf="@+id/scope"
                 app:layout_constraintStart_toStartOf="@+id/scope"
                 app:layout_constraintTop_toBottomOf="@id/ivPower"
-                tools:text="+送200算力" />
+                tools:text="+送200算力"
+                tools:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvPrice"
@@ -102,13 +103,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_gradient_discount"
+            android:fontFamily="monospace"
             android:paddingHorizontal="6dp"
-            android:visibility="@{item.data.discountValid?View.VISIBLE:View.INVISIBLE}"
             android:paddingVertical="3dp"
             android:text="@{item.discountText}"
             android:textColor="@color/white"
-            android:fontFamily="monospace"
-            android:textSize="10sp"
+            android:textSize="9dp"
+            android:visibility="@{item.data.discountValid?View.VISIBLE:View.INVISIBLE}"
             tools:text="赠30% 23:59:59" />
     </FrameLayout>
 </layout>
