@@ -54,7 +54,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
     val storyTitle by lazy { mBundle.getString(Constants.Extra.TITLE) }
     val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
     val taskId by lazy { mBundle.getString(Constants.Extra.TASK_ID) }
-    val workRatio by lazy { mBundle.getString(Constants.Extra.VIDEO_RATIO, "9:16") ?: "9:16" }
+    val workRatio by lazy { ObservableField<String>(mBundle.getString(Constants.Extra.VIDEO_RATIO, "9:16") ?: "9:16") }
     val loadState by lazy { ObservableInt() }
     val model by lazy { mBundle.getInt(Constants.Extra.MODE) }
     val currentStoryboard by lazy { ObservableField<ItemStoryboardVM>() }
@@ -362,6 +362,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         launchWithLoading {
             response(mRepo.api.singleEpisodeDetails(WorkBody(workId, storyId))) {
                 data?.let { storyInfo = it }
+                data?.workRatio?.let { workRatio.set(it) }
                 callback.invoke(storyInfo)
             }
         }

@@ -140,7 +140,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     getString(R.string.video_generating_please_wait).showToast()
                     return
                 }
-                EditStoryboardActivity.start(current, mRealVM.workRatio, mRealVM.storyInfo?.stepProgress)
+                EditStoryboardActivity.start(current, mRealVM.workRatio.get(), mRealVM.storyInfo?.stepProgress)
                 EventManager.onAppTrack(AppEvent.SF_CLICK_REDRAW_STORYBOARD_BUTTON)
             }
 
