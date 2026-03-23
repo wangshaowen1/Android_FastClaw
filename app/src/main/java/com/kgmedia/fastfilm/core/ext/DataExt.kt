@@ -265,7 +265,7 @@ suspend fun showFirstRecharge(): Boolean {
     EventManager.onAppTrack(AppEvent.SF_VIEW_CREATE_NEWCOMER_GIFTPACK_PAGE)
     val dialog = FirstRechargeDialog.show(FirstRechargeDialog.SCENE_OTHER, firstRechargeDialogData)?.apply {
         onClose = {
-            PowerRechargeDialog.show(true)
+            PowerRechargeDialog.show()
         }
     }
     Config.get().markFirstRechargeShown(FirstRechargeDialog.SCENE_OTHER)
