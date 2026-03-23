@@ -124,7 +124,7 @@ class MainViewModel : ShareShortDramaViewModel<AppRepository>() {
                 if (canShowFirstRecharge) {
                     // 2. 请求首充接口 (这里必须先于活动配置完成)
                     val firstRechargeResponse = mRepo.api.getFirstRechargeDialogInfo()
-                    if (firstRechargeResponse.data != null) {
+                    if (firstRechargeResponse.data != null && firstRechargeResponse.data?.isNeedShow() == true) {
                         isFirstRechargeLogicActive = true
                         firstRechargeCache.value = firstRechargeResponse.data
                     } else {
