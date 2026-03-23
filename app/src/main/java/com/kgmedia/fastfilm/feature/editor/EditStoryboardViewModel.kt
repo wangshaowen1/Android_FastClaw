@@ -109,6 +109,11 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        storyboardPlayer.pause()
+    }
+
     override fun onCleared() {
         super.onCleared()
         loopVideoJob?.cancel()

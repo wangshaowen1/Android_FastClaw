@@ -106,6 +106,11 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         getStoryInfo { }
     }
 
+    override fun onPause() {
+        super.onPause()
+        storyboardPlayer.pause()
+    }
+
     override fun onCleared() {
         progressJob?.cancel()
         loopSynthesisStatusJob?.cancel()
