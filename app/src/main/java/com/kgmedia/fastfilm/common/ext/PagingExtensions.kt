@@ -46,7 +46,8 @@ fun SmartRefreshLayout.startRefreshWithAdapter(
                 } else {
                     contentSwitcher?.showContent()
                 }
-                if (this.isRefreshing) {
+                if (this.isRefreshing || it.source.refresh is LoadState.NotLoading) {
+                    // 如果你希望每次从其他页面回来 refresh 都置顶，去掉 isRefreshing 判断
                     contentSwitcher?.findRecyclerChild()?.smoothScrollToPosition(0)
                 }
                 finishRefresh()
