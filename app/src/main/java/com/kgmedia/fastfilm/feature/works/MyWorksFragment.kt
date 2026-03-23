@@ -7,6 +7,8 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
@@ -42,6 +44,9 @@ import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksViewModel>() {
@@ -126,6 +131,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             adapter = myWorksAdapter.withLoadStateFooter(myMultiStatePagingFooterAdapter)
             binding.recyclerView.applyGridSpanSizeLookup()
         }
+        initPagingScrollToTop()
         binding.srl.startRefreshWithAdapter(
             pagingDataAdapter = myWorksAdapter,
             loadStateHolder = binding.lsv,
@@ -133,6 +139,24 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 mRealVM.startChecking()
             }
         )
+    }
+
+    /**
+     * 核心修复逻辑：严格监听 Paging 的 refresh 状态，忽略 append (加载更多) 状态。
+     * 确保只有在整体数据刷新完成时，才重置列表位置到顶部。
+     */
+    private fun initPagingScrollToTop() {
+        lifecycleScope.launch {
+            myWorksAdapter.loadStateFlow
+                // distinctUntilChangedBy 非常关键：它保证只有在 refresh 状态发生变化时才触发
+                // 这样当你滑动到底部触发 append 时，这里的逻辑会被完全忽略，不会导致置顶
+                .distinctUntilChangedBy { it.refresh }
+                .filter { it.refresh is LoadState.NotLoading }
+                .collect {
+                    // 当 refresh 状态变为 NotLoading，说明全局刷新或初次加载完成了，强制回到顶部
+                    binding.recyclerView.smoothScrollToPosition(0)
+                }
+        }
     }
 
     private fun dataUpdate() {
