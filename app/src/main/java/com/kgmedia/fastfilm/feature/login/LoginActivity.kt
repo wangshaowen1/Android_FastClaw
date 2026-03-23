@@ -24,7 +24,7 @@ class LoginActivity : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(
         var checkedPolicy = false
         fun show(showToast: Boolean = false) {
             if (showToast) {
-                "请先登录".showToast()
+                showToast(R.string.toast_login_please)
             }
             val activity = topActivity ?: return
             activity.startActivity(Intent(activity, LoginActivity::class.java))

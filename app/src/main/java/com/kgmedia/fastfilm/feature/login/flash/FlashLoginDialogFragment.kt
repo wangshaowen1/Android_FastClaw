@@ -51,7 +51,7 @@ class FlashLoginDialogFragment :
             val manager =
                 manager ?: (topActivity as? FragmentActivity)?.supportFragmentManager ?: return
             if (showToast) {
-                "请先登录".showToast()
+                showToast(R.string.toast_login_please)
             }
             val dialog = FlashLoginDialogFragment()
             dialog.arguments = Bundle().apply {
@@ -115,7 +115,7 @@ class FlashLoginDialogFragment :
                 }
             },
             onLoginFail = { _, _ ->
-                "登录失败".showToast()
+                showToast(R.string.toast_sign_in_fail)
                 FlashLoginManager.hideLoading()
             },
             onCancel = {

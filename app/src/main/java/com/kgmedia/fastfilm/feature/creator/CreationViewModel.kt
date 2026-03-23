@@ -30,6 +30,7 @@ import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.KEY_MODEL
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.MODEL_INSPIRATION
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
@@ -62,7 +63,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        hint.set(if (inspirationModel()) "写下你的故事灵感，AI将帮你扩展成完整剧情" else "请粘贴一章完整的原创或已授权小说内容，用于改编创作")
+        hint.set(if (inspirationModel()) R.string.story_inspiration_hint.getResString() else R.string.paste_novel_hint.getResString())
         maxInputLength.set(if (inspirationModel()) 1000 else 2000)
         input.value =
             if (inspirationModel()) Global.inspirationContent else Global.customizedContent
@@ -78,7 +79,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     fun getLimitColor(length: Int?): Int {
         val isMax = length == maxInputLength.get()
         if (isMax) {
-            "输入字数已达上限".showToast()
+            showToast(R.string.input_limit_reached)
         }
         val attr =
             if (isMax) R.attr.funcColorFailure else R.attr.textColor4

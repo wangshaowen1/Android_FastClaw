@@ -123,7 +123,7 @@ class App : BaseApp() {
                             namesString
                         )
                     )
-                    commonDialog.setPositiveButtonText("去开启")
+                    commonDialog.setPositiveButtonText(getString(R.string.allow))
                     commonDialog.onPositiveButtonClickListener = { _ ->
                         positive.run()
                         positiveCheck = true

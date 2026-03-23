@@ -56,7 +56,7 @@ class AboutUsActivity : BaseViewModelActivity<ActivityAboutUsBinding, AboutUsVie
                 SimpleBrowserActivity.launch(
                     this@AboutUsActivity,
                     Config.get().serviceUrl,
-                    "用户协议"
+                    getString(R.string.tvSYUserService)
                 )
             }
 
@@ -65,7 +65,7 @@ class AboutUsActivity : BaseViewModelActivity<ActivityAboutUsBinding, AboutUsVie
                 SimpleBrowserActivity.launch(
                     this@AboutUsActivity,
                     Config.get().privacyUrl,
-                    "隐私政策"
+                    getString(R.string.tvSYPrivateService)
                 )
             }
 
@@ -74,7 +74,7 @@ class AboutUsActivity : BaseViewModelActivity<ActivityAboutUsBinding, AboutUsVie
                 SimpleBrowserActivity.launch(
                     this@AboutUsActivity,
                     Config.get().algorithmUrl,
-                    "算法公示"
+                    getString(R.string.app_algorithm_formula)
                 )
             }
 
@@ -83,7 +83,7 @@ class AboutUsActivity : BaseViewModelActivity<ActivityAboutUsBinding, AboutUsVie
                 SimpleBrowserActivity.launch(
                     this@AboutUsActivity,
                     Config.get().appConfig.beianNoJumpUrl,
-                    "备案号"
+                    getString(R.string.app_filing_number)
                 )
             }
 
@@ -93,7 +93,7 @@ class AboutUsActivity : BaseViewModelActivity<ActivityAboutUsBinding, AboutUsVie
                 SimpleBrowserActivity.launch(
                     this@AboutUsActivity,
                     Config.get().appConfig.personalInfoCollectionListUrl,
-                    "个人信息收集清单"
+                    getString(R.string.app_information_collection)
                 )
             }
 
@@ -102,7 +102,7 @@ class AboutUsActivity : BaseViewModelActivity<ActivityAboutUsBinding, AboutUsVie
                 SimpleBrowserActivity.launch(
                     this@AboutUsActivity,
                     Config.get().appConfig.thirdPartyInfoShareListUrl,
-                    "第三方信息共享清单"
+                    getString(R.string.app_shared_list)
                 )
             }
         }

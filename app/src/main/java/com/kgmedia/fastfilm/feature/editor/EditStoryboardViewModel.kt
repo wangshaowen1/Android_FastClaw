@@ -5,6 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.Player
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.Events
@@ -26,6 +27,7 @@ import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.getParcelableValue
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -167,8 +169,8 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
      */
     fun videoGenStatusText(genStatusVideo: Int?) =
         when (genStatusVideo) {
-            1 -> "视频生成中"
-            3 -> "视频生成失败"
+            1 -> R.string.video_generating.getResString()
+            3 -> R.string.video_generation_failed.getResString()
             else -> null
         }
 
@@ -178,12 +180,12 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
     fun retryGenerateVideo(finish: Boolean = false) {
         val storyboard = storyboard.get() ?: return
         if (storyboard.videoGenerating) {
-            "视频正在生成中，请稍后再试".showToast()
+          showToast(R.string.video_generating_please_wait)
             return
         }
         val prompt = storyBoardDesc.value?.toString()
         if (prompt.isNullOrEmpty()) {
-            "请先填写分镜描述".showToast()
+            R.string.please_enter_storyboard_description.getResString().showToast()
             return
         }
         val cost = genVideoCost.get()
@@ -300,7 +302,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
         val storyboard = storyboard.get() ?: return
         val prompt = storyBoardDesc.value?.toString()
         if (prompt.isNullOrEmpty()) {
-            "请先填写分镜描述".showToast()
+            showToast(R.string.please_enter_storyboard_description)
             return
         }
         launchWithLoading {
@@ -321,7 +323,7 @@ class EditStoryboardViewModel : AppRepositoryViewModel<EditStoryboardRepository>
                     this@EditStoryboardViewModel.storyboard.set(it)
                     FlowEventBus.postSync(Events.StoryboardSavedEvent(it))
                 }
-                "保存成功".showToast()
+                showToast(R.string.toast_save_success)
                 if (finish) {
                     finish()
                 }

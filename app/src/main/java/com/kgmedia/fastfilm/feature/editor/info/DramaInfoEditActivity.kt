@@ -79,7 +79,7 @@ class DramaInfoEditActivity :
 
         mRealVM.editAndModify.observe(this) {
             if (!it) return@observe
-            "保存成功".showToast()
+            showToast(R.string.toast_save_success)
             FlowEventBus.postSync(Events.SeriesUpdatedEvent(mRealVM.workInfo?.workId ?: ""))
             finish()
         }

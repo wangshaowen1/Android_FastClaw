@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.creator.storyboard
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
@@ -76,7 +77,7 @@ class ItemStoryboardVM(
         var storyboard = data.get()
         val prompt = (if (editingStoryBoardDesc.get()) editingStoryBoardDescText else storyBoardDesc.get())?.toString()
         if (prompt.isNullOrEmpty()) {
-            if (toast) "您还有分镜尚未填写描述，请补充后再继续".showToast()
+            if (toast) showToast(R.string.please_complete_storyboard_description)
             return false
         }
         if (prompt != storyboard?.storyBoardDesc) {

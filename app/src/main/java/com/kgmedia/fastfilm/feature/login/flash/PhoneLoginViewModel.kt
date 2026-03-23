@@ -145,7 +145,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<PhoneLoginRepository>() {
             launchWithLoading(false, block = {
                 if (isBind.get()) {
                     response(mRepo.bindPhone(mobile, code), {
-                        "绑定成功".showToast()
+                        showToast(R.string.bind_success)
                         User.get().apply {
                             storePhoneNum(mobile)
                         }

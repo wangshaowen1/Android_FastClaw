@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.settings.report
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.App
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
@@ -14,6 +15,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.TipOffBody
 import com.kgmedia.fastfilm.core.response
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -27,7 +29,7 @@ import com.nhsd.basic.ext.showToast
  */
 
 class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
-    var mToolbarVM = ToolbarViewModel(navigationAction = { back() }, title = "举报", paddingTop = 0)
+    var mToolbarVM = ToolbarViewModel(navigationAction = { back() }, title = R.string.report.getResString(), paddingTop = 0)
 
     val phoneNumber = MutableLiveData<String>()
     val photoSize = MutableLiveData(0)
@@ -66,7 +68,7 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
             override fun onUploadFail(uploadFail: MutableList<String>?) {
                 super.onUploadFail(uploadFail)
-                "图片上传失败".showToast()
+                showToast(R.string.toast_img_upload_fail)
                 setLoading(false)
             }
         })
@@ -94,7 +96,7 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
                         )
                     ),
                     result = {
-                        "提交成功".showToast()
+                        showToast(R.string.toast_commit_success)
                         finish()
                     },
                     error = {

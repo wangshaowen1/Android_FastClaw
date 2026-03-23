@@ -29,6 +29,7 @@ import com.kgmedia.fastfilm.feature.creator.assets.ItemAssetVM
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -75,7 +76,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
     val adapter by lazy { StoryboardDesignAdapter() }
-    private val addStoryboardItem by lazy { ItemAddVM("添加分镜", 16).apply { onItemClick.value = { addStoryboard(this) } } }
+    private val addStoryboardItem by lazy { ItemAddVM(R.string.add_storyboard.getResString(), 16).apply { onItemClick.value = { addStoryboard(this) } } }
     private var editingStoryboardDescVM: ItemStoryboardVM? = null
     private var loopAllStoryboardDescriptionStatusJob: Job? = null
     private var inputJob: Job? = null
@@ -88,7 +89,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
             if (field != value) {
                 field = value
                 if (value) {
-                    progressHelper.start("提取分镜信息", step = 1, intervalMs = 100L)
+                    progressHelper.start(R.string.extract_storyboard_info.getResString(), step = 1, intervalMs = 100L)
                 } else {
                     progressHelper.stop()
                 }
@@ -244,7 +245,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                         edit.invoke(0)
                     } else {
                         editConfirm = true
-                        topActivity?.showCommonDialog(title = "确认编辑？", tip = "您想要编辑文字内容，修改内容可能影响AI视频生成质量.", confirmText = "继续编辑") {
+                        topActivity?.showCommonDialog(title = R.string.confirm_edit.getResString(), tip = R.string.edit_text_warning.getResString(), confirmText = R.string.continue_editing.getResString()) {
                             edit.invoke(200)
                         }
                     }
@@ -255,7 +256,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                         adapter.remove(this)
                         updateItemNo()
                     } else {
-                        topActivity?.showCommonDialog(title = "确认删除吗？", tip = "删除后可能影响视频生成", confirmText = "删除") {
+                        topActivity?.showCommonDialog(title = R.string.confirm_deletion.getResString(), tip = R.string.delete_impact_warning.getResString(), confirmText = R.string.del.getResString()) {
                             deleteStoryboard(this)
                         }
                     }
@@ -291,7 +292,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private fun generateStoryboardVideo(toNextStep: ((workId: String?, storyId: String?, taskId: String?) -> Unit)? = null) {
         if (adapter.items.isEmpty()) {
-            "请先添加分镜".showToast()
+            showToast(R.string.please_add_storyboard_first)
             return
         }
         val cost = cost.get()
@@ -327,7 +328,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun buttonText(step: Int, cost: Int): CharSequence? {
         return when (step) {
-            STEP_DESCRIPTION_GENERATED -> if (cost > 0) "生成分镜视频  $POWER $cost".replaceSpan(POWER) { powerSpan } else "生成分镜视频"
+            STEP_DESCRIPTION_GENERATED -> if (cost > 0) "生成分镜视频  $POWER $cost".replaceSpan(POWER) { powerSpan } else R.string.generate_storyboard_video.getResString()
             else -> null
         }
     }

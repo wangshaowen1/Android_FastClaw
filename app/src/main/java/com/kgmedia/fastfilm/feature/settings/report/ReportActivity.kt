@@ -85,15 +85,15 @@ class ReportActivity :
         when (view?.id) {
             R.id.commit -> {
                 if (mRealVM.type.get() == null) {
-                    "请选择类型".showToast()
+                    getString(R.string.select_type_please).showToast()
                     return
                 }
                 if (binding.feedbackInput.text.length < 10) {
-                    "请输入至少10个字的内容".showToast()
+                    getString(R.string.input_min_length, 10).showToast()
                     return
                 }
                 if (mRealVM.phoneNumber.value.isNullOrEmpty()) {
-                    "请输入联系方式".showToast()
+                    getString(R.string.input_contract_info_please).showToast()
                     return
                 }
                 mRealVM.report(

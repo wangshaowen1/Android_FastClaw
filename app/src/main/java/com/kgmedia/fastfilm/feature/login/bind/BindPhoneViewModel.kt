@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.flow
 class BindPhoneViewModel : AppRepositoryViewModel<BindPhoneRepository>() {
     var mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "换绑手机号",
+        title = R.string.change_phone.getResString(),
         background = Color.TRANSPARENT
     )
 
@@ -126,7 +126,7 @@ class BindPhoneViewModel : AppRepositoryViewModel<BindPhoneRepository>() {
     private fun bindPhone(mobile: String?, code: String?, callback: () -> Unit) {
         launchWithLoading(false) {
             response(mRepo.bindPhone(mobile, code)) {
-                "绑定成功".showToast()
+                showToast(R.string.bind_success)
                 User.get().apply {
                     storePhoneNum(mobile)
                 }

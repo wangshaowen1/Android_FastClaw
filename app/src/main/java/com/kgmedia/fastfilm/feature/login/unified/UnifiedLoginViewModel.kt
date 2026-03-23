@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.login.unified
 
 import androidx.databinding.ObservableBoolean
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.User
@@ -58,7 +59,7 @@ class UnifiedLoginViewModel : AppRepositoryViewModel<ThirdLoginRepository>() {
                     data.loginToast()
                     onLogin?.invoke(data)
                 }, error = { this?.msg?.showToast() })
-            }, onError = { "登录失败".showToast() })
+            }, onError = { showToast(R.string.toast_sign_in_fail) })
         }
     }
 }

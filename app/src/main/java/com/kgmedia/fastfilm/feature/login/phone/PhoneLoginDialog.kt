@@ -54,7 +54,7 @@ class PhoneLoginDialog :
             loginType: Int = PhoneLoginViewModel.SHOW_LOADING
         ): PhoneLoginDialog {
             if (showToast) {
-                "请先登录".showToast()
+                showToast(R.string.toast_login_please)
             }
             this.checkedPolicy = checkedPolicy
             val dialog = PhoneLoginDialog()

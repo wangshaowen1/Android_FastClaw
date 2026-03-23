@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.details
 import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.Fragment
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.adapter.FragmentStateCacheAdapter
 import com.kgmedia.fastfilm.common.ext.removeTheRipples
 import com.kgmedia.fastfilm.common.ext.topActivity
@@ -46,9 +47,9 @@ class ComputingPowerDetailsActivity :
         binding.magicIndicator.navigator = CommonNavigatorUtils.getCommonNavigatorVp2(
             this,
             listOf(
-                "全部",
-                "收入明细",
-                "消耗明细"
+                getString(R.string.all),
+                getString(R.string.income_details),
+                getString(R.string.consumption_details)
             ),
             binding.viewPager,
             indicatorView = CommonNavigatorUtils.getLinePagerIndicatorGradient(context = this)

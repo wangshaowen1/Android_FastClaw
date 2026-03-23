@@ -65,7 +65,7 @@ fun Context.openBrowser(url: String?) {
         data = Uri.parse(url)
     }
     if (intent.resolveActivity(packageManager) != null) {
-        startActivity(Intent.createChooser(intent, "请选择浏览器"))
+        startActivity(Intent.createChooser(intent, getString(R.string.select_browser)))
     }
 }
 
@@ -78,7 +78,7 @@ fun FragmentActivity.downloadFile(url: String?) {
             putExtra(DownloadService.DOWNLOADURL, url)
             startService(this)
         }
-        "正在为你下载，请稍候".showToast()
+        getString(R.string.downloading_please_wait).showToast()
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
@@ -23,6 +24,7 @@ import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 
@@ -30,7 +32,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "未命名标题",
+        title = R.string.untitled_title.getResString(),
         background = Color.TRANSPARENT,
     )
 
@@ -60,7 +62,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     override fun onCreate() {
         super.onCreate()
         workName?.let {
-            mToolbarVM.mTitle.set("续创：$it")
+            mToolbarVM.mTitle.set(R.string.continued_creation_s.getResString(it))
         }
         getEpisodeInfo()
     }
@@ -87,7 +89,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
 
     fun sseGenerate() {
-        promptGenerating.value = true to ("AI扩写中...")
+        promptGenerating.value = true to (R.string.ai_expanding.getResString())
         val sseFlow = mRepo.api.sseContentAIExpand(
             AIExpandBody(
                 storyId = episodeInfo.value?.storyId,
@@ -138,15 +140,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
             combinationTitle.set("")
             return
         }
-        combinationTitle.set(buildString {
-            append("第")
-            append(episode.sortNo)
-            append("集")
-//            if (!episode.storyTitle.isNullOrBlank()) {
-//                append(" | ")
-//                append(episode.storyTitle)
-//            }
-        })
+        combinationTitle.set(R.string.episode_number_format.getResString(episode.sortNo))
     }
 
 

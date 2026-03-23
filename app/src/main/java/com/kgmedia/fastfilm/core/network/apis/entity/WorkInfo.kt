@@ -2,10 +2,12 @@ package com.kgmedia.fastfilm.core.network.apis.entity
 
 import android.os.Parcelable
 import androidx.room.TypeConverters
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.toUnitText
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.convert.Converters
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo.Companion.PROGRESS_STORY_GENERATING
+import com.nhsd.basic.ext.getResString
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -116,9 +118,9 @@ data class WorkInfo(
 
     fun statusCopy(): String {
         return when (workStatus) {
-            MIRROR_GENERATION_IN_PROGRESS -> "分镜生成中..."
-            VIDEO_REDRAWING_IN_PROGRESS -> "视频重绘中..."
-            else -> "视频合成中..."
+            MIRROR_GENERATION_IN_PROGRESS -> R.string.storyboard_generating.getResString()
+            VIDEO_REDRAWING_IN_PROGRESS -> R.string.video_redrawing.getResString()
+            else -> R.string.video_synthesizing.getResString()
         }
     }
     fun isNotCreatedEpisode(): Boolean {
@@ -336,9 +338,9 @@ data class EpisodeInfo(
 
     fun statusCopy(): String {
         return when (stepProgress) {
-            PROGRESS_STORYBOARD_GENERATING -> "分镜生成中..."
-            EPISODE_REPAINT_STATE -> "视频重绘中..."
-            else -> "视频合成中..."
+            PROGRESS_STORYBOARD_GENERATING -> R.string.storyboard_generating.getResString()
+            EPISODE_REPAINT_STATE -> R.string.video_redrawing.getResString()
+            else -> R.string.video_synthesizing.getResString()
         }
     }
 

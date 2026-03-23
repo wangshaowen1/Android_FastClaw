@@ -149,7 +149,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
             Logger.i(TAG, "获取token startAuthentication code=$code,result=$result")
             if (2000 != code) {
                 promptGenerating.value = false to ""
-                "登录失败".showToast()
+                showToast(R.string.toast_sign_in_fail)
                 return@startAuthentication
             }
             val flashTestTokenInfo = runCatching {
@@ -158,7 +158,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
 
             if (flashTestTokenInfo == null) {
                 promptGenerating.value = false to ""
-                "登录失败".showToast()
+                showToast(R.string.toast_sign_in_fail)
                 return@startAuthentication
             }
             loginByFlashMobile(flashValidateToken = flashTestTokenInfo?.token)
@@ -188,7 +188,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                     })
             }, onError = {
                 promptGenerating.value = false to ""
-                "登录失败".showToast()
+                showToast(R.string.toast_sign_in_fail)
             })
         }
     }
@@ -219,7 +219,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                     SignUtils.signIn()
                     onLogin?.invoke(data)
                 }, error = { this?.msg?.showToast() })
-            }, onError = { "登录失败".showToast() })
+            }, onError = { showToast(R.string.toast_sign_in_fail) })
         }
     }
 
@@ -325,7 +325,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
             launchWithLoading(false, block = {
                 if (isBind.get()) {
                     response(mRepo.bindPhone(mobile, code), {
-                        "绑定成功".showToast()
+                        showToast(R.string.bind_success)
                         User.get().apply {
                             storePhoneNum(mobile)
                         }

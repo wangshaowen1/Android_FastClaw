@@ -5,6 +5,7 @@ import androidx.core.os.bundleOf
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.databinding.DialogDramaTitleEditBinding
@@ -38,7 +39,7 @@ class DramaTitleEditDialog() :
         binding.btnCancel.setOnClickListener { dismissAllowingStateLoss() }
         binding.btnConfirm.setOnClickListener {
             if (binding.nameInputer.text.trim().isEmpty()) {
-                "请输入需要更新的内容".showToast()
+                getString(R.string.enter_update_content).showToast()
                 return@setOnClickListener
             }
             onSave?.invoke(binding.nameInputer.text.trim())

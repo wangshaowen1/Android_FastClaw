@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.network.RetrofitClient
@@ -91,16 +92,16 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>(), D
                 val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(resource.file, destFile) }
                 if (copied) {
                     FileUtils.notifySystemToScan(destFile)
-                    "下载成功，请到系统相册查看".showToast()
+                    showToast(R.string.download_success_check_album)
                 } else {
-                    "视频下载失败，请重试".showToast()
+                    showToast(R.string.video_download_failed_retry)
                 }
             } else {
-                "视频下载失败，请重试".showToast()
+                showToast(R.string.video_download_failed_retry)
             }
             downloading.value = false
         }, onError = {
-            "视频下载失败，请重试".showToast()
+            showToast(R.string.video_download_failed_retry)
             downloading.value = false
         })
     }

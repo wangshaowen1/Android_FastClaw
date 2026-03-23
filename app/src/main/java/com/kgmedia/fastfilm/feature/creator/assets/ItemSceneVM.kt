@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.creator.assets
 
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
@@ -18,6 +19,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.edit.ReferenceHistoricalImageryDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,21 +34,21 @@ class ItemSceneVM(
     private val getAiPriceProvider: suspend () -> Int
 ) : ItemAssetVM<SimpleSceneInfo>(workId, storyId, onItemChanged, data) {
 
-    override val assetType: String = "场景"
-    override val assetDescHint: String = "场景描述词"
-    override val assetNameHint: String = "场景名"
-    override val generateButtonText: String = "生成场景"
+    override val assetType: String = R.string.scenes.getResString()
+    override val assetDescHint: String = R.string.scene_description.getResString()
+    override val assetNameHint: String = R.string.scene_name.getResString()
+    override val generateButtonText: String = R.string.generate_scene.getResString()
 
     override fun clickGenerate() {
         if (status.get() == 1) return
         val scenePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
         val sceneName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
         if (scenePrompt.isNullOrEmpty()) {
-            "请先填写场景描述".showToast()
+            showToast(R.string.please_enter_scene_description)
             return
         }
         if (sceneName.isNullOrEmpty()) {
-            "请先填写场景名称".showToast()
+            showToast(R.string.please_enter_scene_name)
             return
         }
         val fragmentManager = (topActivity as? FragmentActivity)?.supportFragmentManager

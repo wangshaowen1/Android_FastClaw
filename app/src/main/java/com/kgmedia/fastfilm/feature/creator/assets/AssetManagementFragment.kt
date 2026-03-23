@@ -111,9 +111,9 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
 
     override fun handleBackPressed(): Boolean {
         if (mRealVM.generating || mRealVM.step.get() == AssetManagementViewModel.STEP_IMAGE_GENERATING) {
-            "AI正在生成中，已自动保存为草稿".showToast()
+            getString(R.string.ai_generating_auto_saved).showToast()
         } else {
-            "已自动保存为草稿".showToast()
+            getString(R.string.auto_saved_as_draft).showToast()
         }
         if (hostVm?.model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
             if (from != StoryEditorActivity.FROM_MY_WORKS) {

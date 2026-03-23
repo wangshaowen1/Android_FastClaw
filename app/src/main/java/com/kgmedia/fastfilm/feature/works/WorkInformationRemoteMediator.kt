@@ -5,12 +5,14 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.AppDatabase
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
+import com.nhsd.basic.ext.getResString
 
 /**
  * *****************************************
@@ -67,7 +69,7 @@ class WorkInformationRemoteMediator(
                     // 刷新时清空旧数据
                     complaintDetailsDao.clearAll()
                 }
-                val throwable = ApiException(ApiException.AUTHORIZATION_ERROR, "请先登录")
+                val throwable = ApiException(ApiException.AUTHORIZATION_ERROR, R.string.toast_login_please.getResString())
                 return MediatorResult.Error(throwable)
             }
 

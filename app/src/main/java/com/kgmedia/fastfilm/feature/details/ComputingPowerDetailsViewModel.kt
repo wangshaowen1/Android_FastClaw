@@ -1,9 +1,11 @@
 package com.kgmedia.fastfilm.feature.details
 
 import android.graphics.Color
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
+import com.nhsd.basic.ext.getResString
 
 /**
  * *****************************************
@@ -17,7 +19,7 @@ import com.kgmedia.fastfilm.core.AppRepository
 class ComputingPowerDetailsViewModel : AppRepositoryViewModel<AppRepository>() {
     var mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "算力明细",
+        title = R.string.compute_details.getResString(),
         background = Color.TRANSPARENT
     )
 }

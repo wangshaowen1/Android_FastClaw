@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.editor
 
 import androidx.databinding.ObservableBoolean
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.launch
@@ -14,6 +15,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.GenerateSubtitleBody
 import com.kgmedia.fastfilm.core.network.apis.request.StoryboardIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -58,8 +60,8 @@ class ItemStoryboardVM(
      */
     fun genStatusBig(info: SimpleStoryboardInfo?) =
         when {
-            info?.videoGenerating == true -> "视频生成中"
-            info?.videoGenerateFailed == true -> "视频生成失败"
+            info?.videoGenerating == true -> R.string.video_generating.getResString()
+            info?.videoGenerateFailed == true ->  R.string.video_generation_failed.getResString()
             else -> null
         }
 
@@ -68,9 +70,9 @@ class ItemStoryboardVM(
      */
     fun genStatus(info: SimpleStoryboardInfo?) =
         when {
-            info?.videoGenerating == true -> "制作中"
-            info?.videoGenerateFailed == true -> "加载失败"
-            else -> "分镜${info?.sortNo}"
+            info?.videoGenerating == true -> R.string.in_progress.getResString()
+            info?.videoGenerateFailed == true -> R.string.loading_failed.getResString()
+            else -> R.string.storyboard_s.getResString(info?.sortNo)
         }
 
     fun generate(storyInfo: EpisodeInfo?) {

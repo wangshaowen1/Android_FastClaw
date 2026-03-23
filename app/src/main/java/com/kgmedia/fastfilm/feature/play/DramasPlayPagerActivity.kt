@@ -95,7 +95,7 @@ class DramasPlayPagerActivity :
         listController.onPageChanged = { workInfo, position ->
             mRealVM.currentWork.set(workInfo)
             if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) {
-                binding.tvTitle.text = "第${workInfo.lastEpisodeNo}集"
+                binding.tvTitle.text = getString(R.string.episode_number_format, workInfo.lastEpisodeNo)
             }
             val realWorkId =
                 if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.SERIES) workId else workInfo.workId
@@ -109,7 +109,7 @@ class DramasPlayPagerActivity :
         binding.btnEdit.setOnSingleClickListener {
             val currentWork = mRealVM.currentWork.get() ?: return@setOnSingleClickListener
             val story = currentWork.workStoryItemList?.firstOrNull() ?: return@setOnSingleClickListener
-            showCommonDialog(tip = "本集视频重绘后将覆盖原视频,确定重绘吗？", confirmText = "确定") {
+            showCommonDialog(tip = getString(R.string.redraw_cover_confirm), confirmText = getString(R.string.confirm_ok)) {
                 EditStoryboardVideoActivity.start(currentWork.workTitle, story.workId, story.storyId, story.workRatio, story)
             }
             EventManager.onAppTrack(AppEvent.SF_CLICK_WORK_REPLAY_REDRAW_BUTTON)
@@ -126,12 +126,12 @@ class DramasPlayPagerActivity :
             dataList = listOfNotNull(
                 if (!currentWork.isMine()) PlayMenuInfo(
                     reportTypeId = PlayMenuInfo.REPORT,
-                    reportText = "举报",
+                    reportText = getString(R.string.report),
                     reportIcon = R.drawable.icon_report
                 ) else null,
                 if (currentWork.isMine()) PlayMenuInfo(
                     reportTypeId = PlayMenuInfo.DOWNLOAD,
-                    reportText = "下载",
+                    reportText = getString(R.string.download),
                     reportIcon = R.drawable.icon_menu_download
                 ) else null
             ),
@@ -228,7 +228,7 @@ class DramasPlayPagerActivity :
 
     private fun handlePlayEnded() {
         if (!listController.smoothScrollToNext()) {
-            "已经是最后一集了".showToast()
+            getString(R.string.already_last_episode).showToast()
             //playerManager.replay()
         }
 //        if (mRealVM.currentPlayMode == DramasPlayPagerViewModel.PlayMode.RECOMMEND) {

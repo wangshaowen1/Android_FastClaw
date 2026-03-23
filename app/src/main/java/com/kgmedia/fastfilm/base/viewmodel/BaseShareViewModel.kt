@@ -61,7 +61,7 @@ open class BaseShareViewModel<T : AppRepository> : AppRepositoryViewModel<T>() {
             if (file?.exists() == true) {
                 showToast(R.string.toast_save_success)
             } else {
-                "保存失败".showToast()
+                showToast(R.string.toast_save_fail)
             }
         }
     }

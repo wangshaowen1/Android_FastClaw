@@ -6,6 +6,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.App
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
@@ -25,6 +26,7 @@ import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getParcelableValue
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import kotlinx.coroutines.Dispatchers
@@ -37,9 +39,9 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
             navigationAction = {
                 if (isModify) {
                     topActivity?.showConfirmPrompt(
-                        "您对作品的信息有修改尚未保存，是否保存修改?",
-                        cancelText = "不保存",
-                        confirmText = "保存并退出",
+                        R.string.save_changes_prompt.getResString(),
+                        cancelText = R.string.discard.getResString(),
+                        confirmText = R.string.save_and_exit.getResString(),
                         cancel = {
                             back()
                         },
@@ -50,7 +52,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
                 back()
             },
-            title = "编辑作品",
+            title = R.string.edit_work.getResString(),
             background = Color.TRANSPARENT
         )
     }
@@ -83,16 +85,16 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
     fun saveInfo() {
         val title = name.value?.toString()
         if (title.isNullOrEmpty()) {
-            "请完善作品名称".showToast()
+          showToast(R.string.please_enter_work_name)
             return
         }
         val content = desc.value?.toString()
         if (content.isNullOrEmpty()) {
-            "请完善作品简介".showToast()
+            showToast(R.string.please_enter_work_description)
             return
         }
         if (isUploading && !mCoverPath.isNullOrEmpty()) {
-            "封面上传中,请稍等~".showToast()
+            showToast(R.string.cover_uploading_please_wait)
             return
         }
         launchWithLoading {
@@ -105,7 +107,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                     return@launchWithLoading
                 }
             } else {
-                (sensitiveCheckRes.msg ?: "图片校验失败").showToast()
+                (sensitiveCheckRes.msg ?: R.string.image_validation_failed.getResString()).showToast()
                 return@launchWithLoading
             }
 
@@ -208,7 +210,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
                     onUploadFail(null)
                 } else {
                     cover.set(url)
-                    "上传成功".showToast()
+                    showToast(R.string.upload_success)
                 }
                 isUploading = false
             }
@@ -216,7 +218,7 @@ class DramaInfoEditViewModel : AppRepositoryViewModel<AppRepository>() {
             override fun onUploadFail(uploadFail: MutableList<String>?) {
                 super.onUploadFail(uploadFail)
                 setLoading(false)
-                "上传失败".showToast()
+                showToast(R.string.upload_fail)
                 isUploading = false
             }
         })

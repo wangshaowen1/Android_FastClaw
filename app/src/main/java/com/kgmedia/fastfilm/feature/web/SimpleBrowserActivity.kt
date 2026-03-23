@@ -393,7 +393,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
                 if (!TextUtils.isEmpty(src.src)) {
                     cacheImage(src.src)
                 } else {
-                    "下载图片失败".showToast()
+                    showToast(R.string.download_image_failed)
                 }
             }
 //            registerHandler("webShare") { data, _ ->

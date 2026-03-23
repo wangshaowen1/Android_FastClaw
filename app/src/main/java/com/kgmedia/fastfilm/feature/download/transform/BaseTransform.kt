@@ -3,8 +3,10 @@ package com.kgmedia.fastfilm.feature.download.transform
 import androidx.annotation.CallSuper
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.ioScope
 import com.kgmedia.fastfilm.core.ext.report
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.launchNoCrash
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -58,13 +60,13 @@ abstract class BaseTransform() {
                             }
                             transformListener?.onTransformSuccess(outputFile)
                         } else {
-                            transformListener?.onTransformFail("视频合成文件不存在")
+                            transformListener?.onTransformFail(R.string.video_file_missing.getResString())
                         }
                         cancel()
                     },
                     onFail = {
                         it?.report()
-                        transformListener?.onTransformFail((it as? TransformException)?.message ?: "视频合成失败")
+                        transformListener?.onTransformFail((it as? TransformException)?.message ?: R.string.video_composition_failed.getResString())
                         cancel()
                     },
                     onProgress = {
@@ -73,7 +75,7 @@ abstract class BaseTransform() {
                 )
             } catch (e: Throwable) {
                 e.report()
-                transformListener?.onTransformFail((e as? TransformException)?.message ?: "视频合成失败")
+                transformListener?.onTransformFail((e as? TransformException)?.message ?: R.string.video_composition_failed.getResString())
                 cancel()
             }
         }

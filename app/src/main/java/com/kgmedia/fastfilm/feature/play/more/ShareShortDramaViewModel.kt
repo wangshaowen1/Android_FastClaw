@@ -6,6 +6,7 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.kgmedia.fastfilm.App
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.BaseShareViewModel
 import com.kgmedia.fastfilm.common.ext.toCache
 import com.kgmedia.fastfilm.core.AppRepository
@@ -163,13 +164,13 @@ abstract class ShareShortDramaViewModel<T : AppRepository> : BaseShareViewModel<
                                 },
                                 error = {
                                     downloading.value = false
-                                    "上传失败".showToast()
+                                    showToast(R.string.upload_failed)
                                 }
                             )
                         },
                         onError = {
                             downloading.value = false
-                            "上传失败".showToast()
+                            showToast(R.string.upload_failed)
                         })
                 }
             }
@@ -177,7 +178,7 @@ abstract class ShareShortDramaViewModel<T : AppRepository> : BaseShareViewModel<
             override fun onUploadFail(uploadFail: MutableList<String>?) {
                 super.onUploadFail(uploadFail)
                 downloading.value = false
-                "上传失败".showToast()
+                showToast(R.string.upload_failed)
             }
         })
     }

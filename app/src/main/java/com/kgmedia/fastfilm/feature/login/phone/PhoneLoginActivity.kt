@@ -48,7 +48,7 @@ class PhoneLoginActivity :
             checkedPolicy: Boolean = false
         ) {
             if (showToast) {
-                "请先登录".showToast()
+                showToast(R.string.toast_login_please)
             }
             this.checkedPolicy = checkedPolicy
             val activity = topActivity ?: return

@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.NetworkUtils;
 import com.kgmedia.fastfilm.App;
+import com.kgmedia.fastfilm.R;
 import com.nhsd.basic.ext.ToastExtKt;
 import com.nhsd.basic.utils.Logger;
 import com.nhsd.share.KS;
@@ -69,7 +70,7 @@ public class ShareManager {
         //判断是否有网络
         if (!NetworkUtils.isConnected()) {
             umShareListener.onCancel(platform);
-            ToastExtKt.showToast("你的网络状态异常,请稍后再试");
+            ToastExtKt.showToast(R.string.no_network_tips);
             return;
         }
         UMImage image;
@@ -180,7 +181,7 @@ public class ShareManager {
         //判断是否有网络
         if (!NetworkUtils.isConnected()) {
             umShareListener.onCancel(platform);
-            ToastExtKt.showToast("你的网络状态异常,请稍后再试");
+            ToastExtKt.showToast(R.string.no_network_tips);
             return;
         }
 
@@ -233,7 +234,7 @@ public class ShareManager {
         //判断是否有网络
         if (!NetworkUtils.isConnected()) {
             umShareListener.onCancel(platform);
-            ToastExtKt.showToast("你的网络状态异常,请稍后再试");
+            ToastExtKt.showToast(R.string.no_network_tips);
             return;
         }
 

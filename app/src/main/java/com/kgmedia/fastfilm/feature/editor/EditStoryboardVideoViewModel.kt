@@ -34,6 +34,7 @@ import com.kgmedia.fastfilm.kit.media.setPlayUrl
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.getParcelableValue
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -281,9 +282,9 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
             val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(resource.file.putAIGCMetadata(storyboard), destFile) }
             if (copied) {
                 FileUtils.notifySystemToScan(destFile)
-                "视频已保存至相册".showToast()
+                showToast(R.string.video_saved_to_album)
             } else {
-                "保存失败".showToast()
+                showToast(R.string.toast_save_fail)
             }
         }
     }
@@ -306,11 +307,11 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     fun synthesis() {
         if (anyStoryboardGenerating()) {
-            "视频正在生成中，请稍后再试".showToast()
+            showToast(R.string.video_generating_please_wait)
             return
         }
         if (anyStoryboardFailed()) {
-            "视频生成失败，请重新生成".showToast()
+            showToast(R.string.video_generation_failed_retry)
             return
         }
         val storyboards = adapter.items.mapNotNull { it.data.get() }
@@ -321,11 +322,11 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
             //重绘已完成
             if (it?.stepProgress == EpisodeInfo.EPISODE_REPAINT_COMPLETED) {
                 topActivity?.showCommonDialog(
-                    title = "确认合成并覆盖？",
-                    tip = "合成完成后，修改内容将作为作品最新版本发布，原视频版本将被替换且无法恢复",
-                    cancelText = "返回编辑",
+                    title = R.string.confirm_synthesize_and_overwrite.getResString(),
+                    tip = R.string.overwrite_warning_message.getResString(),
+                    cancelText = R.string.back_to_edit.getResString(),
                     cancel = { },
-                    confirmText = "确认合成",
+                    confirmText = R.string.confirm_synthesize.getResString(),
                     confirm = {
                         doSynthesis(storyboards)
                     })
@@ -337,7 +338,7 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
 
     private fun doSynthesis(storyboards: List<SimpleStoryboardInfo>) {
         topActivity?.let {
-            val dialog = GeneratingDialog(it, "视频合成中...", "请勿退出 或 锁屏")
+            val dialog = GeneratingDialog(it, R.string.video_synthesizing.getResString(), R.string.do_not_exit_or_lock_screen.getResString())
             synthesisDialog = dialog
             dialog.show()
         }

@@ -131,7 +131,7 @@ class ContinueWritingActivity :
                     return
                 }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {
-                    "请输入至少${mRealVM.minInputLength}个字".showToast()
+                    getString(R.string.input_min_length, mRealVM.minInputLength).showToast()
                     return
                 }
                 val checkJob = {

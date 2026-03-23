@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.login.flash
 
 
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.User
@@ -43,7 +44,7 @@ class FlashLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                         FlashLoginManager.hideLoading()
                     })
             }, onError = {
-                "登录失败".showToast()
+                showToast(R.string.toast_sign_in_fail)
                 FlashLoginManager.hideLoading()
             })
         }
@@ -71,7 +72,7 @@ class FlashLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                     SignUtils.signIn()
                     onLogin?.invoke(data)
                 }, error = { this?.msg?.showToast() })
-            }, onError = { "登录失败".showToast() })
+            }, onError = { showToast(R.string.toast_sign_in_fail) })
         }
     }
 }

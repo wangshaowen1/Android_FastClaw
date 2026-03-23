@@ -31,6 +31,7 @@ import com.kuaige.payment.entity.AliPayParams
 import com.kuaige.payment.entity.PaymentParams
 import com.kuaige.payment.entity.WxPayParams
 import com.nhsd.basic.ext.getResColor
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.ext.showToastDelay
 import com.nhsd.basic.utils.Logger
@@ -49,7 +50,7 @@ fun UserHomeData?.loginToast() {
     Global.needCompleteProfile = newRegister
     if (!newRegister) {
     }
-    "登录成功，开始创作吧~".showToastDelay(100)
+    R.string.login_success_start_creating.getResString().showToastDelay(100)
 }
 
 /**
@@ -238,7 +239,7 @@ suspend fun sensitiveWordCheck(content: String?, needHighlight: Boolean? = true)
             return false to sp
         }
     } else {
-        (checkRes.msg ?: "敏感词校验失败").showToast()
+        (checkRes.msg ?: R.string.sensitive_word_check_failed.getResString()).showToast()
         return false to null
     }
     return true to null

@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.editor
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
@@ -10,6 +11,7 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardBinding
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.getResString
 
 /**
  * 分镜重绘
@@ -39,10 +41,10 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
     override fun onBackPressed() {
         if (mRealVM.storyBoardDesc.value != mRealVM.storyboard.get()?.storyBoardDesc) {
             showCommonDialog(
-                tip = "您对分镜信息有修改尚未保存，是否保存修改？",
-                cancelText = "不保存",
+                tip = getString(R.string.save_storyboard_changes_prompt),
+                cancelText = R.string.discard.getResString(),
                 cancel = { super.onBackPressed() },
-                confirmText = "保存并退出",
+                confirmText = R.string.save_and_exit.getResString(),
                 confirm = { mRealVM.save(true) })
         } else {
             super.onBackPressed()

@@ -117,7 +117,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             val myMultiStatePagingFooterAdapter = MyMultiStatePagingFooterAdapter(
                 myWorksAdapter,
                 noMoreThreshold = noMoreThreshold,
-                noData = "暂无作品记录，快去创作你的作品吧",
+                noData = getString(R.string.empty_creation_history)
             ) {
                 myWorksAdapter.retry()
             }
@@ -233,12 +233,12 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             binding.groudEdit.visibility = View.VISIBLE
         }
 
-        mRealVM.selectedCount.observe(this) {
-            if (it <= 0) {
-                binding.tvSelectCount.text = "已选择 0 个"
-                return@observe
+        mRealVM.selectedCount.observe(this) {count ->
+            if (count <= 0) {
+                binding.tvSelectCount.text = getString(R.string.selected_items_format, "0")
+                    return@observe
             }
-            val spannableString = SpannableString("已选择${it}个")
+            val spannableString = SpannableString(getString(R.string.selected_items_format, count.toString()))
             spannableString.setSpan(
                 ForegroundColorSpan(
                     Color.WHITE
@@ -316,9 +316,9 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                     return
                 }
                 topActivity?.showConfirmPrompt(
-                    title = "是否删除该作品",
-                    cancelText = "取消",
-                    confirmText = "确定"
+                    title = getString(R.string.confirm_delete_work),
+                    cancelText = getString(R.string.cancel),
+                    confirmText = getString(R.string.confirm_ok)
                 ) {
                     mRealVM.delete(eventVm.getSelectedItems().toList())
                 }

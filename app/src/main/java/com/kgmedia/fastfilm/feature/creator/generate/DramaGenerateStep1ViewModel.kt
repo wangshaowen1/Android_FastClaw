@@ -112,11 +112,6 @@ class DramaGenerateStep1ViewModel : AppRepositoryViewModel<CreationRepository>()
         )
     }
 
-    fun sendRecoveryNotification(content: String?) {
-        val workName = mWorkName.value?.ifBlank { "未命名" } ?: "未命名"
-        NotificationHelper.sendRecoveryNotification("《${workName}》${content}")
-    }
-
     /**
      * 灵感故事梗概失败重新创建任务
      */

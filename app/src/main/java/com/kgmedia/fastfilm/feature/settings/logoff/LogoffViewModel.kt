@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.CountDownTimer
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
@@ -12,6 +13,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.LogOffStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.kit.SignUtils
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -37,7 +39,7 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
 
     var mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "注销账号",
+        title = R.string.app_cancel_the_account.getResString(),
         background = Color.TRANSPARENT
     )
     val checkedPolicy = ObservableField(false)
@@ -46,7 +48,7 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
     val removeAccountState = ObservableInt(REMOVE_ACCOUNT_STATE_NOT_APPLY)
 
     //提交申请文案
-    val submitApplyText = ObservableField("申请注销")
+    val submitApplyText = ObservableField(R.string.unregister_request.getResString())
     private var countDownTimer: CountDownTimer? = null
     override fun onStart() {
         super.onStart()
@@ -61,11 +63,11 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
         countDownTimer = object : CountDownTimer(10000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val seconds = (millisUntilFinished / 1000) + 1
-                submitApplyText.set("申请注销(${seconds}s)")
+                submitApplyText.set(R.string.cancellation_request_format.getResString(seconds))
             }
 
             override fun onFinish() {
-                submitApplyText.set("申请注销")
+                submitApplyText.set(R.string.unregister_request.getResString())
                 removeAccountState.set(REMOVE_ACCOUNT_STATE_APPLY)
                 countDownTimer = null
             }
@@ -86,7 +88,7 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
     fun cancelLogoff() {
         launchWithLoading {
             response(mRepo.api.cancelLogOff(UserTokenBody())) {
-                "取消成功".showToast()
+                showToast(R.string.cancellation_success)
                 finish()
             }
         }

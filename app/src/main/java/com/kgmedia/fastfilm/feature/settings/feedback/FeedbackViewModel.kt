@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.settings.feedback
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.App
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
@@ -14,6 +15,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.FeedbackBody
 import com.kgmedia.fastfilm.core.network.apis.request.ImgUrlBody
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,7 +33,7 @@ import kotlinx.coroutines.withContext
 class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
     var mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "建议反馈"
+        title = R.string.app_suggestion_and_feedback.getResString()
     )
 
     val phoneNumber = MutableLiveData<String>()
@@ -62,7 +64,7 @@ class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
 
             override fun onUploadFail(uploadFail: MutableList<String>?) {
                 super.onUploadFail(uploadFail)
-                "图片上传失败".showToast()
+                showToast(R.string.toast_img_upload_fail)
                 setLoading(false)
             }
         })
@@ -80,7 +82,7 @@ class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
                         return@apiBlock
                     }
                 } else {
-                    (sensitiveCheckRes.msg ?: "图片校验失败").showToast()
+                    (sensitiveCheckRes.msg ?: R.string.image_validation_failed.getResString()).showToast()
                     setLoading(false)
                     return@apiBlock
                 }
@@ -89,7 +91,7 @@ class FeedbackViewModel : AppRepositoryViewModel<AppRepository>() {
             val response = withContext(Dispatchers.IO) { mRepo.api.feedback(body) }
             setLoading(false)
             if (response.isSuccess) {
-                "反馈成功".showToast()
+                showToast(R.string.feedback_success)
                 finish()
             } else {
                 response.msg.showToast()

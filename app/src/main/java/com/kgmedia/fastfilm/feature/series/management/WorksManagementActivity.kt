@@ -62,8 +62,8 @@ class WorksManagementActivity :
     }
 
     private fun initView() {
-        val noDataButtonTextAs = "刷新"
-        val noDataAs = "暂无数据"
+        val noDataButtonTextAs = getString(R.string.refresh)
+        val noDataAs = getString(R.string.no_data)
         binding.recyclerView.apply {
             itemAnimator = null
             addItemDecoration(BottomSpaceDecoration(80.dp))
@@ -112,10 +112,10 @@ class WorksManagementActivity :
 
         mRealVM.selectedCount.observe(this) {
             if (it <= 0) {
-                binding.tvSelectCount.text = "已选择 0 个"
+                binding.tvSelectCount.text = getString(R.string.selected_items_format, "0")
                 return@observe
             }
-            val spannableString = SpannableString("已选择${it}个")
+            val spannableString = SpannableString(getString(R.string.selected_items_format, it.toString()))
             spannableString.setSpan(
                 ForegroundColorSpan(
                     Color.WHITE
@@ -156,10 +156,10 @@ class WorksManagementActivity :
                     return
                 }
                 topActivity?.showConfirmPrompt(
-                    title = "删除剧集",
-                    tip = "删除后，该集的剧本、资产图、分镜视频等将被清空，已消耗算力将无法恢复",
-                    cancelText = "取消",
-                    confirmText = "删除"
+                    title = getString(R.string.delete_episode),
+                    tip = getString(R.string.delete_episode_warning),
+                    cancelText = getString(R.string.cancel),
+                    confirmText =  getString(R.string.del)
                 ) {
                     mRealVM.delete(eventVm.getSelectedItems().toList())
                 }

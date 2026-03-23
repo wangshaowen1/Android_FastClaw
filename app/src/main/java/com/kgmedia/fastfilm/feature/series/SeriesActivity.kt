@@ -67,8 +67,8 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
     }
 
     private fun initView() {
-        val noDataButtonTextAs = "刷新"
-        val noDataAs = "暂无作品记录，快去创作你的作品吧"
+        val noDataButtonTextAs = getString(R.string.refresh)
+        val noDataAs = getString(R.string.empty_creation_history)
         binding.recyclerView.apply {
             itemAnimator = null
             addItemDecoration(BottomSpaceDecoration(80.dp))
@@ -198,7 +198,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
 
                 if (blocker != null) {
                     // 2. 存在阻断，提示用户
-                    "请先完成第${blocker.sortNo}集的内容制作".showToast()
+                    getString(R.string.please_complete_episode_content, blocker.sortNo).showToast()
                 } else {
                     // 3. 校验通过，允许创建
                     // 传入上一集作为上下文（如果是第一集则为 null）

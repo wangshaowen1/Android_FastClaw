@@ -35,13 +35,13 @@ class LogoffActivity :
                 LogoffViewModel.REMOVE_ACCOUNT_STATE_NOT_APPLY -> {}
                 LogoffViewModel.REMOVE_ACCOUNT_STATE_APPLY -> {
                     if (mRealVM.checkedPolicy.get()==false){
-                        "如需确认注销，请先阅读并同意注销说明".showToast()
+                        getString(R.string.please_agree_to_cancellation_terms).showToast()
                         return
                     }
                     showConfirmPrompt(
-                        title = "是否注销账号",
-                        cancelText = "取消",
-                        confirmText = "确定"
+                        title = getString(R.string.confirm_account_cancellation),
+                        cancelText = getString(R.string.cancel),
+                        confirmText = getString(R.string.confirm_ok)
                     ) {
                         mRealVM.commitLogoff()
                     }
@@ -58,7 +58,7 @@ class LogoffActivity :
      * 取消注销弹窗
      */
     private fun cancelLogoff() {
-        showConfirmPrompt(tip = "是否确认取消注销申请", cancelText = "暂不") {
+        showConfirmPrompt(tip = getString(R.string.confirm_cancel_cancellation_request), cancelText = getString(R.string.action_not_now)) {
             mRealVM.cancelLogoff()
         }
     }

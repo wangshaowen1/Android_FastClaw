@@ -102,7 +102,7 @@ class StoryUploadDialog : BaseVMDialogFragment<DialogStoryUploadBinding, StoryUp
                         val allowedExtensions = listOf("txt")//, "doc", "docx"
                         if (meta.second !in allowedExtensions) {
                             withContext(Dispatchers.Main) {
-                                "文件格式不支持，请选择 TXT 文件".showToast()
+                                getString(R.string.unsupported_file_format_please_select_txt).showToast()
                             }
                             return@launch
                         }

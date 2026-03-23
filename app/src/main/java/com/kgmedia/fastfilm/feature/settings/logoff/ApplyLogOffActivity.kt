@@ -22,10 +22,10 @@ class ApplyLogOffActivity : BaseViewModelActivity<ActivityApplyLogOffBinding, Ap
     private fun logOff() {
         val content = mRealVM.content.value
         if (content.isNullOrEmpty() || content.length < 10) {
-            "申请理由不得低于10个字".showToast()
+            getString(R.string.appeal_reason_min_length_hint).showToast()
             return
         }
-        showConfirmPrompt(title = "是否确认提交申请", cancelText = "暂不", confirmText = "确定") {
+        showConfirmPrompt(title = getString(R.string.confirm_submit_appeal), cancelText = getString(R.string.action_not_now), confirmText = getString(R.string.confirm_ok)) {
             mRealVM.commitLogoff(content)
         }
     }

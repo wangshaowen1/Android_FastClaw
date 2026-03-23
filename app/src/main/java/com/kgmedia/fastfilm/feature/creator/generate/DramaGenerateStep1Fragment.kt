@@ -86,7 +86,7 @@ class DramaGenerateStep1Fragment :
             }
         }
         binding.btnNextDisable.setOnSingleClickListener {
-            "故事生成中，请稍候".showToast()
+            getString(R.string.story_generating_please_wait).showToast()
         }
         binding.btnNext.setOnSingleClickListener {
             mRealVM.saveTitle {
@@ -111,9 +111,9 @@ class DramaGenerateStep1Fragment :
 
     override fun handleBackPressed(): Boolean {
         if (mRealVM.isSummaryLoading.get()) {
-            "AI正在生成中，已自动保存为草稿".showToast()
+            getString(R.string.ai_generating_auto_saved).showToast()
         } else {
-            "已自动保存为草稿".showToast()
+            getString(R.string.auto_saved_as_draft).showToast()
         }
         if (from != StoryEditorActivity.FROM_MY_WORKS) {
             MyWorksFragment.start()

@@ -22,6 +22,7 @@ import com.kgmedia.fastfilm.feature.details.ComputingPowerDetailsActivity
 import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable.isActive
@@ -32,9 +33,9 @@ import kotlinx.coroutines.launch
 class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : PaymentViewModel<PowerRepository>() {
     val toolbar by lazy {
         ToolbarViewModel(
-            title = "算力充值",
+            title = R.string.recharge_credits.getResString(),
             navigationAction = { back() },
-            menuText = "算力明细",
+            menuText = R.string.compute_details.getResString(),
             menuAction = { ComputingPowerDetailsActivity.start(topActivity) }
         )
     }
@@ -114,13 +115,13 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
     fun recharge() {
         val item = currentPower?.data?.get()
         if (item == null) {
-            "请选择充值金额".showToast()
+            showToast(R.string.please_select_recharge_amount)
             return
         }
         val payment = currentPayment?.data?.get()
         val paymentMethod = payment?.paymentMethod
         if (paymentMethod == null) {
-            "请选择支付方式".showToast()
+            showToast(R.string.select_the_payment_method)
             return
         }
         if (isDialog) {

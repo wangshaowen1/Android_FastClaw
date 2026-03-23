@@ -43,7 +43,7 @@ class UnifiedLoginActivity : BaseViewModelActivity<ActivityUnifiedLoginBinding, 
         var checkedPolicy = false
         fun start(showToast: Boolean = false) {
             if (showToast) {
-                "请先登录".showToast()
+                showToast(R.string.toast_login_please)
             }
             val activity = topActivity ?: return
             activity.startActivity(Intent(activity, LoginActivity::class.java))

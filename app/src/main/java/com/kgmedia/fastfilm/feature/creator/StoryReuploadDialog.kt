@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.creator
 
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.formatPlays
 import com.kgmedia.fastfilm.common.ext.topActivity
@@ -44,7 +45,7 @@ class StoryReuploadDialog : BaseVMDialogFragment<DialogStoryReuploadBinding, Sto
             val totalCharCount = getInt(KEY_TOTAL_CHAR_COUNT)
             val totalSensitiveCount = getString(KEY_TOTAL_SENSITIVE_COUNT)
             binding.fileName.text = fileName
-            binding.totalCharCount.text = "总计${totalCharCount.formatPlays()}字"
+            binding.totalCharCount.text = getString(R.string.total_char_count, totalCharCount.formatPlays())
             binding.errorTip.text = totalSensitiveCount
         }
 

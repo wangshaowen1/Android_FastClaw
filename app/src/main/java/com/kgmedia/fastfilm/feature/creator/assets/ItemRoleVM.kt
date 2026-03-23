@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.creator.assets
 
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.ext.launch
@@ -18,6 +19,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.edit.ReferenceHistoricalImageryDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,21 +34,21 @@ class ItemRoleVM(
     private val getAiPriceProvider: suspend () -> Int
 ) : ItemAssetVM<SimpleRoleInfo>(workId, storyId, onItemChanged, data) {
 
-    override val assetType: String = "角色"
-    override val assetDescHint: String = "角色描述词"
-    override val assetNameHint: String = "角色名"
-    override val generateButtonText: String = "生成角色"
+    override val assetType: String = R.string.roles.getResString()
+    override val assetDescHint: String = R.string.role_description.getResString()
+    override val assetNameHint: String = R.string.role_name.getResString()
+    override val generateButtonText: String = R.string.generate_role.getResString()
 
     override fun clickGenerate() {
         if (status.get() == 1) return
         val rolePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
         val roleName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
         if (rolePrompt.isNullOrEmpty()) {
-            "请先填写角色描述".showToast()
+            showToast(R.string.please_enter_role_description)
             return
         }
         if (roleName.isNullOrEmpty()) {
-            "请先填写角色名称".showToast()
+            showToast(R.string.please_enter_role_name)
             return
         }
 

@@ -2,18 +2,20 @@ package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.graphics.Color
 import androidx.lifecycle.MutableLiveData
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.utils.Logger
 
 class StoryEditorViewModel : AppRepositoryViewModel<AppRepository>() {
 
     var mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "未命名标题",
+        title = R.string.untitled_title.getResString(),
         background = Color.TRANSPARENT
     )
 

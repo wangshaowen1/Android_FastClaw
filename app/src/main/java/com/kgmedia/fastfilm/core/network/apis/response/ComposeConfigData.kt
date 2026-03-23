@@ -128,18 +128,6 @@ data class ComposeConfigItem(
         return function == null || (function.supportStatus == 1)
     }
 
-    private fun checkValid(function: ComposeConfigFunction?, withToast: Boolean = true): Boolean {
-        return if (!checkSupport(function)) {
-            if (withToast) showToast(R.string.tip_model_not_support)
-            false
-        } else if (!checkEnable(function)) {
-            if (withToast) showToast(R.string.tip_feature_is_upgrading)
-            false
-        } else {
-            true
-        }
-    }
-
     /**
      * 生成音乐基础功能
      */
@@ -149,13 +137,6 @@ data class ComposeConfigItem(
             T.showShort(R.string.toast_service_updating)
         }
         return checkEnable
-    }
-
-    /**
-     * 风格
-     */
-    fun isMusicTagsEnable(withToast: Boolean = true): Boolean {
-        return checkValid(functions?.firstOrNull { it.functionCode == MUSIC_TAGS }, withToast)
     }
 
 

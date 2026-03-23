@@ -110,6 +110,7 @@ import com.nhsd.basic.Session
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getActivity
 import com.nhsd.basic.ext.getResColor
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.inRange
 import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -1352,7 +1353,7 @@ fun expandContent(
         }
         textView.text = spanText
     } else {
-        textView.text = text ?: "请输入内容"
+        textView.text = text ?: R.string.enter_content.getResString()
     }
 }
 

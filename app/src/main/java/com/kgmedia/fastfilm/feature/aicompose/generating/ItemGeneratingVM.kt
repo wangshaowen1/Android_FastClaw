@@ -51,7 +51,7 @@ class ItemGeneratingVM(info: PictureBook?) : QuickItemViewModel() {
 
     fun status(progress: Int): String? {
         //[枚举]绘本生成(合成)状态 [0=待生成 1=生成中 2=生成成功 3=生成失败]
-        return when {
+//        return when {
             //3）小标题五种状态对应百分比
             //0%-20%正在构思您的专属故事
             //21%-40%正在制作分镜草图
@@ -59,13 +59,14 @@ class ItemGeneratingVM(info: PictureBook?) : QuickItemViewModel() {
             //61%-80%画师AI正在描绘场景
             //81%-99%您的绘本即将完成
             //100%您的绘本已完成
-            progress <= 20 -> R.string.progress_story_creating_simply.getResString()
-            progress <= 40 -> R.string.progress_storyboarding_simply.getResString()
-            progress <= 60 -> R.string.progress_voice_arranging_simply.getResString()
-            progress <= 80 -> R.string.progress_illustration_drawing_simply.getResString()
-            progress <= 99 -> R.string.progress_preview_ready_simply.getResString()
-            else -> R.string.progress_complete_simply.getResString()
-        }
+//            progress <= 20 -> R.string.progress_story_creating_simply.getResString()
+//            progress <= 40 -> R.string.progress_storyboarding_simply.getResString()
+//            progress <= 60 -> R.string.progress_voice_arranging_simply.getResString()
+//            progress <= 80 -> R.string.progress_illustration_drawing_simply.getResString()
+//            progress <= 99 -> R.string.progress_preview_ready_simply.getResString()
+//            else -> R.string.progress_complete_simply.getResString()
+//        }
+        return ""
     }
 
     fun update(book: PictureBook?) {

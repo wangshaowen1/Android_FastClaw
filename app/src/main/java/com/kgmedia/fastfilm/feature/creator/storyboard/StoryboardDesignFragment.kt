@@ -18,6 +18,7 @@ import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getParentViewModel
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -71,12 +72,12 @@ class StoryboardDesignFragment :
     override fun handleBackPressed(): Boolean {
         if (mRealVM.notSaved()) {
             activity?.showCommonDialog(
-                tip = "您对分镜信息有修改尚未保存，是否保存修改？",
-                cancelText = "不保存",
+                tip = getString(R.string.save_storyboard_changes_prompt),
+                cancelText = R.string.discard.getResString(),
                 cancel = {
                     toSeries()
                 },
-                confirmText = "保存并退出",
+                confirmText = R.string.save_and_exit.getResString(),
                 confirm = {
                     mRealVM.saveAndFinish {
                         toSeries()
@@ -85,9 +86,9 @@ class StoryboardDesignFragment :
             return true
         }
         if (mRealVM.generating) {
-            "AI正在生成中，已自动保存为草稿".showToast()
+            getString(R.string.ai_generating_auto_saved).showToast()
         } else {
-            "已自动保存为草稿".showToast()
+            getString(R.string.auto_saved_as_draft).showToast()
         }
         toSeries()
         return true

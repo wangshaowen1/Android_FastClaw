@@ -7,6 +7,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.animation.LinearInterpolator
 import androidx.lifecycle.lifecycleScope
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
@@ -136,8 +137,8 @@ class DramaGenerateStep2Fragment :
                 }
                 isNotified = true
                 mActivity.showConfirmPrompt(
-                    "您想要编辑文字内容，修改内容可能影响 AI 视频生成质量.",
-                    confirmText = "继续编辑"
+                    getString(R.string.edit_text_warning),
+                    confirmText = getString(R.string.confirm_edit)
                 ) {
                     enterEditMode()
                 }
@@ -185,11 +186,7 @@ class DramaGenerateStep2Fragment :
         hostVm?.title?.observe(this) {
             if (it != mRealVM.mWorkName.value) {
                 mRealVM.mWorkName.value = it
-                if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
-                    mRealVM.episodeTitle.set("《$it》")
-                } else {
-                    mRealVM.episodeTitle.set("《$it》第${mRealVM.chapterIndex}集")
-                }
+                mRealVM.episodeTitle.set("《$it》第${mRealVM.chapterIndex}集")
             }
         }
     }
@@ -236,9 +233,9 @@ class DramaGenerateStep2Fragment :
 
     override fun handleBackPressed(): Boolean {
         if (mRealVM.isScriptLoading.get()) {
-            "AI正在生成中，已自动保存为草稿".showToast()
+            getString(R.string.ai_generating_auto_saved).showToast()
         } else {
-            "已自动保存为草稿".showToast()
+            getString(R.string.auto_saved_as_draft).showToast()
         }
         if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
             if (from != StoryEditorActivity.FROM_MY_WORKS) {

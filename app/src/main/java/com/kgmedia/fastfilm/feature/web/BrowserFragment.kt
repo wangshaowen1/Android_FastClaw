@@ -288,7 +288,7 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
                 if (!TextUtils.isEmpty(src.src)) {
                     cacheImage(src.src)
                 } else {
-                    "下载图片失败".showToast()
+                    getString(R.string.download_image_failed).showToast()
                 }
             }
 //            registerHandler("webShare") { data, _ ->

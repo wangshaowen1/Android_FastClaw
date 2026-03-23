@@ -18,13 +18,6 @@ data class SceneCostData(
         return true//if (feeType == 2) User.get().scoreBalance >= (feeNum ?: 0) else (remainingAttempts ?: 0) >= 0
     }
 
-    /**
-     * 价格格式化显示
-     */
-    fun getFormatCost(): String {
-        return if (userStory.isNullOrEmpty()) (if (feeType == 2) "${feeNum}积分" else "免费次数：$remainingAttempts") else userStory
-    }
-
 
     /**
      * 新用户免费

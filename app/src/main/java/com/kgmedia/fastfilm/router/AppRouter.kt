@@ -136,7 +136,7 @@ object AppRouter : IRouter {
         // 官方解释 : Name of the component implementing an activity that can display the intent
         if (intent.resolveActivity(context.packageManager) != null) {
             val componentName = intent.resolveActivity(context.packageManager)
-            context.startActivity(Intent.createChooser(intent, "请选择浏览器"))
+            context.startActivity(Intent.createChooser(intent, context.getString(R.string.select_browser)))
         } else {
             // GlobalMethod.showToast(context, "链接错误或无浏览器");
         }

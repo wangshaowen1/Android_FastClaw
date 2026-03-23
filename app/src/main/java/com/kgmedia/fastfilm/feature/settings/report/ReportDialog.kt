@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.FragmentManager
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.databinding.DialogReportBinding
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -76,7 +77,7 @@ class ReportDialog : BaseBottomPushVMDialogFragment<DialogReportBinding, ReportD
             //提交
             val content = binding.xet.text.toString()
             if (content.length < 10) {
-                "请至少填写10个字".showToast()
+                getString(R.string.toast_inspiration_input,10).showToast()
                 return@setOnSingleClickListener
             }
             //联系人
@@ -88,7 +89,7 @@ class ReportDialog : BaseBottomPushVMDialogFragment<DialogReportBinding, ReportD
     private fun dataUpdate() {
         mRealVM.isSubmit.observe(this) {
             if (!it) return@observe
-            "举报成功".showToast()
+            getString(R.string.report_success).showToast()
             dismissAllowingStateLoss()
         }
     }

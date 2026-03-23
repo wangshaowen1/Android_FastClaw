@@ -66,19 +66,19 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
             //重绘已完成
             if (it?.stepProgress == EpisodeInfo.EPISODE_REPAINT_COMPLETED) {
                 showCommonDialog(
-                    title = "确认退出重绘？",
-                    tip = "当前重绘分镜尚未合成完整视频，退出后本次重绘将不会保留。是否继续退出?",
-                    cancelText = "确认退出",
+                    title = getString(R.string.confirm_exit_redraw),
+                    tip = getString(R.string.exit_redraw_warning_msg),
+                    cancelText = getString(R.string.confirm_exit),
                     cancel = {
                         mRealVM.dropRepaint()
                     },
-                    confirmText = "继续重绘",
+                    confirmText = getString(R.string.continue_redraw),
                     confirm = {})
             } else {
                 if (mRealVM.anyStoryboardGenerating()) {
-                    "AI正在生成中，已自动保存".showToast()
+                    getString(R.string.ai_generating_auto_saved_2).showToast()
                 } else {
-                    "已自动保存".showToast()
+                    getString(R.string.auto_saved).showToast()
                 }
 
                 if (mRealVM.model == DramaGenerateConstants.MODEL_STORY_SINGLE) {
@@ -101,7 +101,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
         super.onCreate(savedInstanceState)
         binding.loadState.setNoDataIcon(0)
         binding.root.applySmartFocusManager()
-        binding.loadState.setNoDataButton("生成分镜视频") {
+        binding.loadState.setNoDataButton(getString(R.string.generate_storyboard_video)) {
             mRealVM.regenerateStoryboards()
         }
         mRealVM.scrollToItem.observe(this) { itemPosition ->
@@ -137,7 +137,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
             R.id.btnRegenerate -> {
                 val current = mRealVM.currentStoryboard.get()?.data?.get() ?: return
                 if (current.videoGenerating) {
-                    "视频正在生成中，请稍后再试".showToast()
+                    getString(R.string.video_generating_please_wait).showToast()
                     return
                 }
                 EditStoryboardActivity.start(current, mRealVM.workRatio, mRealVM.storyInfo?.stepProgress)
@@ -147,11 +147,11 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
             R.id.btnDownload -> {
                 val current = mRealVM.currentStoryboard.get()?.data?.get() ?: return
                 if (current.videoGenerating) {
-                    "视频正在生成中，请稍后再试".showToast()
+                    getString(R.string.video_generating_please_wait).showToast()
                     return
                 }
                 if (current.videoGenerateFailed) {
-                    "视频生成失败，请重新生成".showToast()
+                    getString(R.string.video_generating_please_wait).showToast()
                     return
                 }
                 if (current.videoGenerated) {
@@ -164,7 +164,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
             }
 
             R.id.btnDelete -> {
-                showCommonDialog(tip = "删除后，该分镜视频将永久移除，无法恢复，并可能影响后续视频合成，是否确认删除", confirmText = "确认删除") {
+                showCommonDialog(tip = getString(R.string.confirm_delete_scene_warning), confirmText = getString(R.string.confirm_del)) {
                     mRealVM.deleteCurrentStoryboard()
                 }
             }

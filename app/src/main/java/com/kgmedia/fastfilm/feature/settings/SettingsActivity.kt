@@ -134,7 +134,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 SimpleBrowserActivity.launch(
                     this,
                     Config.get().serviceUrl,
-                    "用户协议"
+                    getString(R.string.app_user_agreement)
                 )
             }
 
@@ -143,7 +143,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 SimpleBrowserActivity.launch(
                     this,
                     Config.get().privacyUrl,
-                    "隐私政策"
+                    getString(R.string.app_privacy_policy)
                 )
             }
 
@@ -152,7 +152,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 SimpleBrowserActivity.launch(
                     this,
                     Config.get().appConfig.personalInfoCollectionListUrl,
-                    "个人信息收集清单"
+                    getString(R.string.app_information_collection)
                 )
             }
 
@@ -161,7 +161,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 SimpleBrowserActivity.launch(
                     this,
                     Config.get().appConfig.beianNoJumpUrl,
-                    "备案号"
+                    getString(R.string.app_filing_number)
                 )
             }
 
@@ -170,7 +170,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 SimpleBrowserActivity.launch(
                     this,
                     Config.get().appConfig.thirdPartyInfoShareListUrl,
-                    "第三方信息共享清单"
+                    getString(R.string.app_shared_list)
                 )
             }
 
@@ -179,7 +179,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 SimpleBrowserActivity.launch(
                     this,
                     Config.get().algorithmUrl,
-                    "算法公示"
+                            getString(R.string.app_algorithm_formula)
                 )
             }
         }

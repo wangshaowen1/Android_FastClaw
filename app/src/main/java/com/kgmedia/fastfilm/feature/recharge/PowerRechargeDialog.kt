@@ -37,7 +37,7 @@ class PowerRechargeDialog : BaseBottomPushVMDialogFragment<DialogRechargePowerBi
                 if (it.fragments.any { fragment -> fragment is PowerRechargeDialog }) return
                 PowerRechargeDialog().show(it)
                 if (showToast) {
-                    "算力余额不足，请及时充值".showToast()
+                    showToast(R.string.insufficient_balance_please_recharge)
                 }
             }
         }

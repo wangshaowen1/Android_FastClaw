@@ -29,6 +29,7 @@ import com.kgmedia.fastfilm.feature.PhotoPagerActivity
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.kgmedia.fastfilm.widget.LoadStateViewHolder
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -85,9 +86,9 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
     val adapter by lazy { AssetManagementAdapter() }
-    private val addRoleItem by lazy { ItemAddVM("添加角色").apply { onItemClick.value = { addRole(this) } } }
-    private val addSceneItem by lazy { ItemAddVM("添加场景").apply { onItemClick.value = { addScene(this) } } }
-    private val addPropItem by lazy { ItemAddVM("添加道具").apply { onItemClick.value = { addProp(this) } } }
+    private val addRoleItem by lazy { ItemAddVM(R.string.add_character.getResString()).apply { onItemClick.value = { addRole(this) } } }
+    private val addSceneItem by lazy { ItemAddVM(R.string.add_scene.getResString()).apply { onItemClick.value = { addScene(this) } } }
+    private val addPropItem by lazy { ItemAddVM(R.string.add_prop.getResString()).apply { onItemClick.value = { addProp(this) } } }
     private var editingAssetDescVM: ItemAssetVM<*>? = null
     private var editingAssetNameVM: ItemAssetVM<*>? = null
     private var loopNextEnabledJob: Job? = null
@@ -102,7 +103,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             if (field != value) {
                 field = value
                 if (value) {
-                    progressHelper.start("提取资产信息", step = 1, intervalMs = 100L)
+                    progressHelper.start(R.string.extract_assets.getResString(), step = 1, intervalMs = 100L)
                 } else {
                     progressHelper.stop()
                 }
@@ -226,7 +227,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     hasRole.set(false)
                 } else {
                     hasRole.set(true)
-                    items.add(ItemTitleVM("角色"))
+                    items.add(ItemTitleVM(R.string.roles.getResString()))
                     items.addAll(roles)
                     items.add(addRoleItem)
                 }
@@ -235,7 +236,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     hasScene.set(false)
                 } else {
                     hasScene.set(true)
-                    items.add(ItemTitleVM("场景"))
+                    items.add(ItemTitleVM(R.string.scenes.getResString()))
                     items.addAll(scenes)
                     items.add(addSceneItem)
                 }
@@ -244,7 +245,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                     hasProp.set(false)
                 } else {
                     hasProp.set(true)
-                    items.add(ItemTitleVM("道具"))
+                    items.add(ItemTitleVM(R.string.props.getResString()))
                     items.addAll(props)
                     items.add(addPropItem)
                 }
@@ -311,7 +312,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
 
             failedNum > 0 -> {
                 if (showToast && step.get() != STEP_IMAGE_GENERATE_FAILED) {
-                    "部分资产生成失败，请重新生成".showToast()
+                    R.string.asset_generation_partial_failure.getResString().showToast()
                 }
                 step.set(STEP_IMAGE_GENERATE_FAILED)
                 calcCost()
@@ -348,7 +349,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         edit.invoke(0)
                     } else {
                         editConfirm = true
-                        topActivity?.showCommonDialog(title = "确认编辑？", tip = "您想要编辑文字内容，修改内容可能影响AI视频生成质量.", confirmText = "继续编辑") {
+                        topActivity?.showCommonDialog(title = R.string.confirm_edit.getResString(), tip = R.string.edit_text_warning.getResString(), confirmText =
+                            R.string.continue_editing.getResString()) {
                             edit.invoke(200)
                         }
                     }
@@ -367,7 +369,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         adapter.remove(this)
                         onItemChanged(false)
                     } else {
-                        topActivity?.showCommonDialog(title = "确认删除吗？", tip = "删除后可能影响视频生成", confirmText = "删除") {
+                        topActivity?.showCommonDialog(title = R.string.confirm_deletion.getResString(), tip = R.string.delete_impact_warning.getResString(), confirmText = R.string.del.getResString()) {
                             deleteAsset(this)
                         }
                     }
@@ -414,7 +416,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
         }
         if (notInput) {
-            "您还有资产尚未填写描述，请补充后再继续".showToast()
+            R.string.missing_asset_description.getResString().showToast()
         }
         if (notGenerateItems.isNotEmpty()) {
             launchWithLoading {
@@ -501,12 +503,40 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         return step == STEP_DESCRIPTION_GENERATED || step == STEP_IMAGE_GENERATE_FAILED || step == STEP_IMAGE_GENERATED
     }
 
+//    fun buttonText(step: Int, cost: Int): CharSequence? {
+//        return when (step) {
+//            STEP_DESCRIPTION_GENERATED -> if (cost > 0) "一键生成  $POWER $cost".replaceSpan(POWER) { powerSpan } else "一键生成"
+//            STEP_IMAGE_GENERATING -> "图片生成中..."
+//            STEP_IMAGE_GENERATE_FAILED -> if (cost > 0) "重试失败项  $POWER $cost".replaceSpan(POWER) { powerSpan } else "重试失败项"
+//            STEP_IMAGE_GENERATED -> "下一步：分镜设计"
+//            else -> null
+//        }
+//    }
+
     fun buttonText(step: Int, cost: Int): CharSequence? {
         return when (step) {
-            STEP_DESCRIPTION_GENERATED -> if (cost > 0) "一键生成  $POWER $cost".replaceSpan(POWER) { powerSpan } else "一键生成"
-            STEP_IMAGE_GENERATING -> "图片生成中..."
-            STEP_IMAGE_GENERATE_FAILED -> if (cost > 0) "重试失败项  $POWER $cost".replaceSpan(POWER) { powerSpan } else "重试失败项"
-            STEP_IMAGE_GENERATED -> "下一步：分镜设计"
+            STEP_DESCRIPTION_GENERATED -> {
+                if (cost > 0) {
+                    R.string.btn_one_click_generate_cost.getResString(POWER, cost)
+                        .replaceSpan(POWER) { powerSpan }
+                } else {
+                    R.string.btn_one_click_generate.getResString()
+                }
+            }
+            STEP_IMAGE_GENERATING -> {
+                R.string.btn_image_generating.getResString()
+            }
+            STEP_IMAGE_GENERATE_FAILED -> {
+                if (cost > 0) {
+                    R.string.btn_retry_failed_cost.getResString(POWER, cost)
+                        .replaceSpan(POWER) { powerSpan }
+                } else {
+                    R.string.btn_retry_failed.getResString()
+                }
+            }
+            STEP_IMAGE_GENERATED -> {
+                R.string.btn_next_step_storyboard.getResString()
+            }
             else -> null
         }
     }

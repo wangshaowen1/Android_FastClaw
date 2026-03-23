@@ -180,7 +180,7 @@ class DramaGenerateStep2ViewModel : AppRepositoryViewModel<CreationRepository>()
     fun getLimitColor(length: Int?): Int {
         val isMax = length == maxInputLength.get()
         if (isMax) {
-            "输入字数已达上限".showToast()
+            showToast(R.string.input_limit_reached)
         }
         val attr =
             if (isMax) R.attr.funcColorFailure else R.attr.textColor4

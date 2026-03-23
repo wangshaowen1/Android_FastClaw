@@ -45,7 +45,7 @@ class UnifiedLoginDialog :
             manager: FragmentManager
         ): UnifiedLoginDialog {
             if (showToast) {
-                "请先登录".showToast()
+                showToast(R.string.toast_login_please)
             }
             val dialog = UnifiedLoginDialog()
             dialog.show(manager)

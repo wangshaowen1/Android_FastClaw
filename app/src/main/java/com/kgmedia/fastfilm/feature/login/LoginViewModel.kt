@@ -35,13 +35,13 @@ class LoginViewModel : AppRepositoryViewModel<ThirdLoginRepository>() {
      */
     val checkedPolicy by lazy { ObservableBoolean(false) }
     val policyText by lazy {
-        "我已阅读并同意"
-            .addSpan("《用户协议》", HighlightSpan(topActivity?.getThemeColor(R.attr.textColor1), Typeface.DEFAULT_BOLD) {
+        R.string.i_have_read_and_agree_to.getResString()
+            .addSpan(R.string.tvUserService.getResString(), HighlightSpan(topActivity?.getThemeColor(R.attr.textColor1), Typeface.DEFAULT_BOLD) {
                 val activity = topActivity ?: return@HighlightSpan
                 SimpleBrowserActivity.launch(activity, Config.get().serviceUrl, R.string.tvSYUserService.getResString())
             })
             .addSpan("、")
-            .addSpan("《隐私政策》", HighlightSpan(topActivity?.getThemeColor(R.attr.textColor1), Typeface.DEFAULT_BOLD) {
+            .addSpan(R.string.tvPrivateService.getResString(), HighlightSpan(topActivity?.getThemeColor(R.attr.textColor1), Typeface.DEFAULT_BOLD) {
                 val activity = topActivity ?: return@HighlightSpan
                 SimpleBrowserActivity.launch(activity, Config.get().privacyUrl, R.string.tvSYPrivateService.getResString())
             })
@@ -72,7 +72,7 @@ class LoginViewModel : AppRepositoryViewModel<ThirdLoginRepository>() {
                     data.loginToast()
                     onLogin?.invoke(data)
                 }, error = { this?.msg?.showToast() })
-            }, onError = { "登录失败".showToast() })
+            }, onError = { showToast(R.string.toast_sign_in_fail) })
         }
     }
 

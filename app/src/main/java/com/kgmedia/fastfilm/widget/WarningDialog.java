@@ -1,5 +1,7 @@
 package com.kgmedia.fastfilm.widget;
 
+import static com.blankj.utilcode.util.StringUtils.getString;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,7 +31,7 @@ public class WarningDialog extends AppCompatDialog {
     }
 
     public WarningDialog(Context context, CharSequence content) {
-        super(context, com.nhsd.basic.R.style.Dialog_Common);
+        super(context, R.style.Dialog_Common);
         setContentView(R.layout.dialog_warning);
         btnConfirm = findViewById(R.id.btnConfirm);
         tvContent = findViewById(R.id.content);
@@ -51,11 +53,11 @@ public class WarningDialog extends AppCompatDialog {
             @Override
             public void run() {
                 if (maxWaitSeconds == 0) {
-                    btnConfirm.setText("我知道啦");
+                    btnConfirm.setText(R.string.got_it);
                     btnConfirm.setEnabled(true);
                     maxWaitSeconds = 30;
                 } else {
-                    btnConfirm.setText(String.format("我知道啦(%ds)", maxWaitSeconds));
+                    btnConfirm.setText(getString(R.string.got_it_s, maxWaitSeconds));
                     if (isShowing()) {
                         startCountDown();
                     }

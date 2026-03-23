@@ -8,12 +8,13 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.nhsd.basic.ext.getResColor
+import com.nhsd.basic.ext.getResString
 
 class CreationRootViewModel : AppRepositoryViewModel<CreationRepository>() {
 
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
-        title = "故事灵感",
+        title = R.string.story_inspiration.getResString(),
         background = Color.TRANSPARENT,
     )
 

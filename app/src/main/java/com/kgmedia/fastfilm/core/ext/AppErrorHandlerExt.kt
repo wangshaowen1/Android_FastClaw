@@ -82,14 +82,14 @@ private fun showSetBlackDialog(
 ) {
     if (setBlackDialog == null) {
         setBlackDialog = CommonDialog(context)
-        setBlackDialog?.setTitle("违反平台规范，账号封禁")
+        setBlackDialog?.setTitle(context.getString(R.string.account_banned_violation))
         setBlackDialog?.setConfirmStyle(true)
         setBlackDialog?.setCanceledOnTouchOutside(false)
         setBlackDialog?.setCancelable(false)
         setBlackDialog?.setPositiveButtonTextColor(
             context.getResources().getColor(R.color.textColorDark)
         )
-        setBlackDialog?.setPositiveButtonText(if (isAppeal) "立即申诉" else "审核中")
+        setBlackDialog?.setPositiveButtonText(if (isAppeal) context.getString(R.string.action_appeal_now) else context.getString(R.string.status_appeal_reviewing))
         //            setBlackDialog.setPositiveButtonEnable(isAppeal);
         val lifecycleObserver: LifecycleEventObserver = object : LifecycleEventObserver {
 

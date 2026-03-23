@@ -34,9 +34,9 @@ object ImageSaveHelper {
                 activity.lifecycleScope.launch {
                     val success = saveImageToGallery(activity, url)
                     if (success) {
-                        "已保存到手机相册".showToast()
+                        showToast(R.string.saved_to_album)
                     } else {
-                        "保存失败".showToast()
+                        showToast(R.string.toast_save_fail)
                     }
                 }
 //                    new ImageCacheAsyncTask(context) {

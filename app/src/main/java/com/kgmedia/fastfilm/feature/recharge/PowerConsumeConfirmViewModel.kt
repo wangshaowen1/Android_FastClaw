@@ -1,9 +1,11 @@
 package com.kgmedia.fastfilm.feature.recharge
 
 import androidx.databinding.ObservableBoolean
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
+import com.nhsd.basic.ext.getResString
 
 
 class PowerConsumeConfirmViewModel : AppRepositoryViewModel<AppRepository>() {
@@ -11,9 +13,9 @@ class PowerConsumeConfirmViewModel : AppRepositoryViewModel<AppRepository>() {
     val cost by lazy { mBundle.getInt(Constants.Extra.COST) }
     val title by lazy {
         when (scene) {
-            PowerConsumeConfirmDialog.SCENE_GENERATE_ASSETS_IMAGE -> "生成资产图片"
-            PowerConsumeConfirmDialog.SCENE_GENERATE_STORYBOARD_VIDEO -> "生成分镜视频"
-            PowerConsumeConfirmDialog.SCENE_REGENERATE_STORYBOARD_VIDEO -> "重绘分镜视频"
+            PowerConsumeConfirmDialog.SCENE_GENERATE_ASSETS_IMAGE -> R.string.generate_asset_image.getResString()
+            PowerConsumeConfirmDialog.SCENE_GENERATE_STORYBOARD_VIDEO -> R.string.generate_storyboard_video.getResString()
+            PowerConsumeConfirmDialog.SCENE_REGENERATE_STORYBOARD_VIDEO -> R.string.redraw_storyboard_video.getResString()
             else -> ""
         }
     }

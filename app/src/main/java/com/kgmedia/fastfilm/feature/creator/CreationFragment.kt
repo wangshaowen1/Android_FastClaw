@@ -218,7 +218,7 @@ class CreationFragment :
                     return
                 }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {
-                    "请输入至少${mRealVM.minInputLength}个字".showToast()
+                    getString(R.string.input_min_length, mRealVM.minInputLength).showToast()
                     return
                 }
                 if (mRealVM.isStreaming()) {
@@ -226,7 +226,7 @@ class CreationFragment :
                 }
                 lifecycleScope.launch {
                     sensitiveWordCheck(mRealVM.input.value, {
-                        mRealVM.sseGenerate(SSEContentBody.TYPE_AI_OPTIMIZE_INSPIRATION, "优化中...")
+                        mRealVM.sseGenerate(SSEContentBody.TYPE_AI_OPTIMIZE_INSPIRATION, getString(R.string.optimizing))
                     }, {
                         it?.let {
                             binding.inputView.setText(it)
@@ -243,7 +243,7 @@ class CreationFragment :
                 if (mRealVM.isStreaming()) {
                     return
                 }
-                mRealVM.sseGenerate(SSEContentBody.TYPE_RANDOM_INSPIRATION, "灵感生成中...")
+                mRealVM.sseGenerate(SSEContentBody.TYPE_RANDOM_INSPIRATION, getString(R.string.generating_inspiration))
             }
 
             R.id.btnDelete -> {
@@ -284,7 +284,7 @@ class CreationFragment :
                     return
                 }
                 if ((mRealVM.input.value?.length ?: 0) < mRealVM.minInputLength) {
-                    "请输入至少${mRealVM.minInputLength}个字".showToast()
+                    getString(R.string.input_min_length, mRealVM.minInputLength).showToast()
                     return
                 }
                 if (mRealVM.creationModel == MODEL_INSPIRATION) {

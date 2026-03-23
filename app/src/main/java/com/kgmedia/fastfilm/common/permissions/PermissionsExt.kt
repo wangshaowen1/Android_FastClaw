@@ -168,7 +168,7 @@ private fun handleRequest(
         val granted = handler?.request(delayText, *permissions) ?: false
         callback?.invoke(granted)
         if (!granted) {
-            "权限申请失败".showToast()
+            showToast(R.string.permission_application_failed)
         }
     }
 }

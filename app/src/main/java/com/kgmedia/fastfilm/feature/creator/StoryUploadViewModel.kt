@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateBody
 import com.kuaige.oss.OnUploadListener
 import com.kuaige.oss.OssClient
 import com.nhsd.basic.ext.getResDrawable
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -28,8 +29,8 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
     val uploadProgress by lazy { ObservableField<String>() }
 
 //    val limitErrorText = "上传失败，字数超${TextEncodingUtil.MAX_CHAR_COUNT.formatW()}字"
-    val limitErrorText = "字数不符合要求，需调整后重新上传"
-    val limitText = "仅支持txt文本，限制${TextEncodingUtil.MIN_CHAR_COUNT.formatW()}-${TextEncodingUtil.MAX_CHAR_COUNT.formatW()}字"
+    val limitErrorText = R.string.word_count_not_meet_requirements_please_retry.getResString()
+    val limitText = R.string.txt_file_size_limit.getResString(TextEncodingUtil.MIN_CHAR_COUNT.formatW(), TextEncodingUtil.MAX_CHAR_COUNT.formatW())
 
     companion object {
         const val STATE_NONE = 0
@@ -67,7 +68,7 @@ class StoryUploadViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun startUpload(path: String?) {
         if (path.isNullOrEmpty()) {
-            "请选择文件".showToast()
+            showToast(R.string.please_select_file)
             return
         }
         uploadStatus.set(STATE_UPLOADING)

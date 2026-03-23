@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.databinding.DialogDramaDescEditBinding
 import com.nhsd.basic.BaseBottomPushDialogFragment
@@ -24,7 +25,7 @@ class DramaDescEditDialog() :
         }
         binding.btnOk.setOnClickListener {
             if (binding.inputView.text.trim().isEmpty()) {
-                "请输入需要更新的内容".showToast()
+                getString(R.string.enter_update_content).showToast()
                 return@setOnClickListener
             }
 

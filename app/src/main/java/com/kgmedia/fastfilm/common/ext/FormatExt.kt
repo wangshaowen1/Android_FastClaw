@@ -5,6 +5,8 @@ package com.kgmedia.fastfilm.common.ext
 import android.text.TextUtils
 import android.text.format.DateUtils
 import com.google.gson.Gson
+import com.kgmedia.fastfilm.R
+import com.nhsd.basic.ext.getResString
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -23,7 +25,7 @@ fun Int.formatPlays(): String {
 
 fun Int.formatW(): String {
     if (this < 10000) return this.toString()
-    return String.format("%s万", this / 10000)
+    return String.format(R.string.ten_thousand_format.getResString(), this / 10000)
 }
 
 fun Int.toUnitText(): String {
