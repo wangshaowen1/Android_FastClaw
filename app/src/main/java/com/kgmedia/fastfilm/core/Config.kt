@@ -390,11 +390,11 @@ class Config : NetworkChangedListener {
     }
 
     fun isFirstRechargeShown(scene: Int): Boolean {
-        return sp.getBoolean("firstRechargeShown$scene", false)
+        return sp.getBoolean("firstRechargeShown${User.get().userId}_$scene", false)
     }
 
     fun markFirstRechargeShown(scene: Int) {
-        sp.putBoolean("firstRechargeShown$scene", true)
+        sp.putBoolean("firstRechargeShown${User.get().userId}_$scene", true)
     }
 
 
