@@ -49,6 +49,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
 
     companion object{
         const val TAG = "MyWorksFragment"
+        const val CLICK_INTERVAL = 500L // 限制 500ms 内只能触发一次
         @JvmStatic
         fun start() {
             FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_MY_WORKS))
@@ -68,6 +69,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
     private val parentVm by lazy {
         getViewModelOfActivity<MainViewModel>()
     }
+    private var lastClickTime = 0L
 
     //当前点击的作品信息
     var workInfo: WorkInfo? = null
@@ -157,10 +159,16 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             }
         }
 
+
+
         lifecycleScope.launch {
             eventVm.events.collect { event ->
                 when (event) {
                     is MyWorksEvent.ViewDetails -> {
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime - lastClickTime < CLICK_INTERVAL) return@collect
+                        lastClickTime = currentTime
+
                         if (event.workInfo?.isNotCreatedEpisode() == true) {
                             //作品类型：3-小说上传 且是草稿状态
                             mRealVM.getWorkDtl(workId = event.workInfo.workId)
