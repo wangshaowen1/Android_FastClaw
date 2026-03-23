@@ -47,21 +47,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTopTitle">
 
-            <TextView
-                android:id="@+id/tvEpisodeTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/spacing_m"
-                android:layout_marginTop="@dimen/spacing_m"
-                android:text="@{layout.episodeTitle}"
-                android:textColor="?attr/textColor2"
-                android:textColorHint="?attr/textColor4"
-                android:textSize="14sp"
-                android:visibility="@{layout.model!=DramaGenerateConstants.MODEL_STORY_SINGLE&amp;&amp;layout.outputComplete?View.VISIBLE:View.GONE}"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="《时代之光》第1集"
-                tools:visibility="invisible" />
-
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/scrollContainer"
                 android:layout_width="match_parent"
@@ -69,24 +54,43 @@
                 android:layout_marginBottom="@dimen/spacing_m"
                 android:fillViewport="true"
                 app:layout_constraintBottom_toTopOf="@id/llBottom"
-                app:layout_constraintTop_toBottomOf="@id/tvEpisodeTitle">
+                app:layout_constraintTop_toTopOf="parent">
 
-                <EditText
-                    android:id="@+id/inputView"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:enabled="@{!layout.isScriptLoading()}"
-                    android:gravity="top|start"
-                    android:maxLength="@{layout.maxInputLength}"
-                    android:minHeight="200dp"
-                    android:padding="@dimen/spacing_m"
-                    android:textColor="?attr/textColor2"
-                    android:textColorHint="?attr/textColor4"
-                    android:textSize="14sp" />
+                    android:orientation="vertical">
 
+                    <TextView
+                        android:id="@+id/tvEpisodeTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/spacing_m"
+                        android:layout_marginTop="@dimen/spacing_m"
+                        android:text="@{layout.episodeTitle}"
+                        android:textColor="?attr/textColor2"
+                        android:textColorHint="?attr/textColor4"
+                        android:textSize="14sp"
+                        android:visibility="@{layout.model!=DramaGenerateConstants.MODEL_STORY_SINGLE&amp;&amp;layout.outputComplete?View.VISIBLE:View.GONE}"
+                        tools:text="《时代之光》第1集"
+                        tools:visibility="invisible" />
+
+                    <EditText
+                        android:id="@+id/inputView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:cursorVisible="false"
+                        android:enabled="@{!layout.isScriptLoading()}"
+                        android:focusable="false"
+                        android:gravity="top|start"
+                        android:maxLength="@{layout.maxInputLength}"
+                        android:minHeight="200dp"
+                        android:padding="@dimen/spacing_m"
+                        android:textColor="?attr/textColor2"
+                        android:textColorHint="?attr/textColor4"
+                        android:textSize="14sp" />
+                </LinearLayout>
             </androidx.core.widget.NestedScrollView>
 
             <LinearLayout
