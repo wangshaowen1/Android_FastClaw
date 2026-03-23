@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.Flow
 class SeriesViewModel : AppRepositoryViewModel<SeriesRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.ID) }
     val loadState by lazy { ObservableInt(LoadStateViewHolder.CONTENT) }
-    val workInfo by lazy { MutableLiveData<WorkInfo>() }
+    val workInfo by lazy { MutableLiveData<WorkInfo?>() }
 
     //创建续集信息
     val episodeInfo = MutableLiveData<EpisodeInfo?>()

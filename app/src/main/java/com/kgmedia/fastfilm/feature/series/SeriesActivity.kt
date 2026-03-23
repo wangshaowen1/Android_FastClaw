@@ -1,8 +1,13 @@
 package com.kgmedia.fastfilm.feature.series
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
@@ -14,6 +19,7 @@ import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ActivitySeriesBinding
+import com.kgmedia.fastfilm.databinding.PopupSeriesReleaseFailTipsBinding
 import com.kgmedia.fastfilm.feature.creator.continuewriting.ContinueWritingActivity
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
@@ -26,7 +32,6 @@ import com.kgmedia.fastfilm.feature.works.ItemMultipleChoiceEventsViewModel
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.Popup
 import com.kgmedia.fastfilm.widget.SeriesMorePopupView
-import com.kgmedia.fastfilm.widget.SeriesReleaseFailTipsPopupView
 import com.kgmedia.fastfilm.widget.decoration.BottomSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
@@ -139,7 +144,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         }
         mRealVM.workInfo.observe(this) {
             episodeAdapter.refresh()
-            if (it.contractStatus == 3 && !isShowPublishRejectReason) showPublishRejectReason()
+            if (it != null && it.contractStatus == 3 && !isShowPublishRejectReason) bindingNullable?.tvPublishStatus?.showPublishRejectReason()
         }
         mRealVM.episodeInfo.observe(this) {
             if (it == null) {
@@ -300,7 +305,7 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
             }
 
             R.id.llPublishStatus -> {
-                showPublishRejectReason()
+                bindingNullable?.tvPublishStatus?.showPublishRejectReason()
             }
 
             R.id.btnSelfPublish -> {
@@ -318,14 +323,28 @@ class SeriesActivity : BaseViewModelActivity<ActivitySeriesBinding, SeriesViewMo
         }
     }
 
-    private fun showPublishRejectReason() {
+    private fun View.showPublishRejectReason() {
         val rejectReason = mRealVM.workInfo.value?.rejectReason ?: return
-        bindingNullable?.tvPublishStatus?.let {
-            it.post {
-                isShowPublishRejectReason = true
-                Popup(SeriesReleaseFailTipsPopupView(this, rejectReason)).showUnder(it)
-            }
+        // 1. 填充布局
+        val binding = PopupSeriesReleaseFailTipsBinding.inflate(LayoutInflater.from(this@SeriesActivity), null, false)
+        binding.tvTips.text = rejectReason
+
+        // 2. 创建并配置 PopupWindow
+        val popupWindow = PopupWindow(
+            binding.root,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true // 允许获取焦点，点击外部消失
+        ).apply {
+            // 设置背景透明（为了让气泡阴影或圆角正常显示）
+            setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+            isOutsideTouchable = true
         }
+
+        // 3. 在当前 View（点击的控件）下方显示
+        // xOff: 水平偏移，yOff: 垂直偏移（单位像素）
+        popupWindow.showAsDropDown(this, 0, 10)
+        isShowPublishRejectReason = true
     }
 
     private fun continueWriting(lastInfo: EpisodeInfo?, info: EpisodeInfo?) {
