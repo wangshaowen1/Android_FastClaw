@@ -34,6 +34,8 @@ class FirstRechargeDialog : BaseVMDialogFragment<DialogFirstRechargeBinding, Fir
         }
     }
 
+    var onClose: (() -> Unit)? = null
+
     override fun onStart() {
         super.onStart()
         dialog?.window?.let { dialogWindow ->
@@ -48,7 +50,10 @@ class FirstRechargeDialog : BaseVMDialogFragment<DialogFirstRechargeBinding, Fir
     override fun onPrepareView() {
         super.onPrepareView()
         binding.bg.minimumHeight = getScreenWidth()
-
+        binding.btnClose.setOnClickListener {
+            onClose?.invoke()
+            dismissAllowingStateLoss()
+        }
         observeEvents {
             onUserSignIn {
                 if (User.get().hasPaid()) {
