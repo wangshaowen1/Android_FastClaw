@@ -6,13 +6,12 @@
     <string name="page_load_error">加载失败，刷新试试</string>
     <string name="page_loading">正在为你全力加载中…</string>
     <string name="page_empty">暂无内容</string>
-    <string name="no_more_data">已经到底了...</string>
+    <string name="no_more_data">已经到底了…</string>
     <string name="page_network_error">请检查网络连接后重试</string>
     <string name="refresh_to_retry">刷新重试</string>
     <string name="download_failed">下载失败</string>
     <string name="i_know">我知道了</string>
     <string name="permissionx_default_denied_forever_rationale_message">为正常使用该功能，请前往系统应用设置中开启%s权限</string>
-
 
     <string name="cancel">取消</string>
     <string name="messages">系统消息</string>
@@ -163,7 +162,7 @@
     <string name="claim_now">立即领取</string>
 
     <string name="customer_service_long_press_to_save">长按保存图片，扫码联系客服</string>
-    <string name="customer_service_time">客服在线时间 9:00-18:00</string>
+    <string name="customer_service_time">客服在线时间 9:00–18:00</string>
     <string name="my_understood">我知道了</string>
     <string name="rmb_symbol">¥</string>
     <string name="please_enter">请输入</string>
@@ -212,8 +211,8 @@
     <string name="one_click_gen_ai_drama">一键式生成可变现的AI短剧</string>
     <string name="select_template">请选择一个模板</string>
     <string name="generate_short_video_now">立即生成短片</string>
-    <string name="generating_short_video">正在为你生成短片...</string>
-    <string name="estimated_wait_time">大约花费10-30秒左右，请稍候</string>
+    <string name="generating_short_video">正在为你生成短片…</string>
+    <string name="estimated_wait_time">大约花费10–30秒左右，请稍候</string>
     <string name="start_creation_monetization">开启我的创作变现</string>
     <string name="works">作品</string>
     <string name="my_balance">我的余额</string>
@@ -303,8 +302,8 @@
     <string name="next_create_script">下一步：创建剧本</string>
     <string name="story_content">剧本内容</string>
     <string name="retry">重试</string>
-    <string name="generating_story_script">正在生成故事剧本...</string>
-    <string name="estimated_duration_2_3m">2-3分钟</string>
+    <string name="generating_story_script">正在生成故事剧本…</string>
+    <string name="estimated_duration_2_3m">2–3分钟</string>
     <string name="next_create_assets">下一步：创建资产</string>
     <string name="create_now">立即创作</string>
     <string name="viral_comic_drama">爆款漫剧</string>
@@ -398,12 +397,12 @@
     <string name="select_type_please">请选择类型</string>
     <string name="input_contract_info_please">请输入联系方式</string>
     <string name="continued_creation_s">续创：%1$s</string>
-    <string name="ai_expanding">AI扩写中...</string>
-    <string name="optimizing">优化中...</string>
-    <string name="generating_inspiration">灵感生成中...</string>
+    <string name="ai_expanding">AI扩写中…</string>
+    <string name="optimizing">优化中…</string>
+    <string name="generating_inspiration">灵感生成中…</string>
     <string name="story_inspiration">故事灵感</string>
     <string name="story_inspiration_hint">写下你的故事灵感，AI将帮你扩展成完整剧情</string>
-    <string name="paste_novel_hint">请粘贴一章完整的原创或已授权小说内容，用于改编创作</string>
+    <string name="paste_novel_hint">请提供原创或已授权小说内容，支持粘贴单章或上传完整小说文件</string>
     <string name="input_limit_reached">输入字数已达上限</string>
     <string name="login_success_start_creating">登录成功，开始创作吧~</string>
     <string name="sensitive_word_check_failed">敏感词校验失败</string>
@@ -431,13 +430,13 @@
     <string name="overwrite_warning_message">合成完成后，修改内容将作为作品最新版本发布，原视频版本将被替换且无法恢复</string>
     <string name="back_to_edit">返回编辑</string>
     <string name="confirm_synthesize">确认合成</string>
-    <string name="video_synthesizing">视频合成中...</string>
+    <string name="video_synthesizing">视频合成中…</string>
     <string name="do_not_exit_or_lock_screen">请勿退出 或 锁屏</string>
     <string name="video_generating">视频生成中</string>
     <string name="video_generation_failed">视频生成失败</string>
     <string name="please_enter_storyboard_description">请先填写分镜描述</string>
-    <string name="storyboard_generating">分镜生成中...</string>
-    <string name="video_redrawing">视频重绘中...</string>
+    <string name="storyboard_generating">分镜生成中…</string>
+    <string name="video_redrawing">视频重绘中…</string>
     <string name="feedback_success">反馈成功</string>
     <string name="ten_thousand_format">%s万</string>
     <string name="saved_to_album">已保存到手机相册</string>
