@@ -22,9 +22,12 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 import com.kgmedia.fastfilm.core.response
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -54,25 +57,41 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
     //剧集详情
     val episodeList = MutableLiveData<List<EpisodeInfo>?>()
 
+    // 1. 创建一个重载触发器，初始发射一个 Unit 确保首次加载
+    private val reloadTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
 
     private var checkGeneratingJob: Job? = null
 
     /**
      * 投诉消息列表
      */
-    @OptIn(ExperimentalPagingApi::class)
+    @OptIn(ExperimentalPagingApi::class, ExperimentalCoroutinesApi::class)
     fun getWorkInformation(): Flow<PagingData<WorkInformationInfo>> {
-        return Pager(
-            config = PagingConfig(
-                initialLoadSize = Constant.Paged.PAGE_SIZE,
-                pageSize = Constant.Paged.PAGE_SIZE,
-                prefetchDistance = 200,
-            ), remoteMediator = WorkInformationRemoteMediator(
-                database = mRepo.appDatabase
-            )
-        ) {
-            mRepo.appDatabase.workInformationDao().getPosts()
-        }.flow.cachedIn(viewModelScope)
+        return reloadTrigger.flatMapLatest {
+            Pager(
+                config = PagingConfig(
+                    initialLoadSize = Constant.Paged.PAGE_SIZE,
+                    pageSize = Constant.Paged.PAGE_SIZE,
+                    prefetchDistance = 200,
+                ), remoteMediator = WorkInformationRemoteMediator(
+                    database = mRepo.appDatabase
+                )
+            ) {
+                mRepo.appDatabase.workInformationDao().getPosts()
+            }.flow
+        }.cachedIn(viewModelScope)
+    }
+
+    /**
+     * 专门为切换账号/严重状态变更准备的重置方法
+     */
+    fun resetPagingForNewUser() {
+        launch {
+            // 1. 先彻底清空上一任账号的数据库残留
+            mRepo.appDatabase.workInformationDao().clearAll()
+            // 2. 触发生成全新的 Pager 数据流
+            reloadTrigger.emit(Unit)
+        }
     }
 
 

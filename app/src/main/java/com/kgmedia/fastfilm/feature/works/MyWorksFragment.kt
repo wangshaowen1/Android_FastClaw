@@ -8,6 +8,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
@@ -169,16 +170,17 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             onUserStatusChanged {
                 if (userId == User.get().id) return@onUserStatusChanged
                 userId = User.get().id
-                if (userId.isNullOrEmpty()) {
-                    mRealVM.deleteAll()
-                } else {
-                    myWorksAdapter.refresh()
+
+                lifecycleScope.launch {
+                    myWorksAdapter.submitData(PagingData.empty())
                 }
+                // 不管是退登还是换号，直接重置流
+                mRealVM.resetPagingForNewUser()
             }
         }
 
         lifecycleScope.launch {
-            mRealVM.getWorkInformation().collect {
+            mRealVM.getWorkInformation().collectLatest {
                 myWorksAdapter.submitData(it)
             }
         }
@@ -268,7 +270,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         mRealVM.selectedCount.observe(this) {count ->
             if (count <= 0) {
                 binding.tvSelectCount.text = getString(R.string.selected_items_format, "0")
-                    return@observe
+                return@observe
             }
             val spannableString = SpannableString(getString(R.string.selected_items_format, count.toString()))
             spannableString.setSpan(

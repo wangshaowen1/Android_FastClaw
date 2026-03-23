@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
 import com.nhsd.basic.ext.getResString
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * *****************************************
@@ -69,8 +70,8 @@ class WorkInformationRemoteMediator(
                     // 刷新时清空旧数据
                     complaintDetailsDao.clearAll()
                 }
-                val throwable = ApiException(ApiException.AUTHORIZATION_ERROR, R.string.toast_login_please.getResString())
-                return MediatorResult.Error(throwable)
+//                val throwable = ApiException(ApiException.AUTHORIZATION_ERROR, R.string.toast_login_please.getResString())
+                return MediatorResult.Success(endOfPaginationReached = true)
             }
 
             val body = MyWorkBody(
@@ -105,6 +106,9 @@ class WorkInformationRemoteMediator(
             val endOfPaginationReached = data.isNullOrEmpty() || data.size < state.config.pageSize
             return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            }
             MediatorResult.Error(e)
         }
     }
