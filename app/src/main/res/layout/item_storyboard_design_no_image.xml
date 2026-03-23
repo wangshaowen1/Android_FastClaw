@@ -51,7 +51,7 @@
             android:background="@drawable/fill_color1_r8"
             android:ellipsize="end"
             android:gravity="top"
-            android:hint="分镜描述词"
+            android:hint="@string/storyboard_prompt"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
             android:maxLength="1000"
             android:onClick="@{(v)->item.onItemClick.invoke(v)}"

@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="举报"
+                android:text="@string/report"
                 android:textColor="?attr/textColor1" />
 
             <ImageView
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xl"
-            android:text="举报描述"
+            android:text="@string/report_desc"
             android:textColor="?attr/textColor1" />
 
         <com.kgmedia.fastfilm.widget.XEditText
@@ -57,7 +57,7 @@
             android:layout_marginTop="@dimen/spacing_xl"
             android:background="@drawable/bg_06_ffffff_r8"
             android:gravity="top"
-            android:hint="请描述具体原因，我们回尽快处理"
+            android:hint="@string/please_describe_the_reason"
             android:maxLength="500"
             android:maxLines="500"
             android:minHeight="120dp"
@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xl"
-            android:text="联系方式"
+            android:text="@string/contact_info_s"
             android:textColor="?attr/textColor1" />
 
         <com.kgmedia.fastfilm.widget.XEditText
@@ -80,7 +80,7 @@
             android:layout_height="45dp"
             android:layout_marginTop="@dimen/spacing_m"
             android:background="@drawable/bg_06_ffffff_r8"
-            android:hint="微信/QQ/电话/邮箱"
+            android:hint="@string/wechat_qq_phone_email"
             android:maxLength="50"
             android:paddingHorizontal="@dimen/spacing_m"
             android:textColor="?attr/textColor2"
@@ -97,7 +97,7 @@
             android:layout_marginBottom="34dp"
             android:alpha="0.5"
             android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
-            android:text="提交"
+            android:text="@string/app_submit"
             android:textColor="?attr/textColor1" />
     </LinearLayout>
 </layout>

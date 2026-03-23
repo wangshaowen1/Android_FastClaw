@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="网络错误"
+            android:text="@string/network_error"
             android:textColor="?attr/textColor2" />
 
         <TextView
@@ -90,7 +90,7 @@
             android:background="@drawable/btn_theme1_r50"
             android:gravity="center"
             android:paddingHorizontal="40dp"
-            android:text="@string/refresh"
+            android:text="@string/refresh_to_retry"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
@@ -139,7 +139,7 @@
             android:background="@drawable/btn_theme1_r50"
             android:gravity="center"
             android:paddingHorizontal="40dp"
-            android:text="@string/refresh"
+            android:text="@string/refresh_to_retry"
             android:textColor="@color/white"
             android:visibility="gone" />
 

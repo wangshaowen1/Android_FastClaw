@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="上传完本小说文本"
+            android:text="@string/upload_completed_novel"
             android:textColor="?attr/textColor1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +80,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_m"
-                android:text="@{layout.uploadErrorType==1?layout.limitErrorText:`上传失败`}"
+                android:text="@{layout.uploadErrorType==1?layout.limitErrorText:@string/upload_failed}"
                 android:textColor="?attr/funcColorFailure"
                 android:visibility="@{layout.uploadStatus==3?View.VISIBLE:View.GONE}"
                 tools:text="字数不符合要求，需调整后重新上传" />
@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_m"
-                android:text="@{layout.uploadStatus==0?`点击选择文件`:`重新选择`}"
+                android:text="@{layout.uploadStatus == 0 ? @string/file_picker_click : @string/reselect}"
                 android:textColor="?attr/themeColor2"
                 android:textStyle="bold"
                 android:visibility="@{layout.uploadStatus==1?View.GONE:View.VISIBLE}"
@@ -146,7 +146,7 @@
                 android:background="@drawable/bg_theme_color1_r50"
                 android:enabled="@{layout.uploadStatus==2}"
                 android:gravity="center"
-                android:text="上传"
+                android:text="@string/upload"
                 android:textColor="?attr/textColor1" />
         </LinearLayout>
     </LinearLayout>

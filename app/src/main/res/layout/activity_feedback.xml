@@ -55,7 +55,7 @@
                         style="@style/Text14"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="选择类型"
+                        android:text="@string/select_type"
                         android:textColor="?attr/textColor4" />
 
                     <TextView
@@ -81,7 +81,7 @@
                     app:inputCounterGravity="right|bottom"
                     app:inputCounterTextColor="?attr/textColor2"
                     app:inputCounterTextSize="13sp"
-                    app:inputHint="请输入10个字以上的反馈描述（必填）"
+                    app:inputHint="@string/feedback_details_required_10_plus"
                     app:inputHorizontalPadding="16dp"
                     app:inputLines="5"
                     app:inputMaxLength="500"
@@ -103,7 +103,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:text="@{`上传图片（`+layout.photoSize+`/4）: `}"
+                        android:text="@{@string/upload_photo_limit(layout.photoSize, 4)}"
                         android:textColor="?attr/textColor2"
                         tools:text="建议截图（0/4）:" />
 
@@ -135,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:text="联系方式："
+                        android:text="@string/contact_info"
                         android:textColor="?attr/textColor2" />
 
                 </LinearLayout>
@@ -147,7 +147,7 @@
                     android:layout_height="45dp"
                     android:layout_marginTop="@dimen/spacing_m"
                     android:background="@drawable/bg_06_ffffff_r8"
-                    android:hint="请输入手机号便于联系"
+                    android:hint="@string/enter_phone_number"
                     android:inputType="phone"
                     android:maxLength="20"
                     android:paddingHorizontal="@dimen/spacing_m"
@@ -166,7 +166,7 @@
                     android:layout_marginTop="84dp"
                     android:alpha="0.5"
                     android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
-                    android:text="提交反馈" />
+                    android:text="@string/submit_feedback" />
 
                 <LinearLayout
                     android:id="@+id/ll_contact_customer"
@@ -183,7 +183,7 @@
                         style="@style/Text12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="点击联系客服>"
+                        android:text="@string/tap_customer_service"
                         android:textColor="?attr/textColor3" />
                 </LinearLayout>
             </LinearLayout>

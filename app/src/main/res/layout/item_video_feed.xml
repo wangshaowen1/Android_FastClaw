@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_s"
                     android:gravity="center"
-                    android:text="正在载入"
+                    android:text="@string/loading"
                     android:textColor="?attr/textColor2" />
             </LinearLayout>
 
@@ -119,8 +119,8 @@
                 android:textColor="?attr/textColor3"
                 android:textSize="14dp"
                 app:collapseLines="3"
-                app:collapseTipLabel="收起"
-                app:expandTipLabel="展开"
+                app:collapseTipLabel="@string/collapse"
+                app:expandTipLabel="@string/expand"
                 app:expandable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

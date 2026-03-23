@@ -43,7 +43,7 @@
                         style="@style/Text14"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="故事简介"
+                        android:text="@string/story_summary"
                         android:textColor="?attr/textColor1"
                         android:textStyle="bold"
                         android:visibility="@{!layout.isSummaryLoading?View.VISIBLE:View.GONE}" />
@@ -97,7 +97,7 @@
                                 style="@style/Text13"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="预计还需  "
+                                android:text="@string/estimated_time_remaining"
                                 android:textColor="?attr/textColor4" />
 
                             <TextView
@@ -115,7 +115,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="退出后AI会继续生成"
+                            android:text="@string/ai_generation_continues_on_exit"
                             android:textColor="?attr/textColor4" />
                     </LinearLayout>
 
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_l"
                         android:layout_marginBottom="@dimen/spacing_m"
-                        android:text="目录"
+                        android:text="@string/directory"
                         android:textColor="?attr/textColor1"
                         android:textStyle="bold" />
 
@@ -184,7 +184,7 @@
                     android:layout_gravity="center"
                     android:drawableTop="@drawable/ic_loading_fail"
                     android:gravity="center"
-                    android:text="加载失败"
+                    android:text="@string/loading_failed"
                     android:textColor="?attr/textColor4"
                     android:textSize="14sp" />
 
@@ -198,7 +198,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="20dp"
                     android:paddingVertical="6dp"
-                    android:text="重新生成"
+                    android:text="@string/regenerate"
                     android:textSize="12sp" />
             </LinearLayout>
         </ViewAnimator>
@@ -215,7 +215,7 @@
                 style="@style/Button.Bold"
                 android:layout_width="match_parent"
                 android:enabled="@{layout.nextStepEnabled}"
-                android:text="下一步：创建剧本"
+                android:text="@string/next_create_script"
                 tools:enabled="false" />
 
             <Button

@@ -33,7 +33,7 @@
             style="@style/Button.Menu"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_marginEnd="16dp"
-            android:text="设置"
+            android:text="@string/title_settings"
             android:visibility="@{DebugUtils.INSTANCE.isDebug()?View.VISIBLE:View.GONE}"
             app:layout_constraintBottom_toBottomOf="@id/btnClose"
             app:layout_constraintEnd_toEndOf="parent"

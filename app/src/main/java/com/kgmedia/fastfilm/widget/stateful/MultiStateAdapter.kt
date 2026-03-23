@@ -66,10 +66,10 @@ open class MultiStateAdapter(
     var requestButtonTextAndImg: Boolean = true
 
     //异常时否显示刷新按钮时按钮文字
-    var requestButtonText = R.string.refresh.getResString()
+    var requestButtonText = R.string.refresh_to_retry.getResString()
 
     //无数据时否显示刷新按钮时按钮文字
-    var noDataButtonText = R.string.refresh.getResString()
+    var noDataButtonText = R.string.refresh_to_retry.getResString()
 
     //最少多少才显示没有更多
     var minLoadMoreLoadEnd = 4

@@ -50,7 +50,7 @@
                 style="@style/Text13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="预计还需  "
+                android:text="@string/estimated_time_remaining"
                 android:textColor="?attr/textColor4" />
 
             <TextView
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="退出后AI会继续生成"
+            android:text="@string/ai_generation_continues_on_exit"
             android:textColor="?attr/textColor4" />
     </LinearLayout>
 </layout>

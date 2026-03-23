@@ -56,7 +56,7 @@ open class MultiStatePagingFooterAdapter(
     var noDataButtonImg: Int? = null
 
     //无数据时否显示刷新按钮时按钮文字
-    var noDataButtonText = R.string.refresh.getResString()
+    var noDataButtonText = R.string.refresh_to_retry.getResString()
 
     //异常时否显示刷新按钮（所有异常：网络+请求）
     var requestButtonDisplay: Boolean = false
@@ -65,7 +65,7 @@ open class MultiStatePagingFooterAdapter(
     var requestButtonTextAndImg: Boolean = true
 
     //异常时显示刷新按钮时按钮文字
-    var requestButtonText = R.string.refresh.getResString()
+    var requestButtonText = R.string.refresh_to_retry.getResString()
 
     //异常时刷新按钮显示图片资源
     var requestButtonImg: Int? = null

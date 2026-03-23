@@ -29,7 +29,7 @@
             android:layout_marginTop="@dimen/spacing_m"
             android:textColor="?attr/textColor2"
             style="@style/Text12"
-            android:text="注销理由："
+            android:text="@string/unregister_reason"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
@@ -53,7 +53,7 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:gravity="top"
-                android:hint="请输入你账户注销申请理由…"
+                android:hint="@string/hint_unregister_request_reason"
                 android:lineSpacingExtra="@dimen/lineSpacingExtra"
                 android:maxLength="200"
                 android:orientation="horizontal"
@@ -88,7 +88,7 @@
             android:layout_marginTop="32dp"
             android:background="@{layout.content.length()>9?@drawable/gradient_left_73b0f8_right_7567f0_r100:@drawable/gradient_left_50_73b0f8_right_50_7567f0_r100}"
             android:gravity="center"
-            android:text="确认注销"
+            android:text="@string/unregister_confirm"
             android:textColor="?attr/textColor1"
             style="@style/Text16"
             app:layout_constraintDimensionRatio="297:48"

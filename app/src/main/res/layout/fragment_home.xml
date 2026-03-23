@@ -74,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:drawableStart="@drawable/icon_ai"
                         android:drawablePadding="10dp"
-                        android:text="立即创作"
+                        android:text="@string/create_now"
                         android:textColor="@color/sel_common_button_txt"
                         app:layout_constraintBottom_toBottomOf="@id/btnCreation"
                         app:layout_constraintEnd_toEndOf="@id/btnCreation"
@@ -92,7 +92,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:paddingVertical="20dp"
-                android:text="爆款漫剧"
+                android:text="@string/viral_comic_drama"
                 android:textColor="?attr/textColor1"
                 app:drawableStartCompat="@drawable/img_hot"
                 app:layout_scrollFlags="enterAlways" />

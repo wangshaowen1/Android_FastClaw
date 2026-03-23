@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/action_bar_size"
                 android:gravity="center"
-                android:text="重绘分镜"
+                android:text="@string/storyboard_redraw"
                 android:textAppearance="@style/Text16"
                 android:textColor="?attr/textColor1"
                 app:layout_constraintTop_toBottomOf="@+id/statusBar" />
@@ -151,7 +151,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="退出后视频会继续生成"
+                    android:text="@string/gen_continue_after_exit"
                     android:textAppearance="@style/Text10"
                     android:textColor="?attr/textColor4" />
 
@@ -164,7 +164,7 @@
                     android:layout_marginTop="12dp"
                     android:background="@drawable/btn_theme1_r50"
                     android:gravity="center"
-                    android:text="点击重试"
+                    android:text="@string/click_retry"
                     android:textAppearance="@style/Text12"
                     android:textColor="@color/fixed_white_1"
                     android:textStyle="bold"
@@ -177,7 +177,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="24dp"
-                android:text="分镜设计"
+                android:text="@string/storyboard_design"
                 android:textAppearance="@style/Text14"
                 android:textColor="?attr/textColor2"
                 android:textStyle="bold"
@@ -218,7 +218,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="重绘分镜"
+                    android:text="@string/storyboard_redraw"
                     android:textAppearance="@style/Text16"
                     android:textColor="@color/fixed_white_1" />
 
@@ -248,7 +248,7 @@
                 android:layout_marginEnd="15dp"
                 android:background="@drawable/btn_text1_r50"
                 android:gravity="center"
-                android:text="保存"
+                android:text="@string/save"
                 android:textAppearance="@style/Text14"
                 android:textColor="?attr/bgColor1"
                 app:layout_constraintBottom_toBottomOf="@+id/tvTitle"

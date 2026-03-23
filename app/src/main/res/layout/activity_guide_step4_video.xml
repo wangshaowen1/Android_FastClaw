@@ -148,7 +148,7 @@
             style="@style/Text18"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开启我的创作变现"
+            android:text="@string/start_creation_monetization"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="@id/btnNext"
             app:layout_constraintEnd_toEndOf="@id/btnNext"

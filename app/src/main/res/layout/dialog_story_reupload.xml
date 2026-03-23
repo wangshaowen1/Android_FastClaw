@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
-            android:text="检测到敏感词"
+            android:text="@string/sensitive_word_detected"
             android:textColor="?attr/textColor1" />
 
         <TextView
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
             android:gravity="center"
-            android:text="系统检测到敏感内容，算力已退还\n请修改后重新提交"
+            android:text="@string/sensitive_content_refunded"
             android:textColor="?attr/textColor3" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -118,6 +118,6 @@
             android:layout_marginTop="@dimen/spacing_l"
             android:background="@drawable/bg_theme_color1_r50"
             android:gravity="center"
-            android:text="重新上传" />
+            android:text="@string/reupload" />
     </LinearLayout>
 </layout>

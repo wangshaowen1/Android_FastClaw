@@ -11,7 +11,7 @@
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:gravity="center"
-        android:text="日期选择"
+        android:text="@string/select_date"
         android:textColor="#393939"
         android:textSize="20sp" />
 
@@ -49,7 +49,7 @@
             android:layout_width="149dp"
             android:layout_height="50dp"
             android:gravity="center"
-            android:text="取消"
+            android:text="@string/cancel"
             android:textColor="#8e8e8e" />
 
         <View
@@ -62,7 +62,7 @@
             android:layout_width="150dp"
             android:layout_height="50dp"
             android:gravity="center"
-            android:text="确定"
+            android:text="@string/confirm_ok"
             android:textColor="@color/colorAccent" />
     </LinearLayout>
 

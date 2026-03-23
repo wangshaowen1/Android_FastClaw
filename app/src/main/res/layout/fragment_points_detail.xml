@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="12dp"
-            android:text="仅展示仅3个月数据，更新可能有延迟"
+            android:text="@string/last_3_months_data_only"
             android:textColor="?attr/textColor4" />
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout

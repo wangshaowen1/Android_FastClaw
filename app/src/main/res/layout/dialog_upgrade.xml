@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="44dp"
-            android:text="发现新版本"
+            android:text="@string/new_version_found"
             android:textAppearance="@style/Text28"
             android:textColor="?attr/textColor1"
             app:layout_constraintStart_toStartOf="@id/card"

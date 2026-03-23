@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_l"
-            android:text="文本解析"
+            android:text="@string/text_parsing"
             android:textColor="?attr/textColor1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
-            android:text="本次解析将使用 AI对整部作品进行结构化理解"
+            android:text="@string/ai_structural_analysis"
             android:textColor="?attr/textColor4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,7 +66,7 @@
                 style="@style/Text12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="预计消耗算力"
+                android:text="@string/estimated_compute_usage"
                 android:textColor="?attr/textColor3"
                 android:textStyle="bold" />
 
@@ -99,7 +99,7 @@
             android:layout_marginStart="@dimen/spacing_l"
             android:layout_marginTop="22dp"
             android:layout_weight="1"
-            android:text="确认"
+            android:text="@string/confirm"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/llPrice" />
@@ -128,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_s"
-                android:text="下次不再提醒我"
+                android:text="@string/dont_remind_me_again"
                 android:textColor="?attr/textColor3"
                 android:textSize="12sp" />
         </LinearLayout>

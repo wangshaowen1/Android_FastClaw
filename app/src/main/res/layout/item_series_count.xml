@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
                 android:layout_marginEnd="14dp"
-                android:text="集"
+                android:text="@string/vol_number"
                 android:textColor="?attr/textColor2" />
         </FrameLayout>
     </com.kgmedia.fastfilm.widget.BorderConstraintLayout>

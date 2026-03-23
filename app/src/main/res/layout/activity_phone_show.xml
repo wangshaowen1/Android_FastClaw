@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="当前手机号"
+                android:text="@string/current_phone_number"
                 android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -51,7 +51,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:gravity="bottom|center_horizontal"
-            android:text="暂不支持换绑手机号"
+            android:text="@string/phone_change_not_supported"
             android:layout_marginBottom="20dp"
             android:textColor="@color/color_50_121212"
             android:textSize="12sp" />

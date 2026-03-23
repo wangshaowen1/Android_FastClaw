@@ -42,7 +42,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="编辑"
+                android:text="@string/edit"
                 android:textColor="@color/text_color_3_dark" />
 
             <TextView
@@ -53,7 +53,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:text="管理"
+                android:text="@string/manage"
                 android:textColor="@color/text_color_3_dark" />
 
         </LinearLayout>

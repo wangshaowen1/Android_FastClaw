@@ -36,7 +36,7 @@
                 android:shadowDx="0"
                 android:shadowDy="4"
                 android:shadowRadius="3.0"
-                android:text="AI生成"
+                android:text="@string/generated_by_ai"
                 android:textColor="@color/color_50_ffffff"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/logo"

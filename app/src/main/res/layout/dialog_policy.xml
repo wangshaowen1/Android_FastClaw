@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="用户协议及隐私说明"
+        android:text="@string/terms_and_privacy"
         android:textAppearance="@style/Text16"
         android:textColor="?attr/textColor1"
         app:layout_constraintEnd_toEndOf="parent"

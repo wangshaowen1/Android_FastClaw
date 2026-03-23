@@ -86,7 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_m"
-                    android:text="登录/注册"
+                    android:text="@string/login_or_register"
                     android:textColor="?attr/textColor1"
                     android:visibility="@{layout.isLogin()?View.GONE:View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
@@ -180,7 +180,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_m"
                         android:layout_weight="1"
-                        android:text="帮助中心"
+                        android:text="@string/help_center"
                         android:textColor="?attr/textColor3" />
 
                     <ImageView
@@ -211,7 +211,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_m"
                         android:layout_weight="1"
-                        android:text="建议与反馈"
+                        android:text="@string/suggest_and_feedback"
                         android:textColor="?attr/textColor3" />
 
                     <ImageView
@@ -242,7 +242,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_m"
                         android:layout_weight="1"
-                        android:text="设置"
+                        android:text="@string/title_settings"
                         android:textColor="?attr/textColor3" />
 
                     <ImageView

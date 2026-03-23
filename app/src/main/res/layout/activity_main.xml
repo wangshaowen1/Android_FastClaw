@@ -49,7 +49,7 @@
                     android:drawableTop="@drawable/cb_main_tab_home"
                     android:drawablePadding="4dp"
                     android:gravity="center"
-                    android:text="创作"
+                    android:text="@string/creation"
                     android:textColor="@color/cb_main_tab_txt"
                     android:textSize="10sp"
                     tools:checked="true" />
@@ -76,7 +76,7 @@
                     android:drawableTop="@drawable/cb_main_tab_folder"
                     android:drawablePadding="4dp"
                     android:gravity="center"
-                    android:text="作品"
+                    android:text="@string/works"
                     android:textColor="@color/cb_main_tab_txt"
                     android:textSize="10sp"
                     tools:checked="false" />
@@ -103,7 +103,7 @@
                     android:drawableTop="@drawable/cb_main_tab_mine"
                     android:drawablePadding="4dp"
                     android:gravity="center"
-                    android:text="我的"
+                    android:text="@string/tab_mine"
                     android:textColor="@color/cb_main_tab_txt"
                     android:textSize="10sp"
                     tools:checked="false" />

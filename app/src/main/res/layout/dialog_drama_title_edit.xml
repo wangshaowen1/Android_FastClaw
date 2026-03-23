@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_l"
-            android:text="修改标题"
+            android:text="@string/edit_title"
             android:textColor="?attr/textColor1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"
             android:layout_marginTop="@dimen/spacing_xl"
-            android:text="故事标题"
+            android:text="@string/story_title"
             android:textColor="?attr/textColor1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
@@ -83,7 +83,7 @@
                 style="@style/Button.Bold.Cancel"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="取消" />
+                android:text="@string/cancel" />
 
             <!-- 保存按钮 -->
             <Button
@@ -92,7 +92,7 @@
                 android:layout_width="0dp"
                 android:layout_marginStart="@dimen/spacing_l"
                 android:layout_weight="1"
-                android:text="确定" />
+                android:text="@string/confirm_ok" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

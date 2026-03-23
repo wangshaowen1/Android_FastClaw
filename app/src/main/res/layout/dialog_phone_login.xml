@@ -28,13 +28,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_xl"
             android:layout_marginTop="40dp"
-            android:text="@{layout.isBind?`绑定手机号`:`登录后更精彩`}"
+            android:text="@{layout.isBind?@string/bind_phone_number:@string/login_for_more_highlights}"
             android:textColor="?attr/textColor1"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            tools:text="登录后更精彩" />
+            tools:text="@string/login_for_more_highlights" />
 
         <TextView
             android:id="@+id/tv_binding_prompt"
@@ -42,11 +42,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
-            android:text="@{layout.isBind?@string/binding_prompt:`新账号登录即注册`}"
+            android:text="@{layout.isBind?@string/binding_prompt:@string/login_as_registration}"
             android:textColor="?attr/textColor3"
             app:layout_constraintStart_toStartOf="@id/iv_title"
             app:layout_constraintTop_toBottomOf="@+id/iv_title"
-            tools:text="新账号登录即注册"
+            tools:text="@string/login_as_registration"
             tools:visibility="visible" />
 
         <LinearLayout
@@ -182,7 +182,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:text="我已阅读并同意"
+                android:text="@string/i_have_read_and_agree_to"
                 android:textColor="?attr/textColor3" />
 
             <TextView
@@ -200,7 +200,7 @@
                 style="@style/Text12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="和"
+                android:text="@string/and"
                 android:textColor="?attr/textColor3" />
 
             <TextView

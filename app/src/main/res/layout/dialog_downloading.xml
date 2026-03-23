@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="正在保存到本地"
+                android:text="@string/saving_to_local"
                 android:textColor="?attr/textColor2"
                 android:textSize="14dp" />
 

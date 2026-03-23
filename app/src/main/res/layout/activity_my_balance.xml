@@ -47,7 +47,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:text="我的余额"
+                            android:text="@string/my_balance"
                             android:textAppearance="@style/Text12"
                             android:textColor="?attr/textColor3"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +96,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="15dp"
                             android:layout_marginTop="24dp"
-                            android:text="选择充值金额"
+                            android:text="@string/select_recharge_amount"
                             android:textAppearance="@style/Text16"
                             android:textColor="?attr/textColor2"
                             android:textStyle="normal"
@@ -123,7 +123,7 @@
                             android:layout_height="wrap_content"
                             android:drawableStart="@drawable/icon_prompt_16"
                             android:drawablePadding="4dp"
-                            android:text="算力值有效期：1年"
+                            android:text="@string/power_validity_period"
                             android:textAppearance="@style/Text12"
                             android:textColor="?attr/textColor4"
                             app:layout_constraintStart_toStartOf="@+id/tvRechargeAmount"
@@ -134,7 +134,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="15dp"
                             android:layout_marginTop="40dp"
-                            android:text="支付方式"
+                            android:text="@string/payment_method"
                             android:textAppearance="@style/Text16"
                             android:textColor="?attr/textColor2"
                             android:textStyle="normal"
@@ -166,7 +166,7 @@
                     android:layout_height="0dp"
                     android:background="@drawable/selector_common_button"
                     android:gravity="center"
-                    android:text="立即充值"
+                    android:text="@string/top_up_now"
                     android:textAppearance="@style/Text16"
                     android:textColor="@color/fixed_white_1"
                     app:layout_constraintBottom_toTopOf="@+id/llPolicy"
@@ -188,7 +188,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="购买即表示同意"
+                        android:text="@string/agree_to_purchase"
                         android:textAppearance="@style/Text12"
                         android:textColor="?attr/textColor3" />
 
@@ -197,7 +197,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingVertical="12dp"
-                        android:text="《支付协议》"
+                        android:text="@string/payment_agreement_show"
                         android:textAppearance="@style/Text12"
                         android:textColor="?attr/textColor1" />
                 </LinearLayout>

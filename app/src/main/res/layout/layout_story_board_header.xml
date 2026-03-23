@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:selected="@{step != null ? step == 1 : false}"
-            android:text="故事梗概"
+            android:text="@string/story_synopsis"
             android:textColor="@color/sel_text1_text4"
             android:visibility='@{(startFrom != null &amp;&amp; startFrom == 2) ? View.GONE : View.VISIBLE}'
             app:layout_constraintEnd_toStartOf="@+id/step2_text"
@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:selected='@{step != null ? step == 2 : false}'
-            android:text="故事剧本"
+            android:text="@string/story_script"
             android:textColor="@color/sel_text1_text4"
             app:layout_constraintEnd_toStartOf="@+id/step3_text"
             app:layout_constraintStart_toEndOf="@id/step1_text"
@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:selected='@{step != null ? step == 3 : false}'
-            android:text="资产管理"
+            android:text="@string/asset_management"
             android:textColor="@color/sel_text1_text4"
             app:layout_constraintEnd_toStartOf="@+id/step4_text"
             app:layout_constraintStart_toEndOf="@id/step2_text"
@@ -170,7 +170,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:selected='@{step != null ? step == 4 : false}'
-            android:text="分镜设计"
+            android:text="@string/storyboard_design"
             android:textColor="@color/sel_text1_text4"
             app:layout_constraintEnd_toStartOf="@+id/step5_text"
             app:layout_constraintStart_toEndOf="@id/step3_text"
@@ -211,7 +211,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:selected='@{step != null ? step == 5 : false}'
-            android:text="分镜预览"
+            android:text="@string/storyboard_preview"
             android:textColor="@color/sel_text1_text4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/step4_text"

@@ -36,7 +36,7 @@
                 style="@style/Button.Menu"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_marginStart="15dp"
-                android:text="设置"
+                android:text="@string/title_settings"
                 android:visibility="@{DebugUtils.INSTANCE.isDebug()?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/btnClose"
                 app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="登录快出片"
+                android:text="@string/sign_in_kuaichupian"
                 android:textColor="?attr/textColor1"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"

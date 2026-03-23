@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/spacing_m"
-                android:text="用户须知"
+                android:text="@string/user_notice"
                 android:textAppearance="@style/Text16"
                 android:textColor="?attr/textColor2" />
 
@@ -85,7 +85,7 @@
                 setSpanText="@{@string/app_purchase_instructions}"
                 singleClick="@{layout.clickHandler::onClick}"
                 spanColor="@{@color/func_failure_dark}"
-                spanText="@{`账号注销说明`}"
+                spanText="@{@string/account_deletion_title}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="4dp"
@@ -112,7 +112,7 @@
                 android:background="@drawable/btn_common_cancel"
                 android:enabled="@{layout.checkedPolicy}"
                 android:gravity="center"
-                android:text="申请注销"
+                android:text="@string/unregister_request"
                 android:textColor="@{layout.checkedPolicy?@color/textColorPrimary:@color/color_40_21213b}"
                 tools:textColor="?attr/textColor3" />
 
@@ -125,7 +125,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
                 android:gravity="center"
-                android:text="再想想"
+                android:text="@string/rethink"
                 android:textColor="?attr/textColor1" />
         </LinearLayout>
 

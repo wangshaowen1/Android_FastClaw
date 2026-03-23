@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:layout_marginTop="40dp"
-            android:text="预计消耗算力"
+            android:text="@string/estimated_compute_cost"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor2"
             app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +70,7 @@
             android:layout_marginTop="35dp"
             android:background="@drawable/selector_common_button"
             android:gravity="center"
-            android:text="确认"
+            android:text="@string/confirm"
             android:textAppearance="@style/Text16"
             android:textColor="@color/fixed_white_1"
             app:layout_constraintDimensionRatio="345:44"
@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_s"
                 android:paddingVertical="@dimen/spacing_m"
-                android:text="下次不再提醒我"
+                android:text="@string/dont_remind_me_again"
                 android:textAppearance="@style/Text12"
                 android:textColor="?attr/textColor3" />
         </LinearLayout>

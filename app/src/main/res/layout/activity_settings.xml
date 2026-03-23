@@ -88,7 +88,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="手机号码"
+                            android:text="@string/phone_number"
                             android:textColor="?attr/textColor3" />
 
                         <TextView
@@ -96,7 +96,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
-                            android:hint="未绑定"
+                            android:hint="@string/unbound"
                             android:text="@{TextUtils.isEmpty(layout.phone)?``:FormatUtils.encryptPhoneNum(layout.phone)}"
                             android:textColor="?attr/textColor3"
                             android:textColorHint="?attr/textColor4" />

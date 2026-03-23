@@ -46,9 +46,9 @@ class MyMultiStatePagingFooterAdapter(
     //异常据提示图片
     @DrawableRes requestButtonImg: Int? = null,
     //异常时否显示刷新按钮时按钮文字
-    requestButtonText: String = R.string.refresh.getResString(),
+    requestButtonText: String = R.string.refresh_to_retry.getResString(),
     //无数据时否显示刷新按钮时按钮文字
-    noDataButtonText: String = R.string.refresh.getResString(),
+    noDataButtonText: String = R.string.refresh_to_retry.getResString(),
     //最小多少才显示没有更多了
     noMoreThreshold: Int = 5,
     //空数据高度

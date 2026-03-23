@@ -44,9 +44,9 @@ open class MyMultiStateAdapter(
     //异常时刷新按钮显示文字(true)还是图片(false)
     requestButtonTextAndImg: Boolean = true,
     //异常时否显示刷新按钮时按钮文字
-    requestButtonText: String = R.string.refresh.getResString(),
+    requestButtonText: String = R.string.refresh_to_retry.getResString(),
     //无数据时否显示刷新按钮时按钮文字
-    noDataButtonText: String = R.string.refresh.getResString(),
+    noDataButtonText: String = R.string.refresh_to_retry.getResString(),
     //空数据高度
     val displayedHeight: Int = -1,
     //刷新回调

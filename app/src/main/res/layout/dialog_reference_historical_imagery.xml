@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="是否参考历史形象生图"
+                android:text="@string/reference_historical_avatar"
                 android:textColor="?attr/textColor1" />
 
             <ImageView
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xl"
-            android:text="历史形象"
+            android:text="@string/historical_character"
             android:textColor="?attr/textColor1"
             android:textStyle="bold" />
 
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
-            android:text="*参考生图将基于资产历史形象和当前描述进行生图，不参考生图将只基于资产描述进行生图"
+            android:text="@string/reference_generation_logic_description"
             android:textColor="?attr/textColor4" />
 
         <LinearLayout
@@ -87,7 +87,7 @@
                 style="@style/Button.Bold.Cancel"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="不参考" />
+                android:text="@string/no_reference" />
 
             <!-- 保存按钮 -->
             <Button
@@ -96,7 +96,7 @@
                 android:layout_width="0dp"
                 android:layout_marginStart="@dimen/spacing_l"
                 android:layout_weight="1"
-                android:text="参考" />
+                android:text="@string/reference" />
         </LinearLayout>
     </LinearLayout>
 </layout>

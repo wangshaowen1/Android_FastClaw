@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:minHeight="34dp"
     android:gravity="center_horizontal"
-    android:text="没有更多数据"
+    android:text="@string/no_more_data"
     android:textColor="@color/textColorGray"
     android:textSize="14sp"
     android:paddingVertical="8dp"

@@ -51,7 +51,7 @@
                 style="@style/Button.Menu"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_marginEnd="16dp"
-                android:text="设置"
+                android:text="@string/title_settings"
                 android:visibility="@{DebugUtils.INSTANCE.isDebug()?View.VISIBLE:View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/btnClose"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -133,7 +133,7 @@
                     android:layout_marginHorizontal="@dimen/spacing_xl"
                     android:background="@drawable/gradient_button_bg_r50"
                     android:gravity="center"
-                    android:text="本机号码一键登录"
+                    android:text="@string/sim_card_quick_login"
                     android:textColor="?attr/textColor1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -215,13 +215,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_xl"
                     android:layout_marginTop="40dp"
-                    android:text="@{layout.isBind?`绑定手机号`:`登录后更精彩`}"
+                    android:text="@{layout.isBind?@string/bind_phone_number:@string/login_for_more_highlights}"
                     android:textColor="?attr/textColor1"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="登录后更精彩" />
+                    tools:text="@string/login_for_more_highlights" />
 
                 <TextView
                     android:id="@+id/tv_binding_prompt"
@@ -229,11 +229,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_m"
-                    android:text="@{layout.isBind?@string/binding_prompt:`新账号登录即注册`}"
+                    android:text="@{layout.isBind?@string/binding_prompt:@string/login_as_registration}"
                     android:textColor="?attr/textColor3"
                     app:layout_constraintStart_toStartOf="@id/tv_title"
                     app:layout_constraintTop_toBottomOf="@+id/tv_title"
-                    tools:text="新账号登录即注册"
+                    tools:text="@string/login_as_registration"
                     tools:visibility="visible" />
 
                 <LinearLayout

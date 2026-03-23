@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="选择生日"
+            android:text="@string/select_birthday"
             android:textColor="@color/textColorPrimary"
             android:textSize="16sp"
             />
@@ -43,7 +43,7 @@
             android:gravity="center"
             android:paddingVertical="20dp"
             android:paddingHorizontal="18dp"
-            android:text="@string/confirm"
+            android:text="@string/confirm_ok"
             android:textColor="@color/textColorPrimary"
             android:textSize="14sp" />
     </LinearLayout>

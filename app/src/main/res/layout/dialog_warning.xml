@@ -17,7 +17,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginRight="24dp"
         android:singleLine="true"
-        android:text="客服警告"
+        android:text="@string/customer_service_warning"
         android:textColor="@color/textColorDark"
         android:textSize="@dimen/font_18"
         android:textStyle="bold" />
@@ -59,7 +59,7 @@
             android:layout_height="44dp"
             android:background="@drawable/selector_common_button"
             android:enabled="false"
-            android:text="知道啦（30s）" />
+            android:text="@string/got_it_countdown" />
     </LinearLayout>
 
 </LinearLayout>

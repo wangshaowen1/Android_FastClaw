@@ -94,7 +94,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:background="@drawable/gradient_left_73b0f8_right_7567f0_r100"
-                android:text="@string/confirm"
+                android:text="@string/confirm_ok"
                 android:textColor="?attr/textColor1"  />
         </LinearLayout>
 

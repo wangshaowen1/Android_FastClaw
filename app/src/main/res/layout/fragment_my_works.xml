@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/action_bar_size"
             android:gravity="center"
-            android:text="我的作品"
+            android:text="@string/my_works"
             android:textAppearance="@style/Text18"
             android:textColor="?attr/textColor1"
             app:layout_constraintTop_toBottomOf="@+id/statusBar" />
@@ -75,7 +75,7 @@
             android:layout_height="@dimen/action_bar_size"
             android:gravity="center"
             android:paddingHorizontal="15dp"
-            android:text="全选"
+            android:text="@string/check_all"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor3"
             app:layout_constraintStart_toStartOf="@+id/tvSelectCount"
@@ -88,7 +88,7 @@
             android:layout_height="@dimen/action_bar_size"
             android:gravity="center"
             android:paddingHorizontal="15dp"
-            android:text="完成"
+            android:text="@string/complete"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor3"
             app:layout_constraintEnd_toEndOf="@+id/tvSelectCount"
@@ -112,7 +112,7 @@
                 android:id="@+id/lsv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:noData="暂无作品记录，快去创作你的作品吧">
+                app:noData="@string/empty_creation_history">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view"
@@ -144,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/icon_delete_red"
                 android:drawablePadding="8dp"
-                android:text="删除"
+                android:text="@string/del"
                 android:textAppearance="@style/Text14"
                 android:textColor="?attr/funcColorFailure" />
         </LinearLayout>

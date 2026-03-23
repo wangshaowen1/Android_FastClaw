@@ -44,7 +44,7 @@
                         android:gravity="center"
                         android:onClick="@{layout.clickHandler::onClick}"
                         android:paddingHorizontal="12dp"
-                        android:text="角色"
+                        android:text="@string/roles"
                         android:textAppearance="@style/Text14"
                         android:textColor="@color/sel_text2_text3" />
 
@@ -57,7 +57,7 @@
                         android:gravity="center"
                         android:onClick="@{layout.clickHandler::onClick}"
                         android:paddingHorizontal="12dp"
-                        android:text="场景"
+                        android:text="@string/scenes"
                         android:textAppearance="@style/Text14"
                         android:textColor="@color/sel_text2_text3" />
 
@@ -70,7 +70,7 @@
                         android:gravity="center"
                         android:onClick="@{layout.clickHandler::onClick}"
                         android:paddingHorizontal="12dp"
-                        android:text="道具"
+                        android:text="@string/props"
                         android:textAppearance="@style/Text14"
                         android:textColor="@color/sel_text2_text3" />
 

@@ -93,7 +93,7 @@
             android:layout_marginTop="8dp"
             android:visibility="gone"
             tools:visibility="visible"
-            android:text="网络错误"
+            android:text="@string/network_error"
             android:textColor="?attr/textColor2" />
 
         <TextView
@@ -125,7 +125,7 @@
             android:gravity="center"
             android:minWidth="74dp"
             android:paddingHorizontal="40dp"
-            android:text="@string/refresh"
+            android:text="@string/refresh_to_retry"
             android:textColor="@color/white"
             android:visibility="gone"
             tools:visibility="visible" />

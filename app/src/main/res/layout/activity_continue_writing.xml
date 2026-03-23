@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/spacing_l"
             android:layout_marginTop="@dimen/spacing_m"
-            android:text="上级概要"
+            android:text="@string/ep_summary"
             android:textColor="?attr/textColor1"
             android:textStyle="bold" />
 
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_l"
             android:layout_marginTop="@dimen/spacing_xl"
-            android:text="续创剧集"
+            android:text="@string/continue_series"
             android:textColor="?attr/textColor1"
             android:textStyle="bold" />
 
@@ -119,7 +119,7 @@
                 app:inputCounterTextColor="?attr/textColor4"
                 app:inputCounterTextSize="12sp"
                 app:inputCounterVisible="false"
-                app:inputHint="请输入您的原著内容，「快出片」将严格基于你提供的章节内容生成漫剧，不会新增剧情"
+                app:inputHint="@string/input_original_story_content"
                 app:inputHorizontalPadding="@dimen/spacing_m"
                 app:inputTextColor="?attr/textColor2"
                 app:inputTextColorHint="?attr/textColor4"
@@ -146,7 +146,7 @@
                     android:drawableTop="@drawable/ic_loading_fail"
                     android:drawablePadding="@dimen/spacing_l"
                     android:gravity="center"
-                    android:text="生成失败"
+                    android:text="@string/error_gen"
                     android:textColor="?attr/textColor4"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -176,7 +176,7 @@
                     android:includeFontPadding="false"
                     android:paddingHorizontal="@dimen/spacing_s"
                     android:paddingVertical="@dimen/spacing_xs"
-                    android:text="重新生成"
+                    android:text="@string/regenerate"
                     android:textColor="?attr/textColor2"
                     app:drawableStartCompat="@drawable/icon_refresh_1_12" />
 
@@ -194,7 +194,7 @@
                     android:includeFontPadding="false"
                     android:paddingHorizontal="@dimen/spacing_s"
                     android:paddingVertical="@dimen/spacing_xs"
-                    android:text="帮我扩写"
+                    android:text="@string/extend_text"
                     android:textColor="?attr/textColor2"
                     app:drawableStartCompat="@drawable/icon_optimize12" />
 
@@ -238,6 +238,6 @@
             android:layout_marginHorizontal="@dimen/spacing_l"
             android:layout_marginTop="38dp"
             android:layout_marginBottom="30dp"
-            android:text="下一步" />
+            android:text="@string/next_step" />
     </LinearLayout>
 </layout>

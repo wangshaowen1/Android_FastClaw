@@ -45,7 +45,7 @@
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="确定"
+            android:text="@string/confirm_ok"
             android:textColor="@color/textColorPrimary"
             android:textSize="16sp"/>
 

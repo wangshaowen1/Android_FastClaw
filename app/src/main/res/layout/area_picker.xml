@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="选择所在地"
+            android:text="@string/choose_region"
             android:textSize="16sp"
             android:textColor="@color/textColorPrimary" />
 
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/textColorPrimary"
-            android:text="@string/confirm" />
+            android:text="@string/confirm_ok" />
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
