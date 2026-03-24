@@ -21,9 +21,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:scaleType="fitXY"
             android:src="@drawable/bg_guang"
-            app:layout_constraintDimensionRatio="375:472"
+            app:layout_constraintDimensionRatio="375:543"
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
