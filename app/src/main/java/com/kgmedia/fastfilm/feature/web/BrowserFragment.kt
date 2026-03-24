@@ -52,6 +52,7 @@ import com.kgmedia.fastfilm.core.network.ObjectTypeAdapter
 import com.kgmedia.fastfilm.core.network.apis.AppHeader
 import com.kgmedia.fastfilm.databinding.FragmentBrowserBinding
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
+import com.kgmedia.fastfilm.feature.recharge.PaySuccessDialog
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity.Companion.launch
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
@@ -479,6 +480,11 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
                     e.printStackTrace()
                 }
             }
+
+            registerHandler("showCustomerGuideDialog") { data, _ ->
+                PaySuccessDialog.checkAndShow(PaySuccessDialog.SCENE_OTHER)
+            }
+
             //埋点上报
             // {
             //  "event_name": 埋点名称,
