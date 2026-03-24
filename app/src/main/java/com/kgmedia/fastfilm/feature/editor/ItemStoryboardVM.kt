@@ -36,6 +36,7 @@ class ItemStoryboardVM(
     val selected by lazy { ObservableBoolean(false) }
     private var loopGenStatusJob: Job? = null
     private var loopSubtitleGenStatusJob: Job? = null
+    private var cleared = false
 
     init {
         if (data?.videoGenerating == true) {
@@ -46,6 +47,7 @@ class ItemStoryboardVM(
     }
 
     fun clear() {
+        cleared = true
         loopGenStatusJob?.cancel()
         loopSubtitleGenStatusJob?.cancel()
     }
@@ -61,7 +63,7 @@ class ItemStoryboardVM(
     fun genStatusBig(info: SimpleStoryboardInfo?) =
         when {
             info?.videoGenerating == true -> R.string.video_generating.getResString()
-            info?.videoGenerateFailed == true ->  R.string.video_generation_failed.getResString()
+            info?.videoGenerateFailed == true -> R.string.video_generation_failed.getResString()
             else -> null
         }
 
@@ -107,6 +109,7 @@ class ItemStoryboardVM(
 
     private fun loopGenStatus() {
         loopGenStatusJob?.cancel()
+        if (cleared) return
         val storyboard = data.get()
         val taskId = storyboard?.taskId
         if (taskId.isNullOrEmpty()) return
@@ -148,6 +151,7 @@ class ItemStoryboardVM(
 
     private fun loopGenSubtitleStatus() {
         loopSubtitleGenStatusJob?.cancel()
+        if (cleared) return
         val storyboard = data.get()
         val storyboardId = storyboard?.storyboardId
         if (storyboardId.isNullOrEmpty()) return

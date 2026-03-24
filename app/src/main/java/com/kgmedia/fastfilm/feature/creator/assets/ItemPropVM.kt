@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Config
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.ext.showRechargeDialog
@@ -19,6 +20,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.edit.ReferenceHistoricalImageryDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerConsumeConfirmDialog
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -144,6 +146,7 @@ class ItemPropVM(
                         prop.genStatus = data?.genStatus
                         data?.genStatus?.let { updateStatus(it) }
                         this@ItemPropVM.data.set(prop)
+                        FlowEventBus.postSync(Events.PropGenerateEvent(workId, storyId, prop))
                         loopGenStatus()
                     },
                     error = {
@@ -206,6 +209,7 @@ class ItemPropVM(
 
     override fun loopGenStatus() {
         loopGenStatusJob?.cancel()
+        if (cleared) return
         val taskId = data.get()?.taskId
         if (taskId.isNullOrEmpty()) return
         loopGenStatusJob = launch {

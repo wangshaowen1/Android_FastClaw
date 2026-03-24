@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
@@ -17,7 +18,9 @@ import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorViewModel
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getParentViewModel
+import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.showToast
 
 /**
@@ -66,6 +69,11 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
             }
         })
         EventManager.onAppTrack(AppEvent.SF_VIEW_ASSET_MANAGEMENT_PAGE)
+        observeEvents {
+            on<Events.RoleGenerateEvent> { if (isActive) mRealVM.onRoleGenerate(it) }
+            on<Events.SceneGenerateEvent> { if (isActive) mRealVM.onSceneGenerate(it) }
+            on<Events.PropGenerateEvent> { if (isActive) mRealVM.onPropGenerate(it) }
+        }
     }
 
     override fun <Data> onClick(view: View, data: Data?) {

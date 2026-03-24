@@ -13,6 +13,7 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.AutoProgressSimulator
+import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.showRechargeDialog
@@ -563,6 +564,39 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 //下一步：分镜设计
                 generateAllStoryboardDescription(toNextStep)
             }
+        }
+    }
+
+    fun onRoleGenerate(event: Events.RoleGenerateEvent) {
+        adapter.items.firstOrNull { it is ItemRoleVM && it.data.get()?.roleId == event.role?.roleId }?.let { it as? ItemRoleVM }?.apply {
+            val role = data.get()
+            role?.taskId = event.role?.taskId
+            role?.genStatus = event.role?.genStatus
+            event.role?.genStatus?.let { updateStatus(it) }
+            data.set(role)
+            loopGenStatus()
+        }
+    }
+
+    fun onSceneGenerate(event: Events.SceneGenerateEvent) {
+        adapter.items.firstOrNull { it is ItemSceneVM && it.data.get()?.sceneId == event.scene?.sceneId }?.let { it as? ItemSceneVM }?.apply {
+            val scene = data.get()
+            scene?.taskId = event.scene?.taskId
+            scene?.genStatus = event.scene?.genStatus
+            event.scene?.genStatus?.let { updateStatus(it) }
+            data.set(scene)
+            loopGenStatus()
+        }
+    }
+
+    fun onPropGenerate(event: Events.PropGenerateEvent) {
+        adapter.items.firstOrNull { it is ItemPropVM && it.data.get()?.propId == event.prop?.propId }?.let { it as? ItemPropVM }?.apply {
+            val prop = data.get()
+            prop?.taskId = event.prop?.taskId
+            prop?.genStatus = event.prop?.genStatus
+            event.prop?.genStatus?.let { updateStatus(it) }
+            data.set(prop)
+            loopGenStatus()
         }
     }
 }

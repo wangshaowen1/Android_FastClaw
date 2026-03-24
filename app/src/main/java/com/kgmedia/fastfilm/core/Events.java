@@ -3,6 +3,9 @@ package com.kgmedia.fastfilm.core;
 
 import androidx.annotation.NonNull;
 
+import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo;
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo;
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo;
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo;
 import com.nhsd.basic.bus.AppEvent;
 
@@ -19,30 +22,6 @@ public class Events {
         private int type;
 
         public MainTabEvent(int type) {
-            this.type = type;
-        }
-
-        public int getType() {
-            return type;
-        }
-
-        public void setType(int type) {
-            this.type = type;
-        }
-    }
-
-    public static class PurchaseEvent implements AppEvent {
-        //购买类型会员
-        public static int VIP = 1;
-        //购买积分
-        public static int POINTS = 2;
-        //购买能力包
-        public static int ABILITY = 3;
-
-        //购买类型
-        private int type;
-
-        public PurchaseEvent(int type) {
             this.type = type;
         }
 
@@ -258,15 +237,6 @@ public class Events {
         }
     }
 
-
-    public static class InvitationIncomeEvent implements AppEvent {
-        public final int amountOfMoney;
-
-        public InvitationIncomeEvent(int amountOfMoney) {
-            this.amountOfMoney = amountOfMoney;
-        }
-    }
-
     /**
      * 修改视频信息
      */
@@ -373,6 +343,51 @@ public class Events {
             this.workId = workId;
             this.storyId = storyId;
             this.storyboardId = storyboardId;
+        }
+    }
+
+    /**
+     * 角色生成事件
+     */
+    public static class RoleGenerateEvent implements AppEvent {
+        public final String workId;
+        public final String storyId;
+        public final SimpleRoleInfo role;
+
+        public RoleGenerateEvent(String workId, String storyId, SimpleRoleInfo role) {
+            this.workId = workId;
+            this.storyId = storyId;
+            this.role = role;
+        }
+    }
+
+    /**
+     * 场景生成事件
+     */
+    public static class SceneGenerateEvent implements AppEvent {
+        public final String workId;
+        public final String storyId;
+        public final SimpleSceneInfo scene;
+
+        public SceneGenerateEvent(String workId, String storyId, SimpleSceneInfo scene) {
+            this.workId = workId;
+            this.storyId = storyId;
+            this.scene = scene;
+        }
+    }
+
+    /**
+     * 道具生成事件
+     */
+    public static class PropGenerateEvent implements AppEvent {
+        public final String workId;
+        public final String storyId;
+        public final SimplePropInfo prop;
+
+        public PropGenerateEvent(String workId, String storyId, SimplePropInfo prop) {
+            this.workId = workId;
+            this.storyId = storyId;
+            this.prop = prop;
         }
     }
 }

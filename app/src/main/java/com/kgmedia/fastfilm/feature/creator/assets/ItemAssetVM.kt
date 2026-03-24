@@ -58,6 +58,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     val assetNameInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
 
     protected var loopGenStatusJob: Job? = null
+    protected var cleared = false
 
     init {
         if (status.get() == 1) {
@@ -66,11 +67,12 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     }
 
     fun clear() {
+        cleared = true
         loopGenStatusJob?.cancel()
     }
 
     override fun onCleared() {
-        loopGenStatusJob?.cancel()
+        clear()
         super.onCleared()
     }
 
@@ -138,7 +140,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
 
     abstract fun loopGenStatus()
 
-    protected fun updateStatus(status: Int) {
+    fun updateStatus(status: Int) {
         this.status.set(status)
         onItemChanged()
     }
