@@ -141,6 +141,26 @@ class AppConfigData {
      * 帮助中心
      */
     val appHelpCenterUrl: String? = null
+
+    /**
+     * APP-添加客户引导弹窗图-算力购买后 20260323新增
+     */
+    val appPopupPointGuideImageUrl: String? = null
+
+    /**
+     * APP-添加客户引导弹窗图-课程购买后 20260323新增
+     */
+    val appPopupCourseGuideImageUrl: String? = null
+
+    /**
+     * APP-跳转小程序地址-客服 20260323新增
+     */
+    val appJumpMiniProgramCustomerServiceUrl: String? = null
+
+    /**
+     * APP-跳转小程序地址-导师 20260323新增
+     */
+    val appJumpMiniProgramAdvisorUrl: String? = null
 }
 
 data class SimpleBannerInfo(

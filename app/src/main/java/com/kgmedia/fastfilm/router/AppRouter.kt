@@ -10,6 +10,8 @@ import android.text.TextUtils
 import androidx.core.net.toUri
 import androidx.fragment.app.FragmentActivity
 import com.blankj.utilcode.util.ActivityUtils
+import com.kgmedia.fastfilm.App
+import com.kgmedia.fastfilm.BuildConfig
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.topActivity
@@ -29,6 +31,8 @@ import com.kgmedia.fastfilm.widget.LoadingDialog2
 import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
+import com.tencent.mm.opensdk.openapi.WXAPIFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.withContext
@@ -124,8 +128,21 @@ object AppRouter : IRouter {
                 AppLaunchJump.launchJump(uri)
             }
 
+            "wechatMini" -> {//fastfilm://wechatMini?wechatMiniId=%s&path=%s&type=%s
+                startWechatMini(uri.getQueryParameter("wechatMiniId"), uri.getQueryParameter("path"), uri.getQueryParameter("type")?.toIntOrNull())
+            }
+
             else -> {}
         }
+    }
+
+    fun startWechatMini(wechatMiniId: String?, path: String?, type: Int? = null) {
+        val api = WXAPIFactory.createWXAPI(App.instance, BuildConfig.WX_APP_ID)
+        val req = WXLaunchMiniProgram.Req()
+        req.userName = wechatMiniId // 填小程序原始id "gh_c2a64b1bcb27";
+        req.path = path ?: ""//拉起小程序页面的可带参路径，不填默认拉起小程序首页，对于小游戏，可以只传入 query 部分，来实现传参效果，如：传入 "?foo=bar"。
+        req.miniprogramType = type ?: WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE
+        api.sendReq(req)
     }
 
     fun openBrowser(context: Context, url: String?) {
@@ -155,7 +172,7 @@ object AppRouter : IRouter {
         storyId: String?,
         workTitle: String?,
         workType: Int?,
-        totalEpisodeCnt:Int?,
+        totalEpisodeCnt: Int?,
         workRatio: String?,
         from: String? = null,
     ) {
@@ -315,7 +332,7 @@ object AppRouter : IRouter {
 
     fun getModel(totalEpisodeCnt: Int?, workType: Int?, sortNo: Int = 0, firstCreated: Boolean = true): Int {
         if (totalEpisodeCnt == 1) return DramaGenerateConstants.MODEL_STORY_SINGLE
-        return getModel(workType = workType, sortNo = sortNo,firstCreated = firstCreated)
+        return getModel(workType = workType, sortNo = sortNo, firstCreated = firstCreated)
     }
 
     fun getModel(workType: Int?, sortNo: Int = 0, firstCreated: Boolean = true): Int {
