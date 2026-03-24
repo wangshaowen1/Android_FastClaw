@@ -4,12 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.KeyEvent
+import android.view.View
 import android.webkit.SslErrorHandler
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -212,6 +214,9 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
         }
     }
 
+    private var customView: View? = null
+    private var customViewCallback: WebChromeClient.CustomViewCallback? = null
+
     private val mWebChromeClient = object : WebChromeClient() {
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             if (newProgress == 100) {
@@ -235,6 +240,44 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
             mUploadCallbackAboveL = filePathCallback
             choosePic()
             return true
+        }
+
+        override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+            if (customView != null) {
+                callback?.onCustomViewHidden()
+                return
+            }
+
+            customView = view
+            customViewCallback = callback
+
+            // 1. 隐藏 WebView，显示视频容器
+            binding.webview.visibility = View.GONE
+            binding.videoContainer.visibility = View.VISIBLE
+
+            // 2. 将视频视图添加到容器中
+            binding.videoContainer.addView(view)
+
+            // 3. (可选) 强制横屏
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+
+        // 退出全屏时触发
+        override fun onHideCustomView() {
+            if (customView == null) return
+
+            // 1. 移除视频视图
+            binding.videoContainer.removeView(customView)
+            binding.videoContainer.visibility = View.GONE
+
+            // 2. 重新显示 WebView
+            binding.webview.visibility = View.VISIBLE
+
+            customView = null
+            customViewCallback?.onCustomViewHidden()
+
+            // 3. 恢复竖屏
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
     }
 
