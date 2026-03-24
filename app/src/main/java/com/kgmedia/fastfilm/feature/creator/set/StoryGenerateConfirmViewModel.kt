@@ -5,9 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
-import com.kgmedia.fastfilm.core.ext.requestWithLoading
+import com.kgmedia.fastfilm.core.ext.launchWithLoading
 import com.kgmedia.fastfilm.core.ext.showRechargeDialog
-import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
@@ -24,28 +23,21 @@ class StoryGenerateConfirmViewModel : AppRepositoryViewModel<AppRepository>() {
     val body by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, UploadStoryBody::class.java) }
     fun confirmPowerConsume(callback: (WorkTaskData?) -> Unit) {
         if (body == null) return
-        requestWithLoading(
-            apiBlock = {
-                mRepo.api.novelUploadSummary(body!!)
-            },
-            onSuccess = { callback.invoke(data) },
-            onError = {
-                if (it is ApiException) {
-                    if (it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
-                        viewModelScope.launch {
-                            showRechargeDialog(true)
-                        }
-                    } else {
-                        it.message?.showToast()
-                    }
-                } else {
-                    it?.message?.showToast()
+        launchWithLoading {
+            val data = mRepo.api.novelUploadSummary(body!!)
+            if (data.code == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
+                viewModelScope.launch {
+                    showRechargeDialog(true)
                 }
+            } else if (data.isSuccess) {
+                callback.invoke(data.data)
+            } else {
+                data.msg?.showToast()
             }
-        )
+        }
     }
 
-    fun checkPolicy(){
+    fun checkPolicy() {
         checkedPolicy.set(checkedPolicy.get().not())
     }
 }
