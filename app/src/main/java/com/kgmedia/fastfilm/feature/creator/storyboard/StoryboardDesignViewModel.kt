@@ -225,9 +225,10 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun ItemStoryboardVM.applyConfig(): ItemStoryboardVM {
-        onItemClick.value = { view ->
+        onItemClick.value = click@{ view ->
             when (view?.id) {
                 R.id.etStoryboardDesc -> {
+                    if (editingStoryboardDescVM == this) return@click
                     inputJob?.cancel()
                     val edit: (delay: Long) -> Unit = { delay ->
                         editingStoryboardDescVM?.exitEditStoryboardDesc()

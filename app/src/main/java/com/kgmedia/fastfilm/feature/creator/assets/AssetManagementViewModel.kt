@@ -325,19 +325,20 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     private fun ItemAssetVM<*>.applyConfig(): ItemAssetVM<*> {
-        onItemClick.value = { view ->
+        onItemClick.value = click@{ view ->
             when (view?.id) {
                 R.id.ivCover -> {
                     assetImage.get()?.let { PhotoPagerActivity.launch(topActivity, it) }
                 }
 
                 R.id.etAssetDesc -> {
+                    editingAssetNameVM?.exitEditAssetName()
+                    editingAssetNameVM = null
+                    if (editingAssetDescVM == this) return@click
                     inputJob?.cancel()
                     val edit: (delay: Long) -> Unit = { delay ->
                         editingAssetDescVM?.exitEditAssetDesc()
-                        editingAssetNameVM?.exitEditAssetName()
                         editingAssetDescVM = this
-                        editingAssetNameVM = null
                         if (delay > 0) {
                             inputJob = launch {
                                 delay(delay)
