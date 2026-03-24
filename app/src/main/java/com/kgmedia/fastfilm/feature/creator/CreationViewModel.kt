@@ -107,17 +107,26 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
             processor = PlainTextSseProcessor(
                 scope = viewModelScope,
                 onStart = {
-                    promptGenerating.value = false to ""
                     Logger.d("[SSE]", "Open")
                     input.value = ""
                 },
                 onUpdate = { fullContent ->
-                    // 这里自动包含了 50ms 的节流逻辑，直接设置即可
-                    input.value = fullContent
+                    if (bizType == SSEContentBody.TYPE_RANDOM_INSPIRATION) {
+                        if (fullContent.contains("%")) {
+                            promptGenerating.value = false to ""
+                            // 提取 % 之后的所有内容
+                            val displayContent = fullContent.substringAfter("%")
+                            input.value = displayContent
+                        }
+                    } else {
+                        promptGenerating.value = false to ""
+                        input.value = fullContent
+                    }
                 },
                 onComplete = {
                     Logger.d("[SSE]", "Finished")
                     // 触发原本结束后的逻辑
+                    promptGenerating.value = false to ""
                 },
                 onErrorCallback = { e ->
                     Log.e("[SSE]", "Error: $e")
