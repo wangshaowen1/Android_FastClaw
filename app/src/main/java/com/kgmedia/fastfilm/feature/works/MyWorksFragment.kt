@@ -132,7 +132,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             adapter = myWorksAdapter.withLoadStateFooter(myMultiStatePagingFooterAdapter)
             binding.recyclerView.applyGridSpanSizeLookup()
         }
-        initPagingScrollToTop()
+//        initPagingScrollToTop()
         binding.srl.startRefreshWithAdapter(
             pagingDataAdapter = myWorksAdapter,
             loadStateHolder = binding.lsv,
