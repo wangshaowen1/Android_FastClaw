@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_m"
             android:text="@{item.stepTitle}"
-            android:textColor="@{item.descColor}"
+            android:textColor="@{item.titleColor}"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/tv_step_status_desc"

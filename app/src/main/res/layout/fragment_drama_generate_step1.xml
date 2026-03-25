@@ -80,6 +80,7 @@
 
                         <TextView
                             style="@style/Text16"
+                            android:textStyle="normal"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/spacing_m"
@@ -106,7 +107,6 @@
                                 android:layout_height="wrap_content"
                                 android:text="@{layout.storySummaryResult.toastTextTime}"
                                 android:textColor="?attr/textColor1"
-                                android:textStyle="bold"
                                 tools:text="12-15分钟" />
                         </LinearLayout>
 
