@@ -332,6 +332,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             R.id.btnEdit -> {
                 //编辑
                 mRealVM.isView.value = false
+                mRealVM.selectedCount.value = eventVm.getSelectedItems().size
             }
 
             R.id.btnSelectAll -> {
