@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.response.FirstRechargeDialogData
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.payment.pay.PaymentViewModel
+import com.kgmedia.fastfilm.feature.recharge.PaySuccessDialog
 import com.kgmedia.fastfilm.feature.recharge.PowerRepository
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kuaige.payment.PaymentClient
@@ -105,6 +106,7 @@ class FirstRechargeViewModel : PaymentViewModel<PowerRepository>() {
                 } else {
                     EventManager.onAppTrack(AppEvent.SF_CLICK_CREATE_NEWCOMER_GIFTPACK_PAYSUCCESS)
                 }
+                PaySuccessDialog.checkAndShow()
                 refreshBalance()
                 dismiss()
             },
