@@ -36,6 +36,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.max
 
 /**
  * 分镜设计
@@ -285,7 +286,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
             }
             if (genVideoPrice > 0) {
-                val duration = adapter.items.sumOf { (it as? ItemStoryboardVM)?.data?.get()?.duration ?: 0 }
+                val duration = max(adapter.items.sumOf { (it as? ItemStoryboardVM)?.data?.get()?.duration ?: 15 } - 15, 0)//-15 去掉新增按钮那个item的价格
                 cost.set(genVideoPrice * duration)
             }
         }
