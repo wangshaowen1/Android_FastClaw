@@ -198,15 +198,37 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
-    fun upsertByPictureBookIdAndType(pictureBook: List<WorkInfo>?) {
-        if (pictureBook == null) return
+    fun upsertByPictureBookIdAndType(pictureBooks: List<WorkInfo>?) {
+        if (pictureBooks.isNullOrEmpty()) return
+
         viewModelScope.launch {
-            val pictureBooks = pictureBook.map {
+            // 1. 提取所有需要更新的 workId 集合
+            val workIds = pictureBooks.mapNotNull { it.workId }
+            if (workIds.isEmpty()) return@launch
+
+            // 2. ⚡️ 一次数据库交互：批量拿到这批数据的旧 sortIndex
+            val oldSortIndexes = mRepo.appDatabase.workInformationDao().getSortIndexesByIds(workIds)
+
+            // 3. 转换为内存 Map，方便极速查找
+            // 最终格式大概是：{ "id_A" -> 5, "id_B" -> 6 }
+            val sortIndexMap = oldSortIndexes.associateBy({ it.workId }, { it.sortIndex })
+
+            // 4. 带着原来的排队号，重新组装全量数据
+            val updatedEntities = pictureBooks.mapNotNull { workInfo ->
+                val workId = workInfo.workId ?: return@mapNotNull null
+
+                // 从 Map 中极速取出旧的排队号。如果是个新来的(极少见)，兜底给个 0
+                val oldSortIndex = sortIndexMap[workId] ?: 0
+
                 WorkInformationInfo(
-                    work = it
+                    workId = workId,
+                    sortIndex = oldSortIndex, // 完美继承旧的顺序！
+                    work = workInfo
                 )
             }
-            mRepo.appDatabase.workInformationDao().upsertWorkInformationDao(pictureBooks)
+
+            // 5. ⚡️ 第二次数据库交互：全量覆盖更新
+            mRepo.appDatabase.workInformationDao().upsertWorkInformationDao(updatedEntities)
         }
     }
 

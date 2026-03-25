@@ -47,7 +47,7 @@ class MyWorksAdapter(
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
                 val viewModel = binding.getVm<ItemMyWorkVM, WorkInfo>(
-                    key = item.workInformationID,
+                    key = item.workId,
                     item = item.work,
                     viewModelFactory = {
                         ItemMyWorkVM(eventVm, item.work)
@@ -66,7 +66,7 @@ class MyWorksAdapter(
                 oldItem: WorkInformationInfo,
                 newItem: WorkInformationInfo
             ): Boolean {
-                return oldItem.work.workId == newItem.work.workId
+                return oldItem.workId == newItem.workId
             }
 
             override fun areContentsTheSame(

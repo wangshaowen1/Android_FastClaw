@@ -5,14 +5,12 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.AppDatabase
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
-import com.nhsd.basic.ext.getResString
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -97,11 +95,15 @@ class WorkInformationRemoteMediator(
             // 从网络获取数据
             val data = response.data?.items
 
-            data?.map { workInformationData ->
+            data?.mapIndexed { index, workInformationData ->
+                val absoluteSortIndex = (page - 1) * state.config.pageSize + index
                 WorkInformationInfo(
+                    workId = workInformationData.workId ?: "",
+                    sortIndex = absoluteSortIndex,
                     work = workInformationData
                 )
             }?.let { workInformation.addAll(it) }
+
             // 在数据库事务中处理数据
             database.withTransaction {
                 if (page <= 1) {
