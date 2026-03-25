@@ -286,8 +286,14 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                 }
             }
             if (genVideoPrice > 0) {
-                val duration = max(adapter.items.sumOf { (it as? ItemStoryboardVM)?.data?.get()?.duration ?: 15 } - 15, 0)//-15 去掉新增按钮那个item的价格
-                cost.set(genVideoPrice * duration)
+                val totalDuration = adapter.items.sumOf { item ->
+                    if (item is ItemStoryboardVM) {
+                        item.data.get()?.duration ?: 15
+                    } else {
+                        0
+                    }
+                }
+                cost.set(genVideoPrice * totalDuration)
             }
         }
     }
