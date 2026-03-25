@@ -157,6 +157,10 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
      *查询是否有正在生成中的
      */
     private suspend fun checkGenerating() {
+        if (isView.value==false){
+            //在编辑模式下不刷新
+            return
+        }
         if (User.get().isVisitor || !isShow.get()) {
             workInformationIds.clear()
             stopCheckGenerating()

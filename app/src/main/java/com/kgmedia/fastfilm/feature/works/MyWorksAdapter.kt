@@ -66,14 +66,14 @@ class MyWorksAdapter(
                 oldItem: WorkInformationInfo,
                 newItem: WorkInformationInfo
             ): Boolean {
-                return oldItem == newItem
+                return oldItem.work.workId == newItem.work.workId
             }
 
             override fun areContentsTheSame(
                 oldItem: WorkInformationInfo,
                 newItem: WorkInformationInfo
             ): Boolean {
-                return oldItem.hashCode() == newItem.hashCode()
+                return oldItem.work == newItem.work
             }
         }
     }
