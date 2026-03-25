@@ -23,6 +23,7 @@ class GuideStep4ViewModel : AppRepositoryViewModel<AppRepository>() {
                         seekTo(1)
                         playWhenReady = false
                         prepare()
+                        playing.set(false)
                     }
                 }
             })
