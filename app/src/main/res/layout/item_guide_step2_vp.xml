@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:background="@drawable/bg_gradient_5eecff_5c4ffe_leaf_right_top_r32"
+            android:background="@drawable/bg_gradient_5dc4ff_5c4ffe_leaf_right_top_r32"
             android:paddingVertical="7dp"
             android:paddingStart="20dp"
             android:paddingEnd="@dimen/spacing_l"

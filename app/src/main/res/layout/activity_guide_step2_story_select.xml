@@ -51,16 +51,12 @@
             android:textColor="?attr/textColor3"
             android:textSize="14sp" />
 
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_m"
-            android:background="@drawable/bg_ffffff_stroke_round"
-            android:paddingHorizontal="18dp"
-            android:paddingVertical="6dp"
-            android:text="@string/select_template"
-            android:textColor="?attr/textColor2"
-            android:textSize="12sp" />
+            android:src="@drawable/bg_select_model_btn"
+            android:text="@string/select_template" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/banner"
