@@ -48,7 +48,7 @@
             app:layout_constraintTop_toTopOf="@+id/ivCover">
 
             <com.airbnb.lottie.LottieAnimationView
-                isVisibleWithAnimation="@{item.data.isWaitingComposing()}"
+                isVisibleWithAnimation="@{item.data.generating&amp;&amp;item.isView()}"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="@dimen/spacing_m"
