@@ -91,7 +91,20 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:shutter_background_color="@color/transparent"
+                            app:use_controller="false"
                             tools:layout_constraintDimensionRatio="16:9" />
+
+                        <ImageView
+                            android:id="@+id/btnPlay"
+                            setVisible="@{!layout.playing}"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/icon_play_off_2"
+                            android:onClick="@{(v)->layout.play()}"
+                            app:layout_constraintBottom_toBottomOf="@id/playerView"
+                            app:layout_constraintEnd_toEndOf="@id/playerView"
+                            app:layout_constraintStart_toStartOf="@id/playerView"
+                            app:layout_constraintTop_toTopOf="@id/playerView" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
