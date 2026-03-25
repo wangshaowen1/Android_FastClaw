@@ -42,6 +42,12 @@ class CommonDialog @JvmOverloads constructor(context: Context, content: CharSequ
             onGuideClickListener?.invoke(this@CommonDialog)
         }
         binding.close.setOnClickListener { dismiss() }
+
+        window?.let { win ->
+            val params = win.attributes
+            params.y = (-40).dp
+            win.attributes = params
+        }
     }
 
     fun setBackEnable(backEnable: Boolean) {
