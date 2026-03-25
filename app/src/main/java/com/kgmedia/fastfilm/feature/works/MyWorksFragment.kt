@@ -267,16 +267,31 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             binding.groudEdit.visibility = View.VISIBLE
         }
 
-        mRealVM.selectedCount.observe(this) {count ->
+        mRealVM.selectedCount.observe(this) { count ->
+            val currentItems = myWorksAdapter.snapshot().items
+            val currentIds = currentItems.mapNotNull { it.work.workId }.toHashSet()
+
+            // 全选判断：已选数量 > 0 且包含所有当前加载项
+            val isAllSelected = count > 0 && eventVm.getSelectedItems().containsAll(currentIds)
+
+            binding.btnSelectAll.text = if (isAllSelected) {
+                getString(R.string.deselect_all)  // 反选
+            } else {
+                getString(R.string.check_all)     // 全选
+            }
+
             if (count <= 0) {
                 binding.tvSelectCount.text = getString(R.string.selected_items_format, "0")
                 return@observe
             }
-            val spannableString = SpannableString(getString(R.string.selected_items_format, count.toString()))
+
+            val spannableString = SpannableString(
+                getString(R.string.selected_items_format, count.toString())
+            )
             spannableString.setSpan(
-                ForegroundColorSpan(
-                    Color.WHITE
-                ), 3, spannableString.length - 1,
+                ForegroundColorSpan(Color.WHITE),
+                3,
+                spannableString.length - 1,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             binding.tvSelectCount.text = spannableString
@@ -336,12 +351,21 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             }
 
             R.id.btnSelectAll -> {
-                //全选
-                val ids = hashSetOf<String>()
-                val items: List<WorkInformationInfo> = myWorksAdapter.snapshot().items
-                items.forEach { w -> ids.add(w.work.workId ?: "") }
-                eventVm.setSelectedItems(ids)
-                mRealVM.selectedCount.value = ids.size
+                val currentItems: List<WorkInformationInfo> = myWorksAdapter.snapshot().items
+                val currentIds = currentItems.mapNotNull { it.work.workId }.toHashSet()
+                val selectedItems = eventVm.getSelectedItems()
+
+                // 判断是否已经全选（当前已加载的所有项都被选中）
+                val isAllSelected = currentIds.isNotEmpty() && selectedItems.containsAll(currentIds)
+
+                if (isAllSelected) {
+                    // 反选 -> 清空所有选中
+                    eventVm.clearAllSelection()
+                } else {
+                    // 全选 -> 选中当前所有已加载的项
+                    eventVm.setSelectedItems(currentIds)
+                }
+                mRealVM.selectedCount.value = eventVm.getSelectedItems().size
             }
 
             R.id.btnDelete -> {

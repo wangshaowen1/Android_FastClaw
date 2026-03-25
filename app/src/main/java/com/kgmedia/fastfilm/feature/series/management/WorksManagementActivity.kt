@@ -110,16 +110,31 @@ class WorksManagementActivity :
             refresh()
         }
 
-        mRealVM.selectedCount.observe(this) {
-            if (it <= 0) {
+        mRealVM.selectedCount.observe(this) { count ->
+            val currentItems = episodeAdapter.snapshot().items
+            val currentIds = currentItems.mapNotNull { it.storyId }.toHashSet()
+
+            // 判断是否全选
+            val isAllSelected = count > 0 && eventVm.getSelectedItems().containsAll(currentIds)
+
+            binding.btnSelectAll.text = if (isAllSelected) {
+                getString(R.string.deselect_all)  // 反选
+            } else {
+                getString(R.string.check_all)     // 全选
+            }
+
+            if (count <= 0) {
                 binding.tvSelectCount.text = getString(R.string.selected_items_format, "0")
                 return@observe
             }
-            val spannableString = SpannableString(getString(R.string.selected_items_format, it.toString()))
+
+            val spannableString = SpannableString(
+                getString(R.string.selected_items_format, count.toString())
+            )
             spannableString.setSpan(
-                ForegroundColorSpan(
-                    Color.WHITE
-                ), 3, spannableString.length - 1,
+                ForegroundColorSpan(Color.WHITE),
+                3,
+                spannableString.length - 1,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             binding.tvSelectCount.text = spannableString
@@ -166,12 +181,21 @@ class WorksManagementActivity :
             }
 
             R.id.btnSelectAll -> {
-                //全选
-                val ids = hashSetOf<String>()
-                val items: List<EpisodeInfo> = episodeAdapter.snapshot().items
-                items.forEach { w -> ids.add(w.storyId ?: "") }
-                eventVm.setSelectedItems(ids)
-                mRealVM.selectedCount.value = ids.size
+                val currentItems: List<EpisodeInfo> = episodeAdapter.snapshot().items
+                val currentIds = currentItems.mapNotNull { it.storyId }.toHashSet()
+                val selectedItems = eventVm.getSelectedItems()
+
+                // 判断是否已经全选
+                val isAllSelected = currentIds.isNotEmpty() && selectedItems.containsAll(currentIds)
+
+                if (isAllSelected) {
+                    // 反选 -> 清空所有选中
+                    eventVm.clearAllSelection()
+                } else {
+                    // 全选 -> 选中当前所有已加载的项
+                    eventVm.setSelectedItems(currentIds)
+                }
+                mRealVM.selectedCount.value = eventVm.getSelectedItems().size
             }
 
             R.id.btnComplete -> {
