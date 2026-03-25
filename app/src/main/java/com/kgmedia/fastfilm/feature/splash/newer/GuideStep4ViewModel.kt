@@ -8,6 +8,7 @@ import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.network.apis.entity.ExampleWorkInfo
 import com.kgmedia.fastfilm.kit.media.PlayerFactory
 import com.kgmedia.fastfilm.kit.media.play
+import com.kgmedia.fastfilm.kit.media.setPlayUrl
 import com.nhsd.basic.ext.getParcelableValue
 
 class GuideStep4ViewModel : AppRepositoryViewModel<AppRepository>() {
@@ -32,7 +33,17 @@ class GuideStep4ViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        play()
+        prepareVideo()
+    }
+
+    private fun prepareVideo() {
+        val videoUrl = example?.videoUrl
+        if (!videoUrl.isNullOrEmpty()) {
+            player.setPlayUrl(videoUrl)
+            player.prepare()
+            player.playWhenReady = false
+            playing.set(false)
+        }
     }
 
     fun play() {
