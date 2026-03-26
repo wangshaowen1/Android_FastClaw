@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class ItemMyWorkVM(
     private val eventVm: ItemMultipleChoiceEventsViewModel<MyWorksEvent, String>,
-    private val workInfo: WorkInfo?
+    workInfo: WorkInfo?
 ) : AppItemViewModel<WorkInfo>(workInfo) {
 
 
@@ -20,18 +20,19 @@ class ItemMyWorkVM(
     val isSelected = ObservableBoolean(false)
 
     fun onClick() {
+        val info = data.get()
         if (isView.get()) {
-            eventVm.postEvent(MyWorksEvent.ViewDetails(workInfo))
+            eventVm.postEvent(MyWorksEvent.ViewDetails(info))
             return
         }
         if (isSelected.get()) {
             isSelected.set(false)
-            eventVm.removeSelectedItem(workInfo?.workId?:"")
+            eventVm.removeSelectedItem(info?.workId?:"")
         } else {
             isSelected.set(true)
-            eventVm.addSelectedItem(workInfo?.workId?:"")
+            eventVm.addSelectedItem(info?.workId?:"")
         }
-        eventVm.postEvent(MyWorksEvent.ComposeState(isSelected.get(), workInfo))
+        eventVm.postEvent(MyWorksEvent.ComposeState(isSelected.get(), info))
     }
 
     init {
