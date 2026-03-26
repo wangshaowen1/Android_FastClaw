@@ -13,7 +13,7 @@ object AudioPlayer {
      * 播放金币到账音效
      */
     fun playCoinAudio() {
-        playAudio(R.raw.audio_receive_coin)
+//        playAudio(R.raw.audio_receive_coin)
     }
 
     /**

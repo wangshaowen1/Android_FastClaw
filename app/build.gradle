@@ -263,7 +263,7 @@ dependencies {
     implementation project(':magicindicator')
     implementation project(':datepicker')
     implementation project(':matisse')
-    implementation project(':audioprocessing')
+//    implementation project(':audioprocessing')
     //公共依赖
     implementation libs.kotlinx.serialization.json
     implementation(libs.androidx.core.ktx)
