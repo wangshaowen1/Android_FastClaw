@@ -147,6 +147,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     }
 
     fun retry() {
+        loadState.set(LoadStateViewHolder.CONTENT)
         when (step.get()) {
             STEP_INIT -> generateAllAssetDescription()
             STEP_DESCRIPTION_GENERATING -> loopAllAssetDescriptionStatus()

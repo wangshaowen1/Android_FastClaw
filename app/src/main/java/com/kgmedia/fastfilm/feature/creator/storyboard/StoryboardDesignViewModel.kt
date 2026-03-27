@@ -126,6 +126,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun retry() {
+        loadState.set(LoadStateViewHolder.CONTENT)
         when (step.get()) {
             STEP_INIT, STEP_DESCRIPTION_GENERATE_FAILED -> generateAllStoryboardDescription()
             STEP_DESCRIPTION_GENERATING -> loopAllStoryboardDescriptionStatus()
