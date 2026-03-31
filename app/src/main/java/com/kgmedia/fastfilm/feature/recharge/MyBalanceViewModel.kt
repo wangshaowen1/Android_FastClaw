@@ -146,6 +146,9 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
                 loadConfig()
                 refreshBalance()
                 PaySuccessDialog.checkAndShow()
+                if (isDialog) {
+                    dismiss()
+                }
             },
             { error, paymentData -> })
     }
