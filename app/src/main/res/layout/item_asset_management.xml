@@ -27,22 +27,25 @@
             android:layout_height="0dp"
             android:layout_marginStart="15dp"
             android:scaleType="centerCrop"
-            android:src="?attr/fillColor1"
             android:visibility="@{item.status == 2 ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintDimensionRatio="108:152"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.288"
-            app:riv_corner_radius="8dp"
-            tools:src="@drawable/img_default_cover_3_4" />
+            app:riv_corner_radius="8dp" />
 
-        <ImageView
-            setVisible="@{item.status == 2}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
+        <com.kgmedia.fastfilm.widget.GradientBorderView
+            showBackground="@{item.status != 2}"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:backgroundStartColor="?attr/fillColor1"
+            app:borderStartColor="?attr/borderColor2"
+            app:borderWidth="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
-            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:roundCornerRadius="8dp" />
 
         <ImageView
             setVisible="@{item.status == 2}"
@@ -87,17 +90,6 @@
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
-
-        <com.kgmedia.fastfilm.widget.GradientBorderView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:borderStartColor="?attr/borderColor2"
-            app:borderWidth="1dp"
-            app:layout_constraintBottom_toBottomOf="@+id/ivCover"
-            app:layout_constraintEnd_toEndOf="@+id/ivCover"
-            app:layout_constraintStart_toStartOf="@+id/ivCover"
-            app:layout_constraintTop_toTopOf="@+id/ivCover"
-            app:roundCornerRadius="8dp" />
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etAssetDesc"
