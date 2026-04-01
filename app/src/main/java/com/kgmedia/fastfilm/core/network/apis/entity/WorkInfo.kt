@@ -57,6 +57,8 @@ data class WorkInfo(
     val novelUploadIsOneStoryContentStatus: Int? = null,
     /**发行平台图片 list*/
     val publishPlatformImageList: List<String>? = null,
+    /**发布平台列表，为空表示未配置任何平台*/
+    val platformLinks: List<PlatformInfo>? = null,
     /**作品-自己发行流程Url*/
     val workSelfPublishProcessUrl: String? = null,
     /**作品-签约发行页面完整 Url（字典 WORK_CONTRACT_PUBLISH_PAGE_URL 基础地址 + workId 参数，带 Redis 缓存）*/

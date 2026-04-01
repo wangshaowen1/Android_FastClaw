@@ -486,5 +486,6 @@
     <string name="delete_episode_warning">删除后，该集的剧本、资产图、分镜视频等将被清空，已消耗算力将无法恢复</string>
     <string name="deselect_all">取消全选</string>
     <string name="starring">已出演</string>
+    <string name="click_button_to_watch_full_episodes">点击下发平台按钮，跳转观看完整剧集</string>
 </resources>
 

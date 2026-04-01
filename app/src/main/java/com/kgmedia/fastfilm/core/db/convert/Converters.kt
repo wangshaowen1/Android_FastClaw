@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.PlatformInfo
 
 /**
  * *****************************************
@@ -35,6 +36,19 @@ class Converters {
     fun toEpisodeInfoList(value: String?): List<EpisodeInfo>? {
         return value?.let {
             val listType = object : TypeToken<List<EpisodeInfo>>() {}.type
+            Gson().fromJson(value, listType)
+        }
+    }
+
+    @TypeConverter
+    fun fromPlatformList(value: List<PlatformInfo>?): String? {
+        return value?.let {  Gson().toJson(it) }
+    }
+
+    @TypeConverter
+    fun toPlatformList(value: String?): List<PlatformInfo>? {
+        return value?.let {
+            val listType = object : TypeToken<List<PlatformInfo>>() {}.type
             Gson().fromJson(value, listType)
         }
     }
