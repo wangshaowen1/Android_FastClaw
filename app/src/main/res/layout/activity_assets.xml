@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.kgmedia.fastfilm.feature.works.assetmanager.AssetsViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:windowBackground">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+        <com.nhsd.magicindicator.MagicIndicator
+            android:id="@+id/magic_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="28dp"
+            android:layout_marginTop="@dimen/spacing_m"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/magic_indicator" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

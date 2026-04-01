@@ -31,7 +31,7 @@ import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
 import com.kgmedia.fastfilm.feature.home.HomeFragment
 import com.kgmedia.fastfilm.feature.mine.MineFragment
 import com.kgmedia.fastfilm.feature.splash.newer.FirstRechargeDialog
-import com.kgmedia.fastfilm.feature.works.MyWorksFragment
+import com.kgmedia.fastfilm.feature.works.WorksFragment
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelActivity
@@ -195,7 +195,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     mRealVM.showTab.set(1)
                     supportFragmentManager.switchFragment(
                         R.id.fragment,
-                        MyWorksFragment::class.java
+                        WorksFragment::class.java
                     )
                 }
 

@@ -485,5 +485,6 @@
     <string name="delete_episode">删除剧集</string>
     <string name="delete_episode_warning">删除后，该集的剧本、资产图、分镜视频等将被清空，已消耗算力将无法恢复</string>
     <string name="deselect_all">取消全选</string>
+    <string name="starring">已出演</string>
 </resources>
 
