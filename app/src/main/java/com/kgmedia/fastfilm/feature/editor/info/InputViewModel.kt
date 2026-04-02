@@ -21,7 +21,7 @@ class InputViewModel : AppRepositoryViewModel<AppRepository>() {
     val input = MutableLiveData<String>()
     val title = ObservableField<String>()
     val subTitle = ObservableField<CharSequence>()
-    var save = false
+    var hasChange = false
 
     override fun onCreate() {
         super.onCreate()

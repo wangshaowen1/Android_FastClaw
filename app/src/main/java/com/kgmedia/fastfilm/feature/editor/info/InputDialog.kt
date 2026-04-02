@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.editor.info
 
 import android.content.DialogInterface
+import android.view.KeyEvent
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
 import com.blankj.utilcode.util.ActivityUtils
@@ -48,16 +49,32 @@ class InputDialog :
 
     var callback: ((String) -> Unit)? = null
 
+
+    override fun onStart() {
+        super.onStart()
+
+        // 2. 拦截物理返回键
+        dialog?.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                closeConfirm() // 统一走你的检查逻辑
+                true // 表示我们已经消费了该事件
+            } else {
+                false
+            }
+        }
+    }
+
     override fun onPrepareView() {
         super.onPrepareView()
         binding.root.applySmartFocusManager()
         binding.inputView.setTextNoSelection("")
         binding.close.setOnClickListener {
-            dismissAllowingStateLoss()
+            closeConfirm()
         }
 
         mRealVM.input.observe(this) {
             if (it != binding.inputView.text) {
+                mRealVM.hasChange = true
                 binding.inputView.setTextNoSelection(it)
             }
         }
@@ -70,32 +87,36 @@ class InputDialog :
             if (mRealVM.content != binding.inputView.text.trim()) {
                 mRealVM.save {
                     callback?.invoke(binding.inputView.text.trim())
-                    mRealVM.save = true
                     dismissAllowingStateLoss()
                 }
             } else {
-                mRealVM.save = true
                 dismissAllowingStateLoss()
             }
         }
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        hideSoftInput()
-        if (!mRealVM.save) {
+    fun closeConfirm() {
+        if (mRealVM.hasChange && mRealVM.content != binding.inputView.text.trim()) {
             topActivity?.showConfirmPrompt(
                 title = getString(R.string.confirm_exit_without_saving),
                 cancelText = getString(R.string.exit_directly),
                 confirmText = getString(R.string.save_and_exit),
                 cancel = {
-                    super.onDismiss(dialog)
+                    dismissAllowingStateLoss()
                 },
                 confirm = {
-                    callback?.invoke(binding.inputView.text.trim())
-                    super.onDismiss(dialog)
+                    mRealVM.save {
+                        callback?.invoke(binding.inputView.text.trim())
+                        dismissAllowingStateLoss()
+                    }
                 })
-            return
+        } else {
+            dismissAllowingStateLoss()
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        hideSoftInput()
         super.onDismiss(dialog)
     }
 
