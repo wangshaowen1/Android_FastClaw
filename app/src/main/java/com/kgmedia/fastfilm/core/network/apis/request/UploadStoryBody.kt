@@ -66,7 +66,7 @@ data class PollSummaryData(
 
 @Parcelize
 data class RollNovelSummaryResult(
-    val workDesc: String? = null,
+    var workDesc: String? = null,
     val workTitle: String? = null,
     val structureList: List<RollNovelStructure>? = null,
 ) : Parcelable{
@@ -93,7 +93,7 @@ data class RollNovelSummaryResult(
 data class RollNovelStructure(
     val id: String? = null,
     val storyId: String? = null,
-    val storySummary: String? = null,
+    var storySummary: String? = null,
     val storyTitle: String? = null
 ) : Parcelable
 

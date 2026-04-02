@@ -88,7 +88,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
-import com.kgmedia.fastfilm.core.network.apis.request.SaveSequelNovelStoryBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveStorySummaryBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneContentEditBody
 import com.kgmedia.fastfilm.core.network.apis.request.SegmentImageDescOptimizeBody
@@ -904,7 +904,7 @@ interface ApiService {
      * 小说-保存续创剧集（只有小说有）
      */
     @POST(ApiConstants.SAVE_SEQUEL_NOVEL_STORY)
-    suspend fun saveSequelNovelStory(@Body body: SaveSequelNovelStoryBody): ApiResponse<SaveSequelNovelStoryInfo>
+    suspend fun saveSequelNovelStory(@Body body: SaveStorySummaryBody): ApiResponse<SaveSequelNovelStoryInfo>
 
     /**
      * 查询用户钱包信息
@@ -1108,4 +1108,10 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_FIRST_RECHARGE_DIALOG_INFO)
     suspend fun getFirstRechargeDialogInfo(): ApiResponse<FirstRechargeDialogData?>
+
+    /**
+     * 剧集-修改剧集梗概
+     */
+    @POST(ApiConstants.UPDATE_STORY_SUMMARY)
+    suspend fun updateStorySummary(@Body body: SaveStorySummaryBody): ApiResponse<Any?>
 }

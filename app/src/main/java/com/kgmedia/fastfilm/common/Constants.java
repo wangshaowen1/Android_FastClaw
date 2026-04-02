@@ -89,6 +89,7 @@ public class Constants {
         String VIDEO_RATIO = "VIDEO_RATIO";
         @NotNull
         String CONTENT = "content";
+        String EXTRA = "extra";
 
         String WORK_TYPE = "WORK_TYPE";
         //举报场景  1-音乐播放界面举报
@@ -118,7 +119,6 @@ public class Constants {
         @Nullable
         String MODE = "mode";
 
-        @Nullable
         String TYPE = "type";
         @Nullable
         String PREVIEW = "preview";

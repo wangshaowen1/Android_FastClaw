@@ -487,6 +487,9 @@
     <string name="deselect_all">取消全选</string>
     <string name="starring">已出演</string>
     <string name="click_button_to_watch_full_episodes">点击下发平台按钮，跳转观看完整剧集</string>
+    <string name="confirm_exit_without_saving">当前内容尚未保存，退出后修改将无法恢复，是否确认退出？</string>
+    <string name="exit_directly">直接退出</string>
+    <string name="edit_story_synopsis">编辑故事梗概</string>
     <string name="choose_video_download_method">选择视频下载方式</string>
     <string name="download_with_watermark">下载含水印版本</string>
     <string name="download_without_watermark">下载无水印版本</string>

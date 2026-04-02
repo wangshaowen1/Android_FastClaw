@@ -19,7 +19,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SaveSequelNovelStoryInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.LatestEpisodeBody
-import com.kgmedia.fastfilm.core.network.apis.request.SaveSequelNovelStoryBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveStorySummaryBody
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.core.response
@@ -151,7 +151,7 @@ class ContinueWritingViewModel : AppRepositoryViewModel<CreationRepository>() {
         launchWithLoading {
             response(
                 mRepo.api.saveSequelNovelStory(
-                    SaveSequelNovelStoryBody(
+                    SaveStorySummaryBody(
                         storySummary = input.value,
                         workId = workId,
                         storyId = storyId

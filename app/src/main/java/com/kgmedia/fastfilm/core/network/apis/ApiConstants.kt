@@ -782,4 +782,9 @@ object ApiConstants {
      * 获取新人专享礼
      */
     const val GET_FIRST_RECHARGE_DIALOG_INFO = "app/window/newUserGift"
+
+    /**
+     * 剧集-修改剧集梗概
+     */
+    const val UPDATE_STORY_SUMMARY = "work/updateStorySummary"
 }

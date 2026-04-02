@@ -9,7 +9,7 @@ package com.kgmedia.fastfilm.core.network.apis.request
  * @Version: 1.0
  * *****************************************
  */
-data class SaveSequelNovelStoryBody(
+data class SaveStorySummaryBody(
     //小说续创剧集内容
     val storySummary: String? = null,
     //剧集 id

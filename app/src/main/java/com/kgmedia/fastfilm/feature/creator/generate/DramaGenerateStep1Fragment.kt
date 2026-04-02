@@ -1,6 +1,11 @@
 package com.kgmedia.fastfilm.feature.creator.generate
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ImageSpan
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
@@ -11,6 +16,7 @@ import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
 import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
 import com.kgmedia.fastfilm.feature.creator.StoryReuploadDialog
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.getViewModelOfActivity
@@ -55,6 +61,7 @@ class DramaGenerateStep1Fragment :
             if (it == null) return@observe
             showBackToast = false
             if (it.isSuccess()) {
+                setTextWithEditIcon(binding.tvStoryDesc, it.result?.workDesc ?: "")
                 episodeAdapter.submitList(it.result?.structureList?.map { info ->
                     return@map ItemStorySummaryGenerateVm(info)
                 })
@@ -89,6 +96,12 @@ class DramaGenerateStep1Fragment :
         binding.btnNextDisable.setOnSingleClickListener {
             getString(R.string.story_generating_please_wait).showToast()
         }
+        binding.tvStoryDesc.setOnSingleClickListener {
+            InputDialog.show(InputDialog.TYPE_WORK_DESC, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.workDesc) {
+                mRealVM.storySummaryResult.value?.result?.workDesc = it
+                setTextWithEditIcon(binding.tvStoryDesc, it)
+            }
+        }
         binding.btnNext.setOnSingleClickListener {
             mRealVM.saveTitle {
                 hostVm?.nextStep(2, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.getFirstStoryId())
@@ -107,6 +120,32 @@ class DramaGenerateStep1Fragment :
             }
             mActivity.finish()
         }
+    }
+
+    fun setTextWithEditIcon(textView: TextView, content: String) {
+        val editIcon = ContextCompat.getDrawable(textView.context, R.drawable.icon_edit_full)!!
+
+        // 设置图标大小（与文字大小匹配）
+        val textSizePx = textView.textSize.toInt()
+        editIcon.setBounds(0, 0, textSizePx, textSizePx)
+
+        // 构建 SpannableString
+        // 末尾加空格占位 + 图标
+        val spaceAndIcon = "  " // 两个空格：一个间距 + 一个给ImageSpan占位
+        val fullText = content + spaceAndIcon
+
+        val spannable = SpannableStringBuilder(fullText)
+
+        // 将最后一个字符替换为图片Span
+        val imageSpan = ImageSpan(editIcon, ImageSpan.ALIGN_BASELINE)
+        spannable.setSpan(
+            imageSpan,
+            fullText.length - 1,  // 最后一个字符位置
+            fullText.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        textView.text = spannable
     }
 
 
