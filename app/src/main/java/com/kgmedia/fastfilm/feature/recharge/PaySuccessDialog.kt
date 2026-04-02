@@ -15,6 +15,7 @@ import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseDialogFragment
 import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import kotlin.math.roundToInt
 
 /**
@@ -45,7 +46,10 @@ class PaySuccessDialog : BaseDialogFragment<DialogPaySuccessBinding>() {
 
             // 2. 判断该场景弹出次数是否超过 3 次
             val count = SPUtils.getInstance().getInt(countKey, 0)
-            if (count >= 3) return
+            if (count >= 3) {
+                showToast(R.string.pay_success)
+                return
+            }
 
             // 符合条件，显示弹窗并累加该场景次数
             SPUtils.getInstance().put(countKey, count + 1)
