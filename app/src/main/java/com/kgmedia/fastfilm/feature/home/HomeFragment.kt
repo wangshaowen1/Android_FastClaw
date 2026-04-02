@@ -111,6 +111,7 @@ class HomeFragment :
                     hostAdapter = homeAdapter,
                     noDataButtonDisplay = false,
                     requestButtonDisplay = false,
+                    displayOnEmpty = false,
                     displayedHeight = 400.dp,
                     refresh = {
                         homeAdapter.refresh()

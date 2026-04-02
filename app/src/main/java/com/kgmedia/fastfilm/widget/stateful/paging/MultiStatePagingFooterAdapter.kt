@@ -11,6 +11,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.utils.NetworkUtil
 import com.kgmedia.fastfilm.databinding.MultiStateAdapterViewBinding
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.utils.Logger
 
 /**
  * *****************************************
@@ -69,6 +70,9 @@ open class MultiStatePagingFooterAdapter(
 
     //异常时刷新按钮显示图片资源
     var requestButtonImg: Int? = null
+
+    //当列表数据为 0 时，是否允许 Footer 显示状态
+    var displayOnEmpty: Boolean = true
 
     //设置低于多少的时候不显示没有更多了
     var noMoreThreshold: Int = 5
@@ -168,7 +172,7 @@ open class MultiStatePagingFooterAdapter(
             llLoadMoreLoadFailSmall.visibility = View.GONE
             //是否是异常
             val isException = error != null || !NetworkUtil.isNetworkAvailable()
-
+            Logger.d("异常处理：${error?.message}")
             if (isException) {
                 if (requestButtonDisplay) {
                     if (requestButtonTextAndImg) {
@@ -235,8 +239,15 @@ open class MultiStatePagingFooterAdapter(
 
     //重写该方法，否则底部LoadStatus不展示，闪过
     override fun displayLoadStateAsItem(loadState: LoadState): Boolean {
+        val itemCount = hostAdapter?.itemCount ?: 0
+
+        // 如果数据为空，且配置了不允许在空数据时显示 Footer，就强行隐藏
+        if (itemCount == 0 && !displayOnEmpty) {
+            return false
+        }
+        // 避免在数据加载中途或者页面重组时频繁出现尾部占位
         return loadState is LoadState.Loading ||
                 loadState is LoadState.Error ||
-                loadState is LoadState.NotLoading
+                (loadState is LoadState.NotLoading && (hostAdapter?.itemCount ?: 0) == 0)
     }
 }
