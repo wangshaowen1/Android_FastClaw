@@ -353,8 +353,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         edit.invoke(0)
                     } else {
                         editConfirm = true
-                        topActivity?.showCommonDialog(
-                            title = R.string.confirm_edit.getResString(), tip = R.string.edit_text_warning.getResString(), confirmText =
+                        topActivity?.showCommonDialog(tip = R.string.edit_text_warning.getResString(), confirmText =
                                 R.string.continue_editing.getResString()
                         ) {
                             edit.invoke(200)

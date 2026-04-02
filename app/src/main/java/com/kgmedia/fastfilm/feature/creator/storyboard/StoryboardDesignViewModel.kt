@@ -248,7 +248,7 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
                         edit.invoke(0)
                     } else {
                         editConfirm = true
-                        topActivity?.showCommonDialog(title = R.string.confirm_edit.getResString(), tip = R.string.edit_text_warning.getResString(), confirmText = R.string.continue_editing.getResString()) {
+                        topActivity?.showCommonDialog(tip = R.string.edit_text_warning.getResString(), confirmText = R.string.continue_editing.getResString()) {
                             edit.invoke(200)
                         }
                     }
