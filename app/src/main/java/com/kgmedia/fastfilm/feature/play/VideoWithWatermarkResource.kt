@@ -43,7 +43,7 @@ class VideoWithWatermarkResource(private val url: String, private val httpClient
                 val videoHeight = videoSize?.height?.takeIf { it > 0 } ?: 720
                 val overlayX = (videoWidth * 0.864f).toInt()
                 val overlayY = (videoHeight * 0.144f).toInt()
-                val idx = builder.addInput(file.absolutePath)
+                val idx = builder.addInput(watermarkFile.absolutePath)
                 val outName = "v_watermark"
                 // 缩放并叠加
                 builder.addFilter("[$idx:v]scale=${videoWidth / 10}:-1[content]")

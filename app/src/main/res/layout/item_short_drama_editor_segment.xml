@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:visibility="@{item.data.videoGenerating ? View.INVISIBLE:View.VISIBLE}"
+            android:visibility="@{item.data.videoGenerated ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="100:75"
             app:layout_constraintStart_toStartOf="parent"
