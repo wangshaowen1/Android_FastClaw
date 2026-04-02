@@ -11,7 +11,7 @@ import com.kgmedia.fastfilm.common.ext.getImageBitmap
 import com.kgmedia.fastfilm.core.manager.ShareManager
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.databinding.DialogEpisodeShareBinding
-import com.kgmedia.fastfilm.feature.play.more.DownloadTypeDialog
+import com.kgmedia.fastfilm.feature.play.more.DownloadMethodDialog
 import com.kgmedia.fastfilm.feature.settings.report.ReportActivity
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.getParcelableValue
@@ -23,7 +23,7 @@ import com.umeng.socialize.bean.SHARE_MEDIA
 /**
  * 单集-分享
  */
-class EpisodeShareDialog : BaseBottomPushVMDialogFragment<DialogEpisodeShareBinding, EpisodeShareViewModel>(), UMShareListener, DownloadTypeDialog.DownloadTypeLauncher {
+class EpisodeShareDialog : BaseBottomPushVMDialogFragment<DialogEpisodeShareBinding, EpisodeShareViewModel>(), UMShareListener, DownloadMethodDialog.DownloadTypeLauncher {
     companion object {
 
         /**
@@ -141,7 +141,7 @@ class EpisodeShareDialog : BaseBottomPushVMDialogFragment<DialogEpisodeShareBind
         dismissAllowingStateLoss()
     }
 
-    interface ShareLauncher : DownloadTypeDialog.DownloadTypeLauncher {
+    interface ShareLauncher : DownloadMethodDialog.DownloadTypeLauncher {
         fun uploadVideo(watermark: Boolean, onUpload: (url: String) -> Unit)
     }
 }

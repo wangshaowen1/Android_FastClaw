@@ -81,11 +81,12 @@ class DramasPlayPagerViewModel : AppRepositoryViewModel<CreationRepository>(), D
     override fun cancelDownload() {
     }
 
-    fun downloadVideo(url: String) {
+    fun downloadVideo(url: String, watermark: Boolean) {
         launch(block = {
             downloadProgress.set(0)
             downloading.value = true
-            val resource = UrlResource(url, RetrofitClient.httpClient)
+            val resource = if (watermark) VideoWithWatermarkResource(url, RetrofitClient.httpClient)
+            else UrlResource(url, RetrofitClient.httpClient)
             resource.download { downloadProgress.set(it) }
             if (resource.file.exists()) {
                 val destFile = File(PathUtils.getExternalDownloadsPath(), resource.file.name)

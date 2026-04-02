@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.play
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
@@ -20,6 +21,7 @@ import com.kgmedia.fastfilm.feature.play.manger.FeedListController
 import com.kgmedia.fastfilm.feature.play.manger.FeedPlayerManager
 import com.kgmedia.fastfilm.feature.play.menu.ListPopupWindow
 import com.kgmedia.fastfilm.feature.play.menu.OnItemSelectedListener
+import com.kgmedia.fastfilm.feature.play.more.DownloadMethodDialog
 import com.kgmedia.fastfilm.feature.settings.report.ReportDialog
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.nhsd.basic.BaseViewModelActivity
@@ -33,7 +35,7 @@ import kotlinx.coroutines.launch
 class DramasPlayPagerActivity :
     BaseViewModelActivity<ActivityDramasPlayPagerBinding, DramasPlayPagerViewModel>(),
     VideoFeedAdapter.InteractionListener,
-    DownloadingViewModel.DownloadStatusHolderFactory {
+    DownloadingViewModel.DownloadStatusHolderFactory, DownloadMethodDialog.DownloadTypeLauncher {
 
     companion object {
         @JvmStatic
@@ -53,6 +55,7 @@ class DramasPlayPagerActivity :
     private var listPopupWindow: ListPopupWindow<PlayMenuInfo>? = null
 
     private var workId: String? = null
+    private var downloadVideoUrl: String? = null
     private var downloadingDialog: DownloadingDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,10 +166,9 @@ class DramasPlayPagerActivity :
 
                     PlayMenuInfo.DOWNLOAD -> {
                         //下载
-                        requestRead2WritePermissions { granted ->
-                            if (granted) {
-                                currentWork.getPlayUrl()?.let { mRealVM.downloadVideo(it) }
-                            }
+                        currentWork.getPlayUrl()?.let {
+                            downloadVideoUrl = it
+                            DownloadMethodDialog.show(this@DramasPlayPagerActivity)
                         }
                     }
                 }
@@ -175,7 +177,6 @@ class DramasPlayPagerActivity :
         val gravity = Gravity.END or Gravity.TOP
         listPopupWindow?.showAtLocation(binding.btnMenu, gravity, 32, 80.dp)
     }
-
 
     private fun setupPlayerEvents() {
         // 进度同步 (幽灵进度问题)
@@ -260,5 +261,15 @@ class DramasPlayPagerActivity :
 
     override fun getStatusHolder(): DownloadingViewModel.DownloadStatusHolder? {
         return mRealVM
+    }
+
+    override fun fragmentManager(): FragmentManager? = supportFragmentManager
+
+    override fun downloadVideo(watermark: Boolean) {
+        requestRead2WritePermissions { granted ->
+            if (granted) {
+                downloadVideoUrl?.let { mRealVM.downloadVideo(it, watermark) }
+            }
+        }
     }
 }

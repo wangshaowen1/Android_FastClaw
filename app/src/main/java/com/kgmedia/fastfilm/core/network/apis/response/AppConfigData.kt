@@ -137,6 +137,7 @@ class AppConfigData {
      * 课程-课程banner
      */
     val workCourseBanner: SimpleBannerInfo? = null
+
     /**
      * 帮助中心
      */
@@ -161,6 +162,11 @@ class AppConfigData {
      * APP-跳转小程序地址-导师 20260323新增
      */
     val appJumpMiniProgramAdvisorUrl: String? = null
+
+    /**
+     * APP-下载协议H5链接 20260401新增
+     */
+    val appDownloadProtocolUrl: String? = null
 }
 
 data class SimpleBannerInfo(
