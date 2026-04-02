@@ -51,35 +51,24 @@ class VideoStoryboardResource(private val url: String, private val storyboard: S
                 marginBottom = marginBottom.toInt(),
             ).download { onProgress?.invoke((40 + it * 0.1f).toInt()) }
         }.getOrNull()
-        if (subtitleFile?.exists() == true) {
-            val builder = FFmpegCommandBuilder()
-            var lastVideoStreamName = ""
-            run {
-                val idx = builder.addInput(videoFile.absolutePath)
-                lastVideoStreamName = "$idx:v"
-            }
-            run {
-                val outName = "v_lyrics"
-                builder.addFilter("[$lastVideoStreamName]subtitles='${subtitleFile.absolutePath}':force_style='Outline=1,Shadow=0,PrimaryColour=&H00FFFFFF,SecondaryColour=&H80000000'[$outName]")
-                lastVideoStreamName = outName
-            }
-            val extra = "-map \"[$lastVideoStreamName]\" -map 0:a? -c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
-            val command = builder.build(cacheFile.absolutePath, extra)
-            val videoDuration = FFmpegHelper.parseDuration(videoFile.absolutePath) / 1000
-            FFmpegHelper.execute(command, videoDuration) { ffmpegProgress ->
-                onProgress?.invoke((50 + ffmpegProgress * 0.5f).toInt())
-            }
-            if (FileUtils.copy(cacheFile, file)) {
-                onProgress?.invoke(100)
-            } else {
-                throw IOException("Copy cache file to target failed")
-            }
+        val builder = FFmpegCommandBuilder()
+        builder.addInput(videoFile.absolutePath)
+        val finalV = if (subtitleFile?.exists() == true) {
+            builder.addFilter("[0:v]subtitles='${subtitleFile.absolutePath}':force_style='Outline=1,Shadow=0,PrimaryColour=&H00FFFFFF,SecondaryColour=&H80000000'[v_subtitle]")
+            "[v_subtitle]"
         } else {
-            if (FileUtils.copy(videoFile, file)) {
-                onProgress?.invoke(100)
-            } else {
-                throw IOException("Copy cache file to target failed")
-            }
+            "0:v"
+        }
+        val extra = "-map $finalV -map 0:a? -c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
+        val command = builder.build(cacheFile.absolutePath, extra)
+        val videoDuration = FFmpegHelper.parseDuration(videoFile.absolutePath) / 1000
+        FFmpegHelper.execute(command, videoDuration) { ffmpegProgress ->
+            onProgress?.invoke((50 + ffmpegProgress * 0.5f).toInt())
+        }
+        if (FileUtils.copy(cacheFile, file)) {
+            onProgress?.invoke(100)
+        } else {
+            throw IOException("Copy cache file to target failed")
         }
     }
 

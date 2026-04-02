@@ -29,8 +29,8 @@ class VideoSynthesisTransform(
             ?: throw kotlin.IllegalStateException("Video materials missing")
         val builder = FFmpegCommandBuilder()
         val fileListFile = generateConcatFile(videos, outputFile)
-        builder.addInput(fileListFile.absolutePath, "-f concat -safe 0")
-        val extra = "-c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
+        builder.addInput(fileListFile.absolutePath, "-fflags +genpts -f concat -safe 0")
+        val extra = "-vf 'fps=30' -c:v libx264 -preset veryfast -c:a aac -b:a 128k -pix_fmt yuv420p"
         val duration = videos.sumOf { FFmpegHelper.parseDuration(it.file.absolutePath) } / 1000
         return builder.build(outputFile.absolutePath, extra) to duration
     }
