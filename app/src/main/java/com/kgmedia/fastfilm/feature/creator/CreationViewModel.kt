@@ -12,9 +12,9 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.TextEncodingUtil
 import com.kgmedia.fastfilm.core.Global
+import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.parseMessage
 import com.kgmedia.fastfilm.core.ext.requestWithLoading
-import com.kgmedia.fastfilm.core.ext.showRechargeDialog
 import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.InspirationInfo
@@ -24,12 +24,14 @@ import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkTaskData
+import com.kgmedia.fastfilm.core.network.apis.response.FirstRechargeDialogData
 import com.kgmedia.fastfilm.core.network.sse.SSEStreamHandler
 import com.kgmedia.fastfilm.core.network.sse.processor.PlainTextSseProcessor
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.KEY_MODEL
 import com.kgmedia.fastfilm.feature.creator.CreationFragment.Companion.MODEL_INSPIRATION
 import com.kgmedia.fastfilm.feature.creator.data.CreationRepository
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.basic.ext.showToast
@@ -56,6 +58,7 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     private val unshownInspirations = mutableListOf<InspirationInfo>()
     val inspirationPrompts by lazy { MutableLiveData<List<InspirationInfo>>() }
     val videoSetConfig by lazy { MutableLiveData<VideoConfigData>() }
+    val firstRechargeCache = MutableLiveData<FirstRechargeDialogData>()
 
     fun inspirationModel(): Boolean {
         return creationModel == MODEL_INSPIRATION
@@ -229,7 +232,8 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
             onError = {
                 if (it is ApiException && it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
                     viewModelScope.launch {
-                        showRechargeDialog(true)
+                        //这里和VideoSetDialog共用首充礼包弹出场景，前面会弹，这就不需要弹了，直接弹出充值弹出
+                        PowerRechargeDialog.show(true)
                     }
                 } else {
                     it?.message?.showToast()
@@ -249,5 +253,17 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
 
         // 如果匹配成功，返回第一个捕获组的内容
         return matchResult?.groups?.get(1)?.value
+    }
+
+    fun getFirstRechargeInfo(callback: () -> Unit) {
+            launch {
+                // 2. 请求首充接口 (这里必须先于活动配置完成)
+                val firstRechargeResponse = mRepo.api.getFirstRechargeDialogInfo()
+                if (firstRechargeResponse.data != null && firstRechargeResponse.data?.isNeedShow() == true) {
+                    firstRechargeCache.value = firstRechargeResponse.data
+                }else{
+                    callback.invoke()
+                }
+            }
     }
 }

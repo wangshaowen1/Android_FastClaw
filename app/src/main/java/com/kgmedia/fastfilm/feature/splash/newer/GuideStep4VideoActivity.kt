@@ -33,7 +33,7 @@ class GuideStep4VideoActivity : BaseViewModelActivity<ActivityGuideStep4VideoBin
         EventManager.onAppTrack(AppEvent.SF_VIEW_BEGINNER_CREATION_RESULT_PAGE)
         binding.btnNext.setOnSingleClickListener {
             EventManager.onAppTrack(AppEvent.SF_CLICK_BEGINNER_CREATION_RESULT_PAGE_BUTTON)
-            MainActivity.startFromNewer(this)
+            MainActivity.start(this, null)
             finish()
         }
     }

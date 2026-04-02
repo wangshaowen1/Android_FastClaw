@@ -3,8 +3,6 @@ package com.kgmedia.fastfilm.feature.creator.set
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
@@ -35,7 +33,7 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
     /**
      * 按顺序依次是：集数范围，自定义集数，视频比例，视频风格,作品名称
      */
-    var onSuccess: ((String?, String?, String?, String?, String?) -> Unit)? = null
+    var onSuccess: ((VideoSetDialog?, String?, String?, String?, String?, String?) -> Unit)? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -80,13 +78,13 @@ class VideoSetDialog : BaseBottomPushVMDialogFragment<DialogVideoSetBinding, Vid
             lifecycleScope.launch {
                 sensitiveWordCheck(binding.nameInputer.text.toString(), {
                     onSuccess?.invoke(
+                        this@VideoSetDialog,
                         mRealVM.checkedEpisodeSet?.data?.get()?.configCode,
                         mRealVM.checkedEpisodeSet?.input?.get(),
                         mRealVM.checkedRatio?.data?.get()?.configValue,
                         mRealVM.checkedStyle?.data?.get()?.styleCode,
                         binding.nameInputer.text
                     )
-                    dismissAllowingStateLoss()
                 }, {
                     it?.let {
                         binding.nameInputer.setText(it)
