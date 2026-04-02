@@ -86,9 +86,7 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.ext.updateLayoutParams
 import com.kgmedia.fastfilm.common.utils.BlurBackgroundOptionsBuilder
 import com.kgmedia.fastfilm.common.utils.ImageColorExtractionUtils
-import com.kgmedia.fastfilm.common.utils.Utils
 import com.kgmedia.fastfilm.common.utils.setBlurBackground
-import com.kgmedia.fastfilm.core.network.RetrofitClient
 import com.kgmedia.fastfilm.widget.CounterInputLayout
 import com.kgmedia.fastfilm.widget.CoverPlayerView
 import com.kgmedia.fastfilm.widget.DecimalInputFilter
@@ -105,14 +103,12 @@ import com.kgmedia.fastfilm.widget.htmlview.HtmlStyleParser.ImgAlignmentEnum
 import com.kuaige.imageloader.GlideApp
 import com.kuaige.imageloader.GlideImageLoader
 import com.kuaige.imageloader.transform.BlurTransformation
-import com.kuaige.videoedit.resource.UrlResource
 import com.nhsd.basic.Session
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getActivity
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.inRange
-import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.manager.FileManager
 import com.nhsd.basic.utils.Logger
@@ -128,9 +124,6 @@ import com.zhpan.bannerview.constants.IndicatorGravity
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import eightbitlab.com.blurview.BlurTarget
 import eightbitlab.com.blurview.BlurView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.io.File
 import kotlin.math.absoluteValue
@@ -340,17 +333,15 @@ fun loadVideoFirstFrame(
     videoUrl: String?,
     placeHolder: Drawable? = null
 ) {
-    if (videoUrl.isNullOrEmpty()) return
-    MainScope().launchNoCrash {
-        runCatching {
-            val videoFile = withContext(Dispatchers.IO) { UrlResource(videoUrl, RetrofitClient.httpClient).download { } }
-            val cover = Utils.getVideoCover(videoFile.absolutePath)
-            GlideImageLoader.with(imageView).thumbnail()
-                .load(cover)
-                .placeholder(placeHolder)
-                .into(imageView)
-        }
-    }
+    GlideApp.with(imageView)
+        .asBitmap()
+        .load(videoUrl)
+        .apply(
+            RequestOptions.frameOf(0L)
+                .diskCacheStrategy(DiskCacheStrategy.ALL) // 缓存首帧到磁盘
+        )
+        .placeholder(placeHolder)
+        .into(imageView)
 }
 
 @BindingAdapter("loadGifUrl", "placeHolder", requireAll = false)
