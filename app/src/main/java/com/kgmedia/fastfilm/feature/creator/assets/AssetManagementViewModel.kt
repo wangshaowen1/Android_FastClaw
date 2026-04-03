@@ -306,16 +306,16 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
         }
         when {
+            newNum > 0 -> {
+                step.set(STEP_DESCRIPTION_GENERATED)
+                calcCost()
+            }
+
             failedNum > 0 -> {
                 if (showToast && step.get() != STEP_IMAGE_GENERATE_FAILED) {
                     R.string.asset_generation_partial_failure.getResString().showToast()
                 }
                 step.set(STEP_IMAGE_GENERATE_FAILED)
-                calcCost()
-            }
-
-            newNum > 0 -> {
-                step.set(STEP_DESCRIPTION_GENERATED)
                 calcCost()
             }
 
