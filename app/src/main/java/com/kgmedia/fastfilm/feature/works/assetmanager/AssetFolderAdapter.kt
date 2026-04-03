@@ -6,6 +6,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.getVm
+import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ItemAssetFolderBinding
 import com.nhsd.basic.item.BindingViewHolder
@@ -35,7 +36,11 @@ class AssetFolderAdapter : PagingDataAdapter<WorkInfo, RecyclerView.ViewHolder>(
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
                 val transVM = binding.getVm<ItemAssetFolderVm, WorkInfo>(key = item.workId, item) {
-                    ItemAssetFolderVm(item)
+                    ItemAssetFolderVm(item).apply {
+                        onItemClick.value = {
+                            AssetsActivity.start(topActivity, item.workId, item.workTitle)
+                        }
+                    }
                 }
                 transVM.updateData(item)
                 binding.item = transVM

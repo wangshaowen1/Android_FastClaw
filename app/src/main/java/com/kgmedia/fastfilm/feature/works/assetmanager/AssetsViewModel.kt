@@ -1,15 +1,26 @@
 package com.kgmedia.fastfilm.feature.works.assetmanager
 
-import com.kgmedia.fastfilm.R
+import androidx.lifecycle.MutableLiveData
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.core.AppRepository
-import com.nhsd.basic.ext.getResString
 
 class AssetsViewModel : AppRepositoryViewModel<AppRepository>() {
+
+    val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
 
     var mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
         title = ""
     )
+
+    override fun onCreate() {
+        super.onCreate()
+        mToolbarVM.title = mBundle.getString(Constants.Extra.TITLE)
+    }
+
+    val roleCount = MutableLiveData(0)
+    val sceneCount = MutableLiveData(0)
+    val propCount = MutableLiveData(0)
 }

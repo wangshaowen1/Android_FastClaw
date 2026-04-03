@@ -45,6 +45,10 @@ data class SimpleSceneInfo(
      */
     val hasHistory: Boolean? = null
 ) : SimpleAsset {
+    override val assetId: String?
+        get() = sceneId
+    override val assetAppearanceId: String?
+        get() = appearanceId
     override val status: Int?
         get() = genStatus
     override val assetDesc: String?

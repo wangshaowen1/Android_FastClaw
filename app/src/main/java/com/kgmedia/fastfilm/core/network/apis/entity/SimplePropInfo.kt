@@ -45,6 +45,10 @@ data class SimplePropInfo(
      */
     val hasHistory: Boolean? = null
 ) : SimpleAsset {
+    override val assetId: String?
+        get() = propId
+    override val assetAppearanceId: String?
+        get() = appearanceId
     override val status: Int?
         get() = genStatus
     override val assetDesc: String?

@@ -78,6 +78,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBo
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateBody
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateData
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
+import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReportSubmissionBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
@@ -745,6 +746,24 @@ interface ApiService {
      */
     @POST(ApiConstants.WORK_ASSET_ROLE_LIST)
     suspend fun workAssetRoleList(@Body body: QueryAssetBody): ApiResponse<List<SimpleRoleInfo>?>
+
+    /**
+     * 作品角色列表
+     */
+    @POST(ApiConstants.WORK_ASSET_ROLE_PAGE)
+    suspend fun workAssetRolePage(@Body body: QueryAssetPagedBody): ApiResponse<PagedList<SimpleRoleInfo>?>
+
+    /**
+     * 作品道具列表
+     */
+    @POST(ApiConstants.WORK_ASSET_PROP_PAGE)
+    suspend fun workAssetPropPage(@Body body: QueryAssetPagedBody): ApiResponse<PagedList<SimplePropInfo>?>
+
+    /**
+     * 作品场景列表
+     */
+    @POST(ApiConstants.WORK_ASSET_SCENE_PAGE)
+    suspend fun workAssetScenePage(@Body body: QueryAssetPagedBody): ApiResponse<PagedList<SimpleSceneInfo>?>
 
     /**
      * 角色保存

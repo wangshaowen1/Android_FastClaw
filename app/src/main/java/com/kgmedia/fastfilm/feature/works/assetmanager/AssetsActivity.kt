@@ -10,13 +10,15 @@ import android.util.TypedValue
 import android.view.Gravity
 import androidx.fragment.app.Fragment
 import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.adapter.FragmentStateCacheAdapter
 import com.kgmedia.fastfilm.common.ext.removeTheRipples
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.common.utils.CommonNavigatorUtils
 import com.kgmedia.fastfilm.core.network.apis.entity.TabEntity
+import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.databinding.ActivityAssetsBinding
-import com.kgmedia.fastfilm.feature.works.MyWorksFragment
+import com.kgmedia.fastfilm.feature.works.assetmanager.child.AssetsChildFragment
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.getThemeColor
 import com.nhsd.magicindicator.ViewPagerHelper
@@ -36,8 +38,11 @@ class AssetsActivity : BaseViewModelActivity<ActivityAssetsBinding, AssetsViewMo
         const val TAG = "AssetManagerActivity"
 
         @JvmStatic
-        fun start(context: Context) {
+        fun start(context: Context?, workId: String?,workTitle: String?) {
+            if (context == null) return
             val starter = Intent(context, AssetsActivity::class.java)
+            starter.putExtra(Constants.Extra.WORK_ID, workId)
+            starter.putExtra(Constants.Extra.TITLE, workTitle)
             context.startActivity(starter)
         }
     }
@@ -54,6 +59,18 @@ class AssetsActivity : BaseViewModelActivity<ActivityAssetsBinding, AssetsViewMo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
+    }
+
+    fun dataUpdate() {
+        mRealVM.roleCount.observe(this) {
+            updateBadgeCount(0, it)
+        }
+        mRealVM.sceneCount.observe(this) {
+            updateBadgeCount(1, it)
+        }
+        mRealVM.propCount.observe(this) {
+            updateBadgeCount(2, it)
+        }
     }
 
 
@@ -92,8 +109,9 @@ class AssetsActivity : BaseViewModelActivity<ActivityAssetsBinding, AssetsViewMo
 
 
         val fragmentList = arrayListOf<Fragment>()
-        fragmentList.add(MyWorksFragment())
-        fragmentList.add(AssetFolderFragment())
+        fragmentList.add(AssetsChildFragment.newInstance(QueryAssetBody.BIZ_TYPE_ROLE, mRealVM.workId))
+        fragmentList.add(AssetsChildFragment.newInstance(QueryAssetBody.BIZ_TYPE_SCENE, mRealVM.workId))
+        fragmentList.add(AssetsChildFragment.newInstance(QueryAssetBody.BIZ_TYPE_PROP, mRealVM.workId))
 
         val viewPagerAdapter = FragmentStateCacheAdapter(
             supportFragmentManager,

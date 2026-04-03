@@ -161,8 +161,8 @@ public class Constants {
         String WORK_ID = "workId";
         String STORY_ID = "storyId";
         String TASK_ID = "taskId";
-        String PLAYER_IN_SERIES = "playerInSeries";
-        String NEWLY_PUBLISH = "newlyPublish";
+        String APPEARANCE_ID = "APPEARANCE_ID";
+        String ASSET_ID = "ASSET_ID";
         String RESTORE = "restore";
     }
 

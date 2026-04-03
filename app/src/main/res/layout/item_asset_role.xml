@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.creator.set.ItemVideoConfigVm" />
+            type="com.kgmedia.fastfilm.feature.works.assetmanager.child.ItemAssetsChildVm" />
 
         <import type="android.view.View" />
     </data>
@@ -22,6 +22,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_image"
+            loadThumbnailUri="@{item.data.assetImage}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
@@ -39,6 +40,7 @@
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
+            android:text="@{item.data.assetName}"
             android:textColor="?attr/textColor2"
             app:layout_constraintTop_toBottomOf="@id/iv_image"
             tools:text="斗罗大陆:修罗..." />
