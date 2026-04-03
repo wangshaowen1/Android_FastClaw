@@ -20,7 +20,7 @@
 
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
-            loadThumbnailUri="@{item.assetImage}"
+            loadUri="@{item.assetImage}"
             placeHolder="@{@drawable/img_default_cover_3_4}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="0dp"
@@ -84,12 +84,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/icon_image_fail"
-            android:tint="?attr/textColor4"
             android:tintMode="src_in"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
-            app:layout_constraintTop_toTopOf="@+id/ivCover" />
+            app:layout_constraintTop_toTopOf="@+id/ivCover"
+            app:tint="?attr/textColor4" />
 
         <com.kgmedia.fastfilm.widget.RecyclerEditText
             android:id="@+id/etAssetDesc"
