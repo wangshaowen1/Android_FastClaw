@@ -306,13 +306,6 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
         }
         when {
-            newNum > 0 -> {
-                step.set(STEP_DESCRIPTION_GENERATED)
-                calcCost()
-            }
-
-            generatingNum > 0 -> step.set(STEP_IMAGE_GENERATING)
-
             failedNum > 0 -> {
                 if (showToast && step.get() != STEP_IMAGE_GENERATE_FAILED) {
                     R.string.asset_generation_partial_failure.getResString().showToast()
@@ -320,6 +313,13 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 step.set(STEP_IMAGE_GENERATE_FAILED)
                 calcCost()
             }
+
+            newNum > 0 -> {
+                step.set(STEP_DESCRIPTION_GENERATED)
+                calcCost()
+            }
+
+            generatingNum > 0 -> step.set(STEP_IMAGE_GENERATING)
 
             else -> step.set(STEP_IMAGE_GENERATED)
         }
