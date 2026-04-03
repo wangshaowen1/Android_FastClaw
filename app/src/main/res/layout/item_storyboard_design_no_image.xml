@@ -40,11 +40,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.kgmedia.fastfilm.widget.RecyclerEditText
+        <TextView
             android:id="@+id/etStoryboardDesc"
-            content="@{item.storyBoardDesc}"
-            onTextInputListener="@{item.storyboardDescInputListener}"
-            setEditing="@{item.editingStoryBoardDesc}"
+            android:text="@{item.storyBoardDesc}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="15dp"

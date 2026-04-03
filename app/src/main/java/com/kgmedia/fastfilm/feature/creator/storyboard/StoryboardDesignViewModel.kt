@@ -106,10 +106,10 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         topActivity?.let {
             KeyboardUtils.registerSoftInputChangedListener(it) { height ->
                 keyboardHeight.set(height)
-                if (height <= 0) {
-                    editingStoryboardDescVM?.exitEditStoryboardDesc()
-                    editingStoryboardDescVM = null
-                }
+//                if (height <= 0) {
+//                    editingStoryboardDescVM?.exitEditStoryboardDesc()
+//                    editingStoryboardDescVM = null
+//                }
             }
         }
     }
@@ -230,26 +230,27 @@ class StoryboardDesignViewModel : AppRepositoryViewModel<AppRepository>() {
         onItemClick.value = click@{ view ->
             when (view?.id) {
                 R.id.etStoryboardDesc -> {
-                    if (editingStoryboardDescVM == this) return@click
-                    inputJob?.cancel()
-                    val edit: (delay: Long) -> Unit = { delay ->
-                        editingStoryboardDescVM?.exitEditStoryboardDesc()
-                        editingStoryboardDescVM = this
-                        if (delay > 0) {
-                            inputJob = launch {
-                                delay(delay)
-                                editStoryboardDesc()
-                            }
-                        } else {
-                            editStoryboardDesc()
-                        }
-                    }
+//                    if (editingStoryboardDescVM == this) return@click
+//                    inputJob?.cancel()
+//                    val edit: (delay: Long) -> Unit = { delay ->
+//                        editingStoryboardDescVM?.exitEditStoryboardDesc()
+//                        editingStoryboardDescVM = this
+//                        if (delay > 0) {
+//                            inputJob = launch {
+//                                delay(delay)
+//                                editStoryboardDesc()
+//                            }
+//                        } else {
+//                            editStoryboardDesc()
+//                        }
+//                    }
                     if (storyBoardDesc.get().isNullOrEmpty() || editConfirm) {
-                        edit.invoke(0)
+                        editConfirm = true
+                        editStoryboardDesc()
                     } else {
                         editConfirm = true
                         topActivity?.showCommonDialog(tip = R.string.edit_text_warning.getResString(), confirmText = R.string.continue_editing.getResString()) {
-                            edit.invoke(200)
+                            editStoryboardDesc()
                         }
                     }
                 }

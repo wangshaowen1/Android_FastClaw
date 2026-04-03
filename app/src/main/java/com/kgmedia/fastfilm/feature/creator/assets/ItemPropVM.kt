@@ -43,7 +43,7 @@ class ItemPropVM(
 
     override fun clickGenerate() {
         if (status.get() == 1) return
-        val propPrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
+        val propPrompt = assetDesc.get()
         val propName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
         if (propPrompt.isNullOrEmpty()) {
             showToast(R.string.please_enter_prop_description)

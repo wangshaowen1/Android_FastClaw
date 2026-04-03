@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.editor
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
@@ -10,8 +11,10 @@ import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardBinding
+import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.setOnSingleClickListener
 
 /**
  * 分镜重绘
@@ -36,6 +39,13 @@ class EditStoryboardActivity : BaseViewModelActivity<ActivityEditStoryboardBindi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.root.applySmartFocusManager()
+        binding.tvStoryboardDesc.movementMethod = ScrollingMovementMethod()
+        binding.tvStoryboardDesc.setOnSingleClickListener {
+            InputDialog.show(
+                type = InputDialog.TYPE_STORYBOARD_DESC,
+                content = mRealVM.storyBoardDesc.value?.toString(),
+                callback = { mRealVM.storyBoardDesc.value = it })
+        }
     }
 
     override fun onBackPressed() {

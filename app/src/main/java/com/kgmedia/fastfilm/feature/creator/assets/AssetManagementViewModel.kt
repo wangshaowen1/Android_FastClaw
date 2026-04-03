@@ -124,9 +124,9 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             KeyboardUtils.registerSoftInputChangedListener(it) { height ->
                 keyboardHeight.set(height)
                 if (height <= 0) {
-                    editingAssetDescVM?.exitEditAssetDesc()
+//                    editingAssetDescVM?.exitEditAssetDesc()
                     editingAssetNameVM?.exitEditAssetName()
-                    editingAssetDescVM = null
+//                    editingAssetDescVM = null
                     editingAssetNameVM = null
                 }
             }
@@ -335,36 +335,37 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 R.id.etAssetDesc -> {
                     editingAssetNameVM?.exitEditAssetName()
                     editingAssetNameVM = null
-                    if (editingAssetDescVM == this) return@click
-                    inputJob?.cancel()
-                    val edit: (delay: Long) -> Unit = { delay ->
-                        editingAssetDescVM?.exitEditAssetDesc()
-                        editingAssetDescVM = this
-                        if (delay > 0) {
-                            inputJob = launch {
-                                delay(delay)
-                                editAssetDesc()
-                            }
-                        } else {
-                            editAssetDesc()
-                        }
-                    }
+//                    if (editingAssetDescVM == this) return@click
+//                    inputJob?.cancel()
+//                    val edit: (delay: Long) -> Unit = { delay ->
+//                        editingAssetDescVM?.exitEditAssetDesc()
+//                        editingAssetDescVM = this
+//                        if (delay > 0) {
+//                            inputJob = launch {
+//                                delay(delay)
+//                                editAssetDesc()
+//                            }
+//                        } else {
+//                            editAssetDesc()
+//                        }
+//                    }
                     if (assetDesc.get().isNullOrEmpty() || editConfirm) {
-                        edit.invoke(0)
+                        editConfirm = true
+                        editAssetDesc()
                     } else {
                         editConfirm = true
                         topActivity?.showCommonDialog(tip = R.string.edit_text_warning.getResString(), confirmText =
                                 R.string.continue_editing.getResString()
                         ) {
-                            edit.invoke(200)
+                            editAssetDesc()
                         }
                     }
                 }
 
                 R.id.etAssetNameCover -> {
-                    editingAssetDescVM?.exitEditAssetDesc()
+//                    editingAssetDescVM?.exitEditAssetDesc()
                     editingAssetNameVM?.exitEditAssetName()
-                    editingAssetDescVM = null
+//                    editingAssetDescVM = null
                     editingAssetNameVM = this
                     editAssetName()
                 }
@@ -410,7 +411,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemAssetVM<*>) {
                 if (item.status.get() < 1 || item.status.get() == 3) {
-                    val assetDesc = if (item.editingAssetDesc.get()) item.editingAssetDescText else item.assetDesc.get()
+                    val assetDesc = item.assetDesc.get()
                     val assetName = if (item.editingAssetName.get()) item.editingAssetNameText else item.assetName.get()
                     if (assetDesc.isNullOrEmpty() || assetName.isNullOrEmpty()) {
                         notInput = true

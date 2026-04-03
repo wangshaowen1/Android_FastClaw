@@ -3,8 +3,6 @@ package com.kgmedia.fastfilm.feature.creator.generate
 import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.text.Editable
-import android.view.GestureDetector
-import android.view.MotionEvent
 import android.view.animation.LinearInterpolator
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.R
@@ -12,12 +10,12 @@ import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
-import com.kgmedia.fastfilm.common.utils.KeyboardUtils
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep2Binding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
+import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.nhsd.basic.BaseViewModelFragment
@@ -119,47 +117,37 @@ class DramaGenerateStep2Fragment :
                 }
             }, {
                 it?.let {
-                    binding.inputView.setText(it)
+                    binding.inputView.text = it
                 }
             })
         }
     }
+
     var isNotified = false
 
     private fun setupTouchInterceptor() {
-        val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                if (mRealVM.isScriptLoading.get()) return super.onSingleTapConfirmed(e)
+        binding.inputView.setOnSingleClickListener {
+            if (mRealVM.isScriptLoading.get()) return@setOnSingleClickListener
 
-                if (mRealVM.input.value?.trim().isNullOrEmpty() || isNotified) {
-                    enterEditMode()
-                    return super.onSingleTapConfirmed(e)
-                }
-                isNotified = true
-                mActivity.showConfirmPrompt(
-                    getString(R.string.edit_text_warning),
-                    confirmText = getString(R.string.confirm_edit)
-                ) {
-                    enterEditMode()
-                }
-                return true
+            if (mRealVM.input.value?.trim().isNullOrEmpty() || isNotified) {
+                enterEditMode()
+                return@setOnSingleClickListener
             }
-        })
-
-        binding.inputView.setOnTouchListener { _, event -> gestureDetector.onTouchEvent(event) }
+            isNotified = true
+            mActivity.showConfirmPrompt(
+                getString(R.string.edit_text_warning),
+                confirmText = getString(R.string.confirm_edit)
+            ) {
+                enterEditMode()
+            }
+        }
     }
 
     private fun enterEditMode() {
-        binding.inputView.let { editText ->
-            editText.setOnTouchListener(null)
-            editText.setFocusable(true)
-            editText.setFocusableInTouchMode(true)
-            editText.setCursorVisible(true)
-
-            editText.requestFocus()
-            editText.postDelayed({
-                KeyboardUtils.showKeyboard(editText)
-            }, 100)
+        mRealVM.input.value.let {
+            InputDialog.show(type = InputDialog.TYPE_EPISODE_CONTENT, content = it) { text ->
+                mRealVM.input.value = text
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.kgmedia.fastfilm.feature.editor.info
 
 import android.content.DialogInterface
+import android.text.Editable
 import android.view.KeyEvent
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
@@ -9,6 +10,7 @@ import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.topActivity
@@ -25,8 +27,14 @@ class InputDialog :
     companion object {
         const val TYPE_WORK_DESC = 0
         const val TYPE_EPISODE_SUMMARY = 1
+        const val TYPE_EPISODE_CONTENT = 3
+        const val TYPE_ASSET_DESC = 4
+        const val TYPE_STORYBOARD_DESC = 5
+
+        /**通用类型，只编辑文案，不需要其他逻辑*/
+        const val TYPE_NORMAL = 2
         fun show(
-            type: Int? = null,
+            type: Int? = TYPE_NORMAL,
             workId: String? = null,
             storyId: String? = null,
             content: String? = null,
@@ -71,6 +79,11 @@ class InputDialog :
         binding.close.setOnClickListener {
             closeConfirm()
         }
+        binding.inputView.addTextChangedListener(object : SimpleTextWatcher() {
+            override fun afterTextChanged(s: Editable?) {
+                mRealVM.input.value = s.toString()
+            }
+        })
 
         mRealVM.input.observe(this) {
             if (it != binding.inputView.text) {

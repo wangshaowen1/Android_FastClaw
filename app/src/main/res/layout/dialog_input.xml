@@ -25,11 +25,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_l"
-            android:text="@string/edit_story_summary"
+            android:text="@{layout.title}"
             android:textColor="?attr/textColor1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="修改故事简介" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,9 +71,10 @@
                 app:inputCounterTextColor="?attr/textColor4"
                 app:inputCounterTextSize="12sp"
                 app:inputCounterVisible="true"
-                app:inputHint="@string/input_original_story_content"
+                app:inputHint="@string/enter_content"
                 app:inputHorizontalPadding="@dimen/spacing_m"
                 app:inputMaxLength="500"
+                android:maxLength="@{layout.maxLength}"
                 app:inputTextColor="?attr/textColor2"
                 app:inputTextColorHint="?attr/textColor4"
                 app:inputTextSize="14sp"

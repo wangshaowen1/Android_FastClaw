@@ -7,6 +7,7 @@ import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
+import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 import kotlinx.coroutines.Job
 
@@ -77,20 +78,23 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     }
 
     fun editAssetDesc() {
-        assetDescInputListener.set(object : RecyclerEditText.OnTextInputListener {
-            override fun onTextInput(text: String) {
-                editingAssetDescText = text
-            }
-        })
-        editingAssetDesc.set(true)
-        editingAssetDescText = assetDesc.get()
+        InputDialog.show(InputDialog.TYPE_ASSET_DESC, content = assetDesc.get()?.toString()) {
+            assetDesc.set(it)
+        }
+//        assetDescInputListener.set(object : RecyclerEditText.OnTextInputListener {
+//            override fun onTextInput(text: String) {
+//                editingAssetDescText = text
+//            }
+//        })
+//        editingAssetDesc.set(true)
+//        editingAssetDescText = assetDesc.get()
     }
 
-    open fun exitEditAssetDesc() {
-        assetDescInputListener.set(null)
-        editingAssetDesc.set(false)
-        assetDesc.set(editingAssetDescText)
-    }
+//    open fun exitEditAssetDesc() {
+//        assetDescInputListener.set(null)
+//        editingAssetDesc.set(false)
+//        assetDesc.set(editingAssetDescText)
+//    }
 
     fun editAssetName() {
         assetNameInputListener.set(object : RecyclerEditText.OnTextInputListener {

@@ -55,8 +55,15 @@ class DramaGenerateStep1Fragment :
             mRealVM.pollSummary()
             showBackToast = true
         }
-
         binding.recyclerView.setAdapter(episodeAdapter)
+        episodeAdapter.setOnItemClickListener { _, _, position ->
+            mRealVM.storySummaryResult.value?.result?.structureList?.get(position)?.let {
+                InputDialog.show(InputDialog.TYPE_EPISODE_SUMMARY, mRealVM.workId, it.storyId, it.storySummary, it.storyTitle) { text ->
+                    it.storySummary = text
+                    episodeAdapter.getItem(position)?.updateData(it.copy())
+                }
+            }
+        }
         mRealVM.storySummaryResult.observe(this) {
             if (it == null) return@observe
             showBackToast = false
@@ -97,7 +104,7 @@ class DramaGenerateStep1Fragment :
             getString(R.string.story_generating_please_wait).showToast()
         }
         binding.tvStoryDesc.setOnSingleClickListener {
-            InputDialog.show(InputDialog.TYPE_WORK_DESC, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.workDesc) {
+            InputDialog.show(InputDialog.TYPE_WORK_DESC, mRealVM.workId, content = mRealVM.storySummaryResult.value?.result?.workDesc) {
                 mRealVM.storySummaryResult.value?.result?.workDesc = it
                 setTextWithEditIcon(binding.tvStoryDesc, it)
             }
@@ -137,7 +144,7 @@ class DramaGenerateStep1Fragment :
         val spannable = SpannableStringBuilder(fullText)
 
         // 将最后一个字符替换为图片Span
-        val imageSpan = ImageSpan(editIcon, ImageSpan.ALIGN_BASELINE)
+        val imageSpan = ImageSpan(editIcon, ImageSpan.ALIGN_BOTTOM)
         spannable.setSpan(
             imageSpan,
             fullText.length - 1,  // 最后一个字符位置

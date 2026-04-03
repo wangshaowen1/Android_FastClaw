@@ -9,6 +9,7 @@ import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
+import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -33,36 +34,39 @@ class ItemStoryboardVM(
      */
     val storyBoardDesc by lazy { ObservableField<CharSequence>(data?.storyBoardDesc) }
 
-    /**
-     * 编辑中的分镜描述
-     */
-    var editingStoryBoardDescText: CharSequence? = data?.storyBoardDesc
-        private set
-    val editingStoryBoardDesc by lazy { ObservableBoolean(false) }
-    val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
+//    /**
+//     * 编辑中的分镜描述
+//     */
+//    var editingStoryBoardDescText: CharSequence? = data?.storyBoardDesc
+//        private set
+//    val editingStoryBoardDesc by lazy { ObservableBoolean(false) }
+//    val storyboardDescInputListener by lazy { ObservableField<RecyclerEditText.OnTextInputListener>() }
 
     fun editStoryboardDesc() {
-        storyboardDescInputListener.set(object : RecyclerEditText.OnTextInputListener {
-            override fun onTextInput(text: String) {
-                editingStoryBoardDescText = text
-            }
-        })
-        editingStoryBoardDesc.set(true)
-        editingStoryBoardDescText = storyBoardDesc.get()
+//        storyboardDescInputListener.set(object : RecyclerEditText.OnTextInputListener {
+//            override fun onTextInput(text: String) {
+//                editingStoryBoardDescText = text
+//            }
+//        })
+        InputDialog.show(InputDialog.TYPE_STORYBOARD_DESC, content = storyBoardDesc.get()?.toString()) {
+            storyBoardDesc.set(it)
+//            editingStoryBoardDesc.set(true)
+//            editingStoryBoardDescText = storyBoardDesc.get()
+        }
     }
 
-    fun exitEditStoryboardDesc() {
-        storyboardDescInputListener.set(null)
-        editingStoryBoardDesc.set(false)
-        storyBoardDesc.set(editingStoryBoardDescText)
-    }
+//    fun exitEditStoryboardDesc() {
+//        storyboardDescInputListener.set(null)
+//        editingStoryBoardDesc.set(false)
+//        storyBoardDesc.set(editingStoryBoardDescText)
+//    }
 
     /**
      * 是否有未保存的分镜描述
      */
     fun notSaved(): Boolean {
         val storyboard = data.get()
-        val prompt = (if (editingStoryBoardDesc.get()) editingStoryBoardDescText else storyBoardDesc.get())?.toString()
+        val prompt = storyBoardDesc.get()?.toString()
         if (prompt.isNullOrEmpty()) {
             return false
         }
@@ -75,7 +79,7 @@ class ItemStoryboardVM(
      */
     suspend fun save(toast: Boolean = true): Boolean {
         var storyboard = data.get()
-        val prompt = (if (editingStoryBoardDesc.get()) editingStoryBoardDescText else storyBoardDesc.get())?.toString()
+        val prompt = storyBoardDesc.get()?.toString()
         if (prompt.isNullOrEmpty()) {
             if (toast) showToast(R.string.please_complete_storyboard_description)
             return false

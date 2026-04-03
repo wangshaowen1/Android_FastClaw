@@ -43,7 +43,7 @@ class ItemRoleVM(
 
     override fun clickGenerate() {
         if (status.get() == 1) return
-        val rolePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
+        val rolePrompt = assetDesc.get()
         val roleName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
         if (rolePrompt.isNullOrEmpty()) {
             showToast(R.string.please_enter_role_description)

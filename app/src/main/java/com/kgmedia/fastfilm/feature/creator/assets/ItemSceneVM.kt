@@ -43,7 +43,7 @@ class ItemSceneVM(
 
     override fun clickGenerate() {
         if (status.get() == 1) return
-        val scenePrompt = if (editingAssetDesc.get()) editingAssetDescText else assetDesc.get()
+        val scenePrompt = assetDesc.get()
         val sceneName = if (editingAssetName.get()) editingAssetNameText else assetName.get()
         if (scenePrompt.isNullOrEmpty()) {
             showToast(R.string.please_enter_scene_description)

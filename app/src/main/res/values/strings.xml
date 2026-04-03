@@ -496,5 +496,8 @@
     <string name="download_without_watermark">下载无水印版本</string>
     <string name="download_video_considered_as_agreement">下载视频即视为同意</string>
     <string name="download_agreement">《下载协议》</string>
+    <string name="edit_episode_content">编辑剧本</string>
+    <string name="edit_asset_desc">编辑资产描述</string>
+    <string name="edit_storyboard_desc">编辑分镜设计</string>
 </resources>
 
