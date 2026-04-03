@@ -91,14 +91,13 @@
             app:layout_constraintTop_toTopOf="@+id/ivCover"
             app:tint="?attr/textColor4" />
 
-        <TextView
+        <com.kgmedia.fastfilm.widget.NestedScrollTextView
             android:id="@+id/etAssetDesc"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="15dp"
             android:background="@drawable/fill_color1_r8"
-            android:ellipsize="end"
             android:gravity="top"
             android:hint="@{item.assetDescHint}"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"

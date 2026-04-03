@@ -40,19 +40,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <com.kgmedia.fastfilm.widget.NestedScrollTextView
             android:id="@+id/etStoryboardDesc"
             android:text="@{item.storyBoardDesc}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="15dp"
             android:background="@drawable/fill_color1_r8"
-            android:ellipsize="end"
             android:gravity="top"
             android:hint="@string/storyboard_prompt"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
             android:maxHeight="264dp"
             android:maxLength="1000"
+            android:scrollbars="vertical"
             android:minHeight="100dp"
             android:onClick="@{(v)->item.onItemClick.invoke(v)}"
             android:padding="12dp"
