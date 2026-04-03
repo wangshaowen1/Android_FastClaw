@@ -20,7 +20,7 @@
 
         <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
             android:id="@+id/ivCover"
-            loadUri="@{item.assetImage}"
+            loadThumbnailUri="@{item.assetImage}"
             placeHolder="@{@drawable/img_default_cover_3_4}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="0dp"
