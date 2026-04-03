@@ -228,7 +228,10 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
             apiBlock = {
                 mRepo.api.novelUploadSummary(body)
             },
-            onSuccess = { callback.invoke(data) },
+            onSuccess = {
+                Global.refreshBalance()
+                callback.invoke(data)
+            },
             onError = {
                 if (it is ApiException && it.errorCode == ApiResponse.RESPONSE_CODE_POWER_NOT_ENOUGH) {
                     viewModelScope.launch {
@@ -256,14 +259,14 @@ class CreationViewModel : AppRepositoryViewModel<CreationRepository>() {
     }
 
     fun getFirstRechargeInfo(callback: () -> Unit) {
-            launch {
-                // 2. 请求首充接口 (这里必须先于活动配置完成)
-                val firstRechargeResponse = mRepo.api.getFirstRechargeDialogInfo()
-                if (firstRechargeResponse.data != null && firstRechargeResponse.data?.isNeedShow() == true) {
-                    firstRechargeCache.value = firstRechargeResponse.data
-                }else{
-                    callback.invoke()
-                }
+        launch {
+            // 2. 请求首充接口 (这里必须先于活动配置完成)
+            val firstRechargeResponse = mRepo.api.getFirstRechargeDialogInfo()
+            if (firstRechargeResponse.data != null && firstRechargeResponse.data?.isNeedShow() == true) {
+                firstRechargeCache.value = firstRechargeResponse.data
+            } else {
+                callback.invoke()
             }
+        }
     }
 }

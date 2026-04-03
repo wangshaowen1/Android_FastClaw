@@ -6,11 +6,11 @@ import android.view.Gravity
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.adapter.FragmentStateCacheAdapter
 import com.kgmedia.fastfilm.common.ext.removeTheRipples
-import com.kgmedia.fastfilm.common.ext.setScale
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
@@ -36,7 +36,6 @@ import com.nhsd.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapt
 import com.nhsd.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import com.nhsd.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
 import com.nhsd.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
-import com.nhsd.magicindicator.buildins.commonnavigator.titles.ScaleTransitionPagerTitleView
 
 class WorksFragment : BaseViewModelFragment<FragmentWorksBinding, WorksViewModel>() {
 
@@ -110,6 +109,13 @@ class WorksFragment : BaseViewModelFragment<FragmentWorksBinding, WorksViewModel
         ViewPagerHelper.bind(binding.magicIndicator, binding.viewPager2)
         binding.viewPager2.setCurrentItem(0, false)
         binding.viewPager2.removeTheRipples()
+
+        binding.viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                binding.btnEdit.isVisible = position == 0
+            }
+        })
     }
 
 

@@ -66,13 +66,14 @@ import com.kgmedia.fastfilm.core.network.apis.request.LoginByPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.LoginByThirdBody
 import com.kgmedia.fastfilm.core.network.apis.request.MusicGenerateSourceBody
 import com.kgmedia.fastfilm.core.network.apis.request.MyWorkBody
-import com.kgmedia.fastfilm.core.network.apis.request.PollScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeContentData
 import com.kgmedia.fastfilm.core.network.apis.request.OptimizeRoleImageDescBody
 import com.kgmedia.fastfilm.core.network.apis.request.OrderStatusBody
 import com.kgmedia.fastfilm.core.network.apis.request.PagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.PlayEventBody
+import com.kgmedia.fastfilm.core.network.apis.request.PollScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.PollScriptData
+import com.kgmedia.fastfilm.core.network.apis.request.PollSummaryData
 import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateBody
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateData
@@ -82,12 +83,12 @@ import com.kgmedia.fastfilm.core.network.apis.request.ReportSubmissionBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
-import com.kgmedia.fastfilm.core.network.apis.request.PollSummaryData
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveEpisodeScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveSceneBody
+import com.kgmedia.fastfilm.core.network.apis.request.SaveScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStorySummaryBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveStoryboardBody
 import com.kgmedia.fastfilm.core.network.apis.request.SceneContentEditBody
@@ -108,7 +109,6 @@ import com.kgmedia.fastfilm.core.network.apis.request.SynthesisUploadBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.TipOffBody
 import com.kgmedia.fastfilm.core.network.apis.request.UploadStoryBody
-import com.kgmedia.fastfilm.core.network.apis.request.SaveScriptBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserShareUrlBody
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.network.apis.request.VideoSynthesisBody
@@ -1114,4 +1114,10 @@ interface ApiService {
      */
     @POST(ApiConstants.UPDATE_STORY_SUMMARY)
     suspend fun updateStorySummary(@Body body: SaveStorySummaryBody): ApiResponse<Any?>
+
+    /**
+     * 资产管理文件夹列表
+     */
+    @POST(ApiConstants.ASSET_FOLDER_LIST)
+    suspend fun assetFolderList(@Body body: PagedBody): ApiResponse<PagedList<WorkInfo>?>
 }

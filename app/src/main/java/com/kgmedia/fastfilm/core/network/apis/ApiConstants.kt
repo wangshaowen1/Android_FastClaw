@@ -787,4 +787,9 @@ object ApiConstants {
      * 剧集-修改剧集梗概
      */
     const val UPDATE_STORY_SUMMARY = "work/updateStorySummary"
+
+    /**
+     * 资产管理文件夹列表
+     */
+    const val ASSET_FOLDER_LIST = "work/asset/folder/list"
 }

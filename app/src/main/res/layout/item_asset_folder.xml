@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.creator.set.ItemVideoConfigVm" />
+            type="com.kgmedia.fastfilm.feature.works.assetmanager.ItemAssetFolderVm" />
 
         <import type="android.view.View" />
     </data>
@@ -17,13 +18,35 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:paddingBottom="20dp">
+        android:paddingBottom="@dimen/spacing_m">
 
-        <ImageView
-            android:id="@+id/iv_folder_icon"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/img_asset" />
+            android:layout_marginHorizontal="6dp">
+
+            <ImageView
+                android:id="@+id/iv_folder_icon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/img_asset"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                loadThumbnailUri="@{item.data.workCoverUrl}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/spacing_s"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="@id/iv_folder_icon"
+                app:layout_constraintDimensionRatio="80:48"
+                app:layout_constraintEnd_toEndOf="@id/iv_folder_icon"
+                app:layout_constraintStart_toStartOf="@id/iv_folder_icon"
+                app:shapeAppearance="@style/roundStyle_r4" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tv_folder_name"
@@ -35,6 +58,7 @@
             android:gravity="center"
             android:maxLines="1"
             android:paddingHorizontal="4dp"
+            android:text="@{item.data.workTitle}"
             android:textColor="?attr/textColor1"
             tools:text="斗罗大陆:修罗..." />
     </LinearLayout>

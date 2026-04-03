@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.databinding.FragmentAssetFolderBinding
+import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.kgmedia.fastfilm.widget.decoration.TopSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
@@ -15,7 +16,6 @@ import kotlinx.coroutines.launch
  */
 class AssetFolderFragment : BaseViewModelFragment<FragmentAssetFolderBinding, AssetFolderViewModel>() {
 
-
     companion object {
         const val TAG = "AssetFolderFragment"
         fun newInstance(): AssetFolderFragment {
@@ -26,33 +26,37 @@ class AssetFolderFragment : BaseViewModelFragment<FragmentAssetFolderBinding, As
         }
     }
 
+    val assetFolderAdapter by lazy { AssetFolderAdapter() }
+
     override fun onPrepareView() {
         super.onPrepareView()
+        initView()
+        dataUpdate()
     }
 
 
     private fun initView() {
-//        binding.recyclerView.apply {
-//            addItemDecoration(TopSpaceDecoration(14.dp))
-//            isFocusable = false
-//            adapter =
-//                computingPowerDetailsAdapter.withLoadStateFooter(
-//                    MyMultiStatePagingFooterAdapter(
-//                        hostAdapter = computingPowerDetailsAdapter,
-//                        noMoreThreshold = 5
-//                    ) { computingPowerDetailsAdapter.retry() })
-//        }
-//        binding.srl.startRefreshWithAdapter(
-//            pagingDataAdapter = computingPowerDetailsAdapter
-//        )
+        binding.recyclerView.apply {
+            addItemDecoration(TopSpaceDecoration(14.dp))
+            addItemDecoration(GridSpacingItemDecoration(3, 0, 23.dp))
+            isFocusable = false
+            adapter =
+                assetFolderAdapter.withLoadStateFooter(
+                    MyMultiStatePagingFooterAdapter(
+                        hostAdapter = assetFolderAdapter,
+                        noMoreThreshold = 9
+                    ) { assetFolderAdapter.retry() })
+        }
+        binding.srl.startRefreshWithAdapter(
+            pagingDataAdapter = assetFolderAdapter
+        )
     }
-
 
     private fun dataUpdate() {
         lifecycleScope.launch {
-//            mRealVM.getComputingPowerDetailsPage().collect {
-//                computingPowerDetailsAdapter.submitData(it)
-//            }
+            mRealVM.getAssetFolderPage().collect {
+                assetFolderAdapter.submitData(it)
+            }
         }
     }
 }
