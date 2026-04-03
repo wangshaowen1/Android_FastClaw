@@ -37,7 +37,7 @@ import kotlin.coroutines.cancellation.CancellationException
 class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
 
     //当前显示状态是查看(true)还是编辑(false)
-    var isView = MutableLiveData(true)
+    var isView = true
 
     //合成中列表数据
     var workInformationIds = hashMapOf<String, WorkInfo>()
@@ -98,7 +98,7 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 删除作品
      */
-    fun delete(workIds: List<String>) {
+    fun delete(workIds: List<String>, callback: () -> Unit) {
         if (workIds.isEmpty()) return
         launchWithLoading {
             response(
@@ -107,7 +107,7 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
                     launch {
                         //删除数据库中的
                         mRepo.appDatabase.workInformationDao().deleteByWorkIds(workIds)
-                        isView.value = true
+                        callback.invoke()
                     }
                 })
         }
@@ -157,7 +157,7 @@ class MyWorksViewModel : AppRepositoryViewModel<AppRepository>() {
      *查询是否有正在生成中的
      */
     private suspend fun checkGenerating() {
-        if (isView.value==false){
+        if (!isView){
             //在编辑模式下不刷新
             return
         }

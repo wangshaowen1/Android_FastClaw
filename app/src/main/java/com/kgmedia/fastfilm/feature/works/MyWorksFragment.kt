@@ -9,26 +9,19 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
-import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.db.entity.WorkInformationInfo
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
-import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
-import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
-import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentMyWorksBinding
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
-import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainActivity
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
@@ -43,8 +36,8 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
-import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
+import com.nhsd.basic.ext.getViewModelOfParentFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
@@ -53,9 +46,10 @@ import kotlinx.coroutines.launch
 class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksViewModel>() {
 
 
-    companion object{
+    companion object {
         const val TAG = "MyWorksFragment"
         const val CLICK_INTERVAL = 500L // 限制 500ms 内只能触发一次
+
         @JvmStatic
         fun start() {
             FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_MY_WORKS))
@@ -73,7 +67,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         ItemMultipleChoiceEventsViewModel<MyWorksEvent, String>()
     }
     private val parentVm by lazy {
-        getViewModelOfActivity<MainViewModel>()
+        getViewModelOfParentFragment<WorksViewModel>()
     }
     private var lastClickTime = 0L
 
@@ -161,9 +155,27 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
     }
 
     private fun dataUpdate() {
-        parentVm?.activityConfigCache?.observe(this) {
-            handlePopup(it.getPopupInfo(ActivityConfigData.TAB_MY_WORKS))
-            handleFloatWindow(it.getFloatWindowInfo(ActivityConfigData.TAB_MY_WORKS))
+        parentVm?.editModel?.observe(this) {
+            binding.groudEdit.isVisible = it
+            mRealVM.isView = !it
+
+            if (it) {
+                mRealVM.selectedCount.value = eventVm.getSelectedItems().size
+            }
+
+            eventVm.switchStatus(!it)
+            getViewModelOfActivity<MainViewModel>()?.isEditing?.set(it)
+            if (!it) {
+                //是否启用下拉刷新
+                binding.srl.setEnableRefresh(true)
+                binding.groudEdit.visibility = View.GONE
+                eventVm.clearAllSelection()
+                getViewModelOfActivity<MainViewModel>()?.showBottomBar?.set(true)
+                return@observe
+            }
+            binding.srl.setEnableRefresh(false)
+            getViewModelOfActivity<MainViewModel>()?.showBottomBar?.set(false)
+            binding.groudEdit.visibility = View.VISIBLE
         }
         observeEvents {
             //登录状态变化
@@ -246,25 +258,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
         }
 
         getViewModelOfActivity<MainViewModel>()?.setIsEditing = { status ->
-            mRealVM.isView.value = true
-        }
-
-        mRealVM.isView.observe(this) {
-            eventVm.switchStatus(it)
-            getViewModelOfActivity<MainViewModel>()?.isEditing?.set(!it)
-            if (it) {
-                //是否启用下拉刷新
-                binding.srl.setEnableRefresh(true)
-                binding.groupView.visibility = View.VISIBLE
-                binding.groudEdit.visibility = View.GONE
-                eventVm.clearAllSelection()
-                getViewModelOfActivity<MainViewModel>()?.showBottomBar?.set(true)
-                return@observe
-            }
-            binding.srl.setEnableRefresh(false)
-            getViewModelOfActivity<MainViewModel>()?.showBottomBar?.set(false)
-            binding.groupView.visibility = View.GONE
-            binding.groudEdit.visibility = View.VISIBLE
+            parentVm?.editModel?.value = false
         }
 
         mRealVM.selectedCount.observe(this) { count ->
@@ -344,12 +338,6 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {
-            R.id.btnEdit -> {
-                //编辑
-                mRealVM.isView.value = false
-                mRealVM.selectedCount.value = eventVm.getSelectedItems().size
-            }
-
             R.id.btnSelectAll -> {
                 val currentItems: List<WorkInformationInfo> = myWorksAdapter.snapshot().items
                 val currentIds = currentItems.mapNotNull { it.work.workId }.toHashSet()
@@ -371,7 +359,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
             R.id.btnDelete -> {
                 //删除
                 if (eventVm.getSelectedItems().isEmpty()) {
-                    mRealVM.isView.value = true
+                    parentVm?.editModel?.value = false
                     return
                 }
                 topActivity?.showConfirmPrompt(
@@ -379,40 +367,16 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                     cancelText = getString(R.string.cancel),
                     confirmText = getString(R.string.confirm_ok)
                 ) {
-                    mRealVM.delete(eventVm.getSelectedItems().toList())
+                    mRealVM.delete(eventVm.getSelectedItems().toList()){
+                        parentVm?.editModel?.value = false
+                    }
                 }
             }
 
             R.id.btnComplete -> {
                 //完成
-                mRealVM.isView.value = true
+                parentVm?.editModel?.value = false
             }
-        }
-    }
-
-    private fun handlePopup(popup: PopupInfo?) {
-        popup?.let {
-            if (popup.isShow()) {
-                ActivityDialog.show(popup)
-                Config.get().activityPopupShowMark(popup.id)
-            }
-        }
-    }
-
-    private fun handleFloatWindow(float: FloatWindowInfo?) {
-        if (float != null && float.isShow()) {
-            binding.floatingBall.isVisible = true
-            loadGifUrl(
-                binding.ivFloating,
-                float.imageUrl,
-                R.drawable.img_default_cover_1_1.getResDrawable()
-            )
-            Config.get().activityFloatShowMark(float.id)
-            binding.floatingBall.setOnMfClickListener {
-                AppRouter.jump(float.jumpUrl)
-            }
-        } else {
-            binding.floatingBall.visibility = View.GONE
         }
     }
 }

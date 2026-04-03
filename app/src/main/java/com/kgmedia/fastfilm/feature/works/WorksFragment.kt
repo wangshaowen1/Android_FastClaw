@@ -12,7 +12,6 @@ import com.kgmedia.fastfilm.common.adapter.FragmentStateCacheAdapter
 import com.kgmedia.fastfilm.common.ext.removeTheRipples
 import com.kgmedia.fastfilm.common.ext.setScale
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.common.utils.CommonNavigatorUtils.getLinePagerIndicator
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.databinding.loadGifUrl
@@ -36,6 +35,7 @@ import com.nhsd.magicindicator.buildins.commonnavigator.CommonNavigator
 import com.nhsd.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
 import com.nhsd.magicindicator.buildins.commonnavigator.abs.IPagerIndicator
 import com.nhsd.magicindicator.buildins.commonnavigator.abs.IPagerTitleView
+import com.nhsd.magicindicator.buildins.commonnavigator.titles.ColorTransitionPagerTitleView
 import com.nhsd.magicindicator.buildins.commonnavigator.titles.ScaleTransitionPagerTitleView
 
 class WorksFragment : BaseViewModelFragment<FragmentWorksBinding, WorksViewModel>() {
@@ -75,12 +75,11 @@ class WorksFragment : BaseViewModelFragment<FragmentWorksBinding, WorksViewModel
             }
 
             override fun getTitleView(context: Context, index: Int): IPagerTitleView {
-                val titleView = ScaleTransitionPagerTitleView(context)
+                val titleView = ColorTransitionPagerTitleView(context)
                 titleView.setIsSelectedBold(true)
                 titleView.setPadding(0, 0, 20.dp, 0)
                 titleView.setLines(1)
                 titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
-                titleView.setScale(1.125f)
                 titleView.gravity = Gravity.CENTER
 
                 titleView.text = titles.getOrNull(index)
@@ -96,9 +95,7 @@ class WorksFragment : BaseViewModelFragment<FragmentWorksBinding, WorksViewModel
                     return null
             }
         }
-
         binding.magicIndicator.navigator = navigator
-
 
         val fragmentList = arrayListOf<Fragment>()
         fragmentList.add(MyWorksFragment())
@@ -128,6 +125,7 @@ class WorksFragment : BaseViewModelFragment<FragmentWorksBinding, WorksViewModel
         super.onClick(view, data)
         when (view.id) {
             R.id.btnEdit -> {
+                mRealVM.editModel.value = true
             }
         }
     }
