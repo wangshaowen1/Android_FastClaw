@@ -5,9 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.method.ScrollingMovementMethod
+import android.view.View
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.databinding.ActivityAssetDtlBinding
+import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.nhsd.basic.BaseViewModelActivity
 
 /**
@@ -55,6 +59,48 @@ class AssetDetailActivity : BaseViewModelActivity<ActivityAssetDtlBinding, Asset
         super.onCreate(savedInstanceState)
 
         binding.desc.movementMethod = ScrollingMovementMethod()
+
+        mRealVM.hasChanged.observe(this) {
+            mRealVM.mToolbarVM.mMenuEnable.set(it)
+        }
+    }
+
+    override fun onBackPressed() {
+        if (mRealVM.generating.get()) {
+            showCommonDialog(getString(R.string.exit_during_generation_warning), confirmText = getString(R.string.continue_exit), confirm = {
+                super.onBackPressed()
+            })
+            return
+        } else if (mRealVM.hasChanged.value == true) {
+            showCommonDialog(
+                getString(R.string.save_and_overwrite_asset_warning), cancelText = getString(R.string.exit_without_saving), confirmText = getString(
+                    R.string.save_and_overwrite
+                ), cancel = {
+                    super.onBackPressed()
+                }, confirm = {
+                    mRealVM.save {
+                        super.onBackPressed()
+                    }
+                })
+            return
+        }
+        super.onBackPressed()
+    }
+
+    override fun <Data> onClick(view: View?, data: Data?) {
+        super.onClick(view, data)
+
+        when (view?.id) {
+            R.id.btnRegenerate -> {
+                mRealVM.reGenerate()
+            }
+
+            R.id.desc -> {
+                InputDialog.show(InputDialog.TYPE_ASSET_DESC, content = mRealVM.prompt.get()) {
+                    mRealVM.prompt.set(it)
+                }
+            }
+        }
     }
 
 

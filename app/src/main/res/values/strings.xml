@@ -503,5 +503,11 @@
     <string name="prop_desc">道具描述</string>
     <string name="scene_desc">场景描述</string>
     <string name="btn_regenerate_cost">重新生成  %1$s %2$d</string>
+    <string name="exit_during_generation_warning">资源图正在生成中，退出将导致本次生成失败，是否继续退出？</string>
+    <string name="continue_exit">继续退出</string>
+    <string name="save_and_overwrite_asset_warning">当前资源图未保存，是否保存并覆盖原资源？覆盖后不可恢复。</string>
+    <string name="exit_without_saving">退出不保存</string>
+    <string name="save_and_overwrite">保存并覆盖</string>
+    <string name="confirm_overwrite_asset_warning">图片保存后将覆盖原资源，覆盖后不可恢复，请确认是否继续？</string>
 </resources>
 

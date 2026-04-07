@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.feature.works.assetmanager
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.StringUtils.getString
 import com.drake.spannable.replaceSpan
 import com.drake.spannable.span.CenterImageSpan
@@ -11,6 +12,8 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
+import com.kgmedia.fastfilm.common.ext.showCommonDialog
+import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.PollingState
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchPolling
@@ -30,14 +33,21 @@ import kotlinx.coroutines.Job
 
 class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>() {
 
+    val hasChanged = MutableLiveData(false)
     var mToolbarVM = ToolbarViewModel(
         navigationAction = { back() },
         title = "",
         menuAction = {
-            if (!generating.get()) {
-                save()
+            if (!generating.get() && hasChanged.value == true) {
+                topActivity?.showCommonDialog(
+                    tip = getString(R.string.confirm_overwrite_asset_warning),
+                    confirmText = getString(R.string.save_and_overwrite),
+                    confirm = {
+                        save()
+                    })
             }
-        }
+        },
+        menuEnable = hasChanged.value
     )
 
     val info by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, SimpleAsset::class.java) }
@@ -57,8 +67,8 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
      */
     val status by lazy { ObservableInt() }
 
+
     var scriptPollingJob: Job? = null
-    var cleared = false
     private val powerSpan by lazy { CenterImageSpan(App.instance, R.drawable.icon_power).apply { setDrawableSize(16.dp, 16.dp) } }
 
     override fun onCreate() {
@@ -92,6 +102,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
     fun reGenerate() {
         launchWithLoading {
             response(mRepo.api.workAssetSingleGenerate(GenerateAssetBody())) {
+                hasChanged.value = true
                 generating.set(true)
                 loopGenStatus(data?.taskId)
             }
@@ -133,7 +144,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
         )
     }
 
-    fun save() {
+    fun save(callback: (() -> Unit)? = null) {
         launch {
             response(
                 when (info) {
@@ -171,6 +182,10 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                     }
                 }
             ) {
+                if (callback != null) {
+                    callback()
+                    return@response
+                }
                 back()
             }
         }

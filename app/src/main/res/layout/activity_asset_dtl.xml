@@ -77,11 +77,12 @@
             android:paddingHorizontal="@dimen/spacing_m"
             android:paddingTop="@dimen/spacing_m"
             android:paddingBottom="40dp"
+            singleClick="@{layout.clickHandler::onClick}"
             android:scrollbars="vertical"
             android:text="@{layout.prompt}"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor2"
-            app:layout_constraintBottom_toTopOf="@+id/btnNext"
+            app:layout_constraintBottom_toTopOf="@+id/btnRegenerate"
             app:layout_constraintDimensionRatio="345:178"
             tools:text="白天，史莱克学院后山茂密的森林，阳光穿透层层叠叠的树叶，在铺满落叶的空地上洒下斑驳光影。唐三与小舞相对而立，清风吹过。唐三微微领首，脚下升起数圈魂环，地面开始震动。唐三...白天，史莱克学院后山茂密的森林，阳光穿透层层叠叠的树叶，在铺满落叶的空地上洒下斑驳光影。唐三与小舞相对而立，清风吹过。唐三微微领首，脚下升起数圈魂环，地面开始震动。唐三...白天，史莱克学院后山茂密的森林，阳光穿透层层叠叠的树叶，在铺满落叶的空地上洒下斑驳光影。唐三与小舞相对而立，清风吹过。唐三微微领首，脚下升起数圈魂环，地面开始震动。唐三..." />
 
@@ -98,7 +99,7 @@
             tools:text="118/200" />
 
         <Button
-            android:id="@+id/btnNext"
+            android:id="@+id/btnRegenerate"
             style="@style/Button.Bold"
             setEnabled="@{!layout.generating}"
             singleClick="@{layout.clickHandler::onClick}"
