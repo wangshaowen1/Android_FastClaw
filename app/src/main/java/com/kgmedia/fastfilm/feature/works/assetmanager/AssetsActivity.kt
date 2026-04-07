@@ -61,6 +61,7 @@ class AssetsActivity : BaseViewModelActivity<ActivityAssetsBinding, AssetsViewMo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
+        dataUpdate()
     }
 
     fun dataUpdate() {
@@ -121,6 +122,7 @@ class AssetsActivity : BaseViewModelActivity<ActivityAssetsBinding, AssetsViewMo
         )
         viewPagerAdapter.setFragments(fragmentList)
         binding.viewPager2.adapter = viewPagerAdapter
+        binding.viewPager2.offscreenPageLimit = 3
         ViewPagerHelper.bind(binding.magicIndicator, binding.viewPager2)
         binding.viewPager2.setCurrentItem(0, false)
         binding.viewPager2.removeTheRipples()

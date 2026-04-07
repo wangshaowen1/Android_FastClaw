@@ -4,7 +4,7 @@ package com.kgmedia.fastfilm.core.network.apis;
 public class PagedList<T> extends ListData<T> {
 
     private int pages;
-    private int totalSize;
+    private int total;
     //特殊字段(目前只有在分页查询歌曲评论列表中存在，其他地方可能为空)：评论回复总数目（包含一级回复和回复的回复）
     private long currentTotalSize;
 
@@ -18,11 +18,11 @@ public class PagedList<T> extends ListData<T> {
     }
 
     public int getTotalSize() {
-        return totalSize;
+        return total;
     }
 
     public void setTotalSize(int totalSize) {
-        this.totalSize = totalSize;
+        this.total = totalSize;
     }
 
 

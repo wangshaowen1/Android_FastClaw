@@ -84,15 +84,15 @@ class AssetsChildFragment : BaseViewModelFragment<FragmentAssetsChildBinding, As
         mRealVM.totalCountBack = {
             when (mRealVM.bizType) {
                 QueryAssetBody.BIZ_TYPE_ROLE -> {
-                    parentVm?.roleCount?.value = it
+                    parentVm?.roleCount?.postValue(it)
                 }
 
                 QueryAssetBody.BIZ_TYPE_PROP -> {
-                    parentVm?.propCount?.value = it
+                    parentVm?.propCount?.postValue(it)
                 }
 
                 QueryAssetBody.BIZ_TYPE_SCENE -> {
-                    parentVm?.sceneCount?.value = it
+                    parentVm?.sceneCount?.postValue(it)
                 }
             }
         }
