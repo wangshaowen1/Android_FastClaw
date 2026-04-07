@@ -3,10 +3,15 @@ package com.kgmedia.fastfilm.feature.creator.assets
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import com.blankj.utilcode.util.StringUtils.getString
+import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
+import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.kgmedia.fastfilm.widget.RecyclerEditText
 import kotlinx.coroutines.Job
@@ -61,10 +66,20 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
     protected var loopGenStatusJob: Job? = null
     protected var cleared = false
 
+    val hint = ObservableField<String>()
+
     init {
         if (status.get() == 1) {
             loopGenStatus()
         }
+        hint.set(
+            when (data) {
+                is SimpleRoleInfo -> getString(R.string.set_character_appearance)
+                is SimpleSceneInfo -> getString(R.string.set_scene)
+                is SimplePropInfo -> getString(R.string.set_prop)
+                else -> ""
+            }
+        )
     }
 
     fun clear() {

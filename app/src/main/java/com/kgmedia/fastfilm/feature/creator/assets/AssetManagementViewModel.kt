@@ -336,11 +336,14 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         onItemClick.value = click@{ view ->
             when (view?.id) {
                 R.id.ivCover -> {
+                    assetImage.get()?.let { PhotoPagerActivity.launch(topActivity, it) }
+                }
+
+                R.id.ivCoverBorder -> {
                     if (assetImage.get().isNullOrEmpty()) {
                         onAssetImageSelectEvent?.invoke(this)
                         return@click
                     }
-                    assetImage.get()?.let { PhotoPagerActivity.launch(topActivity, it) }
                 }
 
                 R.id.btnImageDel -> {
@@ -541,6 +544,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 response.msg?.showToast()
                 return@launchWithLoading
             } else {
+                vm?.status?.set(0)
                 vm?.assetImage?.set(null)
             }
         }

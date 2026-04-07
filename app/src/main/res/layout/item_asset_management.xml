@@ -41,6 +41,8 @@
             app:backgroundStartColor="?attr/fillColor1"
             app:borderStartColor="?attr/borderColor2"
             app:borderWidth="1dp"
+            android:id="@+id/ivCoverBorder"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
@@ -79,11 +81,16 @@
             app:layout_constraintStart_toStartOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
-        <ImageView
+        <TextView
             setVisible="@{item.status &lt; 1}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/icon_ai_image_text4"
+            android:drawableTop="@drawable/icon_ai_image_text4"
+            android:drawablePadding="@dimen/spacing_m"
+            android:gravity="center"
+            android:text="@{item.hint}"
+            android:textColor="?attr/textColor4"
+            android:textSize="12sp"
             android:tintMode="src_in"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"

@@ -513,5 +513,8 @@
     <string name="select_scene">选择场景</string>
     <string name="select_role_image">选择形象</string>
     <string name="character_appearance">角色形象</string>
+    <string name="set_character_appearance">设置角色形象</string>
+    <string name="set_scene">设置场景</string>
+    <string name="set_prop">设置道具</string>
 </resources>
 
