@@ -8,4 +8,5 @@ interface SimpleAsset {
     val assetName: String?
     val assetImage: String?
     val showReference: Boolean
+    val assetTaskId:String?
 }

@@ -23,6 +23,7 @@
 
         <ImageView
             android:id="@+id/ivImage"
+            loadUri="@{layout.image}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
@@ -31,6 +32,7 @@
 
         <View
             android:id="@+id/ivLoading"
+            setVisible="@{layout.status!=2}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="?attr/fillColor1"
@@ -39,8 +41,8 @@
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
         <com.kgmedia.fastfilm.widget.AutoRotateLayout
-            autoRotate="@{layout.status == 1}"
-            setVisible="@{layout.status == 1}"
+            autoRotate="@{layout.generating}"
+            setVisible="@{layout.generating}"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="@drawable/icon_loading1"
@@ -55,12 +57,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:text="@string/storyboard_desc"
+            android:text="@{layout.subTitle}"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor1"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/desc"
-            app:layout_constraintStart_toStartOf="@+id/desc" />
+            app:layout_constraintStart_toStartOf="@+id/desc"
+            tools:text="@string/storyboard_desc" />
 
         <TextView
             android:id="@+id/desc"
@@ -70,10 +73,12 @@
             android:layout_marginBottom="85dp"
             android:background="@drawable/fill_color1_r8"
             android:lineSpacingExtra="@dimen/lineSpacingExtraShort"
+            android:maxLength="200"
             android:paddingHorizontal="@dimen/spacing_m"
             android:paddingTop="@dimen/spacing_m"
             android:paddingBottom="40dp"
             android:scrollbars="vertical"
+            android:text="@{layout.prompt}"
             android:textAppearance="@style/Text14"
             android:textColor="?attr/textColor2"
             app:layout_constraintBottom_toTopOf="@+id/btnNext"
@@ -85,21 +90,22 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/spacing_m"
             android:layout_marginBottom="@dimen/spacing_l"
+            android:text="@{layout.prompt.length()+`/`+layout.maxLength}"
             android:textAppearance="@style/Text12"
             android:textColor="?attr/textColor4"
             app:layout_constraintBottom_toBottomOf="@id/desc"
             app:layout_constraintEnd_toEndOf="@id/desc"
-            tools:text="118/100" />
+            tools:text="118/200" />
 
         <Button
             android:id="@+id/btnNext"
             style="@style/Button.Bold"
-            setEnabled="@{layout.buttonEnable(layout.step)}"
+            setEnabled="@{!layout.generating}"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
             android:layout_marginHorizontal="@dimen/spacing_l"
             android:layout_marginBottom="34dp"
-            android:text="@{layout.buttonText(layout.step,layout.cost)}"
+            android:text="@{layout.buttonText(layout.generating,layout.cost)}"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:text="图片生成中..." />
     </androidx.constraintlayout.widget.ConstraintLayout>

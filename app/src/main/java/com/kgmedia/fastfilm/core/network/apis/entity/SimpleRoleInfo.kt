@@ -1,5 +1,8 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 /**
  * {
  *     "roleId": "角色主键id",
@@ -11,6 +14,7 @@ package com.kgmedia.fastfilm.core.network.apis.entity
  *     "taskId": "任务ID (雪花算法)"
  * }
  */
+@Parcelize
 data class SimpleRoleInfo(
     /**
      * 角色主键id
@@ -44,7 +48,7 @@ data class SimpleRoleInfo(
      * 是否有历史角色形象（同一 roleId 是否存在其他版本）
      */
     val hasHistory: Boolean? = null
-) : SimpleAsset {
+) : SimpleAsset, Parcelable {
     override val assetId: String?
         get() = roleId
     override val assetAppearanceId: String?
@@ -59,4 +63,6 @@ data class SimpleRoleInfo(
         get() = imageUrl
     override val showReference: Boolean
         get() = hasHistory == true || !imageUrl.isNullOrEmpty()
+    override val assetTaskId: String?
+        get() = taskId
 }
