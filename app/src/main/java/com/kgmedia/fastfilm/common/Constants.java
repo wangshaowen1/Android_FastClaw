@@ -145,7 +145,7 @@ public class Constants {
         String FRAME_ACTIVITY = "frameActivity";
         String DOWNLOAD_ACCOMPANY = "downloadAccompany";
         String FROM_NEW_USER_WRITE = "fromNewUserWrite";
-        String ROOM_ID = "roomId";
+        String ROLE_IMAGE = "ROLE_IMAGE";
         String MUSIC_ROOM = "musicRoom";
         String OPEN_RECOMMEND = "openRecommend";
         String DARK_STYLE = "darkStyle";

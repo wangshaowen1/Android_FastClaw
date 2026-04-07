@@ -17,7 +17,7 @@ class AssetsViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        mToolbarVM.title = mBundle.getString(Constants.Extra.TITLE)
+        mToolbarVM.mTitle.set(mBundle.getString(Constants.Extra.TITLE))
     }
 
     val roleCount = MutableLiveData(0)

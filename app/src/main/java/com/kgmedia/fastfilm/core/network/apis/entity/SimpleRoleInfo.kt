@@ -65,4 +65,8 @@ data class SimpleRoleInfo(
         get() = hasHistory == true || !imageUrl.isNullOrEmpty()
     override val assetTaskId: String?
         get() = taskId
+
+    override fun setAssetImage(imageUrl: String?) {
+        this.imageUrl = imageUrl
+    }
 }

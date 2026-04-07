@@ -35,4 +35,6 @@ data class SaveRoleBody(
      * 角色形象提示词（形象表字段）
      */
     val rolePrompt: String?,
+    val parentAppearanceId: String? = null,//基于某个形象重新生成时传入，为空则视为原始生成
+    val imageUrl: String? = null,//图片地址
 )

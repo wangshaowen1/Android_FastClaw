@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.kgmedia.fastfilm.common.ext.getVm
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
@@ -12,10 +13,15 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
 import com.kgmedia.fastfilm.databinding.ItemAssetPropBinding
 import com.kgmedia.fastfilm.databinding.ItemAssetRoleBinding
 import com.kgmedia.fastfilm.databinding.ItemAssetSceneBinding
+import com.nhsd.basic.item.BaseItemEventsViewModel
 import com.nhsd.basic.item.BindingViewHolder
-import androidx.viewbinding.ViewBinding
 
-class AssetsChildAdapter : PagingDataAdapter<SimpleAsset, RecyclerView.ViewHolder>(ITEM_DIFF_CALLBACK) {
+class AssetsChildAdapter(
+    val model: Boolean = false,
+    val itemClickVm: BaseItemEventsViewModel<AssetsEvent, SimpleAsset>,
+    val appearanceId: String? = null
+) :
+    PagingDataAdapter<SimpleAsset, RecyclerView.ViewHolder>(ITEM_DIFF_CALLBACK) {
 
     companion object {
         // 定义三种布局类型常量
@@ -29,7 +35,6 @@ class AssetsChildAdapter : PagingDataAdapter<SimpleAsset, RecyclerView.ViewHolde
             }
 
             override fun areContentsTheSame(oldItem: SimpleAsset, newItem: SimpleAsset): Boolean {
-                // 如果是 data class，建议直接 oldItem == newItem
                 return oldItem.assetId == newItem.assetId
                         && oldItem.assetAppearanceId == newItem.assetAppearanceId
                         && oldItem.assetName == newItem.assetName
@@ -37,6 +42,7 @@ class AssetsChildAdapter : PagingDataAdapter<SimpleAsset, RecyclerView.ViewHolde
                         && oldItem.assetDesc == newItem.assetDesc
                         && oldItem.status == newItem.status
                         && oldItem.showReference == newItem.showReference
+                        && oldItem.assetTaskId == newItem.assetTaskId
             }
         }
     }
@@ -67,16 +73,20 @@ class AssetsChildAdapter : PagingDataAdapter<SimpleAsset, RecyclerView.ViewHolde
         }
     }
 
-    abstract class BaseAssetViewHolder<VB : ViewBinding>(val binding: VB) :
+    abstract class BaseAssetViewHolder<VB : ViewBinding>(binding: VB) :
         BindingViewHolder<VB>(binding)
 
     inner class RoleViewHolder(binding: ItemAssetRoleBinding) : BaseAssetViewHolder<ItemAssetRoleBinding>(binding) {
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
                 // 使用 getVm 维护状态
-                val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item) {
-                    ItemAssetsChildVm(item)
-                }
+                val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item, {
+                    ItemAssetsChildVm(item, model, itemClickVm).apply {
+                        if (appearanceId == item.assetAppearanceId) {
+                            selectModel.set(true)
+                        }
+                    }
+                }, {})
                 vm.updateData(item)
                 binding.item = vm
                 binding.executePendingBindings()
@@ -87,9 +97,13 @@ class AssetsChildAdapter : PagingDataAdapter<SimpleAsset, RecyclerView.ViewHolde
     inner class SceneViewHolder(binding: ItemAssetSceneBinding) : BaseAssetViewHolder<ItemAssetSceneBinding>(binding) {
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
-                val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item) {
-                    ItemAssetsChildVm(item)
-                }
+                val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item, viewModelFactory = {
+                    ItemAssetsChildVm(item, model, itemClickVm).apply {
+                        if (appearanceId == item.assetAppearanceId) {
+                            selectModel.set(true)
+                        }
+                    }
+                }, {})
                 vm.updateData(item)
                 binding.item = vm
                 binding.executePendingBindings()
@@ -100,9 +114,13 @@ class AssetsChildAdapter : PagingDataAdapter<SimpleAsset, RecyclerView.ViewHolde
     inner class PropViewHolder(binding: ItemAssetPropBinding) : BaseAssetViewHolder<ItemAssetPropBinding>(binding) {
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
-                val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item) {
-                    ItemAssetsChildVm(item)
-                }
+                val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item, viewModelFactory = {
+                    ItemAssetsChildVm(item, model, itemClickVm).apply {
+                        if (appearanceId == item.assetAppearanceId) {
+                            selectModel.set(true)
+                        }
+                    }
+                }, {})
                 vm.updateData(item)
                 binding.item = vm
                 binding.executePendingBindings()

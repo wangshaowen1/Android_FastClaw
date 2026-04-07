@@ -335,6 +335,10 @@
         <activity android:name=".feature.splash.newer.GuideStep2StorySelectActivity"  android:screenOrientation="portrait"/>
         <activity android:name=".feature.splash.newer.GuideStep3GeneratingActivity"  android:screenOrientation="portrait"/>
         <activity android:name=".feature.splash.newer.GuideStep4VideoActivity"  android:screenOrientation="portrait"/>
+        <activity android:name=".feature.works.assetmanager.child.AssetSelectActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature.works.assetmanager.AssetDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature.works.assetmanager.AssetsActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature.works.assetmanager.roleimage.RoleImageSelectActivity" />
     </application>
     <queries>
         <intent>

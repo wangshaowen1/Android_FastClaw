@@ -18,6 +18,7 @@ import com.kgmedia.fastfilm.core.ext.PollingState
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchPolling
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
+import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
@@ -51,8 +52,8 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
     )
 
     val info by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, SimpleAsset::class.java) }
+    val roleImageInfo by lazy { mBundle.getParcelableValue(Constants.Extra.ROLE_IMAGE, RoleImageInfo::class.java) }
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
-    val storyId by lazy { mBundle.getString(Constants.Extra.STORY_ID) }
     val maxLength = 200
 
     val prompt = ObservableField<String>()
@@ -66,6 +67,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
      * -1=新创建 0=待生成 1=生成中 2=成功 3=失败
      */
     val status by lazy { ObservableInt() }
+    var newAppearanceId: String? = null
 
 
     var scriptPollingJob: Job? = null
@@ -73,22 +75,32 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
 
     override fun onCreate() {
         super.onCreate()
-        info?.let {
-            prompt.set(it.assetDesc)
-            image.set(it.assetImage)
-            status.set(it.status ?: 0)
+        if (roleImageInfo != null) {
+            roleImageInfo?.let {
+                prompt.set(it.rolePrompt)
+                image.set(it.imageUrl)
+                status.set(it.genStatus ?: 0)
 
-            generating.set(it.status == 1)
-            subTitle.set(
-                when (info) {
-                    is SimpleRoleInfo -> getString(R.string.role_desc)
-                    is SimpleSceneInfo -> getString(R.string.scene_desc)
-                    else -> getString(R.string.prop_desc)
-                }
-            )
+                generating.set(it.genStatus == 1)
+                subTitle.set(getString(R.string.role_desc))
+            }
+        } else {
+            info?.let {
+                prompt.set(it.assetDesc)
+                image.set(it.assetImage)
+                status.set(it.status ?: 0)
 
-            getPrice()
+                generating.set(it.status == 1)
+                subTitle.set(
+                    when (info) {
+                        is SimpleRoleInfo -> getString(R.string.role_desc)
+                        is SimpleSceneInfo -> getString(R.string.scene_desc)
+                        else -> getString(R.string.prop_desc)
+                    }
+                )
+            }
         }
+        getPrice()
     }
 
     fun getPrice() {
@@ -101,7 +113,18 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
 
     fun reGenerate() {
         launchWithLoading {
-            response(mRepo.api.workAssetSingleGenerate(GenerateAssetBody())) {
+            response(
+                mRepo.api.workAssetSingleRegenerate(
+                    GenerateAssetBody(
+                        workId = workId,
+                        assetId = info?.assetId,
+                        appearanceId = roleImageInfo?.appearanceId ?: info?.assetAppearanceId,
+                        referenceImageInStatus = 0,
+                        bizType = 51,
+                    )
+                )
+            ) {
+                newAppearanceId = data?.newAppearanceId
                 hasChanged.value = true
                 generating.set(true)
                 loopGenStatus(data?.taskId)
@@ -151,9 +174,9 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                     is SimpleRoleInfo -> {
                         mRepo.workAssetRoleSave(
                             info?.assetId,
-                            info?.assetAppearanceId,
+                            newAppearanceId,
                             workId,
-                            storyId,
+                            null,
                             info?.assetName,
                             prompt.get()
                         )
@@ -162,9 +185,9 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                     is SimpleSceneInfo -> {
                         mRepo.workAssetSceneSave(
                             info?.assetId,
-                            info?.assetAppearanceId,
+                            newAppearanceId,
                             workId,
-                            storyId,
+                            null,
                             info?.assetName,
                             prompt.get()
                         )
@@ -173,9 +196,9 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                     else -> {
                         mRepo.workAssetPropSave(
                             info?.assetId,
-                            info?.assetAppearanceId,
+                            newAppearanceId,
                             workId,
-                            storyId,
+                            null,
                             info?.assetName,
                             prompt.get()
                         )

@@ -35,10 +35,10 @@ class AssetsActivity : BaseViewModelActivity<ActivityAssetsBinding, AssetsViewMo
 
 
     companion object {
-        const val TAG = "AssetManagerActivity"
+        const val TAG = "AssetsActivity"
 
         @JvmStatic
-        fun start(context: Context?, workId: String?,workTitle: String?) {
+        fun start(context: Context?, workId: String?, workTitle: String?) {
             if (context == null) return
             val starter = Intent(context, AssetsActivity::class.java)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
@@ -48,11 +48,13 @@ class AssetsActivity : BaseViewModelActivity<ActivityAssetsBinding, AssetsViewMo
     }
 
     // 模拟数据源
-    private val mDataList = mutableListOf(
-        TabEntity(getString(R.string.roles), 0),
-        TabEntity(getString(R.string.scenes), 0),
-        TabEntity(getString(R.string.props), 0)
-    )
+    private val mDataList by lazy {
+        mutableListOf(
+            TabEntity(getString(R.string.roles), 0),
+            TabEntity(getString(R.string.scenes), 0),
+            TabEntity(getString(R.string.props), 0)
+        )
+    }
 
     private lateinit var navigator: CommonNavigator
 

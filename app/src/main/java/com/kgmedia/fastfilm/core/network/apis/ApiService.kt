@@ -17,6 +17,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.OrderStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.RoleTagInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SaveSequelNovelStoryInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SegmentImageHistoryInfo
@@ -78,10 +79,10 @@ import com.kgmedia.fastfilm.core.network.apis.request.PopularRecommendDramasIdBo
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateBody
 import com.kgmedia.fastfilm.core.network.apis.request.PowerCalculateData
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
-import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReferenceImageBody
 import com.kgmedia.fastfilm.core.network.apis.request.ReportSubmissionBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.RoleIdPagedBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleImageRegenerateBody
 import com.kgmedia.fastfilm.core.network.apis.request.RoleSwitchBody
 import com.kgmedia.fastfilm.core.network.apis.request.SSEContentBody
@@ -751,19 +752,25 @@ interface ApiService {
      * 作品角色列表
      */
     @POST(ApiConstants.WORK_ASSET_ROLE_PAGE)
-    suspend fun workAssetRolePage(@Body body: QueryAssetPagedBody): ApiResponse<PagedList<SimpleRoleInfo>?>
+    suspend fun workAssetRolePage(@Body body: WorkIdPagedBody): ApiResponse<PagedList<SimpleRoleInfo>?>
+
+    /**
+     * 作品角色形象列表
+     */
+    @POST(ApiConstants.WORK_ASSET_ROLE_IMAGE_PAGE)
+    suspend fun workAssetRoleImagePage(@Body body: RoleIdPagedBody): ApiResponse<PagedList<RoleImageInfo>?>
 
     /**
      * 作品道具列表
      */
     @POST(ApiConstants.WORK_ASSET_PROP_PAGE)
-    suspend fun workAssetPropPage(@Body body: QueryAssetPagedBody): ApiResponse<PagedList<SimplePropInfo>?>
+    suspend fun workAssetPropPage(@Body body: WorkIdPagedBody): ApiResponse<PagedList<SimplePropInfo>?>
 
     /**
      * 作品场景列表
      */
     @POST(ApiConstants.WORK_ASSET_SCENE_PAGE)
-    suspend fun workAssetScenePage(@Body body: QueryAssetPagedBody): ApiResponse<PagedList<SimpleSceneInfo>?>
+    suspend fun workAssetScenePage(@Body body: WorkIdPagedBody): ApiResponse<PagedList<SimpleSceneInfo>?>
 
     /**
      * 角色保存
@@ -800,6 +807,12 @@ interface ApiService {
      */
     @POST(ApiConstants.WORK_ASSET_SINGLE_GENERATE)
     suspend fun workAssetSingleGenerate(@Body body: GenerateAssetBody): ApiResponse<TaskStatusInfo?>
+
+    /**
+     * 重新生成资产图片(需要手动保存的接口)
+     */
+    @POST(ApiConstants.WORK_ASSET_SINGLE_REGENERATE)
+    suspend fun workAssetSingleRegenerate(@Body body: GenerateAssetBody): ApiResponse<TaskStatusInfo?>
 
     /**
      * 一键生成所有资产图片
@@ -1139,4 +1152,22 @@ interface ApiService {
      */
     @POST(ApiConstants.ASSET_FOLDER_LIST)
     suspend fun assetFolderList(@Body body: PagedBody): ApiResponse<PagedList<WorkInfo>?>
+
+    /**
+     * 资产管理角色图片删除
+     */
+    @POST(ApiConstants.ROLE_IMAGE_DELETE)
+    suspend fun roleImageDelete(@Body body: IdsBody): ApiResponse<Any?>
+
+    /**
+     * 资产管理道具图片删除
+     */
+    @POST(ApiConstants.PROP_IMAGE_DELETE)
+    suspend fun propImageDelete(@Body body: IdsBody): ApiResponse<Any?>
+
+    /**
+     * 资产管理场景图片删除
+     */
+    @POST(ApiConstants.SCENE_IMAGE_DELETE)
+    suspend fun sceneImageDelete(@Body body: IdsBody): ApiResponse<Any?>
 }

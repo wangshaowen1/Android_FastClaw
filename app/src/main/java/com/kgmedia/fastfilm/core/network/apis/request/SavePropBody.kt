@@ -35,4 +35,5 @@ data class SavePropBody(
      * 道具图片描述提示词
      */
     val propPrompt: String?,
+    val imageUrl: String? = null,//图片地址
 )

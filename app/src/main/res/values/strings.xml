@@ -509,5 +509,9 @@
     <string name="exit_without_saving">退出不保存</string>
     <string name="save_and_overwrite">保存并覆盖</string>
     <string name="confirm_overwrite_asset_warning">图片保存后将覆盖原资源，覆盖后不可恢复，请确认是否继续？</string>
+    <string name="select_prop">选择道具</string>
+    <string name="select_scene">选择场景</string>
+    <string name="select_role_image">选择形象</string>
+    <string name="character_appearance">角色形象</string>
 </resources>
 

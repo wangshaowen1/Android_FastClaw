@@ -10,7 +10,7 @@ package com.kgmedia.fastfilm.core.network.apis.request
  * }
  */
 data class IdsBody(
-    val ids: List<String>?,
-    val id: String?,
+    val ids: List<String>?=null,
+    val id: String?=null,
     val operateType: Int? = null
 )

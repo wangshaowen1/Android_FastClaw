@@ -1,6 +1,8 @@
 package com.kgmedia.fastfilm.core.network.apis.entity
 
-interface SimpleAsset {
+import android.os.Parcelable
+
+interface SimpleAsset : Parcelable {
     val assetId: String?
     val assetAppearanceId: String?
     val status: Int?
@@ -8,5 +10,7 @@ interface SimpleAsset {
     val assetName: String?
     val assetImage: String?
     val showReference: Boolean
-    val assetTaskId:String?
+    val assetTaskId: String?
+
+    fun setAssetImage(imageUrl: String?)
 }

@@ -6,9 +6,9 @@ import com.kgmedia.fastfilm.core.network.apis.ApiException
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
-import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetPagedBody
+import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 
-class AssetChildPagingSource(val body: QueryAssetBody, val totalCountBack: (Int) -> Unit) : PagingSource<Int, SimpleAsset>() {
+class AssetChildPagingSource(val bizType: Int, val workId: String?, val totalCountBack: (Int) -> Unit) : PagingSource<Int, SimpleAsset>() {
 
     override fun getRefreshKey(state: PagingState<Int, SimpleAsset>): Int? {
         return null
@@ -17,8 +17,8 @@ class AssetChildPagingSource(val body: QueryAssetBody, val totalCountBack: (Int)
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SimpleAsset> {
         return try {
             val pageNum = params.key ?: 1
-            val body = QueryAssetPagedBody(body.assetId, body.appearanceId, body.bizType, body.storyId, body.workId, pageNum, params.loadSize)
-            val apiResponse = when (body.bizType) {
+            val body = WorkIdPagedBody(workId, pageNum, params.loadSize)
+            val apiResponse = when (bizType) {
                 QueryAssetBody.BIZ_TYPE_ROLE -> ApiFactory.apiService.workAssetRolePage(body)
                 QueryAssetBody.BIZ_TYPE_PROP -> ApiFactory.apiService.workAssetPropPage(body)
                 else -> ApiFactory.apiService.workAssetScenePage(body)

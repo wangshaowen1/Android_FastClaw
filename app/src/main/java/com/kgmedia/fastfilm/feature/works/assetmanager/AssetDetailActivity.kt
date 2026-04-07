@@ -9,7 +9,9 @@ import android.view.View
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
+import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.databinding.ActivityAssetDtlBinding
 import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.nhsd.basic.BaseViewModelActivity
@@ -45,11 +47,19 @@ class AssetDetailActivity : BaseViewModelActivity<ActivityAssetDtlBinding, Asset
 //        }
 
         @JvmStatic
-        fun <T> start(context: Context, workId: String?, storyId: String?, info: T?) where T : SimpleAsset, T : Parcelable {
+        fun <T> start(context: Context, workId: String?,info: T?) where T : SimpleAsset, T : Parcelable {
             val starter = Intent(context, AssetDetailActivity::class.java)
             starter.putExtra(Constants.Extra.DATA, info)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
-            starter.putExtra(Constants.Extra.STORY_ID, storyId)
+            context.startActivity(starter)
+        }
+
+        @JvmStatic
+        fun start(context: Context, workId: String?, roleInfo: SimpleRoleInfo?, info: RoleImageInfo?) {
+            val starter = Intent(context, AssetDetailActivity::class.java)
+            starter.putExtra(Constants.Extra.ROLE_IMAGE, info)
+            starter.putExtra(Constants.Extra.DATA, roleInfo)
+            starter.putExtra(Constants.Extra.WORK_ID, workId)
             context.startActivity(starter)
         }
     }

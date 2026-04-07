@@ -35,13 +35,13 @@ class AssetFolderAdapter : PagingDataAdapter<WorkInfo, RecyclerView.ViewHolder>(
 
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
-                val transVM = binding.getVm<ItemAssetFolderVm, WorkInfo>(key = item.workId, item) {
+                val transVM = binding.getVm<ItemAssetFolderVm, WorkInfo>(key = item.workId, item, viewModelFactory = {
                     ItemAssetFolderVm(item).apply {
                         onItemClick.value = {
                             AssetsActivity.start(topActivity, item.workId, item.workTitle)
                         }
                     }
-                }
+                }, { })
                 transVM.updateData(item)
                 binding.item = transVM
                 binding.executePendingBindings()

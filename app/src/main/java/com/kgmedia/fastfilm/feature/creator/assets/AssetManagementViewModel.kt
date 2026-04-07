@@ -20,9 +20,12 @@ import com.kgmedia.fastfilm.core.ext.showRechargeDialog
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
+import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
+import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
@@ -117,6 +120,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     val hasRole by lazy { ObservableBoolean(false) }
     val hasScene by lazy { ObservableBoolean(false) }
     val hasProp by lazy { ObservableBoolean(false) }
+
+    var onAssetImageSelectEvent: ((ItemAssetVM<*>) -> Unit)? = null
 
     override fun onResume() {
         super.onResume()
@@ -267,9 +272,11 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
     private fun SimpleRoleInfo.toItemAssetVM() =
         ItemRoleVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
 
-    private fun SimpleSceneInfo.toItemAssetVM() = ItemSceneVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
+    private fun SimpleSceneInfo.toItemAssetVM() =
+        ItemSceneVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
 
-    private fun SimplePropInfo.toItemAssetVM() = ItemPropVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
+    private fun SimplePropInfo.toItemAssetVM() =
+        ItemPropVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
 
     fun addRole(addItem: ItemAddVM) {
         val index = adapter.items.indexOf(addItem)
@@ -329,7 +336,17 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         onItemClick.value = click@{ view ->
             when (view?.id) {
                 R.id.ivCover -> {
+                    if (assetImage.get().isNullOrEmpty()) {
+                        onAssetImageSelectEvent?.invoke(this)
+                        return@click
+                    }
                     assetImage.get()?.let { PhotoPagerActivity.launch(topActivity, it) }
+                }
+
+                R.id.btnImageDel -> {
+                    data.get()?.let {
+                        imageDel(this)
+                    }
                 }
 
                 R.id.etAssetDesc -> {
@@ -354,7 +371,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         editAssetDesc()
                     } else {
                         editConfirm = true
-                        topActivity?.showCommonDialog(tip = R.string.edit_text_warning.getResString(), confirmText =
+                        topActivity?.showCommonDialog(
+                            tip = R.string.edit_text_warning.getResString(), confirmText =
                                 R.string.continue_editing.getResString()
                         ) {
                             editAssetDesc()
@@ -375,7 +393,11 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         adapter.remove(this)
                         onItemChanged(false)
                     } else {
-                        topActivity?.showCommonDialog(title = R.string.confirm_deletion.getResString(), tip = R.string.delete_impact_warning.getResString(), confirmText = R.string.del.getResString()) {
+                        topActivity?.showCommonDialog(
+                            title = R.string.confirm_deletion.getResString(),
+                            tip = R.string.delete_impact_warning.getResString(),
+                            confirmText = R.string.del.getResString()
+                        ) {
                             deleteAsset(this)
                         }
                     }
@@ -501,6 +523,76 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         launchWithLoading {
             response(mRepo.api.generateAllStoryboardDescription(WorkBody(workId, storyId))) {
                 toNextStep?.invoke(workId, storyId, data?.taskId)
+            }
+        }
+    }
+
+    fun imageDel(vm: ItemAssetVM<*>?) {
+        launchWithLoading {
+            val asset = vm?.data?.get()
+            val response = withContext(Dispatchers.IO) {
+                when (asset) {
+                    is SimpleRoleInfo -> mRepo.api.roleImageDelete(IdsBody(id = asset.assetAppearanceId))
+                    is SimpleSceneInfo -> mRepo.api.sceneImageDelete(IdsBody(id = asset.assetAppearanceId))
+                    else -> mRepo.api.propImageDelete(IdsBody(id = asset?.assetAppearanceId))
+                }
+            }
+            if (!response.isSuccess) {
+                response.msg?.showToast()
+                return@launchWithLoading
+            } else {
+                vm?.assetImage?.set(null)
+            }
+        }
+    }
+
+    fun saveImage(simpleAsset: SimpleAsset?, roleImageInfo: RoleImageInfo?) {
+        launchWithLoading {
+            val response = withContext(Dispatchers.IO) {
+                when (simpleAsset) {
+                    is SimpleSceneInfo -> mRepo.workAssetSceneSave(
+                        simpleAsset?.assetId,
+                        simpleAsset?.assetAppearanceId,
+                        workId,
+                        storyId,
+                        simpleAsset?.assetName,
+                        simpleAsset?.assetDesc,
+                        simpleAsset?.assetImage
+                    )
+
+                    is SimplePropInfo -> mRepo.workAssetPropSave(
+                        simpleAsset?.assetId,
+                        simpleAsset?.assetAppearanceId,
+                        workId,
+                        storyId,
+                        simpleAsset?.assetName,
+                        simpleAsset?.assetDesc,
+                        simpleAsset?.assetImage
+                    )
+
+                    else -> mRepo.workAssetRoleSave(
+                        simpleAsset?.assetId,
+                        roleImageInfo?.appearanceId,
+                        workId,
+                        storyId,
+                        simpleAsset?.assetName,
+                        roleImageInfo?.rolePrompt,
+                        roleImageInfo?.sourceAppearanceId,
+                        roleImageInfo?.imageUrl
+                    )
+                }
+            }
+            if (response.isSuccess) {
+                val index = adapter.items.indexOfFirst {
+                    it is ItemAssetVM<*> && it.data.get()?.assetId == simpleAsset?.assetId
+                }
+                if (index != -1) {
+                    val item = adapter.items[index]
+                    (item.data.get() as? SimpleAsset)?.setAssetImage(response.data?.assetImage)
+                    adapter.notifyItemChanged(index)
+                }
+            } else {
+                response.msg?.showToast()
             }
         }
     }

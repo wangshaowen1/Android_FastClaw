@@ -60,9 +60,9 @@ class AssetManagementRepository : AppRepository() {
         workId: String?,
         storyId: String?,
         sceneName: String?,
-        scenePrompt: String?
+        scenePrompt: String?, imageUrl: String? = null
     ) = withContext(Dispatchers.IO) {
-        api.workAssetSceneSave(SaveSceneBody(sceneId, appearanceId, workId, storyId, sceneName, scenePrompt))
+        api.workAssetSceneSave(SaveSceneBody(sceneId, appearanceId, workId, storyId, sceneName, scenePrompt, imageUrl))
     }
 
     /**
@@ -93,8 +93,9 @@ class AssetManagementRepository : AppRepository() {
      * @param roleName 角色名称
      * @param rolePrompt 角色图片描述提示词
      */
-    suspend fun workAssetRoleSave(roleId: String?, appearanceId: String?, workId: String?, storyId: String?, roleName: String?, rolePrompt: String?) = withContext(Dispatchers.IO) {
-        api.workAssetRoleSave(SaveRoleBody(roleId, appearanceId, workId, storyId, roleName, rolePrompt))
+    suspend fun workAssetRoleSave(roleId: String?, appearanceId: String?, workId: String?, storyId: String?, roleName: String?, rolePrompt: String?, parentAppearanceId: String? = null,//基于某个形象重新生成时传入，为空则视为原始生成
+                                  imageUrl: String? = null) = withContext(Dispatchers.IO) {
+        api.workAssetRoleSave(SaveRoleBody(roleId, appearanceId, workId, storyId, roleName, rolePrompt, parentAppearanceId, imageUrl))
     }
 
     /**
@@ -125,8 +126,8 @@ class AssetManagementRepository : AppRepository() {
      * @param propName 道具名称
      * @param propPrompt 道具图片描述提示词
      */
-    suspend fun workAssetPropSave(propId: String?, appearanceId: String?, workId: String?, storyId: String?, propName: String?, propPrompt: String?) = withContext(Dispatchers.IO) {
-        api.workAssetPropSave(SavePropBody(propId, appearanceId, workId, storyId, propName, propPrompt))
+    suspend fun workAssetPropSave(propId: String?, appearanceId: String?, workId: String?, storyId: String?, propName: String?, propPrompt: String?, imageUrl: String? = null) = withContext(Dispatchers.IO) {
+        api.workAssetPropSave(SavePropBody(propId, appearanceId, workId, storyId, propName, propPrompt,imageUrl))
     }
 
     /**

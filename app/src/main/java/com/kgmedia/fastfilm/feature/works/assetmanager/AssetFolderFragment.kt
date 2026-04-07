@@ -5,7 +5,9 @@ import androidx.lifecycle.lifecycleScope
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.databinding.FragmentAssetFolderBinding
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
+import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
 import com.kgmedia.fastfilm.widget.decoration.TopSpaceDecoration
+import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
@@ -37,7 +39,7 @@ class AssetFolderFragment : BaseViewModelFragment<FragmentAssetFolderBinding, As
 
     private fun initView() {
         binding.recyclerView.apply {
-            addItemDecoration(TopSpaceDecoration(14.dp))
+            addItemDecoration(SpaceDecoration(12.dp))
             addItemDecoration(GridSpacingItemDecoration(3, 0, 23.dp))
             isFocusable = false
             adapter =
@@ -46,6 +48,7 @@ class AssetFolderFragment : BaseViewModelFragment<FragmentAssetFolderBinding, As
                         hostAdapter = assetFolderAdapter,
                         noMoreThreshold = 9
                     ) { assetFolderAdapter.retry() })
+            binding.recyclerView.applyGridSpanSizeLookup()
         }
         binding.srl.startRefreshWithAdapter(
             pagingDataAdapter = assetFolderAdapter

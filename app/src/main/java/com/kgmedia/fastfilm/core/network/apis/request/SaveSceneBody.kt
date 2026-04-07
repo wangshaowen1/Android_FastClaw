@@ -36,4 +36,5 @@ data class SaveSceneBody(
      * 场景图片描述提示词
      */
     val scenePrompt: String?,
+    val imageUrl: String? = null,//图片地址
 )

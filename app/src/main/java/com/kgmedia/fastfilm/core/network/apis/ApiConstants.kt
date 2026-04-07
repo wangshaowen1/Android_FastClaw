@@ -478,7 +478,7 @@ object ApiConstants {
     /**
      * 场景保存
      */
-    const val WORK_ASSET_SCENE_SAVE = "work/asset/scene/save"
+    const val WORK_ASSET_SCENE_SAVE = "v2/work/asset/scene/save"
 
     /**
      * 场景单个删除
@@ -496,9 +496,14 @@ object ApiConstants {
     const val WORK_ASSET_ROLE_PAGE = "v2/work/asset/role/list"
 
     /**
+     * 角色形象列表
+     */
+    const val WORK_ASSET_ROLE_IMAGE_PAGE = "v2/work/asset/role/appearance/list"
+
+    /**
      * 角色保存
      */
-    const val WORK_ASSET_ROLE_SAVE = "work/asset/role/save"
+    const val WORK_ASSET_ROLE_SAVE = "v2/work/asset/role/save"
 
     /**
      * 角色单个删除
@@ -518,7 +523,7 @@ object ApiConstants {
     /**
      * 道具保存
      */
-    const val WORK_ASSET_PROP_SAVE = "work/asset/prop/save"
+    const val WORK_ASSET_PROP_SAVE = "v2/work/asset/prop/save"
 
     /**
      * 道具单个删除
@@ -529,6 +534,11 @@ object ApiConstants {
      * 生成单个资产图片（重新生成/生成）
      */
     const val WORK_ASSET_SINGLE_GENERATE = "ai/asset/generation/single/image"
+
+    /**
+     * 重新生成资产图片(需要手动保存的接口)
+     */
+    const val WORK_ASSET_SINGLE_REGENERATE = "v2/work/asset/generation/image"
 
     /**
      * 一键生成所有资产图片
@@ -806,5 +816,18 @@ object ApiConstants {
     /**
      * 资产管理文件夹列表
      */
-    const val ASSET_FOLDER_LIST = "work/asset/folder/list"
+    const val ASSET_FOLDER_LIST = "v2/work/asset/folder/list"
+
+    /**
+     * 角色形象图片删除
+     */
+    const val ROLE_IMAGE_DELETE = "v2/work/asset/role/delete"
+    /**
+     * 道具图片删除
+     */
+    const val PROP_IMAGE_DELETE = "v2/work/asset/prop/delete"
+    /**
+     * 场景图片删除
+     */
+    const val SCENE_IMAGE_DELETE = "v2/work/asset/scene/delete"
 }
