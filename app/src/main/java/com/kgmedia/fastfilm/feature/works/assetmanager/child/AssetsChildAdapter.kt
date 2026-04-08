@@ -82,8 +82,9 @@ class AssetsChildAdapter(
                 // 使用 getVm 维护状态
                 val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item, {
                     ItemAssetsChildVm(item, model, itemClickVm).apply {
-                        if (appearanceId == item.assetAppearanceId) {
+                        if (model && appearanceId == item.assetAppearanceId) {
                             selectModel.set(true)
+                            itemClickVm.postEvent(AssetsEvent.Select(this))
                         }
                     }
                 }, {})
@@ -99,8 +100,9 @@ class AssetsChildAdapter(
             getItem(position)?.let { item ->
                 val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item, viewModelFactory = {
                     ItemAssetsChildVm(item, model, itemClickVm).apply {
-                        if (appearanceId == item.assetAppearanceId) {
+                        if (model && appearanceId == item.assetAppearanceId) {
                             selectModel.set(true)
+                            itemClickVm.postEvent(AssetsEvent.Select(this))
                         }
                     }
                 }, {})
@@ -116,8 +118,9 @@ class AssetsChildAdapter(
             getItem(position)?.let { item ->
                 val vm = binding.getVm<ItemAssetsChildVm, SimpleAsset>(key = item.assetId, item, viewModelFactory = {
                     ItemAssetsChildVm(item, model, itemClickVm).apply {
-                        if (appearanceId == item.assetAppearanceId) {
+                        if (model && appearanceId == item.assetAppearanceId) {
                             selectModel.set(true)
+                            itemClickVm.postEvent(AssetsEvent.Select(this))
                         }
                     }
                 }, {})

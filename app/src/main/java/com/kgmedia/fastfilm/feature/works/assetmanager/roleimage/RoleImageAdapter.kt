@@ -53,8 +53,9 @@ class RoleImageAdapter(
                 // 使用 getVm 维护状态
                 val vm = binding.getVm<ItemRoleImageVm, RoleImageInfo>(key = item.appearanceId, item, viewModelFactory = {
                     ItemRoleImageVm(item, model, itemClickVm).apply {
-                        if (appearanceId == item.appearanceId) {
+                        if (model && appearanceId == item.appearanceId) {
                             selectModel.set(true)
+                            itemClickVm.postEvent(RoleImageEvent.Select(this))
                         }
                     }
                 },{})

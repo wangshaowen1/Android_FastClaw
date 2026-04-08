@@ -26,6 +26,7 @@ class AssetSelectViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val bizType by lazy { mBundle.getInt(Constants.Extra.TYPE) }
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    var selectedItem: SimpleAsset? = null
 
     var totalCountBack: (Int) -> Unit = {}
 

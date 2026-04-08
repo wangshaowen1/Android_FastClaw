@@ -62,9 +62,11 @@ class AssetsChildFragment : BaseViewModelFragment<FragmentAssetsChildBinding, As
     private fun initView() {
         binding.recyclerView.apply {
             addItemDecoration(SpaceDecoration(12.dp))
-            addItemDecoration(GridSpacingItemDecoration(3, 12.dp, 0))
             if (mRealVM.bizType == QueryAssetBody.BIZ_TYPE_SCENE) {
                 layoutManager = GridLayoutManager(mActivity, 2)
+                addItemDecoration(GridSpacingItemDecoration(2, 12.dp, 0))
+            }else{
+                addItemDecoration(GridSpacingItemDecoration(3, 12.dp, 0))
             }
             isFocusable = false
             adapter =

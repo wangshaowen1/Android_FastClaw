@@ -11,11 +11,11 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.databinding.ActivityRoleImageSelectBinding
 import com.kgmedia.fastfilm.feature.works.assetmanager.AssetDetailActivity
 import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
-import com.kgmedia.fastfilm.widget.decoration.TopSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.item.BaseItemEventsViewModel
 import kotlinx.coroutines.launch
 
@@ -52,6 +52,7 @@ class RoleImageSelectActivity : BaseViewModelActivity<ActivityRoleImageSelectBin
         super.onCreate(savedInstanceState)
         initView()
         dataUpdate()
+        initListener()
     }
 
     private fun initView() {
@@ -93,6 +94,21 @@ class RoleImageSelectActivity : BaseViewModelActivity<ActivityRoleImageSelectBin
                     }
                 }
             }
+        }
+    }
+
+    fun initListener() {
+        binding.btnCancel.setOnSingleClickListener {
+            onBackPressed()
+        }
+        binding.btnConfirm.setOnSingleClickListener {
+            if (mRealVM.mSelectedItem != null) {
+                setResult(RESULT_OK, Intent().apply {
+                    putExtra(Constants.Extra.DATA, mRealVM.roleInfo)
+                    putExtra(Constants.Extra.ROLE_IMAGE, mRealVM.mSelectedItem)
+                })
+            }
+            finish()
         }
     }
 }

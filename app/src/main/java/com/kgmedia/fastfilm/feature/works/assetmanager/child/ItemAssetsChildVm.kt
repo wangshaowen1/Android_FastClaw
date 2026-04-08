@@ -1,9 +1,11 @@
 package com.kgmedia.fastfilm.feature.works.assetmanager.child
 
 import androidx.databinding.ObservableBoolean
+import androidx.lifecycle.viewModelScope
 import com.kgmedia.fastfilm.base.item.AppItemViewModel
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.nhsd.basic.item.BaseItemEventsViewModel
+import kotlinx.coroutines.launch
 
 class ItemAssetsChildVm(
     data: SimpleAsset?,
@@ -15,6 +17,20 @@ class ItemAssetsChildVm(
 
     init {
         selectModel.set(model)
+        if (model) {
+            viewModelScope.launch {
+                itemClickVm.events.collect {
+                    when (it) {
+                        is AssetsEvent.Click -> {
+                        }
+
+                        is AssetsEvent.Select -> {
+                            checked.set(it.item?.data?.get()?.assetId == data?.assetId)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun onItemClick() {

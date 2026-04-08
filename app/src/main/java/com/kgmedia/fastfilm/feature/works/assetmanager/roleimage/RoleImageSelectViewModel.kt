@@ -27,6 +27,7 @@ class RoleImageSelectViewModel : AppRepositoryViewModel<AppRepository>() {
     val selectModel by lazy { mBundle.getBoolean(Constants.Extra.SELECT_MODE, false) }
     val roleInfo by lazy { mBundle.getParcelableValue(Constants.Extra.DATA, SimpleRoleInfo::class.java) }
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
+    var mSelectedItem: RoleImageInfo? = null
 
 
     override fun onCreate() {

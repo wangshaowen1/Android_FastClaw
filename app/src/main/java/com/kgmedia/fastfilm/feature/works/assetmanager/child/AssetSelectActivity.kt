@@ -3,17 +3,20 @@ package com.kgmedia.fastfilm.feature.works.assetmanager.child
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
+import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.databinding.ActivityAssetSelectBinding
-import com.kgmedia.fastfilm.widget.decoration.TopSpaceDecoration
+import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
+import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.item.BaseItemEventsViewModel
 import kotlinx.coroutines.launch
 
@@ -45,12 +48,34 @@ class AssetSelectActivity : BaseViewModelActivity<ActivityAssetSelectBinding, As
         super.onCreate(savedInstanceState)
         initView()
         dataUpdate()
+        initListener()
+    }
+
+    fun initListener() {
+        binding.btnCancel.setOnSingleClickListener {
+            onBackPressed()
+        }
+        binding.btnConfirm.setOnSingleClickListener {
+            if (mRealVM.selectedItem != null) {
+                setResult(RESULT_OK, Intent().apply {
+                    putExtra(Constants.Extra.DATA, mRealVM.selectedItem)
+                })
+            }
+            finish()
+        }
     }
 
     private fun initView() {
         binding.recyclerView.apply {
-            addItemDecoration(TopSpaceDecoration(14.dp))
+            addItemDecoration(SpaceDecoration(14.dp))
+
             isFocusable = false
+            if (mRealVM.bizType == QueryAssetBody.BIZ_TYPE_SCENE) {
+                layoutManager = GridLayoutManager(this@AssetSelectActivity, 2)
+                addItemDecoration(GridSpacingItemDecoration(2, 12.dp, 0))
+            } else {
+                addItemDecoration(GridSpacingItemDecoration(3, 12.dp, 0))
+            }
             adapter =
                 assetsChildAdapter.withLoadStateFooter(
                     MyMultiStatePagingFooterAdapter(
@@ -75,12 +100,11 @@ class AssetSelectActivity : BaseViewModelActivity<ActivityAssetSelectBinding, As
             itemClickVm.events.collect {
                 when (it) {
                     is AssetsEvent.Click -> {
+
                     }
 
                     is AssetsEvent.Select -> {
-                        setResult(RESULT_OK, Intent().apply {
-                            putExtra(Constants.Extra.DATA, it.item?.data?.get())
-                        })
+                        mRealVM.selectedItem = it.item?.data?.get()
                     }
                 }
             }
