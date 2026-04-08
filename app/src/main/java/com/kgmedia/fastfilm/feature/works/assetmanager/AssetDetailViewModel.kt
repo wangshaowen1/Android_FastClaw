@@ -32,7 +32,9 @@ import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.AssetManagementRepository
 import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getDrawable
 import com.nhsd.basic.ext.getParcelableValue
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +57,9 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                     })
             }
         },
+        menuButtonText = getString(R.string.save),
+        menuButtonBackground = R.drawable.bg_white_rectangle_corner_r50.getDrawable(),
+        menuButtonTextColor = R.color.bg_color_1_dark.getResColor(),
         menuEnable = hasChanged.value
     )
 
@@ -127,8 +132,8 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                 mRepo.api.workAssetSingleRegenerate(
                     GenerateAssetBody(
                         workId = workId,
-                        assetId = info?.assetId,
                         appearanceId = roleImageInfo?.appearanceId ?: info?.assetAppearanceId,
+                        prompt = prompt.get(),
                         bizType = when (info) {
                             is SimpleRoleInfo -> 41
                             is SimpleSceneInfo -> 61

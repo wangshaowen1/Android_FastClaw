@@ -19,7 +19,8 @@ class AssetFolderViewModel : AppRepositoryViewModel<AppRepository>() {
             config = PagingConfig(
                 initialLoadSize = Constant.Paged.PAGE_SIZE,
                 pageSize = Constant.Paged.PAGE_SIZE,
-                prefetchDistance = Constant.Paged.PREFETCH_DISTANCE,
+                enablePlaceholders = false,
+                prefetchDistance = Constant.Paged.PREFETCH_DISTANCE * 3,
             ),
             pagingSourceFactory = {
                 AssetFolderPagingSource()

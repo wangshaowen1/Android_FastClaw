@@ -1,7 +1,9 @@
 package com.kgmedia.fastfilm.feature.works.assetmanager.child
 
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
@@ -68,6 +70,7 @@ class AssetsChildFragment : BaseViewModelFragment<FragmentAssetsChildBinding, As
             }else{
                 addItemDecoration(GridSpacingItemDecoration(3, 12.dp, 0))
             }
+            itemAnimator = null
             isFocusable = false
             adapter =
                 assetsChildAdapter.withLoadStateFooter(
@@ -99,8 +102,10 @@ class AssetsChildFragment : BaseViewModelFragment<FragmentAssetsChildBinding, As
             }
         }
         lifecycleScope.launch {
-            mRealVM.getAssetsPage().collect {
-                assetsChildAdapter.submitData(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mRealVM.getAssetsPage().collect {
+                    assetsChildAdapter.submitData(it)
+                }
             }
         }
         lifecycleScope.launch {

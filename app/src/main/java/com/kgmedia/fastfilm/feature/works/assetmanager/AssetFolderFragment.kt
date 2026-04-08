@@ -1,7 +1,10 @@
 package com.kgmedia.fastfilm.feature.works.assetmanager
 
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.databinding.FragmentAssetFolderBinding
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
@@ -40,8 +43,11 @@ class AssetFolderFragment : BaseViewModelFragment<FragmentAssetFolderBinding, As
     private fun initView() {
         binding.recyclerView.apply {
             addItemDecoration(SpaceDecoration(12.dp))
-            addItemDecoration(GridSpacingItemDecoration(3, 0, 23.dp))
+            addItemDecoration(GridSpacingItemDecoration(3, 12.dp, 0))
             isFocusable = false
+            itemAnimator = null
+            assetFolderAdapter.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             adapter =
                 assetFolderAdapter.withLoadStateFooter(
                     MyMultiStatePagingFooterAdapter(
@@ -57,8 +63,10 @@ class AssetFolderFragment : BaseViewModelFragment<FragmentAssetFolderBinding, As
 
     private fun dataUpdate() {
         lifecycleScope.launch {
-            mRealVM.getAssetFolderPage().collect {
-                assetFolderAdapter.submitData(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mRealVM.getAssetFolderPage().collect {
+                    assetFolderAdapter.submitData(it)
+                }
             }
         }
     }

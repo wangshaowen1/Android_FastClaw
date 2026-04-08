@@ -11,7 +11,10 @@ import com.kgmedia.fastfilm.core.network.apis.request.WorkIdPagedBody
 class AssetChildPagingSource(val bizType: Int, val workId: String?, val totalCountBack: (Int) -> Unit) : PagingSource<Int, SimpleAsset>() {
 
     override fun getRefreshKey(state: PagingState<Int, SimpleAsset>): Int? {
-        return null
+        return state.anchorPosition?.let { anchorPosition ->
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+        }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SimpleAsset> {

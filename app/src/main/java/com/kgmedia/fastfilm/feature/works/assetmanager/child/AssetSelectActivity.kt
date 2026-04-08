@@ -3,8 +3,11 @@ package com.kgmedia.fastfilm.feature.works.assetmanager.child
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
@@ -68,7 +71,7 @@ class AssetSelectActivity : BaseViewModelActivity<ActivityAssetSelectBinding, As
     private fun initView() {
         binding.recyclerView.apply {
             addItemDecoration(SpaceDecoration(14.dp))
-
+            itemAnimator = null
             isFocusable = false
             if (mRealVM.bizType == QueryAssetBody.BIZ_TYPE_SCENE) {
                 layoutManager = GridLayoutManager(this@AssetSelectActivity, 2)
@@ -76,6 +79,8 @@ class AssetSelectActivity : BaseViewModelActivity<ActivityAssetSelectBinding, As
             } else {
                 addItemDecoration(GridSpacingItemDecoration(3, 12.dp, 0))
             }
+            assetsChildAdapter.stateRestorationPolicy =
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             adapter =
                 assetsChildAdapter.withLoadStateFooter(
                     MyMultiStatePagingFooterAdapter(
@@ -91,8 +96,10 @@ class AssetSelectActivity : BaseViewModelActivity<ActivityAssetSelectBinding, As
 
     private fun dataUpdate() {
         lifecycleScope.launch {
-            mRealVM.getAssetsPage().collect {
-                assetsChildAdapter.submitData(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mRealVM.getAssetsPage().collect {
+                    assetsChildAdapter.submitData(it)
+                }
             }
         }
 

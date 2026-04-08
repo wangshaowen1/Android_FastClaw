@@ -10,7 +10,10 @@ import com.kgmedia.fastfilm.core.network.apis.request.RoleIdPagedBody
 class RoleImagePagingSource(val roleId: String?) : PagingSource<Int, RoleImageInfo>() {
 
     override fun getRefreshKey(state: PagingState<Int, RoleImageInfo>): Int? {
-        return null
+        return state.anchorPosition?.let { anchorPosition ->
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+        }
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RoleImageInfo> {

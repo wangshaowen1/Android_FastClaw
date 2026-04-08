@@ -3,7 +3,9 @@ package com.kgmedia.fastfilm.feature.works.assetmanager.roleimage
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
@@ -76,8 +78,10 @@ class RoleImageSelectActivity : BaseViewModelActivity<ActivityRoleImageSelectBin
 
     private fun dataUpdate() {
         lifecycleScope.launch {
-            mRealVM.getRoleImages().collect {
-                imageAdapter.submitData(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mRealVM.getRoleImages().collect {
+                    imageAdapter.submitData(it)
+                }
             }
         }
 
