@@ -23,9 +23,9 @@ import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
+import com.kgmedia.fastfilm.core.network.apis.request.AppearanceIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.AssetSaveOverrideBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
-import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
@@ -232,9 +232,9 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
             val asset = info
             val response = withContext(Dispatchers.IO) {
                 when (asset) {
-                    is SimpleRoleInfo -> mRepo.api.roleImageDelete(IdsBody(id = newAppearanceId))
-                    is SimpleSceneInfo -> mRepo.api.sceneImageDelete(IdsBody(id = newAppearanceId))
-                    else -> mRepo.api.propImageDelete(IdsBody(id = newAppearanceId))
+                    is SimpleRoleInfo -> mRepo.api.roleImageDelete(AppearanceIdBody(newAppearanceId))
+                    is SimpleSceneInfo -> mRepo.api.sceneImageDelete(AppearanceIdBody(newAppearanceId))
+                    else -> mRepo.api.propImageDelete(AppearanceIdBody(newAppearanceId))
                 }
             }
             if (!response.isSuccess) {

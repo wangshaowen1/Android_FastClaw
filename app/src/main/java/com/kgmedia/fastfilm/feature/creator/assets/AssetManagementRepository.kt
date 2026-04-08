@@ -66,13 +66,6 @@ class AssetManagementRepository : AppRepository() {
     }
 
     /**
-     * 场景单个删除
-     */
-    suspend fun workAssetSceneDelete(ids: List<String>?, id: String?) = withContext(Dispatchers.IO) {
-        api.workAssetSceneDelete(IdsBody(ids, id))
-    }
-
-    /**
      * 角色列表
      * @param assetId 资产 ID （角色、道具、场景 id）根据业务类型判断，查询单个时入参
      * @param appearanceId 当前资产形象ID 查询单个时入参
@@ -99,13 +92,6 @@ class AssetManagementRepository : AppRepository() {
     }
 
     /**
-     * 角色单个删除
-     */
-    suspend fun workAssetRoleDelete(ids: List<String>?, id: String?) = withContext(Dispatchers.IO) {
-        api.workAssetRoleDelete(IdsBody(ids, id))
-    }
-
-    /**
      * 道具列表
      * @param assetId 资产 ID （角色、道具、场景 id）根据业务类型判断，查询单个时入参
      * @param appearanceId 当前资产形象ID 查询单个时入参
@@ -128,12 +114,5 @@ class AssetManagementRepository : AppRepository() {
      */
     suspend fun workAssetPropSave(propId: String?, appearanceId: String?, workId: String?, storyId: String?, propName: String?, propPrompt: String?, imageUrl: String? = null) = withContext(Dispatchers.IO) {
         api.workAssetPropSave(SavePropBody(propId, appearanceId, workId, storyId, propName, propPrompt,imageUrl))
-    }
-
-    /**
-     * 道具单个删除
-     */
-    suspend fun workAssetPropDelete(ids: List<String>?, id: String?) = withContext(Dispatchers.IO) {
-        api.workAssetPropDelete(IdsBody(ids, id))
     }
 }

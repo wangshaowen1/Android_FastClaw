@@ -483,7 +483,7 @@ object ApiConstants {
     /**
      * 场景单个删除
      */
-    const val WORK_ASSET_SCENE_DELETE = "work/asset/scene/delete"
+    const val WORK_ASSET_SCENE_DELETE = "v2/work/asset/scene/delete/asset"
 
     /**
      * 角色列表
@@ -508,7 +508,7 @@ object ApiConstants {
     /**
      * 角色单个删除
      */
-    const val WORK_ASSET_ROLE_DELETE = "work/asset/role/delete"
+    const val WORK_ASSET_ROLE_DELETE = "v2/work/asset/role/delete/asset"
 
     /**
      * 道具列表
@@ -528,7 +528,7 @@ object ApiConstants {
     /**
      * 道具单个删除
      */
-    const val WORK_ASSET_PROP_DELETE = "work/asset/prop/delete"
+    const val WORK_ASSET_PROP_DELETE = "v2/work/asset/prop/delete/asset"
 
     /**
      * 生成单个资产图片（重新生成/生成）
@@ -821,15 +821,15 @@ object ApiConstants {
     /**
      * 角色形象图片删除
      */
-    const val ROLE_IMAGE_DELETE = "v2/work/asset/role/delete"
+    const val ROLE_IMAGE_DELETE = "v2/work/asset/role/delete/appearance"
     /**
      * 道具图片删除
      */
-    const val PROP_IMAGE_DELETE = "v2/work/asset/prop/delete"
+    const val PROP_IMAGE_DELETE = "v2/work/asset/prop/delete/appearance"
     /**
      * 场景图片删除
      */
-    const val SCENE_IMAGE_DELETE = "v2/work/asset/scene/delete"
+    const val SCENE_IMAGE_DELETE = "v2/work/asset/scene/delete/appearance"
 
     /**
      * 保存并覆盖资产图片
