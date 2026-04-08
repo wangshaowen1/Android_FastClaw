@@ -468,7 +468,7 @@ object ApiConstants {
     /**
      * 场景列表
      */
-    const val WORK_ASSET_SCENE_LIST = "work/asset/scene/list"
+    const val WORK_ASSET_SCENE_LIST = "v2/work/asset/scene/list/story"
 
     /**
      * 作品场景列表
@@ -488,7 +488,7 @@ object ApiConstants {
     /**
      * 角色列表
      */
-    const val WORK_ASSET_ROLE_LIST = "work/asset/role/list"
+    const val WORK_ASSET_ROLE_LIST = "v2/work/asset/role/list/story"
 
     /**
      * 作品角色列表
@@ -513,7 +513,7 @@ object ApiConstants {
     /**
      * 道具列表
      */
-    const val WORK_ASSET_PROP_LIST = "work/asset/prop/list"
+    const val WORK_ASSET_PROP_LIST = "v2/work/asset/prop/list/story"
     /**
      * 作品道具列表
      */

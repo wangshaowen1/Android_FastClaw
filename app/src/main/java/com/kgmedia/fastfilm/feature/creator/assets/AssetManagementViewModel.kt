@@ -544,8 +544,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 response.msg?.showToast()
                 return@launchWithLoading
             } else {
-                vm?.status?.set(0)
-                vm?.assetImage?.set(null)
+                vm?.updateStatus(0, null)
+                calcCost()
             }
         }
     }
@@ -587,17 +587,13 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
             }
             if (response.isSuccess) {
-                val index = adapter.items.indexOfFirst {
+                adapter.items.find {
                     it is ItemAssetVM<*> && it.data.get()?.assetId == simpleAsset?.assetId
-                }
-                if (index != -1) {
-                    val item = adapter.items[index]
-                    (item.data.get() as? SimpleAsset)?.setAssetImage(response.data?.assetImage)
-                    (item as? ItemAssetVM<*>)?.apply {
-                        status.set(2)
-                        assetImage.set(response.data?.assetImage)
+                }?.let {
+                    (it as? ItemAssetVM<*>)?.apply {
+                        updateStatus(2, response.data?.assetImage)
                     }
-                    adapter.notifyItemChanged(index)
+                    calcCost()
                 }
             } else {
                 response.msg?.showToast()

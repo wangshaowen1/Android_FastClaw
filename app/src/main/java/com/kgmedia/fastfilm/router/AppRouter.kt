@@ -128,7 +128,7 @@ object AppRouter : IRouter {
                 AppLaunchJump.launchJump(uri)
             }
 
-            "wechatMini" -> {//fastfilm://wechatMini?wechatMiniId=%s&path=%s&type=%s
+            "wechatMini" -> {//fastfilm://wechatMini?wechatMiniId=%s&type=%s&path=%s
                 startWechatMini(uri.getQueryParameter("wechatMiniId"), uri.getQueryParameter("path"), uri.getQueryParameter("type")?.toIntOrNull())
             }
 

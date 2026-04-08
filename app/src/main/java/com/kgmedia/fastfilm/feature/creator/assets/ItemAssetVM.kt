@@ -164,6 +164,12 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
         onItemChanged()
     }
 
+    fun updateStatus(status: Int, imageUrl: String?) {
+        this.status.set(status)
+        assetImage.set(imageUrl)
+        onItemChanged()
+    }
+
     override fun equals(other: Any?): Boolean {
         return hashCode() == other?.hashCode()
     }
