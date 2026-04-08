@@ -1,5 +1,7 @@
 package com.kgmedia.fastfilm.feature.splash
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
@@ -35,11 +37,22 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
         private const val TAG = "SplashActivity"
     }
 
+    var lottieHasEnd = false
+    var isFinish = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
             val splashScreen = installSplashScreen()
             splashScreen.setOnExitAnimationListener { it.remove() }
             super.onCreate(savedInstanceState)
+            binding.splashLottie.addAnimatorListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    lottieHasEnd = true
+                    if (isFinish) return
+                    jumpToTheHomepage()
+                    super.onAnimationEnd(animation)
+                }
+            })
             if (!isTaskRoot) {
                 intent.data?.takeIf { !TextUtils.isEmpty(it.host) }?.toString()?.also {
                     if (ActivityUtils.getActivityList().find { activity -> activity.javaClass == MainActivity::class.java } != null) {
@@ -71,6 +84,8 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
     }
 
     private fun jumpToTheHomepage() {
+        if (!lottieHasEnd) return
+        isFinish = true
         val it = intent.data?.takeIf { !TextUtils.isEmpty(it.host) } ?: ""
         if (Config.get().isFirstOpenApp) {
             Config.get().markAppOpenedWithNotify()
