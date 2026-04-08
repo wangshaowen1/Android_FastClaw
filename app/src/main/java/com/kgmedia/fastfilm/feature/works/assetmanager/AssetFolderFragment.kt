@@ -52,7 +52,7 @@ class AssetFolderFragment : BaseViewModelFragment<FragmentAssetFolderBinding, As
                 assetFolderAdapter.withLoadStateFooter(
                     MyMultiStatePagingFooterAdapter(
                         hostAdapter = assetFolderAdapter,
-                        noMoreThreshold = 9
+                        noMoreThreshold = 12
                     ) { assetFolderAdapter.retry() })
             binding.recyclerView.applyGridSpanSizeLookup()
         }

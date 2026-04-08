@@ -85,7 +85,7 @@ class AssetSelectActivity : BaseViewModelActivity<ActivityAssetSelectBinding, As
                 assetsChildAdapter.withLoadStateFooter(
                     MyMultiStatePagingFooterAdapter(
                         hostAdapter = assetsChildAdapter,
-                        noMoreThreshold = 5
+                        noMoreThreshold = 12
                     ) { assetsChildAdapter.retry() })
             applyGridSpanSizeLookup()
         }

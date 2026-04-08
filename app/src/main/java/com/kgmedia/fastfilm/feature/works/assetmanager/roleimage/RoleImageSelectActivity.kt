@@ -67,7 +67,7 @@ class RoleImageSelectActivity : BaseViewModelActivity<ActivityRoleImageSelectBin
                 imageAdapter.withLoadStateFooter(
                     MyMultiStatePagingFooterAdapter(
                         hostAdapter = imageAdapter,
-                        noMoreThreshold = 5
+                        noMoreThreshold = 12
                     ) { imageAdapter.retry() })
             applyGridSpanSizeLookup()
         }
