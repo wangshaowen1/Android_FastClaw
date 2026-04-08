@@ -14,6 +14,7 @@ import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.ext.PollingState
 import com.kgmedia.fastfilm.core.ext.launch
 import com.kgmedia.fastfilm.core.ext.launchPolling
@@ -22,15 +23,21 @@ import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
+import com.kgmedia.fastfilm.core.network.apis.request.AssetSaveOverrideBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
+import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.feature.creator.assets.AssetManagementRepository
+import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.withContext
 
 class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>() {
 
@@ -61,6 +68,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
     val subTitle = ObservableField<String>()
 
     val generating by lazy { ObservableBoolean(false) }
+    val regenerateFail by lazy { ObservableBoolean(false) }
     val cost by lazy { ObservableInt() }
 
     /**
@@ -112,6 +120,8 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
     }
 
     fun reGenerate() {
+        if (PowerRechargeDialog.checkLowBalance(cost.get())) return
+        regenerateFail.set(false)
         launchWithLoading {
             response(
                 mRepo.api.workAssetSingleRegenerate(
@@ -128,13 +138,15 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                 )
             ) {
                 if (data?.genStatus != 3) {
+                    Global.refreshBalance()
                     image.set(null)
                     newAppearanceId = data?.newAppearanceId
                     hasChanged.value = true
                     loopGenStatus(data?.taskId)
                     generating.set(true)
                 } else {
-
+                    image.set(null)
+                    regenerateFail.set(true)
                 }
             }
         }
@@ -171,48 +183,20 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
             },
             onFail = { response, _ ->
                 generating.set(false)
+                image.set(null)
+                regenerateFail.set(true)
             }
         )
     }
 
     fun save(callback: (() -> Unit)? = null) {
         launch {
-            response(
-                when (info) {
-                    is SimpleRoleInfo -> {
-                        mRepo.workAssetRoleSave(
-                            info?.assetId,
-                            newAppearanceId,
-                            workId,
-                            null,
-                            info?.assetName,
-                            prompt.get()
-                        )
-                    }
-
-                    is SimpleSceneInfo -> {
-                        mRepo.workAssetSceneSave(
-                            info?.assetId,
-                            newAppearanceId,
-                            workId,
-                            null,
-                            info?.assetName,
-                            prompt.get()
-                        )
-                    }
-
-                    else -> {
-                        mRepo.workAssetPropSave(
-                            info?.assetId,
-                            newAppearanceId,
-                            workId,
-                            null,
-                            info?.assetName,
-                            prompt.get()
-                        )
-                    }
-                }
-            ) {
+            val bizType = when (info) {
+                is SimpleRoleInfo -> 41
+                is SimpleSceneInfo -> 61
+                else -> 51
+            }
+            response(mRepo.api.assetSaveOverride(AssetSaveOverrideBody(bizType, newAppearanceId, workId))) {
                 if (callback != null) {
                     callback()
                     return@response
@@ -222,15 +206,37 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
         }
     }
 
-    fun buttonText(generating: Boolean, cost: Int): CharSequence? {
+    fun buttonText(generating: Boolean, regenerateFail: Boolean, cost: Int): CharSequence? {
         return if (generating) {
             R.string.btn_image_generating.getResString()
         } else {
+            if (regenerateFail) {
+                return R.string.image_load_failed_regenerate.getResString()
+            }
             if (cost > 0) {
                 R.string.btn_regenerate_cost.getResString(POWER, cost)
                     .replaceSpan(POWER) { powerSpan }
             } else {
                 R.string.regenerate.getResString()
+            }
+        }
+    }
+
+    fun imageDel(callback: (() -> Unit)?) {
+        launchWithLoading {
+            val asset = info
+            val response = withContext(Dispatchers.IO) {
+                when (asset) {
+                    is SimpleRoleInfo -> mRepo.api.roleImageDelete(IdsBody(id = newAppearanceId))
+                    is SimpleSceneInfo -> mRepo.api.sceneImageDelete(IdsBody(id = newAppearanceId))
+                    else -> mRepo.api.propImageDelete(IdsBody(id = newAppearanceId))
+                }
+            }
+            if (!response.isSuccess) {
+                response.msg?.showToast()
+                return@launchWithLoading
+            } else {
+                callback?.invoke()
             }
         }
     }

@@ -10,6 +10,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.databinding.ActivityRoleImageSelectBinding
 import com.kgmedia.fastfilm.feature.works.assetmanager.AssetDetailActivity
+import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
@@ -58,6 +59,7 @@ class RoleImageSelectActivity : BaseViewModelActivity<ActivityRoleImageSelectBin
     private fun initView() {
         binding.recyclerView.apply {
             addItemDecoration(SpaceDecoration(14.dp))
+            addItemDecoration(GridSpacingItemDecoration(3, 12.dp, 0))
             isFocusable = false
             adapter =
                 imageAdapter.withLoadStateFooter(
@@ -87,10 +89,7 @@ class RoleImageSelectActivity : BaseViewModelActivity<ActivityRoleImageSelectBin
                     }
 
                     is RoleImageEvent.Select -> {
-                        setResult(RESULT_OK, Intent().apply {
-                            putExtra(Constants.Extra.DATA, mRealVM.roleInfo)
-                            putExtra(Constants.Extra.ROLE_IMAGE, it.item?.data?.get())
-                        })
+                        mRealVM.mSelectedItem = it.item?.data?.get()
                     }
                 }
             }

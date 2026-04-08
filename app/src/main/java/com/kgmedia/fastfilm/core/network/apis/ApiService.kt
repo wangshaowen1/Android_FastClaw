@@ -37,6 +37,8 @@ import com.kgmedia.fastfilm.core.network.apis.entity.WalletInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AIExpandBody
 import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
+import com.kgmedia.fastfilm.core.network.apis.request.AppearanceIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.AssetSaveOverrideBody
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
@@ -1170,4 +1172,28 @@ interface ApiService {
      */
     @POST(ApiConstants.SCENE_IMAGE_DELETE)
     suspend fun sceneImageDelete(@Body body: IdsBody): ApiResponse<Any?>
+
+    /**
+     *保存并覆盖资产图片
+     */
+    @POST(ApiConstants.ASSET_SAVE_OVERRIDE)
+    suspend fun assetSaveOverride(@Body body: AssetSaveOverrideBody): ApiResponse<Any?>
+
+    /**
+     *取消场景形象选用
+     */
+    @POST(ApiConstants.CANCEL_SCENE_IMAGE)
+    suspend fun cancelSceneImage(@Body body: AppearanceIdBody): ApiResponse<Any?>
+
+    /**
+     *取消角色形象选用
+     */
+    @POST(ApiConstants.CANCEL_ROLE_IMAGE)
+    suspend fun cancelRoleImage(@Body body: AppearanceIdBody): ApiResponse<Any?>
+
+    /**
+     *取消道具形象选用
+     */
+    @POST(ApiConstants.CANCEL_PROP_IMAGE)
+    suspend fun cancelPropImage(@Body body: AppearanceIdBody): ApiResponse<Any?>
 }

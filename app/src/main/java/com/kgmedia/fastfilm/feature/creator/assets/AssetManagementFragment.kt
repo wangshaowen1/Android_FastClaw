@@ -102,7 +102,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
                 else -> QueryAssetBody.BIZ_TYPE_PROP
             }
             if (bizType == QueryAssetBody.BIZ_TYPE_ROLE) {
-                roleImageSelectLauncher.launch(RoleImageSelectActivity.getIntent(activity, mRealVM.workId, asset as? SimpleRoleInfo))
+                roleImageSelectLauncher.launch(RoleImageSelectActivity.getIntent(activity, mRealVM.workId, asset as? SimpleRoleInfo, true))
             } else {
                 imageSelectLauncher.launch(AssetSelectActivity.getIntent(activity, bizType, mRealVM.workId, asset?.assetAppearanceId))
             }

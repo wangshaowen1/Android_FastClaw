@@ -47,7 +47,7 @@ class AssetDetailActivity : BaseViewModelActivity<ActivityAssetDtlBinding, Asset
 //        }
 
         @JvmStatic
-        fun <T> start(context: Context, workId: String?,info: T?) where T : SimpleAsset, T : Parcelable {
+        fun <T> start(context: Context, workId: String?, info: T?) where T : SimpleAsset, T : Parcelable {
             val starter = Intent(context, AssetDetailActivity::class.java)
             starter.putExtra(Constants.Extra.DATA, info)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
@@ -67,9 +67,7 @@ class AssetDetailActivity : BaseViewModelActivity<ActivityAssetDtlBinding, Asset
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding.desc.movementMethod = ScrollingMovementMethod()
-
         mRealVM.hasChanged.observe(this) {
             mRealVM.mToolbarVM.mMenuEnable.set(it)
         }
@@ -78,7 +76,9 @@ class AssetDetailActivity : BaseViewModelActivity<ActivityAssetDtlBinding, Asset
     override fun onBackPressed() {
         if (mRealVM.generating.get()) {
             showCommonDialog(getString(R.string.exit_during_generation_warning), confirmText = getString(R.string.continue_exit), confirm = {
-                super.onBackPressed()
+                mRealVM.imageDel {
+                    super.onBackPressed()
+                }
             })
             return
         } else if (mRealVM.hasChanged.value == true) {
@@ -86,7 +86,9 @@ class AssetDetailActivity : BaseViewModelActivity<ActivityAssetDtlBinding, Asset
                 getString(R.string.save_and_overwrite_asset_warning), cancelText = getString(R.string.exit_without_saving), confirmText = getString(
                     R.string.save_and_overwrite
                 ), cancel = {
-                    super.onBackPressed()
+                    mRealVM.imageDel {
+                        super.onBackPressed()
+                    }
                 }, confirm = {
                     mRealVM.save {
                         super.onBackPressed()

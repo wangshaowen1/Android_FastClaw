@@ -42,6 +42,7 @@
             app:borderStartColor="?attr/borderColor2"
             app:borderWidth="1dp"
             android:id="@+id/ivCoverBorder"
+            android:clickable="@{item.status!=2}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"

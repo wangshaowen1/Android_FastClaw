@@ -830,4 +830,24 @@ object ApiConstants {
      * 场景图片删除
      */
     const val SCENE_IMAGE_DELETE = "v2/work/asset/scene/delete"
+
+    /**
+     * 保存并覆盖资产图片
+     */
+    const val ASSET_SAVE_OVERRIDE = "v2/work/asset/appearance/save/override"
+
+    /**
+     * 取消场景形象选用
+     */
+    const val CANCEL_SCENE_IMAGE = "v2/work/asset/scene/appearance/unset"
+
+    /**
+     * 取消角色形象选用
+     */
+    const val CANCEL_ROLE_IMAGE = "v2/work/asset/role/appearance/unset"
+
+    /**
+     * 取消道具形象选用
+     */
+    const val CANCEL_PROP_IMAGE = "v2/work/asset/prop/appearance/unset"
 }

@@ -25,7 +25,7 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimpleAsset
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleSceneInfo
-import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
+import com.kgmedia.fastfilm.core.network.apis.request.AppearanceIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.StrategyTypeBody
 import com.kgmedia.fastfilm.core.network.apis.request.WorkBody
 import com.kgmedia.fastfilm.core.response
@@ -340,7 +340,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 R.id.ivCoverBorder -> {
-                    if (assetImage.get().isNullOrEmpty()) {
+                    if (assetImage.get().isNullOrEmpty() && status.get() == 0) {
                         onAssetImageSelectEvent?.invoke(this)
                         return@click
                     }
@@ -348,7 +348,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
 
                 R.id.btnImageDel -> {
                     data.get()?.let {
-                        imageDel(this)
+                        cancelImage(this)
                     }
                 }
 
@@ -530,14 +530,14 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
     }
 
-    fun imageDel(vm: ItemAssetVM<*>?) {
+    fun cancelImage(vm: ItemAssetVM<*>?) {
         launchWithLoading {
             val asset = vm?.data?.get()
             val response = withContext(Dispatchers.IO) {
                 when (asset) {
-                    is SimpleRoleInfo -> mRepo.api.roleImageDelete(IdsBody(id = asset.assetAppearanceId))
-                    is SimpleSceneInfo -> mRepo.api.sceneImageDelete(IdsBody(id = asset.assetAppearanceId))
-                    else -> mRepo.api.propImageDelete(IdsBody(id = asset?.assetAppearanceId))
+                    is SimpleRoleInfo -> mRepo.api.cancelRoleImage(AppearanceIdBody(asset.assetAppearanceId))
+                    is SimpleSceneInfo -> mRepo.api.cancelSceneImage(AppearanceIdBody(asset.assetAppearanceId))
+                    else -> mRepo.api.cancelPropImage(AppearanceIdBody(asset?.assetAppearanceId))
                 }
             }
             if (!response.isSuccess) {
@@ -593,6 +593,10 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 if (index != -1) {
                     val item = adapter.items[index]
                     (item.data.get() as? SimpleAsset)?.setAssetImage(response.data?.assetImage)
+                    (item as? ItemAssetVM<*>)?.apply {
+                        status.set(2)
+                        assetImage.set(response.data?.assetImage)
+                    }
                     adapter.notifyItemChanged(index)
                 }
             } else {

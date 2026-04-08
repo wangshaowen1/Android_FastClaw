@@ -516,5 +516,6 @@
     <string name="set_character_appearance">设置角色形象</string>
     <string name="set_scene">设置场景</string>
     <string name="set_prop">设置道具</string>
+    <string name="image_load_failed_regenerate">图片加载失败，重新生成</string>
 </resources>
 
