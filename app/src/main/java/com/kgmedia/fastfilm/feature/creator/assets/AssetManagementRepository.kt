@@ -1,7 +1,6 @@
 package com.kgmedia.fastfilm.feature.creator.assets
 
 import com.kgmedia.fastfilm.core.AppRepository
-import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.QueryAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody

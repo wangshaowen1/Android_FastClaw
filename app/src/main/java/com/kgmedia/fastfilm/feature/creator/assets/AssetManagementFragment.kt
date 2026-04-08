@@ -58,7 +58,8 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
     val imageSelectLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val simpleAsset = result.data?.getParcelableValue(Constants.Extra.DATA, SimpleAsset::class.java)
-            mRealVM.saveImage(simpleAsset,null)
+            val assetId = result.data?.getStringExtra(Constants.Extra.ASSET_ID)
+            mRealVM.saveImage(simpleAsset, null, assetId)
         }
     }
 
@@ -104,7 +105,7 @@ class AssetManagementFragment : BaseViewModelFragment<FragmentAssetManagementBin
             if (bizType == QueryAssetBody.BIZ_TYPE_ROLE) {
                 roleImageSelectLauncher.launch(RoleImageSelectActivity.getIntent(activity, mRealVM.workId, asset as? SimpleRoleInfo, true))
             } else {
-                imageSelectLauncher.launch(AssetSelectActivity.getIntent(activity, bizType, mRealVM.workId, asset?.assetAppearanceId))
+                imageSelectLauncher.launch(AssetSelectActivity.getIntent(activity, bizType, mRealVM.workId, asset?.assetAppearanceId, asset?.assetId))
             }
         }
         observeEvents {

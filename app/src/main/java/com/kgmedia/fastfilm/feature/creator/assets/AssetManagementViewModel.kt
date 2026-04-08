@@ -550,27 +550,27 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         }
     }
 
-    fun saveImage(simpleAsset: SimpleAsset?, roleImageInfo: RoleImageInfo?) {
+    fun saveImage(simpleAsset: SimpleAsset?, roleImageInfo: RoleImageInfo?, assetId: String? = null) {
         launchWithLoading {
             val response = withContext(Dispatchers.IO) {
                 when (simpleAsset) {
                     is SimpleSceneInfo -> mRepo.workAssetSceneSave(
-                        simpleAsset?.assetId,
+                        assetId,
                         simpleAsset?.assetAppearanceId,
                         workId,
                         storyId,
-                        simpleAsset?.assetName,
-                        simpleAsset?.assetDesc,
-                        simpleAsset?.assetImage
+                        null,
+                        null,
+                        imageUrl = simpleAsset?.assetImage
                     )
 
                     is SimplePropInfo -> mRepo.workAssetPropSave(
-                        simpleAsset?.assetId,
+                        assetId,
                         simpleAsset?.assetAppearanceId,
                         workId,
                         storyId,
-                        simpleAsset?.assetName,
-                        simpleAsset?.assetDesc,
+                        null,
+                        null,
                         simpleAsset?.assetImage
                     )
 
@@ -579,8 +579,8 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                         roleImageInfo?.appearanceId,
                         workId,
                         storyId,
-                        simpleAsset?.assetName,
-                        roleImageInfo?.rolePrompt,
+                        null,
+                        null,
                         roleImageInfo?.sourceAppearanceId,
                         roleImageInfo?.imageUrl
                     )
@@ -588,7 +588,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             }
             if (response.isSuccess) {
                 adapter.items.find {
-                    it is ItemAssetVM<*> && it.data.get()?.assetId == simpleAsset?.assetId
+                    it is ItemAssetVM<*> && it.data.get()?.assetId == (assetId ?: simpleAsset?.assetId)
                 }?.let {
                     (it as? ItemAssetVM<*>)?.apply {
                         updateStatus(2, response.data?.assetImage)

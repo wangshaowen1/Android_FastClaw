@@ -33,17 +33,19 @@ class AssetSelectActivity : BaseViewModelActivity<ActivityAssetSelectBinding, As
         const val TAG = "AssetSelectActivity"
 
         @JvmStatic
-        fun getIntent(context: Context?, bizType: Int, workId: String?, appearanceId: String?): Intent? {
+        fun getIntent(context: Context?, bizType: Int, workId: String?, appearanceId: String?, assetId: String? = null): Intent? {
             if (context == null) return null
             val starter = Intent(context, AssetSelectActivity::class.java)
             starter.putExtra(Constants.Extra.TYPE, bizType)
             starter.putExtra(Constants.Extra.WORK_ID, workId)
+            starter.putExtra(Constants.Extra.ASSET_ID, assetId)
             starter.putExtra(Constants.Extra.APPEARANCE_ID, appearanceId)
             return starter
         }
     }
 
     val appearanceId by lazy { intent.getStringExtra(Constants.Extra.APPEARANCE_ID) }
+    val assetId by lazy { intent.getStringExtra(Constants.Extra.ASSET_ID) }
     val itemClickVm by lazy { BaseItemEventsViewModel<AssetsEvent, SimpleAsset>() }
     val assetsChildAdapter by lazy { AssetsChildAdapter(true, itemClickVm, appearanceId) }
 
@@ -62,6 +64,7 @@ class AssetSelectActivity : BaseViewModelActivity<ActivityAssetSelectBinding, As
             if (mRealVM.selectedItem != null) {
                 setResult(RESULT_OK, Intent().apply {
                     putExtra(Constants.Extra.DATA, mRealVM.selectedItem)
+                    putExtra(Constants.Extra.ASSET_ID, assetId)
                 })
             }
             finish()
