@@ -119,16 +119,22 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                         workId = workId,
                         assetId = info?.assetId,
                         appearanceId = roleImageInfo?.appearanceId ?: info?.assetAppearanceId,
-                        bizType = 51,
+                        bizType = when (info) {
+                            is SimpleRoleInfo -> 41
+                            is SimpleSceneInfo -> 61
+                            else -> 51
+                        },
                     )
                 )
             ) {
-                if (data?.genStatus == 2) {
+                if (data?.genStatus != 3) {
                     image.set(null)
                     newAppearanceId = data?.newAppearanceId
                     hasChanged.value = true
                     loopGenStatus(data?.taskId)
                     generating.set(true)
+                } else {
+
                 }
             }
         }

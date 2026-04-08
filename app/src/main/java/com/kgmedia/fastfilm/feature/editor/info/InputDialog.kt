@@ -5,6 +5,7 @@ import android.text.Editable
 import android.view.KeyEvent
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.ThreadUtils
@@ -14,9 +15,11 @@ import com.kgmedia.fastfilm.common.SimpleTextWatcher
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.topActivity
+import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.databinding.DialogInputBinding
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.showToast
+import kotlinx.coroutines.launch
 
 /**
  * 修改描述-通用版
@@ -98,9 +101,17 @@ class InputDialog :
                 return@setOnClickListener
             }
             if (mRealVM.content != binding.inputView.text.trim()) {
-                mRealVM.save {
-                    callback?.invoke(binding.inputView.text.trim())
-                    dismissAllowingStateLoss()
+                lifecycleScope.launch {
+                    sensitiveWordCheck(mRealVM.input.value).let { (isPass, highlightText) ->
+                        if (!isPass) {
+                            highlightText?.let { binding.inputView.setText(it) }
+                        } else {
+                            mRealVM.save {
+                                callback?.invoke(binding.inputView.text.trim())
+                                dismissAllowingStateLoss()
+                            }
+                        }
+                    }
                 }
             } else {
                 dismissAllowingStateLoss()
