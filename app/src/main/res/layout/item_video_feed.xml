@@ -152,17 +152,19 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/spacing_l"
+                    android:layout_marginHorizontal="@dimen/spacing_l"
+                    android:layout_marginVertical="@dimen/spacing_m"
+                    android:gravity="center"
                     android:text="@string/click_button_to_watch_full_episodes"
                     android:textColor="?attr/textColor2"
                     android:textSize="12sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    setLinearLayoutManager="@{false}"
+                    setGridLayoutManager="@{4}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/spacing_l"
                     android:adapter="@{item.mPlatformAdapter}"
-                    android:paddingStart="@dimen/spacing_l"
                     tools:itemCount="1"
                     tools:listitem="@layout/item_platform" />
             </LinearLayout>
