@@ -5,6 +5,8 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.kgmedia.fastfilm.core.db.convert.Converters
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.PlatformInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 
 /**
  * 首页 Feed 流数据库实体
@@ -33,6 +35,7 @@ data class WorkInfoEntity(
 
     // 剧集列表：由 Converters 负责将其转为 String 存入 DB
     var workStoryItemList: List<EpisodeInfo>? = null,
+    val platformLinks: List<PlatformInfo>? = null,
 
     // --- 数据库管理专用字段 ---
 

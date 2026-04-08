@@ -22,6 +22,7 @@ fun WorkInfo.toEntity(pageIndex: Int): WorkInfoEntity {
         playCount = this.playCount,
         userId = this.userId,
         workStoryItemList = this.workStoryItemList,
+        platformLinks = this.platformLinks,
         pageIndex = pageIndex
     )
 }
@@ -44,6 +45,7 @@ fun WorkInfoEntity.toDomain(): WorkInfo {
         lastGenerateTime = this.lastGenerateTime,
         playCount = this.playCount,
         userId = this.userId,
-        workStoryItemList = this.workStoryItemList
+        workStoryItemList = this.workStoryItemList,
+        platformLinks = this.platformLinks,
     )
 }
