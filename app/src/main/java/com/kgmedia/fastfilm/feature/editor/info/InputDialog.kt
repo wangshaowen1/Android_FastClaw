@@ -122,7 +122,7 @@ class InputDialog :
     fun closeConfirm() {
         if (mRealVM.hasChange && mRealVM.content != binding.inputView.text) {
             topActivity?.showConfirmPrompt(
-                title = getString(R.string.confirm_exit_without_saving),
+                tip = getString(R.string.confirm_exit_without_saving),
                 cancelText = getString(R.string.exit_directly),
                 confirmText = getString(R.string.save_and_exit),
                 cancel = {

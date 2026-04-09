@@ -10,6 +10,7 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.adapter.QuickAdapter
+import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.databinding.FragmentDramaGenerateStep1Binding
@@ -57,10 +58,12 @@ class DramaGenerateStep1Fragment :
         }
         binding.recyclerView.setAdapter(episodeAdapter)
         episodeAdapter.setOnItemClickListener { _, _, position ->
-            mRealVM.storySummaryResult.value?.result?.structureList?.get(position)?.let {
-                InputDialog.show(InputDialog.TYPE_EPISODE_SUMMARY, mRealVM.workId, it.storyId, it.storySummary, it.storyTitle) { text ->
-                    it.storySummary = text
-                    episodeAdapter.getItem(position)?.updateData(it.copy())
+            editWarning {
+                mRealVM.storySummaryResult.value?.result?.structureList?.get(position)?.let {
+                    InputDialog.show(InputDialog.TYPE_EPISODE_SUMMARY, mRealVM.workId, it.storyId, it.storySummary, it.storyTitle) { text ->
+                        it.storySummary = text
+                        episodeAdapter.getItem(position)?.updateData(it.copy())
+                    }
                 }
             }
         }
@@ -104,15 +107,33 @@ class DramaGenerateStep1Fragment :
             getString(R.string.story_generating_please_wait).showToast()
         }
         binding.tvStoryDesc.setOnSingleClickListener {
-            InputDialog.show(InputDialog.TYPE_WORK_DESC, mRealVM.workId, content = mRealVM.storySummaryResult.value?.result?.workDesc) {
-                mRealVM.storySummaryResult.value?.result?.workDesc = it
-                setTextWithEditIcon(binding.tvStoryDesc, it)
+            editWarning {
+                InputDialog.show(InputDialog.TYPE_WORK_DESC, mRealVM.workId, content = mRealVM.storySummaryResult.value?.result?.workDesc) {
+                    mRealVM.storySummaryResult.value?.result?.workDesc = it
+                    setTextWithEditIcon(binding.tvStoryDesc, it)
+                }
             }
         }
         binding.btnNext.setOnSingleClickListener {
             mRealVM.saveTitle {
                 hostVm?.nextStep(2, mRealVM.workId, mRealVM.storySummaryResult.value?.result?.getFirstStoryId())
             }
+        }
+    }
+
+    var hasEditWarning = false
+
+    fun editWarning(callback: () -> Unit) {
+        if (hasEditWarning) {
+            callback()
+            return
+        }
+        hasEditWarning = true
+        mActivity.showConfirmPrompt(
+            getString(R.string.edit_text_warning),
+            confirmText = getString(R.string.continue_editing)
+        ) {
+            callback()
         }
     }
 

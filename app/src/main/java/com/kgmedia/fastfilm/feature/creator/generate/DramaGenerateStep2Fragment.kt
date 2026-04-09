@@ -136,7 +136,7 @@ class DramaGenerateStep2Fragment :
             isNotified = true
             mActivity.showConfirmPrompt(
                 getString(R.string.edit_text_warning),
-                confirmText = getString(R.string.confirm_edit)
+                confirmText = getString(R.string.continue_editing)
             ) {
                 enterEditMode()
             }
