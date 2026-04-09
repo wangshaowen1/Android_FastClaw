@@ -32,10 +32,12 @@ class VideoWithWatermarkResource(private val url: String, private val httpClient
         val watermarkFile = R.drawable.icon_ai_watermark.getBitmap().toCache()
         if (watermarkFile?.exists() == true) {
             val builder = FFmpegCommandBuilder()
-            var lastVideoStreamName = ""
+            var mapV = ""
+            var finalV = ""
             run {
                 val idx = builder.addInput(videoFile.absolutePath)
-                lastVideoStreamName = "$idx:v"
+                mapV = "$idx:v"
+                finalV = mapV
             }
             run {
                 val videoSize = getVideoSize(videoFile.absolutePath)
@@ -44,13 +46,13 @@ class VideoWithWatermarkResource(private val url: String, private val httpClient
                 val overlayX = (videoWidth * 0.864f).toInt()
                 val overlayY = (videoHeight * 0.144f).toInt()
                 val idx = builder.addInput(watermarkFile.absolutePath)
-                val outName = "v_watermark"
                 // 缩放并叠加
                 builder.addFilter("[$idx:v]scale=${videoWidth / 10}:-1[content]")
-                builder.addFilter("[$lastVideoStreamName][content]overlay=$overlayX:$overlayY[$outName]")
-                lastVideoStreamName = outName
+                builder.addFilter("[$mapV][content]overlay=$overlayX:$overlayY[v_watermark]")
+                mapV = "v_watermark"
+                finalV = "[$mapV]"
             }
-            val extra = "-map \"[$lastVideoStreamName]\" -map 0:a? -c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
+            val extra = "-map $finalV -map 0:a? -c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
             val command = builder.build(cacheFile.absolutePath, extra)
             val videoDuration = FFmpegHelper.parseDuration(videoFile.absolutePath) / 1000
             FFmpegHelper.execute(command, videoDuration) { ffmpegProgress ->

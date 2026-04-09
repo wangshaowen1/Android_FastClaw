@@ -283,6 +283,14 @@ data class EpisodeInfo(
     val taskGenResultStoryVO: TaskGenResultStoryVO? = null,
     /**是否首次创建（0=否删除过，1=是首次创建）*/
     val firstCreationFlag: Int? = null,
+    /**
+     * 对应最早分镜的创建时间，无分镜时为 null
+     */
+    val storyboardCreateTime : Long? = null,
+    /**
+     * 视频是否含有水印：true=含水印（v1.4上线前生成），false=无水印，null=无法判断
+     */
+    val hasWatermark : Boolean? = null
 ) : Parcelable {
 
     @Parcelize

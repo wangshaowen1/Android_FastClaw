@@ -5,6 +5,8 @@ import android.util.Size
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.PathUtils
+import com.kgmedia.fastfilm.R
+import com.kgmedia.fastfilm.common.ext.toCache
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.feature.download.resource.JsonToAssResource
 import com.kuaige.videoedit.ffmpeg.FFmpegCommandBuilder
@@ -12,11 +14,12 @@ import com.kuaige.videoedit.ffmpeg.FFmpegHelper
 import com.kuaige.videoedit.resource.Resource
 import com.kuaige.videoedit.resource.UrlResource
 import com.nhsd.basic.BaseApp
+import com.nhsd.basic.ext.getBitmap
 import okhttp3.OkHttpClient
 import java.io.File
 import java.io.IOException
 
-class VideoStoryboardResource(private val url: String, private val storyboard: SimpleStoryboardInfo, private val httpClient: OkHttpClient) : Resource() {
+class VideoStoryboardResource(private val url: String, private val storyboard: SimpleStoryboardInfo, private val watermark: Boolean, private val httpClient: OkHttpClient) : Resource() {
     init {
         // 配置字体目录，防止添加字幕时出错
         FFmpegKitConfig.setFontDirectoryList(BaseApp.getInstance(), listOf("/system/fonts"), emptyMap())
@@ -52,12 +55,33 @@ class VideoStoryboardResource(private val url: String, private val storyboard: S
             ).download { onProgress?.invoke((40 + it * 0.1f).toInt()) }
         }.getOrNull()
         val builder = FFmpegCommandBuilder()
-        builder.addInput(videoFile.absolutePath)
-        val finalV = if (subtitleFile?.exists() == true) {
+        var mapV = ""
+        var finalV = ""
+        run {
+            val idx = builder.addInput(videoFile.absolutePath)
+            mapV = "$idx:v"
+            finalV = mapV
+        }
+        if (subtitleFile?.exists() == true) {
             builder.addFilter("[0:v]subtitles='${subtitleFile.absolutePath}':force_style='Outline=1,Shadow=0,PrimaryColour=&H00FFFFFF,SecondaryColour=&H80000000'[v_subtitle]")
-            "[v_subtitle]"
-        } else {
-            "0:v"
+            mapV = "v_subtitle"
+            finalV = "[$mapV]"
+        }
+        if (watermark){
+            val watermarkFile = R.drawable.icon_ai_watermark.getBitmap().toCache()
+            if (watermarkFile?.exists() == true) {
+                val videoSize = getVideoSize(videoFile.absolutePath)
+                val videoWidth = videoSize?.width?.takeIf { it > 0 } ?: 1280
+                val videoHeight = videoSize?.height?.takeIf { it > 0 } ?: 720
+                val overlayX = (videoWidth * 0.864f).toInt()
+                val overlayY = (videoHeight * 0.144f).toInt()
+                val idx = builder.addInput(watermarkFile.absolutePath)
+                // 缩放并叠加
+                builder.addFilter("[$idx:v]scale=${videoWidth / 10}:-1[content]")
+                builder.addFilter("[$mapV][content]overlay=$overlayX:$overlayY[v_watermark]")
+                mapV = "v_watermark"
+                finalV = "[$mapV]"
+            }
         }
         val extra = "-map $finalV -map 0:a? -c:v libx264 -preset veryfast -r 30 -pix_fmt yuv420p"
         val command = builder.build(cacheFile.absolutePath, extra)

@@ -71,7 +71,15 @@ data class SimpleStoryboardInfo(
     /**
      * [枚举]视频生成状态 0=待生成 1=生成中 2=成功 3=失败 5=重绘中 6=重绘完成
      */
-    var genStatusVideo: Int? = null
+    var genStatusVideo: Int? = null,
+    /**
+     * 分镜创建时间
+     */
+    val createTime : Long? = null,
+    /**
+     * 视频是否含有水印：true=含水印（v1.4上线前生成），false=无水印，null=无法判断
+     */
+    val hasWatermark : Boolean? = null
 ) : Parcelable {
 
     val videoGenerating get() = genStatusVideo == 1 || genStatusVideo == 5

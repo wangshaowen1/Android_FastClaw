@@ -17,7 +17,7 @@ class VideoSynthesisTransform(
 
     override val resourceManager by lazy {
         VideoSynthesisResourceManager(storyboards.mapNotNull { storyboard ->
-            storyboard.videoUrl?.let { VideoStoryboardResource(it, storyboard, RetrofitClient.httpClient) }
+            storyboard.videoUrl?.let { VideoStoryboardResource(it, storyboard, false, RetrofitClient.httpClient) }
         })
     }
 

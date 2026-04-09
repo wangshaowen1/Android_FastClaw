@@ -279,9 +279,9 @@ class EditStoryboardVideoViewModel : AppRepositoryViewModel<EditStoryboardReposi
         return adapter.items.any { it.data.get()?.videoGenerateFailed == true }
     }
 
-    fun download(storyboard: SimpleStoryboardInfo, videoUrl: String) {
+    fun download(storyboard: SimpleStoryboardInfo, videoUrl: String, watermark: Boolean) {
         launchWithLoading {
-            val resource = VideoStoryboardResource(videoUrl, storyboard, RetrofitClient.httpClient)
+            val resource = VideoStoryboardResource(videoUrl, storyboard, watermark, RetrofitClient.httpClient)
             resource.download { }
             val destFile = File(PathUtils.getExternalDownloadsPath(), resource.file.name)
             val copied = if (destFile.exists()) true else withContext(Dispatchers.IO) { FileUtils.copy(resource.file.putAIGCMetadata(storyboard), destFile) }

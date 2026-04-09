@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.marginEnd
 import androidx.core.view.marginStart
+import androidx.fragment.app.FragmentManager
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.applySmartFocusManager
@@ -16,9 +17,11 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.EpisodeInfo
+import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.databinding.ActivityEditStoryboardVideoBinding
 import com.kgmedia.fastfilm.feature.creator.data.DramaGenerateConstants
 import com.kgmedia.fastfilm.feature.creator.generate.StoryEditorActivity
+import com.kgmedia.fastfilm.feature.play.more.DownloadMethodDialog
 import com.kgmedia.fastfilm.feature.series.SeriesActivity
 import com.kgmedia.fastfilm.feature.works.MyWorksFragment
 import com.nhsd.basic.BaseViewModelActivity
@@ -29,7 +32,7 @@ import com.nhsd.basic.ext.showToast
 /**
  * 编辑分镜视频
  */
-class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboardVideoBinding, EditStoryboardVideoViewModel>() {
+class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboardVideoBinding, EditStoryboardVideoViewModel>(), DownloadMethodDialog.DownloadTypeLauncher {
     companion object {
         @JvmStatic
         fun launchIntent(
@@ -60,6 +63,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
     }
 
     val from by lazy { intent?.getStringExtra(Constants.Extra.FROM_PAGE) }
+    private var downloadStoryboard: SimpleStoryboardInfo? = null
 
     override fun onBackPressed() {
         mRealVM.getStoryInfo {
@@ -155,10 +159,11 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                     return
                 }
                 if (current.videoGenerated) {
-                    requestRead2WritePermissions { granted ->
-                        if (granted) {
-                            current.videoUrl?.let { mRealVM.download(current, it) }
-                        }
+                    downloadStoryboard = current
+                    if (current.hasWatermark == true) {
+                        downloadVideo(false)
+                    } else {
+                        DownloadMethodDialog.show(this@EditStoryboardVideoActivity)
                     }
                 }
             }
@@ -175,4 +180,14 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
         }
     }
 
+    override fun fragmentManager(): FragmentManager? = supportFragmentManager
+
+    override fun downloadVideo(watermark: Boolean) {
+        requestRead2WritePermissions { granted ->
+            if (granted) {
+                val current = downloadStoryboard ?: return@requestRead2WritePermissions
+                current.videoUrl?.let { mRealVM.download(current, it, watermark) }
+            }
+        }
+    }
 }
