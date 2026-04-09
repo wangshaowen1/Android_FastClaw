@@ -202,6 +202,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                 else -> 51
             }
             response(mRepo.api.assetSaveOverride(AssetSaveOverrideBody(bizType, newAppearanceId, workId))) {
+                hasChanged.value = false
                 if (callback != null) {
                     callback()
                     return@response
