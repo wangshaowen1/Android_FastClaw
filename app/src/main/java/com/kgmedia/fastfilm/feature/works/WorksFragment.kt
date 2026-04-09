@@ -120,6 +120,9 @@ class WorksFragment : BaseViewModelFragment<FragmentWorksBinding, WorksViewModel
 
 
     private fun dataUpdate() {
+        mRealVM.editModel.observe(this){
+            binding.viewPager2.isUserInputEnabled = !it
+        }
         parentVm?.activityConfigCache?.observe(this) {
             handlePopup(it.getPopupInfo(ActivityConfigData.TAB_MY_WORKS))
             handleFloatWindow(it.getFloatWindowInfo(ActivityConfigData.TAB_MY_WORKS))
