@@ -40,6 +40,22 @@
             app:layout_constraintDimensionRatio="375:210"
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_l"
+            android:background="@drawable/bg_90_ffffff_stroke_r3"
+            android:padding="3dp"
+            android:shadowColor="@color/color_05_000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="1.5"
+            android:text="@string/generated_by_ai"
+            android:textColor="?attr/textColor2"
+            android:textSize="9sp"
+            app:layout_constraintStart_toStartOf="@id/ivLoading"
+            app:layout_constraintTop_toTopOf="@id/ivLoading" />
+
         <com.kgmedia.fastfilm.widget.AutoRotateLayout
             autoRotate="@{layout.generating}"
             setVisible="@{layout.generating}"
