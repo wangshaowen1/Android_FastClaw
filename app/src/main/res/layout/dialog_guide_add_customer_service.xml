@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:src="@drawable/img_add_customer"
+        android:src="@drawable/img_default_cover_1_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="375:415"
         app:layout_constraintEnd_toEndOf="parent"
