@@ -75,7 +75,7 @@ data class SimpleStoryboardInfo(
     /**
      * 分镜创建时间
      */
-    val createTime : Long? = null,
+    val createTime : String? = null,
     /**
      * 视频是否含有水印：true=含水印（v1.4上线前生成），false=无水印，null=无法判断
      */

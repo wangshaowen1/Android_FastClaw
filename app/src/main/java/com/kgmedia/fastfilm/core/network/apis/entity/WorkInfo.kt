@@ -286,7 +286,7 @@ data class EpisodeInfo(
     /**
      * 对应最早分镜的创建时间，无分镜时为 null
      */
-    val storyboardCreateTime : Long? = null,
+    val storyboardCreateTime : String? = null,
     /**
      * 视频是否含有水印：true=含水印（v1.4上线前生成），false=无水印，null=无法判断
      */
