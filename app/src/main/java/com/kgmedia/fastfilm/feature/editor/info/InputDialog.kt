@@ -100,7 +100,7 @@ class InputDialog :
                 getString(R.string.enter_update_content).showToast()
                 return@setOnClickListener
             }
-            if (mRealVM.content != binding.inputView.text.trim()) {
+            if (mRealVM.content != binding.inputView.text) {
                 lifecycleScope.launch {
                     sensitiveWordCheck(mRealVM.input.value).let { (isPass, highlightText) ->
                         if (!isPass) {
@@ -120,7 +120,7 @@ class InputDialog :
     }
 
     fun closeConfirm() {
-        if (mRealVM.hasChange && mRealVM.content != binding.inputView.text.trim()) {
+        if (mRealVM.hasChange && mRealVM.content != binding.inputView.text) {
             topActivity?.showConfirmPrompt(
                 title = getString(R.string.confirm_exit_without_saving),
                 cancelText = getString(R.string.exit_directly),
@@ -130,7 +130,7 @@ class InputDialog :
                 },
                 confirm = {
                     mRealVM.save {
-                        callback?.invoke(binding.inputView.text.trim())
+                        callback?.invoke(binding.inputView.text)
                         dismissAllowingStateLoss()
                     }
                 })
