@@ -518,5 +518,6 @@
     <string name="set_scene">设置场景</string>
     <string name="set_prop">设置道具</string>
     <string name="image_load_failed_regenerate">图片加载失败，重新生成</string>
+    <string name="no_assets_start_creating">暂无资产，去开启想象</string>
 </resources>
 

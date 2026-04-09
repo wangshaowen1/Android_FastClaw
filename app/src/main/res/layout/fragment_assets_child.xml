@@ -29,7 +29,8 @@
                 android:id="@+id/lsv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:noData="@string/empty_creation_history">
+                app:noDataSrc="@drawable/img_empty"
+                app:noData="@string/no_assets_start_creating">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view"
