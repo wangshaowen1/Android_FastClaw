@@ -32,6 +32,7 @@ import com.kgmedia.fastfilm.feature.splash.newer.FirstRechargeDialog
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.launch
@@ -177,6 +178,8 @@ class CreationFragment :
                                 workType = workType,
                                 model = modelType
                             )
+                            FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_MY_WORKS))
+                            mActivity.finish()
                         }
 
                         if (isFileModel) {
