@@ -56,7 +56,7 @@ import com.kgmedia.fastfilm.core.network.ObjectTypeAdapter
 import com.kgmedia.fastfilm.core.network.apis.AppHeader
 import com.kgmedia.fastfilm.databinding.ActivityBrowserBinding
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
-import com.kgmedia.fastfilm.feature.recharge.PaySuccessDialog
+import com.kgmedia.fastfilm.feature.recharge.GuideAddCustomerServiceDialog
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.AndroidBug5497Workaround
@@ -587,7 +587,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
             }
 
             registerHandler("showCustomerGuideDialog") { data, _ ->
-                PaySuccessDialog.checkAndShow(PaySuccessDialog.SCENE_OTHER)
+                GuideAddCustomerServiceDialog.checkAndShow()
             }
             //埋点上报
             // {

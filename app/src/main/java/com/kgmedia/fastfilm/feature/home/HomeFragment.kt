@@ -5,9 +5,12 @@ import android.widget.ImageView
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.blankj.utilcode.util.SPUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
 import com.kgmedia.fastfilm.core.Config
+import com.kgmedia.fastfilm.core.Global
+import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.databinding.loadUri
 import com.kgmedia.fastfilm.core.manager.AppEvent
@@ -16,11 +19,12 @@ import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
 import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
 import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
+import com.kgmedia.fastfilm.core.network.apis.response.SimpleActivityInfo
 import com.kgmedia.fastfilm.databinding.FragmentHomeBinding
 import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
 import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
-import com.kgmedia.fastfilm.router.AppNavigator
+import com.kgmedia.fastfilm.feature.recharge.GuideAddCustomerServiceDialog
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.StaggeredGridSpaceItemDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
@@ -42,6 +46,7 @@ import kotlin.math.abs
 class HomeFragment :
     BaseViewModelFragment<FragmentHomeBinding, HomeViewModel>() {
     companion object {
+        private const val KEY_VISIT_COUNT = "visit_count_home_fragment"
         fun newInstance(): HomeFragment {
             val fragment = HomeFragment()
             return fragment
@@ -167,6 +172,15 @@ class HomeFragment :
         }
     }
 
+    @Deprecated("旧活动弹窗的逻辑，有新手礼包弹窗，这里需要在下一次打开的时候弹出，这个活动暂时没了")
+    private var isFragmentVisible = false // 记录当前 Tab 是否是选中状态
+
+    override fun onStart() {
+        super.onStart()
+        // 场景 1：从其他 Activity 返回，或者 ViewPager 切换（replace 模式）
+        checkAndTriggerPopup()
+    }
+
     override fun onResume() {
         super.onResume()
         if (isFragmentVisible) {
@@ -174,17 +188,66 @@ class HomeFragment :
         }
     }
 
-    private var isFragmentVisible = false // 记录当前 Tab 是否是选中状态
-
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+        // 场景 2：底栏 Tab 切换（show/hide 模式）
+        if (!hidden) {
+            checkAndTriggerPopup()
+        }
         isFragmentVisible = !hidden
         if (isFragmentVisible) {
             resumePopup()
         }
     }
 
-    fun resumePopup(){
+    private var lastCountTime = 0L
+
+    private fun checkAndTriggerPopup() {
+        val currentTime = System.currentTimeMillis()
+        // 物理防抖：如果距离上次计数小于 500 毫秒，直接判定为重复触发
+        if (currentTime - lastCountTime < 500) return
+        lastCountTime = currentTime
+
+        // 1. 获取当前次数并加 1
+        val currentCount = SPUtils.getInstance().getInt(KEY_VISIT_COUNT, 0)
+        val newCount = currentCount + 1
+
+        // 2. 立即持久化新次数
+        SPUtils.getInstance().put(KEY_VISIT_COUNT, newCount)
+
+        // 3. 严格逻辑判断：仅在第 2 次时执行弹窗
+        if (newCount == 2) {
+            showTargetDialog()
+        } else if (newCount > 2) {//超过2次直接显示悬浮窗，直到跳转到客服弹窗
+            showFloatWindow()
+        }
+    }
+
+    private fun showTargetDialog() {
+        GuideAddCustomerServiceDialog.checkAndShow(GuideAddCustomerServiceDialog.SCENE_HOME) { dialog ->
+            dialog?.setOnDismissListener {
+                showFloatWindow()
+            }
+        }
+    }
+
+    private fun showFloatWindow() {
+        if (!GuideAddCustomerServiceDialog.isHasJumped()) {
+            Global.getGuideLinkCustomerInfo { list ->
+                val targetCode = if (User.get().hasPaid()) {
+                    SimpleActivityInfo.FLOAT_PAID
+                } else {
+                    SimpleActivityInfo.FLOAT_UNPAID
+                }
+                list?.find { it.businessCode == targetCode && it.isEnable() }?.let { info ->
+                    handleFloatWindow(info)
+                }
+            }
+        }
+    }
+
+
+    fun resumePopup() {
         if (parentVm?.isFirstRechargeLogicActive == false && parentVm?.hasActivityConfig == true) {
             handlePopup(parentVm?.activityConfigCache?.value?.getPopupInfo(ActivityConfigData.TAB_HOME))
             parentVm?.hasActivityConfig = false
@@ -210,6 +273,21 @@ class HomeFragment :
             Config.get().activityFloatShowMark(float.id)
             binding.floatingBall.setOnMfClickListener {
                 AppRouter.jump(float.jumpUrl)
+            }
+        } else {
+            binding.floatingBall.visibility = View.GONE
+        }
+    }
+
+    private fun handleFloatWindow(info: SimpleActivityInfo?) {
+        if (info != null && info.isEnable()) {
+            if (binding.floatingBall.isVisible) return
+            binding.floatingBall.isVisible = true
+            loadGifUrl(binding.ivFloating, info.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
+            binding.floatingBall.setOnMfClickListener {
+                AppRouter.jump(info.jumpUrl)
+                GuideAddCustomerServiceDialog.markHasJumped()
+                binding.floatingBall.visibility = View.GONE
             }
         } else {
             binding.floatingBall.visibility = View.GONE

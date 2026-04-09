@@ -109,3 +109,37 @@ data class PopupInfo(
         }
     }
 }
+
+/**
+ *  "businessCode": "业务编号（雪花算法ID）",
+ *             "jumpUrl": "跳转URL",
+ *             "status": "启用状态（0-禁用、1-启用）",
+ *             "imageUrl": "图片地址(png/jpg/gif)",
+ *             "sourceType": "数据来源（1-浮窗、2-弹窗）"
+ */
+@Parcelize
+data class SimpleActivityInfo(
+    val businessCode: String? = null,
+    val imageUrl: String? = null,
+    val jumpUrl: String? = null,
+    val sourceType: Int? = null,
+    val status: Int? = null
+) : Parcelable {
+    fun isEnable(): Boolean {
+        return status == 1
+    }
+
+    fun isPopup(): Boolean {
+        return sourceType == 2
+    }
+
+    companion object {
+        // 浮窗
+        const val FLOAT_UNPAID = "2042126738586079233"
+        const val FLOAT_PAID = "2042126738590273537"
+
+        // 弹窗
+        const val POPUP_UNPAID = "2042147807158079489"
+        const val POPUP_PAID = "2042147807166468097"
+    }
+}

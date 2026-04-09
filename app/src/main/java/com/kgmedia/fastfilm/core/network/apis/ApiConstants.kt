@@ -850,4 +850,9 @@ object ApiConstants {
      * 取消道具形象选用
      */
     const val CANCEL_PROP_IMAGE = "v2/work/asset/prop/appearance/unset"
+
+    /**
+     * 引导添加客服弹窗信息列表
+     */
+    const val GUIDE_LINK_CUSTOMER_POPUP_INFO = "app/window/floatWindow/wechatMini/list"
 }

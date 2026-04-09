@@ -3,6 +3,7 @@ package com.kgmedia.fastfilm.core
 import com.kgmedia.fastfilm.common.ext.ioScope
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
+import com.kgmedia.fastfilm.core.network.apis.response.SimpleActivityInfo
 import com.nhsd.basic.ext.launchNoCrash
 
 /**
@@ -29,6 +30,8 @@ object Global {
      */
     var customizedContent: String? = null
 
+    var guideActivityInfoList: List<SimpleActivityInfo>? = null
+
     fun refreshUserInfo() {
         ioScope.launchNoCrash {
             response(ApiFactory.apiService.getUserHomeInfo(UserTokenBody())) {
@@ -42,6 +45,24 @@ object Global {
             val resp = ApiFactory.apiService.queryWalletInfo(UserTokenBody())
             if (resp.isSuccess) {
                 resp.data?.pointNum?.let { User.get().storeComputingPower(it) }
+            }
+        }
+    }
+
+    fun getGuideLinkCustomerInfo(callback: (List<SimpleActivityInfo>?) -> Unit) {
+        // 如果有缓存，直接回调并 return
+        guideActivityInfoList?.let {
+            callback(it)
+            return
+        }
+        ioScope.launchNoCrash {
+            val resp = ApiFactory.apiService.guideLinkCustomerPopupInfo()
+            if (resp.isSuccess) {
+                guideActivityInfoList = resp.data
+                callback(guideActivityInfoList) // 移除多余的 ?.invoke
+            } else {
+                // 建议：如果请求失败，回调 null，防止调用方如果在做等待动画时永远挂起
+                callback(null)
             }
         }
     }

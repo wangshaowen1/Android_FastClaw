@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.splash.newer
 
+import android.content.DialogInterface
 import android.view.Gravity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentActivity
@@ -11,6 +12,7 @@ import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.ext.onUserSignIn
 import com.kgmedia.fastfilm.core.network.apis.response.FirstRechargeDialogData
 import com.kgmedia.fastfilm.databinding.DialogFirstRechargeBinding
+import com.kgmedia.fastfilm.feature.recharge.GuideAddCustomerServiceDialog
 import com.nhsd.basic.BaseVMDialogFragment
 import com.nhsd.basic.bus.observeEvents
 
@@ -45,6 +47,11 @@ class FirstRechargeDialog : BaseVMDialogFragment<DialogFirstRechargeBinding, Fir
                 dialogWindow.attributes = attr
             }
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        GuideAddCustomerServiceDialog.checkAndShow(GuideAddCustomerServiceDialog.SCENE_FIRST_RECHARGE)
     }
 
     override fun onPrepareView() {

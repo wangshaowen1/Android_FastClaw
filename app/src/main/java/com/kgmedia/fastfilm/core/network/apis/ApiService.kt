@@ -136,6 +136,7 @@ import com.kgmedia.fastfilm.core.network.apis.response.PointAmountData
 import com.kgmedia.fastfilm.core.network.apis.response.PointConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.ShelfStatusData
 import com.kgmedia.fastfilm.core.network.apis.response.ShortLikeData
+import com.kgmedia.fastfilm.core.network.apis.response.SimpleActivityInfo
 import com.kgmedia.fastfilm.core.network.apis.response.StoryboardListData
 import com.kgmedia.fastfilm.core.network.apis.response.UpgradeData
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
@@ -1197,4 +1198,10 @@ interface ApiService {
      */
     @POST(ApiConstants.CANCEL_PROP_IMAGE)
     suspend fun cancelPropImage(@Body body: AppearanceIdBody): ApiResponse<Any?>
+
+    /**
+     * 引导添加客服弹窗信息列表
+     */
+    @POST(ApiConstants.GUIDE_LINK_CUSTOMER_POPUP_INFO)
+    suspend fun guideLinkCustomerPopupInfo(): ApiResponse<List<SimpleActivityInfo>?>
 }
