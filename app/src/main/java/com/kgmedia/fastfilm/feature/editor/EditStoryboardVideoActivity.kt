@@ -160,7 +160,7 @@ class EditStoryboardVideoActivity : BaseViewModelActivity<ActivityEditStoryboard
                 }
                 if (current.videoGenerated) {
                     downloadStoryboard = current
-                    if (current.hasWatermark != true) {
+                    if (current.hasWatermark == true) {
                         downloadVideo(false)
                     } else {
                         DownloadMethodDialog.show(this@EditStoryboardVideoActivity)

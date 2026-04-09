@@ -32,7 +32,7 @@ class DownloadMethodDialog : BaseBottomPushDialogFragment<DialogDownloadMethodBi
 
         }
         binding.btnPolicy.setOnSingleClickListener {
-            Config.get().appConfig.appDownloadProtocolUrl?.let { SimpleBrowserActivity.launch(activity, it) }
+            Config.get().appConfig.userProtocolUrl?.let { SimpleBrowserActivity.launch(activity, it) }
         }
         binding.btnClose.setOnSingleClickListener {
             dismissAllowingStateLoss()

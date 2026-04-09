@@ -168,7 +168,7 @@ class DramasPlayPagerActivity :
                         //下载
                         currentWork.getPlayUrl()?.let {
                             downloadVideoUrl = it
-                            if (currentWork.workStoryItemList?.getOrNull(0)?.hasWatermark != true) {
+                            if (currentWork.workStoryItemList?.getOrNull(0)?.hasWatermark == true) {
                                 downloadVideo(false)
                             } else {
                                 DownloadMethodDialog.show(this@DramasPlayPagerActivity)

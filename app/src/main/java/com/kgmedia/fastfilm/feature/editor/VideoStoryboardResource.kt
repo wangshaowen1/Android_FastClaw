@@ -25,7 +25,7 @@ class VideoStoryboardResource(private val url: String, private val storyboard: S
         FFmpegKitConfig.setFontDirectoryList(BaseApp.getInstance(), listOf("/system/fonts"), emptyMap())
     }
 
-    override val filename by lazy { "${url.urlToFilename()}_${storyboard.subtitle?.subtitleContent.hashCode()}.mp4" }
+    override val filename by lazy { "${url.urlToFilename()}_${storyboard.subtitle?.subtitleContent.hashCode()}_${watermark}.mp4" }
     private val cacheFile by lazy {
         val path = "${PathUtils.getExternalAppCachePath()}${File.separator}source_material${File.separator}${filename}"
         File(path).apply {
