@@ -7,6 +7,8 @@ import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.ActivityUtils
 import com.bytedance.ads.convert.BDConvert.init
@@ -43,8 +45,14 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
             val splashScreen = installSplashScreen()
-            splashScreen.setOnExitAnimationListener { it.remove() }
+            splashScreen.setOnExitAnimationListener { it.remove()}
             super.onCreate(savedInstanceState)
+            ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+                // 强行把根布局的内边距清零
+                view.setPadding(0, 0, 0, 0)
+                // 返回 CONSUMED，告诉系统：“安全边距我处理完了，不要再去压缩我的 View 的高度了！”
+                WindowInsetsCompat.CONSUMED
+            }
             binding.splashLottie.addAnimatorListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     lottieHasEnd = true
