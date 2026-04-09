@@ -20,11 +20,11 @@ ext {
             targetSdkVersion  : 35,
             buildToolsVersion : "35.0.0",
             //上线版本号六位，涵盖重大版本更新(前两位),大版本更新(中两位),小版本更新(最后两位)
-            versionCodeRelease: 100301,
+            versionCodeRelease: 100400,
             //Debug版本号8位,涵盖重大版本更新(1,2位),大版本更新(3,4位),小版本更新(5,6位),最后两位为对应版本的测试升级号(例:alpha版本,beta版本等)
-            versionCodeDebug  : 100301,
+            versionCodeDebug  : 100400,
             //版本名称
-            versionName       : "1.3.1",
+            versionName       : "1.4.0",
 
             //数据库版本号
             databaseVersion   : 100000

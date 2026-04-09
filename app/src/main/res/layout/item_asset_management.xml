@@ -50,6 +50,23 @@
             app:layout_constraintTop_toTopOf="@+id/ivCover"
             app:roundCornerRadius="8dp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_s"
+            android:padding="3dp"
+            android:visibility="@{item.status == 2 ? View.VISIBLE : View.INVISIBLE}"
+            android:shadowColor="@color/color_05_000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="1.5"
+            android:textColor="?attr/textColor2"
+            android:textSize="9sp"
+            app:layout_constraintStart_toStartOf="@id/ivCover"
+            app:layout_constraintTop_toTopOf="@id/ivCover"
+            android:background="@drawable/bg_90_ffffff_stroke_r3"
+            android:text="@string/generated_by_ai" />
+
         <ImageView
             android:id="@+id/btnImageDel"
             setVisible="@{item.status == 2}"

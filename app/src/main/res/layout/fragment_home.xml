@@ -92,7 +92,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="center_vertical"
                 android:paddingVertical="20dp"
-                android:text="@string/viral_comic_drama"
+                android:text="@string/published_works"
                 android:textColor="?attr/textColor1"
                 app:drawableStartCompat="@drawable/img_hot"
                 app:layout_scrollFlags="enterAlways" />

@@ -116,14 +116,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:maxLength="200"
+                android:maxLength="500"
                 app:inputCounterGravity="right"
                 app:inputCounterRightMargin="0dp"
                 app:inputCounterTextColor="?attr/textColor4"
                 app:inputCounterTextSize="12sp"
                 app:inputCounterVisible="false"
                 app:inputHorizontalPadding="@dimen/spacing_m"
-                app:inputMaxLength="200"
+                app:inputMaxLength="500"
                 app:inputTextColor="?attr/textColor2"
                 app:inputTextColorHint="?attr/textColor4"
                 app:inputTextSize="14sp"
@@ -185,10 +185,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/spacing_m"
-                    android:maxLength="200"
-                    android:text="@{layout.desc.length()+`/200`}"
+                    android:text="@{layout.desc.length()+`/500`}"
                     android:textColor="?attr/textColor4"
-                    tools:text="0/200" />
+                    tools:text="0/500" />
             </LinearLayout>
 
         </LinearLayout>
