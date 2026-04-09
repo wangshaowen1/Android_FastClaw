@@ -96,14 +96,17 @@
                 tools:text="恭喜你，完成初步觉醒"
                 tools:textSize="15dp" />
 
-            <ImageView
+            <TextView
                 setVisible="@{layout.storyboard.videoGenerated}"
-                android:layout_width="32dp"
-                android:layout_height="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:layout_constraintStart_toStartOf="@+id/storyboardPlayer"
-                app:layout_constraintTop_toTopOf="@+id/storyboardPlayer"
-                tools:text="AI生成" />
+                android:text="AI生成"
+                android:textAppearance="@style/Text12"
+                android:textColor="?attr/textColor4"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/playerArea"
+                app:layout_constraintTop_toTopOf="@+id/playerArea" />
 
             <ImageView
                 setVisible="@{layout.storyboard.videoGenerated &amp;&amp; !layout.playing}"
