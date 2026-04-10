@@ -305,7 +305,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
             if (item is ItemAssetVM<*>) {
                 //-1=新创建 0=待生成 1=生成中 2=成功 3=失败
                 when (item.status.get()) {
-                    -1, 0 -> newNum++
+                    -1, 0, 5 -> newNum++
                     1 -> generatingNum++
                     2 -> generatedNum++
                     3 -> failedNum++
@@ -340,7 +340,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
                 }
 
                 R.id.ivCoverBorder -> {
-                    if (assetImage.get().isNullOrEmpty() && status.get() == 0) {
+                    if (assetImage.get().isNullOrEmpty() && (status.get() == 0 || status.get() == 5)) {
                         onAssetImageSelectEvent?.invoke(this)
                         return@click
                     }
@@ -435,7 +435,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         val notGenerateItems = arrayListOf<Triple<ItemAssetVM<*>, String, String>>()
         adapter.items.forEachIndexed { index, item ->
             if (item is ItemAssetVM<*>) {
-                if (item.status.get() < 1 || item.status.get() == 3) {
+                if (item.status.get() < 1 || item.status.get() == 3 || item.status.get() == 5) {
                     val assetDesc = item.assetDesc.get()
                     val assetName = if (item.editingAssetName.get()) item.editingAssetNameText else item.assetName.get()
                     if (assetDesc.isNullOrEmpty() || assetName.isNullOrEmpty()) {
@@ -501,7 +501,7 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         launch {
             getOrRequestAiPrice()
             if (aiPrice > 0) {
-                val num = adapter.items.count { it is ItemAssetVM<*> && it.status.get().let { status -> status < 1 || status == 3 } }
+                val num = adapter.items.count { it is ItemAssetVM<*> && it.status.get().let { status -> status < 1 || status == 3 || status == 5 } }
                 cost.set(aiPrice * num)
             }
         }
