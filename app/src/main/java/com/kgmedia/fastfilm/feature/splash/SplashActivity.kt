@@ -57,7 +57,7 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
                 override fun onAnimationEnd(animation: Animator) {
                     lottieHasEnd = true
                     if (isFinish) return
-                    if (!App.instance.hasAgree()) {
+                    if (App.instance.hasAgree()) {
                         jumpToTheHomepage()
                     }
                     super.onAnimationEnd(animation)
