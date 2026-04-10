@@ -466,7 +466,7 @@
     <string name="cancellation_request_format">申请注销(%1$ds)</string>
     <string name="please_select_recharge_amount">请选择充值金额</string>
     <string name="selected_items_format">已选择%1$s个</string>
-    <string name="confirm_delete_work">是否删除该作品</string>
+    <string name="confirm_delete_work">确认删除作品吗？</string>
     <string name="generate_asset_image">生成资产图片</string>
     <string name="redraw_storyboard_video">重绘分镜视频</string>
     <string name="insufficient_balance_please_recharge">算力余额不足，请及时充值</string>
@@ -519,5 +519,6 @@
     <string name="set_prop">设置道具</string>
     <string name="image_load_failed_regenerate">图片加载失败，重新生成</string>
     <string name="no_assets_start_creating">暂无资产，去开启想象</string>
+    <string name="delete_work_permanent_warning">删除后，作品剧集及作品相关的资产图片将一并删除，无法恢复</string>
 </resources>
 
