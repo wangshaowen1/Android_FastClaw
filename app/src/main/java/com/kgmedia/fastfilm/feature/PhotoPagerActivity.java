@@ -492,7 +492,7 @@ public class PhotoPagerActivity extends BaseActivity {
     }
 
     private void showSaveImageDialog(GestureImageView image) {
-        ActionSheetHelper.createDialog(new String[]{"Save photo"}, (v, position) -> {
+        ActionSheetHelper.createDialog(new String[]{"保存"}, (v, position) -> {
             switch (position) {
                 case 0:
                     Utils.saveToSystemAlbumWithWatermark(this, image.getDrawable(), exist -> {
