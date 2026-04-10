@@ -63,7 +63,7 @@ object AppRouter : IRouter {
         if (TextUtils.isEmpty(schemeUri)) {
             return
         }
-        val uri = Uri.parse(schemeUri)
+        val uri = schemeUri?.toUri()
         if (uri != null) {
             var context: Context? = ActivityUtils.getTopActivity()
             if (context == null) {
@@ -95,6 +95,12 @@ object AppRouter : IRouter {
                     }
                 }
             } else if (schemeUri.startsWith("http")) {
+                val target = uri.getQueryParameter("ff_jump_mode")
+                if(target == "external"){
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    topActivity?.startActivity(intent)
+                    return
+                }
                 launch(context, schemeUri)
             }
         }
