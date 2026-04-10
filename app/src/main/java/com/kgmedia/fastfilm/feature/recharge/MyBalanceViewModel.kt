@@ -145,6 +145,7 @@ class MyBalanceViewModel(@LayoutRes private val paymentItemLayout: Int) : Paymen
                 }
                 loadConfig()
                 refreshBalance()
+                showToast(R.string.pay_success)
                 GuideAddCustomerServiceDialog.checkAndShow(GuideAddCustomerServiceDialog.SCENE_FIRST_RECHARGE)
                 if (isDialog) {
                     dismiss()
