@@ -61,7 +61,7 @@ class AssetManagementRepository : AppRepository() {
         sceneName: String?,
         scenePrompt: String?, imageUrl: String? = null
     ) = withContext(Dispatchers.IO) {
-        api.workAssetSceneSave(SaveSceneBody(sceneId, appearanceId, workId, storyId, sceneName, scenePrompt, imageUrl))
+        api.workAssetSceneSave(SaveSceneBody(sceneId, appearanceId, workId, storyId, sceneName, scenePrompt, imageUrl = imageUrl))
     }
 
     /**
@@ -87,7 +87,7 @@ class AssetManagementRepository : AppRepository() {
      */
     suspend fun workAssetRoleSave(roleId: String?, appearanceId: String?, workId: String?, storyId: String?, roleName: String?, rolePrompt: String?, parentAppearanceId: String? = null,//基于某个形象重新生成时传入，为空则视为原始生成
                                   imageUrl: String? = null) = withContext(Dispatchers.IO) {
-        api.workAssetRoleSave(SaveRoleBody(roleId, appearanceId, workId, storyId, roleName, rolePrompt, parentAppearanceId, imageUrl))
+        api.workAssetRoleSave(SaveRoleBody(roleId, appearanceId, workId, storyId, roleName, rolePrompt, parentAppearanceId = parentAppearanceId, imageUrl = imageUrl))
     }
 
     /**
@@ -112,6 +112,6 @@ class AssetManagementRepository : AppRepository() {
      * @param propPrompt 道具图片描述提示词
      */
     suspend fun workAssetPropSave(propId: String?, appearanceId: String?, workId: String?, storyId: String?, propName: String?, propPrompt: String?, imageUrl: String? = null) = withContext(Dispatchers.IO) {
-        api.workAssetPropSave(SavePropBody(propId, appearanceId, workId, storyId, propName, propPrompt,imageUrl))
+        api.workAssetPropSave(SavePropBody(propId, appearanceId, workId, storyId, propName, propPrompt, imageUrl = imageUrl))
     }
 }
