@@ -364,6 +364,7 @@ class MyWorksFragment : BaseViewModelFragment<FragmentMyWorksBinding, MyWorksVie
                 }
                 topActivity?.showConfirmPrompt(
                     title = getString(R.string.confirm_delete_work),
+                    tip = getString(R.string.delete_work_permanent_warning),
                     cancelText = getString(R.string.cancel),
                     confirmText = getString(R.string.confirm_ok)
                 ) {
