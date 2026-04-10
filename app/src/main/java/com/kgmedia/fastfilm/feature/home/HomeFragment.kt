@@ -116,7 +116,7 @@ class HomeFragment :
                     hostAdapter = homeAdapter,
                     noDataButtonDisplay = false,
                     requestButtonDisplay = false,
-                    displayOnEmpty = false,
+                    displayOnEmpty = true,
                     displayedHeight = 400.dp,
                     refresh = {
                         homeAdapter.refresh()
@@ -172,31 +172,26 @@ class HomeFragment :
         }
     }
 
-    @Deprecated("旧活动弹窗的逻辑，有新手礼包弹窗，这里需要在下一次打开的时候弹出，这个活动暂时没了")
-    private var isFragmentVisible = false // 记录当前 Tab 是否是选中状态
-
     override fun onStart() {
         super.onStart()
-        // 场景 1：从其他 Activity 返回，或者 ViewPager 切换（replace 模式）
-        checkAndTriggerPopup()
+        // 场景 1：从其他 Activity 返回
+        if (!isHidden) {
+            checkAndTriggerPopup()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (isFragmentVisible) {
+        if (!isHidden) {
             resumePopup()
         }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        // 场景 2：底栏 Tab 切换（show/hide 模式）
         if (!hidden) {
-            checkAndTriggerPopup()
-        }
-        isFragmentVisible = !hidden
-        if (isFragmentVisible) {
             resumePopup()
+            checkAndTriggerPopup()
         }
     }
 
@@ -247,6 +242,7 @@ class HomeFragment :
     }
 
 
+    @Deprecated("这个活动暂时停用了")
     fun resumePopup() {
         if (parentVm?.isFirstRechargeLogicActive == false && parentVm?.hasActivityConfig == true) {
             handlePopup(parentVm?.activityConfigCache?.value?.getPopupInfo(ActivityConfigData.TAB_HOME))
@@ -254,6 +250,7 @@ class HomeFragment :
         }
     }
 
+    @Deprecated("这个活动暂时停用了")
     private fun handlePopup(popup: PopupInfo?) {
         popup?.let {
             if (popup.isShow()) {
@@ -266,6 +263,7 @@ class HomeFragment :
         }
     }
 
+    @Deprecated("这个活动暂时停用了")
     private fun handleFloatWindow(float: FloatWindowInfo?) {
         if (float != null && float.isShow()) {
             binding.floatingBall.isVisible = true
