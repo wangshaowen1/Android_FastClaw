@@ -14,6 +14,7 @@ import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.core.network.apis.request.AssetIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.AssetUnlinkBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
 import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.SaveRoleBody
@@ -203,7 +204,7 @@ class ItemRoleVM(
     }
 
     override suspend fun delete(): ApiResponse<Any> {
-        return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetRoleDelete(AssetIdBody(data.get()?.assetId)) }
+        return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetRoleDelete(AssetUnlinkBody(workId, storyId, data.get()?.assetId)) }
     }
 
     override fun loopGenStatus() {

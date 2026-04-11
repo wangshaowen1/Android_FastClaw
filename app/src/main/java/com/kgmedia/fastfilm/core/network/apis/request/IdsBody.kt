@@ -18,3 +18,9 @@ data class IdsBody(
 data class AssetIdBody(
     val assetId: String? = null
 )
+
+data class AssetUnlinkBody(
+    val workId: String? = null,
+    val storyId: String? = null,
+    val assetId: String? = null,
+)

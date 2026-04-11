@@ -13,9 +13,8 @@ import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.ApiResponse
 import com.kgmedia.fastfilm.core.network.apis.entity.ReferenceImageInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimplePropInfo
-import com.kgmedia.fastfilm.core.network.apis.request.AssetIdBody
+import com.kgmedia.fastfilm.core.network.apis.request.AssetUnlinkBody
 import com.kgmedia.fastfilm.core.network.apis.request.GenerateAssetBody
-import com.kgmedia.fastfilm.core.network.apis.request.IdsBody
 import com.kgmedia.fastfilm.core.network.apis.request.SavePropBody
 import com.kgmedia.fastfilm.core.network.apis.request.TaskIdBody
 import com.kgmedia.fastfilm.core.response
@@ -205,7 +204,7 @@ class ItemPropVM(
     }
 
     override suspend fun delete(): ApiResponse<Any> {
-        return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetPropDelete(AssetIdBody(data.get()?.assetId)) }
+        return withContext(Dispatchers.IO) { ApiFactory.apiService.workAssetPropDelete(AssetUnlinkBody(workId, storyId, data.get()?.assetId)) }
     }
 
     override fun loopGenStatus() {

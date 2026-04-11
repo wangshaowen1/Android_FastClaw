@@ -40,6 +40,7 @@ import com.kgmedia.fastfilm.core.network.apis.request.AISynopsisBody
 import com.kgmedia.fastfilm.core.network.apis.request.AppearanceIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.AssetIdBody
 import com.kgmedia.fastfilm.core.network.apis.request.AssetSaveOverrideBody
+import com.kgmedia.fastfilm.core.network.apis.request.AssetUnlinkBody
 import com.kgmedia.fastfilm.core.network.apis.request.BannerBody
 import com.kgmedia.fastfilm.core.network.apis.request.BindPhoneBody
 import com.kgmedia.fastfilm.core.network.apis.request.CompleteUserDataInfoBody
@@ -744,7 +745,7 @@ interface ApiService {
      * 场景单个删除
      */
     @POST(ApiConstants.WORK_ASSET_SCENE_DELETE)
-    suspend fun workAssetSceneDelete(@Body body: AssetIdBody): ApiResponse<Any>
+    suspend fun workAssetSceneDelete(@Body body: AssetUnlinkBody): ApiResponse<Any>
 
     /**
      * 角色列表
@@ -786,7 +787,7 @@ interface ApiService {
      * 角色单个删除
      */
     @POST(ApiConstants.WORK_ASSET_ROLE_DELETE)
-    suspend fun workAssetRoleDelete(@Body body: AssetIdBody): ApiResponse<Any>
+    suspend fun workAssetRoleDelete(@Body body: AssetUnlinkBody): ApiResponse<Any>
 
     /**
      * 道具列表
@@ -804,7 +805,7 @@ interface ApiService {
      * 道具单个删除
      */
     @POST(ApiConstants.WORK_ASSET_PROP_DELETE)
-    suspend fun workAssetPropDelete(@Body body: AssetIdBody): ApiResponse<Any>
+    suspend fun workAssetPropDelete(@Body body: AssetUnlinkBody): ApiResponse<Any>
 
     /**
      * 生成单个资产图片（重新生成/生成）
