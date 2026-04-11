@@ -6,13 +6,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
+import com.kgmedia.fastfilm.core.Events
+import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
 import com.kgmedia.fastfilm.databinding.FragmentAssetFolderBinding
 import com.kgmedia.fastfilm.widget.decoration.GridSpacingItemDecoration
 import com.kgmedia.fastfilm.widget.decoration.SpaceDecoration
-import com.kgmedia.fastfilm.widget.decoration.TopSpaceDecoration
 import com.kgmedia.fastfilm.widget.stateful.applyGridSpanSizeLookup
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import kotlinx.coroutines.launch
 
@@ -66,6 +68,14 @@ class AssetFolderFragment : BaseViewModelFragment<FragmentAssetFolderBinding, As
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mRealVM.getAssetFolderPage().collect {
                     assetFolderAdapter.submitData(it)
+                }
+            }
+        }
+        observeEvents {
+            //登录状态变化
+            onUserStatusChanged {
+                if (it == Events.UserChangedEvent.SIGN_IN) {
+                    assetFolderAdapter.refresh()
                 }
             }
         }
