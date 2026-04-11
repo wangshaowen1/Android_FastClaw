@@ -42,7 +42,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="52dp"
                 android:layout_marginEnd="@dimen/spacing_l"
-                android:background="@color/color_60_000000"
                 app:layout_constraintEnd_toEndOf="@id/playerView"
                 app:layout_constraintTop_toTopOf="@id/playerView" />
 

@@ -35,15 +35,15 @@
             app:riv_corner_radius="8dp" />
 
         <com.kgmedia.fastfilm.widget.GradientBorderView
+            android:id="@+id/ivCoverBorder"
             showBackground="@{item.status != 2}"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:clickable="@{item.status!=2}"
             app:backgroundStartColor="?attr/fillColor1"
             app:borderStartColor="?attr/borderColor2"
             app:borderWidth="1dp"
-            android:id="@+id/ivCoverBorder"
-            android:clickable="@{item.status!=2}"
-            singleClick="@{(v)->item.onItemClick.invoke(v)}"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintStart_toStartOf="@+id/ivCover"
@@ -51,32 +51,24 @@
             app:roundCornerRadius="8dp" />
 
         <TextView
+            style="@style/TextAppearance.AIChip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_s"
-            android:padding="3dp"
             android:visibility="@{item.status == 2 ? View.VISIBLE : View.INVISIBLE}"
-            android:shadowColor="@color/color_05_000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="1.5"
-            android:textColor="?attr/textColor2"
-            android:textSize="9sp"
             app:layout_constraintStart_toStartOf="@id/ivCover"
-            app:layout_constraintTop_toTopOf="@id/ivCover"
-            android:background="@drawable/bg_90_ffffff_stroke_r3"
-            android:text="@string/generated_by_ai" />
+            app:layout_constraintTop_toTopOf="@id/ivCover" />
 
         <ImageView
             android:id="@+id/btnImageDel"
             setVisible="@{item.status == 2}"
+            singleClick="@{(v)->item.onItemClick.invoke(v)}"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:padding="8dp"
-            singleClick="@{(v)->item.onItemClick.invoke(v)}"
-            android:src="@drawable/icon_close_background"
-            app:layout_constraintTop_toTopOf="@+id/ivCover"
-            app:layout_constraintEnd_toEndOf="@+id/ivCover" />
+            android:src="@drawable/icon_close_background_dark"
+            app:layout_constraintEnd_toEndOf="@+id/ivCover"
+            app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
         <ImageView
             setVisible="@{item.status == 2}"
