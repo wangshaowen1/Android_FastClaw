@@ -41,6 +41,8 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
 
     var lottieHasEnd = false
     var isFinish = false
+    @Volatile
+    var hasAgree = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
@@ -53,11 +55,14 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
                 // 返回 CONSUMED，告诉系统：“安全边距我处理完了，不要再去压缩我的 View 的高度了！”
                 WindowInsetsCompat.CONSUMED
             }
+            hasAgree = App.instance.hasAgree()
             binding.splashLottie.addAnimatorListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     lottieHasEnd = true
+                    Logger.d("是否同意协议了：onAnimationEnd===isFinish = ${isFinish}")
                     if (isFinish) return
-                    if (App.instance.hasAgree()) {
+                    Logger.d("是否同意协议了：onAnimationEnd===hasAgree =${hasAgree}")
+                    if (hasAgree) {
                         jumpToTheHomepage()
                     }
                     super.onAnimationEnd(animation)
@@ -94,14 +99,21 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
     }
 
     private fun jumpToTheHomepage() {
-        if (!lottieHasEnd) return
-        isFinish = true
         val it = intent.data?.takeIf { !TextUtils.isEmpty(it.host) } ?: ""
         if (Config.get().isFirstOpenApp) {
             Config.get().markAppOpenedWithNotify()
             App.instance.initSdkAfterAgreeLicense()
+            hasAgree = true
+            Logger.d("是否同意协议了：jumpToTheHomepage==1=hasAgree =${hasAgree}")
+            if (!lottieHasEnd) return
+            Logger.d("是否同意协议了：jumpToTheHomepage==1=lottieHasEnd =${lottieHasEnd}")
+            isFinish = true
             GuideStep1AdActivity.start(this)
         } else {
+            Logger.d("是否同意协议了：jumpToTheHomepage==2=hasAgree =${hasAgree}")
+            if (!lottieHasEnd) return
+            Logger.d("是否同意协议了：jumpToTheHomepage==2=lottieHasEnd =${lottieHasEnd}")
+            isFinish = true
             MainActivity.start(this@SplashActivity, it.toString())
         }
         finish()
