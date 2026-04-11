@@ -483,7 +483,7 @@ object ApiConstants {
     /**
      * 场景单个删除
      */
-    const val WORK_ASSET_SCENE_DELETE = "v2/work/asset/scene/delete/asset"
+    const val WORK_ASSET_SCENE_DELETE = "v2/work/asset/scene/unlink/story"
 
     /**
      * 角色列表
@@ -506,9 +506,9 @@ object ApiConstants {
     const val WORK_ASSET_ROLE_SAVE = "v2/work/asset/role/save"
 
     /**
-     * 角色单个删除
+     * 角色解除绑定
      */
-    const val WORK_ASSET_ROLE_DELETE = "v2/work/asset/role/delete/asset"
+    const val WORK_ASSET_ROLE_DELETE = "v2/work/asset/role/unlink/story"
 
     /**
      * 道具列表
@@ -528,7 +528,7 @@ object ApiConstants {
     /**
      * 道具单个删除
      */
-    const val WORK_ASSET_PROP_DELETE = "v2/work/asset/prop/delete/asset"
+    const val WORK_ASSET_PROP_DELETE = "v2/work/asset/prop/unlink/story"
 
     /**
      * 生成单个资产图片（重新生成/生成）
