@@ -35,7 +35,7 @@
             loadThumbnailUri="@{item.data.assetImage}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:padding="18dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/img_default_cover_1_1"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintTop_toTopOf="parent"
