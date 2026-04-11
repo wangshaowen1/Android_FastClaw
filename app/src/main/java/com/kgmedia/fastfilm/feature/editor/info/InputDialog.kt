@@ -117,6 +117,8 @@ class InputDialog :
                 dismissAllowingStateLoss()
             }
         }
+        binding.inputView.requestFocus()
+        KeyboardUtils.showSoftInput(binding.inputView)
     }
 
     fun closeConfirm() {
