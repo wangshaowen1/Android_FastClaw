@@ -2,6 +2,7 @@ package com.kgmedia.fastfilm.feature.web
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
@@ -13,9 +14,11 @@ import android.view.View
 import android.webkit.SslErrorHandler
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import androidx.core.view.isVisible
 import com.blankj.utilcode.util.GsonUtils
@@ -27,6 +30,7 @@ import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.Constants
 import com.kgmedia.fastfilm.common.ext.downloadFile
 import com.kgmedia.fastfilm.common.ext.selectSinglePhotoFromAlbums
+import com.kgmedia.fastfilm.common.ext.showCommonDialog
 import com.kgmedia.fastfilm.common.jsbridge.WebViewJavascriptBridge
 import com.kgmedia.fastfilm.common.jsbridge.data.DownLoadImageData
 import com.kgmedia.fastfilm.common.permissions.PermissionsUtils
@@ -66,6 +70,7 @@ import com.nhsd.basic.utils.Logger
 import com.nhsd.mattise.Matisse
 import com.tencent.bugly.crashreport.CrashReport
 import org.json.JSONObject
+import java.net.URISyntaxException
 
 class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserViewModel>() {
 
@@ -108,12 +113,11 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            if (url.isNullOrEmpty()) return true
-            if (url.contains("newView")) {
-                launch(mActivity, url, mRealVM.interceptBack)
-                return true
-            }
-            return !url.startsWith("http") || super.shouldOverrideUrlLoading(view, url)
+            return handleUrlJump(url)
+        }
+
+        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+            return handleUrlJump(request?.url?.toString())
         }
 
         override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
@@ -128,6 +132,71 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
         override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
             handler?.proceed()
         }
+    }
+
+    private fun handleUrlJump(url: String?): Boolean {
+        // 使用 isNullOrBlank 更加安全，防止纯空格字符串
+        if (url.isNullOrBlank()) return true
+
+        return when {
+            isWeChatWorkUrl(url) -> openInWeChat(url)
+            url.startsWith("weixin://") -> handleWeChatSchemeUrl(url)
+            url.contains("newView") -> openNewBrowserView(url)
+            // 默认处理：拦截所有非 http/https 的未知 Scheme，防止 WebView 加载报错
+            else -> !url.startsWith("http", ignoreCase = true)
+        }
+    }
+
+    // 提取判断条件
+    private fun isWeChatWorkUrl(url: String): Boolean {
+        return url.startsWith("https://work.weixin.qq.com/") ||
+                url.startsWith("https://open.work.weixin.qq.com/")
+    }
+
+    // 处理企微/外部联系人链接跳转微信
+    private fun openInWeChat(url: String): Boolean {
+        return try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                // 明确指定微信包名
+                setPackage("com.tencent.mm")
+            }
+            startActivity(intent)
+            true
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(mActivity, "请先安装微信", Toast.LENGTH_SHORT).show()
+            // 即使没安装，也返回 true 拦截掉，防止 WebView 加载出一个错误页面
+            true
+        } catch (e: Exception) {
+            // 捕获其他可能的异常（如 URI 解析错误）
+            e.printStackTrace()
+            true
+        }
+    }
+
+    // 处理微信原生 Scheme 协议
+    private fun handleWeChatSchemeUrl(url: String): Boolean {
+        mActivity.showCommonDialog(tip = "即将跳转至微信", cancel = { mActivity.finish() }, confirm = {
+            try {
+                val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(intent)
+            } catch (e: URISyntaxException) {
+                e.printStackTrace()
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(mActivity, "请先安装微信", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        })
+        return true
+    }
+
+    // 处理内部定义的 newView 跳转逻辑
+    private fun openNewBrowserView(url: String): Boolean {
+        launch(mActivity, url, mRealVM.interceptBack, mRealVM.darkStyle)
+        return true
     }
 
     private var customView: View? = null

@@ -344,5 +344,6 @@
         <intent>
             <action android:name="android.intent.action.MAIN" />
         </intent>
+        <package android:name="com.tencent.mm" />
     </queries>
 </manifest>
