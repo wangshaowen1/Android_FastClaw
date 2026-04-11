@@ -45,6 +45,9 @@ fun SmartRefreshLayout.startRefreshWithAdapter(
                     contentSwitcher?.showEmpty()
                 } else {
                     contentSwitcher?.showContent()
+                    // StaggeredGridLayoutManager 在 ViewAnimator GONE→VISIBLE 切换后不会自动
+                    // 重新排列已加载的 item，需要手动触发一次 requestLayout
+                    contentSwitcher?.post { contentSwitcher.findRecyclerChild()?.requestLayout() }
                 }
                 if (this.isRefreshing) {
                     contentSwitcher?.findRecyclerChild()?.smoothScrollToPosition(0)

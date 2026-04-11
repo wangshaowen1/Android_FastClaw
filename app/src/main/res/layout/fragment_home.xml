@@ -134,16 +134,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:layout_marginBottom="14dp"
-            android:visibility="gone"
-            android:padding="@dimen/spacing_m">
+            android:padding="@dimen/spacing_m"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/ivFloating"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:importantForAccessibility="no"
-                android:src="@drawable/img_floating" />
+                android:importantForAccessibility="no" />
         </com.kgmedia.fastfilm.widget.MoveFrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

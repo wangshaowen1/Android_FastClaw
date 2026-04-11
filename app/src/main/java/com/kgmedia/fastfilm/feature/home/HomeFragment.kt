@@ -2,8 +2,8 @@ package com.kgmedia.fastfilm.feature.home
 
 import android.view.View
 import android.widget.ImageView
-import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
+import androidx.paging.LoadState
 import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.SPUtils
 import com.kgmedia.fastfilm.R
@@ -33,6 +33,7 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
+import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.utils.Logger
 import com.nhsd.crop.util.ViewUtils
@@ -40,6 +41,8 @@ import com.zhpan.bannerview.BaseBannerAdapter
 import com.zhpan.bannerview.BaseViewHolder
 import com.zhpan.indicator.enums.IndicatorStyle
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -111,22 +114,21 @@ class HomeFragment :
         binding.recyclerView.apply {
             isFocusable = false
             addItemDecoration(StaggeredGridSpaceItemDecoration(2, 10.dp, 0, 0))
-            adapter = homeAdapter.withLoadStateFooter(
-                MyMultiStatePagingFooterAdapter(
-                    hostAdapter = homeAdapter,
-                    noDataButtonDisplay = false,
-                    requestButtonDisplay = false,
-                    displayOnEmpty = false,
-                    displayedHeight = 400.dp,
-                    refresh = {
-                        homeAdapter.refresh()
-                    },
-                    requestButtonTextAndImg = false,
-                )
-            )
-            doOnLayout {
-                scrollToPosition(0)
-            }
+            itemAnimator=null
+            adapter = homeAdapter
+            .withLoadStateFooter(
+                            MyMultiStatePagingFooterAdapter(
+                                hostAdapter = homeAdapter,
+                                noDataButtonDisplay = false,
+                                requestButtonDisplay = false,
+                                displayOnEmpty = true,
+                                displayedHeight = 400.dp,
+                                refresh = {
+                                    homeAdapter.refresh()
+                                },
+                                requestButtonTextAndImg = false,
+                            )
+                        )
         }
         binding.srl.startRefreshWithAdapter(
             pagingDataAdapter = homeAdapter
@@ -154,6 +156,15 @@ class HomeFragment :
             }
         }
 
+        // 首次数据加载完成后，确保从第一条开始显示
+        // loadStateFlow.first() 只触发一次：refresh 状态变为 NotLoading 且列表有数据时
+        lifecycleScope.launch {
+            homeAdapter.loadStateFlow
+                .filter { it.refresh is LoadState.NotLoading && homeAdapter.itemCount > 0 }
+                .first()
+            binding.recyclerView.scrollToPosition(0)
+        }
+
         mRealVM.bannerData.observe(this) {
             binding.banner.refreshData(it)
         }
@@ -175,8 +186,10 @@ class HomeFragment :
     override fun onStart() {
         super.onStart()
         // 场景 1：从其他 Activity 返回
-        if (!isHidden) {
-            checkAndTriggerPopup()
+        binding.root.post {
+            if (isActive && !isHidden) {
+                checkAndTriggerPopup()
+            }
         }
     }
 
@@ -195,20 +208,16 @@ class HomeFragment :
         }
     }
 
-    private var lastCountTime = 0L
 
     private fun checkAndTriggerPopup() {
-        val currentTime = System.currentTimeMillis()
-        // 物理防抖：如果距离上次计数小于 500 毫秒，直接判定为重复触发
-        if (currentTime - lastCountTime < 500) return
-        lastCountTime = currentTime
-
         // 1. 获取当前次数并加 1
         val currentCount = SPUtils.getInstance().getInt(KEY_VISIT_COUNT, 0)
         val newCount = currentCount + 1
 
         // 2. 立即持久化新次数
-        SPUtils.getInstance().put(KEY_VISIT_COUNT, newCount)
+        if (newCount < 10) {//防止无限增长
+            SPUtils.getInstance().put(KEY_VISIT_COUNT, newCount)
+        }
 
         // 3. 严格逻辑判断：仅在第 2 次时执行弹窗
         if (newCount == 2) {
@@ -232,7 +241,9 @@ class HomeFragment :
                 SimpleActivityInfo.FLOAT_UNPAID
             }
             list?.find { it.businessCode == targetCode && it.isEnable() }?.let { info ->
-                handleFloatWindow(info)
+                binding.root.post {
+                    handleFloatWindow(info)
+                }
             }
         }
     }
@@ -274,6 +285,7 @@ class HomeFragment :
     }
 
     private fun handleFloatWindow(info: SimpleActivityInfo?) {
+        if (!isActive) return
         if (info != null && info.isEnable()) {
             if (binding.floatingBall.isVisible) return
             binding.floatingBall.isVisible = true
@@ -281,7 +293,6 @@ class HomeFragment :
             binding.floatingBall.setOnMfClickListener {
                 AppRouter.jump(info.jumpUrl)
                 GuideAddCustomerServiceDialog.markHasJumped()
-                binding.floatingBall.visibility = View.GONE
             }
         } else {
             binding.floatingBall.visibility = View.GONE
