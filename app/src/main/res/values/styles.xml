@@ -769,6 +769,24 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <!--AI生成 水印样式-->
+    <style name="ai_generate_sign">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextAppearance.AIChip" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">?attr/textColor4</item>
+        <item name="android:shadowColor">@color/color_05_000000</item>
+        <item name="android:shadowDx">0</item>
+        <item name="android:shadowDy">0</item>
+        <item name="android:shadowRadius">1.5</item>
+        <item name="android:text">@string/generated_by_ai</item>
+    </style>
+
     <style name="CountDownTextStyle">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>

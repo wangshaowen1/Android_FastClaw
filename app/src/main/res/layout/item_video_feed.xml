@@ -37,21 +37,14 @@
                 app:use_controller="false" />
 
             <TextView
+                style="@style/TextAppearance.AIChip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_m"
-                android:layout_marginTop="92dp"
-                android:padding="3dp"
-                android:shadowColor="@color/color_05_000000"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="1.5"
-                android:textColor="?attr/textColor2"
-                android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@id/playerView"
-                app:layout_constraintTop_toTopOf="@id/playerView"
-                android:background="@drawable/bg_90_ffffff_stroke_r3"
-                android:text="@string/generated_by_ai" />
+                android:layout_marginTop="52dp"
+                android:layout_marginEnd="@dimen/spacing_l"
+                android:background="@color/color_60_000000"
+                app:layout_constraintEnd_toEndOf="@id/playerView"
+                app:layout_constraintTop_toTopOf="@id/playerView" />
 
             <ImageView
                 android:id="@+id/btnPause"
@@ -96,6 +89,7 @@
             <TextView
                 android:id="@+id/tv_title"
                 style="@style/Text18"
+                setVisible="@{item.data.platformLinks==null||item.data.platformLinks.size()==0}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_l"
@@ -109,6 +103,7 @@
             <com.kgmedia.fastfilm.widget.expandtextview.ExpandableTextView
                 android:id="@+id/tvContent"
                 expandContent="@{item.data.workDesc}"
+                setVisible="@{item.data.platformLinks==null||item.data.platformLinks.size()==0}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/spacing_l"
@@ -133,6 +128,7 @@
 
             <com.kgmedia.fastfilm.widget.PlayerSeekbar
                 android:id="@+id/seekbar"
+                setVisible="@{item.data.platformLinks==null||item.data.platformLinks.size()==0}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
@@ -144,9 +140,9 @@
                 setVisible="@{item.data.platformLinks!=null&amp;&amp;item.data.platformLinks.size()>0}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_60_000000_tr20"
+                android:background="@color/color_60_000000"
                 android:orientation="vertical"
-                android:paddingBottom="42dp"
+                android:paddingBottom="@dimen/spacing_m"
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <TextView
