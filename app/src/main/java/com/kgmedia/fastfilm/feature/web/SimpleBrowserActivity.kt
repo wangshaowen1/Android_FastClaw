@@ -267,6 +267,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 startActivity(intent)
+                finish()
             } catch (e: URISyntaxException) {
                 e.printStackTrace()
             } catch (e: ActivityNotFoundException) {

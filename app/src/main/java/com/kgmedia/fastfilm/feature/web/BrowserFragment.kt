@@ -182,6 +182,7 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
                 startActivity(intent)
+                mActivity.finish()
             } catch (e: URISyntaxException) {
                 e.printStackTrace()
             } catch (e: ActivityNotFoundException) {
