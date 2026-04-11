@@ -55,6 +55,7 @@ class ToolbarViewModel(
     val mMenuButtonText = ObservableField(menuButtonText)
     val mMenuIconRes = ObservableField<Int>(menuIconRes)
     val mMenuButtonBackground = ObservableField(menuButtonBackground)
+    val mMenuButtonTextColor = ObservableField(menuButtonTextColor)
     val mMenuDrawableStart = ObservableField(menuTextDrawableStart)
     val mMenuDrawableEnd = ObservableField(menuTextDrawableEnd)
     val mMenuButtonDrawableStart = ObservableField(menuButtonDrawableStart)

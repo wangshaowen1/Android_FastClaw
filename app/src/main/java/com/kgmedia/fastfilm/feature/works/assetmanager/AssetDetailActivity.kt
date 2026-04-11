@@ -15,6 +15,8 @@ import com.kgmedia.fastfilm.core.network.apis.entity.SimpleRoleInfo
 import com.kgmedia.fastfilm.databinding.ActivityAssetDtlBinding
 import com.kgmedia.fastfilm.feature.editor.info.InputDialog
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.getDrawable
+import com.nhsd.basic.ext.getResColor
 
 /**
  * 资产详情页 可修改资产描述 重新生成图片
@@ -68,13 +70,17 @@ class AssetDetailActivity : BaseViewModelActivity<ActivityAssetDtlBinding, Asset
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.desc.movementMethod = ScrollingMovementMethod()
-        mRealVM.hasChanged.observe(this) {
-            mRealVM.mToolbarVM.mMenuEnable.set(it)
+
+        mRealVM.generating.observe(this) {
+            val isEnable = !it && mRealVM.hasChanged.value == true
+            mRealVM.mToolbarVM.mMenuEnable.set(isEnable)
+            mRealVM.mToolbarVM.mMenuButtonBackground.set(if (isEnable) R.drawable.bg_white_rectangle_corner_r50.getDrawable() else R.drawable.bg_fill_color_3_r50.getDrawable())
+            mRealVM.mToolbarVM.mMenuButtonTextColor.set(if (isEnable) R.color.bg_color_1_dark.getResColor() else R.color.text_color_3_dark.getResColor())
         }
     }
 
     override fun onBackPressed() {
-        if (mRealVM.generating.get()) {
+        if (mRealVM.generating.value == true) {
             showCommonDialog(getString(R.string.exit_during_generation_warning), confirmText = getString(R.string.continue_exit), confirm = {
                 mRealVM.imageDel {
                     super.onBackPressed()

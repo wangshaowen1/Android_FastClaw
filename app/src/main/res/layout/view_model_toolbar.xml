@@ -112,7 +112,7 @@
                 android:onClick="@{(v)->toolbar.menuAction.invoke(v)}"
                 android:text="@{toolbar.MMenuButtonText}"
                 android:textAllCaps="@{toolbar.mMenuButtonTextAllCaps}"
-                android:textColor="@{toolbar.menuButtonTextColor}"
+                android:textColor="@{toolbar.mMenuButtonTextColor}"
                 android:visibility="@{TextUtils.isEmpty(toolbar.MMenuButtonText)?View.GONE:View.VISIBLE}"
                 app:marginEnd="@{toolbar.menuButtonMarginEnd}"
                 app:paddingHorizontal="@{toolbar.menuButtonHorPadding}"

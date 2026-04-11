@@ -36,7 +36,6 @@ import com.nhsd.basic.ext.getDrawable
 import com.nhsd.basic.ext.getParcelableValue
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -48,7 +47,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
         navigationAction = { back() },
         title = "",
         menuAction = {
-            if (!generating.get() && hasChanged.value == true) {
+            if (generating.value == false && hasChanged.value == true) {
                 topActivity?.showCommonDialog(
                     tip = getString(R.string.confirm_overwrite_asset_warning),
                     confirmText = getString(R.string.save_and_overwrite),
@@ -72,7 +71,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
     val image = ObservableField<String>()
     val subTitle = ObservableField<String>()
 
-    val generating by lazy { ObservableBoolean(false) }
+    val generating by lazy { MutableLiveData(false) }
     val regenerateFail by lazy { ObservableBoolean(false) }
     val cost by lazy { ObservableInt() }
 
@@ -94,7 +93,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                 image.set(it.imageUrl)
                 status.set(it.genStatus ?: 0)
 
-                generating.set(it.genStatus == 1)
+                generating.value = it.genStatus == 1
                 subTitle.set(getString(R.string.role_desc))
             }
         } else {
@@ -103,7 +102,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                 image.set(it.assetImage)
                 status.set(it.status ?: 0)
 
-                generating.set(it.status == 1)
+                generating.value = it.status == 1
                 subTitle.set(
                     when (info) {
                         is SimpleRoleInfo -> getString(R.string.role_desc)
@@ -148,7 +147,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                     newAppearanceId = data?.newAppearanceId
                     hasChanged.value = true
                     loopGenStatus(data?.taskId)
-                    generating.set(true)
+                    generating.value = true
                 } else {
                     image.set(null)
                     regenerateFail.set(true)
@@ -183,11 +182,11 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                 }
             },
             onSuccess = { response ->
-                generating.set(false)
+                generating.value = false
                 image.set(response?.data?.result)
             },
             onFail = { response, _ ->
-                generating.set(false)
+                generating.value = false
                 image.set(null)
                 regenerateFail.set(true)
             }
@@ -229,7 +228,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
     }
 
     fun imageDel(callback: (() -> Unit)?) {
-        launchWithLoading {
+        launch {
             val asset = info
             val response = withContext(Dispatchers.IO) {
                 when (asset) {
@@ -238,12 +237,7 @@ class AssetDetailViewModel : AppRepositoryViewModel<AssetManagementRepository>()
                     else -> mRepo.api.propImageDelete(AppearanceIdBody(newAppearanceId))
                 }
             }
-            if (!response.isSuccess) {
-                response.msg?.showToast()
-                return@launchWithLoading
-            } else {
-                callback?.invoke()
-            }
+            callback?.invoke()
         }
     }
 

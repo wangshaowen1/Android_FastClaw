@@ -8,6 +8,9 @@
         <variable
             name="layout"
             type="com.kgmedia.fastfilm.feature.works.assetmanager.AssetDetailViewModel" />
+
+        <import type="android.view.View"/>
+        <import type="android.text.TextUtils"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +35,7 @@
 
         <View
             android:id="@+id/ivLoading"
-            setVisible="@{layout.status!=2}"
+            android:visibility="@{layout.status!=2?View.VISIBLE:View.GONE}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="?attr/fillColor1"
@@ -41,12 +44,13 @@
             app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
         <TextView
+            android:visibility="@{TextUtils.isEmpty(layout.image)?View.GONE:View.VISIBLE}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/spacing_l"
             style="@style/TextAppearance.AIChip"
-            app:layout_constraintStart_toStartOf="@id/ivLoading"
-            app:layout_constraintTop_toTopOf="@id/ivLoading" />
+            app:layout_constraintStart_toStartOf="@id/ivImage"
+            app:layout_constraintTop_toTopOf="@id/ivImage" />
 
         <com.kgmedia.fastfilm.widget.AutoRotateLayout
             autoRotate="@{layout.generating}"
