@@ -116,7 +116,7 @@ class HomeFragment :
                     hostAdapter = homeAdapter,
                     noDataButtonDisplay = false,
                     requestButtonDisplay = false,
-                    displayOnEmpty = true,
+                    displayOnEmpty = false,
                     displayedHeight = 400.dp,
                     refresh = {
                         homeAdapter.refresh()
@@ -213,30 +213,26 @@ class HomeFragment :
         // 3. 严格逻辑判断：仅在第 2 次时执行弹窗
         if (newCount == 2) {
             showTargetDialog()
-        } else if (newCount > 2) {//超过2次直接显示悬浮窗，直到跳转到客服弹窗
+        } else {
             showFloatWindow()
         }
     }
 
     private fun showTargetDialog() {
-        GuideAddCustomerServiceDialog.checkAndShow(GuideAddCustomerServiceDialog.SCENE_HOME) { dialog ->
-            dialog?.setOnDismissListener {
-                showFloatWindow()
-            }
+        GuideAddCustomerServiceDialog.checkAndShow(GuideAddCustomerServiceDialog.SCENE_HOME) {
+            showFloatWindow()
         }
     }
 
     private fun showFloatWindow() {
-        if (!GuideAddCustomerServiceDialog.isHasJumped()) {
-            Global.getGuideLinkCustomerInfo { list ->
-                val targetCode = if (User.get().hasPaid()) {
-                    SimpleActivityInfo.FLOAT_PAID
-                } else {
-                    SimpleActivityInfo.FLOAT_UNPAID
-                }
-                list?.find { it.businessCode == targetCode && it.isEnable() }?.let { info ->
-                    handleFloatWindow(info)
-                }
+        Global.getGuideLinkCustomerInfo { list ->
+            val targetCode = if (User.get().hasPaid()) {
+                SimpleActivityInfo.FLOAT_PAID
+            } else {
+                SimpleActivityInfo.FLOAT_UNPAID
+            }
+            list?.find { it.businessCode == targetCode && it.isEnable() }?.let { info ->
+                handleFloatWindow(info)
             }
         }
     }

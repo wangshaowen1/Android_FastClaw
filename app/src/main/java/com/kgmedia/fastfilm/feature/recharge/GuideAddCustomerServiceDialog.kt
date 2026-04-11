@@ -48,7 +48,7 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
         /**
          * @param scene 场景标识，确保不同场景互不干扰
          */
-        fun checkAndShow(scene: String = SCENE_HOME, isPaid: Boolean? = null, callback: ((GuideAddCustomerServiceDialog?) -> Unit)? = null) {
+        fun checkAndShow(scene: String = SCENE_HOME, isPaid: Boolean? = null, callback: (() -> Unit)? = null) {
             val activity = topActivity as? FragmentActivity ?: return
             // 1，已经跳转过小程序的话 就所有场景都不需要显示
             if (isHasJumped()) return
@@ -60,6 +60,7 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
 
             Global.getGuideLinkCustomerInfo { list ->
                 if (list.isNullOrEmpty()) return@getGuideLinkCustomerInfo
+                callback?.invoke()
                 // 确定需要查找的 targetCode
                 val targetCode = if (isPaid == true || User.get().hasPaid()) {
                     SimpleActivityInfo.POPUP_PAID
@@ -75,7 +76,6 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
                         }
                     }
                     dialog.show(activity.supportFragmentManager, "GuideAddCustomerServiceDialog") // 建议加上 tag
-                    callback?.invoke(dialog)
                     SPUtils.getInstance().put(showKey, true)
                 }
             }
