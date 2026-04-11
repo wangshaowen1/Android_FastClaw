@@ -4,6 +4,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.KeyboardUtils
+import com.blankj.utilcode.util.StringUtils.getString
 import com.drake.spannable.replaceSpan
 import com.drake.spannable.span.CenterImageSpan
 import com.kgmedia.fastfilm.App
@@ -279,18 +280,33 @@ class AssetManagementViewModel : AppRepositoryViewModel<AssetManagementRepositor
         ItemPropVM(workId, storyId, ::onItemChanged, this, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig()
 
     fun addRole(addItem: ItemAddVM) {
+        val count = adapter.items.count { it is ItemRoleVM || it is ItemPropVM || it is ItemSceneVM }
+        if (count >= 9) {
+            getString(R.string.asset_image_limit_reached).showToast()
+            return
+        }
         val index = adapter.items.indexOf(addItem)
         adapter.add(index, ItemRoleVM(workId, storyId, ::onItemChanged, null, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig())
         onItemChanged()
     }
 
     fun addScene(addItem: ItemAddVM) {
+        val count = adapter.items.count { it is ItemRoleVM || it is ItemPropVM || it is ItemSceneVM }
+        if (count >= 9) {
+            getString(R.string.asset_image_limit_reached).showToast()
+            return
+        }
         val index = adapter.items.indexOf(addItem)
         adapter.add(index, ItemSceneVM(workId, storyId, ::onItemChanged, null, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig())
         onItemChanged()
     }
 
     fun addProp(addItem: ItemAddVM) {
+        val count = adapter.items.count { it is ItemRoleVM || it is ItemPropVM || it is ItemSceneVM }
+        if (count >= 9) {
+            getString(R.string.asset_image_limit_reached).showToast()
+            return
+        }
         val index = adapter.items.indexOf(addItem)
         adapter.add(index, ItemPropVM(workId, storyId, ::onItemChanged, null, getAiPriceProvider = { getOrRequestAiPrice() }).applyConfig())
         onItemChanged()
