@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.works.assetmanager.roleimage
 
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -29,6 +30,7 @@ class RoleImageSelectViewModel : AppRepositoryViewModel<AppRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
     var mSelectedItem: RoleImageInfo? = null
 
+    val isDataEmpty = ObservableBoolean(true)
 
     override fun onCreate() {
         super.onCreate()
@@ -43,7 +45,9 @@ class RoleImageSelectViewModel : AppRepositoryViewModel<AppRepository>() {
                 prefetchDistance = Constant.Paged.PREFETCH_DISTANCE,
             ),
             pagingSourceFactory = {
-                RoleImagePagingSource(roleInfo?.roleId)
+                RoleImagePagingSource(roleInfo?.roleId){
+                    isDataEmpty.set(it == 0)
+                }
             }).flow.cachedIn(viewModelScope)
     }
 }

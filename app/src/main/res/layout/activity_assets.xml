@@ -24,7 +24,6 @@
             android:id="@+id/magic_indicator"
             android:layout_width="match_parent"
             android:layout_height="32dp"
-            android:layout_marginTop="@dimen/spacing_m"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 

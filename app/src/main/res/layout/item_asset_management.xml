@@ -92,7 +92,7 @@
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
         <TextView
-            setVisible="@{item.status &lt; 1}"
+            setVisible="@{item.status &lt; 1||item.status==10}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableTop="@drawable/icon_ai_image_text4"
@@ -197,7 +197,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@{item.status &lt; 1 ? item.generateButtonText : @string/regenerate}"
+                android:text="@{item.status &lt; 1||item.status==10 ? item.generateButtonText : @string/regenerate}"
                 android:textAppearance="@style/Text13"
                 android:textColor="@android:color/white"
                 app:endColor="#8F83FF"

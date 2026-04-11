@@ -1,5 +1,6 @@
 package com.kgmedia.fastfilm.feature.works.assetmanager.child
 
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -28,6 +29,8 @@ class AssetSelectViewModel : AppRepositoryViewModel<AppRepository>() {
     val workId by lazy { mBundle.getString(Constants.Extra.WORK_ID) }
     var selectedItem: SimpleAsset? = null
 
+    val isDataEmpty = ObservableBoolean(true)
+
     var totalCountBack: (Int) -> Unit = {}
 
     override fun onCreate() {
@@ -46,7 +49,10 @@ class AssetSelectViewModel : AppRepositoryViewModel<AppRepository>() {
                 prefetchDistance = Constant.Paged.PREFETCH_DISTANCE,
             ),
             pagingSourceFactory = {
-                AssetChildPagingSource(bizType, workId, totalCountBack)
+                AssetChildPagingSource(bizType, workId) {
+                    totalCountBack.invoke(it)
+                    isDataEmpty.set(it == 0)
+                }
             }).flow.cachedIn(viewModelScope)
     }
 }

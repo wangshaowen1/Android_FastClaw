@@ -7,7 +7,7 @@ import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.RoleImageInfo
 import com.kgmedia.fastfilm.core.network.apis.request.RoleIdPagedBody
 
-class RoleImagePagingSource(val roleId: String?) : PagingSource<Int, RoleImageInfo>() {
+class RoleImagePagingSource(val roleId: String?, val totalCountBack: (Int) -> Unit) : PagingSource<Int, RoleImageInfo>() {
 
     override fun getRefreshKey(state: PagingState<Int, RoleImageInfo>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -25,7 +25,7 @@ class RoleImagePagingSource(val roleId: String?) : PagingSource<Int, RoleImageIn
                 val prevKey = if (pageNum > 1) pageNum - 1 else null
                 val items: ArrayList<RoleImageInfo> = ArrayList()
                 val data = apiResponse.data?.items
-                // 加载下一页的键（为 null 表示没有下一页）
+                totalCountBack(apiResponse.data?.totalSize ?: 0)
                 val nextKey =
                     if (data.isNullOrEmpty() || data.size < params.loadSize) null else pageNum + 1
                 data?.filterNotNull()?.let { items.addAll(it) }

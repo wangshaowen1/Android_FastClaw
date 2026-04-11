@@ -30,7 +30,7 @@ abstract class ItemAssetVM<Item : SimpleAsset>(
 ) : AppItemViewModel<Item>(data) {
 
     /**
-     * -1=新创建 0=待生成 1=生成中 2=成功 3=失败 5=取消设置（和待生成0一样处理）
+     * -1=新创建 0=待生成 1=生成中 2=成功 3=失败 10=取消设置（和待生成0一样处理）
      */
     val status by lazy { ObservableInt(data?.status ?: -1) }
 
