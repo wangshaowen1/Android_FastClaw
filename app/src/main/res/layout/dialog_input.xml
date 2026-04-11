@@ -63,8 +63,6 @@
                 android:id="@+id/inputView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
                 android:gravity="top|start"
                 android:maxLength="@{layout.maxLength}"
                 app:inputBottomMargin="24dp"

@@ -18,6 +18,7 @@ import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.ext.sensitiveWordCheck
 import com.kgmedia.fastfilm.databinding.DialogInputBinding
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
+import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.showToast
 import kotlinx.coroutines.launch
 
@@ -117,8 +118,12 @@ class InputDialog :
                 dismissAllowingStateLoss()
             }
         }
-        binding.inputView.requestFocus()
-        KeyboardUtils.showSoftInput(binding.inputView)
+        binding.inputView.input.postDelayed({
+            if (isActive) {
+                binding.inputView.input.requestFocus()
+                KeyboardUtils.showSoftInput(binding.inputView.input)
+            }
+        }, 100)
     }
 
     fun closeConfirm() {
