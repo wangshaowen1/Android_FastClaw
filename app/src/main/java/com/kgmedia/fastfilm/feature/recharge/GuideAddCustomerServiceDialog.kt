@@ -29,6 +29,7 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
     companion object {
         //弹窗场景标识
         const val SCENE_FIRST_RECHARGE = "SCENE_FIRST_RECHARGE"
+        const val SCENE_MALL = "SCENE_MALL"
 
         //弹窗场景标识
         const val SCENE_HOME = "SCENE_HOME"
