@@ -38,10 +38,22 @@
 
             <TextView
                 style="@style/TextAppearance.AIChip"
+                setVisible="@{item.ratio_9_16}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="52dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="@dimen/spacing_l"
+                app:layout_constraintEnd_toEndOf="@id/playerView"
+                app:layout_constraintTop_toTopOf="@id/playerView" />
+
+            <TextView
+                style="@style/TextAppearance.AIChip"
+                setVisible="@{!item.ratio_9_16}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/spacing_l"
+                android:layout_marginBottom="120dp"
+                app:layout_constraintBottom_toBottomOf="@id/playerView"
                 app:layout_constraintEnd_toEndOf="@id/playerView"
                 app:layout_constraintTop_toTopOf="@id/playerView" />
 
