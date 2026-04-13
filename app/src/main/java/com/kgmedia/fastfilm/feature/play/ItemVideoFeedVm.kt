@@ -23,6 +23,8 @@ class ItemVideoFeedVm(info: WorkInfo?) :
         }
     }
 
+    val ratio_9_16 = info?.workRatio == "9:16"
+
     /**
      * 是否播放中
      */

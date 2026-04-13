@@ -104,6 +104,7 @@ class AssetsActivity : BaseViewModelActivity<ActivityAssetsBinding, AssetsViewMo
             override fun getIndicator(context: Context): IPagerIndicator {
                 return CommonNavigatorUtils.getLinePagerIndicator(this@AssetsActivity, 11f).also {
                     it.setColors(topActivity?.getThemeColor(R.attr.textColor1))
+                    it.yOffset = 0f
                 }
             }
         }
