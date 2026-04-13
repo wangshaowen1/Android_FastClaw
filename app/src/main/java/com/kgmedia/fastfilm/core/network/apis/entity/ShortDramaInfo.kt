@@ -8,7 +8,6 @@ import androidx.room.TypeConverters
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.db.convert.RoleListTypeConverter
 import com.kgmedia.fastfilm.core.db.convert.SegmentListTypeConverter
-import com.kgmedia.fastfilm.feature.download.DownloadRatioConfig
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -142,15 +141,6 @@ data class ShortDramaInfo(
             3 -> "3:4"
             4 -> "4:3"
             else -> "9:16"
-        }
-
-    val downloadRatio: DownloadRatioConfig
-        get() = when (videoRatio) {
-            1 -> DownloadRatioConfig.RATIO_9_16
-            2 -> DownloadRatioConfig.RATIO_16_9
-            3 -> DownloadRatioConfig.RATIO_3_4
-            4 -> DownloadRatioConfig.RATIO_4_3
-            else -> DownloadRatioConfig.RATIO_9_16
         }
 
     val generated get() = workStatus == 5 || workStatus == 6

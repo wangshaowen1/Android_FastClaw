@@ -162,7 +162,6 @@ public class NetworkUtil {
      * @return
      */
     /**
-     * @deprecated 4.0
      * doc:
      * Since the DB may contain corp passwords, we should secure it. Using the same permission as writing to the DB as the read is potentially as damaging as a write
      */

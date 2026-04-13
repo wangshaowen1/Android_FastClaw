@@ -10,13 +10,11 @@ import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
-import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
 import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentMineBinding
 import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
-import com.kgmedia.fastfilm.feature.recharge.MyBalanceActivity
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
@@ -64,11 +62,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
     }
 
     private fun dataUpdate() {
-        parentVm?.activityConfigCache?.observe(this) {
-            handlePopup(it.getPopupInfo(ActivityConfigData.TAB_MINE))
-            handleFloatWindow(it.getFloatWindowInfo(ActivityConfigData.TAB_MINE))
-        }
-
         observeEvents {
             /**
              * 登录状态变化
@@ -131,7 +124,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 if (AppNavigator.checkLoginIntercepted(false)) {
                     return
                 }
-                MyBalanceActivity.start()
             }
         }
     }

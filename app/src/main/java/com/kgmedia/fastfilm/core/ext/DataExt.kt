@@ -14,8 +14,6 @@ import com.kgmedia.fastfilm.common.utils.WXUtils
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
-import com.kgmedia.fastfilm.core.manager.AppEvent
-import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.model.PhotoItem
 import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
@@ -23,8 +21,6 @@ import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
 import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
 import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
-import com.kgmedia.fastfilm.feature.recharge.PowerRechargeDialog
-import com.kgmedia.fastfilm.feature.splash.newer.FirstRechargeDialog
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.entity.AliPayParams
@@ -243,31 +239,4 @@ suspend fun sensitiveWordCheck(content: String?, needHighlight: Boolean? = true)
         return false to null
     }
     return true to null
-}
-
-suspend fun showRechargeDialog(showToast: Boolean = false){
-    if(!showFirstRecharge(showToast)){
-        PowerRechargeDialog.show(showToast)
-    }
-}
-
-/**
- * 显示首充弹窗
- * @return 是否显示成功
- */
-suspend fun showFirstRecharge(showToast: Boolean): Boolean {
-    val canShowFirstRecharge = !User.get().hasPaid() && !Config.get().isFirstRechargeShown(FirstRechargeDialog.SCENE_OTHER)
-    if (!canShowFirstRecharge) return false
-    val firstRechargeDialogData = withContext(Dispatchers.IO) {
-        ApiFactory.apiService.getFirstRechargeDialogInfo()
-    }.data
-    if (firstRechargeDialogData == null) return false
-    EventManager.onAppTrack(AppEvent.SF_VIEW_CREATE_NEWCOMER_GIFTPACK_PAGE)
-    val dialog = FirstRechargeDialog.show(FirstRechargeDialog.SCENE_OTHER, firstRechargeDialogData)?.apply {
-        onClose = {
-            PowerRechargeDialog.show(showToast)
-        }
-    }
-    Config.get().markFirstRechargeShown(FirstRechargeDialog.SCENE_OTHER)
-    return dialog != null
 }

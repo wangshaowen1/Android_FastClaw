@@ -10,7 +10,6 @@ import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.WorkInfo
 import com.kgmedia.fastfilm.databinding.ItemHomeDramaBinding
-import com.kgmedia.fastfilm.feature.play.DramasPlayPagerActivity
 import com.nhsd.basic.item.BindingViewHolder
 
 class HomeAdapter() : PagingDataAdapter<WorkInfo, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
@@ -40,7 +39,6 @@ class HomeAdapter() : PagingDataAdapter<WorkInfo, RecyclerView.ViewHolder>(DIFF_
                 val transVM = binding.getVm(position, item, ItemHomeDramaVm::class.java).apply {
                     onItemClick.value = {
                         EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_RECOMMEND_VIDEO)
-                        DramasPlayPagerActivity.start(null, position)
                     }
                 }
                 binding.item = transVM

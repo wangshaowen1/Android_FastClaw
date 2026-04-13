@@ -3,8 +3,8 @@ package com.kgmedia.fastfilm.feature.home
 import android.view.View
 import android.widget.ImageView
 import androidx.core.view.isVisible
-import androidx.paging.LoadState
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import com.blankj.utilcode.util.SPUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
@@ -16,15 +16,12 @@ import com.kgmedia.fastfilm.core.databinding.loadUri
 import com.kgmedia.fastfilm.core.manager.AppEvent
 import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
-import com.kgmedia.fastfilm.core.network.apis.response.ActivityConfigData
 import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
 import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.core.network.apis.response.SimpleActivityInfo
 import com.kgmedia.fastfilm.databinding.FragmentHomeBinding
-import com.kgmedia.fastfilm.feature.creator.CreationRootActivity
 import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
-import com.kgmedia.fastfilm.feature.recharge.GuideAddCustomerServiceDialog
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.StaggeredGridSpaceItemDecoration
 import com.kgmedia.fastfilm.widget.stateful.paging.MyMultiStatePagingFooterAdapter
@@ -35,7 +32,6 @@ import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.setOnSingleClickListener
-import com.nhsd.basic.utils.Logger
 import com.nhsd.crop.util.ViewUtils
 import com.zhpan.bannerview.BaseBannerAdapter
 import com.zhpan.bannerview.BaseViewHolder
@@ -114,21 +110,21 @@ class HomeFragment :
         binding.recyclerView.apply {
             isFocusable = false
             addItemDecoration(StaggeredGridSpaceItemDecoration(2, 10.dp, 0, 0))
-            itemAnimator=null
+            itemAnimator = null
             adapter = homeAdapter
-            .withLoadStateFooter(
-                            MyMultiStatePagingFooterAdapter(
-                                hostAdapter = homeAdapter,
-                                noDataButtonDisplay = false,
-                                requestButtonDisplay = false,
-                                displayOnEmpty = true,
-                                displayedHeight = 400.dp,
-                                refresh = {
-                                    homeAdapter.refresh()
-                                },
-                                requestButtonTextAndImg = false,
-                            )
-                        )
+                .withLoadStateFooter(
+                    MyMultiStatePagingFooterAdapter(
+                        hostAdapter = homeAdapter,
+                        noDataButtonDisplay = false,
+                        requestButtonDisplay = false,
+                        displayOnEmpty = true,
+                        displayedHeight = 400.dp,
+                        refresh = {
+                            homeAdapter.refresh()
+                        },
+                        requestButtonTextAndImg = false,
+                    )
+                )
         }
         binding.srl.startRefreshWithAdapter(
             pagingDataAdapter = homeAdapter
@@ -145,7 +141,6 @@ class HomeFragment :
 
         binding.btnCreation.setOnSingleClickListener {
             //if (AppNavigator.checkLoginIntercepted()) return@setOnSingleClickListener
-            CreationRootActivity.start(activity)
         }
     }
 
@@ -167,19 +162,6 @@ class HomeFragment :
 
         mRealVM.bannerData.observe(this) {
             binding.banner.refreshData(it)
-        }
-
-        parentVm?.activityConfigCache?.observe(this) { config ->
-            // 悬浮窗：始终显示
-            handleFloatWindow(config.getFloatWindowInfo(ActivityConfigData.TAB_HOME))
-            // 弹窗逻辑
-            val popup = config.getPopupInfo(ActivityConfigData.TAB_HOME)
-            // 关键拦截：只有首充没弹，才处理活动弹窗
-            if (parentVm?.isFirstRechargeLogicActive == true) {
-                Logger.d("Dialog", "拦截活动弹窗，等待下次回到首页再弹")
-            } else {
-                handlePopup(popup)
-            }
         }
     }
 
@@ -228,9 +210,6 @@ class HomeFragment :
     }
 
     private fun showTargetDialog() {
-        GuideAddCustomerServiceDialog.checkAndShow(GuideAddCustomerServiceDialog.SCENE_HOME) {
-            showFloatWindow()
-        }
     }
 
     private fun showFloatWindow() {
@@ -251,10 +230,6 @@ class HomeFragment :
 
     @Deprecated("这个活动暂时停用了")
     fun resumePopup() {
-        if (parentVm?.isFirstRechargeLogicActive == false && parentVm?.hasActivityConfig == true) {
-            handlePopup(parentVm?.activityConfigCache?.value?.getPopupInfo(ActivityConfigData.TAB_HOME))
-            parentVm?.hasActivityConfig = false
-        }
     }
 
     @Deprecated("这个活动暂时停用了")
@@ -294,7 +269,6 @@ class HomeFragment :
             binding.floatingBall.setOnMfClickListener {
                 EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_CUSTOMER_SERVICE_FLOAT_WIN)
                 AppRouter.jump(info.jumpUrl)
-                GuideAddCustomerServiceDialog.markHasJumped()
             }
         } else {
             binding.floatingBall.visibility = View.GONE

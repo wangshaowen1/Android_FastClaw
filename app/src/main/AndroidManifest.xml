@@ -231,16 +231,6 @@
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
-        <!--充值消耗明细-->
-        <activity
-            android:name=".feature.details.ComputingPowerDetailsActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--作品管理-->
-        <activity
-            android:name=".feature.series.management.WorksManagementActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <!--闪验-->
         <!-- *******************************授权页*********************************** -->
         <activity
@@ -302,43 +292,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature.creator.generate.StoryEditorActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.editor.EditStoryboardVideoActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.editor.EditStoryboardActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".feature.mine.PhoneShowActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.creator.CreationRootActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.series.SeriesActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.creator.continuewriting.ContinueWritingActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.play.DramasPlayPagerActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.editor.info.DramaInfoEditActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".feature.recharge.MyBalanceActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".feature.splash.newer.GuideStep1AdActivity"   android:screenOrientation="portrait" />
-        <activity android:name=".feature.splash.newer.GuideStep2StorySelectActivity"  android:screenOrientation="portrait"/>
-        <activity android:name=".feature.splash.newer.GuideStep3GeneratingActivity"  android:screenOrientation="portrait"/>
-        <activity android:name=".feature.splash.newer.GuideStep4VideoActivity"  android:screenOrientation="portrait"/>
-        <activity android:name=".feature.works.assetmanager.child.AssetSelectActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".feature.works.assetmanager.AssetDetailActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".feature.works.assetmanager.AssetsActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".feature.works.assetmanager.roleimage.RoleImageSelectActivity" />
     </application>
     <queries>
         <intent>

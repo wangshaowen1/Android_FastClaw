@@ -20,7 +20,6 @@ import com.kgmedia.fastfilm.BuildConfig
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.databinding.ActivitySplashBinding
 import com.kgmedia.fastfilm.feature.main.MainActivity
-import com.kgmedia.fastfilm.feature.splash.newer.GuideStep1AdActivity
 import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.utils.Logger
@@ -108,7 +107,7 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
             if (!lottieHasEnd) return
             Logger.d("是否同意协议了：jumpToTheHomepage==1=lottieHasEnd =${lottieHasEnd}")
             isFinish = true
-            GuideStep1AdActivity.start(this)
+            MainActivity.start(this@SplashActivity, it.toString())
         } else {
             Logger.d("是否同意协议了：jumpToTheHomepage==2=hasAgree =${hasAgree}")
             if (!lottieHasEnd) return

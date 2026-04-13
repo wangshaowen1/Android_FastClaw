@@ -56,7 +56,6 @@ import com.kgmedia.fastfilm.core.network.ObjectTypeAdapter
 import com.kgmedia.fastfilm.core.network.apis.AppHeader
 import com.kgmedia.fastfilm.databinding.FragmentBrowserBinding
 import com.kgmedia.fastfilm.feature.PhotoPagerActivity
-import com.kgmedia.fastfilm.feature.recharge.GuideAddCustomerServiceDialog
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity.Companion.launch
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
@@ -552,7 +551,6 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
             }
 
             registerHandler("showCustomerGuideDialog") { data, _ ->
-                GuideAddCustomerServiceDialog.checkAndShow()
             }
 
             //埋点上报

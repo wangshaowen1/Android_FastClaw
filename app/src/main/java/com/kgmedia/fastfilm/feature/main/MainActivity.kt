@@ -27,11 +27,8 @@ import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.manager.UpgradeManager
 import com.kgmedia.fastfilm.core.model.WakeUpEntity
 import com.kgmedia.fastfilm.databinding.ActivityMainBinding
-import com.kgmedia.fastfilm.feature.aicompose.generating.GeneratingViewModel
 import com.kgmedia.fastfilm.feature.home.HomeFragment
 import com.kgmedia.fastfilm.feature.mine.MineFragment
-import com.kgmedia.fastfilm.feature.splash.newer.FirstRechargeDialog
-import com.kgmedia.fastfilm.feature.works.WorksFragment
 import com.kgmedia.fastfilm.router.AppNavigator
 import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelActivity
@@ -193,10 +190,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(1)
-                    supportFragmentManager.switchFragment(
-                        R.id.fragment,
-                        WorksFragment::class.java
-                    )
                 }
 
 
@@ -242,16 +235,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             mRealVM.fetchUserInfo()
             needRefreshUserInfo = false
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        GeneratingViewModel.visible = false
-    }
-
-    override fun onResume() {
-        super.onResume()
-        GeneratingViewModel.visible = false
     }
 
     override fun <Data> onClick(view: View?, data: Data?) {
@@ -400,17 +383,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     }
 
     private fun observeEvents() {
-        mRealVM.firstRechargeCache.observe(this) { data ->
-            data?.let {
-                EventManager.onAppTrack(AppEvent.SF_VIEW_HOME_NEWCOMER_GIFTPACK_PAGE)
-                FirstRechargeDialog.show(FirstRechargeDialog.SCENE_HOME, it)?.apply {
-                    setOnDismissListener {
-                        this@MainActivity.mRealVM.isFirstRechargeLogicActive = false
-                    }
-                }
-                Config.get().markFirstRechargeShown(FirstRechargeDialog.SCENE_HOME)
-            }
-        }
         observeEvents {
             on<Events.ApkRenewal> { event ->
                 //用户日活记录
