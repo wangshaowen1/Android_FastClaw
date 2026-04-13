@@ -21,7 +21,7 @@
         <!-- 左侧头像区域 -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCover"
-            loadHQThumbnailUri="@{item.data.workCoverUrl}"
+            loadThumbnailUri="@{item.data.workCoverUrl}"
             placeHolder="@{@drawable/img_default_cover_3_4}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
