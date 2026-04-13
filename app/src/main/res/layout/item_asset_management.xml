@@ -63,18 +63,18 @@
             android:id="@+id/btnImageDel"
             setVisible="@{item.status == 2}"
             singleClick="@{(v)->item.onItemClick.invoke(v)}"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:padding="8dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:padding="4dp"
             android:src="@drawable/icon_close_background_dark"
             app:layout_constraintEnd_toEndOf="@+id/ivCover"
             app:layout_constraintTop_toTopOf="@+id/ivCover" />
 
         <ImageView
             setVisible="@{item.status == 2}"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:padding="8dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:padding="4dp"
             android:src="@drawable/icon_magnify"
             app:layout_constraintBottom_toBottomOf="@+id/ivCover"
             app:layout_constraintEnd_toEndOf="@+id/ivCover" />
