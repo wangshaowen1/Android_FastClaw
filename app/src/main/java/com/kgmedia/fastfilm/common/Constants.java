@@ -146,7 +146,7 @@ public class Constants {
         String DOWNLOAD_ACCOMPANY = "downloadAccompany";
         String FROM_NEW_USER_WRITE = "fromNewUserWrite";
         String ROLE_IMAGE = "ROLE_IMAGE";
-        String MUSIC_ROOM = "musicRoom";
+        String PAID = "PAID";
         String OPEN_RECOMMEND = "openRecommend";
         String DARK_STYLE = "darkStyle";
         String INSPIRATION = "inspiration";

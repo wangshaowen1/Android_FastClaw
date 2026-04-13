@@ -288,9 +288,11 @@ class HomeFragment :
         if (!isActive) return
         if (info != null && info.isEnable()) {
             if (binding.floatingBall.isVisible) return
+            EventManager.onAppTrack(AppEvent.SF_VIEW_HOME_CUSTOMER_SERVICE_FLOAT_WIN)
             binding.floatingBall.isVisible = true
             loadGifUrl(binding.ivFloating, info.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
             binding.floatingBall.setOnMfClickListener {
+                EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_CUSTOMER_SERVICE_FLOAT_WIN)
                 AppRouter.jump(info.jumpUrl)
                 GuideAddCustomerServiceDialog.markHasJumped()
             }

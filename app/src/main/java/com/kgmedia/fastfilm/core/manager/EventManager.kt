@@ -302,6 +302,78 @@ object AppEvent {
      * 快出片 | 新手创作营首页曝光
      */
     const val SF_VIEW_BEGINNER_CREATION_GUIDE_PAGE = "sf_view_beginner_creation_guide_page"
+
+    /**
+     * 新人礼包-付费用户添加客服弹窗曝光
+     */
+    const val SF_VIEW_GIFTPACK_PAYCUSTOMER_SERVICE_PAGE = "sf_view_giftpack_paycustomer_service_page"
+
+    /**
+     *新人礼包-付费用户添加客服弹窗点击
+     */
+    const val SF_CLICK_GIFTPACK_PAYCUSTOMER_SERVICE_BUTTON = "sf_click_giftpack_paycustomer_service_button"
+
+    /**
+     * 新人礼包-免费用户添加客服弹窗曝光
+     */
+    const val SF_VIEW_GIFTPACK_FREECUSTOMER_SERVICE_PAGE = "sf_view_giftpack_freecustomer_service_page"
+
+    /**
+     *点击新人礼包处免费用户添加客服弹窗跳转按钮
+     */
+    const val SF_CLICK_GIFTPACK_FREECUSTOMER_SERVICE_BUTTON = "sf_click_giftpack_freecustomer_service_button"
+
+    /**
+     *
+     * 首页付费用户添加客服弹窗曝光
+     */
+    const val SF_VIEW_HOME_PAYCUSTOMER_SERVICE_PAGE = "sf_view_home_paycustomer_service_page"
+
+    /**
+     *
+     * 点击首页付费用户添加客服弹窗跳转按钮
+     */
+    const val SF_CLICK_HOME_PAYCUSTOMER_SERVICE_BUTTON = "sf_click_home_paycustomer_service_button"
+
+    /**
+     *首页免费用户添加客服弹窗曝光
+     */
+    const val SF_VIEW_HOME_FREECUSTOMER_SERVICE_PAGE = "sf_view_home_freecustomer_service_page"
+
+    /**
+     * 点击首页免费用户添加客服弹窗跳转按钮
+     */
+    const val SF_CLICK_HOME_FREECUSTOMER_SERVICE_BUTTON = "sf_click_home_freecustomer_service_button"
+
+    /**
+     *商城付费用户添加客服弹窗曝光
+     */
+    const val SF_VIEW_PAYSTORE_PAYCUSTOMER_SERVICE_PAGE = "sf_view_paystore_paycustomer_service_page"
+
+    /**
+     *
+     * 点击商城付费用户添加客服弹窗跳转按钮
+     */
+    const val SF_CLICK_PAYSTORE_PAYCUSTOMER_SERVICE_BUTTON = "sf_click_paystore_paycustomer_service_button"
+
+    /**
+     *
+     * 点击首页悬浮窗
+     */
+    const val SF_CLICK_HOME_CUSTOMER_SERVICE_FLOAT_WIN = "sf_click_home_customer_service_float_win"
+
+    /**
+     *
+     * 首页客服悬浮窗曝光
+     */
+    const val SF_VIEW_HOME_CUSTOMER_SERVICE_FLOAT_WIN = "sf_view_home_customer_service_float_win"
+
+    /**
+     *
+     * 点击作品播放器页面“跳转”发布平台按钮
+     */
+    const val SF_CLICK_WORK_VIDEO_BUTTON = "sf_click_work_video_button"
+
 }
 
 

@@ -12,6 +12,8 @@ import com.kgmedia.fastfilm.common.utils.DateUtil
 import com.kgmedia.fastfilm.core.Global
 import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.databinding.loadGifUrl
+import com.kgmedia.fastfilm.core.manager.AppEvent
+import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.response.SimpleActivityInfo
 import com.kgmedia.fastfilm.databinding.DialogGuideAddCustomerServiceBinding
 import com.kgmedia.fastfilm.router.AppRouter
@@ -61,8 +63,9 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
             Global.getGuideLinkCustomerInfo { list ->
                 if (list.isNullOrEmpty()) return@getGuideLinkCustomerInfo
                 callback?.invoke()
+                val isPaid = isPaid == true || User.get().hasPaid()
                 // 确定需要查找的 targetCode
-                val targetCode = if (isPaid == true || User.get().hasPaid()) {
+                val targetCode = if (isPaid) {
                     SimpleActivityInfo.POPUP_PAID
                 } else {
                     SimpleActivityInfo.POPUP_UNPAID
@@ -72,6 +75,7 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
                     val dialog = GuideAddCustomerServiceDialog().apply {
                         arguments = Bundle().apply {
                             putString(Constants.Extra.MODE, scene)
+                            putBoolean(Constants.Extra.PAID, isPaid)
                             putParcelable(Constants.Extra.DATA, info)
                         }
                     }
@@ -82,6 +86,8 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
         }
     }
 
+    val isPaid by lazy { arguments?.getBoolean(Constants.Extra.PAID) ?: false }
+    val scene by lazy { arguments?.getString(Constants.Extra.MODE) }
     val info: SimpleActivityInfo? by lazy { arguments?.getParcelableValue(Constants.Extra.DATA, SimpleActivityInfo::class.java) }
 
     override fun onStart() {
@@ -98,6 +104,21 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
 
     override fun onPrepareView() {
         super.onPrepareView()
+        if (scene == SCENE_MALL) {
+            EventManager.onAppTrack(AppEvent.SF_VIEW_PAYSTORE_PAYCUSTOMER_SERVICE_PAGE)
+        } else if (scene == SCENE_HOME) {
+            if (isPaid) {
+                EventManager.onAppTrack(AppEvent.SF_VIEW_HOME_PAYCUSTOMER_SERVICE_PAGE)
+            } else {
+                EventManager.onAppTrack(AppEvent.SF_VIEW_HOME_FREECUSTOMER_SERVICE_PAGE)
+            }
+        } else if (scene == SCENE_FIRST_RECHARGE) {
+            if (isPaid) {
+                EventManager.onAppTrack(AppEvent.SF_VIEW_GIFTPACK_PAYCUSTOMER_SERVICE_PAGE)
+            } else {
+                EventManager.onAppTrack(AppEvent.SF_VIEW_GIFTPACK_FREECUSTOMER_SERVICE_PAGE)
+            }
+        }
         binding.image.minimumHeight = (ScreenUtils.getScreenWidth() / 375f * 415f).roundToInt()
         loadGifUrl(binding.image, info?.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
 
@@ -106,6 +127,21 @@ class GuideAddCustomerServiceDialog : BaseDialogFragment<DialogGuideAddCustomerS
         }
 
         binding.btnAdd.setOnSingleClickListener {
+            if (scene == SCENE_MALL) {
+                EventManager.onAppTrack(AppEvent.SF_CLICK_PAYSTORE_PAYCUSTOMER_SERVICE_BUTTON)
+            } else if (scene == SCENE_HOME) {
+                if (isPaid) {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_PAYCUSTOMER_SERVICE_BUTTON)
+                } else {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_FREECUSTOMER_SERVICE_BUTTON)
+                }
+            } else if (scene == SCENE_FIRST_RECHARGE) {
+                if (isPaid) {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_GIFTPACK_PAYCUSTOMER_SERVICE_BUTTON)
+                } else {
+                    EventManager.onAppTrack(AppEvent.SF_CLICK_GIFTPACK_FREECUSTOMER_SERVICE_BUTTON)
+                }
+            }
             markHasJumped()
             AppRouter.jump(info?.jumpUrl)
             dismissAllowingStateLoss()
