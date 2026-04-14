@@ -9,7 +9,6 @@ import com.kgmedia.fastfilm.base.viewmodel.AppRepositoryViewModel
 import com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel
 import com.kgmedia.fastfilm.core.AppRepository
 import com.kgmedia.fastfilm.core.ext.launchWithLoading
-import com.kgmedia.fastfilm.core.network.apis.entity.LogOffStatusInfo
 import com.kgmedia.fastfilm.core.network.apis.request.UserTokenBody
 import com.kgmedia.fastfilm.core.response
 import com.kgmedia.fastfilm.kit.SignUtils

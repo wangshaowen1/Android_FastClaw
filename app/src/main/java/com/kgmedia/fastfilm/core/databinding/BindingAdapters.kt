@@ -1763,21 +1763,6 @@ fun setEditing(view: RecyclerEditText, editing: Boolean, content: CharSequence?)
     }
 }
 
-@BindingAdapter("rotateLoading")
-fun setRotateLoading(view: ImageView, show: Boolean) {
-    if (show) {
-        view.visibility = View.VISIBLE
-        // 检查当前是否有动画在运行，防止重复启动导致闪烁
-        if (view.animation == null) {
-            val rotateAnim = AnimationUtils.loadAnimation(view.context, R.anim.loading_2)
-            view.startAnimation(rotateAnim)
-        }
-    } else {
-        view.visibility = View.GONE
-        view.clearAnimation()
-    }
-}
-
 @BindingAdapter("isScrollable")
 fun setScrollable(view: NestedScrollView, isScrollable: Boolean) {
     view.setOnTouchListener { _, _ ->

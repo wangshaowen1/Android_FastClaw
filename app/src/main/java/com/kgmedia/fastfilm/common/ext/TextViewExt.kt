@@ -9,8 +9,6 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.TypedValue
 import android.widget.TextView
-import com.kgmedia.fastfilm.core.network.apis.response.Role
-import com.kgmedia.fastfilm.widget.editor.RoleSpan
 import com.nhsd.basic.ext.getResColor
 
 
@@ -137,40 +135,4 @@ fun parseRoleTagsModernPlain(textWithTags: String?): SpannableStringBuilder? {
     }
 
     return spannable
-}
-
-/**
- * 角色标签解析，带RoleSpan字颜色之类的 <role:@张三> => @张三
- */
-fun parseRoleTagsModern(textWithTags: String?, roles: List<Role>? = null): SpannableStringBuilder? {
-    if (textWithTags.isNullOrEmpty()) {
-        return null
-    }
-    val regex = Regex("<role:@(.*?)>")
-    val spannable = SpannableStringBuilder()
-    var lastIndex = 0
-
-    for (match in regex.findAll(textWithTags)) {
-        val startIndex = match.range.first
-        if (startIndex > lastIndex) {
-            spannable.append(textWithTags.substring(lastIndex, startIndex))
-        }
-        val name = match.groupValues[1]
-        val role = roles?.find { it.roleName == name } ?: Role("", name)
-        val roleText = "@$name"
-        val start = spannable.length
-        spannable.append(roleText)
-        spannable.setSpan(RoleSpan(role), start, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        lastIndex = match.range.last + 1
-    }
-
-    if (lastIndex < textWithTags.length) {
-        spannable.append(textWithTags.substring(lastIndex))
-    }
-    return spannable
-}
-
-/** 解析服务器格式文本并渲染 */
-fun TextView.setTextWithRoles(textWithTags: String, roles: List<Role>? = null) {
-    text = parseRoleTagsModern(textWithTags = textWithTags, roles = roles)
 }

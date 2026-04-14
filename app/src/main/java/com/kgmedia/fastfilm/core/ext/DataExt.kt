@@ -3,42 +3,26 @@
 package com.kgmedia.fastfilm.core.ext
 
 import android.app.Activity
-import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.EncryptUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.OssHelp
 import com.kgmedia.fastfilm.common.ext.showConfirmPrompt
 import com.kgmedia.fastfilm.common.ext.topActivity
-import com.kgmedia.fastfilm.common.utils.SensitiveHighlighter
 import com.kgmedia.fastfilm.common.utils.WXUtils
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Global
-import com.kgmedia.fastfilm.core.User
 import com.kgmedia.fastfilm.core.model.PhotoItem
-import com.kgmedia.fastfilm.core.network.apis.ApiFactory
 import com.kgmedia.fastfilm.core.network.apis.entity.PaymentData
 import com.kgmedia.fastfilm.core.network.apis.entity.ShortDramaInfo
-import com.kgmedia.fastfilm.core.network.apis.entity.SimpleStoryboardInfo
-import com.kgmedia.fastfilm.core.network.apis.request.ContentBody
 import com.kgmedia.fastfilm.core.network.apis.response.UserHomeData
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.entity.AliPayParams
 import com.kuaige.payment.entity.PaymentParams
 import com.kuaige.payment.entity.WxPayParams
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.ext.showToastDelay
-import com.nhsd.basic.utils.Logger
 import com.nhsd.share.ShareContent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.jcodec.containers.mp4.boxes.MetaValue
-import org.jcodec.movtool.MetadataEditor
 import org.json.JSONObject
-import java.io.File
-import java.net.URLEncoder
 
 
 fun UserHomeData?.loginToast() {
@@ -109,37 +93,6 @@ fun Activity.customerServiceTransfer() {
     }
 }
 
-
-suspend fun File.putAIGCMetadata(shortDrama: SimpleStoryboardInfo): File {
-    withContext(Dispatchers.IO) {
-        runCatching {
-            val contentProducer = AppUtils.getAppName().let { URLEncoder.encode(it) }
-            val produceID = shortDrama.storyboardId
-            val reservedCode1 = EncryptUtils.encryptMD5ToString("${contentProducer}${produceID}")
-            val contentPropagator = User.get().nickName?.let { URLEncoder.encode(it) }
-            val propagateID = User.get().getId()
-            val reservedCode2 = EncryptUtils.encryptMD5ToString("${contentPropagator}${propagateID}")
-            val aigc = JSONObject()
-                .put("Label", "3")
-                .put("ContentProducer", contentProducer)
-                .put("ProduceID", produceID)
-                .put("ReservedCode1", reservedCode1)
-                .put("ContentPropagator", contentPropagator)
-                .put("PropagateID", propagateID)
-                .put("ReservedCode2", reservedCode2)
-                .toString()
-            val metadataEditor = MetadataEditor.createFrom(this@putAIGCMetadata)
-            metadataEditor.keyedMeta?.put("AIGC", MetaValue.createString(aigc))
-            metadataEditor.save(true)
-        }.onFailure {
-            Logger.e("putAIGCMetadata", it.message)
-            it.printStackTrace()
-        }
-    }
-    return this
-}
-
-
 fun toPhotoItem(list: MutableList<String?>?): ArrayList<PhotoItem?>? {
     if (list == null || list.size <= 0) {
         return null
@@ -196,47 +149,4 @@ fun PaymentData.toPaymentParams(method: PaymentClient.PaymentMethod): PaymentPar
                 this.sign = json.optString("sign")
             }
         }
-}
-
-suspend fun sensitiveWordCheck(content: String?, passBlock: () -> Unit, notPassBlock: (CharSequence?) -> Unit, needHighlight: Boolean? = true) {
-    val pair = sensitiveWordCheck(content, needHighlight)
-    withContext(Dispatchers.Main) {
-        if (pair.first) {
-            notPassBlock(content)
-            passBlock()
-        } else {
-            notPassBlock(pair.second)
-        }
-    }
-}
-
-/**
- * 敏感词校验
- * @return 校验结果 Pair<是否通过校验, 高亮未通过文字>
- */
-suspend fun sensitiveWordCheck(content: String?, needHighlight: Boolean? = true): Pair<Boolean, CharSequence?> {
-    if (content.isNullOrBlank()) {
-        return true to null
-    }
-    val checkRes = withContext(Dispatchers.IO) { ApiFactory.apiService.sensitiveWordCheck(ContentBody(content)) }
-    val checkData = checkRes.data
-    if (checkRes.isSuccess && checkData != null) {
-        if (checkData.isSensitive()) {
-            checkData.content?.showToast()
-            val review = Config.get().isInReview
-            if (needHighlight == false || review) {
-                return false to content
-            }
-            val sp = SensitiveHighlighter.highlight(
-                text = content,
-                keywords = checkData.hitWords,
-                color = R.color.func_failure_dark.getResColor()
-            )
-            return false to sp
-        }
-    } else {
-        (checkRes.msg ?: R.string.sensitive_word_check_failed.getResString()).showToast()
-        return false to null
-    }
-    return true to null
 }

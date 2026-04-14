@@ -1,28 +1,21 @@
 package com.kgmedia.fastfilm.feature.mine
 
 import android.view.View
-import androidx.core.view.isVisible
 import com.blankj.utilcode.util.ClipboardUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.topActivity
 import com.kgmedia.fastfilm.core.Config
 import com.kgmedia.fastfilm.core.Events
 import com.kgmedia.fastfilm.core.User
-import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.ext.onUserStatusChanged
-import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
-import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
 import com.kgmedia.fastfilm.databinding.FragmentMineBinding
-import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.feature.settings.SettingsActivity
 import com.kgmedia.fastfilm.feature.settings.feedback.FeedbackActivity
 import com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity
 import com.kgmedia.fastfilm.router.AppNavigator
-import com.kgmedia.fastfilm.router.AppRouter
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.showToast
 
@@ -125,28 +118,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     return
                 }
             }
-        }
-    }
-
-    private fun handlePopup(popup: PopupInfo?) {
-        popup?.let {
-            if (popup.isShow()) {
-                ActivityDialog.show(popup)
-                Config.get().activityPopupShowMark(popup.id)
-            }
-        }
-    }
-
-    private fun handleFloatWindow(float: FloatWindowInfo?) {
-        if (float != null && float.isShow()) {
-            binding.floatingBall.isVisible = true
-            loadGifUrl(binding.ivFloating, float.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
-            Config.get().activityFloatShowMark(float.id)
-            binding.floatingBall.setOnMfClickListener {
-                AppRouter.jump(float.jumpUrl)
-            }
-        } else {
-            binding.floatingBall.visibility = View.GONE
         }
     }
 }

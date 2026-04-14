@@ -2,25 +2,14 @@ package com.kgmedia.fastfilm.feature.home
 
 import android.view.View
 import android.widget.ImageView
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.blankj.utilcode.util.SPUtils
 import com.kgmedia.fastfilm.R
 import com.kgmedia.fastfilm.common.ext.startRefreshWithAdapter
-import com.kgmedia.fastfilm.core.Config
-import com.kgmedia.fastfilm.core.Global
-import com.kgmedia.fastfilm.core.User
-import com.kgmedia.fastfilm.core.databinding.loadGifUrl
 import com.kgmedia.fastfilm.core.databinding.loadUri
-import com.kgmedia.fastfilm.core.manager.AppEvent
-import com.kgmedia.fastfilm.core.manager.EventManager
 import com.kgmedia.fastfilm.core.network.apis.entity.BannerInfo
-import com.kgmedia.fastfilm.core.network.apis.response.FloatWindowInfo
-import com.kgmedia.fastfilm.core.network.apis.response.PopupInfo
-import com.kgmedia.fastfilm.core.network.apis.response.SimpleActivityInfo
 import com.kgmedia.fastfilm.databinding.FragmentHomeBinding
-import com.kgmedia.fastfilm.feature.main.ActivityDialog
 import com.kgmedia.fastfilm.feature.main.MainViewModel
 import com.kgmedia.fastfilm.router.AppRouter
 import com.kgmedia.fastfilm.widget.decoration.StaggeredGridSpaceItemDecoration
@@ -175,17 +164,9 @@ class HomeFragment :
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (!isHidden) {
-            resumePopup()
-        }
-    }
-
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            resumePopup()
             checkAndTriggerPopup()
         }
     }
@@ -199,79 +180,6 @@ class HomeFragment :
         // 2. 立即持久化新次数
         if (newCount < 10) {//防止无限增长
             SPUtils.getInstance().put(KEY_VISIT_COUNT, newCount)
-        }
-
-        // 3. 严格逻辑判断：仅在第 2 次时执行弹窗
-        if (newCount == 2) {
-            showTargetDialog()
-        } else {
-            showFloatWindow()
-        }
-    }
-
-    private fun showTargetDialog() {
-    }
-
-    private fun showFloatWindow() {
-        Global.getGuideLinkCustomerInfo { list ->
-            val targetCode = if (User.get().hasPaid()) {
-                SimpleActivityInfo.FLOAT_PAID
-            } else {
-                SimpleActivityInfo.FLOAT_UNPAID
-            }
-            list?.find { it.businessCode == targetCode && it.isEnable() }?.let { info ->
-                binding.root.post {
-                    handleFloatWindow(info)
-                }
-            }
-        }
-    }
-
-
-    @Deprecated("这个活动暂时停用了")
-    fun resumePopup() {
-    }
-
-    @Deprecated("这个活动暂时停用了")
-    private fun handlePopup(popup: PopupInfo?) {
-        popup?.let {
-            if (popup.isShow()) {
-                if (popup.businessType == 1) {
-                    EventManager.onAppTrack(AppEvent.SF_SHOW_COURSE_ENROLL_POPUP)
-                }
-                ActivityDialog.show(popup)
-                Config.get().activityPopupShowMark(popup.id)
-            }
-        }
-    }
-
-    @Deprecated("这个活动暂时停用了")
-    private fun handleFloatWindow(float: FloatWindowInfo?) {
-        if (float != null && float.isShow()) {
-            binding.floatingBall.isVisible = true
-            loadGifUrl(binding.ivFloating, float.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
-            Config.get().activityFloatShowMark(float.id)
-            binding.floatingBall.setOnMfClickListener {
-                AppRouter.jump(float.jumpUrl)
-            }
-        } else {
-            binding.floatingBall.visibility = View.GONE
-        }
-    }
-
-    private fun handleFloatWindow(info: SimpleActivityInfo?) {
-        if (!isActive) return
-        if (info != null && info.isEnable()) {
-            if (binding.floatingBall.isVisible) return
-            EventManager.onAppTrack(AppEvent.SF_VIEW_HOME_CUSTOMER_SERVICE_FLOAT_WIN)
-            binding.floatingBall.isVisible = true
-            loadGifUrl(binding.ivFloating, info.imageUrl, R.drawable.img_default_cover_1_1.getResDrawable())
-            binding.floatingBall.setOnMfClickListener {
-                EventManager.onAppTrack(AppEvent.SF_CLICK_HOME_CUSTOMER_SERVICE_FLOAT_WIN)
-                AppRouter.jump(info.jumpUrl)
-            }
-        } else {
-            binding.floatingBall.visibility = View.GONE
         }
     }
 }
