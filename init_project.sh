@@ -1,20 +1,14 @@
 #!/bin/bash
 #
 # Android 项目模板初始化脚本 (Unix/Mac/Git Bash)
-# 用法: bash init_project.sh <新包名> <新APP名称> [新项目名称]
+# 用法: bash init_project.sh <新包名> <新APP名称> <新项目名称> <keyAlias> <keyPassword> <storePassword>
 #
-# 示例: bash init_project.sh com.example.myapp 我的应用 MyApp
-#       bash init_project.sh com.company.newproject NewProject NewProject
-#
-# 说明:
-#   - 新包名: 例如 com.example.myapp (必填)
-#   - 新APP名称: 显示在手机上的名字 (必填)
-#   - 新项目名称: Gradle项目名, 不填则从包名最后一段自动生成 (可选)
+# 示例: bash init_project.sh com.example.myapp 我的应用 MyApp myapp abc123 abc123
 #
 
 set -e
 
-# ============================== 颜色输出 ==============================
+# ============================== Color output ==============================
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -26,24 +20,26 @@ ok()    { echo -e "${GREEN}[OK]${NC} $1"; }
 warn()  { echo -e "${YELLOW}[WARN]${NC} $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 
-# ============================== 参数校验 ==============================
+# ============================== Constants ==============================
 OLD_PACKAGE="com.kgmedia.fastfilm"
 OLD_APP_NAME="快出片"
 OLD_PROJECT_NAME="FastFilm"
 OLD_KEY_ALIAS="fastfilm"
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 6 ]; then
     echo ""
-    echo "用法: bash init_project.sh <新包名> <新APP名称> [新项目名称]"
+    echo "用法: bash init_project.sh <新包名> <新APP名称> <新项目名称> <keyAlias> <keyPassword> <storePassword>"
     echo ""
     echo "参数:"
-    echo "  新包名       必填, 例如 com.example.myapp"
-    echo "  新APP名称    必填, 例如 我的应用"
-    echo "  新项目名称   可选, 不填则从包名最后一段自动生成(首字母大写)"
+    echo "  新包名         必填, 例如 com.example.myapp"
+    echo "  新APP名称      必填, 例如 我的应用"
+    echo "  新项目名称     必填, 例如 MyApp"
+    echo "  keyAlias       必填, 签名别名, 例如 myapp"
+    echo "  keyPassword    必填, 签名密钥密码"
+    echo "  storePassword  必填, 签名库密码"
     echo ""
     echo "示例:"
-    echo "  bash init_project.sh com.example.myapp 我的应用 MyApp"
-    echo "  bash init_project.sh com.company.news 新闻头条"
+    echo "  bash init_project.sh com.example.myapp 我的应用 MyApp myapp abc123 abc123"
     echo ""
     exit 1
 fi
@@ -51,25 +47,19 @@ fi
 NEW_PACKAGE="$1"
 NEW_APP_NAME="$2"
 
-# 验证包名格式
+# Validate package name
 if ! echo "$NEW_PACKAGE" | grep -qE '^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$'; then
     error "包名格式不正确: $NEW_PACKAGE (应为 com.example.app 格式, 只含小写字母、数字、点号)"
 fi
 
-# 如果没提供项目名称, 从包名最后一段生成 (首字母大写)
-if [ -n "$3" ]; then
-    NEW_PROJECT_NAME="$3"
-else
-    LAST_SEGMENT=$(echo "$NEW_PACKAGE" | awk -F'.' '{print $NF}')
-    NEW_PROJECT_NAME="$(echo "${LAST_SEGMENT:0:1}" | tr '[:lower:]' '[:upper:]')${LAST_SEGMENT:1}"
-fi
+NEW_PROJECT_NAME="$3"
+NEW_KEY_ALIAS="$4"
+KEY_PASSWORD="$5"
+STORE_PASSWORD="$6"
 
-# 路径转换: com.example.app -> com/example/app
+# Path conversion
 OLD_PACKAGE_PATH=$(echo "$OLD_PACKAGE" | tr '.' '/')
 NEW_PACKAGE_PATH=$(echo "$NEW_PACKAGE" | tr '.' '/')
-
-# 新的 keyAlias (包名最后一段)
-NEW_KEY_ALIAS=$(echo "$NEW_PACKAGE" | awk -F'.' '{print $NF}')
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
@@ -79,16 +69,17 @@ echo "============================================"
 echo "  Android 项目模板初始化"
 echo "============================================"
 echo ""
-info "旧包名:     $OLD_PACKAGE"
-info "新包名:     $NEW_PACKAGE"
-info "旧APP名:    $OLD_APP_NAME"
-info "新APP名:    $NEW_APP_NAME"
-info "新项目名:   $NEW_PROJECT_NAME"
-info "新keyAlias: $NEW_KEY_ALIAS"
+info "旧包名:       $OLD_PACKAGE"
+info "新包名:       $NEW_PACKAGE"
+info "旧APP名:      $OLD_APP_NAME"
+info "新APP名:      $NEW_APP_NAME"
+info "新项目名:     $NEW_PROJECT_NAME"
+info "keyAlias:     $NEW_KEY_ALIAS"
+info "keyPassword:  $KEY_PASSWORD"
+info "storePassword: $STORE_PASSWORD"
 echo ""
 
-# ============================== 跨平台 sed ==============================
-# macOS 的 sed -i 需要备份后缀, Linux 不需要
+# ============================== Cross-platform sed ==============================
 sedi() {
     if [[ "$OSTYPE" == "darwin"* ]]; then
         sed -i '' "$@"
@@ -97,48 +88,133 @@ sedi() {
     fi
 }
 
-# ============================== 1. 更新 config.gradle ==============================
+# ============================== 1. config.gradle ==============================
 info "更新 config.gradle ..."
 sedi "s|$OLD_PACKAGE|$NEW_PACKAGE|g" config.gradle
-ok "config.gradle 已更新"
+ok "config.gradle"
 
-# ============================== 2. 更新 settings.gradle ==============================
+# ============================== 2. settings.gradle ==============================
 info "更新 settings.gradle ..."
 sedi "s|rootProject.name = \"$OLD_PROJECT_NAME\"|rootProject.name = \"$NEW_PROJECT_NAME\"|g" settings.gradle
-ok "settings.gradle 已更新"
+ok "settings.gradle"
 
-# ============================== 3. 更新 app/build.gradle ==============================
-info "更新 app/build.gradle ..."
+# ============================== 3. app/build.gradle (package/signing) ==============================
+info "更新 app/build.gradle (包名/签名) ..."
 sedi "s|namespace '$OLD_PACKAGE'|namespace '$NEW_PACKAGE'|g" app/build.gradle
 sedi "s|storeFile file(\"../$OLD_PACKAGE.jks\")|storeFile file(\"../$NEW_PACKAGE.jks\")|g" app/build.gradle
 sedi "s|keyAlias '$OLD_KEY_ALIAS'|keyAlias '$NEW_KEY_ALIAS'|g" app/build.gradle
-ok "app/build.gradle 已更新"
+sedi "s|keyPassword '111111'|keyPassword '$KEY_PASSWORD'|g" app/build.gradle
+sedi "s|storePassword '111111'|storePassword '$STORE_PASSWORD'|g" app/build.gradle
+ok "app/build.gradle (包名/签名)"
 
-# ============================== 4. 更新 AndroidManifest.xml ==============================
+# ============================== 4. app/build.gradle (SDK keys) ==============================
+info "清理 app/build.gradle 第三方SDK密钥 ..."
+BG="app/build.gradle"
+# Douyin
+sedi "s|awg154kyqmvhns2f|YOUR_DY_CLIENT_KEY|g" "$BG"
+# WeChat
+sedi "s|wxc4c951d1cd1816fc|YOUR_WX_APP_ID|g" "$BG"
+sedi "s|9d679c3bdc5531e794d7ab83214d40af|YOUR_WX_APP_SECRET|g" "$BG"
+# GrowingIO
+sedi "s|09ae0b3ae5497abe|YOUR_GROWING_SCHEME|g" "$BG"
+# Kuaishou
+sedi "s|ks664562422307705809|YOUR_KWAI_APP_ID|g" "$BG"
+# QQ
+sedi "s|1112354170|YOUR_QQ_APP_ID|g" "$BG"
+sedi "s|JLx3P8RMZrnTQ2k0|YOUR_QQ_APP_KEY|g" "$BG"
+# Weibo
+sedi "s|4008287256|YOUR_WB_APP_KEY|g" "$BG"
+sedi "s|9fe4864f3bfff59e241442ae0d645615|YOUR_WB_APP_SECRET|g" "$BG"
+sedi "s|https://m.helloaa.cn/|https://example.com|g" "$BG"
+# Service/Privacy/Official URLs
+sedi "s|https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E7%94%A8%E6%88%B7%E6%9C%8D%E5%8A%A1%E5%8D%8F%E8%AE%AE.html|https://example.com/service|g" "$BG"
+sedi "s|https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96.html|https://example.com/privacy|g" "$BG"
+sedi "s|http://rmgf.wechatrenmai.cn|https://example.com|g" "$BG"
+# Umeng
+sedi "s|a0d38408ddaceb5c935d511e71f1ac36|YOUR_UMENG_SECRET|g" "$BG"
+sedi "s|698d31b96f259537c758f5a2|YOUR_UMENG_APP_KEY|g" "$BG"
+sedi "s|69005d13644c9e2c20677a21|YOUR_UMENG_APP_KEY|g" "$BG"
+# Shanyan
+sedi "s|KfNYHDRd|YOUR_SHANYAN_APPID|g" "$BG"
+sedi "s|VDE8Q8TY|YOUR_SHANYAN_APP_KEY|g" "$BG"
+# OpenInstall
+sedi "s|dacw8u|YOUR_OPENINSTALL_KEY|g" "$BG"
+# Server URLs
+sedi "s|https://kcp-test.kwaige.cn|https://your-dev-server.com|g" "$BG"
+sedi "s|http://120.24.240.28:9010|https://your-preview-server.com|g" "$BG"
+sedi "s|https://kuaichupianjk.kuaigeai.cn|https://your-production-server.com|g" "$BG"
+ok "app/build.gradle (第三方SDK密钥已清理)"
+
+# ============================== 5. AndroidManifest.xml ==============================
 info "更新 AndroidManifest.xml ..."
 sedi "s|$OLD_PACKAGE|$NEW_PACKAGE|g" app/src/main/AndroidManifest.xml
-ok "AndroidManifest.xml 已更新"
+ok "AndroidManifest.xml"
 
-# ============================== 5. 更新 strings.xml (APP名称) ==============================
+# ============================== 6. strings.xml ==============================
 info "更新 strings.xml (APP名称) ..."
 sedi "s|<string name=\"app_name\">$OLD_APP_NAME</string>|<string name=\"app_name\">$NEW_APP_NAME</string>|g" app/src/main/res/values/strings.xml
-ok "strings.xml 已更新"
+ok "strings.xml"
 
-# ============================== 6. 重命名 keystore 文件 ==============================
-info "重命名 keystore 文件 ..."
-if [ -f "$OLD_PACKAGE.jks" ]; then
-    mv "$OLD_PACKAGE.jks" "$NEW_PACKAGE.jks"
-    ok "keystore 已重命名为 $NEW_PACKAGE.jks"
-else
-    warn "keystore 文件 $OLD_PACKAGE.jks 不存在, 跳过"
+# ============================== 7. Create new keystore ==============================
+info "创建新签名文件 ..."
+
+rm -f "$OLD_PACKAGE.jks"
+rm -f "$NEW_PACKAGE.jks"
+
+JKS_FILE="$NEW_PACKAGE.jks"
+keytool -genkey -v \
+    -keystore "$JKS_FILE" \
+    -alias "$NEW_KEY_ALIAS" \
+    -keyalg RSA \
+    -keysize 2048 \
+    -validity 36525 \
+    -storepass "$STORE_PASSWORD" \
+    -keypass "$KEY_PASSWORD" \
+    -dname "CN=kuaige, OU=kuaige, O=深圳市快歌智能有限公司, L=ShenZhen, ST=GuangDong, C=CN"
+
+if [ ! -f "$JKS_FILE" ]; then
+    error "keytool 执行失败, 请确保 JDK 已安装且 keytool 在 PATH 中"
 fi
+ok "签名文件已创建: $JKS_FILE"
 
-# ============================== 7. 更新 gradle.properties ==============================
+# ============================== 8. Extract cert info ==============================
+info "提取签名信息 ..."
+
+CERT_INFO=$(keytool -list -v -keystore "$JKS_FILE" -alias "$NEW_KEY_ALIAS" -storepass "$STORE_PASSWORD" 2>&1)
+
+NEW_MD5=$(echo "$CERT_INFO" | grep "MD5:" | head -1 | sed 's/.*MD5: *//')
+NEW_SHA1=$(echo "$CERT_INFO" | grep "SHA1:" | head -1 | sed 's/.*SHA1: *//')
+NEW_SHA256=$(echo "$CERT_INFO" | grep -i "SHA-\?256:" | head -1 | sed 's/.*SHA-\?256: *//')
+
+# SHA1 lowercase without colons (for apisecurity)
+NEW_SHA1_NOCOLON=$(echo "$NEW_SHA1" | tr -d ':' | tr '[:upper:]' '[:lower:]')
+
+ok "MD5:    $NEW_MD5"
+ok "SHA1:   $NEW_SHA1"
+ok "SHA256: $NEW_SHA256"
+
+# Extract certificate DER hex (for apisecurity signature)
+CERT_HEX=$(keytool -exportcert -keystore "$JKS_FILE" -alias "$NEW_KEY_ALIAS" -storepass "$STORE_PASSWORD" 2>/dev/null | xxd -p | tr -d '\n')
+
+# Extract public key PEM
+CERT_PEM=$(keytool -exportcert -rfc -keystore "$JKS_FILE" -alias "$NEW_KEY_ALIAS" -storepass "$STORE_PASSWORD" 2>/dev/null)
+
+ok "证书HEX长度: ${#CERT_HEX} 字符"
+
+# ============================== 9. gradle.properties ==============================
 info "更新 gradle.properties ..."
 sedi "s|#Alias: $OLD_KEY_ALIAS|#Alias: $NEW_KEY_ALIAS|g" gradle.properties
-ok "gradle.properties 已更新"
+sedi "s|#MD5: 67:E7:63:39:E0:7A:4D:95:BC:7F:B9:24:C0:6B:C0:ED|#MD5: $NEW_MD5|g" gradle.properties
+sedi "s|#SHA1: EC:82:59:D5:0D:00:62:32:6C:B4:80:34:32:A3:57:94:36:DF:38:76|#SHA1: $NEW_SHA1|g" gradle.properties
+sedi "s|#SHA-256: FF:D7:E3:BC:E1:53:69:EF:1C:D5:19:8A:04:0E:7F:A7:D2:7E:39:32:BA:C1:3E:9A:A6:5C:94:C5:C0:55:A0:58|#SHA-256: $NEW_SHA256|g" gradle.properties
 
-# ============================== 8. 移动源码目录 ==============================
+# Replace old public.key
+sedi "/#public.key = /d" gradle.properties
+echo "" >> gradle.properties
+echo "#public.key = $CERT_PEM" >> gradle.properties
+ok "gradle.properties"
+
+# ============================== 10. Move source directory ==============================
 info "移动源码目录 ..."
 OLD_SRC_DIR="app/src/main/java/$OLD_PACKAGE_PATH"
 NEW_SRC_DIR="app/src/main/java/$NEW_PACKAGE_PATH"
@@ -149,7 +225,6 @@ if [ -d "$OLD_SRC_DIR" ]; then
     rm -rf "$OLD_SRC_DIR"
     ok "源码目录已移动: $OLD_PACKAGE_PATH -> $NEW_PACKAGE_PATH"
 
-    # 清理旧的空目录
     OLD_BASE=$(echo "$OLD_PACKAGE" | awk -F'.' '{print $1}')
     NEW_BASE=$(echo "$NEW_PACKAGE" | awk -F'.' '{print $1}')
     if [ "$OLD_BASE" != "$NEW_BASE" ]; then
@@ -166,38 +241,49 @@ else
     warn "源码目录 $OLD_SRC_DIR 不存在, 跳过"
 fi
 
-# ============================== 9. 更新所有 Kotlin/Java 源文件中的包名 ==============================
+# ============================== 11. Kotlin/Java source ==============================
 info "更新 Kotlin/Java 源文件中的包名引用 ..."
-COUNT=0
 find app/src/main/java -type f \( -name "*.kt" -o -name "*.java" \) | while read -r file; do
     if grep -q "$OLD_PACKAGE" "$file"; then
         sedi "s|$OLD_PACKAGE|$NEW_PACKAGE|g" "$file"
-        COUNT=$((COUNT + 1))
     fi
 done
-ok "Kotlin/Java 源文件已更新"
+ok "Kotlin/Java 源文件"
 
-# ============================== 10. 更新所有 XML 布局文件中的包名 ==============================
+# ============================== 12. XML layouts ==============================
 info "更新 XML 布局文件中的包名引用 ..."
 find app/src/main/res -type f -name "*.xml" | while read -r file; do
     if grep -q "$OLD_PACKAGE" "$file"; then
         sedi "s|$OLD_PACKAGE|$NEW_PACKAGE|g" "$file"
     fi
 done
-ok "XML 布局文件已更新"
+ok "XML 布局文件"
 
-# ============================== 11. 更新 apisecurity 原生代码 ==============================
-info "更新 apisecurity 原生代码中的包名 ..."
+# ============================== 13. apisecurity native ==============================
+info "更新 apisecurity 原生代码 ..."
 CPP_FILE="apisecurity/src/main/cpp/apisecurity-lib.cpp"
 if [ -f "$CPP_FILE" ]; then
+    # Package name (APP_PKG + APPLICATION_NAME)
     sedi "s|$OLD_PACKAGE|$NEW_PACKAGE|g" "$CPP_FILE"
-    ok "apisecurity-lib.cpp 已更新 (APP_PKG + APPLICATION_NAME)"
-    warn "请手动更新 apisecurity-lib.cpp 中的 SHA1、signature、KEY、KEY_DEV"
+
+    # SHA1
+    sedi "s|ec8259d50d0062326cb4803432a3579436df3876|$NEW_SHA1_NOCOLON|g" "$CPP_FILE"
+
+    # API keys -> placeholders
+    sedi 's|#define KEY ".*"|#define KEY "YOUR_API_KEY"|g' "$CPP_FILE"
+    sedi 's|#define KEY_DEV ".*"|#define KEY_DEV "YOUR_API_KEY_DEV"|g' "$CPP_FILE"
+    sedi 's|const std::string  ERROR_KEY= ".*"|const std::string  ERROR_KEY= "YOUR_ERROR_KEY"|g' "$CPP_FILE"
+
+    # Replace signature with new cert hex
+    sedi "s|const char \*signature = \".*\"|const char *signature = \"$CERT_HEX\"|g" "$CPP_FILE"
+
+    ok "apisecurity-lib.cpp (SHA1 + signature + 包名已更新)"
+    warn "请手动更新 apisecurity-lib.cpp 中的 KEY、KEY_DEV (与后端协商)"
 else
     warn "$CPP_FILE 不存在, 跳过"
 fi
 
-# ============================== 12. 清理构建缓存 ==============================
+# ============================== 14. Clean build cache ==============================
 info "清理构建缓存 ..."
 rm -rf .gradle/
 rm -rf app/build/
@@ -205,26 +291,33 @@ rm -rf build/
 rm -rf .idea/
 ok "构建缓存已清理"
 
-# ============================== 完成 ==============================
+# ============================== 15. Git add ==============================
+info "添加变更到 Git ..."
+if git add -A 2>/dev/null; then
+    ok "所有变更已添加到 Git 暂存区"
+else
+    warn "Git add 失败, 请手动执行 git add"
+fi
+
+# ============================== Done ==============================
 echo ""
 echo "============================================"
 echo -e "  ${GREEN}项目初始化完成!${NC}"
 echo "============================================"
 echo ""
-info "项目名称: $NEW_PROJECT_NAME"
-info "包名:     $NEW_PACKAGE"
-info "APP名称:  $NEW_APP_NAME"
+info "项目名称:     $NEW_PROJECT_NAME"
+info "包名:         $NEW_PACKAGE"
+info "APP名称:      $NEW_APP_NAME"
+info "keyAlias:     $NEW_KEY_ALIAS"
+info "keystore:     $JKS_FILE"
 echo ""
 warn "注意事项:"
 echo "  1. 请用 Android Studio 打开项目, 等待 Gradle Sync 完成"
-echo "  2. keystore 密码仍为默认值(111111), 请在正式发布前修改"
-echo "  3. 请更新 app/build.gradle 中的第三方 SDK 密钥 (微信/QQ/友盟等)"
-echo "  4. 请更新 app/build.gradle 中的 SERVER_URL 为你的服务器地址"
-echo "  5. 如需启用 apisecurity 模块, 请手动修改 apisecurity-lib.cpp 中的:"
-echo "     - SHA1 (APK签名哈希)"
-echo "     - signature (签名证书十六进制内容)"
-echo "     - KEY / KEY_DEV (API签名密钥)"
-echo "     详见 README.md 第八章"
-echo "  6. 如需生成新的 keystore, 请运行:"
-echo "     keytool -genkey -v -keystore $NEW_PACKAGE.jks -alias $NEW_KEY_ALIAS -keyalg RSA -keysize 2048 -validity 36500"
+echo "  2. 请更新 app/build.gradle 中的第三方 SDK 密钥 (微信/QQ/友盟等)"
+echo "     当前已替换为 YOUR_XXX 占位符, 需填入真实值"
+echo "  3. 请更新 app/build.gradle 中的 SERVER_URL 为你的服务器地址"
+echo "  4. 如需启用 apisecurity 模块, 请手动修改 apisecurity-lib.cpp 中的:"
+echo "     - KEY / KEY_DEV (API签名密钥, 与后端协商)"
+echo "     - SHA1 和 signature 已自动从新签名文件生成"
+echo "     详见 apisecurity/README.md"
 echo ""

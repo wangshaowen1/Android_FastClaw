@@ -87,41 +87,40 @@ app/src/main/java/com/kgmedia/fastfilm/
 
 | 脚本 | 适用系统 |
 |------|----------|
-| `init_project.bat` | Windows（CMD） |
+| `init_project.ps1` | Windows（PowerShell） |
 | `init_project.sh` | Unix / macOS / Git Bash |
 
-**Windows（CMD）：**
-```
-init_project.bat <新包名> <新APP名称> [新项目名称]
+**Windows（PowerShell）：**
+```powershell
+.\init_project.ps1 <新包名> <新APP名称> <新项目名称> <keyAlias> <keyPassword> <storePassword>
 ```
 
 **Unix / macOS / Git Bash：**
 ```bash
-bash init_project.sh <新包名> <新APP名称> [新项目名称]
+bash init_project.sh <新包名> <新APP名称> <新项目名称> <keyAlias> <keyPassword> <storePassword>
 ```
 
 **参数说明：**
 
-| 参数 | 是否必填 | 说明 | 示例 |
-|------|---------|------|------|
-| 新包名 | 必填 | Android 应用包名，小写字母+数字+点号 | `com.example.myapp` |
-| 新APP名称 | 必填 | 显示在手机桌面上的应用名称 | `我的应用` |
-| 新项目名称 | 可选 | Gradle 项目名，不填则自动从包名最后一段生成（首字母大写） | `MyApp` |
+| 参数 | 说明 | 示例 |
+|------|------|------|
+| 新包名 | Android 应用包名，小写字母+数字+点号 | `com.example.myapp` |
+| 新APP名称 | 显示在手机桌面上的应用名称 | `我的应用` |
+| 新项目名称 | Gradle 项目名 | `MyApp` |
+| keyAlias | 签名别名 | `myapp` |
+| keyPassword | 签名密钥密码 | `abc123` |
+| storePassword | 签名库密码 | `abc123` |
+
+以上参数均为必填。
 
 **示例：**
 
 ```bash
-# Windows
-init_project.bat com.example.myapp 我的应用 MyApp
+# Windows (PowerShell)
+.\init_project.ps1 com.example.myapp 我的应用 MyApp myapp abc123 abc123
 
 # Unix / macOS / Git Bash
-bash init_project.sh com.example.myapp 我的应用 MyApp
-
-# 省略项目名（自动生成为 Myapp）
-init_project.bat com.example.myapp 我的应用
-
-# 中文APP名称
-init_project.bat com.company.news 新闻头条 News
+bash init_project.sh com.example.myapp 我的应用 MyApp myapp abc123 abc123
 ```
 
 ### 第 3 步：用 Android Studio 打开项目
@@ -134,21 +133,24 @@ init_project.bat com.company.news 新闻头条 News
 
 ## 四、初始化脚本自动处理的内容
 
-脚本会自动完成以下 **11 项** 操作：
+脚本会自动完成以下 **14 项** 操作：
 
 | 序号 | 操作 | 涉及文件 |
 |------|------|----------|
 | 1 | 更新 applicationId | `config.gradle` |
 | 2 | 更新 rootProject.name | `settings.gradle` |
-| 3 | 更新 namespace、keystore 路径、keyAlias | `app\build.gradle` |
-| 4 | 更新 package 属性 | `app\src\main\AndroidManifest.xml` |
-| 5 | 更新 app_name | `app\src\main\res\values\strings.xml` |
-| 6 | 重命名 keystore 文件 | `com.kgmedia.fastfilm.jks` → `新包名.jks` |
-| 7 | 更新 Alias 注释 | `gradle.properties` |
-| 8 | 移动源码目录到新包路径 | `app\src\main\java\` 目录结构 |
-| 9 | 替换所有 `.kt` / `.java` 文件中的包名 | 全部 Kotlin/Java 源文件（100+ 个） |
-| 10 | 替换所有 XML 布局文件中的包名 | 全部 res 下 XML 文件（35+ 个） |
-| 11 | 清理构建缓存 | `.gradle/`、`build/`、`.idea/` |
+| 3 | 更新 namespace、keystore 路径、keyAlias、密码 | `app\build.gradle` |
+| 4 | 清理第三方 SDK 密钥为占位符 | `app\build.gradle` |
+| 5 | 更新 package 属性 | `app\src\main\AndroidManifest.xml` |
+| 6 | 更新 app_name | `app\src\main\res\values\strings.xml` |
+| 7 | 创建新签名文件（keytool） | `新包名.jks` |
+| 8 | 提取签名信息并更新 | `gradle.properties` |
+| 9 | 移动源码目录到新包路径 | `app\src\main\java\` 目录结构 |
+| 10 | 替换所有 `.kt` / `.java` 文件中的包名 | 全部 Kotlin/Java 源文件（100+ 个） |
+| 11 | 替换所有 XML 布局文件中的包名 | 全部 res 下 XML 文件（35+ 个） |
+| 12 | 更新 apisecurity 原生代码（SHA1、signature、包名） | `apisecurity-lib.cpp` |
+| 13 | API 密钥置为占位符 | `apisecurity-lib.cpp` |
+| 14 | 清理构建缓存 | `.gradle/`、`build/`、`.idea/` |
 
 ---
 
@@ -156,9 +158,9 @@ init_project.bat com.company.news 新闻头条 News
 
 ### 1. 修改 keystore 密码（发布前必须）
 
-当前 keystore 使用默认密码 `111111`，正式发布前必须更换。
+初始化脚本已自动创建新的 keystore 文件，默认密码为 `123456`（或你在脚本参数中指定的密码）。正式发布前建议更换为更强的密码。
 
-生成全新 keystore：
+如需重新生成 keystore：
 ```
 keytool -genkey -v -keystore 新包名.jks -alias 别名 -keyalg RSA -keysize 2048 -validity 36500
 ```
@@ -177,22 +179,23 @@ signingConfigs {
 
 ### 2. 更新第三方 SDK 密钥
 
-以下密钥在 `app\build.gradle` 中，需替换为新项目自己的：
+初始化脚本已将所有第三方 SDK 密钥替换为 `YOUR_XXX` 占位符。在 `app\build.gradle` 中搜索 `YOUR_` 并替换为真实值：
 
-| SDK | 配置项 | 位置 |
-|-----|--------|------|
-| 微信 | `WX_APP_ID`、`WX_APP_SECRET` | defaultConfig |
-| QQ | `QQ_APP_ID`、`QQ_APP_KEY` | buildTypes |
-| 微博 | `WB_APP_KEY`、`WB_APP_SECRET` | buildTypes |
-| 友盟 | `UMENG_APP_KEY`、`UMENG_SECRET` | buildTypes |
-| 闪验 | `SHANYAN_APPID`、`SHANYAN_APP_KEY` | buildTypes |
-| 抖音 | `DY_CLIENT_KEY` | defaultConfig |
-| GrowingIO | `GROWING_URL_SCHEME` | defaultConfig |
-| 快手 | `KWAI_APP_ID` | manifestPlaceholders |
+| 占位符 | SDK | 位置 |
+|--------|-----|------|
+| `YOUR_WX_APP_ID`、`YOUR_WX_APP_SECRET` | 微信 | defaultConfig |
+| `YOUR_QQ_APP_ID`、`YOUR_QQ_APP_KEY` | QQ | buildTypes + manifestPlaceholders |
+| `YOUR_WB_APP_KEY`、`YOUR_WB_APP_SECRET` | 微博 | buildTypes |
+| `YOUR_UMENG_APP_KEY`、`YOUR_UMENG_SECRET` | 友盟 | buildTypes + manifestPlaceholders |
+| `YOUR_SHANYAN_APPID`、`YOUR_SHANYAN_APP_KEY` | 闪验 | buildTypes |
+| `YOUR_DY_CLIENT_KEY` | 抖音 | defaultConfig |
+| `YOUR_GROWING_SCHEME` | GrowingIO | defaultConfig + manifestPlaceholders |
+| `YOUR_KWAI_APP_ID` | 快手 | manifestPlaceholders |
+| `YOUR_OPENINSTALL_KEY` | OpenInstall | manifestPlaceholders |
 
 ### 3. 更新服务器地址
 
-修改 `app\build.gradle` 中 `productFlavors` 下的 `SERVER_URL`：
+初始化脚本已将服务器地址替换为占位符。修改 `app\build.gradle` 中 `productFlavors` 下的 `SERVER_URL`：
 
 ```groovy
 productFlavors {
@@ -208,6 +211,8 @@ productFlavors {
 }
 ```
 
+同时更新 `SERVICE_URL`（服务协议）、`PRIVACY_URL`（隐私政策）、`OFFICIAL_URL`（官方网站）、`WB_URL`（微博地址）。
+
 ### 4. 更新应用图标
 
 替换以下目录中的图标文件：
@@ -220,6 +225,13 @@ app\src\main\res\mipmap-xxxhdpi\
 ```
 
 ### 5. 配置原生安全库（apisecurity）
+
+初始化脚本已自动完成：
+- 包名替换（`APP_PKG`、`APPLICATION_NAME`）
+- SHA1 和 signature 从新签名文件自动提取并写入
+- API 密钥（`KEY`、`KEY_DEV`）置为 `YOUR_API_KEY` / `YOUR_API_KEY_DEV` 占位符
+
+**仍需手动完成：** 与后端协商 API 签名密钥，替换 `apisecurity-lib.cpp` 中的 `KEY` 和 `KEY_DEV`。
 
 详见 [apisecurity/README.md](apisecurity/README.md)。
 
@@ -259,9 +271,9 @@ APK 文件输出在 `app\build\outputs\apk\` 目录下，命名格式：
 修改 `config.gradle`：
 ```groovy
 android = [
-    versionCodeRelease: 100400,    // 6位版本号
-    versionCodeDebug  : 100400,    // 8位Debug版本号
-    versionName       : "1.4.0",   // 版本名称
+    versionCodeRelease: 100000,    // 6位版本号
+    versionCodeDebug  : 100000,    // 8位Debug版本号
+    versionName       : "1.0.0",   // 版本名称
 ]
 ```
 
@@ -275,8 +287,14 @@ android = [
 
 ## 七、常见问题
 
-### Q: 脚本运行后中文乱码？
-A: 确保命令提示符使用 UTF-8 编码。脚本开头已设置 `chcp 65001`，如仍有问题，手动在 CMD 中先执行 `chcp 65001`。
+### Q: PowerShell 脚本运行报错或中文乱码？
+A: 确保 `init_project.ps1` 文件编码为 **UTF-8 with BOM**（PowerShell 5.x 需要 BOM 才能正确识别 UTF-8）。如果从 Git 拉取后 BOM 丢失，可用以下命令修复：
+```powershell
+$f = 'init_project.ps1'
+$c = [IO.File]::ReadAllText($f, [Text.Encoding]::UTF8)
+[IO.File]::WriteAllText($f, $c, [Text.UTF8Encoding]::new($true))
+```
+如遇到执行策略限制，先运行：`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`
 
 ### Q: Gradle Sync 失败？
 A: 检查以下几点：
