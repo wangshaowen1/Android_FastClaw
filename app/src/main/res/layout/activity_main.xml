@@ -7,11 +7,11 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.main.MainViewModel" />
+            type="com.shiyuan.fastclaw.feature.main.MainViewModel" />
 
         <import type="android.view.View" />
 
-        <import type="com.kgmedia.fastfilm.common.ext.FormatUtils" />
+        <import type="com.shiyuan.fastclaw.common.ext.FormatUtils" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,7 +25,7 @@
             app:layout_constraintBottom_toTopOf="@id/mrg"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.kgmedia.fastfilm.widget.MultRadioGroup
+        <com.shiyuan.fastclaw.widget.MultRadioGroup
             android:id="@+id/mrg"
             android:layout_width="match_parent"
             android:layout_height="@dimen/main_bottom_nav_height"
@@ -40,7 +40,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.kgmedia.fastfilm.widget.FixedAnimatedRadioButton
+                <com.shiyuan.fastclaw.widget.FixedAnimatedRadioButton
                     android:id="@+id/rbHome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.kgmedia.fastfilm.widget.FixedAnimatedRadioButton
+                <com.shiyuan.fastclaw.widget.FixedAnimatedRadioButton
                     android:id="@+id/rbWorks"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <com.kgmedia.fastfilm.widget.FixedAnimatedRadioButton
+                <com.shiyuan.fastclaw.widget.FixedAnimatedRadioButton
                     android:id="@+id/rbMine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -116,6 +116,6 @@
 
             </FrameLayout>
 
-        </com.kgmedia.fastfilm.widget.MultRadioGroup>
+        </com.shiyuan.fastclaw.widget.MultRadioGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

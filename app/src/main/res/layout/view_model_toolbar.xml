@@ -11,7 +11,7 @@
 
         <variable
             name="toolbar"
-            type="com.kgmedia.fastfilm.base.viewmodel.ToolbarViewModel" />
+            type="com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel" />
 
     </data>
 

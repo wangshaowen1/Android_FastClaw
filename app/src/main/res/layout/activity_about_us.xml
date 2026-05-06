@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.settings.about.AboutUsViewModel" />
+            type="com.shiyuan.fastclaw.feature.settings.about.AboutUsViewModel" />
     </data>
 
     <FrameLayout
@@ -31,7 +31,7 @@
                 android:layout_marginTop="@dimen/action_bar_size"
                 android:orientation="vertical">
 
-                <com.kgmedia.fastfilm.widget.StatusBarView
+                <com.shiyuan.fastclaw.widget.StatusBarView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 

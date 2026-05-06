@@ -6,7 +6,7 @@
     <data>
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.web.BrowserViewModel" />
+            type="com.shiyuan.fastclaw.feature.web.BrowserViewModel" />
     </data>
 
     <FrameLayout

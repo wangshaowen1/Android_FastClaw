@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.base.viewmodel.EmptyViewModel" />
+            type="com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel" />
 
         <import type="android.view.View" />
 
@@ -26,7 +26,7 @@
             app:layout_constraintDimensionRatio="285:18"
             app:layout_constraintTop_toTopOf="@+id/card" />
 
-        <com.kgmedia.fastfilm.widget.GradientBorderView
+        <com.shiyuan.fastclaw.widget.GradientBorderView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:backgroundStartColor="?attr/bgColor3"
@@ -64,7 +64,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tvTitle"
             tools:text="V1.1.3" />
 
-        <com.kgmedia.fastfilm.widget.AtMostScrollView
+        <com.shiyuan.fastclaw.widget.AtMostScrollView
             android:id="@+id/llScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -83,7 +83,7 @@
                 android:textAppearance="@style/Text14"
                 android:textColor="?attr/textColor1"
                 tools:text="1.优化一键登录;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;\n2.优化完善资料;" />
-        </com.kgmedia.fastfilm.widget.AtMostScrollView>
+        </com.shiyuan.fastclaw.widget.AtMostScrollView>
 
         <TextView
             android:id="@+id/upgrade"

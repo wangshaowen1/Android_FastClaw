@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.mine.MineViewModel" />
+            type="com.shiyuan.fastclaw.feature.mine.MineViewModel" />
 
         <import type="android.view.View" />
 
@@ -24,7 +24,7 @@
             android:background="?android:windowBackground"
             android:orientation="vertical">
 
-            <com.kgmedia.fastfilm.widget.StatusBarView
+            <com.shiyuan.fastclaw.widget.StatusBarView
                 android:id="@+id/sbv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -254,7 +254,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <com.kgmedia.fastfilm.widget.MoveFrameLayout
+        <com.shiyuan.fastclaw.widget.MoveFrameLayout
             android:id="@+id/floating_ball"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -270,6 +270,6 @@
                 android:adjustViewBounds="true"
                 android:importantForAccessibility="no"
                 android:src="@drawable/img_floating" />
-        </com.kgmedia.fastfilm.widget.MoveFrameLayout>
+        </com.shiyuan.fastclaw.widget.MoveFrameLayout>
     </FrameLayout>
 </layout>

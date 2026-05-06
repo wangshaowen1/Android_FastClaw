@@ -5,7 +5,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.settings.report.ReportDialogViewModel" />
+            type="com.shiyuan.fastclaw.feature.settings.report.ReportDialogViewModel" />
 
     </data>
 
@@ -49,7 +49,7 @@
             android:text="@string/report_desc"
             android:textColor="?attr/textColor1" />
 
-        <com.kgmedia.fastfilm.widget.XEditText
+        <com.shiyuan.fastclaw.widget.XEditText
             android:id="@+id/xet"
             style="@style/Text14"
             android:layout_width="match_parent"
@@ -73,7 +73,7 @@
             android:text="@string/contact_info_s"
             android:textColor="?attr/textColor1" />
 
-        <com.kgmedia.fastfilm.widget.XEditText
+        <com.shiyuan.fastclaw.widget.XEditText
             android:id="@+id/contact_person"
             style="@style/Text14"
             android:layout_width="match_parent"

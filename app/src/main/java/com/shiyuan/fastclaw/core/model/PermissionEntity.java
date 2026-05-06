@@ -1,0 +1,14 @@
+package com.shiyuan.fastclaw.core.model;
+
+
+public class PermissionEntity {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}

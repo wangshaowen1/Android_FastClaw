@@ -7,15 +7,15 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.settings.SettingsViewModel" />
+            type="com.shiyuan.fastclaw.feature.settings.SettingsViewModel" />
 
-        <import type="com.kgmedia.fastfilm.common.utils.DebugUtils" />
+        <import type="com.shiyuan.fastclaw.common.utils.DebugUtils" />
 
         <import type="android.view.View" />
 
         <import type="android.text.TextUtils" />
 
-        <import type="com.kgmedia.fastfilm.common.ext.FormatUtils" />
+        <import type="com.shiyuan.fastclaw.common.ext.FormatUtils" />
     </data>
 
 

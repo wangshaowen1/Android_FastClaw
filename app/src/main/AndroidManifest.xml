@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.kgmedia.fastfilm"
+    package="com.shiyuan.fastclaw"
     tools:ignore="LockedOrientationActivity">
 
     <uses-permission
@@ -44,7 +44,7 @@
 
 
     <application
-        android:name="com.kgmedia.fastfilm.App"
+        android:name="com.shiyuan.fastclaw.App"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -114,7 +114,7 @@
             android:name="com.nhsd.crop.CropActivity"
             android:screenOrientation="portrait" />
 
-        <service android:name="com.kgmedia.fastfilm.service.DownloadService" />
+        <service android:name="com.shiyuan.fastclaw.service.DownloadService" />
 
         <receiver
             android:name="androidx.media.session.MediaButtonReceiver"
@@ -125,7 +125,7 @@
         </receiver>
 
         <activity
-            android:name="com.kgmedia.fastfilm.feature.splash.SplashActivity"
+            android:name="com.shiyuan.fastclaw.feature.splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/SplashScreen"
@@ -153,23 +153,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.kgmedia.fastfilm.feature.PhotoPagerActivity"
+            android:name="com.shiyuan.fastclaw.feature.PhotoPagerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PhotoPager" />
         <activity
-            android:name="com.kgmedia.fastfilm.feature.web.SimpleBrowserActivity"
+            android:name="com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="unspecified"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name="com.kgmedia.fastfilm.feature.BringForegroundActivity"
+            android:name="com.shiyuan.fastclaw.feature.BringForegroundActivity"
             android:screenOrientation="portrait" />
 
         <!--主页-->
         <activity
-            android:name="com.kgmedia.fastfilm.feature.main.MainActivity"
+            android:name="com.shiyuan.fastclaw.feature.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">

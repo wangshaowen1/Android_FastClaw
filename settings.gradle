@@ -1,4 +1,4 @@
-rootProject.name = "FastFilm"
+rootProject.name = "FastClaw"
 include ':app'
 include ':matisse'
 include ':magicindicator'

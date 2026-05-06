@@ -5,7 +5,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.login.flash.FlashLoginViewModel" />
+            type="com.shiyuan.fastclaw.feature.login.flash.FlashLoginViewModel" />
     </data>
 
     <FrameLayout

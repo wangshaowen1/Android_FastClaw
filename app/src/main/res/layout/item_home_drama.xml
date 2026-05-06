@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.home.ItemHomeDramaVm" />
+            type="com.shiyuan.fastclaw.feature.home.ItemHomeDramaVm" />
 
         <import type="android.view.View" />
 

@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+    <com.shiyuan.fastclaw.widget.roundedimageview.RoundedImageView
         android:id="@+id/ivNext"
         android:layout_width="18dp"
         android:layout_height="18dp"
@@ -18,7 +18,7 @@
         app:riv_oval="true"
         tools:src="@drawable/ic_default_avatar_big" />
 
-    <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+    <com.shiyuan.fastclaw.widget.roundedimageview.RoundedImageView
         android:id="@+id/ivAvatar3"
         android:layout_width="18dp"
         android:layout_height="18dp"
@@ -31,7 +31,7 @@
         app:riv_oval="true"
         tools:src="@drawable/ic_default_avatar_big" />
 
-    <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+    <com.shiyuan.fastclaw.widget.roundedimageview.RoundedImageView
         android:id="@+id/ivAvatar2"
         android:layout_width="18dp"
         android:layout_height="18dp"
@@ -44,7 +44,7 @@
         app:riv_oval="true"
         tools:src="@drawable/ic_default_avatar_big" />
 
-    <com.kgmedia.fastfilm.widget.roundedimageview.RoundedImageView
+    <com.shiyuan.fastclaw.widget.roundedimageview.RoundedImageView
         android:id="@+id/ivAvatar1"
         android:layout_width="18dp"
         android:layout_height="18dp"

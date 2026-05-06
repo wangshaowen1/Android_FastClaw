@@ -7,11 +7,11 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.login.phone.PhoneLoginViewModel" />
+            type="com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel" />
 
         <import type="android.view.View" />
 
-        <import type="com.kgmedia.fastfilm.common.utils.DebugUtils" />
+        <import type="com.shiyuan.fastclaw.common.utils.DebugUtils" />
     </data>
 
     <LinearLayout

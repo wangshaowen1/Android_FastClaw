@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.login.bind.BindPhoneViewModel" />
+            type="com.shiyuan.fastclaw.feature.login.bind.BindPhoneViewModel" />
 
     </data>
 

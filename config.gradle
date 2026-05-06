@@ -15,7 +15,7 @@ ext {
      */
     android = [
             compileSdkVersion : 35,
-            applicationId     : "com.kgmedia.fastfilm",
+            applicationId     : "com.shiyuan.fastclaw",
             minSdkVersion     : 24,
             targetSdkVersion  : 35,
             buildToolsVersion : "35.0.0",

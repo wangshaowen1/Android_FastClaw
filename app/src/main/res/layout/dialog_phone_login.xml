@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.login.flash.PhoneLoginViewModel" />
+            type="com.shiyuan.fastclaw.feature.login.flash.PhoneLoginViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -215,7 +215,7 @@
                 android:textColor="?attr/textColor1" />
         </LinearLayout>
 
-        <com.kgmedia.fastfilm.widget.NavBarView
+        <com.shiyuan.fastclaw.widget.NavBarView
             android:id="@+id/nav_bar_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -223,7 +223,7 @@
             app:layout_constraintTop_toBottomOf="@id/btnPolicy"
             app:layout_goneMarginTop="40dp" />
 
-        <com.kgmedia.fastfilm.widget.ToastView
+        <com.shiyuan.fastclaw.widget.ToastView
             android:id="@+id/toast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

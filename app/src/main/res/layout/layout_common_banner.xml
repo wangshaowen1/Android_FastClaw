@@ -7,9 +7,9 @@
 
         <variable
             name="banner"
-            type="com.kgmedia.fastfilm.core.network.apis.response.SimpleBannerInfo" />
+            type="com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo" />
 
-        <import type="com.kgmedia.fastfilm.router.AppRouter" />
+        <import type="com.shiyuan.fastclaw.router.AppRouter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

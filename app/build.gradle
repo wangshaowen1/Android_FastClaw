@@ -58,30 +58,30 @@ android {
             doNotStrip "*/x86_64/*.so"
             doNotStrip "armeabi.so"
         }
-        buildConfigField "String", "DY_CLIENT_KEY", '"awg154kyqmvhns2f"'
-        buildConfigField "String", "WX_APP_ID", '"wxc4c951d1cd1816fc"' //微信AppKey
-        buildConfigField "String", "WX_APP_SECRET", '"9d679c3bdc5531e794d7ab83214d40af"'//微信Secret
-        def growingScheme = "09ae0b3ae5497abe"
+        buildConfigField "String", "DY_CLIENT_KEY", '"YOUR_DY_CLIENT_KEY"'
+        buildConfigField "String", "WX_APP_ID", '"YOUR_WX_APP_ID"' //微信AppKey
+        buildConfigField "String", "WX_APP_SECRET", '"YOUR_WX_APP_SECRET"'//微信Secret
+        def growingScheme = "YOUR_GROWING_SCHEME"
         buildConfigField "String", "GROWING_URL_SCHEME", '\"' + growingScheme + '\"' //埋点库GROWINGIO的Urlscheme
         manifestPlaceholders = [
                 "GROWING_URL_SCHEME": growingScheme, // 埋点库GROWINGIO的Urlscheme
-                "KWAI_APP_ID": "ks664562422307705809", // 快手申请分配的appId
+                "KWAI_APP_ID": "YOUR_KWAI_APP_ID", // 快手申请分配的appId
                 "KWAI_SCOPE" : "user_info" // 账号授权需要申请的scope权限，多个scope可以使用","分割。user_info：用户信息授权，user_phone：用户手机号授权。
         ]
     }
 
     signingConfigs {
         debug {
-            keyAlias 'fastfilm'
-            keyPassword '111111'
-            storeFile file("../com.kgmedia.fastfilm.jks")
-            storePassword '111111'
+            keyAlias 'klx'
+            keyPassword 'klx123456'
+            storeFile file("../com.shiyuan.fastclaw.jks")
+            storePassword 'klx123456'
         }
         release {
-            keyAlias 'fastfilm'
-            keyPassword '111111'
-            storeFile file("../com.kgmedia.fastfilm.jks")
-            storePassword '111111'
+            keyAlias 'klx'
+            keyPassword 'klx123456'
+            storeFile file("../com.shiyuan.fastclaw.jks")
+            storePassword 'klx123456'
         }
     }
 
@@ -107,29 +107,29 @@ android {
             signingConfig signingConfigs.release
             //网络请求地址
             buildConfigField "boolean", "DEBUG_MODEL", "false" //是否是debug哦是
-            buildConfigField "String", "QQ_APP_ID", '"1112354170"' //QQAppKey APP_ID
-            buildConfigField "String", "QQ_APP_KEY", '"JLx3P8RMZrnTQ2k0"' //QQSecret APP_KEY
-            buildConfigField "String", "WB_APP_KEY", '"4008287256"' //微博AppKey
-            buildConfigField "String", "WB_APP_SECRET", '"9fe4864f3bfff59e241442ae0d645615"'
+            buildConfigField "String", "QQ_APP_ID", '"YOUR_QQ_APP_ID"' //QQAppKey APP_ID
+            buildConfigField "String", "QQ_APP_KEY", '"YOUR_QQ_APP_KEY"' //QQSecret APP_KEY
+            buildConfigField "String", "WB_APP_KEY", '"YOUR_WB_APP_KEY"' //微博AppKey
+            buildConfigField "String", "WB_APP_SECRET", '"YOUR_WB_APP_SECRET"'
             //微博Secret
-            buildConfigField "String", "WB_URL", '"https://m.helloaa.cn/"'
+            buildConfigField "String", "WB_URL", '"https://example.com"'
             //微博地址
-            buildConfigField "String", "SERVICE_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E7%94%A8%E6%88%B7%E6%9C%8D%E5%8A%A1%E5%8D%8F%E8%AE%AE.html"'
+            buildConfigField "String", "SERVICE_URL", '"https://example.com/service"'
             //服务协议
-            buildConfigField "String", "PRIVACY_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96.html"'
+            buildConfigField "String", "PRIVACY_URL", '"https://example.com/privacy"'
             //隐私政策
-            buildConfigField "String", "OFFICIAL_URL", '"http://rmgf.wechatrenmai.cn"' //官方网站
+            buildConfigField "String", "OFFICIAL_URL", '"https://example.com"' //官方网站
             //友盟SECRET
-            buildConfigField "String", "UMENG_SECRET", '"a0d38408ddaceb5c935d511e71f1ac36"'//填写Umeng Message Secret对应信息
-            buildConfigField "String", "UMENG_APP_KEY", '"698d31b96f259537c758f5a2"'
-            buildConfigField "String", "SHANYAN_APPID", '"KfNYHDRd"' //闪验APPID
-            buildConfigField "String", "SHANYAN_APP_KEY", '"VDE8Q8TY"' //闪验APPKEY
+            buildConfigField "String", "UMENG_SECRET", '"YOUR_UMENG_SECRET"'//填写Umeng Message Secret对应信息
+            buildConfigField "String", "UMENG_APP_KEY", '"YOUR_UMENG_APP_KEY"'
+            buildConfigField "String", "SHANYAN_APPID", '"YOUR_SHANYAN_APPID"' //闪验APPID
+            buildConfigField "String", "SHANYAN_APP_KEY", '"YOUR_SHANYAN_APP_KEY"' //闪验APPKEY
 
             manifestPlaceholders = [
-                    UMENG_APP_KEY      : "69005d13644c9e2c20677a21",
-                    OPENINSTALL_APP_KEY: "dacw8u",
-                    OPENINSTALL_SCHEME : "dacw8u",
-                    qqappid            : "1112354170",
+                    UMENG_APP_KEY      : "YOUR_UMENG_APP_KEY",
+                    OPENINSTALL_APP_KEY: "YOUR_OPENINSTALL_KEY",
+                    OPENINSTALL_SCHEME : "YOUR_OPENINSTALL_KEY",
+                    qqappid            : "YOUR_QQ_APP_ID",
             ]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -145,31 +145,31 @@ android {
             shrinkResources false
 
             buildConfigField "boolean", "DEBUG_MODEL", "true" //是否是debug模式
-            buildConfigField "String", "QQ_APP_ID", '"1112354170"' //QQAppKey APP_ID
-            buildConfigField "String", "QQ_APP_KEY", '"JLx3P8RMZrnTQ2k0"' //QQSecret APP_KEY
-            buildConfigField "String", "WB_APP_KEY", '"4008287256"' //微博AppKey
-            buildConfigField "String", "WB_APP_SECRET", '"9fe4864f3bfff59e241442ae0d645615"'
+            buildConfigField "String", "QQ_APP_ID", '"YOUR_QQ_APP_ID"' //QQAppKey APP_ID
+            buildConfigField "String", "QQ_APP_KEY", '"YOUR_QQ_APP_KEY"' //QQSecret APP_KEY
+            buildConfigField "String", "WB_APP_KEY", '"YOUR_WB_APP_KEY"' //微博AppKey
+            buildConfigField "String", "WB_APP_SECRET", '"YOUR_WB_APP_SECRET"'
             //微博Secret
-            buildConfigField "String", "WB_URL", '"https://m.helloaa.cn/"'
+            buildConfigField "String", "WB_URL", '"https://example.com"'
             //微博地址
-            buildConfigField "String", "SERVICE_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E7%94%A8%E6%88%B7%E6%9C%8D%E5%8A%A1%E5%8D%8F%E8%AE%AE.html"'
+            buildConfigField "String", "SERVICE_URL", '"https://example.com/service"'
             //服务协议
-            buildConfigField "String", "PRIVACY_URL", '"https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96.html"'
+            buildConfigField "String", "PRIVACY_URL", '"https://example.com/privacy"'
             //隐私政策
-            buildConfigField "String", "OFFICIAL_URL", '"http://rmgf.wechatrenmai.cn"' //官方网站
-            buildConfigField "String", "UMENG_SECRET", '"a0d38408ddaceb5c935d511e71f1ac36"'//填写Umeng Message Secret对应信息
-            buildConfigField "String", "UMENG_APP_KEY", '"698d31b96f259537c758f5a2"'
+            buildConfigField "String", "OFFICIAL_URL", '"https://example.com"' //官方网站
+            buildConfigField "String", "UMENG_SECRET", '"YOUR_UMENG_SECRET"'//填写Umeng Message Secret对应信息
+            buildConfigField "String", "UMENG_APP_KEY", '"YOUR_UMENG_APP_KEY"'
             //友盟SECRET
-            buildConfigField "String", "SHANYAN_APPID", '"KfNYHDRd"' //闪验APPID
-            buildConfigField "String", "SHANYAN_APP_KEY", '"VDE8Q8TY"' //闪验APPKEY
+            buildConfigField "String", "SHANYAN_APPID", '"YOUR_SHANYAN_APPID"' //闪验APPID
+            buildConfigField "String", "SHANYAN_APP_KEY", '"YOUR_SHANYAN_APP_KEY"' //闪验APPKEY
 
             versionNameSuffix ""
             signingConfig signingConfigs.debug
             manifestPlaceholders = [
-                    UMENG_APP_KEY      : "69005d13644c9e2c20677a21",
-                    OPENINSTALL_APP_KEY: "dacw8u",//gjn2wu
-                    OPENINSTALL_SCHEME : "dacw8u",
-                    qqappid            : "1112354170",
+                    UMENG_APP_KEY      : "YOUR_UMENG_APP_KEY",
+                    OPENINSTALL_APP_KEY: "YOUR_OPENINSTALL_KEY",//gjn2wu
+                    OPENINSTALL_SCHEME : "YOUR_OPENINSTALL_KEY",
+                    qqappid            : "YOUR_QQ_APP_ID",
             ]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -225,17 +225,17 @@ android {
         //开发测试环境
         develop {
             dimension 'env'
-            buildConfigField 'String', 'SERVER_URL', '"https://kcp-test.kwaige.cn"'
+            buildConfigField 'String', 'SERVER_URL', '"https://your-dev-server.com"'
         }
         //预发布
         preview {
             dimension 'env'
-            buildConfigField 'String', 'SERVER_URL', '"http://120.24.240.28:9010"'
+            buildConfigField 'String', 'SERVER_URL', '"https://your-preview-server.com"'
         }
         //生产环境
         production {
             dimension 'env'
-            buildConfigField 'String', 'SERVER_URL', '"https://kuaichupianjk.kuaigeai.cn"'
+            buildConfigField 'String', 'SERVER_URL', '"https://your-production-server.com"'
         }
         arch32 {
             dimension 'arch'
@@ -250,7 +250,7 @@ android {
             }
         }
     }
-    namespace 'com.kgmedia.fastfilm'
+    namespace 'com.shiyuan.fastclaw'
     lint {
         abortOnError false
         checkReleaseBuilds false

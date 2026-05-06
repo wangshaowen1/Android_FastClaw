@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.settings.customerservice.CustomerServiceViewModel" />
+            type="com.shiyuan.fastclaw.feature.settings.customerservice.CustomerServiceViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_2a2a2b_r24">
 
-        <com.kgmedia.fastfilm.widget.BorderConstraintLayout
+        <com.shiyuan.fastclaw.widget.BorderConstraintLayout
             android:id="@+id/bcl_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -33,13 +33,13 @@
             app:roundCornerRadius="@dimen/radius_xl"
             app:showBorder="@{true}">
 
-            <com.kgmedia.fastfilm.widget.AutoResizeImageView
+            <com.shiyuan.fastclaw.widget.AutoResizeImageView
                 android:id="@+id/card"
                 loadUri="@{layout.customerServiceUrl}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitCenter" />
-        </com.kgmedia.fastfilm.widget.BorderConstraintLayout>
+        </com.shiyuan.fastclaw.widget.BorderConstraintLayout>
 
 
         <TextView

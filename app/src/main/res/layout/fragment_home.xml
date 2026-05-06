@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.home.HomeViewModel" />
+            type="com.shiyuan.fastclaw.feature.home.HomeViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -112,7 +112,7 @@
             app:srlEnablePreviewInEditMode="true"
             app:srlPrimaryColor="@color/transparent">
 
-            <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+            <com.shiyuan.fastclaw.widget.LoadStateViewHolder
                 android:id="@+id/lsv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -125,10 +125,10 @@
                     app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
                     app:spanCount="2"
                     tools:listitem="@layout/item_home_drama" />
-            </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
+            </com.shiyuan.fastclaw.widget.LoadStateViewHolder>
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
-        <com.kgmedia.fastfilm.widget.MoveFrameLayout
+        <com.shiyuan.fastclaw.widget.MoveFrameLayout
             android:id="@+id/floating_ball"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -143,6 +143,6 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:importantForAccessibility="no" />
-        </com.kgmedia.fastfilm.widget.MoveFrameLayout>
+        </com.shiyuan.fastclaw.widget.MoveFrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

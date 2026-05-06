@@ -4,7 +4,7 @@
     android:orientation="vertical"
     tools:parentTag="android.widget.FrameLayout">
 
-    <com.kgmedia.fastfilm.widget.EditTextWithScrollView
+    <com.shiyuan.fastclaw.widget.EditTextWithScrollView
         android:id="@+id/contentInput"
         style="@style/Text.Medium"
         android:layout_width="match_parent"

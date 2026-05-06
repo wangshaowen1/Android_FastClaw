@@ -7,22 +7,22 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.login.unified.UnifiedLoginViewModel" />
+            type="com.shiyuan.fastclaw.feature.login.unified.UnifiedLoginViewModel" />
 
         <import type="android.view.View" />
 
         <import type="android.text.method.LinkMovementMethod" />
 
-        <import type="com.kgmedia.fastfilm.common.utils.DebugUtils" />
+        <import type="com.shiyuan.fastclaw.common.utils.DebugUtils" />
 
-        <import type="com.kgmedia.fastfilm.common.Constant.SDKConfiguration" />
+        <import type="com.shiyuan.fastclaw.common.Constant.SDKConfiguration" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.kgmedia.fastfilm.widget.StatusBarView
+        <com.shiyuan.fastclaw.widget.StatusBarView
             android:id="@+id/statusBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -7,9 +7,9 @@
 
         <variable
             name="layout"
-            type="com.kgmedia.fastfilm.feature.settings.logoff.LogoffViewModel" />
+            type="com.shiyuan.fastclaw.feature.settings.logoff.LogoffViewModel" />
 
-        <import type="com.kgmedia.fastfilm.feature.settings.logoff.LogoffViewModel" />
+        <import type="com.shiyuan.fastclaw.feature.settings.logoff.LogoffViewModel" />
 
         <import type="android.view.View" />
     </data>

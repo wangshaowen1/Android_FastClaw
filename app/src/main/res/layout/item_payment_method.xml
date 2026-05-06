@@ -6,7 +6,7 @@
 
         <variable
             name="item"
-            type="com.kgmedia.fastfilm.feature.payment.ItemPaymentMethodVm" />
+            type="com.shiyuan.fastclaw.feature.payment.ItemPaymentMethodVm" />
     </data>
 
     <LinearLayout
