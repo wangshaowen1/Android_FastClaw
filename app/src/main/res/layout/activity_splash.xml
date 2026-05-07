@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><!--欢迎页-->
+<?xml version="1.0" encoding="utf-8"?><!--欢迎页/招聘启动页-->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -12,47 +13,54 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
+        <!-- Logo 图片 (1:1比例，保持原图尺寸) -->
         <ImageView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:id="@+id/ivLogo"
+            android:layout_width="108dp"
+            android:layout_height="108dp"
             android:adjustViewBounds="true"
-            android:importantForAccessibility="no"
-            android:src="@drawable/img_splash_top"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/img_splash_logo"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.39755"
-            app:layout_constraintWidth_percent="0.61" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/splashLottie"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="false"
-            app:lottie_rawRes="@raw/splash" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.313"
+            tools:ignore="ContentDescription" />
 
-        <ImageView
+        <!-- 标题: 快龙虾 -->
+        <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
-            android:layout_height="37dp"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="40dp"
-            android:adjustViewBounds="true"
-            android:importantForAccessibility="no"
-            android:src="@drawable/img_splash_logo"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/app_name"
+            android:textColor="@color/color_1a1a1a"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/alimama_shu_hei_ti_bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivLogo"
+            tools:text="快龙虾" />
+
+        <!-- 副标题: 抓住每一个好机会 -->
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/splash_subtitle"
+            android:textColor="@color/color_999999"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            tools:text="抓住每一个好机会" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
