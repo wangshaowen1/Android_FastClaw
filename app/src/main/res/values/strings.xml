@@ -522,5 +522,13 @@
     <string name="no_assets_start_creating">暂无资产，去开启想象</string>
     <string name="delete_work_permanent_warning">删除后，作品剧集及作品相关的资产图片将一并删除，无法恢复</string>
     <string name="asset_image_limit_reached">资产图数量已达上限</string>
+    <string name="login_phone_hint">请输入11位手机号码</string>
+    <string name="login_code_hint">请输入4位验证码</string>
+    <string name="login_btn_text">进入快龙虾</string>
+    <string name="login_agreement_prefix">我已阅读并同意</string>
+    <string name="login_user_agreement">《快龙虾用户协议》</string>
+    <string name="login_privacy_policy">《隐私政策》</string>
+    <string name="login_agreement_suffix">和</string>
+    <string name="login_page_title">求职这件事 不再一个人</string>
 </resources>
 
