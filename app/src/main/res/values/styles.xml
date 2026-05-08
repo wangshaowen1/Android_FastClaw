@@ -3,7 +3,7 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorPrimaryDark">@color/theme_color_1_dark</item>
+        <item name="colorPrimaryDark">@color/color_F5F8FC</item>
         <item name="colorAccent">@color/theme_color_1_dark</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:screenOrientation">portrait</item>
@@ -66,8 +66,8 @@
         <item name="borderColor4">@color/border_color_4_dark</item>
 
         <item name="colorPrimary">@color/theme_color_1_dark</item>
-        <item name="android:windowBackground">@color/bg_color_1_dark</item>
-        <item name="android:textColorPrimary">@color/text_color_1_dark</item>
+        <item name="android:windowBackground">@color/color_F5F8FC</item>
+        <item name="android:textColorPrimary">@color/black</item>
     </style>
 
     <style name="SplashScreen" parent="Theme.SplashScreen">
