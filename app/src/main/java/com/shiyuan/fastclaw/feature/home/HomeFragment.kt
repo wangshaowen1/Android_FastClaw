@@ -57,80 +57,7 @@ class HomeFragment :
     }
 
     private fun initView() {
-        binding.llTop.minimumHeight = ViewUtils.getStatusBarHeight(activity)
-        binding.appbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
-            val totalScrollRange = appBarLayout.totalScrollRange.toFloat()
-            val ratio = abs(verticalOffset) / totalScrollRange
-            val alpha = if (ratio < 0.95f) 1f - ratio / 0.95f else 0f
-            binding.llTop.alpha = alpha
-        }
-        bannerAdapter = object : BaseBannerAdapter<BannerInfo>() {
-            override fun bindData(
-                holder: BaseViewHolder<BannerInfo>?, data: BannerInfo, position: Int, pageSize: Int
-            ) {
-                holder?.apply {
-                    val image = findViewById<ImageView>(R.id.image)
-                    loadUri(image, data.imageUrl, R.drawable.img_default_cover_16_9.getResDrawable())
-                    image.setOnSingleClickListener {
-                        AppRouter.jump(data.jumpUri)
-                    }
-                }
-            }
 
-            override fun getLayoutId(viewType: Int): Int {
-                return R.layout.item_message_banner
-            }
-        }
-        binding.banner.setAdapter(bannerAdapter)
-            .setLifecycleRegistry(lifecycle)
-            .setAutoPlay(true)
-            .setIndicatorSliderRadius(2f.dp)
-            .setIndicatorSliderGap(4.dp)
-            .setIndicatorHeight(4.dp)
-            .setIndicatorSliderWidth(4.dp, 16.dp)
-            .setIndicatorSliderColor(
-                R.color.color_60_ffffff.getResColor(), R.color.white.getResColor()
-            ).setIndicatorStyle(IndicatorStyle.ROUND_RECT)
-            .setIndicatorMargin(0, 0, 0, 4.dp)
-            .setIndicatorView(binding.ivIndicator)
-            .setIndicatorVisibility(View.VISIBLE)
-            .create()
-
-        binding.recyclerView.apply {
-            isFocusable = false
-            addItemDecoration(StaggeredGridSpaceItemDecoration(2, 10.dp, 0, 0))
-            itemAnimator = null
-            adapter = homeAdapter
-                .withLoadStateFooter(
-                    MyMultiStatePagingFooterAdapter(
-                        hostAdapter = homeAdapter,
-                        noDataButtonDisplay = false,
-                        requestButtonDisplay = false,
-                        displayOnEmpty = true,
-                        displayedHeight = 400.dp,
-                        refresh = {
-                            homeAdapter.refresh()
-                        },
-                        requestButtonTextAndImg = false,
-                    )
-                )
-        }
-        binding.srl.startRefreshWithAdapter(
-            pagingDataAdapter = homeAdapter
-        )
-        binding.lsv.apply {
-            makeScrollable()
-            setRetryListener {
-                if (mRealVM.bannerData.value.isNullOrEmpty()) {
-                    mRealVM.getData()
-                }
-                homeAdapter.refresh()
-            }
-        }
-
-        binding.btnCreation.setOnSingleClickListener {
-            //if (AppNavigator.checkLoginIntercepted()) return@setOnSingleClickListener
-        }
     }
 
     fun dataUpdate() {
@@ -146,11 +73,9 @@ class HomeFragment :
             homeAdapter.loadStateFlow
                 .filter { it.refresh is LoadState.NotLoading && homeAdapter.itemCount > 0 }
                 .first()
-            binding.recyclerView.scrollToPosition(0)
         }
 
         mRealVM.bannerData.observe(this) {
-            binding.banner.refreshData(it)
         }
     }
 

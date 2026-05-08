@@ -8,141 +8,214 @@
         <variable
             name="layout"
             type="com.shiyuan.fastclaw.feature.home.HomeViewModel" />
-
-        <import type="android.view.View" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:descendantFocusability="blocksDescendants">
+        android:orientation="vertical">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appbar"
+        <com.shiyuan.fastclaw.widget.StatusBarView
+            android:id="@+id/sbv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:elevation="0dp"
-            android:stateListAnimator="@drawable/appbar_elevation">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
-                android:id="@+id/llTop"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                android:paddingVertical="8dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/siv_avatar"
+                    loadUri="@{layout.userInfo[`avatar`]}"
+                    placeHolder="@{@drawable/ic_default_avatar}"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_default_avatar"
+                    app:shapeAppearanceOverlay="@style/roundStyle_circle" />
 
-                    <com.zhpan.bannerview.BannerViewPager
-                        android:id="@+id/banner"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        app:bvp_can_loop="true"
-                        app:bvp_indicator_visibility="gone"
-                        app:bvp_interval="4000"
-                        app:bvp_scroll_duration="600"
-                        app:layout_constraintDimensionRatio="375:246"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@color/color_20_ffffff" />
 
-                    <com.zhpan.indicator.IndicatorView
-                        android:id="@+id/iv_indicator"
-                        android:layout_width="wrap_content"
-                        android:layout_height="4dp"
-                        android:layout_gravity="bottom|center_horizontal"
-                        android:layout_marginEnd="@dimen/spacing_l"
-                        android:layout_marginBottom="30dp"
-                        android:orientation="horizontal"
-                        app:layout_constraintBottom_toBottomOf="@id/banner"
-                        app:layout_constraintEnd_toEndOf="@id/banner" />
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_toEndOf="@id/siv_avatar"
+                    android:fontFamily="@font/alimama_shu_hei_ti_bold"
+                    android:text="@string/home_name"
+                    android:textColor="@color/color_1a1a1a"
+                    android:textSize="20sp"></TextView>
 
-                    <Button
-                        android:id="@+id/btnCreation"
-                        style="@style/Button.Bold"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginHorizontal="25dp"
-                        android:layout_marginTop="-12dp"
-                        app:layout_constraintDimensionRatio="325:48"
-                        app:layout_constraintTop_toBottomOf="@id/banner" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/siv_avatar"
+                    android:layout_marginStart="12dp"
+                    android:layout_toEndOf="@id/siv_avatar"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="6dp"
+                        android:layout_height="6dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_home_state"></ImageView>
+
 
                     <TextView
-                        style="@style/Text18"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:drawableStart="@drawable/icon_ai"
-                        android:drawablePadding="10dp"
-                        android:text="@string/create_now"
-                        android:textColor="@color/sel_common_button_txt"
-                        app:layout_constraintBottom_toBottomOf="@id/btnCreation"
-                        app:layout_constraintEnd_toEndOf="@id/btnCreation"
-                        app:layout_constraintStart_toStartOf="@id/btnCreation"
-                        app:layout_constraintTop_toTopOf="@id/btnCreation" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
+                        android:layout_marginStart="4dp"
+                        android:text="@string/home_state"
+                        android:textColor="@color/color_666666"
+                        android:textSize="10sp"></TextView>
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:layout_toEndOf="@id/tv_name"
+                    android:background="@drawable/bg_e2edfc_r4"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="3dp"
+                    android:text="@string/home_agent_tag"
+                    android:textColor="@color/color_0066CC"
+                    android:textSize="10sp" />
+
+
+            </RelativeLayout>
 
             <TextView
-                android:id="@+id/tvTitle"
-                style="@style/Text16"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_l"
-                android:drawablePadding="8dp"
-                android:gravity="center_vertical"
-                android:paddingVertical="20dp"
-                android:text="@string/published_works"
-                android:textColor="?attr/textColor1"
-                app:drawableStartCompat="@drawable/img_hot"
-                app:layout_scrollFlags="enterAlways" />
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/srl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/spacing_m"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:overScrollMode="never"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            app:srlAccentColor="@color/color_121212"
-            app:srlEnableNestedScrolling="true"
-            app:srlEnablePreviewInEditMode="true"
-            app:srlPrimaryColor="@color/transparent">
-
-            <com.shiyuan.fastclaw.widget.LoadStateViewHolder
-                android:id="@+id/lsv"
+                android:id="@+id/tvGreeting1"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-                    app:spanCount="2"
-                    tools:listitem="@layout/item_home_drama" />
-            </com.shiyuan.fastclaw.widget.LoadStateViewHolder>
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-
-        <com.shiyuan.fastclaw.widget.MoveFrameLayout
-            android:id="@+id/floating_ball"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_marginBottom="14dp"
-            android:padding="@dimen/spacing_m"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/ivFloating"
-                android:layout_width="80dp"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:importantForAccessibility="no" />
-        </com.shiyuan.fastclaw.widget.MoveFrameLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                android:layout_marginTop="@dimen/dp20"
+                android:background="@drawable/bg_ffffff_r12"
+                android:padding="12dp"
+                android:text="@string/home_greeting_1"
+                android:textColor="@color/color_1a1a1a"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/home_greeting_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_ffffff_r12"
+                android:padding="12dp"
+                android:text="@string/home_greeting_2"
+                android:textColor="@color/color_1a1a1a"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_report_card"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="28dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/alimama_shu_hei_ti_bold"
+                            android:text="@string/home_interview_report_title"
+                            android:textColor="@color/color_1a1a1a"
+                            android:textSize="18sp"></TextView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dp20"
+                            android:text="@string/home_report_option_company"
+                            android:textColor="@color/color_666666"
+                            android:textSize="13sp"></TextView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/home_report_option_analysis"
+                            android:textColor="@color/color_666666"
+                            android:textSize="13sp"></TextView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/home_report_option_interview"
+                            android:textColor="@color/color_666666"
+                            android:textSize="13sp"></TextView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="@string/home_report_option_salary"
+                            android:textColor="@color/color_666666"
+                            android:textSize="13sp"></TextView>
+
+
+                    </LinearLayout>
+
+
+                    <View
+                        android:layout_width="@dimen/dp_0"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"></View>
+
+                    <ImageView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_gravity="center_vertical"
+                        android:importantForAccessibility="no"
+                        android:src="@mipmap/ima_home_report"></ImageView>
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/btnUploadResume"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="23dp"
+                    android:background="@drawable/bg_upload_btn"
+                    android:gravity="center"
+                    android:text="@string/home_upload_resume"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
 </layout>

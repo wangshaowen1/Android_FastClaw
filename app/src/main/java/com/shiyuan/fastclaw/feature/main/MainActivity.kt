@@ -180,6 +180,10 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(1)
+                    supportFragmentManager.switchFragment(
+                        R.id.fragment,
+                        HomeFragment::class.java
+                    )
                 }
 
 

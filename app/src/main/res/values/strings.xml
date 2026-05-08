@@ -215,7 +215,7 @@
     <string name="generating_short_video">正在为你生成短片…</string>
     <string name="estimated_wait_time">大约花费10–30秒左右，请稍候</string>
     <string name="start_creation_monetization">开启我的创作变现</string>
-    <string name="works">作品</string>
+    <string name="works">报告</string>
     <string name="my_balance">我的余额</string>
     <string name="select_recharge_amount">选择充值金额</string>
     <string name="power_validity_period">算力值有效期：1年</string>
@@ -533,6 +533,7 @@
 
     <!-- 首页招聘相关字符串 -->
     <string name="home_name">小虾</string>
+    <string name="home_state">在线</string>
     <string name="home_agent_tag">职业经纪人</string>
     <string name="home_interview_report_title">面试作战报告</string>
     <string name="home_upload_resume">上传简历免费生成</string>
