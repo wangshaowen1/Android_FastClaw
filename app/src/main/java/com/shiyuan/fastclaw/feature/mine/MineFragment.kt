@@ -78,7 +78,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {
-            R.id.siv_avatar,
+   /*         R.id.siv_avatar,
             R.id.tv_login,
             R.id.tv_name -> {
                 //个人资料
@@ -117,7 +117,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 if (AppNavigator.checkLoginIntercepted(false)) {
                     return
                 }
-            }
+            }*/
         }
     }
 }
