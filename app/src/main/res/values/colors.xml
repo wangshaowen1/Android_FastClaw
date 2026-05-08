@@ -476,6 +476,10 @@
     <color name="login_btn_blue">#0099FF</color>
     <color name="login_agreement_text">#993C3C43</color>
     <color name="login_agreement_link">#FF214CA5</color>
+
+    <color name="color_FF2A66FF">#FF2A66FF</color>
+    <color name="color_50_747B9680">#747B9680</color>
+
 </resources>
 
 

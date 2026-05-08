@@ -41,8 +41,6 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
     //设置编辑的回调
     var setIsEditing: ((Boolean) -> Unit)? = null
 
-    //去创作
-    val startCreating = MutableLiveData<Boolean>()
 
     fun initialization() {
         //获取用户主页信息接口

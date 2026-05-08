@@ -36,9 +36,10 @@ class SplashViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private fun proceedToNext() {
         launchDestination.value = if (User.get().isVisitor) {
-            LaunchDestination.Login
-        } else {
             LaunchDestination.Home(null)
+        } else {
+            LaunchDestination.Login
+
         }
     }
 }

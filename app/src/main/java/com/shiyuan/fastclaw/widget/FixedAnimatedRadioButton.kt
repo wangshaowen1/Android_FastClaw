@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.widget
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.AttributeSet
@@ -89,15 +90,35 @@ class FixedAnimatedRadioButton : AppCompatRadioButton, ValueAnimator.AnimatorUpd
     }
 
 
+    private var normalTypeface: Typeface? = null
+    private var boldTypeface: Typeface? = null
+
+    private fun initTypeface() {
+        normalTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+        boldTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+    }
+
     override fun setChecked(checked: Boolean) {
         super.setChecked(checked)
+
+
+        // 设置字体加粗
+        if (checked) {
+            setTypeface(boldTypeface, Typeface.BOLD)
+        } else {
+            setTypeface(normalTypeface, Typeface.NORMAL)
+        }
+
         if (width == 0 || height == 0) {
             return
         }
 
 
         if (checked) {
-            startAnimator()
+            // 只有动画开关打开时才启动动画
+            if (animationOpen) {
+                startAnimator()
+            }
         } else {
             if (valueAnimator.isRunning) {
                 valueAnimator.end()
@@ -107,6 +128,10 @@ class FixedAnimatedRadioButton : AppCompatRadioButton, ValueAnimator.AnimatorUpd
 
 
     override fun onAnimationUpdate(animation: ValueAnimator) {
+        // 如果动画未开启，缩放比保持为 1，不进行缩放
+        if (!animationOpen) {
+            return
+        }
         animatedScaleRate = animation?.animatedValue as Float
         try {
             //1.保存图标默认位置

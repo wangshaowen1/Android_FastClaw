@@ -130,12 +130,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 }, 1200)
             }
         }
-        mRealVM.startCreating.observe(this) {
-            if (it) {
-                toHome()
-                mRealVM.startCreating.value = false
-            }
-        }
     }
 
 
@@ -179,10 +173,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                         R.id.fragment,
                         HomeFragment::class.java
                     )
-                    lifecycleScope.launch {
-                        delay(100)
-                        displayPopUpBox(MainBulletFrameEnum.COMPLETE_PERSONAL_INFO)
-                    }
                 }
 
                 R.id.rbWorks -> {
@@ -247,60 +237,25 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 ) {
                     binding.mrg.check(R.id.rbHome) // 真正执行切换
                 }
-//                binding.mrg.check(R.id.rbHome)
-//                clickTab(tabId = R.id.tabHome) { diff ->
-//                    if (diff < CLICK_INTERVAL_TIME) {
-//                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
-//                        true
-//                    } else false
-//                }
             }
 
             R.id.tabWorks -> {
                 clickTab(
                     tabId = R.id.rbWorks,
-                    interceptor = { AppNavigator.checkLoginIntercepted(true) } // 传入拦截逻辑
+                    null
                 ) {
                     binding.mrg.check(R.id.rbWorks) // 真正执行切换
                 }
-//                if (AppNavigator.checkLoginIntercepted(true)) {
-//                    return
-//                }
-//                binding.mrg.check(R.id.rbWorks)
-//                clickTab(tabId = R.id.tabWorks) { diff ->
-//                    if (diff < CLICK_INTERVAL_TIME) {
-//                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_WORKS))
-//                        true
-//                    } else false
-//                }
             }
 
             R.id.tabMine -> {
                 clickTab(
                     tabId = R.id.tabMine,
-                    interceptor = { AppNavigator.checkLoginIntercepted(true) } // 传入拦截逻辑
+                    null
                 ) {
                     binding.mrg.check(R.id.rbMine) // 真正执行切换
                 }
-//                if (AppNavigator.checkLoginIntercepted(true)) {
-//                    return
-//                }
-//                clickTab(tabId = R.id.tabMine) { diff ->
-//                    if (diff < CLICK_INTERVAL_TIME) {
-//                        FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MINE))
-//                        true
-//                    } else false
-//                }
-//                binding.mrg.check(R.id.rbMine)
             }
-        }
-    }
-
-    private fun clickTab(tabId: Int, clickAction: (diff: Long) -> Boolean) {
-        val current = System.currentTimeMillis()
-
-        if (!clickAction(current - clicks.getOrDefault(tabId, 0))) {
-            clicks.put(tabId, current)
         }
     }
 
@@ -372,7 +327,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
 
     override fun setTranslucentStatus() {
-        setupTranslucentStatus(false, getThemeColor(R.attr.bgColor2))
+        setupTranslucentStatus(false, getColor(R.color.white))
     }
 
     private fun checkUpgrade() {
