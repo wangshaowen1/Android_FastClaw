@@ -59,6 +59,7 @@
 
 
         <LinearLayout
+            android:layout_marginRight="6dp"
             android:layout_marginTop="@dimen/dp20"
             android:id="@+id/ll_wx"
             android:layout_width="match_parent"
@@ -120,6 +121,7 @@
 
 
         <LinearLayout
+            android:layout_marginRight="6dp"
             android:id="@+id/ll_folder"
             android:layout_marginTop="12dp"
             android:layout_width="match_parent"

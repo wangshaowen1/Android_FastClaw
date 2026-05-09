@@ -8,15 +8,8 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 
 
-
 /**
- * *****************************************
- * 项目名称: FastFilm
- * @Author: SZYMN
- * @Introduce:上传简历弹窗
- * @Data: 2026/2/10/周二  17:09
- * @Version: 1.0
- * *****************************************
+ * 上传简历dialog
  */
 class UploadResumeDialog : BaseBottomPushVMDialogFragment<DialogUploadResumeBinding, ReportViewModel>(){
 

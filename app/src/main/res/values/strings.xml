@@ -574,6 +574,10 @@
     <string name="file_read_error">文件读取失败</string>
     <string name="wx_upload_developing">微信上传功能开发中</string>
 
+    <string name="choice_resume_developing">查看你上传的简历是否是最新版本</string>
+    <string name="re_upload">重新上传</string>
+    <string name="true_upload_resume">确认你的最新简历</string>
+
 
 
 

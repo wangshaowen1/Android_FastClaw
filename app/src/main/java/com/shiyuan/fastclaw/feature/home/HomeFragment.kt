@@ -31,6 +31,7 @@ import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.mine.MyShrimpChipsActivity
 import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
+import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
@@ -80,7 +81,7 @@ class HomeFragment :
                 /*val mainActivity = activity as? MainActivity
                 mainActivity?.switchToTab(1)*/
                // SettingsActivity.start(activity)
-                UploadResumeDialog.show(
+                ResumeListDialog.show(
                     manager = this.parentFragmentManager,
                 )
             }
