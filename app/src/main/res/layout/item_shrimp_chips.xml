@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="item"
+            type="com.shiyuan.fastclaw.feature.mine.ItemShrimpChipsVM" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="生产报告"
+                android:textColor="@color/color_1a1a1a"
+                android:textSize="14sp" />
+
+
+            <TextView
+                android:layout_marginTop="6dp"
+                android:layout_below="@id/tv_name"
+                android:id="@+id/tv_tiem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2021-0-0"
+                android:textColor="@color/color_999999"
+                android:textSize="12sp" />
+
+
+            <TextView
+                android:id="@+id/tv_number"
+                android:text="+0"
+                android:textColor="@color/color_1a1a1a"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+
+        </RelativeLayout>
+
+        <View
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/color_10_ffffff"></View>
+
+    </LinearLayout>
+</layout>

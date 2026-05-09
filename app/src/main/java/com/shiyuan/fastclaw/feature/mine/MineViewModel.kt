@@ -1,9 +1,13 @@
 package com.shiyuan.fastclaw.feature.mine
 
+import android.graphics.Color
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import com.nhsd.basic.ext.getResString
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
+import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Global
@@ -23,6 +27,15 @@ import com.shiyuan.fastclaw.core.response
  * *****************************************
  */
 class MineViewModel : AppRepositoryViewModel<AppRepository>() {
+
+
+    val mToolbarVM = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = R.string.mine_sticks.getResString(),
+        menuText = R.string.mine_rule.getResString(),
+        background = Color.TRANSPARENT,
+    )
+
 
     //是否登录
     val isLogin by lazy { ObservableBoolean(false) }

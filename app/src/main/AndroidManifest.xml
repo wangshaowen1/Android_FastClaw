@@ -189,10 +189,14 @@
         <activity
             android:name=".feature.settings.SettingsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--设置-->
         <activity
             android:name=".feature.report.MyHistoryReportActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.mine.MyShrimpChipsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
         <!--关于我们-->
         <activity
             android:name=".feature.settings.about.AboutUsActivity"

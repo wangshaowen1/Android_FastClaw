@@ -26,6 +26,7 @@ import com.shiyuan.fastclaw.feature.login.LoginActivity.Companion.checkedPolicy
 import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
 import com.shiyuan.fastclaw.feature.login.flash.FlashLoginDialogFragment
 import com.shiyuan.fastclaw.feature.main.MainActivity
+import com.shiyuan.fastclaw.feature.mine.MyShrimpChipsActivity
 import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
@@ -74,7 +75,7 @@ class HomeFragment :
             R.id.btnUploadResume -> {
                 /*val mainActivity = activity as? MainActivity
                 mainActivity?.switchToTab(1)*/
-                MyHistoryReportActivity.start(activity)
+                MyShrimpChipsActivity.start(activity)
             }
         }
     }

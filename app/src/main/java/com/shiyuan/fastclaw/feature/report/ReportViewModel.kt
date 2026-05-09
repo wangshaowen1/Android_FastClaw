@@ -16,6 +16,8 @@ import com.shiyuan.fastclaw.feature.report.data.ReportStatus
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResString
 import com.shiyuan.fastclaw.core.ext.request
+import com.shiyuan.fastclaw.core.network.apis.ApiFactory
+import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
 /**
@@ -43,7 +45,7 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
     fun loadData() {
         loadState.set(LoadState.Loading)
         request(
-            apiBlock = { mRepo.getMyReportList() },
+            apiBlock = {  ApiFactory.apiService.getMyReportList(UserTokenBody()) },
             onSuccess = {
                 data?.let { data ->
                     listData = data.toReportInfoList().toMutableList()
