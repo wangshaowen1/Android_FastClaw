@@ -19,6 +19,7 @@ import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+import okhttp3.MultipartBody
 
 /**
  * @Introduce: 历史报告列表 ViewModel
@@ -45,7 +46,7 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
     fun loadData() {
         loadState.set(LoadState.Loading)
         request(
-            apiBlock = {  ApiFactory.apiService.getMyReportList(UserTokenBody()) },
+            apiBlock = { ApiFactory.apiService.getMyReportList(UserTokenBody()) },
             onSuccess = {
                 data?.let { data ->
                     listData = data.toReportInfoList().toMutableList()
@@ -91,6 +92,24 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
                 // TODO: 跳转到报告详情页面
             }
         }
+    }
+
+    /**
+     * 上传简历
+     * @param file 文件 MultipartBody
+     * @param fileName 文件名
+     * @param callback 上传结果回调
+     */
+    fun uploadResume(file: MultipartBody.Part, fileName: String, callback: (Boolean) -> Unit) {
+        request(
+            apiBlock = { ApiFactory.apiService.uploadResume(file, fileName) },
+            onSuccess = {
+                callback(true)
+            },
+            onError = {
+                callback(false)
+            }
+        )
     }
 
     companion object {

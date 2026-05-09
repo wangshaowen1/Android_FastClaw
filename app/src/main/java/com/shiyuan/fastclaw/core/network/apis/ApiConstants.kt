@@ -137,4 +137,9 @@ object ApiConstants {
      * 引导添加客服弹窗信息列表
      */
     const val GUIDE_LINK_CUSTOMER_POPUP_INFO = "app/window/floatWindow/wechatMini/list"
+
+    /**
+     * 上传简历
+     */
+    const val UPLOAD_RESUME = "app/resume/upload"
 }

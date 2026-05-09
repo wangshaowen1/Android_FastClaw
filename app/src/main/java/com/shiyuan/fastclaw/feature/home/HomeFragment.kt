@@ -22,12 +22,16 @@ import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.crop.util.ViewUtils
+import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.feature.login.LoginActivity.Companion.checkedPolicy
 import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
 import com.shiyuan.fastclaw.feature.login.flash.FlashLoginDialogFragment
+import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginDialog
+import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.mine.MyShrimpChipsActivity
 import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
+import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
 import com.zhpan.bannerview.BaseBannerAdapter
@@ -75,7 +79,10 @@ class HomeFragment :
             R.id.btnUploadResume -> {
                 /*val mainActivity = activity as? MainActivity
                 mainActivity?.switchToTab(1)*/
-                SettingsActivity.start(activity)
+               // SettingsActivity.start(activity)
+                UploadResumeDialog.show(
+                    manager = this.parentFragmentManager,
+                )
             }
         }
     }

@@ -71,13 +71,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
             activity.startActivity(intent)
         }
-
-        fun startFromNewer(activity: Activity?) {
-            if (activity == null) return
-            val intent = Intent(activity, MainActivity::class.java)
-            intent.putExtra(Constants.Extra.FROM_PAGE, FROM_NEWER)
-            activity.startActivity(intent)
-        }
     }
 
     private var exitTime: Long = 0

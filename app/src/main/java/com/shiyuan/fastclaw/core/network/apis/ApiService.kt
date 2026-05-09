@@ -26,8 +26,11 @@ import com.shiyuan.fastclaw.core.network.apis.response.ReportListData
 import com.shiyuan.fastclaw.core.network.apis.response.ShelfStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
+import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 
 interface ApiService {
 
@@ -181,5 +184,15 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_MY_REPORT_LIST)
     suspend fun getMyReportList(@Body body: UserTokenBody): ApiResponse<ReportListData?>
+
+    /**
+     * 上传简历
+     */
+    @Multipart
+    @POST(ApiConstants.UPLOAD_RESUME)
+    suspend fun uploadResume(
+        @Part file: MultipartBody.Part,
+        @Part("fileName") fileName: String
+    ): ApiResponse<Any?>
 
 }
