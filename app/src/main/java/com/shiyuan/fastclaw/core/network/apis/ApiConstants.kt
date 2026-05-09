@@ -106,6 +106,7 @@ object ApiConstants {
      * 举报提交
      */
     const val REPORT_SUBMISSION = "app/report/save"
+    const val GET_MY_REPORT_LIST = "app/report/list"
 
     /**
      * 查询用户钱包信息

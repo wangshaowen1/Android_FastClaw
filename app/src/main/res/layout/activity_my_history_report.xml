@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="layout"
             type="com.shiyuan.fastclaw.feature.report.ReportViewModel" />
@@ -13,25 +12,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/color_F5F8FC"
         android:orientation="vertical">
-<!--
-        <com.shiyuan.fastclaw.widget.StatusBarView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />-->
 
         <include
             android:id="@+id/toolbar"
             layout="@layout/view_model_toolbar"
             app:toolbar="@{layout.mToolbarVM}" />
 
-<!--
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/srl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/spacing_m">
+            android:layout_marginHorizontal="16dp">
 
-            <com.kgmedia.fastfilm.widget.LoadStateViewHolder
+            <com.shiyuan.fastclaw.widget.LoadStateViewHolder
                 android:id="@+id/lsv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -39,11 +34,14 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </com.kgmedia.fastfilm.widget.LoadStateViewHolder>
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp" />
 
+            </com.shiyuan.fastclaw.widget.LoadStateViewHolder>
 
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
     </LinearLayout>
 

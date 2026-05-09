@@ -552,6 +552,10 @@
     <string name="mine_tip2">知道了</string>
 
     <string name="report_my_name">我的报告</string>
+    <string name="report_empty_tip">还没有生成报告哦</string>
+    <string name="report_generating_progress">预计还需2分钟，请耐心等待</string>
+    <string name="report_upload_resume_date">上传简历于 %s</string>
+    <string name="report_target_position">目标岗位：%s</string>
 
 
 </resources>

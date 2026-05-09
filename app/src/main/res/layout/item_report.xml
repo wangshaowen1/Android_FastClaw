@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="item"
+            type="com.shiyuan.fastclaw.feature.report.ItemReportVM" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_white_rectangle_corner_r12"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        singleClick="@{()->item.onItemClick()}"
+        tools:layout_marginHorizontal="16dp">
+
+        <!-- 左侧分数圆圈/加载图标 -->
+        <FrameLayout
+            android:layout_width="36dp"
+            android:layout_height="36dp">
+
+            <!-- 生成中状态: 加载图标 -->
+                <View
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@color/color_04_000000"
+                    android:visibility="@{item.isGenerating ? View.VISIBLE : View.GONE}" />
+
+            <!-- 已完成状态: 分数圆圈 -->
+            <FrameLayout
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_score_circle"
+                android:visibility="@{item.isCompleted ? View.VISIBLE : View.GONE}">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@{item.scoreText}"
+                    android:textColor="@color/color_1a1a1a"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="88" />
+            </FrameLayout>
+        </FrameLayout>
+
+        <!-- 中间内容区域 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- 第一行: 标题 + 标签 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.titleText}"
+                    android:textColor="@color/color_1a1a1a"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="面试作战报告" />
+
+                <!-- 标签 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_tag_green"
+                    android:paddingHorizontal="6dp"
+                    android:paddingVertical="3dp"
+                    android:text="@{item.tagText}"
+                    android:textColor="@color/func_success_dark"
+                    android:textSize="10sp"
+                    android:visibility="@{item.tagVisible ? View.VISIBLE : View.GONE}"
+                    tools:text="天作之合" />
+            </LinearLayout>
+
+            <!-- 第二行: 公司名 + 岗位 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@{item.companyNameText}"
+                android:textColor="@color/color_1a1a1a"
+                android:textSize="13sp"
+                android:visibility="@{item.isCompleted ? View.VISIBLE : View.GONE}"
+                tools:text="深圳快歌智能有限公司" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@{item.positionText}"
+                android:textColor="@color/color_666666"
+                android:textSize="13sp"
+                android:visibility="@{item.isCompleted ? View.VISIBLE : View.GONE}"
+                tools:text="目标岗位：AI产品经理" />
+
+            <!-- 生成中: 进度条 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:visibility="@{item.isGenerating ? View.VISIBLE : View.GONE}">
+
+                <ProgressBar
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="180dp"
+                    android:layout_height="5dp"
+                    android:max="100"
+                    android:progress="30"
+                    android:progressDrawable="@drawable/progress_generating" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@{item.progressText}"
+                    android:textColor="@color/color_999999"
+                    android:textSize="11sp"
+                    tools:text="预计还需2分钟，请耐心等待" />
+            </LinearLayout>
+
+            <!-- 已完成: 日期 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@{item.dateText}"
+                android:textColor="@color/color_999999"
+                android:textSize="11sp"
+                android:visibility="@{item.isCompleted ? View.VISIBLE : View.GONE}"
+                tools:text="上传简历于 2026.05.07" />
+        </LinearLayout>
+
+        <!-- 右侧箭头 -->
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/arrow_right_gray36" />
+    </LinearLayout>
+</layout>

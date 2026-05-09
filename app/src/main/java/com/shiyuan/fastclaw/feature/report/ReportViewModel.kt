@@ -1,50 +1,101 @@
 package com.shiyuan.fastclaw.feature.report
 
+import android.content.Context
 import android.graphics.Color
 import androidx.databinding.ObservableField
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
+import com.shiyuan.fastclaw.common.LoadState
+import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.core.AppRepository
-import com.shiyuan.fastclaw.core.Config
-import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.ext.launch
-import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
-import com.shiyuan.fastclaw.core.response
-import com.nhsd.basic.ext.getResColor
+import com.shiyuan.fastclaw.core.network.apis.response.toReportInfoList
+import com.shiyuan.fastclaw.feature.report.data.ReportInfo
+import com.shiyuan.fastclaw.feature.report.data.ReportStatus
+import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResString
+import com.shiyuan.fastclaw.core.ext.request
+import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
 /**
- * *****************************************
- * 项目名称: KidsTales
- * @Author: SZYMN
- * @Introduce:设置
- * @Data: 2025/4/18  16:04
- * @Version: 1.0
- * *****************************************
+ * @Introduce: 历史报告列表 ViewModel
  */
 class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
+
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { finish() },
         title = R.string.report_my_name.getResString(),
         background = Color.TRANSPARENT,
     )
 
-    val debugIp = ObservableField<String>()
+    val loadState = ObservableField<LoadState>(LoadState.NotLoading(false))
 
-    var phone = ObservableField(User.get().phoneNum)
+    val listAdapter = QuickAdapter<ItemReportVM>(R.layout.item_report, emptyList())
 
-    val beiAn by lazy { Config.get().appConfig.beianNo }
+    private var listData = mutableListOf<ReportInfo>()
 
-    /**
-     * 退出登录
-     */
-    fun logoutApp() {
-        launch { response(mRepo.api.logoutApp(UserTokenBody())) {} }
+    override fun onCreate() {
+        super.onCreate()
+        loadData()
     }
 
-    override fun onResume() {
-        super.onResume()
-        phone.set(User.get().phoneNum)
+    fun loadData() {
+        loadState.set(LoadState.Loading)
+        request(
+            apiBlock = { mRepo.getMyReportList() },
+            onSuccess = {
+                data?.let { data ->
+                    listData = data.toReportInfoList().toMutableList()
+                    refreshList()
+                    loadState.set(
+                        if (data.toReportInfoList().isEmpty()) LoadState.Empty
+                        else LoadState.NotLoading(true)
+                    )
+                } ?: run {
+                    listData.clear()
+                    refreshList()
+                    loadState.set(LoadState.Empty)
+                }
+            },
+            onError = {
+                loadState.set(LoadState.Error(it ?: Exception("unknown")))
+            }
+        )
+    }
+
+    fun refresh() {
+        loadData()
+    }
+
+    private fun refreshList() {
+        val items = listData.map { info ->
+            ItemReportVM(info).apply {
+                onItemClick.value = {
+                    onReportItemClick(info)
+                }
+            }
+        }
+        listAdapter.submitList(items)
+    }
+
+    fun onReportItemClick(info: ReportInfo) {
+        // 报告详情跳转
+        when (info.status) {
+            ReportStatus.GENERATING -> {
+                // 生成中的报告，暂不可查看
+            }
+            ReportStatus.COMPLETED -> {
+                // TODO: 跳转到报告详情页面
+            }
+        }
+    }
+
+    companion object {
+        fun buildLayoutManager(context: Context?) = LinearLayoutManager(context).apply {
+            isAutoMeasureEnabled = false
+        }
+
+        fun buildItemDecoration(context: Context?) = SpaceDecoration(12.dp)
     }
 }

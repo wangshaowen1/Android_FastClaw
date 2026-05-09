@@ -22,6 +22,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.request.TipOffBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
+import com.shiyuan.fastclaw.core.network.apis.response.ReportListData
 import com.shiyuan.fastclaw.core.network.apis.response.ShelfStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
@@ -174,5 +175,11 @@ interface ApiService {
      */
     @POST(ApiConstants.SENSITIVE_IMAGE_CHECK)
     suspend fun sensitiveImageCheck(@Body body: ImgUrlBody): ApiResponse<SensitiveWordCheckData?>
+
+    /**
+     * 获取我的报告列表
+     */
+    @POST(ApiConstants.GET_MY_REPORT_LIST)
+    suspend fun getMyReportList(@Body body: UserTokenBody): ApiResponse<ReportListData?>
 
 }

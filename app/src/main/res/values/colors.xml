@@ -146,6 +146,10 @@
 
     <color name="color_d9d9d9">#d9d9d9</color>
     <color name="color_10_d9d9d9">#1ad9d9d9</color>
+    <color name="color_04_000000">#0a000000</color>
+    <color name="color_10_d17173">#1ad17173</color>
+    <color name="color_10_ff5967">#1aff5967</color>
+    <color name="color_10_ffb300">#1affb300</color>
     <color name="color_20_d9d9d9">#33D9D9D9</color>
     <color name="color_30_d9d9d9">#4Dd9d9d9</color>
     <color name="color_d8d8d8">#d8d8d8</color>
