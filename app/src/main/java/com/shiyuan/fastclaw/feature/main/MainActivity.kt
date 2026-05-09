@@ -9,6 +9,7 @@ import android.util.SparseArray
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
+import androidx.constraintlayout.motion.widget.KeyPosition
 import androidx.core.util.getOrDefault
 import androidx.lifecycle.lifecycleScope
 import com.fm.openinstall.OpenInstall
@@ -202,6 +203,17 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             2 -> binding.mrg.check(R.id.rbMine)
             else -> binding.mrg.check(R.id.rbHome)
         }
+    }
+
+
+    fun switchToTab(position:Int) {
+        when(position){
+            0 -> binding.mrg.check(R.id.rbHome)
+            1 -> binding.mrg.check(R.id.rbWorks)
+            2 ->binding.mrg.check(R.id.rbMine)
+            else -> binding.mrg.check(R.id.rbHome)
+        }
+
     }
 
 

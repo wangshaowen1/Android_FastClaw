@@ -338,7 +338,7 @@
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="toolbarNavigationButtonStyle">@style/toolbarNavigationButtonStyle</item>
         <item name="actionMenuTextColor">@android:color/white</item> <!-- menu 字体颜色-->
-        <item name="android:textSize">16sp</item> <!-- menu 字体大小-->
+        <item name="android:textSize">17sp</item> <!-- menu 字体大小-->
     </style>
 
     <style name="toolbarNavigationButtonStyle" parent="@style/Widget.AppCompat.Toolbar.Button.Navigation">
@@ -745,7 +745,7 @@
     </style>
     <!--用于模块标题/分类标题-->
     <style name="Text16">
-        <item name="android:textSize">16sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
     </style>
     <!--用于正文/大段文本-->

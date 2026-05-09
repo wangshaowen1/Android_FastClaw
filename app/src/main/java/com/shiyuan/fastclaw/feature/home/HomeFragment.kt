@@ -22,6 +22,13 @@ import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.crop.util.ViewUtils
+import com.shiyuan.fastclaw.feature.login.LoginActivity.Companion.checkedPolicy
+import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
+import com.shiyuan.fastclaw.feature.login.flash.FlashLoginDialogFragment
+import com.shiyuan.fastclaw.feature.main.MainActivity
+import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
+import com.shiyuan.fastclaw.feature.settings.SettingsActivity
+import com.umeng.socialize.bean.SHARE_MEDIA
 import com.zhpan.bannerview.BaseBannerAdapter
 import com.zhpan.bannerview.BaseViewHolder
 import com.zhpan.indicator.enums.IndicatorStyle
@@ -59,6 +66,19 @@ class HomeFragment :
     private fun initView() {
 
     }
+
+
+    override fun <Data> onClick(view: View, data: Data?) {
+        super.onClick(view, data)
+        when (view.id) {
+            R.id.btnUploadResume -> {
+                /*val mainActivity = activity as? MainActivity
+                mainActivity?.switchToTab(1)*/
+                MyHistoryReportActivity.start(activity)
+            }
+        }
+    }
+
 
     fun dataUpdate() {
         lifecycleScope.launch {
