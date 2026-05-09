@@ -53,6 +53,44 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# ============================== Find JDK ==============================
+$script:JAVA_HOME = $env:JAVA_HOME
+$script:KeytoolCmd = 'keytool'
+
+if (-not $script:JAVA_HOME) {
+    Write-Host "[WARN] JAVA_HOME 未设置，尝试自动查找 JDK..." -ForegroundColor Yellow
+    
+    # Try common installation paths
+    $jdkPaths = @(
+        "D:\Java",
+        "C:\Program Files\Java",
+        "C:\Program Files (x86)\Java",
+        "${env:LOCALAPPDATA}\Programs\Java"
+    )
+    
+    foreach ($path in $jdkPaths) {
+        if (Test-Path $path) {
+            $jdkDir = Get-ChildItem $path -Directory | Where-Object { $_.Name -match '^jdk' } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+            if ($jdkDir) {
+                $script:JAVA_HOME = $jdkDir.FullName
+                break
+            }
+        }
+    }
+}
+
+if ($script:JAVA_HOME) {
+    $keytoolPath = Join-Path $script:JAVA_HOME "bin\keytool.exe"
+    if (Test-Path $keytoolPath) {
+        $script:KeytoolCmd = $keytoolPath
+        Write-Host "[INFO] 找到 JDK: $script:JAVA_HOME" -ForegroundColor Cyan
+    } else {
+        Write-Host "[WARN] JAVA_HOME 已设置但 keytool 不存在" -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "[WARN] 未找到 JDK，keytool 命令需要在 PATH 中" -ForegroundColor Yellow
+}
+
 # ============================== Constants ==============================
 $OLD_PACKAGE      = 'com.kgmedia.fastfilm'
 $OLD_APP_NAME     = '快出片'
@@ -224,7 +262,7 @@ $keytoolArgs = @(
 )
 
 $ErrorActionPreference = 'Continue'
-$keytoolResult = & keytool @keytoolArgs 2>&1
+$keytoolResult = & $script:KeytoolCmd @keytoolArgs 2>&1
 $ErrorActionPreference = 'Stop'
 if ($LASTEXITCODE -ne 0) {
     Write-Err "keytool 执行失败: $keytoolResult"
@@ -238,7 +276,7 @@ Write-Info "提取签名信息 ..."
 
 # Extract MD5/SHA1/SHA-256
 $ErrorActionPreference = 'Continue'
-$certInfo = & keytool -list -v -keystore $jksFile -alias $NEW_KEY_ALIAS -storepass $StorePassword 2>&1 | Out-String
+$certInfo = & $script:KeytoolCmd -list -v -keystore $jksFile -alias $NEW_KEY_ALIAS -storepass $StorePassword 2>&1 | Out-String
 $ErrorActionPreference = 'Stop'
 
 $newMD5 = ''
@@ -264,11 +302,11 @@ Write-Ok "SHA256: $newSHA256"
 
 # Extract certificate DER hex (for apisecurity signature)
 $ErrorActionPreference = 'Continue'
-$certPem = & keytool -exportcert -keystore $jksFile -alias $NEW_KEY_ALIAS -storepass $StorePassword 2>$null
+$certPem = & $script:KeytoolCmd -exportcert -keystore $jksFile -alias $NEW_KEY_ALIAS -storepass $StorePassword 2>$null
 $certHex = ($certPem | ForEach-Object { '{0:x2}' -f $_ }) -join ''
 
 # Extract public key PEM
-$certPemText = & keytool -exportcert -rfc -keystore $jksFile -alias $NEW_KEY_ALIAS -storepass $StorePassword 2>$null | Out-String
+$certPemText = & $script:KeytoolCmd -exportcert -rfc -keystore $jksFile -alias $NEW_KEY_ALIAS -storepass $StorePassword 2>$null | Out-String
 $ErrorActionPreference = 'Stop'
 
 Write-Ok "证书HEX长度: $($certHex.Length) 字符"

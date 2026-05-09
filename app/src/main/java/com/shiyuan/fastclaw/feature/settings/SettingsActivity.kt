@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
@@ -46,7 +47,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (DebugUtils.isDebug()) {
+/*        if (DebugUtils.isDebug()) {
             binding.etIp.setText(Config.get().baseUrlCustom)
             binding.etIp.setSelection(binding.etIp.length())
             binding.btnIPConfirm.setOnSingleClickListener {
@@ -63,7 +64,15 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                     "设置好了，自己杀掉app重启一下！".showToast()
                 }.show(supportFragmentManager)
             }
-        }
+        }*/
+    }
+
+    override fun setTranslucentStatus() {
+        ImmersionBar.with(this)
+            .statusBarDarkFont(true)
+            .navigationBarColor(R.color.color_F5F8FC)
+            .transparentStatusBar()
+            .init()
     }
 
     override fun onRestart() {
@@ -76,7 +85,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
-            R.id.sll_personal_information -> {
+   /*         R.id.sll_personal_information -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
                 }
@@ -181,7 +190,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                     Config.get().algorithmUrl,
                             getString(R.string.app_algorithm_formula)
                 )
-            }
+            }*/
         }
     }
 }

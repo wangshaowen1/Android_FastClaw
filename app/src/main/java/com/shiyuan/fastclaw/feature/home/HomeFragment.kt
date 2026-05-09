@@ -75,7 +75,7 @@ class HomeFragment :
             R.id.btnUploadResume -> {
                 /*val mainActivity = activity as? MainActivity
                 mainActivity?.switchToTab(1)*/
-                MyShrimpChipsActivity.start(activity)
+                SettingsActivity.start(activity)
             }
         }
     }
