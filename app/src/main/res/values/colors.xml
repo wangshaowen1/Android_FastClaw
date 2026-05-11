@@ -487,10 +487,13 @@
     <color name="color_B0DFFF">#B0DFFF</color>
     <color name="color_f3f5f6">#f3f5f6</color>
     <color name="color_0099FF">#0099FF</color>
+    <color name="color_2d8af5">#2d8af5</color>
     <color name="color_0066CC">#0066CC</color>
     <color name="color_E2EDFC">#E2EDFC</color>
     <color name="color_E8EAED">#E8EAED</color>
     <color name="color_50_0099FF">#800099FF</color>
+    <color name="color_656C72">#656C72</color>
+    <color name="color_8b939b">#8b939b</color>
 
 </resources>
 

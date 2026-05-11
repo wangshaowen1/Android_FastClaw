@@ -42,6 +42,7 @@ import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.ext.switchFragment
+import com.shiyuan.fastclaw.feature.report.report.HomeReportFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -176,7 +177,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     mRealVM.showTab.set(1)
                     supportFragmentManager.switchFragment(
                         R.id.fragment,
-                        HomeFragment::class.java
+                        HomeReportFragment::class.java
                     )
                 }
 

@@ -1,0 +1,800 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+    </data>
+
+    <!--    <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="0dp">
+
+
+
+
+            </com.google.android.material.appbar.AppBarLayout>-->
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="301dp">
+
+                    <ImageView
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/ima_home_report_bg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                    <ImageView
+                        android:scaleType="centerCrop"
+                        android:layout_alignParentBottom="true"
+                        android:src="@mipmap/img_home_report_bg2"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingTop="103dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_marginLeft="20dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/report_home_tip1"
+                            android:textColor="@color/color_1a1a1a"
+                            android:textSize="22sp"
+                            android:textStyle="bold">
+
+                        </TextView>
+
+                        <TextView
+                            android:layout_marginLeft="20dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/report_home_tip2"
+                            android:textColor="@color/color_1a1a1a"
+                            android:textSize="32sp"
+                            android:textStyle="bold">
+
+                        </TextView>
+
+                        <LinearLayout
+                            android:layout_marginLeft="20dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/go_report"
+                                android:textColor="@color/color_666666"
+                                android:textSize="12sp"></TextView>
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:src="@mipmap/ic_arrow_right2"></ImageView>
+
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_marginRight="16dp"
+                            android:layout_marginLeft="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginTop="38dp"
+                            android:background="@drawable/bg_000000_r100"
+                            android:orientation="horizontal"
+                            android:padding="4dp">
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/bg_0099ff_r100"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/target_position"
+                                    android:textColor="@color/white"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"></TextView>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="@string/up_JD"
+                                    android:textColor="@color/white"
+                                    android:textSize="10sp"></TextView>
+
+
+                            </LinearLayout>
+
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/no_target_position"></TextView>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_marginRight="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:text="@string/what_content"
+                        android:textColor="@color/color_656C72"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <LinearLayout
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:paddingBottom="16dp"
+                            android:paddingTop="12dp"
+                            android:paddingHorizontal="6dp"
+                            android:background="@drawable/bg_ffffff_r12"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@mipmap/ic_background_check"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp">
+                                </ImageView>
+
+                                <TextView
+                                    android:textStyle="bold"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/color_1a1a1a"
+                                    android:layout_marginLeft="4dp"
+                                    android:text="@string/company_background_check"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                </TextView>
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_marginTop="8dp"
+                                android:text="@string/report_home_tip3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                            </TextView>
+
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="9dp"
+                            android:layout_height="match_parent">
+                        </View>
+
+                        <LinearLayout
+                            android:paddingBottom="16dp"
+                            android:paddingTop="12dp"
+                            android:paddingHorizontal="6dp"
+                            android:background="@drawable/bg_ffffff_r12"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@mipmap/ic_background_check"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp">
+                                </ImageView>
+
+                                <TextView
+                                    android:textStyle="bold"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/color_1a1a1a"
+                                    android:layout_marginLeft="4dp"
+                                    android:text="@string/company_background_check"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                </TextView>
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_marginTop="8dp"
+                                android:text="@string/report_home_tip3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                            </TextView>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:paddingBottom="16dp"
+                            android:paddingTop="12dp"
+                            android:paddingHorizontal="6dp"
+                            android:background="@drawable/bg_ffffff_r12"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@mipmap/ic_background_check"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp">
+                                </ImageView>
+
+                                <TextView
+                                    android:textStyle="bold"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/color_1a1a1a"
+                                    android:layout_marginLeft="4dp"
+                                    android:text="@string/company_background_check"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                </TextView>
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_marginTop="8dp"
+                                android:text="@string/report_home_tip3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                            </TextView>
+
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="9dp"
+                            android:layout_height="match_parent">
+                        </View>
+
+                        <LinearLayout
+                            android:paddingBottom="16dp"
+                            android:paddingTop="12dp"
+                            android:paddingHorizontal="6dp"
+                            android:background="@drawable/bg_ffffff_r12"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@mipmap/ic_background_check"
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp">
+                                </ImageView>
+
+                                <TextView
+                                    android:textStyle="bold"
+                                    android:textSize="14sp"
+                                    android:textColor="@color/color_1a1a1a"
+                                    android:layout_marginLeft="4dp"
+                                    android:text="@string/company_background_check"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                </TextView>
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_marginTop="8dp"
+                                android:text="@string/report_home_tip3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                            </TextView>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:layout_marginTop="@dimen/dp20"
+                        android:text="@string/report_home_tip4"
+                        android:textColor="@color/color_656C72"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+
+                    <LinearLayout
+                        android:padding="16dp"
+                        android:background="@drawable/bg_ffffff_r12"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_gravity="center_vertical"
+                                android:textStyle="bold"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"
+                                android:gravity="center"
+                                android:text="1"
+                                android:background="@drawable/bg_2d8af5_r45"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp">
+                            </TextView>
+
+                            <LinearLayout
+                                android:layout_marginLeft="12dp"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:textStyle="bold"
+                                    android:textColor="@color/color_1a1a1a"
+                                    android:textSize="14sp"
+                                    android:text="@string/up_resume_file"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                </TextView>
+
+
+                                <TextView
+                                    android:layout_marginTop="8dp"
+                                    android:textColor="@color/color_999999"
+                                    android:textSize="12sp"
+                                    android:text="@string/report_home_tip5"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                </TextView>
+
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_marginTop="16dp"
+                            android:background="@color/color_10_000000"
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp">
+                        </View>
+
+                        <LinearLayout
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+
+
+                            <TextView
+                                android:layout_gravity="center_vertical"
+                                android:textStyle="bold"
+                                android:textSize="12sp"
+                                android:textColor="@color/white"
+                                android:gravity="center"
+                                android:text="1"
+                                android:background="@drawable/bg_2d8af5_r45"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp">
+                            </TextView>
+
+                            <LinearLayout
+                                android:layout_marginLeft="12dp"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:textStyle="bold"
+                                    android:textColor="@color/color_1a1a1a"
+                                    android:textSize="14sp"
+                                    android:text="@string/up_bos_file"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                </TextView>
+
+
+                                <TextView
+                                    android:layout_marginTop="8dp"
+                                    android:textColor="@color/color_999999"
+                                    android:textSize="12sp"
+                                    android:text="@string/report_home_tip6"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                </TextView>
+
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:layout_marginTop="@dimen/dp20"
+                        android:text="@string/Customer_reviews"
+                        android:textColor="@color/color_656C72"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <LinearLayout
+                        android:padding="16dp"
+                        android:background="@drawable/bg_ffffff_r12"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_gravity="center_vertical"
+                                    android:id="@+id/iv_avatar"
+                                    android:src="@mipmap/ic_avatar2"
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp">
+                                </ImageView>
+
+                                <LinearLayout
+                                    android:layout_marginLeft="8dp"
+                                    android:orientation="vertical"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:layout_toRightOf="@+id/iv_avatar"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/color_1a1a1a"
+                                        android:textSize="14sp"
+                                        android:text="@string/report_home_name1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+                                    </TextView>
+
+                                    <TextView
+                                        android:layout_marginTop="6dp"
+                                        android:layout_alignBottom="@id/iv_avatar"
+                                        android:layout_toEndOf="@id/iv_avatar"
+                                        android:textColor="@color/color_8b939b"
+                                        android:textSize="12sp"
+                                        android:text="@string/report_home_name1_tip"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+                                    </TextView>
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_marginTop="12dp"
+                                android:layout_toRightOf="@+id/iv_avatar"
+                                android:textColor="@color/color_1a1a1a"
+                                android:textSize="13sp"
+                                android:text="@string/report_home_name1_tip1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                            </TextView>
+
+                        </LinearLayout>
+
+
+                        <View
+                            android:layout_marginTop="16dp"
+                            android:background="@color/color_10_000000"
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp">
+                        </View>
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@mipmap/ic_avatar2"
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp">
+                                </ImageView>
+
+                                <LinearLayout
+                                    android:layout_marginLeft="8dp"
+                                    android:orientation="vertical"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:layout_toRightOf="@+id/iv_avatar"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/color_1a1a1a"
+                                        android:textSize="14sp"
+                                        android:text="@string/report_home_name1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+                                    </TextView>
+
+                                    <TextView
+                                        android:layout_marginTop="6dp"
+                                        android:layout_alignBottom="@id/iv_avatar"
+                                        android:layout_toEndOf="@id/iv_avatar"
+                                        android:textColor="@color/color_8b939b"
+                                        android:textSize="12sp"
+                                        android:text="@string/report_home_name1_tip"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+                                    </TextView>
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_marginTop="12dp"
+                                android:layout_toRightOf="@+id/iv_avatar"
+                                android:textColor="@color/color_1a1a1a"
+                                android:textSize="13sp"
+                                android:text="@string/report_home_name1_tip1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                            </TextView>
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_marginTop="16dp"
+                            android:background="@color/color_10_000000"
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp">
+                        </View>
+
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <ImageView
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@mipmap/ic_avatar2"
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp">
+                                </ImageView>
+
+                                <LinearLayout
+                                    android:layout_marginLeft="8dp"
+                                    android:orientation="vertical"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:layout_toRightOf="@+id/iv_avatar"
+                                        android:textStyle="bold"
+                                        android:textColor="@color/color_1a1a1a"
+                                        android:textSize="14sp"
+                                        android:text="@string/report_home_name1"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+                                    </TextView>
+
+                                    <TextView
+                                        android:layout_marginTop="6dp"
+                                        android:layout_alignBottom="@id/iv_avatar"
+                                        android:layout_toEndOf="@id/iv_avatar"
+                                        android:textColor="@color/color_8b939b"
+                                        android:textSize="12sp"
+                                        android:text="@string/report_home_name1_tip"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content">
+                                    </TextView>
+
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <TextView
+                                android:layout_marginTop="12dp"
+                                android:layout_toRightOf="@+id/iv_avatar"
+                                android:textColor="@color/color_1a1a1a"
+                                android:textSize="13sp"
+                                android:text="@string/report_home_name1_tip1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+                            </TextView>
+
+                        </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:layout_marginTop="@dimen/dp20"
+                        android:text="@string/report_case"
+                        android:textColor="@color/color_656C72"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+
+
+                    <RelativeLayout
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_ffffff_r12"
+                        android:layout_width="match_parent"
+                        android:layout_height="232dp">
+
+                        <com.zhpan.bannerview.BannerViewPager
+                            android:id="@+id/banner_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="232dp" />
+
+
+                        <com.zhpan.bannerview.indicator.DrawableIndicator
+                            android:layout_marginBottom="16dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_alignParentBottom="true"
+                            android:id="@+id/indicator_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </RelativeLayout>
+
+
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:layout_marginHorizontal="16dp"
+            android:id="@+id/btnUploadResume"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+           android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_upload_btn"
+            android:gravity="center"
+            android:text="@string/production_report"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+    <!--    </androidx.coordinatorlayout.widget.CoordinatorLayout>-->
+</layout>
+
+
+

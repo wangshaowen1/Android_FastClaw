@@ -537,6 +537,7 @@
     <string name="home_agent_tag">职业经纪人</string>
     <string name="home_interview_report_title">面试作战报告</string>
     <string name="home_upload_resume">上传简历免费生成</string>
+    <string name="production_report">生成报告</string>
     <string name="home_report_option_interview">面试题库准备</string>
     <string name="home_report_option_salary">薪资预测 谈薪技巧</string>
     <string name="home_report_option_company">反向背调公司</string>
@@ -593,6 +594,27 @@
     <string name="get_jd_two">截图岗位职责和任职要求且需要\n包含公司名称</string>
     <string name="generate_precise_matching_report">生成精准匹配报告</string>
     <string name="skip_precise_matching">跳过，直接用简历生成报告</string>
+    <string name="report_home_tip1">面试前 , 先生成你的</string>
+    <string name="report_home_tip2">面试作战报告</string>
+    <string name="go_report">查看历史报告</string>
+    <string name="target_position">有目标岗位</string>
+    <string name="up_JD">上传简历 + JD </string>
+    <string name="no_target_position">没有目标岗位 </string>
+    <string name="what_content">报告包含哪些内容？</string>
+    <string name="report_home_tip3">深扒公司经营情况、调研\n核心业务/产品。</string>
+    <string name="company_background_check">公司背调</string>
+    <string name="report_home_tip4">仅需一步，30秒生成报告</string>
+    <string name="up_resume_file">上传简历文件</string>
+    <string name="report_home_tip5">PDF文件、Word文件、图片均可</string>
+    <string name="report_home_tip6">需包含公司详细信息和岗位描述</string>
+    <string name="up_bos_file">上传BOSS/官网招聘信息截图</string>
+    <string name="Customer_reviews">真实用户评价(32000+)</string>
+    <string name="report_home_name1">杨*玉</string>
+    <string name="report_home_name1_tip">AI科技｜2年｜AI产品经理</string>
+    <string name="report_home_name1_tip1">比起瞎投、海投，经纪人教我如果用boss回复率低该怎么操作，另辟蹊径后回复率高了两三倍。</string>
+    <string name="report_home_name2">李*枫</string>
+    <string name="report_home_name3">潘*丹</string>
+    <string name="report_case">报告四大模块样例预览</string>
 
 
 
