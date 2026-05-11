@@ -1,24 +1,12 @@
 package com.shiyuan.fastclaw.feature.report.report
 
-import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
 import android.view.View
-import com.gyf.immersionbar.ImmersionBar
+import android.graphics.Color
 import com.shiyuan.fastclaw.R
-import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.BaseViewModelFragment
-import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.getViewModelOfActivity
-import com.shiyuan.fastclaw.core.Events
-import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
-import com.shiyuan.fastclaw.databinding.ActivityGennerReportBinding
+import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.databinding.FragmentHomeReportBinding
-import com.shiyuan.fastclaw.databinding.FragmentMineBinding
-import com.shiyuan.fastclaw.feature.main.MainViewModel
-import com.shiyuan.fastclaw.feature.mine.MineViewModel
-import com.shiyuan.fastclaw.feature.report.genner.GenerateReportViewModel
+import com.zhpan.indicator.enums.IndicatorStyle
 
 /**
  * @Introduce: 历史报告列表页面
@@ -31,17 +19,26 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
-        //数据更新
         dataUpdate()
     }
 
     private fun initView() {
-     /*   binding.bannerView.setIndicatorView(binding.indicatorView)
-            .setIndicatorColor(Color.parseColor("#888888"),
-                Color.parseColor("#118EEA"))
-            .setHolderCreator(() -> new ImageResourceViewHolder(BannerUtils.dp2px(5)))
-        .create(mDrawableList);*/
+        binding.bannerView.apply {
+            setIndicatorGravity(com.zhpan.bannerview.constants.IndicatorGravity.START)
+            setIndicatorSliderColor(resources.getColor(R.color.color_F6F6F7),resources.getColor(R.color.color_0099FF))
+            setIndicatorStyle(IndicatorStyle.CIRCLE)
+            setIndicatorSliderWidth(6.dp, 6.dp)
+            setIndicatorHeight(6.dp)
+            setScrollDuration(750)
+            setInterval(3000)
+            setLifecycleRegistry(lifecycle)
+        }
 
+        mRealVM.bannerList.get()?.let { imageList ->
+            val adapter = ImageBannerAdapter()
+            binding.bannerView.adapter = adapter
+            binding.bannerView.create(imageList)
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
