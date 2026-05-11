@@ -578,6 +578,21 @@
     <string name="re_upload">重新上传</string>
     <string name="true_upload_resume">确认你的最新简历</string>
 
+    <string name="generate_report">生成面试报告</string>
+    <string name="my_resume">我的简历</string>
+    <string name="resume_up_success">简历上传成功</string>
+    <string name="add_position_info">添加目标岗位信息</string>
+    <string name="screenshot_up">截图上传</string>
+    <string name="paste_string">粘贴</string>
+    <string name="jd_tip1">上传JD截图（如 BOSS直聘 / 官网 / 公众号截图）</string>
+    <string name="jd_tip2">可上传3张截图，每次仅支持分析1个目标岗位</string>
+    <string name="jd_tip3">上传JD截图</string>
+    <string name="et_hit1">粘贴公司名称与岗位职责信息，每次仅支持分析1个\n目标岗位</string>
+    <string name="get_jd">如何获取JD截图</string>
+    <string name="get_jd_one">打开BOSS直聘/招聘网站后进入\n目标职位详情页</string>
+    <string name="get_jd_two">截图岗位职责和任职要求且需要\n包含公司名称</string>
+    <string name="generate_precise_matching_report">生成精准匹配报告</string>
+    <string name="skip_precise_matching">跳过，直接用简历生成报告</string>
 
 
 

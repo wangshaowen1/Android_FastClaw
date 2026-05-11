@@ -194,6 +194,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.report.genner.GenerateReportActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.mine.MyShrimpChipsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 

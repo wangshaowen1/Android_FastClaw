@@ -32,6 +32,7 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
+
     val loadState = ObservableField<LoadState>(LoadState.NotLoading(false))
 
     val listAdapter = QuickAdapter<ItemReportVM>(R.layout.item_report, emptyList())

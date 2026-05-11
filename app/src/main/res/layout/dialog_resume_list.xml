@@ -73,7 +73,7 @@
                 android:layout_height="28dp"
                 android:layout_gravity="center_vertical"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/ic_folder" />
+                android:src="@mipmap/ic_resume" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

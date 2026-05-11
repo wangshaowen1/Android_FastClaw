@@ -33,6 +33,7 @@ import com.shiyuan.fastclaw.feature.mine.MyShrimpChipsActivity
 import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
 import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
+import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
 import com.zhpan.bannerview.BaseBannerAdapter
@@ -80,10 +81,10 @@ class HomeFragment :
             R.id.btnUploadResume -> {
                 /*val mainActivity = activity as? MainActivity
                 mainActivity?.switchToTab(1)*/
-               // SettingsActivity.start(activity)
-                ResumeListDialog.show(
+                GenerateReportActivity.start(activity)
+               /* ResumeListDialog.show(
                     manager = this.parentFragmentManager,
-                )
+                )*/
             }
         }
     }
