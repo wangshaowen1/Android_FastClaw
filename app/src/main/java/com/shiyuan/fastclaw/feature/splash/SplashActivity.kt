@@ -38,25 +38,21 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
     }
 
     private fun initView() {
-        // deep link 处理：若 App 已启动且被外部唤起，直接跳转
+      /*  // deep link 处理：若 App 已启动且被外部唤起，直接跳转
         if (!ActivityUtils.getActivityList().isEmpty()) {
             intent.data?.takeIf { !TextUtils.isEmpty(it.host) }?.toString()?.also {
                 AppRouter.jump(it)
                 finish()
                 return
             }
-        }
+        }*/
     }
 
     private fun initObservers() {
         mRealVM.launchDestination.observe(this) { destination ->
-            when (destination) {
-                is SplashViewModel.LaunchDestination.Login -> PhoneLoginActivity.start(false, false)
-                is SplashViewModel.LaunchDestination.Home -> MainActivity.start(
-                    this, destination.deepLink.orEmpty()
-                )
-                null -> { /* ignore */ }
-            }
+            // 不管登没登录，都跳转到首页
+            val deepLink = (destination as? SplashViewModel.LaunchDestination.Home)?.deepLink
+            MainActivity.start(this, deepLink.orEmpty())
             finish()
         }
     }

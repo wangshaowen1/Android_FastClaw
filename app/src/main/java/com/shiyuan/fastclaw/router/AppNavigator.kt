@@ -46,7 +46,8 @@ object AppNavigator {
         showToast: Boolean,
         isFullScreen: Boolean = false
     ) {
-        if (Constant.SDKConfiguration.IS_SHOW_WE_CHAT.not()) {
+        PhoneLoginActivity.start(showToast = showToast, checkedPolicy = false)
+/*        if (Constant.SDKConfiguration.IS_SHOW_WE_CHAT.not()) {
             if (isFullScreen) {
                 PhoneLoginActivity.start(showToast = showToast, checkedPolicy = false)
             } else if (topActivity != null && topActivity is AppCompatActivity) {
@@ -69,6 +70,6 @@ object AppNavigator {
                     manager = this.supportFragmentManager
                 )
             }
-        }
+        }*/
     }
 }

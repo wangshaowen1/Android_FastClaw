@@ -37,8 +37,18 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
 
     override fun onPrepareView() {
         super.onPrepareView()
+        initView()
         //数据更新
         dataUpdate()
+    }
+
+    private fun initView() {
+        mRealVM.isLogin.observe(this,{
+            binding.rlPoints.visibility = if (it) View.VISIBLE else View.GONE
+            if(!it){
+                binding.tvPoints.text = "-"
+            }
+        })
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -78,6 +88,17 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {
+            R.id.tv_name -> {
+                AppNavigator.checkLoginIntercepted(false)
+            }
+            R.id.rl_xt -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    MyShrimpChipsActivity.start(requireActivity())
+                }
+            }
+            R.id.iv_setting -> {
+                SettingsActivity.start(requireActivity())
+            }
    /*         R.id.siv_avatar,
             R.id.tv_login,
             R.id.tv_name -> {

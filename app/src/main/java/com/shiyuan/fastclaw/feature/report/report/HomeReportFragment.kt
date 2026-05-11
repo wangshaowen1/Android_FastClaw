@@ -6,6 +6,7 @@ import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.databinding.FragmentHomeReportBinding
+import com.shiyuan.fastclaw.router.AppNavigator
 import com.zhpan.indicator.enums.IndicatorStyle
 
 /**
@@ -56,10 +57,16 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
 
     }
 
-
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {
+            R.id.tv_generate -> {
+                if(AppNavigator.checkLoginIntercepted(true)){
+                    //跳转
+
+                }
+            }
+
             /*         R.id.siv_avatar,
                      R.id.tv_login,
                      R.id.tv_name -> {

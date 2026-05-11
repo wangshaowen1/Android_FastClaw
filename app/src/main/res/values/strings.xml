@@ -41,6 +41,7 @@
     <string name="app_suggestion_and_feedback">建议反馈</string>
     <string name="app_cancel_the_account">注销账号</string>
     <string name="app_log_out">退出登录</string>
+    <string name="app_log">退出登录</string>
     <string name="text_save">保存</string>
 
     <string name="tvPrivateService" tools:ignore="ExtraTranslation">《隐私政策》</string>

@@ -34,7 +34,6 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/siv_avatar"
-                    loadUri="@{layout.userInfo[`avatar`]}"
                     placeHolder="@{@drawable/ic_default_avatar}"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="44dp"

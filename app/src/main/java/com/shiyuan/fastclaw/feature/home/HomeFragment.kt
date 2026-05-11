@@ -35,6 +35,7 @@ import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
+import com.shiyuan.fastclaw.router.AppNavigator
 import com.umeng.socialize.bean.SHARE_MEDIA
 import com.zhpan.bannerview.BaseBannerAdapter
 import com.zhpan.bannerview.BaseViewHolder
@@ -79,12 +80,10 @@ class HomeFragment :
         super.onClick(view, data)
         when (view.id) {
             R.id.btnUploadResume -> {
-                /*val mainActivity = activity as? MainActivity
-                mainActivity?.switchToTab(1)*/
-                GenerateReportActivity.start(activity)
-               /* ResumeListDialog.show(
-                    manager = this.parentFragmentManager,
-                )*/
+               if(AppNavigator.checkLoginIntercepted(true)){
+                   //跳转
+
+               }
             }
         }
     }

@@ -12,7 +12,6 @@ import com.shiyuan.fastclaw.core.User
 class SplashViewModel : AppRepositoryViewModel<AppRepository>() {
 
     sealed class LaunchDestination {
-        data object Login : LaunchDestination()
         data class Home(val deepLink: String?) : LaunchDestination()
     }
 
@@ -35,11 +34,7 @@ class SplashViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun proceedToNext() {
-        launchDestination.value = if (User.get().isVisitor) {
-            LaunchDestination.Home(null)
-        } else {
-            LaunchDestination.Login
-
-        }
+        // 不管登没登录，都跳转到首页
+        launchDestination.value = LaunchDestination.Home(null)
     }
 }

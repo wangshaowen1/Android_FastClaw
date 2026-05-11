@@ -38,7 +38,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
 
 
     //是否登录
-    val isLogin by lazy { ObservableBoolean(false) }
+    val isLogin by lazy { MutableLiveData(false) }
 
     //用户资料Map
     val userInfo by lazy { ObservableField<Map<String, String?>>() }
@@ -64,7 +64,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     fun refreshUserInfo() {
         User.get().let { user ->
-            isLogin.set(!user.isVisitor)
+            isLogin.postValue(!user.isVisitor)
             if (user.isVisitor) {
                 notLoggedIn()
                 return
@@ -87,7 +87,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     private fun getUserHomeInfo() {
         User.get().let { user ->
-            isLogin.set(!user.isVisitor)
+            isLogin.postValue(!user.isVisitor)
             if (user.isVisitor) {
                 notLoggedIn()
                 return
@@ -111,7 +111,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         userInfo.set(
             mapOf(
                 "id" to "",
-                "nickname" to "登录注册》",
+                "nickname" to "点击登录",
                 "avatar" to "",
             )
         )

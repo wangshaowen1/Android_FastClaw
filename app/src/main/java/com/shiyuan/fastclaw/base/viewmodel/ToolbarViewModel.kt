@@ -17,7 +17,7 @@ class ToolbarViewModel(
     var navigationDrawable: Drawable? = R.drawable.icon_back_left.getDrawable(),
     var navigationAction: (() -> Unit)? = null,
     var title: String? = "",
-    var navigationColor: Int = R.color.text_color_1_dark.getResColor(),
+    var navigationColor: Int = R.color.color_1a1a1a.getResColor(),
     var titleColor: Int = R.color.color_1a1a1a.getResColor(),
     var paddingTop: Int = ViewUtils.getStatusBarHeight(App.instance),
     var menuText: String? = "",

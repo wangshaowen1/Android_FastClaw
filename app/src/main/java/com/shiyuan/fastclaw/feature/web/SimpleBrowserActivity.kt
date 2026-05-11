@@ -72,6 +72,7 @@ import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.ext.statusBarHeight
 import com.nhsd.basic.utils.Logger
 import com.nhsd.mattise.Matisse
+import com.shiyuan.fastclaw.core.databinding.backgroundColor
 import com.tencent.bugly.crashreport.CrashReport
 import com.umeng.analytics.MobclickAgent
 import org.json.JSONObject
@@ -368,7 +369,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
         binding.progressLayout.paddingStatusBar()
 
         if (mRealVM.darkStyle) {
-            binding.root.setBackgroundColor(resources.getColor(R.color.bg_color_1_dark))
+            binding.root.setBackgroundColor(resources.getColor(R.color.color_F5F8FC))
         }
 
         binding.circularButton.setOnClickListener {
@@ -398,8 +399,8 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
             }
 
 
-            setBackgroundColor(0)
-            background?.alpha = 0
+            setBackgroundColor(resources.getColor(R.color.color_F5F8FC))
+           // background?.alpha = 0
             setDownloadListener { url, _, _, _, _ ->
                 requestRead2WritePermissions(
                     R.string.sdcard_permission_description
@@ -784,14 +785,14 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
         if (mRealVM.darkStyle) {
             binding.progressLayout.isVisible = false
             ImmersionBar.with(this)
-                .statusBarDarkFont(false)
-                .navigationBarColor(R.color.bg_color_1_dark)
+                .statusBarDarkFont(true)
+                .navigationBarColor(R.color.color_F5F8FC)
                 .init()
         } else {
             if (!TextUtils.isEmpty(mRealVM.title)) {
                 ImmersionBar.with(this)
                     .statusBarDarkFont(true)
-                    .navigationBarColor(R.color.white)
+                    .navigationBarColor(R.color.color_F5F8FC)
                     .navigationBarDarkIcon(true)
                     .init()
             } else {

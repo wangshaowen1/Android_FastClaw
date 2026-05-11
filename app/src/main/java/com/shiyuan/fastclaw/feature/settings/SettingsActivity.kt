@@ -65,6 +65,17 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 }.show(supportFragmentManager)
             }
         }*/
+        initView()
+
+    }
+
+    private fun initView() {
+         if( User.get().isVisitor){
+             binding.tvLg.text = resources.getString(R.string.app_log_out)
+            // binding.
+         }else{
+             binding.tvLg.text = resources.getString(R.string.app_log)
+         }
     }
 
     override fun setTranslucentStatus() {
@@ -77,14 +88,35 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
 
     override fun onRestart() {
         super.onRestart()
-        if (User.get().isVisitor) {
+      /*  if (User.get().isVisitor) {
             finish()
-        }
+        }*/
     }
 
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
+            R.id.rl1 -> {
+                //用户协议
+                SimpleBrowserActivity.launch(
+                    this,
+                    Config.get().serviceUrl,
+                    getString(R.string.app_user_agreement)
+                )
+            }
+            R.id.rl2 -> {
+                //隐私政策
+                SimpleBrowserActivity.launch(
+                    this,
+                    Config.get().privacyUrl,
+                    getString(R.string.app_privacy_policy),
+                )
+
+            }
+            R.id.rl3 -> {
+
+
+            }
    /*         R.id.sll_personal_information -> {
                 if (AppNavigator.checkLoginIntercepted(true)) {
                     return
