@@ -41,7 +41,7 @@
     <string name="app_suggestion_and_feedback">建议反馈</string>
     <string name="app_cancel_the_account">注销账号</string>
     <string name="app_log_out">退出登录</string>
-    <string name="app_log">退出登录</string>
+    <string name="app_log">登录</string>
     <string name="text_save">保存</string>
 
     <string name="tvPrivateService" tools:ignore="ExtraTranslation">《隐私政策》</string>
@@ -616,7 +616,9 @@
     <string name="report_home_name2">李*枫</string>
     <string name="report_home_name3">潘*丹</string>
     <string name="report_case">报告四大模块样例预览</string>
-
+    <string name="about">关于快龙虾</string>
+    <string name="business_license">营业执照</string>
+    <string name="record_filing_information">备案信息</string>
 
 
 </resources>

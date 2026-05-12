@@ -2,6 +2,8 @@ package com.shiyuan.fastclaw.feature.settings
 
 import android.graphics.Color
 import androidx.databinding.ObservableField
+import com.blankj.utilcode.util.AppUtils
+import com.nhsd.basic.Session
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
@@ -13,6 +15,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.response
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
+import com.shiyuan.fastclaw.kit.SignUtils
 
 /**
  * *****************************************
@@ -30,21 +33,34 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
-    val debugIp = ObservableField<String>()
+    val mToolbarVM2 = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = R.string.about.getResString(),
+        background = Color.TRANSPARENT,
+    )
 
-    var phone = ObservableField(User.get().phoneNum)
+    val appVersion: String by lazy { "快龙虾版本："+ Session.getInstance().versionName }
 
     val beiAn by lazy { Config.get().appConfig.beianNo }
+
+
+
+    override fun onCreate() {
+        super.onCreate()
+
+    }
 
     /**
      * 退出登录
      */
     fun logoutApp() {
-        launch { response(mRepo.api.logoutApp(UserTokenBody())) {} }
+        SignUtils.signOut()
+        AppUtils.relaunchApp()
+      /*  launch { response(mRepo.api.logoutApp(UserTokenBody())) {
+
+        } }*/
     }
 
     override fun onResume() {
-        super.onResume()
-        phone.set(User.get().phoneNum)
     }
 }

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.settings.SettingsViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:windowBackground"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:toolbar="@{layout.mToolbarVM2}" />
+
+            <LinearLayout
+                android:paddingHorizontal="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                
+                <ImageView
+                    android:layout_marginTop="42.5dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/img_splash_logo"
+                    android:layout_width="54dp"
+                    android:layout_height="51dp">
+                </ImageView>
+
+
+                <TextView
+                    android:text="@{layout.appVersion}"
+                    android:id="@+id/tv_name"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </TextView>
+                
+
+               <LinearLayout
+                   android:layout_marginTop="40dp"
+                   android:background="@drawable/bg_ffffff_r12"
+                   android:orientation="vertical"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+                   <RelativeLayout
+                       android:id="@+id/business_license"
+                       android:paddingVertical="18dp"
+                       android:paddingHorizontal="16dp"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       tools:ignore="UselessParent">
+
+                       <TextView
+                           android:text="@string/business_license"
+                           android:textColor="@color/color_1a1a1a"
+                           android:textSize="16sp"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content">
+                       </TextView>
+
+
+                       <ImageView
+                           android:layout_width="16dp"
+                           android:layout_height="16dp"
+                           android:layout_alignParentEnd="true"
+                           android:layout_centerVertical="true"
+                           android:importantForAccessibility="no"
+                           android:src="@mipmap/ic_arrow_right" />
+                   </RelativeLayout>
+
+                   <View
+                       android:background="@color/color_10_000000"
+                       android:layout_width="match_parent"
+                       android:layout_height="0.5dp"/>
+
+                   <RelativeLayout
+                       android:id="@+id/record_filing_information"
+                       android:paddingVertical="18dp"
+                       android:paddingHorizontal="16dp"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       tools:ignore="UselessParent">
+
+                       <TextView
+                           android:text="@string/record_filing_information"
+                           android:textColor="@color/color_1a1a1a"
+                           android:textSize="16sp"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content">
+                       </TextView>
+
+
+                       <ImageView
+                           android:layout_width="16dp"
+                           android:layout_height="16dp"
+                           android:layout_alignParentEnd="true"
+                           android:layout_centerVertical="true"
+                           android:importantForAccessibility="no"
+                           android:src="@mipmap/ic_arrow_right" />
+                   </RelativeLayout>
+
+               </LinearLayout>
+
+
+                <View
+                    android:paddingHorizontal="16dp"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp">
+                </View>
+
+                <TextView
+                    android:text="@{layout.beiAn}"
+                    android:layout_marginBottom="12dp"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="@color/color_999999"
+                    android:textSize="10sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                </TextView>
+
+
+
+            </LinearLayout>
+
+    </LinearLayout>
+</layout>

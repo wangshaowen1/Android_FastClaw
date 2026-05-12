@@ -189,6 +189,10 @@
         <activity
             android:name=".feature.settings.SettingsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.settings.AboutActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".feature.report.MyHistoryReportActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />

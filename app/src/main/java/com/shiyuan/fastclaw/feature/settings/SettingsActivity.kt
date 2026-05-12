@@ -71,10 +71,10 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
 
     private fun initView() {
          if( User.get().isVisitor){
-             binding.tvLg.text = resources.getString(R.string.app_log_out)
-            // binding.
-         }else{
              binding.tvLg.text = resources.getString(R.string.app_log)
+         }else{
+             binding.tvLg.text = resources.getString(R.string.app_log_out)
+
          }
     }
 
@@ -114,115 +114,18 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
 
             }
             R.id.rl3 -> {
-
-
+                AboutActivity.start(this)
             }
-   /*         R.id.sll_personal_information -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
-                //个人资料
-            }
-
-            R.id.sll_about_us -> {
-                //关于我们
-                AboutUsActivity.start(this)
-            }
-
-            R.id.sll_contact_customer_service -> {
-                //联系客服
-                openTheCustomerServiceChat()
-            }
-
-            R.id.sll_suggestion_and_feedback -> {
-                //建议反馈
-                FeedbackActivity.start(this)
-            }
-
-            R.id.sll_cancel_the_account -> {
-                //注销账号
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
-                LogoffActivity.start(this)
-            }
-
-            R.id.stv_log_out -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
-                showConfirmPrompt(tip = R.string.tip_sign_out_confirm.getResString()) {
+            R.id.rl4 -> {
+                if( User.get().isVisitor){
+                    // 登录
+                    AppNavigator.checkLoginIntercepted(true)
+                }else{
+                    //退出登录
                     mRealVM.logoutApp()
-                    getString(R.string.toast_sign_out_success).showToast()
-                    SignUtils.signOut()
-                    finish()
+
                 }
             }
-
-            R.id.sll_phone -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
-                    return
-                }
-                if (User.get().phoneNum.isNullOrEmpty()) {
-                    PhoneLoginDialogActivity.start(this, true)
-                } else {
-                    PhoneShowActivity.start(this)
-                }
-            }
-
-            R.id.ll_user_agreement -> {
-                //用户协议
-                SimpleBrowserActivity.launch(
-                    this,
-                    Config.get().serviceUrl,
-                    getString(R.string.app_user_agreement)
-                )
-            }
-
-            R.id.ll_privacy_policy -> {
-                //隐私政策
-                SimpleBrowserActivity.launch(
-                    this,
-                    Config.get().privacyUrl,
-                    getString(R.string.app_privacy_policy)
-                )
-            }
-
-            R.id.ll_information_collection -> {
-                //个人信息收集清单
-                SimpleBrowserActivity.launch(
-                    this,
-                    Config.get().appConfig.personalInfoCollectionListUrl,
-                    getString(R.string.app_information_collection)
-                )
-            }
-
-            R.id.sll_filing_number -> {
-                //备案号
-                SimpleBrowserActivity.launch(
-                    this,
-                    Config.get().appConfig.beianNoJumpUrl,
-                    getString(R.string.app_filing_number)
-                )
-            }
-
-            R.id.ll_shared_list -> {
-                //第三方信息共享清单
-                SimpleBrowserActivity.launch(
-                    this,
-                    Config.get().appConfig.thirdPartyInfoShareListUrl,
-                    getString(R.string.app_shared_list)
-                )
-            }
-
-            R.id.ll_algorithm_formula -> {
-                //算法公示
-                SimpleBrowserActivity.launch(
-                    this,
-                    Config.get().algorithmUrl,
-                            getString(R.string.app_algorithm_formula)
-                )
-            }*/
         }
     }
 }
