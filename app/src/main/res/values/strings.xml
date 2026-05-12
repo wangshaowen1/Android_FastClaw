@@ -421,6 +421,7 @@
     <string name="image_validation_failed">图片校验失败</string>
     <string name="upload_success">上传成功</string>
     <string name="upload_fail">上传失败</string>
+    <string name="file_copy_failed">文件读取失败</string>
     <string name="redraw_cover_confirm">本集视频重绘后将覆盖原视频,确定重绘吗？</string>
     <string name="download">下载</string>
     <string name="already_last_episode">已经是最后一集了</string>

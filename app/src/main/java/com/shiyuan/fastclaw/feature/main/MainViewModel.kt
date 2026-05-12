@@ -50,9 +50,9 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
     override fun onResume() {
         super.onResume()
         isLogin.set(User.get().isLogged)
-        if (isLogin.get()) {
+       /* if (isLogin.get()) {
             Global.refreshBalance()
-        }
+        }*/
     }
 
     /**

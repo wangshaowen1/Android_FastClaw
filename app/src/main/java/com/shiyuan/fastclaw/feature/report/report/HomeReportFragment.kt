@@ -1,14 +1,15 @@
 package com.shiyuan.fastclaw.feature.report.report
 
-import android.view.View
-import android.graphics.Color
 import android.graphics.Typeface
-import com.shiyuan.fastclaw.R
+import android.view.View
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
+import com.shiyuan.fastclaw.App.Companion.instance
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.FragmentHomeReportBinding
 import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
+import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.zhpan.indicator.enums.IndicatorStyle
 
@@ -33,10 +34,16 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             it?.let {
                 if(it.hasLatestResume){
                     //显示简历
-                    ResumeListDialog.show( manager = this.parentFragmentManager,)
+                    ResumeListDialog.show( manager = this.parentFragmentManager)
                 }else{
-                    //显示上传简历
-                    UploadResumeDialog.show(  manager = this.parentFragmentManager,)
+                    //上传简历
+                    UploadResumeDialog.show(manager = this.parentFragmentManager) { fileInfo ->
+                        if (fileInfo != null) {
+                            mRealVM.submitResume(fileInfo.uri) {
+                                GenerateReportActivity.start(requireActivity())
+                            }
+                        }
+                    }
                 }
             }
         }

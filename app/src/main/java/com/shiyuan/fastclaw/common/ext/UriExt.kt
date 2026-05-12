@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.common.ext
 
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import com.shiyuan.fastclaw.App
@@ -95,4 +96,54 @@ fun Uri.getTempFilePathFromUri(context: Context?): String? {
         e.printStackTrace()
     }
     return null
+}
+
+/**
+ * 将任意 URI 转换为 OSS 上传所需的文件路径
+ * 根据 Android 版本自动适配
+ */
+fun Uri.toOssFilePath(context: Context): String? {
+    return when {
+        // 网络路径（http/https）- 直接使用
+        scheme == "http" || scheme == "https" -> this.toString()
+
+        // content:// URI - 根据版本处理
+        scheme == "content" -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                // Android 4.4+ 使用 SAF 复制到临时文件
+                getTempFilePathFromUri(context)
+            } else {
+                // Android 4.4 以下尝试获取真实路径
+                RealPathUtil.getRealPath(context, this)
+            }
+        }
+
+        // file:// URI - 提取路径
+        scheme == "file" -> path
+
+        // 已经是绝对路径
+        scheme == null && path != null -> path
+
+        else -> null
+    }
+}
+
+/**
+ * 判断是否为网络路径
+ */
+fun Uri.isNetworkPath(): Boolean {
+    return scheme == "http" || scheme == "https"
+}
+
+/**
+ * 清理临时文件（仅清理本地文件）
+ */
+fun String?.cleanupTempFile() {
+    if (this == null) return
+    if (Uri.parse(this).isNetworkPath()) return
+    try {
+        File(this).delete()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
