@@ -125,6 +125,8 @@
                             android:padding="4dp">
 
                             <LinearLayout
+                                singleClick="@{layout.clickHandler::onClick}"
+                                android:id="@+id/ll_tab1"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
@@ -133,14 +135,16 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:id="@+id/tv_target_position"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/target_position"
                                     android:textColor="@color/white"
                                     android:textSize="14sp"
-                                    android:textStyle="bold"></TextView>
+                                    android:textStyle="bold"/>
 
                                 <TextView
+                                    android:id="@+id/tv_up_jd"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="2dp"
@@ -153,15 +157,33 @@
 
 
                             <LinearLayout
+                                android:orientation="vertical"
+                                singleClick="@{layout.clickHandler::onClick}"
+                                android:id="@+id/ll_tab2"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center">
 
                                 <TextView
+                                    android:textColor="@color/color_999999"
+                                    android:textSize="14sp"
+                                    android:id="@+id/tv_no_target_position"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/no_target_position"></TextView>
+
+
+                                <TextView
+                                    android:id="@+id/tv_no_jd"
+                                    android:visibility="gone"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="@string/no_JD"
+                                    android:textColor="@color/white"
+                                    android:textSize="10sp"></TextView>
+
                             </LinearLayout>
 
 
@@ -210,13 +232,15 @@
                                 android:layout_height="wrap_content">
 
                                 <ImageView
+                                    android:id="@+id/iv_item1"
                                     android:layout_gravity="center_vertical"
-                                    android:src="@mipmap/ic_background_check"
+                                    android:src="@drawable/ic_background_check"
                                     android:layout_width="16dp"
                                     android:layout_height="16dp">
                                 </ImageView>
 
                                 <TextView
+                                    android:id="@+id/tv_item1_1"
                                     android:textStyle="bold"
                                     android:textSize="14sp"
                                     android:textColor="@color/color_1a1a1a"
@@ -229,6 +253,9 @@
                             </LinearLayout>
 
                             <TextView
+                                android:textSize="12sp"
+                                android:textColor="@color/color_666666"
+                                android:id="@+id/tv_item1_2"
                                 android:layout_marginTop="8dp"
                                 android:text="@string/report_home_tip3"
                                 android:layout_width="wrap_content"
@@ -259,18 +286,20 @@
                                 android:layout_height="wrap_content">
 
                                 <ImageView
+                                    android:id="@+id/iv_item2"
                                     android:layout_gravity="center_vertical"
-                                    android:src="@mipmap/ic_background_check"
+                                    android:src="@drawable/ic_job"
                                     android:layout_width="16dp"
                                     android:layout_height="16dp">
                                 </ImageView>
 
                                 <TextView
+                                    android:id="@+id/tv_item2_1"
                                     android:textStyle="bold"
                                     android:textSize="14sp"
                                     android:textColor="@color/color_1a1a1a"
                                     android:layout_marginLeft="4dp"
-                                    android:text="@string/company_background_check"
+                                    android:text="@string/job_matching_analysis"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content">
                                 </TextView>
@@ -278,8 +307,11 @@
                             </LinearLayout>
 
                             <TextView
+                                android:id="@+id/tv_item2_2"
+                                android:textSize="12sp"
+                                android:textColor="@color/color_666666"
                                 android:layout_marginTop="8dp"
-                                android:text="@string/report_home_tip3"
+                                android:text="@string/job_home_tip1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
                             </TextView>
@@ -312,7 +344,7 @@
 
                                 <ImageView
                                     android:layout_gravity="center_vertical"
-                                    android:src="@mipmap/ic_background_check"
+                                    android:src="@drawable/ic_nterview"
                                     android:layout_width="16dp"
                                     android:layout_height="16dp">
                                 </ImageView>
@@ -322,7 +354,7 @@
                                     android:textSize="14sp"
                                     android:textColor="@color/color_1a1a1a"
                                     android:layout_marginLeft="4dp"
-                                    android:text="@string/company_background_check"
+                                    android:text="@string/nterview_question_bank"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content">
                                 </TextView>
@@ -330,8 +362,10 @@
                             </LinearLayout>
 
                             <TextView
+                                android:textSize="12sp"
+                                android:textColor="@color/color_666666"
                                 android:layout_marginTop="8dp"
-                                android:text="@string/report_home_tip3"
+                                android:text="@string/nterview_home_tip1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
                             </TextView>
@@ -361,7 +395,7 @@
 
                                 <ImageView
                                     android:layout_gravity="center_vertical"
-                                    android:src="@mipmap/ic_background_check"
+                                    android:src="@drawable/ic_salary"
                                     android:layout_width="16dp"
                                     android:layout_height="16dp">
                                 </ImageView>
@@ -371,7 +405,7 @@
                                     android:textSize="14sp"
                                     android:textColor="@color/color_1a1a1a"
                                     android:layout_marginLeft="4dp"
-                                    android:text="@string/company_background_check"
+                                    android:text="@string/salary_prediction"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content">
                                 </TextView>
@@ -379,8 +413,10 @@
                             </LinearLayout>
 
                             <TextView
+                                android:textSize="12sp"
+                                android:textColor="@color/color_666666"
                                 android:layout_marginTop="8dp"
-                                android:text="@string/report_home_tip3"
+                                android:text="@string/salary_home_tip1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content">
                             </TextView>
@@ -458,6 +494,7 @@
                         </LinearLayout>
 
                         <View
+                            android:id="@+id/v_line"
                             android:layout_marginTop="16dp"
                             android:background="@color/color_10_000000"
                             android:layout_width="match_parent"
@@ -465,6 +502,7 @@
                         </View>
 
                         <LinearLayout
+                            android:id="@+id/ll_jd"
                             android:layout_marginTop="16dp"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
@@ -529,203 +567,191 @@
                     </TextView>
 
                     <LinearLayout
-                        android:padding="16dp"
-                        android:background="@drawable/bg_ffffff_r12"
-                        android:layout_marginTop="12dp"
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_ffffff_r12"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
                         <LinearLayout
-                            android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
                                 <ImageView
-                                    android:layout_gravity="center_vertical"
                                     android:id="@+id/iv_avatar"
-                                    android:src="@mipmap/ic_avatar2"
                                     android:layout_width="32dp"
-                                    android:layout_height="32dp">
-                                </ImageView>
+                                    android:layout_height="32dp"
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@drawable/ic_avatar2"></ImageView>
 
                                 <LinearLayout
-                                    android:layout_marginLeft="8dp"
-                                    android:orientation="vertical"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="8dp"
+                                    android:orientation="vertical">
 
                                     <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
                                         android:layout_toRightOf="@+id/iv_avatar"
-                                        android:textStyle="bold"
+                                        android:text="@string/report_home_name1"
                                         android:textColor="@color/color_1a1a1a"
                                         android:textSize="14sp"
-                                        android:text="@string/report_home_name1"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content">
-                                    </TextView>
+                                        android:textStyle="bold"></TextView>
 
                                     <TextView
-                                        android:layout_marginTop="6dp"
-                                        android:layout_alignBottom="@id/iv_avatar"
-                                        android:layout_toEndOf="@id/iv_avatar"
-                                        android:textColor="@color/color_8b939b"
-                                        android:textSize="12sp"
-                                        android:text="@string/report_home_name1_tip"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content">
-                                    </TextView>
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignBottom="@id/iv_avatar"
+                                        android:layout_marginTop="6dp"
+                                        android:layout_toEndOf="@id/iv_avatar"
+                                        android:text="@string/report_home_name1_tip"
+                                        android:textColor="@color/color_8b939b"
+                                        android:textSize="12sp"></TextView>
 
                                 </LinearLayout>
                             </LinearLayout>
 
                             <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
                                 android:layout_toRightOf="@+id/iv_avatar"
-                                android:textColor="@color/color_1a1a1a"
-                                android:textSize="13sp"
                                 android:text="@string/report_home_name1_tip1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-                            </TextView>
+                                android:textColor="@color/color_1a1a1a"
+                                android:textSize="13sp"/>
 
                         </LinearLayout>
 
 
                         <View
-                            android:layout_marginTop="16dp"
-                            android:background="@color/color_10_000000"
                             android:layout_width="match_parent"
-                            android:layout_height="0.5dp">
-                        </View>
+                            android:layout_height="0.5dp"
+                            android:layout_marginVertical="16dp"
+                            android:background="@color/color_10_000000"/>
 
                         <LinearLayout
-                            android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
                                 <ImageView
-                                    android:layout_gravity="center_vertical"
-                                    android:src="@mipmap/ic_avatar2"
                                     android:layout_width="32dp"
-                                    android:layout_height="32dp">
-                                </ImageView>
+                                    android:layout_height="32dp"
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@drawable/ic_avatar3"></ImageView>
 
                                 <LinearLayout
-                                    android:layout_marginLeft="8dp"
-                                    android:orientation="vertical"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="8dp"
+                                    android:orientation="vertical">
 
                                     <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
                                         android:layout_toRightOf="@+id/iv_avatar"
-                                        android:textStyle="bold"
+                                        android:text="@string/report_home_name2"
                                         android:textColor="@color/color_1a1a1a"
                                         android:textSize="14sp"
-                                        android:text="@string/report_home_name1"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content">
-                                    </TextView>
+                                        android:textStyle="bold"></TextView>
 
                                     <TextView
-                                        android:layout_marginTop="6dp"
-                                        android:layout_alignBottom="@id/iv_avatar"
-                                        android:layout_toEndOf="@id/iv_avatar"
-                                        android:textColor="@color/color_8b939b"
-                                        android:textSize="12sp"
-                                        android:text="@string/report_home_name1_tip"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content">
-                                    </TextView>
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignBottom="@id/iv_avatar"
+                                        android:layout_marginTop="6dp"
+                                        android:layout_toEndOf="@id/iv_avatar"
+                                        android:text="@string/report_home_name2_tip"
+                                        android:textColor="@color/color_8b939b"
+                                        android:textSize="12sp"></TextView>
 
                                 </LinearLayout>
                             </LinearLayout>
 
                             <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
                                 android:layout_toRightOf="@+id/iv_avatar"
+                                android:text="@string/report_home_name2_tip1"
                                 android:textColor="@color/color_1a1a1a"
-                                android:textSize="13sp"
-                                android:text="@string/report_home_name1_tip1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-                            </TextView>
+                                android:textSize="13sp"></TextView>
 
                         </LinearLayout>
 
                         <View
-                            android:layout_marginTop="16dp"
-                            android:background="@color/color_10_000000"
                             android:layout_width="match_parent"
-                            android:layout_height="0.5dp">
-                        </View>
+                            android:layout_height="0.5dp"
+                            android:layout_marginVertical="16dp"
+                            android:background="@color/color_10_000000"/>
 
                         <LinearLayout
-                            android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
                             <LinearLayout
-                                android:orientation="horizontal"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
                                 <ImageView
-                                    android:layout_gravity="center_vertical"
-                                    android:src="@mipmap/ic_avatar2"
                                     android:layout_width="32dp"
-                                    android:layout_height="32dp">
-                                </ImageView>
+                                    android:layout_height="32dp"
+                                    android:layout_gravity="center_vertical"
+                                    android:src="@drawable/ic_avatar4"/>
 
                                 <LinearLayout
-                                    android:layout_marginLeft="8dp"
-                                    android:orientation="vertical"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="8dp"
+                                    android:orientation="vertical">
 
                                     <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
                                         android:layout_toRightOf="@+id/iv_avatar"
-                                        android:textStyle="bold"
+                                        android:text="@string/report_home_name3"
                                         android:textColor="@color/color_1a1a1a"
                                         android:textSize="14sp"
-                                        android:text="@string/report_home_name1"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content">
-                                    </TextView>
+                                        android:textStyle="bold"/>
 
                                     <TextView
-                                        android:layout_marginTop="6dp"
-                                        android:layout_alignBottom="@id/iv_avatar"
-                                        android:layout_toEndOf="@id/iv_avatar"
-                                        android:textColor="@color/color_8b939b"
-                                        android:textSize="12sp"
-                                        android:text="@string/report_home_name1_tip"
                                         android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content">
-                                    </TextView>
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignBottom="@id/iv_avatar"
+                                        android:layout_marginTop="6dp"
+                                        android:layout_toEndOf="@id/iv_avatar"
+                                        android:text="@string/report_home_name3_tip"
+                                        android:textColor="@color/color_8b939b"
+                                        android:textSize="12sp"/>
 
                                 </LinearLayout>
                             </LinearLayout>
 
                             <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
                                 android:layout_toRightOf="@+id/iv_avatar"
+                                android:text="@string/report_home_name3_tip1"
                                 android:textColor="@color/color_1a1a1a"
-                                android:textSize="13sp"
-                                android:text="@string/report_home_name1_tip1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content">
-                            </TextView>
+                                android:textSize="13sp"/>
 
                         </LinearLayout>
-
 
 
                     </LinearLayout>
@@ -782,7 +808,7 @@
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-           android:layout_marginBottom="20dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/bg_upload_btn"
             android:gravity="center"
             android:text="@string/production_report"

@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.report.report
 
 import androidx.databinding.ObservableField
+import androidx.lifecycle.MutableLiveData
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
@@ -11,6 +12,8 @@ import com.shiyuan.fastclaw.core.AppRepository
 class HomeReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val bannerList = ObservableField<List<Int>>()
+
+    val selectIndex = MutableLiveData<Int>(0)
 
     override fun onCreate() {
         super.onCreate()

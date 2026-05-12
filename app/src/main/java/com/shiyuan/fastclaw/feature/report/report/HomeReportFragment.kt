@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.report.report
 
 import android.view.View
 import android.graphics.Color
+import android.graphics.Typeface
 import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
@@ -15,18 +16,78 @@ import com.zhpan.indicator.enums.IndicatorStyle
 class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, HomeReportViewModel>() {
 
 
-    private var userId: String? = null
-
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
+        dataMonitoring()
         dataUpdate()
     }
 
+    private fun dataMonitoring() {
+        mRealVM.selectIndex.observe(this) {
+            setView(it)
+        }
+    }
+
+    fun setView(index: Int) {
+        if(index == 0){
+            binding.llTab1.background =  resources.getDrawable(R.drawable.bg_0099ff_r100)
+            binding.tvTargetPosition.setTextColor(resources.getColor(R.color.white))
+            binding.tvTargetPosition.setTypeface(binding.tvNoTargetPosition.typeface, Typeface.BOLD)
+            binding.tvUpJd.visibility = View.VISIBLE
+            binding.ivItem1.setImageResource(R.drawable.ic_background_check)
+            binding.tvItem11.text = resources.getString(R.string.company_background_check)
+            binding.tvItem12.text = resources.getString(R.string.report_home_tip3)
+
+
+
+
+            binding.llTab2.background =  null
+            binding.tvNoTargetPosition.setTextColor(resources.getColor(R.color.color_999999))
+            binding.tvNoTargetPosition.typeface = Typeface.DEFAULT
+            binding.tvNoJd.visibility = View.GONE
+            binding.ivItem2.setImageResource(R.drawable.ic_job)
+            binding.tvItem21.text = resources.getString(R.string.job_matching_analysis)
+            binding.tvItem22.text = resources.getString(R.string.job_home_tip1)
+
+
+
+            binding.llJd.visibility = View.VISIBLE
+            binding.vLine.visibility = View.VISIBLE
+
+
+
+        }else{
+            binding.llTab1.background =  null
+            binding.tvTargetPosition.setTextColor(resources.getColor(R.color.color_999999))
+            binding.tvTargetPosition.typeface = Typeface.DEFAULT
+            binding.tvUpJd.visibility = View.GONE
+            binding.ivItem1.setImageResource(R.drawable.ic_skill)
+            binding.tvItem11.text = resources.getString(R.string.job_matching_analysis)
+            binding.tvItem12.text = resources.getString(R.string.job_home_tip1)
+
+
+            binding.llTab2.background =  resources.getDrawable(R.drawable.bg_0099ff_r100)
+            binding.tvNoTargetPosition.setTextColor(resources.getColor(R.color.white))
+            binding.tvNoTargetPosition.setTypeface(binding.tvNoTargetPosition.typeface, Typeface.BOLD)
+            binding.tvNoJd.visibility = View.VISIBLE
+            binding.ivItem2.setImageResource(R.drawable.ic_personal)
+            binding.tvItem21.text = resources.getString(R.string.personal_weaknesses)
+            binding.tvItem22.text = resources.getString(R.string.personal_home_tip1)
+
+
+            binding.llJd.visibility = View.GONE
+            binding.vLine.visibility = View.GONE
+
+        }
+    }
     private fun initView() {
         binding.bannerView.apply {
             setIndicatorGravity(com.zhpan.bannerview.constants.IndicatorGravity.START)
-            setIndicatorSliderColor(resources.getColor(R.color.color_F6F6F7),resources.getColor(R.color.color_0099FF))
+            setIndicatorSliderColor(
+                resources.getColor(R.color.color_F6F6F7),
+                resources.getColor(R.color.color_0099FF)
+            )
             setIndicatorStyle(IndicatorStyle.CIRCLE)
             setIndicatorSliderWidth(6.dp, 6.dp)
             setIndicatorHeight(6.dp)
@@ -61,52 +122,19 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
         super.onClick(view, data)
         when (view.id) {
             R.id.tv_generate -> {
-                if(AppNavigator.checkLoginIntercepted(true)){
+                if (AppNavigator.checkLoginIntercepted(true)) {
                     //跳转
 
                 }
             }
 
-            /*         R.id.siv_avatar,
-                     R.id.tv_login,
-                     R.id.tv_name -> {
-                         //个人资料
-                         AppNavigator.checkLoginIntercepted(false)
-                     }
+            R.id.ll_tab1 -> {
+                mRealVM.selectIndex.postValue(0)
+            }
 
-                     R.id.ll_qa -> {
-                         SimpleBrowserActivity.launch(activity, Config.get().appConfig.appHelpCenterUrl)
-                     }
-
-                     R.id.ll_settings -> {
-                         //设置
-                         if (AppNavigator.checkLoginIntercepted(false)) {
-                             return
-                         }
-                         SettingsActivity.start(requireActivity())
-                     }
-
-                     R.id.tv_id, R.id.iv_copy -> {
-                         //复制
-                         User.get().userUid?.let {
-                             ClipboardUtils.copyText(it)
-                             getString(R.string.copy_success).showToast()
-                         }
-                     }
-
-                     R.id.suggestions_feedback -> {
-                         if (AppNavigator.checkLoginIntercepted(false)) {
-                             return
-                         }
-                         //建议与反馈
-                         FeedbackActivity.start(topActivity)
-                     }
-
-                     R.id.btnMyBalance -> {
-                         if (AppNavigator.checkLoginIntercepted(false)) {
-                             return
-                         }
-                     }*/
+            R.id.ll_tab2 -> {
+                mRealVM.selectIndex.postValue(1)
+            }
         }
     }
 }
