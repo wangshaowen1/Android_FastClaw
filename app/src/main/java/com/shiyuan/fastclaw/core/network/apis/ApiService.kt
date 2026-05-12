@@ -4,6 +4,7 @@ import com.shiyuan.fastclaw.core.model.H5PayInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.BannerInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.OrderStatusInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.PaymentData
+import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.entity.SensitiveWordCheckData
 import com.shiyuan.fastclaw.core.network.apis.entity.WalletInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.WorkInfo
@@ -194,5 +195,8 @@ interface ApiService {
         @Part file: MultipartBody.Part,
         @Part("fileName") fileName: String
     ): ApiResponse<Any?>
+
+    @POST(ApiConstants.GET_RESUME_LATEST)
+    suspend fun queryLatestResume(): ApiResponse<ResumeData?>
 
 }

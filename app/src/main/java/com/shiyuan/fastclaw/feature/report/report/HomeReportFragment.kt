@@ -7,6 +7,8 @@ import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.databinding.FragmentHomeReportBinding
+import com.shiyuan.fastclaw.feature.report.ResumeListDialog
+import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.zhpan.indicator.enums.IndicatorStyle
 
@@ -27,6 +29,17 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
         mRealVM.selectIndex.observe(this) {
             setView(it)
         }
+        mRealVM.resumeData.observe(this) {
+            it?.let {
+                if(it.hasLatestResume){
+                    //显示简历
+                    ResumeListDialog.show( manager = this.parentFragmentManager,)
+                }else{
+                    //显示上传简历
+                    UploadResumeDialog.show(  manager = this.parentFragmentManager,)
+                }
+            }
+        }
     }
 
     fun setView(index: Int) {
@@ -39,9 +52,6 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.tvItem11.text = resources.getString(R.string.company_background_check)
             binding.tvItem12.text = resources.getString(R.string.report_home_tip3)
 
-
-
-
             binding.llTab2.background =  null
             binding.tvNoTargetPosition.setTextColor(resources.getColor(R.color.color_999999))
             binding.tvNoTargetPosition.typeface = Typeface.DEFAULT
@@ -50,13 +60,8 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.tvItem21.text = resources.getString(R.string.job_matching_analysis)
             binding.tvItem22.text = resources.getString(R.string.job_home_tip1)
 
-
-
             binding.llJd.visibility = View.VISIBLE
             binding.vLine.visibility = View.VISIBLE
-
-
-
         }else{
             binding.llTab1.background =  null
             binding.tvTargetPosition.setTextColor(resources.getColor(R.color.color_999999))
@@ -65,7 +70,6 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.ivItem1.setImageResource(R.drawable.ic_skill)
             binding.tvItem11.text = resources.getString(R.string.job_matching_analysis)
             binding.tvItem12.text = resources.getString(R.string.job_home_tip1)
-
 
             binding.llTab2.background =  resources.getDrawable(R.drawable.bg_0099ff_r100)
             binding.tvNoTargetPosition.setTextColor(resources.getColor(R.color.white))
@@ -78,7 +82,6 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
 
             binding.llJd.visibility = View.GONE
             binding.vLine.visibility = View.GONE
-
         }
     }
     private fun initView() {
@@ -122,9 +125,9 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
         super.onClick(view, data)
         when (view.id) {
             R.id.tv_generate -> {
-                if (AppNavigator.checkLoginIntercepted(true)) {
+                if (!AppNavigator.checkLoginIntercepted(true)) {
                     //跳转
-
+                    mRealVM.queryLatestResume()
                 }
             }
 

@@ -43,6 +43,7 @@ class UploadResumeDialog : BaseBottomPushVMDialogFragment<DialogUploadResumeBind
 
         binding.llFolder.setOnSingleClickListener {
 
+
         }
     }
 

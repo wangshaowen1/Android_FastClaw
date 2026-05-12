@@ -107,6 +107,7 @@ object ApiConstants {
      */
     const val REPORT_SUBMISSION = "app/report/save"
     const val GET_MY_REPORT_LIST = "app/report/list"
+    const val GET_RESUME_LATEST = "/api/candidate/app/interviewReport/resume/latest/query"
 
     /**
      * 查询用户钱包信息
