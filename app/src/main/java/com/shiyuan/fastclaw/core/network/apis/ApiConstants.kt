@@ -57,7 +57,7 @@ object ApiConstants {
     /**
      * 发送短信验证码
      */
-    const val SEND_SMS_VALIDATE_CODE = "auth/sendSmsValidateCode"
+    const val SEND_SMS_VALIDATE_CODE = "/api/candidate/auth/sendSmsValidateCode"
 
     /**
      * 绑定手机号
@@ -73,7 +73,7 @@ object ApiConstants {
     /**
      * 手机登录接口--验证码方式
      */
-    const val LOGIN_BY_PHONE = "auth/register"
+    const val LOGIN_BY_PHONE = "/api/candidate/auth/loginByMobile"
 
     /**
      * 取消注销

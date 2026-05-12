@@ -7,8 +7,10 @@ import android.text.SpannableString
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.topActivity
@@ -37,10 +39,10 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
             val activity = topActivity ?: return
             val intent = Intent(activity, PhoneLoginActivity::class.java)
             activity.startActivity(intent)
-           /* activity.overridePendingTransition(
-                R.anim.push_bottom_in,
-                R.anim.push_bottom_out
-            )*/
+            /* activity.overridePendingTransition(
+                 R.anim.push_bottom_in,
+                 R.anim.push_bottom_out
+             )*/
         }
     }
 
@@ -64,6 +66,18 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
     }
 
     private fun initView() {
+        // 如果只需要监听 afterTextChanged，可以这样简化
+        binding.etPhone.doAfterTextChanged { editable ->
+            mRealVM.mobile.value = editable?.toString()
+        }
+        binding.etVerifyCode.doAfterTextChanged { editable ->
+            mRealVM.code.value = editable?.toString()
+        }
+        // 初始化：把 EditText 当前内容同步到 ViewModel，避免 Activity 重建时按钮状态丢失
+        mRealVM.mobile.value = binding.etPhone.text?.toString()
+        mRealVM.code.value = binding.etVerifyCode.text?.toString()
+        mRealVM.checkSendCodeEnable()
+        mRealVM.checkLoginEnable()
         mRealVM.checkedPolicy.set(checkedPolicy)
         updateCheckboxState()
     }
@@ -86,7 +100,7 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
                 phoneLogin()
                 return@setOnClickListener
             }
-           // mRealVM.checkedPolicy.set(true)
+            // mRealVM.checkedPolicy.set(true)
             phoneLogin()
         }
     }
@@ -108,17 +122,56 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
             finishOnly()
         }
 
-        mRealVM.checkedPolicy.addOnPropertyChangedCallback(object : androidx.databinding.Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: androidx.databinding.Observable?, propertyId: Int) {
+        mRealVM.checkedPolicy.addOnPropertyChangedCallback(object :
+            androidx.databinding.Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(
+                sender: androidx.databinding.Observable?,
+                propertyId: Int
+            ) {
                 updateCheckboxState()
             }
         })
 
-        mRealVM.sendCodeText.addOnPropertyChangedCallback(object : androidx.databinding.Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: androidx.databinding.Observable?, propertyId: Int) {
+        mRealVM.sendCodeText.addOnPropertyChangedCallback(object :
+            androidx.databinding.Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(
+                sender: androidx.databinding.Observable?,
+                propertyId: Int
+            ) {
                 binding.btnSend.text = mRealVM.sendCodeText.get()
             }
         })
+
+
+        mRealVM.mobile.observe(this) {
+            Log.d("mobile",it.toString())
+            mRealVM.checkSendCodeEnable()
+        }
+        mRealVM.code.observe(this) {
+            Log.d("code",it.toString())
+            mRealVM.checkLoginEnable()
+        }
+
+        mRealVM.sendCodeEnable.observe(this) {
+            Log.d("sendCodeEnable",it.toString())
+            if (it) {
+                binding.btnSend.isEnabled = true
+                binding.btnSend.alpha = 1f
+            } else {
+                binding.btnSend.isEnabled = false
+                binding.btnSend.alpha = 0.3f
+            }
+        }
+        mRealVM.loginEnable.observe(this) {
+            if (it) {
+                binding.btnSend.isEnabled = true
+                binding.btVerificationCodeLogin.alpha = 1f
+            } else {
+                binding.btnSend.isEnabled = false
+                binding.btVerificationCodeLogin.alpha = 0.3f
+            }
+        }
+
     }
 
     private fun phoneLogin() {
@@ -160,7 +213,11 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
 
                 override fun updateDrawState(ds: TextPaint) {
                     super.updateDrawState(ds)
-                    ds.color = ContextCompat.getColor(this@PhoneLoginActivity, R.color.login_agreement_link)
+                    ds.color =
+                        ContextCompat.getColor(
+                            this@PhoneLoginActivity,
+                            R.color.login_agreement_link
+                        )
                     ds.isUnderlineText = false
                 }
             },
@@ -181,7 +238,11 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
 
                 override fun updateDrawState(ds: TextPaint) {
                     super.updateDrawState(ds)
-                    ds.color = ContextCompat.getColor(this@PhoneLoginActivity, R.color.login_agreement_link)
+                    ds.color =
+                        ContextCompat.getColor(
+                            this@PhoneLoginActivity,
+                            R.color.login_agreement_link
+                        )
                     ds.isUnderlineText = false
                 }
             },

@@ -82,7 +82,10 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
     val mobile = MutableLiveData<String?>()
 
     //发送验证码按钮是否可点击
-    val sendCodeEnable = ObservableBoolean(true)
+    val sendCodeEnable = MutableLiveData(false)
+
+    //登录按钮是否可点击
+    val loginEnable = MutableLiveData(false)
 
     //发送验证码按钮文字
     val sendCodeText = ObservableField(R.string.send_sms_code.getResString())
@@ -229,11 +232,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      */
     fun sendSmsCode() {
         val mobile = this.mobile.value
-        if (!RegexUtils.isMobileSimple(mobile)) {
-            T.showShort(R.string.enter_right_phone_num)
-            return
-        }
-        sendCodeEnable.set(false)
+        sendCodeEnable.postValue(false)
         launchWithLoading(
             block = {
                 response(
@@ -251,12 +250,12 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                     },
                     error = {
                         this?.msg?.showToast()
-                        sendCodeEnable.set(true)
+                        sendCodeEnable.postValue(true)
                     })
             },
             onError = {
                 parseMessage(it)?.showToast()
-                sendCodeEnable.set(true)
+                sendCodeEnable.postValue(true)
             })
     }
 
@@ -296,8 +295,24 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      */
     private fun stopCountdown() {
         countdownId = 0
-        sendCodeText.set(R.string.resend_sms_code.getResString())
-        sendCodeEnable.set(true)
+        sendCodeText.set(R.string.send_sms_code.getResString())
+        sendCodeEnable.postValue(true)
+    }
+
+    /**
+     * 检查发送验证码按钮是否可点击
+     */
+    fun checkSendCodeEnable() {
+        sendCodeEnable.postValue(RegexUtils.isMobileSimple(mobile.value))
+    }
+
+    /**
+     * 检查登录按钮是否可点击
+     */
+    fun checkLoginEnable() {
+        val hasPhone = RegexUtils.isMobileSimple(mobile.value)
+        val hasCode = (code.value?.length ?: 0) >= Constants.SMS_CODE_LENGTH
+        loginEnable.postValue(hasPhone && hasCode)
     }
 
 
@@ -310,18 +325,36 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
             return
         }
         val mobile = this.mobile.value
-        if (!RegexUtils.isMobileSimple(mobile)) {
-            T.showShort(R.string.enter_right_phone_num)
-            return
-        }
-        val code = this.code.value
-        if (code?.length != Constants.SMS_CODE_LENGTH) {
-            T.showShort(R.string.enter_right_validate_code)
-            return
-        }
         KeyboardUtils.hideSoftInput(ActivityUtils.getTopActivity())
         setLoading(true)
-        getInstall {
+        launchWithLoading(false, block = {
+            if (isBind.get()) {
+                response(mRepo.bindPhone(mobile, code.toString()), {
+                    showToast(R.string.bind_success)
+                    User.get().apply {
+                        storePhoneNum(mobile)
+                    }
+                    onLogin?.invoke(null)
+                }, error = {
+                    this?.msg?.showToast()
+                    setLoading(false)
+                })
+            } else {
+                response(mRepo.loginByPhone(mobile, code.toString()), {
+                    User.get().updateFrom(data)
+                    SignUtils.signIn()
+                    data.loginToast()
+                    onLogin?.invoke(data)
+                }, error = {
+                    this?.msg?.showToast()
+                    setLoading(false)
+                })
+            }
+        }, onError = {
+            setLoading(false)
+            parseMessage(it)?.showToast()
+        })
+   /*     getInstall {
             launchWithLoading(false, block = {
                 if (isBind.get()) {
                     response(mRepo.bindPhone(mobile, code), {
@@ -349,7 +382,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                 setLoading(false)
                 parseMessage(it)?.showToast()
             })
-        }
+        }*/
     }
 
 }
