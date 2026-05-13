@@ -7,7 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
@@ -165,6 +167,27 @@ class GenerateReportActivity :
         }
         binding.rlSelect1.setOnSingleClickListener {mRealVM.tableSelect.postValue(0)  }
         binding.rlSelect2.setOnSingleClickListener{mRealVM.tableSelect.postValue(1)  }
+
+        // EditText 滚动处理
+        setupEtTxtScroll()
+    }
+
+    private fun setupEtTxtScroll() {
+        binding.etTxt.apply {
+            setOnTouchListener { v, event ->
+                // 当用户在 EditText 上滑动时，禁止父视图拦截触摸事件
+                if (event.action == MotionEvent.ACTION_UP) {
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                } else {
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                false
+            }
+            // 确保 EditText 可以滚动
+            movementMethod = ScrollingMovementMethod.getInstance()
+            isHorizontalScrollBarEnabled = false
+            isVerticalScrollBarEnabled = true
+        }
     }
 
 
