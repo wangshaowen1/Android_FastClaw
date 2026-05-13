@@ -4,15 +4,26 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * *****************************************
- * 项目名称: KidsTales
- * @Author: SZYMN
- * @Introduce: 获取用户基础信息
- * @Data: 2024/7/8 星期一 14:53
- * @Version: 1.0
- * *****************************************
+  简历数据
  */
 
-data class ResumeData(
+@Parcelize
+ class ResumeData(
     val hasLatestResume: Boolean = false,
-)
+    var isJd: Boolean = true,
+    var blockingIssuesMessage: String? = null,
+    val resumeFileUrl: String ?,
+    var checkStatus: String? = null,
+    val resumeFileName: String ?,
+    val resumeFileType: String ?,
+    val submitTime: String ? = null,
+    val checkId: String ? = null,
+): Parcelable{
+
+    val safeBlockingIssuesMessage: String
+        get() = blockingIssuesMessage ?: "简历上传成功"
+
+    val safeCheckStatus: String
+        get() = checkStatus ?: "PASS"
+
+}

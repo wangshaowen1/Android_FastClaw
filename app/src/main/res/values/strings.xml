@@ -539,7 +539,7 @@
     <string name="home_agent_tag">职业经纪人</string>
     <string name="home_interview_report_title">面试作战报告</string>
     <string name="home_upload_resume">上传简历免费生成</string>
-    <string name="production_report">生成报告</string>
+    <string name="production_report">生成面试报告</string>
     <string name="home_report_option_interview">面试题库准备</string>
     <string name="home_report_option_salary">薪资预测 谈薪技巧</string>
     <string name="home_report_option_company">反向背调公司</string>

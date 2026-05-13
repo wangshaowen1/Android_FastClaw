@@ -6,6 +6,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.App.Companion.instance
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.FragmentHomeReportBinding
 import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
@@ -34,19 +35,37 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             it?.let {
                 if(it.hasLatestResume){
                     //显示简历
-                    ResumeListDialog.show( manager = this.parentFragmentManager)
+                    ResumeListDialog.show( manager = this.parentFragmentManager,it,{
+                        uploadResume()
+                    },{
+                        GenerateReportActivity.start(requireActivity(),it.apply {
+                            this.isJd = (mRealVM.selectIndex.value == 0)
+                        })
+                    })
                 }else{
-                    //上传简历
-                    UploadResumeDialog.show(manager = this.parentFragmentManager) { fileInfo ->
-                        if (fileInfo != null) {
-                            mRealVM.submitResume(fileInfo.uri) {
-                                GenerateReportActivity.start(requireActivity())
-                            }
-                        }
-                    }
+                    uploadResume()
                 }
             }
         }
+    }
+
+    fun  uploadResume(){
+        //上传简历
+        UploadResumeDialog.show(manager = this.parentFragmentManager) { fileInfo ->
+            if (fileInfo != null) {
+                mRealVM.submitResume(fileInfo.uri) {
+                    GenerateReportActivity.start(
+                        requireActivity(),
+                        ResumeData(
+                            resumeFileUrl = it,
+                            isJd = (mRealVM.selectIndex.value == 0),
+                            resumeFileName = fileInfo.fileName,
+                            resumeFileType = fileInfo.mimeType,
+                        ))
+                }
+            }
+        }
+
     }
 
     fun setView(index: Int) {

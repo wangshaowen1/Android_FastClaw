@@ -54,7 +54,7 @@ class HomeReportViewModel : AppRepositoryViewModel<ReportRepository>() {
 
 
 
-    fun submitResume(uri: Uri, callback: () -> Unit) {
+    fun submitResume(uri: Uri, callback: (path: String) -> Unit) {
         setLoading(true)
         val context = App.instance
         val filePath = uri.toOssFilePath(context)
@@ -76,7 +76,7 @@ class HomeReportViewModel : AppRepositoryViewModel<ReportRepository>() {
                     if (!uri.isNetworkPath()) {
                         filePath.cleanupTempFile()
                     }
-                    callback.invoke()
+                    callback.invoke(images[0])
                     setLoading(false)
                 }
             }

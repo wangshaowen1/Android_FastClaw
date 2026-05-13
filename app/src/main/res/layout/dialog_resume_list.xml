@@ -76,22 +76,25 @@
                 android:src="@mipmap/ic_resume" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:orientation="vertical">
 
 
                 <TextView
+                    android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="王少文的简历"
+                    android:text="简历名称"
                     android:textColor="@color/color_1a1a1a"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
 
                 <TextView
+                    android:id="@+id/tv_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -101,10 +104,7 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"></View>
+
 
             <TextView
                 android:id="@+id/tv_upload"

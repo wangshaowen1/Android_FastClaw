@@ -19,6 +19,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.PlayEventBody
 import com.shiyuan.fastclaw.core.network.apis.request.ReportSubmissionBody
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.request.TipOffBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
@@ -198,5 +199,12 @@ interface ApiService {
 
     @POST(ApiConstants.GET_RESUME_LATEST)
     suspend fun queryLatestResume(): ApiResponse<ResumeData?>
+
+
+    @POST(ApiConstants.RESUME_MATERIAL_QUALITY)
+    suspend fun resumeMaterialQuality(@Body body: ResumeMaterialQualityBody): ApiResponse<ResumeData?>
+
+    @POST(ApiConstants.RESUME_MATERIAL_QUALITY_RESULT)
+    suspend fun resumeMaterialQualityResult(@Body body: ResumeMaterialQualityBody): ApiResponse<ResumeData?>
 
 }
