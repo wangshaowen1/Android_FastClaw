@@ -144,7 +144,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
                     bean = mRepo.api.getUserPoints(),
                     result = {
                         if (data == null) return@response
-                        userPonts.set("${data.pointsBalance?.plus(100)}")
+                        userPonts.set("${data.pointsBalance}")
                     }
                 )
             }
