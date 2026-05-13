@@ -47,9 +47,9 @@ object OssManager {
 
     private fun getALiYunOssStsConfig(): OssStsConfig {
         return OssStsConfig(
-            accessKeyId = "LTAI5tBeSRMZvDBq9xKFJsnQ",
-            accessKeySecret = "c5er42rEKyENOoGdRU6mZ41kyEoVQx",
-            bucket = "kuaichupian",
+            accessKeyId = "LTAI5t6PBTCGF1sst1p3bj9S",
+            accessKeySecret = "fIsQEGSKydcODP0EZwZEAvf8gq1zmv",
+            bucket = "kuailongxia",
             endpoint = "oss-cn-shenzhen.aliyuncs.com",
             region = null,
             netImageUrl = ALIYUN_NET_IMAGE_URL,

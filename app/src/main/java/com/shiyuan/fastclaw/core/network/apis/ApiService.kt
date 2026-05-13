@@ -12,6 +12,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.FeedbackBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImgUrlBody
+import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByFlashMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
@@ -206,5 +207,13 @@ interface ApiService {
 
     @POST(ApiConstants.RESUME_MATERIAL_QUALITY_RESULT)
     suspend fun resumeMaterialQualityResult(@Body body: ResumeMaterialQualityBody): ApiResponse<ResumeData?>
+
+
+
+    @POST(ApiConstants.JD_RESUME_MATERIAL_QUALITY)
+    suspend fun jdMaterialQuality(@Body body: JdMaterialQualityBody): ApiResponse<ResumeData?>
+
+    @POST(ApiConstants.JD_RESUME_MATERIAL_QUALITY_RESULT)
+    suspend fun jdMaterialQualityResult(@Body body: JdMaterialQualityBody): ApiResponse<ResumeData?>
 
 }

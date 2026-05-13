@@ -111,6 +111,9 @@ object ApiConstants {
     const val RESUME_MATERIAL_QUALITY = "/api/candidate/app/interviewReport/resumeMaterialQuality/check"
     const val RESUME_MATERIAL_QUALITY_RESULT = "/api/candidate/app/interviewReport/resumeMaterialQuality/result/query"
 
+    const val JD_RESUME_MATERIAL_QUALITY = "/api/candidate/app/interviewReport/jdMaterialQuality/check"
+    const val JD_RESUME_MATERIAL_QUALITY_RESULT = "/api/candidate/app/interviewReport/jdMaterialQuality/result/query"
+
     /**
      * 查询用户钱包信息
      */

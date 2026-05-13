@@ -12,6 +12,7 @@ import kotlinx.parcelize.Parcelize
     val hasLatestResume: Boolean = false,
     var isJd: Boolean = true,
     var blockingIssuesMessage: String? = null,
+    var blockingIssues: List<String>? = null,
     val resumeFileUrl: String ?,
     var checkStatus: String? = null,
     val resumeFileName: String ?,
@@ -20,8 +21,6 @@ import kotlinx.parcelize.Parcelize
     val checkId: String ? = null,
 ): Parcelable{
 
-    val safeBlockingIssuesMessage: String
-        get() = blockingIssuesMessage ?: "简历上传成功"
 
     val safeCheckStatus: String
         get() = checkStatus ?: "PASS"

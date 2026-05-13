@@ -71,7 +71,7 @@ class HomeReportViewModel : AppRepositoryViewModel<ReportRepository>() {
                 if (images.isEmpty()) {
                     onUploadFail(null)
                 } else {
-                    Log.d("onUploadSuccess", images[0].toString())
+                    Log.d("onUploadSuccess", images[0])
                     // 仅清理本地临时文件
                     if (!uri.isNetworkPath()) {
                         filePath.cleanupTempFile()
