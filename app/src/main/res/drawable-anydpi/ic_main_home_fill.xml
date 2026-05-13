@@ -1,36 +1,9 @@
-<!--
-  ~ Copyright (C) 2026 The Android Open Source Project
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
   <path
-      android:pathData="M11.022,1.839C11.439,1.055 12.561,1.055 12.978,1.839L16.007,7.535C16.111,7.73 16.27,7.889 16.465,7.993L22.161,11.022C22.944,11.439 22.944,12.561 22.161,12.978L16.465,16.007C16.27,16.111 16.111,16.27 16.007,16.465L12.978,22.161C12.561,22.944 11.439,22.944 11.022,22.161L7.993,16.465C7.889,16.27 7.73,16.111 7.535,16.007L1.839,12.978C1.055,12.561 1.055,11.439 1.839,11.022L7.535,7.993C7.73,7.889 7.889,7.73 7.993,7.535L11.022,1.839Z">
-    <aapt:attr name="android:fillColor">
-      <gradient
-          android:startX="12"
-          android:startY="9.5"
-          android:endX="12"
-          android:endY="24"
-          android:type="linear">
-        <item android:offset="0" android:color="#FF4C6FFF"/>
-        <item android:offset="1" android:color="#FF3ED4EE"/>
-      </gradient>
-    </aapt:attr>
-  </path>
+      android:pathData="M13.021,2.765L20.354,8.029C20.708,8.283 20.997,8.619 21.197,9.007C21.396,9.396 21.5,9.826 21.5,10.262V18.75C21.5,20.269 20.269,21.5 18.75,21.5H15V17.5C15,15.843 13.657,14.5 12,14.5C10.343,14.5 9,15.843 9,17.5V21.5H5.25C3.731,21.5 2.5,20.269 2.5,18.75V10.263C2.5,9.826 2.604,9.396 2.803,9.007C3.003,8.619 3.292,8.283 3.647,8.029L10.979,2.765C11.277,2.552 11.634,2.437 12,2.437C12.366,2.437 12.723,2.552 13.021,2.765Z"
+      android:fillColor="#0099FF"/>
 </vector>
