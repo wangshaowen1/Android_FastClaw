@@ -4,6 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.Observable
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.LoadState
@@ -14,6 +19,8 @@ import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
 import com.shiyuan.fastclaw.feature.payment.ItemPaymentMethodVm
 import com.shiyuan.fastclaw.feature.report.ReportViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * @Introduce: 我的虾条
@@ -29,8 +36,8 @@ class MyShrimpChipsActivity : BaseViewModelActivity<ActivityMyShrimpChipsBinding
     }
 
 
-    private val adapter by lazy {
-        QuickAdapter<ItemPaymentMethodVm>(R.layout.item_shrimp_chips, emptyList())
+    private val mAdapter by lazy {
+        MineUserPointAdapter()
     }
 
 
@@ -51,13 +58,16 @@ class MyShrimpChipsActivity : BaseViewModelActivity<ActivityMyShrimpChipsBinding
 
     private fun initView() {
         binding.recyclerView.apply {
-            layoutManager = ReportViewModel.buildLayoutManager(context)
-            adapter = adapter
+            layoutManager = LinearLayoutManager(this@MyShrimpChipsActivity, RecyclerView.VERTICAL, false)
+            adapter = mAdapter
         }
-
     }
 
     private fun initObservers() {
-
+        lifecycleScope.launch {
+            mRealVM.userPointListFlow.collectLatest { list ->
+                mAdapter.submitData(list)
+            }
+        }
     }
 }
