@@ -31,8 +31,11 @@ import com.shiyuan.fastclaw.core.network.apis.response.ReportListData
 import com.shiyuan.fastclaw.core.network.apis.response.ShelfStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
+import com.shiyuan.fastclaw.core.network.apis.response.UserPointPageData
+import com.shiyuan.fastclaw.core.network.apis.response.UserPointsData
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -224,5 +227,11 @@ interface ApiService {
 
     @POST(ApiConstants.INTERVIEW_REPORT_RESULT)
     suspend fun interviewReportResult(@Body body: InterviewReportData): ApiResponse<ReportData>
+
+    @POST(ApiConstants.GET_USER_POINTS)
+    suspend fun getUserPoints(): ApiResponse<UserPointsData>
+
+    @POST(ApiConstants.QUERY_USER_POINTS_PAGE)
+    suspend fun queryUserPointsPage(@Body body: PagedBody): ApiResponse<UserPointPageData>
 
 }

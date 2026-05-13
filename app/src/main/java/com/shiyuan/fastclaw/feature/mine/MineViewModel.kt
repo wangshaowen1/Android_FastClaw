@@ -4,6 +4,11 @@ import android.graphics.Color
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.nhsd.basic.ext.getResString
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
@@ -15,7 +20,12 @@ import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
+import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
 import com.shiyuan.fastclaw.core.response
+import com.umeng.analytics.pro.da
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 
 /**
  * *****************************************
@@ -52,6 +62,23 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
     val balance by lazy { ObservableField<String>() }
     val workCourseBanner by lazy { ObservableField<SimpleBannerInfo>() }
 
+    /**
+     * 账户虾条
+     */
+    val userPonts by lazy { ObservableField<String>() }
+
+    /**
+     * 虾条记录
+     */
+    val userPointListFlow = Pager(PagingConfig(
+        pageSize = 10,
+        initialLoadSize = 10
+    )) {
+        UserPointPagingSource()
+    }.flow
+        .flowOn(Dispatchers.Default)
+        .cachedIn(viewModelScope)
+
     override fun onCreate() {
         super.onCreate()
         refreshUserInfo()
@@ -80,6 +107,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
     fun updateInformation() {
         //获取用户主页信息接口
         getUserHomeInfo()
+        getUserPoints()
     }
 
     /**
@@ -106,6 +134,23 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 获取积分信息(虾条)
+     */
+    private fun getUserPoints() {
+        if (noLogIn.value == false) {
+            launch {
+                response(
+                    bean = mRepo.api.getUserPoints(),
+                    result = {
+                        if (data == null) return@response
+                        userPonts.set("${data.pointsBalance}")
+                    }
+                )
+            }
+        }
+    }
+
 
     private fun notLoggedIn() {
         userInfo.set(
@@ -117,6 +162,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         )
         noLogIn.value = true
         balance.set("0")
+        userPonts.set("-")
         workCourseBanner.set(Config.get().appConfig.workCourseBanner)
     }
 

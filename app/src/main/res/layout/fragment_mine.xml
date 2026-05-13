@@ -128,7 +128,7 @@
 
                        <TextView
                            android:id="@+id/tv_points"
-                           android:text="0"
+                           android:text="@{layout.userPonts}"
                            android:textColor="@color/color_1a1a1a"
                            android:textSize="32sp"
                            android:textStyle="bold"

@@ -150,4 +150,14 @@ object ApiConstants {
      * 上传简历
      */
     const val UPLOAD_RESUME = "app/resume/upload"
+
+    /**
+     * 查询积分信息
+     */
+    const val GET_USER_POINTS = "api/candidate/points/info"
+
+    /**
+     * 分页查询积分交易明细
+     */
+    const val QUERY_USER_POINTS_PAGE = "api/candidate/points/transaction/page"
 }
