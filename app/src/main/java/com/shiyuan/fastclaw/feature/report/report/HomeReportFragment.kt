@@ -65,7 +65,6 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
                 }
             }
         }
-
     }
 
     fun setView(index: Int) {

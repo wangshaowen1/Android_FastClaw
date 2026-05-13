@@ -8,6 +8,22 @@
             <corners
                 android:topLeftRadius="0dp"
                 android:topRightRadius="0dp"
+                android:bottomLeftRadius="12dp"
+                android:bottomRightRadius="12dp" />
+        </shape>
+    </item>
+
+
+    <item
+        android:left="200dp"
+        android:top="0dp"
+        android:right="0dp"
+        android:bottom="200dp">
+        <shape>
+            <solid android:color="@color/color_E8EAED" />
+            <corners
+                android:topLeftRadius="0dp"
+                android:topRightRadius="0dp"
                 android:bottomLeftRadius="0dp"
                 android:bottomRightRadius="0dp" />
         </shape>
@@ -17,12 +33,11 @@
     <item>
         <shape>
             <solid android:color="@color/white" />
-            <!-- 左边也需要圆角 -->
             <corners
                 android:topLeftRadius="0dp"
                 android:topRightRadius="12dp"
-                android:bottomLeftRadius="0dp"
-                android:bottomRightRadius="0dp" />
+                android:bottomLeftRadius="12dp"
+                android:bottomRightRadius="12dp" />
         </shape>
     </item>
 
