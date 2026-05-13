@@ -15,3 +15,15 @@ class JdMaterialQualityBody(
     val jdImageUrls:List<String>? = null,
     val checkId:String? = null,
 )
+
+
+class InterviewReportData(
+    val resumeCheckId:String? = null,
+    val jdCheckId:String? = null,
+    val reportType:String? = null,
+    val reportId:String? = null,
+)
+
+
+
+

@@ -4,6 +4,7 @@ import com.shiyuan.fastclaw.core.model.H5PayInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.BannerInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.OrderStatusInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.PaymentData
+import com.shiyuan.fastclaw.core.network.apis.entity.ReportData
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.entity.SensitiveWordCheckData
 import com.shiyuan.fastclaw.core.network.apis.entity.WalletInfo
@@ -12,6 +13,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.FeedbackBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImgUrlBody
+import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByFlashMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByPhoneBody
@@ -214,6 +216,13 @@ interface ApiService {
     suspend fun jdMaterialQuality(@Body body: JdMaterialQualityBody): ApiResponse<ResumeData?>
 
     @POST(ApiConstants.JD_RESUME_MATERIAL_QUALITY_RESULT)
-    suspend fun jdMaterialQualityResult(@Body body: JdMaterialQualityBody): ApiResponse<ResumeData?>
+    suspend fun jdMaterialQualityResult(@Body body: JdMaterialQualityBody): ApiResponse<ResumeData>
+
+    @POST(ApiConstants.INTERVIEW_REPORT)
+    suspend fun interviewReport(@Body body: InterviewReportData): ApiResponse<ReportData>
+
+
+    @POST(ApiConstants.INTERVIEW_REPORT_RESULT)
+    suspend fun interviewReportResult(@Body body: InterviewReportData): ApiResponse<ReportData>
 
 }

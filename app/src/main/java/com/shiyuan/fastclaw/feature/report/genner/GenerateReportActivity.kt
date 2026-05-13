@@ -9,13 +9,9 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import androidx.databinding.Observable
 import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.LoadState
-import com.shiyuan.fastclaw.databinding.ActivityMyHistoryReportBinding
 import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.manager.FileManager
@@ -31,8 +27,6 @@ import com.shiyuan.fastclaw.databinding.ActivityGennerReportBinding
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.widget.PhotoGridView
-import com.umeng.analytics.pro.da
-import kotlinx.serialization.json.Json
 
 /**
  * @Introduce: 历史报告列表页面
@@ -80,11 +74,19 @@ class GenerateReportActivity :
         data?.let {
             Log.d("ResumeData", it.toJsonString())
             binding.tvResumeName.text = it.resumeFileName
-            binding.llJd.visibility = if (it.isJd) View.VISIBLE else View.GONE
+            mRealVM.isJd.value  = it.isJd
             if (it.hasLatestResume) {
-                initStateView("简历上传成功", "PASS")
+               // initStateView("简历上传成功", "PASS")
+                mRealVM.resumeData.value = data?.apply {
+                    blockingIssuesMessage = "简历上传成功"
+                    checkStatus = "PASS"
+                }
             } else {
-                initStateView("简历解析中", "PENDING")
+                mRealVM.resumeData.value = data?.apply {
+                    blockingIssuesMessage = "简历解析中"
+                    checkStatus = "PENDING"
+                }
+                //initStateView("简历解析中", "PENDING")
                 mRealVM.resumeMaterialQuality(it.resumeFileUrl ?: "", it.resumeFileName ?: "")
             }
         }
@@ -118,7 +120,33 @@ class GenerateReportActivity :
         binding.photoGrid.setOnAddButtonClickedListener {
             requestAlbumsPermission()
         }
+
+        binding.tvSkip.setOnSingleClickListener {  //直接用简历
+            if(mRealVM.resumeData.value?.checkStatus != "PASS"){
+                mRealVM.resumeData.value?.blockingIssuesMessage?.showToast()
+                return@setOnSingleClickListener
+            }
+            ReportProgressActivity.start(this, resumeCheckId =mRealVM.resumeData.value?.checkId,null,reportType ="PERSONAL_REPORT")
+        }
+        binding.tvTrue.setOnSingleClickListener {//简历 +JD
+            if(mRealVM.resumeData.value?.checkStatus != "PASS"){
+                mRealVM.resumeData.value?.blockingIssuesMessage?.showToast()
+                return@setOnSingleClickListener
+            }
+            if(mRealVM.isJd.value == true){
+                if(mRealVM.jdImageData.value?.checkStatus != "PASS"){
+                    mRealVM.resumeData.value?.blockingMessage?.showToast()
+                    return@setOnSingleClickListener
+                }
+                ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdImageData.value?.checkId,reportType ="JD_REPORT")
+            }else{
+                ReportProgressActivity.start(this, resumeCheckId =mRealVM.resumeData.value?.checkId,null,reportType ="PERSONAL_REPORT")
+            }
+        }
     }
+
+
+
 
     private fun requestAlbumsPermission() {
         requestImages2VideosPermissions {
@@ -223,8 +251,8 @@ class GenerateReportActivity :
                 else -> {
                     // 处理失败
                     binding.llJdImageState.visibility = View.VISIBLE
-                    val message = data.blockingIssues?.joinToString("\n") ?: ""
-                    binding.tvJdImageState.text = message
+                   // val message = data.blockingIssues?.joinToString("\n") ?: ""
+                    binding.tvJdImageState.text = data.blockingMessage?.takeIf { it.isNotEmpty() } ?: "检测失败"
                     stopJdPolling()  // ✅ 停止轮询
                 }
             }
@@ -241,6 +269,11 @@ class GenerateReportActivity :
                 binding.llJdImageState.visibility = View.GONE
             }
         }
+        mRealVM.isJd.observe(this) {
+            binding.llJd.visibility = if (it) View.VISIBLE else View.GONE
+            binding.tvSkip.visibility = if (it) View.VISIBLE else View.GONE
+        }
+
     }
 
     private fun startResumePolling() {
@@ -315,5 +348,6 @@ class GenerateReportActivity :
     override fun onDestroy() {
         super.onDestroy()
         stopResumePolling()
+        stopJdPolling()
     }
 }

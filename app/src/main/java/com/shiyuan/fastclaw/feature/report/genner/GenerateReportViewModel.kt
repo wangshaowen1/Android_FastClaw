@@ -17,11 +17,12 @@ import com.shiyuan.fastclaw.common.ext.cleanupTempFile
 import com.shiyuan.fastclaw.common.ext.isNetworkPath
 import com.shiyuan.fastclaw.common.ext.toOssFilePath
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
+import com.shiyuan.fastclaw.core.network.apis.entity.ReportData
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.response
-import kotlinx.serialization.json.Json
 
 /**
  * @Introduce: 历史报告列表 ViewModel
@@ -33,18 +34,68 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
         title = R.string.generate_report.getResString(),
         background = Color.TRANSPARENT,
     )
+
+    val mToolbarVM2 = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = "",
+        background = Color.TRANSPARENT,
+    )
     val resumeData = MutableLiveData<ResumeData>()
+
+    val isJd = MutableLiveData<Boolean>()
 
     val jdTextData = MutableLiveData<ResumeData>()
     val jdImageData = MutableLiveData<ResumeData>()
+    val reportData = MutableLiveData<ReportData>()
 
 
     val photoSize = MutableLiveData<Int>(0)
 
 
+
+    fun interviewReport(data:InterviewReportData){
+        launchWithLoading(true, block = {
+            response(
+                mRepo.api.interviewReport(
+                    data
+                ), result = {
+                    if(this.code == 200){
+                        reportData.postValue(this.data)
+                    }else{
+                     finish()
+                    }
+                }, error = {
+                    setLoading(false)
+                    this?.msg?.showToast() }
+            )
+        }, onError = {
+            setLoading(false)
+            it.message.toString().showToast()
+        })
+    }
+
+
+    fun interviewReportr(){
+        launchWithLoading(true, block = {
+            response(
+                mRepo.api.interviewReportResult(
+                    InterviewReportData(
+                        reportId = reportData.value?.reportStatus
+                    )
+                ), result = {
+                    reportData.postValue(this.data)
+                }, error = {
+                    setLoading(false)
+                    this?.msg?.showToast() }
+            )
+        }, onError = {
+            setLoading(false)
+            it.message.toString().showToast()
+        })
+    }
+
     fun jdQualityQuality(jdImageUrls: List<String>?,jdText: String?,type: String){
-        setLoading(true)
-        launchWithLoading(false, block = {
+        launchWithLoading(true, block = {
             response(
                 mRepo.api.jdMaterialQuality(
                     JdMaterialQualityBody(
@@ -66,15 +117,14 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun jdMaterialQualityr() {
-        setLoading(true)
-        launchWithLoading(false, block = {
+        launchWithLoading(true, block = {
             response(
                 mRepo.api.jdMaterialQualityResult(
                     JdMaterialQualityBody(
                         checkId = jdImageData.value?.checkId
                     )
                 ), result = {
-                    if(this.data?.checkStatus !="RUNNING" || this.data?.checkStatus !="PENDING"){
+                    if (this.data?.checkStatus !in listOf("RUNNING", "PENDING")) {
                         setLoading(false)
                     }
                     jdImageData.postValue(this.data)
@@ -92,9 +142,15 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
                     resumeFileName = resumeFileName
                 )
             ), result = {
-                resumeData.postValue(this.data)
-            }, error = { this?.msg?.showToast() } )
-        }, onError = { it.message.toString().showToast() })
+                    resumeData.postValue(this.data)
+            }, error = {
+                 setLoading(false)
+                this?.msg?.showToast()
+            } )
+        }, onError = {
+             setLoading(false)
+            it.message.toString().showToast()
+        })
 
     }
 
@@ -108,7 +164,10 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
                     checkId = resumeData.value?.checkId
                 )
             ), result = {
-                resumeData.postValue(this.data)
+                    if (this.data?.checkStatus !in listOf("RUNNING", "PENDING")) {
+                        setLoading(false)
+                    }
+                    resumeData.postValue(this.data)
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
     }
