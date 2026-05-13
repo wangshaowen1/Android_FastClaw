@@ -8,20 +8,30 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.animation.LinearInterpolator
+import androidx.lifecycle.lifecycleScope
 import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.databinding.ActivityReportProgressBinding
 import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * @Introduce:
  */
-class ReportProgressActivity : BaseViewModelActivity<ActivityReportProgressBinding, GenerateReportViewModel>() {
+class ReportProgressActivity :
+    BaseViewModelActivity<ActivityReportProgressBinding, GenerateReportViewModel>() {
 
     companion object {
-        fun start(activity: Activity?, resumeCheckId: String?,jdCheckId: String?,reportType: String?) {
+        fun start(
+            activity: Activity?,
+            resumeCheckId: String?,
+            jdCheckId: String?,
+            reportType: String?
+        ) {
             activity ?: return
             val intent = Intent(activity, ReportProgressActivity::class.java)
             intent.putExtra("resumeCheckId", resumeCheckId)
@@ -65,17 +75,24 @@ class ReportProgressActivity : BaseViewModelActivity<ActivityReportProgressBindi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
-        mRealVM.interviewReport(InterviewReportData(
-            resumeCheckId = intent.getStringExtra("resumeCheckId"),
-            jdCheckId =   intent.getStringExtra("jdCheckId"),
-            reportType = intent.getStringExtra("reportType")
-        ))
-        mRealVM.reportData.observe(this){
+        mRealVM.interviewReport(
+            InterviewReportData(
+                resumeCheckId = intent.getStringExtra("resumeCheckId"),
+                jdCheckId = intent.getStringExtra("jdCheckId"),
+                reportType = intent.getStringExtra("reportType")
+            ), {
+                lifecycleScope.launch {
+                    delay(1000)
+                    finish()
+                }
+            })
+        mRealVM.reportData.observe(this) {
             when (it.reportStatus) {
                 "SUCCESS " -> {
                     stopJdPolling()
                     MyHistoryReportActivity.start(this)
                 }
+
                 else -> {
                     startJdPolling()
                 }
@@ -97,6 +114,10 @@ class ReportProgressActivity : BaseViewModelActivity<ActivityReportProgressBindi
             interpolator = LinearInterpolator()
             repeatCount = ObjectAnimator.INFINITE
             start()
+        }
+        binding.tvTrue.setOnSingleClickListener {
+            MyHistoryReportActivity.start(this)
+            finish()
         }
     }
 

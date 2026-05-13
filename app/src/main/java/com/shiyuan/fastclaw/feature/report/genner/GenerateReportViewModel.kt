@@ -53,19 +53,17 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
 
 
-    fun interviewReport(data:InterviewReportData){
+    fun interviewReport(data:InterviewReportData, callback: () -> Unit){
         launchWithLoading(true, block = {
             response(
                 mRepo.api.interviewReport(
                     data
                 ), result = {
-                    if(this.code == 200){
-                        reportData.postValue(this.data)
-                    }else{
-                     finish()
-                    }
+                    reportData.postValue(this.data)
                 }, error = {
+                    Log.d("interviewReport", this?.msg.toString())
                     setLoading(false)
+                    callback.invoke()
                     this?.msg?.showToast() }
             )
         }, onError = {
@@ -80,7 +78,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
             response(
                 mRepo.api.interviewReportResult(
                     InterviewReportData(
-                        reportId = reportData.value?.reportStatus
+                        reportId = reportData.value?.reportId
                     )
                 ), result = {
                     reportData.postValue(this.data)
