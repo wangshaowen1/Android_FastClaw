@@ -129,20 +129,42 @@ class GenerateReportActivity :
             ReportProgressActivity.start(this, resumeCheckId =mRealVM.resumeData.value?.checkId,null,reportType ="PERSONAL_REPORT")
         }
         binding.tvTrue.setOnSingleClickListener {//简历 +JD
+            //校验简历要通过
             if(mRealVM.resumeData.value?.checkStatus != "PASS"){
                 mRealVM.resumeData.value?.blockingIssuesMessage?.showToast()
                 return@setOnSingleClickListener
             }
+
+            //校验是否jd
             if(mRealVM.isJd.value == true){
-                if(mRealVM.jdImageData.value?.checkStatus != "PASS"){
-                    mRealVM.resumeData.value?.blockingMessage?.showToast()
-                    return@setOnSingleClickListener
+                if(mRealVM.tableSelect.value == 0){ //选中截图
+                    if(mRealVM.photoSize.value  == 0){
+                        "请上传图片".showToast()
+                        return@setOnSingleClickListener
+                    }
+                      //校验截图
+                    if(mRealVM.jdImageData.value?.checkStatus != "PASS"){
+                        mRealVM.jdImageData.value?.blockingMessage?.showToast()
+                        return@setOnSingleClickListener
+                    }
+                    ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdImageData.value?.checkId,reportType ="JD_REPORT")
+                }else{ //选中粘贴
+                   if(binding.etTxt.text.isNullOrBlank()){
+                       "粘贴公司名称与岗位职责信息".showToast()
+                      return@setOnSingleClickListener
+                   }
+                  mRealVM.jdQualityQuality(null, binding.etTxt.text.toString(),"TEXT")
+                /*  if(mRealVM.jdTextData.value?.checkStatus != "PASS"){
+                      mRealVM.resumeData.value?.blockingMessage?.showToast()
+                      return@setOnSingleClickListener
+                  }*/
                 }
-                ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdImageData.value?.checkId,reportType ="JD_REPORT")
             }else{
                 ReportProgressActivity.start(this, resumeCheckId =mRealVM.resumeData.value?.checkId,null,reportType ="PERSONAL_REPORT")
             }
         }
+        binding.rlSelect1.setOnSingleClickListener {mRealVM.tableSelect.postValue(0)  }
+        binding.rlSelect2.setOnSingleClickListener{mRealVM.tableSelect.postValue(1)  }
     }
 
 
@@ -257,6 +279,33 @@ class GenerateReportActivity :
                 }
             }
         }
+
+        mRealVM.jdTextData.observe(this) { data ->
+            Log.d("checkStatus", data.safeCheckStatus)
+            when (data.safeCheckStatus) {
+                "PASS" -> {
+                    binding.llJdTxtState.visibility = View.GONE
+                    stopJdPolling()  // ✅ 停止轮询
+                    ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdTextData.value?.checkId,reportType ="JD_REPORT")
+                }
+                "RUNNING", "PENDING" -> {
+                    binding.llJdTxtState.visibility = View.GONE
+                    // ✅ 只有在未轮询且 checkId 存在时才启动
+                    if (!isJdPolling) {
+                        startJdPolling()
+                    }
+                }
+
+                else -> {
+                    // 处理失败
+                    binding.llJdTxtState.visibility = View.VISIBLE
+                    // val message = data.blockingIssues?.joinToString("\n") ?: ""
+                    binding.tvJdTxtState.text = data.blockingMessage?.takeIf { it.isNotEmpty() } ?: "检测失败"
+                    stopJdPolling()  // ✅ 停止轮询
+                }
+            }
+        }
+
         mRealVM.photoSize.observe(this) {
             if (it > 0) {
                 binding.llUp.visibility = View.GONE
@@ -272,6 +321,37 @@ class GenerateReportActivity :
         mRealVM.isJd.observe(this) {
             binding.llJd.visibility = if (it) View.VISIBLE else View.GONE
             binding.tvSkip.visibility = if (it) View.VISIBLE else View.GONE
+        }
+        mRealVM.tableSelect.observe(this){
+            if(it == 0){
+                binding.vBgSelect1.background = resources.getDrawable(R.drawable.bg_select_txt1)
+                binding.tvSelect1.setTextColor(resources.getColor(R.color.color_1a1a1a))
+                binding.rlImage.visibility = View.VISIBLE
+
+                binding.vBgSelect2.background = resources.getDrawable(R.drawable.bg_select_txt2)
+                binding.tvSelect2.setTextColor(resources.getColor(R.color.color_999999))
+                binding.rlTxt.visibility = View.GONE
+
+
+                binding.llJt.visibility = View.VISIBLE
+                binding.llAll.background = resources.getDrawable(R.drawable.bg_genner_right_top_12)
+
+
+
+            }else{
+
+                binding.vBgSelect1.background = resources.getDrawable(R.drawable.bg_select_txt3)
+                binding.tvSelect1.setTextColor(resources.getColor(R.color.color_999999))
+                binding.rlImage.visibility = View.GONE
+
+                binding.vBgSelect2.background = resources.getDrawable(R.drawable.bg_select_txt4)
+                binding.tvSelect2.setTextColor(resources.getColor(R.color.color_1a1a1a))
+                binding.rlTxt.visibility = View.VISIBLE
+
+                binding.llJt.visibility = View.GONE
+                binding.llAll.background = resources.getDrawable(R.drawable.bg_genner_left_top_12)
+
+            }
         }
 
     }
@@ -312,7 +392,7 @@ class GenerateReportActivity :
             override fun run() {
                 if (!isFinishing && !isDestroyed && isJdPolling) {
                     Log.d("Polling", "JD图片轮询...")
-                    mRealVM.jdMaterialQualityr()   // ★ 这里调用 JD 图片专用的检查方法
+                    mRealVM.jdMaterialQualityr(if (mRealVM.tableSelect.value == 0) "IMAGE" else "TEXT")   // ★ 这里调用 JD 图片专用的检查方法
                     handler.postDelayed(this, POLLING_INTERVAL)
                 }
             }

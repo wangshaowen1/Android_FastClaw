@@ -51,6 +51,10 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val photoSize = MutableLiveData<Int>(0)
 
+    val tableSelect = MutableLiveData<Int>(0)
+
+
+
 
 
     fun interviewReport(data:InterviewReportData, callback: () -> Unit){
@@ -102,7 +106,11 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
                         jdImageUrls  = jdImageUrls
                     )
                 ), result = {
-                    jdImageData.postValue(this.data)
+                    if(type == "IMAGE"){
+                        jdImageData.postValue(this.data)
+                    }else{
+                        jdTextData.postValue(this.data)
+                    }
                 }, error = {
                     setLoading(false)
                     this?.msg?.showToast() }
@@ -114,18 +122,25 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
     }
 
-    fun jdMaterialQualityr() {
+    fun jdMaterialQualityr(type: String) {
         launchWithLoading(true, block = {
+            val body = if (type == "IMAGE") {
+                JdMaterialQualityBody(checkId = jdImageData.value?.checkId)
+            } else {
+                JdMaterialQualityBody(checkId = jdTextData.value?.checkId)
+            }
             response(
                 mRepo.api.jdMaterialQualityResult(
-                    JdMaterialQualityBody(
-                        checkId = jdImageData.value?.checkId
-                    )
+                    body
                 ), result = {
                     if (this.data?.checkStatus !in listOf("RUNNING", "PENDING")) {
                         setLoading(false)
                     }
-                    jdImageData.postValue(this.data)
+                    if(type == "IMAGE"){
+                        jdImageData.postValue(this.data)
+                    }else{
+                        jdTextData.postValue(this.data)
+                    }
                 }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
 
