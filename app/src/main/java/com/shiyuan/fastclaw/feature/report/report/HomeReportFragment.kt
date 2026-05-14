@@ -72,15 +72,18 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.llTab1.background =  resources.getDrawable(R.drawable.bg_0099ff_r100)
             binding.tvTargetPosition.setTextColor(resources.getColor(R.color.white))
             binding.tvTargetPosition.setTypeface(binding.tvNoTargetPosition.typeface, Typeface.BOLD)
-            binding.tvUpJd.visibility = View.VISIBLE
+            binding.ivTargetPosition.visibility = View.VISIBLE
             binding.ivItem1.setImageResource(R.drawable.ic_background_check)
             binding.tvItem11.text = resources.getString(R.string.company_background_check)
             binding.tvItem12.text = resources.getString(R.string.report_home_tip3)
 
+            binding.rlHave.visibility = View.VISIBLE
+            binding.rlNo.visibility = View.GONE
+
             binding.llTab2.background =  null
             binding.tvNoTargetPosition.setTextColor(resources.getColor(R.color.color_999999))
             binding.tvNoTargetPosition.typeface = Typeface.DEFAULT
-            binding.tvNoJd.visibility = View.GONE
+            binding.ivNoTargetPosition.visibility = View.GONE
             binding.ivItem2.setImageResource(R.drawable.ic_job)
             binding.tvItem21.text = resources.getString(R.string.job_matching_analysis)
             binding.tvItem22.text = resources.getString(R.string.job_home_tip1)
@@ -91,15 +94,18 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.llTab1.background =  null
             binding.tvTargetPosition.setTextColor(resources.getColor(R.color.color_999999))
             binding.tvTargetPosition.typeface = Typeface.DEFAULT
-            binding.tvUpJd.visibility = View.GONE
+            binding.ivTargetPosition.visibility = View.GONE
             binding.ivItem1.setImageResource(R.drawable.ic_skill)
             binding.tvItem11.text = resources.getString(R.string.job_matching_analysis)
             binding.tvItem12.text = resources.getString(R.string.job_home_tip1)
 
+            binding.rlHave.visibility = View.GONE
+            binding.rlNo.visibility = View.VISIBLE
+
             binding.llTab2.background =  resources.getDrawable(R.drawable.bg_0099ff_r100)
             binding.tvNoTargetPosition.setTextColor(resources.getColor(R.color.white))
             binding.tvNoTargetPosition.setTypeface(binding.tvNoTargetPosition.typeface, Typeface.BOLD)
-            binding.tvNoJd.visibility = View.VISIBLE
+            binding.ivNoTargetPosition.visibility = View.VISIBLE
             binding.ivItem2.setImageResource(R.drawable.ic_personal)
             binding.tvItem21.text = resources.getString(R.string.personal_weaknesses)
             binding.tvItem22.text = resources.getString(R.string.personal_home_tip1)

@@ -601,8 +601,10 @@
     <string name="go_report">查看历史报告</string>
     <string name="target_position">有目标岗位</string>
     <string name="up_JD">上传简历 + JD </string>
+    <string name="up_JD2">适合：面试中/即将面试 </string>
     <string name="no_target_position">没有目标岗位 </string>
     <string name="no_JD">仅上传简历</string>
+    <string name="no_JD2">适合：投递中/还未面试</string>
     <string name="what_content">报告包含哪些内容？</string>
     <string name="report_home_tip3">深扒公司经营情况、调研核心业务/产品。</string>
     <string name="company_background_check">公司背调</string>
