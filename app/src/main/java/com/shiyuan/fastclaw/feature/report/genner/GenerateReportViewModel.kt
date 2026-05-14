@@ -16,7 +16,9 @@ import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.common.ext.cleanupTempFile
 import com.shiyuan.fastclaw.common.ext.isNetworkPath
 import com.shiyuan.fastclaw.common.ext.toOssFilePath
+import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
+import com.shiyuan.fastclaw.core.ext.setBlackDialog
 import com.shiyuan.fastclaw.core.network.apis.entity.ReportData
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
@@ -52,7 +54,6 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
     val photoSize = MutableLiveData<Int>(0)
 
     val tableSelect = MutableLiveData<Int>(0)
-
 
 
 
@@ -97,7 +98,8 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun jdQualityQuality(jdImageUrls: List<String>?,jdText: String?,type: String){
-        launchWithLoading(true, block = {
+        setLoading(true)
+        launch(  block = {
             response(
                 mRepo.api.jdMaterialQuality(
                     JdMaterialQualityBody(
@@ -123,7 +125,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun jdMaterialQualityr(type: String) {
-        launchWithLoading(true, block = {
+        launch(  block = {
             val body = if (type == "IMAGE") {
                 JdMaterialQualityBody(checkId = jdImageData.value?.checkId)
             } else {
@@ -133,9 +135,6 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
                 mRepo.api.jdMaterialQualityResult(
                     body
                 ), result = {
-                    if (this.data?.checkStatus !in listOf("RUNNING", "PENDING")) {
-                        setLoading(false)
-                    }
                     if(type == "IMAGE"){
                         jdImageData.postValue(this.data)
                     }else{
@@ -147,7 +146,8 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun resumeMaterialQuality(resumeFileUrl: String,resumeFileName: String) {
-        launchWithLoading(true, block = {
+        setLoading(true)
+        launch( block = {
             response(
                 mRepo.api.resumeMaterialQuality(
                 ResumeMaterialQualityBody(
@@ -169,17 +169,13 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
 
     fun resumeMaterialQualityr() {
-        Log.d("resumeMaterialQualityr", resumeData.value?.checkId.toString())
-        launchWithLoading(true, block = {
+        launch( block = {
             response(
                 mRepo.api.resumeMaterialQualityResult(
                 ResumeMaterialQualityBody(
                     checkId = resumeData.value?.checkId
                 )
             ), result = {
-                    if (this.data?.checkStatus !in listOf("RUNNING", "PENDING")) {
-                        setLoading(false)
-                    }
                     resumeData.postValue(this.data)
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
@@ -214,7 +210,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
             return
         }
 
-        setLoading(true)
+       // setLoading(true)
         val context = App.instance
 
         // 用于收集结果
@@ -279,7 +275,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
         failedUris: List<Uri>,
         onComplete: (List<String>, List<Uri>) -> Unit
     ) {
-        setLoading(false)
+       // setLoading(false)
         if (failedUris.isNotEmpty()) {
             // 可以根据需要提示失败数量
             "有 ${failedUris.size} 个文件上传失败".showToast()

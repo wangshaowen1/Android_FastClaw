@@ -97,6 +97,7 @@ class GenerateReportActivity :
             UploadResumeDialog.show(manager = supportFragmentManager) { fileInfo ->
                 if (fileInfo != null) {
                     mRealVM.submitResume(fileInfo.uri) {
+                        binding.tvResumeName.text = fileInfo.fileName
                         initStateView("简历解析中", "PENDING")
                         mRealVM.resumeMaterialQuality(it, fileInfo.fileName ?: "")
                     }
@@ -255,6 +256,7 @@ class GenerateReportActivity :
             Log.d("checkStatus", data.safeCheckStatus)
             when (data.safeCheckStatus) {
                 "PASS" -> {
+                    mRealVM.setLoading(false)
                     initStateView(data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }
                         ?: "简历上传成功", data.safeCheckStatus)
                     stopResumePolling()  // ✅ 停止轮询
@@ -269,6 +271,7 @@ class GenerateReportActivity :
                     }
                 }
                 else -> {
+                    mRealVM.setLoading(false)
                     // 处理失败
                     initStateView(data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }
                         ?: "简历解析失败", data.safeCheckStatus)
@@ -282,6 +285,7 @@ class GenerateReportActivity :
             when (data.safeCheckStatus) {
                 "PASS" -> {
                     binding.llJdImageState.visibility = View.GONE
+                    mRealVM.setLoading(false)
                     stopJdPolling()  // ✅ 停止轮询
                 }
 
@@ -294,6 +298,7 @@ class GenerateReportActivity :
                 }
 
                 else -> {
+                    mRealVM.setLoading(false)
                     // 处理失败
                     binding.llJdImageState.visibility = View.VISIBLE
                    // val message = data.blockingIssues?.joinToString("\n") ?: ""
@@ -307,6 +312,7 @@ class GenerateReportActivity :
             Log.d("checkStatus", data.safeCheckStatus)
             when (data.safeCheckStatus) {
                 "PASS" -> {
+                    mRealVM.setLoading(false)
                     binding.llJdTxtState.visibility = View.GONE
                     stopJdPolling()  // ✅ 停止轮询
                     ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdTextData.value?.checkId,reportType ="JD_REPORT")
@@ -320,6 +326,7 @@ class GenerateReportActivity :
                 }
 
                 else -> {
+                    mRealVM.setLoading(false)
                     // 处理失败
                     binding.llJdTxtState.visibility = View.VISIBLE
                     // val message = data.blockingIssues?.joinToString("\n") ?: ""

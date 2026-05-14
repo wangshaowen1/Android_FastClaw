@@ -16,7 +16,7 @@ import kotlinx.parcelize.Parcelize
     var blockingIssues: List<String>? = null,
     val resumeFileUrl: String ?,
     var checkStatus: String? = null,
-    val resumeFileName: String ?,
+    var resumeFileName: String ?,
     val resumeFileType: String ?,
     val submitTime: String ? = null,
     var checkId: String ? = null,
