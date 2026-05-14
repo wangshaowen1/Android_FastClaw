@@ -30,13 +30,14 @@ class MineUserPointAdapter() : PagingDataAdapter<UserPointItemData, RecyclerView
         }
     }
 
-    inner class ViewHolder(binding: ItemShrimpChipsBinding) :
-        BindingViewHolder<ItemShrimpChipsBinding>(binding) {
+    inner class ViewHolder(binding: ItemShrimpChipsBinding) : BindingViewHolder<ItemShrimpChipsBinding>(binding) {
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
                 val itemVm = binding.getVm(item.id, item, viewModelFactory = {
                     MineUserPointItemVm(item)
                 })
+                // 判断是否最后一项 隐藏分割线
+                binding.isLastItem = position == snapshot().size - 1
                 binding.item = itemVm
                 binding.executePendingBindings()
             }

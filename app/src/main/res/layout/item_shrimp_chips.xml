@@ -8,61 +8,75 @@
         <import type="android.view.View" />
 
         <variable
+            name="isLastItem"
+            type="Boolean" />
+        <variable
             name="item"
             type="com.shiyuan.fastclaw.feature.mine.MineUserPointItemVm" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:paddingHorizontal="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_number"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constrainedWidth="true"
+            android:layout_marginTop="16dp"
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{item.data.businessDesc}"
+            android:textColor="@color/color_1a1a1a"
+            android:textSize="14sp"
+            tools:text="生成报告"/>
 
-            <TextView
-                android:id="@+id/tv_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{item.data.businessDesc}"
-                android:textColor="@color/color_1a1a1a"
-                android:textSize="14sp"
-                tools:text="生成报告"/>
+        <TextView
+            app:layout_constraintStart_toStartOf="@id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_number"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constrainedWidth="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_below="@id/tv_name"
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{item.data.createTime}"
+            android:textColor="@color/color_999999"
+            android:textSize="12sp"
+            tools:text="2026.06.06"/>
 
 
-            <TextView
-                android:layout_marginTop="6dp"
-                android:layout_below="@id/tv_name"
-                android:id="@+id/tv_tiem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{item.data.createTime}"
-                android:textColor="@color/color_999999"
-                android:textSize="12sp"
-                tools:text="2026.06.06"/>
-
-
-            <TextView
-                android:id="@+id/tv_number"
-                android:text="@{item.data.changePoints}"
-                android:textColor="@color/color_1a1a1a"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="+10"/>
-
-        </RelativeLayout>
+        <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/tv_number"
+            android:text="@{item.data.showTransaction()}"
+            android:textColor="@color/color_1a1a1a"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="+10"/>
 
         <View
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/color_10_ffffff"></View>
-
-    </LinearLayout>
+            android:visibility="@{isLastItem ? View.GONE : View.VISIBLE}"
+            android:background="@color/color_10_000000"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
