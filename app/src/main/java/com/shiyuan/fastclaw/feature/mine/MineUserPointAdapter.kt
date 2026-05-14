@@ -34,7 +34,9 @@ class MineUserPointAdapter() : PagingDataAdapter<UserPointItemData, RecyclerView
         BindingViewHolder<ItemShrimpChipsBinding>(binding) {
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
-                val itemVm = binding.getVm(position, item, MineUserPointItemVm::class.java)
+                val itemVm = binding.getVm(item.id, item, viewModelFactory = {
+                    MineUserPointItemVm(item)
+                })
                 binding.item = itemVm
                 binding.executePendingBindings()
             }
@@ -49,7 +51,7 @@ class MineUserPointAdapter() : PagingDataAdapter<UserPointItemData, RecyclerView
                 oldItem: UserPointItemData,
                 newItem: UserPointItemData
             ): Boolean {
-                return oldItem.hashCode() == newItem.hashCode()
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(
