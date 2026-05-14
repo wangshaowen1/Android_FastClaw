@@ -1779,6 +1779,24 @@ fun isVisibleWithAnimation(view: LottieAnimationView, isVisible: Boolean) {
         view.playAnimation()
     } else {
         view.visibility = View.GONE
-        view.cancelAnimation() // 彻底停止，不占 CPU
+        view.cancelAnimation()
+    }
+}
+
+@BindingAdapter("autoRotate")
+fun setAutoRotate(view: ImageView, isRotating: Boolean) {
+    if (isRotating) {
+        val existingAnimator = view.getTag(R.id.viewAnimator) as? ObjectAnimator
+        if (existingAnimator == null || !existingAnimator.isRunning) {
+            ObjectAnimator.ofFloat(view, "rotation", 0f, 360f).apply {
+                duration = 1000
+                repeatCount = ObjectAnimator.INFINITE
+                interpolator = LinearInterpolator()
+                view.setTag(R.id.viewAnimator, this)
+                start()
+            }
+        }
+    } else {
+        (view.getTag(R.id.viewAnimator) as? ObjectAnimator)?.cancel()
     }
 }
