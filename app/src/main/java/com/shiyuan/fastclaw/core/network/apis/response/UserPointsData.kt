@@ -54,7 +54,7 @@ data class UserPointItemData(
     /**
      * 积分变动
      */
-    val changePoints: Int? = null,
+    val changePoints: String? = null,
 
     /**
      * 类型
@@ -67,4 +67,18 @@ data class UserPointItemData(
      * 2026-05-12 10:49:55
      */
     val createTime: String? = ""
-) : Parcelable
+) : Parcelable {
+
+    fun showTransaction(): String = when (transactionType) {
+        "ADD" -> {
+            "+$changePoints"
+        }
+        "SUBTRACT" -> {
+            "-$changePoints"
+        }
+        else -> {
+            changePoints ?: "-"
+        }
+    }
+
+}
