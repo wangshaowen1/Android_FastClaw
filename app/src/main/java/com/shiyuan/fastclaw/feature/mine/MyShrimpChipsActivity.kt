@@ -3,28 +3,17 @@ package com.shiyuan.fastclaw.feature.mine
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.content.ContextCompat
-import androidx.databinding.Observable
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gyf.immersionbar.ImmersionBar
-import com.king.logx.logger.Logger
-import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.LoadState
-import com.shiyuan.fastclaw.databinding.ActivityMyHistoryReportBinding
 import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.ext.getResString
-import com.shiyuan.fastclaw.common.adapter.QuickAdapter
+import com.nhsd.basic.ext.showAllowingStateLoss
+import com.nhsd.basic.viewmodel.UiState
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
-import com.shiyuan.fastclaw.feature.payment.ItemPaymentMethodVm
-import com.shiyuan.fastclaw.feature.report.ReportViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.text.append
 
 /**
  * @Introduce: 我的虾条
@@ -83,9 +72,25 @@ class MyShrimpChipsActivity : BaseViewModelActivity<ActivityMyShrimpChipsBinding
 
     private fun initObservers() {
         lifecycleScope.launch {
+            mRealVM.testLoading()
             mRealVM.userPointListFlow.collectLatest { list ->
                 mAdapter.submitData(list)
             }
         }
+    }
+
+    private var analysisLoadingDialog: AnalysisLoadingDialog? = null
+
+    override fun onUiStateChanged(state: UiState) {
+        if (state.isLoading) {
+            if (analysisLoadingDialog?.isAdded != true) {
+                analysisLoadingDialog = AnalysisLoadingDialog()
+                analysisLoadingDialog?.showAllowingStateLoss(supportFragmentManager, "analysis_loading")
+            }
+        } else {
+            analysisLoadingDialog?.dismissAllowingStateLoss()
+            analysisLoadingDialog = null
+        }
+        state.pageError?.let { showPageError(it.message, it.retryAction) } ?: hidePageError()
     }
 }

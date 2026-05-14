@@ -18,14 +18,17 @@ import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Global
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
+import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
 import com.shiyuan.fastclaw.core.response
 import com.umeng.analytics.pro.da
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 /**
  * *****************************************
@@ -148,6 +151,18 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
                     }
                 )
             }
+        }
+    }
+
+    /**
+     * 测试解析loading
+     */
+    fun testLoading() {
+        viewModelScope.launch {
+            setLoading(true)
+            // 5s 关闭
+            delay(5000L)
+            setLoading(false)
         }
     }
 
