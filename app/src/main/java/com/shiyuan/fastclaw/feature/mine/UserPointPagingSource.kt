@@ -3,7 +3,6 @@ package com.shiyuan.fastclaw.feature.mine
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.shiyuan.fastclaw.core.AppRepository
-import com.shiyuan.fastclaw.core.network.apis.ApiService
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
 import okio.IOException
