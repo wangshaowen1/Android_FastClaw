@@ -5,39 +5,22 @@ import com.shiyuan.fastclaw.core.User;
 
 public class PagedBody {
 
-    /**
-     * uniqueId : 7210e8d9
-     * pageNum : 1
-     * pageSize : 3
-     */
-    private String userToken;
     private int pageNum;
     private int pageSize;
 
 
-    public PagedBody() {
-        this.userToken = User.get().getId();
-    }
+
 
     public PagedBody(int pageNum, int pageSize) {
-        this.userToken = User.get().getId();
         this.pageNum = pageNum;
         this.pageSize = pageSize;
     }
 
     public PagedBody(String userToken, int pageNum, int pageSize) {
-        this.userToken = userToken;
         this.pageNum = pageNum;
         this.pageSize = pageSize;
     }
 
-    public String getUserToken() {
-        return userToken;
-    }
-
-    public void setUserToken(String userToken) {
-        this.userToken = userToken;
-    }
 
     public int getPageNum() {
         return pageNum;

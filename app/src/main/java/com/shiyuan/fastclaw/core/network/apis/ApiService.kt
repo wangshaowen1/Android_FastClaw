@@ -191,7 +191,7 @@ interface ApiService {
      * 获取我的报告列表
      */
     @POST(ApiConstants.GET_MY_REPORT_LIST)
-    suspend fun getMyReportList(@Body body: UserTokenBody): ApiResponse<ReportListData?>
+    suspend fun getMyReportList(@Body body: PagedBody): ApiResponse<ReportListData?>
 
     /**
      * 上传简历

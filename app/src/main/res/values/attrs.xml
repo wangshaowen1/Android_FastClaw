@@ -1047,4 +1047,15 @@
         <attr name="pi_activeWidth" format="dimension" />
         <attr name="pi_indicatorSpacing" format="dimension" />
     </declare-styleable>
+
+    <!-- CircleProgressView 带中心文字的圆形进度 -->
+    <declare-styleable name="CircleProgressView2">
+        <attr name="cpv_strokeWidth" format="dimension" />
+        <attr name="cpv_progressColor" format="color" />
+        <attr name="cpv_backgroundColor" format="color" />
+        <attr name="cpv_text" format="string" />
+        <attr name="cpv_textColor" format="color" />
+        <attr name="cpv_textSize" format="dimension" />
+        <attr name="cpv_progress" format="integer" />
+    </declare-styleable>
 </resources>

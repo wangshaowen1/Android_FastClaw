@@ -114,21 +114,21 @@
 
         <ImageView
             android:id="@+id/no_data_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_not_song" />
 
         <TextView
             android:id="@+id/no_data"
-            style="@style/Text14"
+            android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="24dp"
             android:gravity="center"
             android:lineSpacingExtra="@dimen/lineSpacingExtra"
             android:text="@string/page_empty"
-            android:textColor="?attr/textColor4" />
+            android:textColor="@color/color_999999" />
 
         <TextView
             android:id="@+id/no_data_btn"

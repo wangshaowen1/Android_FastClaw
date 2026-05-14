@@ -4,10 +4,12 @@ import android.graphics.Typeface
 import android.view.View
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.App.Companion.instance
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.FragmentHomeReportBinding
+import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
 import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity
@@ -134,6 +136,9 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             val adapter = ImageBannerAdapter()
             binding.bannerView.adapter = adapter
             binding.bannerView.create(imageList)
+        }
+        binding.llViewReport.setOnSingleClickListener {
+            MyHistoryReportActivity.start(requireActivity())
         }
     }
 

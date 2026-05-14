@@ -6,20 +6,29 @@ package com.shiyuan.fastclaw.feature.report.data
 data class ReportInfo(
     val id: String,
     val title: String,
-    val score: Int,
     val status: ReportStatus,
     val companyName: String?,
     val position: String?,
-    val date: String,
     val tag: String?,
     val tagColor: String?,
+    val progress: Int = 0,
     val progressText: String?,
-    val progressPercent: Int?
+    val jobTitleStd: String?,
+    val progressPercent: Int?,
+    val reportType: String? = null,
+    val createTime: String? = null,
+    val reportName: String? = null,
+    val canViewReport: Boolean = false,
+    val detailUrl: String? = null,
+    val detailQuery: String? = null,
+    val detailPath: String? = null,
+    val estimateMessage: String? = null,
+    val totalScore: Int = 0,
 )
 
 enum class ReportStatus {
-    /** 生成中 */
-    GENERATING,
-    /** 已完成 */
-    COMPLETED
+    /** 生成cg */
+    IN_PROGRESS,
+    OTHER,
+
 }

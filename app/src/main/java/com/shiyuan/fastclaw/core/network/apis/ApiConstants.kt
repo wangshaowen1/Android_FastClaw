@@ -106,7 +106,7 @@ object ApiConstants {
      * 举报提交
      */
     const val REPORT_SUBMISSION = "app/report/save"
-    const val GET_MY_REPORT_LIST = "app/report/list"
+    const val GET_MY_REPORT_LIST = "/api/candidate/app/interviewReport/report/list"
     const val GET_RESUME_LATEST = "/api/candidate/app/interviewReport/resume/latest/query"
     const val RESUME_MATERIAL_QUALITY = "/api/candidate/app/interviewReport/resumeMaterialQuality/check"
     const val RESUME_MATERIAL_QUALITY_RESULT = "/api/candidate/app/interviewReport/resumeMaterialQuality/result/query"

@@ -1,7 +1,6 @@
 package com.shiyuan.fastclaw.feature.report
 
 import androidx.databinding.ObservableField
-import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
 import com.shiyuan.fastclaw.feature.report.data.ReportStatus
@@ -11,45 +10,59 @@ import com.shiyuan.fastclaw.feature.report.data.ReportStatus
  */
 class ItemReportVM(data: ReportInfo?) : AppItemViewModel<ReportInfo>(data) {
 
-    val isGenerating = ObservableField(data?.status == ReportStatus.GENERATING)
-    val isCompleted = ObservableField(data?.status == ReportStatus.COMPLETED)
+    val isGenerating = ObservableField(data?.status == ReportStatus.IN_PROGRESS)
 
-    val scoreText = ObservableField(data?.score?.toString().orEmpty())
-    val titleText = ObservableField(data?.title.orEmpty())
+    val estimateMessage = ObservableField(data?.estimateMessage.orEmpty())
+
+    val progress = ObservableField(data?.progress)
+
+    val jobTitleStd = ObservableField("目标岗位："+ data?.jobTitleStd.orEmpty())
+
+    val isJobTitleStd = ObservableField(data?.jobTitleStd.isNullOrBlank())
+
+    val reportNameCompanyName = ObservableField(if (data?.companyName.isNullOrBlank()) data?.reportName.orEmpty() else data?.companyName.orEmpty())
+
+    val stTime = ObservableField(if(data?.jobTitleStd.isNullOrBlank()) "上传简历于 ${data?.createTime}" else "上传简历+JD于：${data?.createTime}" )
+
+    val progressBgC = ObservableField(getScoreProgressColor(data?.totalScore))
+
+    val progressBg = ObservableField(getScoreProgressBgColor(data?.totalScore))
+
+    val totalScore = ObservableField(data?.totalScore)
+
+
+    val reportName = ObservableField(data?.reportName.orEmpty())
 
     val companyNameText = ObservableField(data?.companyName.orEmpty())
     val positionText = ObservableField(
         if (!data?.position.isNullOrBlank()) "目标岗位：${data?.position}" else ""
     )
 
-    val dateText = ObservableField(
-        if (!data?.date.isNullOrBlank()) "上传简历于 ${data?.date}" else ""
-    )
-
     val tagText = ObservableField(data?.tag.orEmpty())
     val tagVisible = ObservableField(!data?.tag.isNullOrEmpty())
 
-    val progressText = ObservableField(data?.progressText.orEmpty())
-    val progressVisible = ObservableField(data?.status == ReportStatus.GENERATING)
 
-    val circleStrokeColorRes = ObservableField(getScoreStrokeColorRes(data?.score))
-    val circleProgressColorRes = ObservableField(getScoreProgressColorRes(data?.score))
-    val circleBgColorRes = ObservableField(R.color.color_10_000000)
 
     fun onItemClick() {
         onItemClick.value?.invoke(null)
     }
 
-    private fun getScoreStrokeColorRes(score: Int?): Int {
-        return R.color.color_10_000000
+    private fun getScoreProgressColor(score: Int?): Int {
+        return when {
+            score == null -> 0xFFFF5967.toInt()
+            score >= 80 -> 0xFF0095FF.toInt()
+            score >= 50 -> 0xFFFFEE00.toInt()
+            else -> 0xFFFF5967.toInt()
+        }
     }
 
-    private fun getScoreProgressColorRes(score: Int?): Int {
+    private fun getScoreProgressBgColor(score: Int?): Int {
         return when {
-            score == null -> R.color.func_success_dark
-            score >= 70 -> R.color.func_success_dark
-            score >= 40 -> R.color.func_warning_dark
-            else -> R.color.func_failure_dark
+            score == null -> 0x1AFF5967.toInt()
+            score >= 80 -> 0x1A0095FF.toInt()
+            score >= 50 -> 0x1AFFEE00.toInt()
+            else -> 0x1AFF5967.toInt()
         }
     }
 }
+

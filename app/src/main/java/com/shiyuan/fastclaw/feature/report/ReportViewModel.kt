@@ -12,12 +12,11 @@ import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.network.apis.response.toReportInfoList
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
-import com.shiyuan.fastclaw.feature.report.data.ReportStatus
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResString
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
-import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
+import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import okhttp3.MultipartBody
 
@@ -32,29 +31,35 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
-
     val loadState = ObservableField<LoadState>(LoadState.NotLoading(false))
 
     val listAdapter = QuickAdapter<ItemReportVM>(R.layout.item_report, emptyList())
 
+    // 外部注入的 item 点击回调（由 Activity 设置）
+    var itemClickListener: ((ReportInfo) -> Unit)? = null
+
     private var listData = mutableListOf<ReportInfo>()
+    private var currentPage = 1
+    private var isLoadingMore = false
+    private val pageSize = 10
 
     override fun onCreate() {
         super.onCreate()
-        loadData()
     }
 
     fun loadData() {
         loadState.set(LoadState.Loading)
         request(
-            apiBlock = { ApiFactory.apiService.getMyReportList(UserTokenBody()) },
+            apiBlock = { ApiFactory.apiService.getMyReportList(PagedBody(1, pageSize)) },
             onSuccess = {
                 data?.let { data ->
+                    currentPage = 1
                     listData = data.toReportInfoList().toMutableList()
                     refreshList()
+                    val isEmpty = data.toReportInfoList().isEmpty()
                     loadState.set(
-                        if (data.toReportInfoList().isEmpty()) LoadState.Empty
-                        else LoadState.NotLoading(true)
+                        if (isEmpty) LoadState.Empty
+                        else LoadState.NotLoading(isEmpty)
                     )
                 } ?: run {
                     listData.clear()
@@ -69,30 +74,54 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun refresh() {
+        currentPage = 1
+        isLoadingMore = false
         loadData()
+    }
+
+    fun loadMore() {
+        if (isLoadingMore) return
+        val currentState = loadState.get()
+        if (currentState is LoadState.NotLoading && currentState.endOfPaginationReached) return
+
+        isLoadingMore = true
+        val nextPage = currentPage + 1
+        request(
+            apiBlock = { ApiFactory.apiService.getMyReportList(PagedBody(nextPage, pageSize)) },
+            onSuccess = {
+                isLoadingMore = false
+                data?.let { data ->
+                    val newData = data.toReportInfoList()
+                    if (newData.isEmpty()) {
+                        loadState.set(LoadState.NotLoading(true))
+                    } else {
+                        currentPage = nextPage
+                        listData.addAll(newData)
+                        refreshList()
+                        loadState.set(LoadState.NotLoading(false))
+                    }
+                } ?: run {
+                    loadState.set(LoadState.NotLoading(true))
+                }
+            },
+            onError = {
+                isLoadingMore = false
+            }
+        )
     }
 
     private fun refreshList() {
         val items = listData.map { info ->
             ItemReportVM(info).apply {
-                onItemClick.value = {
-                    onReportItemClick(info)
+                // 使用外部回调设置点击事件（如果回调不为空）
+                onItemClick.value = if (itemClickListener != null) {
+                    { itemClickListener?.invoke(info) }
+                } else {
+                    null
                 }
             }
         }
         listAdapter.submitList(items)
-    }
-
-    fun onReportItemClick(info: ReportInfo) {
-        // 报告详情跳转
-        when (info.status) {
-            ReportStatus.GENERATING -> {
-                // 生成中的报告，暂不可查看
-            }
-            ReportStatus.COMPLETED -> {
-                // TODO: 跳转到报告详情页面
-            }
-        }
     }
 
     /**
