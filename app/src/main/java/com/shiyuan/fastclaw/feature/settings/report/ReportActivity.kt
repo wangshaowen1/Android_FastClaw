@@ -18,12 +18,15 @@ import com.shiyuan.fastclaw.widget.PhotoGridView
 import com.shiyuan.fastclaw.widget.actionsheet.ActionSheetDialog
 import com.shiyuan.fastclaw.widget.actionsheet.ActionSheetHelper
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.showAllowingStateLoss
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.manager.FileManager
+import com.nhsd.basic.viewmodel.UiState
 import com.nhsd.mattise.Matisse
 import com.nhsd.mattise.MimeType
 import com.nhsd.mattise.engine.impl.GlideEngine
 import com.nhsd.mattise.internal.entity.CaptureStrategy
+import com.shiyuan.fastclaw.feature.mine.AnalysisLoadingDialog
 
 
 class ReportActivity :
@@ -169,5 +172,6 @@ class ReportActivity :
                 0.5f
             }
     }
+
 }
 

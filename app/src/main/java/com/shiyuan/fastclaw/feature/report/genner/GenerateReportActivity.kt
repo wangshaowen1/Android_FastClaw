@@ -15,8 +15,10 @@ import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showAllowingStateLoss
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.manager.FileManager
+import com.nhsd.basic.viewmodel.UiState
 import com.nhsd.mattise.Matisse
 import com.nhsd.mattise.MimeType
 import com.nhsd.mattise.engine.impl.GlideEngine
@@ -26,6 +28,7 @@ import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.ActivityGennerReportBinding
+import com.shiyuan.fastclaw.feature.mine.AnalysisLoadingDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.widget.PhotoGridView
@@ -454,6 +457,20 @@ class GenerateReportActivity :
         }
     }
 
+    private var analysisLoadingDialog: AnalysisLoadingDialog? = null
+
+    override fun onUiStateChanged(state: UiState) {
+        if (state.isLoading) {
+            if (analysisLoadingDialog?.isAdded != true) {
+                analysisLoadingDialog = AnalysisLoadingDialog()
+                analysisLoadingDialog?.showAllowingStateLoss(supportFragmentManager, "analysis_loading")
+            }
+        } else {
+            analysisLoadingDialog?.dismissAllowingStateLoss()
+            analysisLoadingDialog = null
+        }
+        state.pageError?.let { showPageError(it.message, it.retryAction) } ?: hidePageError()
+    }
 
     override fun onDestroy() {
         super.onDestroy()

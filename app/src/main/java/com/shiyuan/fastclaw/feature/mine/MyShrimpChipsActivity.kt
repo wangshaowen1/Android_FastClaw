@@ -79,18 +79,5 @@ class MyShrimpChipsActivity : BaseViewModelActivity<ActivityMyShrimpChipsBinding
         }
     }
 
-    private var analysisLoadingDialog: AnalysisLoadingDialog? = null
 
-    override fun onUiStateChanged(state: UiState) {
-        if (state.isLoading) {
-            if (analysisLoadingDialog?.isAdded != true) {
-                analysisLoadingDialog = AnalysisLoadingDialog()
-                analysisLoadingDialog?.showAllowingStateLoss(supportFragmentManager, "analysis_loading")
-            }
-        } else {
-            analysisLoadingDialog?.dismissAllowingStateLoss()
-            analysisLoadingDialog = null
-        }
-        state.pageError?.let { showPageError(it.message, it.retryAction) } ?: hidePageError()
-    }
 }
