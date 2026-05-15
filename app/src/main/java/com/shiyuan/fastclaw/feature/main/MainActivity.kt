@@ -3,22 +3,30 @@ package com.shiyuan.fastclaw.feature.main
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
-import androidx.constraintlayout.motion.widget.KeyPosition
 import androidx.core.util.getOrDefault
 import androidx.lifecycle.lifecycleScope
 import com.fm.openinstall.OpenInstall
 import com.fm.openinstall.listener.AppWakeUpAdapter
 import com.fm.openinstall.model.AppData
 import com.google.gson.Gson
+import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.bus.observeEvents
+import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.isActive
+import com.nhsd.basic.ext.launchNoCrash
+import com.nhsd.basic.ext.setupTranslucentStatus
+import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.ext.switchFragment
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
@@ -30,19 +38,9 @@ import com.shiyuan.fastclaw.core.model.WakeUpEntity
 import com.shiyuan.fastclaw.databinding.ActivityMainBinding
 import com.shiyuan.fastclaw.feature.home.HomeFragment
 import com.shiyuan.fastclaw.feature.mine.MineFragment
+import com.shiyuan.fastclaw.feature.report.report.HomeReportFragment
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.router.AppRouter
-import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.bus.FlowEventBus
-import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.getThemeColor
-import com.nhsd.basic.ext.isActive
-import com.nhsd.basic.ext.launchNoCrash
-import com.nhsd.basic.ext.setupTranslucentStatus
-import com.nhsd.basic.ext.showToast
-import com.nhsd.basic.ext.switchFragment
-import com.shiyuan.fastclaw.feature.report.report.HomeReportFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -101,6 +99,14 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 底部系统导航栏颜色
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.navigationBarColor = Color.WHITE
+            window.navigationBarDividerColor = Color.WHITE
+        } else {
+            window.navigationBarColor = Color.WHITE
+        }
+
         registerTime = System.currentTimeMillis()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             try {
