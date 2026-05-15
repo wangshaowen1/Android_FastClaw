@@ -28,6 +28,7 @@ data class ReportInfo(
 
 enum class ReportStatus {
     /** 生成cg */
+    FAILED,
     IN_PROGRESS,
     OTHER,
 

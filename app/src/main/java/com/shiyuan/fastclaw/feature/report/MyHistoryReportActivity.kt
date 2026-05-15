@@ -75,7 +75,7 @@ class MyHistoryReportActivity : BaseViewModelActivity<ActivityMyHistoryReportBin
      */
     private fun onReportItemClick(info: ReportInfo) {
         when (info.status) {
-            ReportStatus.OTHER -> {
+            ReportStatus.OTHER ,  ReportStatus.FAILED -> {
                 SimpleBrowserActivity.launch(
                     this,
                     info.detailUrl,
