@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.login.phone
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.text.Spannable
@@ -105,6 +106,7 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun dataUpdate() {
         mRealVM.promptGenerating.observe(this) {
             if (it.first) {
@@ -144,30 +146,50 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
 
 
         mRealVM.mobile.observe(this) {
-            Log.d("mobile",it.toString())
             mRealVM.checkSendCodeEnable()
+            mRealVM.checkPhoneBg()
         }
         mRealVM.code.observe(this) {
-            Log.d("code",it.toString())
             mRealVM.checkLoginEnable()
+            mRealVM.checkCodeBg()
         }
+
+        mRealVM.phoneBg.observe(this){
+            binding.llPhone.background =if(it) resources.getDrawable(R.drawable.bg_ffffff_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_f74c30)
+        }
+
+        mRealVM.codeBg.observe(this){
+            binding.llVerifyCode.background =if(it) resources.getDrawable(R.drawable.bg_ffffff_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_f74c30)
+        }
+
+        mRealVM.codeSendBg.observe(this){
+            binding.btnSend.background =if(it) resources.getDrawable(R.drawable.bg_00000_r100_w1_0099ff) else  resources.getDrawable(R.drawable.bg_0099ff_r100)
+            binding.btnSend.setTextColor(if(it) resources.getColor(R.color.color_0099FF) else resources.getColor(R.color.white))
+        }
+
 
         mRealVM.sendCodeEnable.observe(this) {
             Log.d("sendCodeEnable",it.toString())
+            Log.d("sendCodeEnable",mRealVM.codeSendBg.value.toString())
             if (it) {
                 binding.btnSend.isEnabled = true
                 binding.btnSend.alpha = 1f
             } else {
                 binding.btnSend.isEnabled = false
-                binding.btnSend.alpha = 0.3f
+                if( mRealVM.codeSendBg.value == true){
+                    binding.btnSend.alpha =  1f
+                }else{
+                    binding.btnSend.alpha = 0.3f
+                }
+
             }
         }
         mRealVM.loginEnable.observe(this) {
             if (it) {
-                binding.btnSend.isEnabled = true
+                binding.btVerificationCodeLogin.isEnabled = true
                 binding.btVerificationCodeLogin.alpha = 1f
             } else {
-                binding.btnSend.isEnabled = false
+                binding.btVerificationCodeLogin.isEnabled = false
                 binding.btVerificationCodeLogin.alpha = 0.3f
             }
         }
