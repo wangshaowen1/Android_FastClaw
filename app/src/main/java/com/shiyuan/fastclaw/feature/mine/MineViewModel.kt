@@ -154,19 +154,6 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     }
 
-    /**
-     * 测试解析loading
-     */
-    fun testLoading() {
-        viewModelScope.launch {
-            setLoading(true)
-            // 5s 关闭
-            delay(5000L)
-            setLoading(false)
-        }
-    }
-
-
     private fun notLoggedIn() {
         userInfo.set(
             mapOf(

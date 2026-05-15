@@ -3,13 +3,13 @@ package com.shiyuan.fastclaw.feature.mine
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.ext.showAllowingStateLoss
-import com.nhsd.basic.viewmodel.UiState
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
 import kotlinx.coroutines.flow.collectLatest
@@ -72,9 +72,10 @@ class MyShrimpChipsActivity : BaseViewModelActivity<ActivityMyShrimpChipsBinding
 
     private fun initObservers() {
         lifecycleScope.launch {
-            mRealVM.testLoading()
-            mRealVM.userPointListFlow.collectLatest { list ->
-                mAdapter.submitData(list)
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                mRealVM.userPointListFlow.collectLatest { list ->
+                    mAdapter.submitData(list)
+                }
             }
         }
     }
