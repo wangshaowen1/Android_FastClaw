@@ -22,16 +22,15 @@
         android:padding="16dp"
         tools:layout_marginHorizontal="16dp">
 
-
         <LinearLayout
-            android:visibility="@{item.isGenerating ? View.VISIBLE  : View.GONE}"
+            android:visibility="@{item.isInProgress() ? View.VISIBLE : View.GONE}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/iv"
-                app:autoRotate="@{item.isGenerating}"
+                app:autoRotate="@{item.isInProgress()}"
                 android:layout_gravity="center_vertical"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -80,7 +79,7 @@
 
 
         <LinearLayout
-            android:visibility="@{item.isGenerating ? View.GONE : View.VISIBLE}"
+            android:visibility="@{item.isOther() ? View.VISIBLE : View.GONE}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -107,14 +106,41 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{item.reportNameCompanyName}"
-                    android:textColor="@color/color_1a1a1a"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    tools:text="面试作战报告" />
+
+               <LinearLayout
+                   android:orientation="horizontal"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+                   <TextView
+                       android:maxWidth="180dp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:maxLines="2"
+                       android:ellipsize="end"
+                       android:text="@{item.reportNameCompanyName}"
+                       android:textColor="@color/color_1a1a1a"
+                       android:textSize="16sp"
+                       android:textStyle="bold"
+                       tools:text="面试作战报告" />
+
+
+                   <TextView
+                       android:layout_gravity="center_vertical"
+                       android:layout_marginStart="8dp"
+                       android:paddingVertical="3dp"
+                       android:paddingHorizontal="6dp"
+                       app:backgroundRes="@{item.textBg}"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:text="@{item.tex}"
+                       android:textColor="@{item.textC}"
+                       android:textSize="10sp"
+                       tools:text="新手小白" />
+
+               </LinearLayout>
+
+
 
                 <TextView
                     android:visibility="@{item.isJobTitleStd ? View.GONE : View.VISIBLE}"
@@ -147,6 +173,61 @@
                 android:importantForAccessibility="no"
                 android:src="@mipmap/ic_arrow_right" />
 
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:visibility="@{item.isFailed() ? View.VISIBLE : View.GONE}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_failed"
+                android:layout_gravity="center_vertical"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_up_failed">
+
+            </ImageView>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_marginLeft="20dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{item.reportName}"
+                    android:textColor="@color/color_1a1a1a"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="面试作战报告" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@{item.estimateMessage}"
+                    android:textColor="@color/color_999999"
+                    android:textSize="11sp"
+                    tools:text="预计还需2分钟，请耐心等待" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_gravity="center_vertical"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:importantForAccessibility="no"
+                android:src="@mipmap/ic_arrow_right" />
 
         </LinearLayout>
 

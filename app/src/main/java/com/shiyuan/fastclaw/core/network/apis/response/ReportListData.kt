@@ -36,6 +36,7 @@ data class ReportListItem(
         title = title ?: reportName.orEmpty(),
         status = when (reportStatus) {
             "RUNNING", "GENERATING"-> ReportStatus.IN_PROGRESS
+            "FAILED "-> ReportStatus.FAILED
             else -> ReportStatus.OTHER
         },
         companyName = companyName,

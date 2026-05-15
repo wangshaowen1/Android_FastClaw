@@ -91,10 +91,10 @@ class HomeReportViewModel : AppRepositoryViewModel<ReportRepository>() {
 
     private fun initBannerData() {
         val fakeBannerImages = listOf(
-            R.mipmap.img_banner_test,
-            R.mipmap.img_banner_test,
-            R.mipmap.img_banner_test,
-            R.mipmap.img_banner_test
+            R.drawable.img_home_banner1,
+            R.drawable.img_home_banner2,
+            R.drawable.img_home_banner3,
+            R.drawable.img_home_banner4,
         )
         bannerList.set(fakeBannerImages)
     }

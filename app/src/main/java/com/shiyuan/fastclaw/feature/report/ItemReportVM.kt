@@ -1,6 +1,11 @@
 package com.shiyuan.fastclaw.feature.report
 
+import android.graphics.drawable.GradientDrawable
+import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.databinding.BindingAdapter
 import androidx.databinding.ObservableField
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
 import com.shiyuan.fastclaw.feature.report.data.ReportStatus
@@ -10,13 +15,15 @@ import com.shiyuan.fastclaw.feature.report.data.ReportStatus
  */
 class ItemReportVM(data: ReportInfo?) : AppItemViewModel<ReportInfo>(data) {
 
-    val isGenerating = ObservableField(data?.status == ReportStatus.IN_PROGRESS)
+    val isFailed = ObservableField(data?.status == ReportStatus.FAILED)
+    val isInProgress = ObservableField(data?.status == ReportStatus.IN_PROGRESS)
+    val isOther = ObservableField(data?.status == ReportStatus.OTHER)
 
     val estimateMessage = ObservableField(data?.estimateMessage.orEmpty())
 
     val progress = ObservableField(data?.progress)
 
-    val jobTitleStd = ObservableField("目标岗位："+ data?.jobTitleStd.orEmpty())
+    val jobTitleStd = ObservableField("目标岗位：" + data?.jobTitleStd.orEmpty())
 
     val isJobTitleStd = ObservableField(data?.jobTitleStd.isNullOrBlank())
 
@@ -27,6 +34,16 @@ class ItemReportVM(data: ReportInfo?) : AppItemViewModel<ReportInfo>(data) {
     val progressBgC = ObservableField(getScoreProgressColor(data?.totalScore))
 
     val progressBg = ObservableField(getScoreProgressBgColor(data?.totalScore))
+
+
+    val textC = ObservableField(getScoreTextColor(data?.totalScore))
+
+   val textBg = ObservableField(getScoreTextBgColor(data?.totalScore))
+
+
+  //  val textBg: Int get() = getScoreTextBgColor(data?.get()?.totalScore)  // 复用你的函数
+
+    val tex = ObservableField(getScoreText(data?.totalScore))
 
     val totalScore = ObservableField(data?.totalScore)
 
@@ -62,6 +79,39 @@ class ItemReportVM(data: ReportInfo?) : AppItemViewModel<ReportInfo>(data) {
             score >= 80 -> 0x1A0095FF.toInt()
             score >= 50 -> 0x1AFFEE00.toInt()
             else -> 0x1AFF5967.toInt()
+        }
+    }
+
+    private fun getScoreTextColor(score: Int?): Int {
+        return when {
+            score == null -> 0xFFFF5967.toInt()
+            score >= 80 -> 0xFF0095FF.toInt()
+            score >= 50 -> 0xFFFFEE00.toInt()
+            else -> 0xFFFF5967.toInt()
+        }
+    }
+
+    private fun getScoreTextBgColor(score: Int?): Int {
+        return when {
+            score == null ->  R.drawable.bg_1aff5967_r4
+            score >= 80 -> R.drawable.bg_1a0095ff_r4
+            score >= 50 ->  R.drawable.bg_1affee00_r4
+            else -> R.drawable.bg_1aff5967_r4
+        }
+    }
+
+
+
+    private fun getScoreText(score: Int?): String {
+        return when {
+            score == null -> "新手小白"
+            score >= 98 -> "offer海王"
+            score >= 88 -> "天作牛马"
+            score >= 75 -> "潜力黑马"
+            score >= 65 -> "潜力选手"
+            score >= 50 -> "基础达标"
+            score >= 38 -> "新手小白"
+            else -> "新手小白"
         }
     }
 }

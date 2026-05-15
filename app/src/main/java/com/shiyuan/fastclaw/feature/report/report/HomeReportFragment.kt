@@ -79,6 +79,25 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.tvItem11.text = resources.getString(R.string.company_background_check)
             binding.tvItem12.text = resources.getString(R.string.report_home_tip3)
 
+            binding.ivAvatar.setImageResource(R.drawable.ic_avatar5)
+            binding.tvReportHomeName.text = resources.getString(R.string.report_home_name4)
+            binding.tvReportHomeTip.text = resources.getString(R.string.report_home_name4_tip)
+            binding.tvReportHomeTip1.text = resources.getString(R.string.report_home_name4_tip1)
+
+            binding.ivAvatar2.setImageResource(R.drawable.ic_avatar6)
+            binding.tvReportHomeName1.text = resources.getString(R.string.report_home_name5)
+            binding.tvReportHomeTip2.text = resources.getString(R.string.report_home_name5_tip)
+            binding.tvReportHomeTip3.text = resources.getString(R.string.report_home_name5_tip1)
+
+
+            binding.ivAvatar3.setImageResource(R.drawable.ic_avatar7)
+            binding.tvReportHomeName2.text = resources.getString(R.string.report_home_name6)
+            binding.tvReportHomeTip4.text = resources.getString(R.string.report_home_name6_tip)
+            binding.tvReportHomeTip5.text = resources.getString(R.string.report_home_name6_tip1)
+
+            binding.tvMyd.text= resources.getString(R.string.string_98)
+            binding.tvCustomerReviews.text= resources.getString(R.string.Customer_reviews)
+
             binding.rlHave.visibility = View.VISIBLE
             binding.rlNo.visibility = View.GONE
 
@@ -100,6 +119,25 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.ivItem1.setImageResource(R.drawable.ic_skill)
             binding.tvItem11.text = resources.getString(R.string.job_matching_analysis)
             binding.tvItem12.text = resources.getString(R.string.job_home_tip1)
+
+            binding.ivAvatar.setImageResource(R.drawable.ic_avatar2)
+            binding.tvReportHomeName.text = resources.getString(R.string.report_home_name1)
+            binding.tvReportHomeTip.text = resources.getString(R.string.report_home_name1_tip)
+            binding.tvReportHomeTip1.text = resources.getString(R.string.report_home_name1_tip1)
+
+            binding.ivAvatar2.setImageResource(R.drawable.ic_avatar3)
+            binding.tvReportHomeName1.text = resources.getString(R.string.report_home_name2)
+            binding.tvReportHomeTip2.text = resources.getString(R.string.report_home_name2_tip)
+            binding.tvReportHomeTip3.text = resources.getString(R.string.report_home_name2_tip1)
+
+
+            binding.ivAvatar3.setImageResource(R.drawable.ic_avatar4)
+            binding.tvReportHomeName2.text = resources.getString(R.string.report_home_name3)
+            binding.tvReportHomeTip4.text = resources.getString(R.string.report_home_name3_tip)
+            binding.tvReportHomeTip5.text = resources.getString(R.string.report_home_name3_tip1)
+
+            binding.tvMyd.text= resources.getString(R.string.string_93)
+            binding.tvCustomerReviews.text= resources.getString(R.string.Customer_reviews2)
 
             binding.rlHave.visibility = View.GONE
             binding.rlNo.visibility = View.VISIBLE
@@ -124,11 +162,12 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
                 resources.getColor(R.color.color_F6F6F7),
                 resources.getColor(R.color.color_0099FF)
             )
+            .setIndicatorMargin(16.dp, 0.dp, 0.dp, 16.dp)
             setIndicatorStyle(IndicatorStyle.CIRCLE)
             setIndicatorSliderWidth(6.dp, 6.dp)
             setIndicatorHeight(6.dp)
-            setScrollDuration(750)
-            setInterval(3000)
+            setScrollDuration(550)
+            setInterval(1000)
             setLifecycleRegistry(lifecycle)
         }
 
@@ -160,7 +199,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {
-            R.id.tv_generate -> {
+            R.id.rl_generate -> {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
                     //跳转
                     mRealVM.queryLatestResume()
