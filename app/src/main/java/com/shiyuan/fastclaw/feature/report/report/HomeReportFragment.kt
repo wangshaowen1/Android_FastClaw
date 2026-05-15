@@ -77,7 +77,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.ivTargetPosition.visibility = View.VISIBLE
             binding.ivItem1.setImageResource(R.drawable.ic_background_check)
             binding.tvItem11.text = resources.getString(R.string.company_background_check)
-            binding.tvItem12.text = resources.getString(R.string.report_home_name4_tip1)
+            binding.tvItem12.text = resources.getString(R.string.report_home_tip3)
 
             binding.ivAvatar.setImageResource(R.drawable.ic_avatar5)
             binding.tvReportHomeName.text = resources.getString(R.string.report_home_name4)
@@ -96,6 +96,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.tvReportHomeTip5.text = resources.getString(R.string.report_home_name6_tip1)
 
             binding.tvMyd.text= resources.getString(R.string.string_98)
+            binding.tvCustomerReviews.text= resources.getString(R.string.Customer_reviews)
 
             binding.rlHave.visibility = View.VISIBLE
             binding.rlNo.visibility = View.GONE
@@ -136,6 +137,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.tvReportHomeTip5.text = resources.getString(R.string.report_home_name3_tip1)
 
             binding.tvMyd.text= resources.getString(R.string.string_93)
+            binding.tvCustomerReviews.text= resources.getString(R.string.Customer_reviews2)
 
             binding.rlHave.visibility = View.GONE
             binding.rlNo.visibility = View.VISIBLE
@@ -197,7 +199,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {
-            R.id.tv_generate -> {
+            R.id.rl_generate -> {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
                     //跳转
                     mRealVM.queryLatestResume()
