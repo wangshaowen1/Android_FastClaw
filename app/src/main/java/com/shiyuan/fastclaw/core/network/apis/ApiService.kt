@@ -234,4 +234,15 @@ interface ApiService {
     @POST(ApiConstants.QUERY_USER_POINTS_PAGE)
     suspend fun queryUserPointsPage(@Body body: PagedBody): ApiResponse<UserPointPageData>
 
+
+
+    @POST(ApiConstants.COMMON_INIT)
+    suspend fun commonInit(): ApiResponse<Any>
+
+
+    @POST(ApiConstants.SIGN_OUT)
+    suspend fun signOut(): ApiResponse<Any>
+
+
+
 }

@@ -80,6 +80,17 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
 
+
+    fun commonInit() {
+        if (User.get().isVisitor) return
+        launch {
+            response(
+                bean = mRepo.api.commonInit(),
+                result = {})
+        }
+    }
+
+
     /**
      * 用户日活记录
      */

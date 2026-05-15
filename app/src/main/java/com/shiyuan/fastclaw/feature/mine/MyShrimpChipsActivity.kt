@@ -10,8 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.Constants.SHRIMPSTICKS_URL
+import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -68,6 +74,14 @@ class MyShrimpChipsActivity : BaseViewModelActivity<ActivityMyShrimpChipsBinding
                 }
             }
         }
+        mRealVM.onMenuClick = {
+            SimpleBrowserActivity.launch(
+                this,
+                BuildConfig.SERVER_URL+SHRIMPSTICKS_URL,
+                R.string.mine_rule.getResString()
+            )
+        }
+
     }
 
     private fun initObservers() {

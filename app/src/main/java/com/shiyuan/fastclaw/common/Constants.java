@@ -26,6 +26,7 @@ public class Constants {
 
     public static final String SERVICE_URL = "https://file.kuaichupian.cn/data/protocol/terms.html";
     public static final String PRIVACY_URL = "https://file.kuaichupian.cn/data/protocol/privacy.html";
+    public static final String SHRIMPSTICKS_URL = "/pages/shrimpSticks/rules?nav=1";
     public static final String DEFAULT_USER_VIP_PROTOCOL_URL = "https://file.jinguomanju.com/data/protocol/hyxy.html";
 
     public static final String DEFAULT_ALGORITHM_ANNOUNCEMENT = "https://file.jinguomanju.com/data/protocol/tgLLM-algorithm.html";

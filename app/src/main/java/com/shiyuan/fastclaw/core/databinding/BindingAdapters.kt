@@ -354,6 +354,14 @@ fun loadGifUrl(imageView: ImageView, path: String?, placeHolder: Drawable? = nul
     }
 }
 
+// 处理 Int 资源 ID（注意使用不同属性名，或复用属性名但通过类型区分）
+@BindingAdapter("loadGifRes", "placeHolder", requireAll = false)
+fun loadGifRes(imageView: ImageView, resId: Int?, placeHolder: Drawable? = null) {
+    if (resId != null) {
+        GlideApp.with(imageView).load(resId).placeholder(placeHolder).into(imageView)
+    }
+}
+
 @BindingAdapter("setAvatar", requireAll = false)
 fun setAvatar(imageView: ImageView, path: String?) {
     path?.let {

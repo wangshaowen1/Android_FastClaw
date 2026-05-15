@@ -155,12 +155,16 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         initView()
         //App检测更新
         checkUpgrade()
+        //添加虾分
+        mRealVM.commonInit()
         wakeUpAdapter?.let {
             // 此处要调用，否则App在后台运行时，会无法截获
             OpenInstall.getWakeUp(intent, it)
         }
         handleIntent(intent)
     }
+
+
 
     private fun initView() {
         binding.mrg.setOnCheckedChangeListener { _, checkedId ->

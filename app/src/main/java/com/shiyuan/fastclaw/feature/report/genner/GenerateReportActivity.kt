@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.gyf.immersionbar.ImmersionBar
+import com.kuaige.imageloader.GlideApp
 import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -171,6 +172,13 @@ class GenerateReportActivity :
         }
         binding.rlSelect1.setOnSingleClickListener {mRealVM.tableSelect.postValue(0)  }
         binding.rlSelect2.setOnSingleClickListener{mRealVM.tableSelect.postValue(1)  }
+
+
+
+        GlideApp.with(this)
+            .asGif()
+            .load(R.drawable.img_jc_gif)
+            .into(binding.ivGif)
 
         // EditText 滚动处理
         setupEtTxtScroll()

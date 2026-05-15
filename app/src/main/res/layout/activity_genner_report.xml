@@ -423,9 +423,9 @@
                             </LinearLayout>
 
                             <com.google.android.material.imageview.ShapeableImageView
+                                android:id="@+id/iv_gif"
                                 android:layout_width="98dp"
-                                android:layout_height="98dp"
-                                android:src="@mipmap/ic_launcher"
+                                android:layout_height="131dp"
                                 app:shapeAppearance="@style/roundStyle_r16" />
                         </LinearLayout>
                     </LinearLayout>

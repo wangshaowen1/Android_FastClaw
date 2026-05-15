@@ -15,6 +15,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.databinding.ActivityReportProgressBinding
+import com.shiyuan.fastclaw.feature.mine.MyShrimpChipsActivity
 import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -83,6 +84,7 @@ class ReportProgressActivity :
             ), {
                 lifecycleScope.launch {
                     delay(1000)
+                    MyShrimpChipsActivity.start(this@ReportProgressActivity)
                     finish()
                 }
             })

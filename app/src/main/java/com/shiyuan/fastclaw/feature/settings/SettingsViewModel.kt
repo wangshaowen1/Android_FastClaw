@@ -56,9 +56,9 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
     fun logoutApp() {
         SignUtils.signOut()
         AppUtils.relaunchApp()
-      /*  launch { response(mRepo.api.logoutApp(UserTokenBody())) {
+        launch { response(mRepo.api.signOut()) {
 
-        } }*/
+        } }
     }
 
     override fun onResume() {

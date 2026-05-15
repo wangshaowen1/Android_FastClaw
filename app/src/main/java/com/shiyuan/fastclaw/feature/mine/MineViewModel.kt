@@ -10,9 +10,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
+import com.shiyuan.fastclaw.common.Constants.SHRIMPSTICKS_URL
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Global
@@ -23,6 +26,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
 import com.shiyuan.fastclaw.core.response
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.umeng.analytics.pro.da
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -41,12 +45,16 @@ import kotlinx.coroutines.launch
  */
 class MineViewModel : AppRepositoryViewModel<AppRepository>() {
 
+    var onMenuClick: (() -> Unit)? = null
 
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { finish() },
         title = R.string.mine_sticks.getResString(),
         menuText = R.string.mine_rule.getResString(),
         background = Color.TRANSPARENT,
+        menuAction = { view ->
+            onMenuClick?.invoke()
+        }
     )
 
 

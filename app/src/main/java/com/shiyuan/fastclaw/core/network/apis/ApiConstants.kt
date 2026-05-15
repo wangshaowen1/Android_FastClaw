@@ -160,4 +160,7 @@ object ApiConstants {
      * 分页查询积分交易明细
      */
     const val QUERY_USER_POINTS_PAGE = "api/candidate/points/transaction/page"
+
+    const val COMMON_INIT = "/api/app/common/init"
+    const val SIGN_OUT = "/candidate/auth/sign-out"
 }
