@@ -81,11 +81,47 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
     //手机号
     val mobile = MutableLiveData<String?>()
 
+
+    val phoneBg = MutableLiveData(false)
+
+    val codeBg = MutableLiveData(false)
+
+
+    val codeSendBg = MutableLiveData(false)
+
+
+
+    /**
+     * 检查发送验证码按钮是否可点击
+     */
+    fun checkCodeBg() {
+       val length  = code.value?.length ?: 0
+        if(length == 0 || length== 4 ){
+            codeBg.postValue(true)
+        }else{
+            codeBg.postValue(false)
+        }
+    }
+
+    /**
+     * 检查登录按钮是否可点击
+     */
+    fun checkPhoneBg() {
+        val hasPhone = RegexUtils.isMobileSimple(mobile.value)
+        val length  = mobile.value?.length ?: 0
+        if(length == 0 || hasPhone ){
+            phoneBg.postValue(true)
+        }else{
+            phoneBg.postValue(false)
+        }
+    }
+
     //发送验证码按钮是否可点击
     val sendCodeEnable = MutableLiveData(false)
 
     //登录按钮是否可点击
     val loginEnable = MutableLiveData(false)
+
 
     //发送验证码按钮文字
     val sendCodeText = ObservableField(R.string.send_sms_code.getResString())
@@ -232,6 +268,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      */
     fun sendSmsCode() {
         val mobile = this.mobile.value
+        codeSendBg.postValue(true)
         sendCodeEnable.postValue(false)
         launchWithLoading(
             block = {
@@ -250,12 +287,14 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                     },
                     error = {
                         this?.msg?.showToast()
-                        sendCodeEnable.postValue(true)
+                        codeSendBg.postValue(false)
+                        checkSendCodeEnable()
                     })
             },
             onError = {
                 parseMessage(it)?.showToast()
-                sendCodeEnable.postValue(true)
+                codeSendBg.postValue(false)
+                checkSendCodeEnable()
             })
     }
 
@@ -296,7 +335,8 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
     private fun stopCountdown() {
         countdownId = 0
         sendCodeText.set(R.string.send_sms_code.getResString())
-        sendCodeEnable.postValue(true)
+        codeSendBg.postValue(false)
+        checkSendCodeEnable()
     }
 
     /**

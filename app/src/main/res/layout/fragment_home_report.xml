@@ -121,7 +121,7 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginTop="38dp"
                             android:layout_marginRight="16dp"
-                            android:background="@drawable/bg_000000_r100"
+                            android:background="@drawable/bg_ffffff_r100"
                             android:orientation="horizontal"
                             android:padding="4dp">
 
@@ -209,7 +209,7 @@
 
                       <RelativeLayout
                           android:id="@+id/rl_have"
-                          android:background="@drawable/bg_000000_r100"
+                          android:background="@drawable/bg_ffffff_r100"
                           android:paddingVertical="14dp"
                           android:paddingHorizontal="16dp"
                           android:layout_width="match_parent"
@@ -264,7 +264,7 @@
                        <RelativeLayout
                            android:visibility="gone"
                            android:id="@+id/rl_no"
-                           android:background="@drawable/bg_000000_r100"
+                           android:background="@drawable/bg_ffffff_r100"
                            android:paddingVertical="14dp"
                            android:paddingHorizontal="16dp"
                             android:layout_width="match_parent"

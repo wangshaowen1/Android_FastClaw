@@ -60,7 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="84dp"
-                    android:background="@drawable/bg_login_input_phone"
+                    android:background="@drawable/bg_ffffff_r100"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/tv_title">
@@ -105,10 +105,11 @@
                     app:layout_constraintTop_toBottomOf="@id/ll_phone">
 
                     <LinearLayout
+                        android:id="@+id/ll_verify_code"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_login_input_code"
+                        android:background="@drawable/bg_ffffff_r100"
                         android:gravity="center_vertical">
 
                         <EditText
@@ -132,7 +133,7 @@
                         android:layout_width="109dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_login_code_btn"
+                        android:background="@drawable/bg_0099ff_r100"
                         android:gravity="center"
                         android:paddingHorizontal="8dp"
                         android:text="@{layout.sendCodeText}"
