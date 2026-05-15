@@ -560,6 +560,7 @@
     <string name="report_generating_progress">预计还需2分钟，请耐心等待</string>
     <string name="report_upload_resume_date">上传简历于 %s</string>
     <string name="report_target_position">目标岗位：%s</string>
+    <string name="report_post_analysis">正在解析中</string>
 
     <string name="setting_name1">目标岗位：%s</string>
 

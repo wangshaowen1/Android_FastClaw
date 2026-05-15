@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="正在解析中"
+            android:text="@string/report_post_analysis"
             android:textColor="?attr/textColor1"
             android:textSize="14sp" />
     </LinearLayout>
