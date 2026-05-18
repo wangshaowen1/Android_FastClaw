@@ -31,6 +31,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.ReportListData
 import com.shiyuan.fastclaw.core.network.apis.response.ShelfStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
+import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointPageData
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointsData
 import okhttp3.MultipartBody
@@ -228,11 +229,19 @@ interface ApiService {
     @POST(ApiConstants.INTERVIEW_REPORT_RESULT)
     suspend fun interviewReportResult(@Body body: InterviewReportData): ApiResponse<ReportData>
 
+    /**
+     * 查询虾条信息(积分)
+     * @see <a href="https://space-nzj9og.w.eolink.com/home/api-studio/inside/Gq7fyxV22d65e957b3984991a671e481af3e9241a116bec/api/3376873/detail/56521903?spaceKey=space-nzj9og">
+     */
     @POST(ApiConstants.GET_USER_POINTS)
     suspend fun getUserPoints(): ApiResponse<UserPointsData>
 
+    /**
+     * 分页查询虾条明细
+     * @see <a href="https://space-nzj9og.w.eolink.com/home/api-studio/inside/Gq7fyxV22d65e957b3984991a671e481af3e9241a116bec/api/3376873/detail/56521904?spaceKey=space-nzj9og">
+     */
     @POST(ApiConstants.QUERY_USER_POINTS_PAGE)
-    suspend fun queryUserPointsPage(@Body body: PagedBody): ApiResponse<UserPointPageData>
+    suspend fun queryUserPointsPage(@Body body: PagedBody): ApiResponse<PagedList<UserPointItemData>?>
 
 
 

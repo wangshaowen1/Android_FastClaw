@@ -10,9 +10,17 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class UserHomeData(
     //用户ID
-    val userId: String? = null,
+//    val userId: String? = null,
+    /**
+     * 账号ID
+     */
+    val accountId: String? = null,
+    /**
+     * 候选人ID
+     */
+    val candidateId: String? = null,
     //仅展示用
-    val userUid: String? = null,
+//    val userUid: String? = null,
     //手机号
     val phoneNum: String? = null,
     //用户名

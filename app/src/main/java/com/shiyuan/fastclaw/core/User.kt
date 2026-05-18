@@ -107,11 +107,9 @@ class User : IUser {
 
     fun updateFrom(userData: UserHomeData?) {
         if (userData == null) return
-        userData.userId?.apply {
-            storeUserId(this)
-        }
+        storeUid(userData.candidateId)
         storePhoneNum(userData.phoneNum)
-        storeUid(userData.userUid)
+        storeUserId(userData.accountId)
         storeNickname(userData.nickName)
         storeNickname(userData.gender)
         storeAvatar(userData.avatarUrl)

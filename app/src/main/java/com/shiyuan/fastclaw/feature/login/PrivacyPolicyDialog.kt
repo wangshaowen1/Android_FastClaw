@@ -43,7 +43,7 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
         super.onStart()
         dialog?.window?.let { dialogWindow ->
             dialogWindow.attributes?.let { attr ->
-                attr.width = (ScreenUtils.getScreenWidth() * 293 / 375f).toInt()
+                attr.width = (ScreenUtils.getScreenWidth() * 296f / 375f).toInt()
                 attr.gravity = Gravity.CENTER
                 dialogWindow.attributes = attr
             }
@@ -57,13 +57,14 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
         binding.btnAgree.typeface = Typeface.DEFAULT_BOLD
         binding.btnReject.typeface = Typeface.DEFAULT_BOLD
 
-        val text = SpannableStringBuilder("阅读并同意《用户协议》和《隐私政策》")
+        val contentStr = R.string.policy_content.getResString()
+        val text = SpannableStringBuilder(contentStr)
         text.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
                 SimpleBrowserActivity.launch(
                     this@PrivacyPolicyDialog.activity,
                     Config.get().serviceUrl,
-                    R.string.tvSYUserService.getResString()
+                    R.string.login_user_agreement.getResString()
                 )
             }
 
@@ -71,17 +72,18 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
                 ds.setColor(
                     ContextCompat.getColor(
                         requireActivity(),
-                        R.color.text_color_1_dark
+                        R.color.login_agreement_link
                     )
                 )
+                ds.isUnderlineText = false
             }
-        }, 5, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }, 25, 34, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         text.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
                 SimpleBrowserActivity.launch(
                     this@PrivacyPolicyDialog.activity,
                     Config.get().privacyUrl,
-                    R.string.tvSYPrivateService.getResString()
+                    R.string.login_privacy_policy.getResString()
                 )
             }
 
@@ -89,16 +91,17 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
                 ds.setColor(
                     ContextCompat.getColor(
                         requireActivity(),
-                        R.color.text_color_1_dark
+                        R.color.login_agreement_link
                     )
                 )
+                ds.isUnderlineText = false
             }
-        }, 12, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }, 34, 40, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         binding.tvContent.movementMethod = LinkMovementMethod.getInstance()
         binding.tvContent.text = text
 
-        binding.btnReject.text = "不同意"
-        binding.btnAgree.text = "同意"
+        binding.btnReject.text = R.string.app_not_agree_and_quit.getResString()
+        binding.btnAgree.text = R.string.app_agree_and_sign_in.getResString()
 
         binding.btnAgree.setOnSingleClickListener {
             dismiss()

@@ -10,7 +10,6 @@ import android.util.SparseArray
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
-import androidx.activity.enableEdgeToEdge
 import androidx.core.util.getOrDefault
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -105,13 +104,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 底部系统导航栏颜色
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            window.navigationBarColor = Color.WHITE
-            window.navigationBarDividerColor = Color.WHITE
-        } else {
-            window.navigationBarColor = Color.WHITE
-        }
+        // 配合修改导航栏颜色适配部分rom的底部手势提示线
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             // 获取系统栏（状态栏 + 导航栏）的 Insets
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -361,7 +354,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
 
     override fun setTranslucentStatus() {
-        setupTranslucentStatus(true, getColor(R.color.color_F5F8FC))
+        setupTranslucentStatus(true, Color.WHITE)
     }
 
     private fun checkUpgrade() {

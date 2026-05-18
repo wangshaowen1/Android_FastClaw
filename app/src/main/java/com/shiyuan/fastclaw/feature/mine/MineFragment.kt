@@ -44,7 +44,16 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
 
     private fun initView() {
         mRealVM.isLogin.observe(this,{
-            binding.rlPoints.visibility = if (it) View.VISIBLE else View.GONE
+            if (it) {
+                User.get().userId?.let { uid ->
+                    val firstLogin = Config.get().isFirstLogin(uid)
+                    binding.tvMinePointsTip.visibility = if (firstLogin) View.VISIBLE else View.GONE
+                    binding.tvMineTipBtn.visibility = if (firstLogin) View.VISIBLE else View.GONE
+                }
+            } else {
+                binding.tvMinePointsTip.visibility = View.GONE
+                binding.tvMineTipBtn.visibility = View.GONE
+            }
             if(!it){
                 binding.tvPoints.text = "-"
             }
@@ -91,13 +100,20 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             R.id.tv_name -> {
                 AppNavigator.checkLoginIntercepted(false)
             }
-            R.id.rl_xt -> {
+            R.id.layout_mine_point -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
                     MyShrimpChipsActivity.start(requireActivity())
                 }
             }
             R.id.iv_setting -> {
                 SettingsActivity.start(requireActivity())
+            }
+            R.id.tv_mine_tip_btn -> {
+                User.get().userId?.let {
+                    Config.get().recordFirstLogin(it)
+                    binding.tvMinePointsTip.visibility = View.GONE
+                    binding.tvMineTipBtn.visibility = View.GONE
+                }
             }
    /*         R.id.siv_avatar,
             R.id.tv_login,
