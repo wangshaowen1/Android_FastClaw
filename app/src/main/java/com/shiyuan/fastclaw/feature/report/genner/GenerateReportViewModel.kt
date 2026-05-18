@@ -13,6 +13,7 @@ import com.shiyuan.fastclaw.core.AppRepository
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.App
+import com.shiyuan.fastclaw.common.Constants.Extra.IMAGE
 import com.shiyuan.fastclaw.common.ext.cleanupTempFile
 import com.shiyuan.fastclaw.common.ext.isNetworkPath
 import com.shiyuan.fastclaw.common.ext.toOssFilePath
@@ -25,6 +26,8 @@ import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.response
+import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.FAILURE
+import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.PENDING
 
 /**
  * @Introduce: 历史报告列表 ViewModel
@@ -56,9 +59,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
     val tableSelect = MutableLiveData<Int>(0)
 
 
-
-
-    fun interviewReport(data:InterviewReportData, callback: () -> Unit){
+    fun interviewReport(data: InterviewReportData, callback: () -> Unit) {
         launchWithLoading(true, block = {
             response(
                 mRepo.api.interviewReport(
@@ -69,7 +70,8 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
                     Log.d("interviewReport", this?.msg.toString())
                     setLoading(false)
                     callback.invoke()
-                    this?.msg?.showToast() }
+                    this?.msg?.showToast()
+                }
             )
         }, onError = {
             setLoading(false)
@@ -78,7 +80,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
 
-    fun interviewReportr(){
+    fun interviewReportr() {
         launchWithLoading(true, block = {
             response(
                 mRepo.api.interviewReportResult(
@@ -89,7 +91,8 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
                     reportData.postValue(this.data)
                 }, error = {
                     setLoading(false)
-                    this?.msg?.showToast() }
+                    this?.msg?.showToast()
+                }
             )
         }, onError = {
             setLoading(false)
@@ -97,25 +100,26 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
         })
     }
 
-    fun jdQualityQuality(jdImageUrls: List<String>?,jdText: String?,type: String){
+    fun jdQualityQuality(jdImageUrls: List<String>?, jdText: String?, type: String) {
         setLoading(true)
-        launch(  block = {
+        launch(block = {
             response(
                 mRepo.api.jdMaterialQuality(
                     JdMaterialQualityBody(
-                        jdInputType =  type,
-                        jdText  = jdText,
-                        jdImageUrls  = jdImageUrls
+                        jdInputType = type,
+                        jdText = jdText,
+                        jdImageUrls = jdImageUrls
                     )
                 ), result = {
-                    if(type == "IMAGE"){
+                    if (type == IMAGE) {
                         jdImageData.postValue(this.data)
-                    }else{
+                    } else {
                         jdTextData.postValue(this.data)
                     }
                 }, error = {
                     setLoading(false)
-                    this?.msg?.showToast() }
+                    this?.msg?.showToast()
+                }
             )
         }, onError = {
             setLoading(false)
@@ -125,8 +129,8 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun jdMaterialQualityr(type: String) {
-        launch(  block = {
-            val body = if (type == "IMAGE") {
+        launch(block = {
+            val body = if (type == IMAGE) {
                 JdMaterialQualityBody(checkId = jdImageData.value?.checkId)
             } else {
                 JdMaterialQualityBody(checkId = jdTextData.value?.checkId)
@@ -135,9 +139,9 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
                 mRepo.api.jdMaterialQualityResult(
                     body
                 ), result = {
-                    if(type == "IMAGE"){
+                    if (type == IMAGE) {
                         jdImageData.postValue(this.data)
-                    }else{
+                    } else {
                         jdTextData.postValue(this.data)
                     }
                 }, error = { this?.msg?.showToast() })
@@ -145,39 +149,50 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
     }
 
-    fun resumeMaterialQuality(resumeFileUrl: String,resumeFileName: String) {
-        setLoading(true)
-        launch( block = {
+    fun resumeMaterialQuality(resumeFileUrl: String, resumeFileName: String) {
+         launch(block = {
             response(
                 mRepo.api.resumeMaterialQuality(
-                ResumeMaterialQualityBody(
-                    resumeFileUrl = resumeFileUrl,
-                    resumeFileName = resumeFileName
-                )
-            ), result = {
+                    ResumeMaterialQualityBody(
+                        resumeFileUrl = resumeFileUrl,
+                        resumeFileName = resumeFileName
+                    )
+                ), result = {
                     resumeData.postValue(this.data)
-            }, error = {
-                 setLoading(false)
-                this?.msg?.showToast()
-            } )
+                }, error = {
+                    val errorData = resumeData.value?.copy(
+                        blockingIssuesMessage = "简历解析失败",
+                        checkStatus = FAILURE
+                    )
+                    errorData?.let {
+                        resumeData.postValue(it)
+                    }
+                    this?.msg?.showToast()
+                })
         }, onError = {
-             setLoading(false)
+            val errorData = resumeData.value?.copy(
+                blockingIssuesMessage = "简历解析失败",
+                checkStatus = FAILURE
+            )
+            errorData?.let { it ->
+                resumeData.postValue(it)
+            }
             it.message.toString().showToast()
         })
-
     }
 
 
+
     fun resumeMaterialQualityr() {
-        launch( block = {
+        launch(block = {
             response(
                 mRepo.api.resumeMaterialQualityResult(
-                ResumeMaterialQualityBody(
-                    checkId = resumeData.value?.checkId
-                )
-            ), result = {
+                    ResumeMaterialQualityBody(
+                        checkId = resumeData.value?.checkId
+                    )
+                ), result = {
                     resumeData.postValue(this.data)
-            }, error = { this?.msg?.showToast() })
+                }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
     }
 
@@ -204,13 +219,16 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
      * @param uris 待上传的文件 Uri 列表
      * @param onComplete 所有文件上传完成后的回调，返回成功上传的 URL 列表和失败的 Uri 列表
      */
-    fun submitMultipleFiles(uris: List<Uri>, onComplete: (successUrls: List<String>, failedUris: List<Uri>) -> Unit) {
+    fun submitMultipleFiles(
+        uris: List<Uri>,
+        onComplete: (successUrls: List<String>, failedUris: List<Uri>) -> Unit
+    ) {
         if (uris.isEmpty()) {
             onComplete(emptyList(), emptyList())
             return
         }
 
-       // setLoading(true)
+        // setLoading(true)
         val context = App.instance
 
         // 用于收集结果
@@ -275,7 +293,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
         failedUris: List<Uri>,
         onComplete: (List<String>, List<Uri>) -> Unit
     ) {
-       // setLoading(false)
+        // setLoading(false)
         if (failedUris.isNotEmpty()) {
             // 可以根据需要提示失败数量
             "有 ${failedUris.size} 个文件上传失败".showToast()

@@ -19,9 +19,9 @@
             <solid android:color="@color/white" />
             <!-- 左边也需要圆角 -->
             <corners
-                android:topLeftRadius="0dp"
+                android:topLeftRadius="12dp"
                 android:topRightRadius="12dp"
-                android:bottomLeftRadius="12dp"
+                android:bottomLeftRadius="0dp"
                 android:bottomRightRadius="0dp" />
         </shape>
     </item>

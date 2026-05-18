@@ -26,6 +26,24 @@ import kotlinx.parcelize.Parcelize
     val safeCheckStatus: String
         get() = checkStatus ?: "PASS"
 
+
+    fun copy(
+        hasLatestResume: Boolean = this.hasLatestResume,
+        isJd: Boolean = this.isJd,
+        blockingIssuesMessage: String? = this.blockingIssuesMessage,
+        blockingMessage: String? = this.blockingMessage,
+        blockingIssues: List<String>? = this.blockingIssues,
+        resumeFileUrl: String? = this.resumeFileUrl,
+        checkStatus: String? = this.checkStatus,
+        resumeFileName: String? = this.resumeFileName,
+        resumeFileType: String? = this.resumeFileType,
+        submitTime: String? = this.submitTime,
+        checkId: String? = this.checkId
+    ) = ResumeData(
+        hasLatestResume, isJd, blockingIssuesMessage, blockingMessage,
+        blockingIssues, resumeFileUrl, checkStatus, resumeFileName,
+        resumeFileType, submitTime, checkId
+    )
 }
 
 

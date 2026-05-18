@@ -20,9 +20,9 @@
             <!-- 左边也需要圆角 -->
             <corners
                 android:topLeftRadius="12dp"
-                android:topRightRadius="12dp"
+                android:topRightRadius="0dp"
                 android:bottomLeftRadius="0dp"
-                android:bottomRightRadius="0dp" />
+                android:bottomRightRadius="12dp" />
         </shape>
     </item>
 

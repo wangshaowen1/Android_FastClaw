@@ -407,7 +407,7 @@
     <string name="story_inspiration_hint">写下你的故事灵感，AI将帮你扩展成完整剧情</string>
     <string name="paste_novel_hint">请提供原创或已授权小说内容，支持粘贴单章或上传完整小说文件</string>
     <string name="input_limit_reached">输入字数已达上限</string>
-    <string name="login_success_start_creating">登录成功，开始创作吧~</string>
+    <string name="login_success_start_creating">登录成功</string>
     <string name="sensitive_word_check_failed">敏感词校验失败</string>
     <string name="enter_update_content">请输入需要更新的内容</string>
     <string name="story_generating_please_wait">故事生成中，请稍候</string>
@@ -588,7 +588,7 @@
     <string name="resume_up_success">简历上传成功</string>
     <string name="add_position_info">添加目标岗位信息</string>
     <string name="screenshot_up">截图上传</string>
-    <string name="paste_string">粘贴</string>
+    <string name="paste_string">粘贴文本</string>
     <string name="jd_tip1">上传JD截图（如 BOSS直聘 / 官网 / 公众号截图）</string>
     <string name="jd_tip2">可上传3张截图，每次仅支持分析1个目标岗位</string>
     <string name="jd_tip3">上传JD截图</string>
@@ -612,7 +612,7 @@
     <string name="company_background_check">公司背调</string>
 
 
-    <string name="skill_Interview">面试技巧</string>
+    <string name="skill_Interview">约面技巧</string>
     <string name="skill_home_tip1">投递技巧与简历优化，提升面试邀约率。</string>
 
     <string name="job_matching_analysis">岗位匹配分析</string>

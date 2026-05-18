@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="layout"
             type="com.shiyuan.fastclaw.feature.report.genner.GenerateReportViewModel" />
@@ -17,17 +18,17 @@
         <include
             android:id="@+id/toolbar"
             layout="@layout/view_model_toolbar"
-            app:toolbar="@{layout.mToolbarVM}"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:toolbar="@{layout.mToolbarVM}" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:fillViewport="true"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintBottom_toTopOf="@id/ll_bottom"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -302,8 +303,8 @@
                                     android:hint="@string/et_hit1"
                                     android:inputType="textMultiLine"
                                     android:overScrollMode="always"
-                                    android:scrollHorizontally="false"
                                     android:scrollbars="vertical"
+                                    android:scrollHorizontally="false"
                                     android:textColorHint="@color/color_999999"
                                     android:textSize="12sp" />
 
@@ -384,7 +385,7 @@
 
                                 <View
                                     android:layout_width="0.5dp"
-                                    android:layout_height="60dp"
+                                    android:layout_height="75dp"
                                     android:layout_marginVertical="4dp"
                                     android:background="@color/color_50_0099FF" />
 
@@ -397,7 +398,7 @@
 
                             <LinearLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
+                                android:layout_height="match_parent"
                                 android:layout_marginStart="8dp"
                                 android:layout_weight="1"
                                 android:orientation="vertical">

@@ -77,8 +77,7 @@ class MyShrimpChipsActivity : BaseViewModelActivity<ActivityMyShrimpChipsBinding
         mRealVM.onMenuClick = {
             SimpleBrowserActivity.launch(
                 this,
-                BuildConfig.SERVER_URL+SHRIMPSTICKS_URL,
-                R.string.mine_rule.getResString()
+                SHRIMPSTICKS_URL
             )
         }
 

@@ -11,6 +11,9 @@ import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import com.gyf.immersionbar.ImmersionBar
 import com.kuaige.imageloader.GlideApp
 import com.shiyuan.fastclaw.R
@@ -41,10 +44,16 @@ class GenerateReportActivity :
     BaseViewModelActivity<ActivityGennerReportBinding, GenerateReportViewModel>() {
 
     companion object {
+        const val DATA = "data"
+        const val PASS = "PASS"
+        const val PENDING = "PENDING"
+        const val RUNNING = "RUNNING"
+        const val FAILURE = "FAILURE"
+
         fun start(activity: Activity?, data: ResumeData) {
             activity ?: return
             val intent = Intent(activity, GenerateReportActivity::class.java)
-            intent.putExtra("data", data)
+            intent.putExtra(DATA, data)
             activity.startActivity(intent)
         }
     }
@@ -63,7 +72,7 @@ class GenerateReportActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        data = intent.getParcelableExtra("data") as? ResumeData
+        data = intent.getParcelableExtra(DATA) as? ResumeData
         initView()
         initObservers()
     }
@@ -85,14 +94,13 @@ class GenerateReportActivity :
                // initStateView("简历上传成功", "PASS")
                 mRealVM.resumeData.value = data?.apply {
                     blockingIssuesMessage = "简历上传成功"
-                    checkStatus = "PASS"
+                    checkStatus = PASS
                 }
             } else {
                 mRealVM.resumeData.value = data?.apply {
                     blockingIssuesMessage = "简历解析中"
-                    checkStatus = "PENDING"
+                    checkStatus = PENDING
                 }
-                //initStateView("简历解析中", "PENDING")
                 mRealVM.resumeMaterialQuality(it.resumeFileUrl ?: "", it.resumeFileName ?: "")
             }
         }
@@ -102,7 +110,7 @@ class GenerateReportActivity :
                 if (fileInfo != null) {
                     mRealVM.submitResume(fileInfo.uri) {
                         binding.tvResumeName.text = fileInfo.fileName
-                        initStateView("简历解析中", "PENDING")
+                        initStateView("简历解析中", PENDING)
                         mRealVM.resumeMaterialQuality(it, fileInfo.fileName ?: "")
                     }
                 }
@@ -129,7 +137,7 @@ class GenerateReportActivity :
         }
 
         binding.tvSkip.setOnSingleClickListener {  //直接用简历
-            if(mRealVM.resumeData.value?.checkStatus != "PASS"){
+            if(mRealVM.resumeData.value?.checkStatus != PASS){
                 mRealVM.resumeData.value?.blockingIssuesMessage?.showToast()
                 return@setOnSingleClickListener
             }
@@ -137,7 +145,7 @@ class GenerateReportActivity :
         }
         binding.tvTrue.setOnSingleClickListener {//简历 +JD
             //校验简历要通过
-            if(mRealVM.resumeData.value?.checkStatus != "PASS"){
+            if(mRealVM.resumeData.value?.checkStatus != PASS){
                 mRealVM.resumeData.value?.blockingIssuesMessage?.showToast()
                 return@setOnSingleClickListener
             }
@@ -150,7 +158,7 @@ class GenerateReportActivity :
                         return@setOnSingleClickListener
                     }
                       //校验截图
-                    if(mRealVM.jdImageData.value?.checkStatus != "PASS"){
+                    if(mRealVM.jdImageData.value?.checkStatus != PASS){
                         mRealVM.jdImageData.value?.blockingMessage?.showToast()
                         return@setOnSingleClickListener
                     }
@@ -238,18 +246,20 @@ class GenerateReportActivity :
 
     fun initStateView(blockingIssuesMessage: String?, checkStatus: String) {
         when (checkStatus) {
-            "PASS" -> {
+            PASS -> {
                 // 处理通过状态
                 binding.ivState.setImageResource(R.drawable.ic_up_success)
                 binding.tvState.text = blockingIssuesMessage
                 binding.tvState.setTextColor(resources.getColor(R.color.color_15D173))
+                stopRotation()   // 停止旋转
             }
 
-            "RUNNING", "PENDING" -> {
+            RUNNING, PENDING -> {
                 // 处理运行中状态
                 binding.ivState.setImageResource(R.drawable.ic_running)
                 binding.tvState.text = "简历解析中"
                 binding.tvState.setTextColor(resources.getColor(R.color.color_0099FF))
+                startRotation()  // 开始旋转
             }
 
             else -> {
@@ -257,23 +267,46 @@ class GenerateReportActivity :
                 binding.ivState.setImageResource(R.drawable.ic_up_failed)
                 binding.tvState.text = blockingIssuesMessage
                 binding.tvState.setTextColor(resources.getColor(R.color.color_F74C30))
-
+                stopRotation()
             }
         }
+    }
+
+    private var rotateAnim: RotateAnimation? = null
+    private fun startRotation() {
+        if (rotateAnim == null) {
+            rotateAnim = RotateAnimation(
+                0f, 360f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f
+            ).apply {
+                duration = 1000L
+                repeatCount = Animation.INFINITE
+                interpolator = LinearInterpolator()
+            }
+        }
+        // 如果动画已经在运行，不要重复启动
+        if (rotateAnim != null && binding.ivState.animation != rotateAnim) {
+            binding.ivState.startAnimation(rotateAnim)
+        }
+    }
+
+    private fun stopRotation() {
+        binding.ivState.clearAnimation()
     }
 
     private fun initObservers() {
         mRealVM.resumeData.observe(this) { data ->
             Log.d("checkStatus", data.safeCheckStatus)
             when (data.safeCheckStatus) {
-                "PASS" -> {
-                    mRealVM.setLoading(false)
+                PASS -> {
+                   // mRealVM.setLoading(false)
                     initStateView(data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }
                         ?: "简历上传成功", data.safeCheckStatus)
                     stopResumePolling()  // ✅ 停止轮询
                 }
 
-                "RUNNING", "PENDING" -> {
+                RUNNING, PENDING -> {
                     initStateView(data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }
                         ?: "简历解析中", data.safeCheckStatus)
                     // ✅ 只有在未轮询且 checkId 存在时才启动
@@ -282,7 +315,7 @@ class GenerateReportActivity :
                     }
                 }
                 else -> {
-                    mRealVM.setLoading(false)
+                   // mRealVM.setLoading(false)
                     // 处理失败
                     initStateView(data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }
                         ?: "简历解析失败", data.safeCheckStatus)
@@ -294,13 +327,13 @@ class GenerateReportActivity :
         mRealVM.jdImageData.observe(this) { data ->
             Log.d("checkStatus", data.safeCheckStatus)
             when (data.safeCheckStatus) {
-                "PASS" -> {
+                PASS -> {
                     binding.llJdImageState.visibility = View.GONE
                     mRealVM.setLoading(false)
                     stopJdPolling()  // ✅ 停止轮询
                 }
 
-                "RUNNING", "PENDING" -> {
+               RUNNING, PENDING -> {
                     binding.llJdImageState.visibility = View.GONE
                     // ✅ 只有在未轮询且 checkId 存在时才启动
                     if (!isJdPolling && mRealVM.jdImageData.value?.checkId != null) {
@@ -322,13 +355,13 @@ class GenerateReportActivity :
         mRealVM.jdTextData.observe(this) { data ->
             Log.d("checkStatus", data.safeCheckStatus)
             when (data.safeCheckStatus) {
-                "PASS" -> {
+                PASS -> {
                     mRealVM.setLoading(false)
                     binding.llJdTxtState.visibility = View.GONE
                     stopJdPolling()  // ✅ 停止轮询
                     ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdTextData.value?.checkId,reportType ="JD_REPORT")
                 }
-                "RUNNING", "PENDING" -> {
+                RUNNING, PENDING -> {
                     binding.llJdTxtState.visibility = View.GONE
                     // ✅ 只有在未轮询且 checkId 存在时才启动
                     if (!isJdPolling) {

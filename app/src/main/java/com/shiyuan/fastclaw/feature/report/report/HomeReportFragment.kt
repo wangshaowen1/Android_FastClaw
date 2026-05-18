@@ -109,6 +109,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.tvItem21.text = resources.getString(R.string.job_matching_analysis)
             binding.tvItem22.text = resources.getString(R.string.job_home_tip1)
 
+
             binding.llJd.visibility = View.VISIBLE
             binding.vLine.visibility = View.VISIBLE
         }else{
@@ -117,8 +118,8 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.tvTargetPosition.typeface = Typeface.DEFAULT
             binding.ivTargetPosition.visibility = View.GONE
             binding.ivItem1.setImageResource(R.drawable.ic_skill)
-            binding.tvItem11.text = resources.getString(R.string.job_matching_analysis)
-            binding.tvItem12.text = resources.getString(R.string.job_home_tip1)
+            binding.tvItem11.text = resources.getString(R.string.skill_Interview)
+            binding.tvItem12.text = resources.getString(R.string.skill_home_tip1)
 
             binding.ivAvatar.setImageResource(R.drawable.ic_avatar2)
             binding.tvReportHomeName.text = resources.getString(R.string.report_home_name1)
@@ -167,7 +168,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             setIndicatorSliderWidth(6.dp, 6.dp)
             setIndicatorHeight(6.dp)
             setScrollDuration(550)
-            setInterval(1000)
+            setInterval(2000)
             setLifecycleRegistry(lifecycle)
         }
 
