@@ -121,10 +121,18 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                     // 登录
                     AppNavigator.checkLoginIntercepted(true)
                 }else{
-                    //退出登录
-                    mRealVM.logoutApp()
-
+                    showConfirmLogoutDialog()
                 }
+            }
+        }
+    }
+
+    private fun showConfirmLogoutDialog() {
+        val confirmDialog = LogoutConfirmDialog.show(supportFragmentManager)
+        confirmDialog.clickListener = {
+            if (it) {
+                //退出登录
+                mRealVM.logoutApp()
             }
         }
     }

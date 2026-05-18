@@ -1,55 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_2a2a2b_r20"
-    android:padding="20dp">
-
+    android:background="@drawable/bg_ffffff_r20"
+    android:paddingHorizontal="30dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="28dp">
 
     <TextView
+        android:id="@+id/tvTitle"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/color_1a1a1a"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/policy_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
         android:id="@+id/tvContent"
         style="@style/Text14"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:lineSpacingExtra="@dimen/lineSpacingExtra"
-        android:textColor="?attr/textColor3"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="阅读并同意《中国移动认证服务条款》以及《用户协议》和《隐私政策》" />
+        android:textColor="@color/color_1a1a1a"
+        android:text="@string/policy_content" />
 
-    <LinearLayout
-        android:id="@+id/ll_menu"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
+    <TextView
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnAgree"
+        app:layout_constraintTop_toTopOf="@id/btnAgree"
+        app:layout_constraintBottom_toBottomOf="@id/btnAgree"
+        android:layout_marginEnd="8dp"
+        android:id="@+id/btnReject"
+        android:layout_width="90dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_br1_3c3c43_r100"
+        android:gravity="center"
+        android:text="@string/app_not_agree_and_quit"
+        android:textStyle="bold"
+        android:textColor="@color/color_1a1a1a"
+        android:textSize="14sp"/>
+
+    <Button
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toEndOf="@id/btnReject"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvContent">
+        app:layout_constraintTop_toBottomOf="@id/tvContent"
+        android:id="@+id/btnAgree"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_0099ff_r100"
+        android:gravity="center"
+        android:text="@string/app_agree_and_sign_in"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/btnReject"
-            style="@style/Text16"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/btn_common_cancel"
-            android:gravity="center"
-            android:text="@string/app_not_agree_and_quit"
-            android:textColor="?attr/textColor2" />
-
-        <Button
-            android:id="@+id/btnAgree"
-            style="@style/Text16"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:background="@drawable/gradient_button_bg_r50"
-            android:gravity="center"
-            android:text="@string/app_agree_and_sign_in"
-            android:textColor="?attr/textColor1"
-            android:textSize="14sp" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

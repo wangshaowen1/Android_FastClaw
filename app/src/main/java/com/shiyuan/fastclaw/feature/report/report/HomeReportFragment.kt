@@ -167,7 +167,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             setIndicatorSliderWidth(6.dp, 6.dp)
             setIndicatorHeight(6.dp)
             setScrollDuration(550)
-            setInterval(1000)
+            setInterval(3000)
             setLifecycleRegistry(lifecycle)
         }
 

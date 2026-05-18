@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_ffffff_r20"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="确认要退出登录么？"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/color_e6_000000"
+        android:id="@+id/tv_title"
+        android:layout_marginTop="24dp"
+        app:layout_constrainedWidth="true"
+        android:layout_marginHorizontal="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="退出登录不会丢失任何数据，你仍可以登录此账号"
+        android:textSize="14sp"
+        android:textColor="@color/color_e6_000000"
+        android:id="@+id/tv_content"
+        android:layout_marginTop="12dp"
+        app:layout_constrainedWidth="true"
+        android:layout_marginHorizontal="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <View
+        app:layout_constraintTop_toBottomOf="@id/tv_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:id="@+id/line1"
+        android:background="@color/color_1a_000000"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"/>
+
+    <View
+        app:layout_constraintStart_toEndOf="@id/tv_reject"
+        app:layout_constraintEnd_toStartOf="@id/tv_agree"
+        app:layout_constraintTop_toTopOf="@id/tv_agree"
+        app:layout_constraintBottom_toBottomOf="@id/tv_agree"
+        android:background="@color/color_1a_000000"
+        android:id="@+id/line2"
+        android:layout_width="0.5dp"
+        android:layout_height="0dp"/>
+
+    <TextView
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/line2"
+        app:layout_constraintTop_toTopOf="@id/tv_agree"
+        app:layout_constraintBottom_toBottomOf="@id/tv_agree"
+        tools:text="取消"
+        android:gravity="center"
+        android:textColor="@color/color_214CA5"
+        android:textSize="16sp"
+        android:id="@+id/tv_reject"
+        android:layout_width="0dp"
+        android:layout_height="54dp"/>
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/line1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/line2"
+        tools:text="确定退出"
+        android:gravity="center"
+        android:textColor="@color/color_214CA5"
+        android:textSize="16sp"
+        android:id="@+id/tv_agree"
+        android:layout_width="0dp"
+        android:layout_height="54dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

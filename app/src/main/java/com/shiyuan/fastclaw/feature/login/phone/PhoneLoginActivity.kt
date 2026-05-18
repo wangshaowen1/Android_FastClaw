@@ -22,6 +22,7 @@ import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.widget.GeneratingDialog
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
+import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
 
 /**
  * @Introduce: 手机号登录页面
@@ -97,12 +98,18 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
             mRealVM.checkedPolicy.set(!mRealVM.checkedPolicy.get())
         }
         binding.btVerificationCodeLogin.setOnClickListener {
-            if (mRealVM.isBind.get() || mRealVM.checkedPolicy.get()) {
-                phoneLogin()
+            if (!mRealVM.checkedPolicy.get()) {
+                showPrivacyPolicyDialog()
                 return@setOnClickListener
+            } else {
+                phoneLogin()
             }
-            // mRealVM.checkedPolicy.set(true)
-            phoneLogin()
+//            if (mRealVM.isBind.get() || mRealVM.checkedPolicy.get()) {
+//                phoneLogin()
+//                return@setOnClickListener
+//            }
+//            // mRealVM.checkedPolicy.set(true)
+//            phoneLogin()
         }
     }
 
@@ -207,6 +214,19 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
 
     private fun finishOnly() {
         finish()
+    }
+
+    /**
+     * 显示用户协议及隐私政策确认弹窗
+     */
+    private fun showPrivacyPolicyDialog() {
+        val privacyPolicyDialog = PrivacyPolicyDialog.show(supportFragmentManager)
+        privacyPolicyDialog.callback = {
+            if (it) {
+                mRealVM.checkedPolicy.set(true)
+                phoneLogin()
+            }
+        }
     }
 
     private fun termsOfService() {

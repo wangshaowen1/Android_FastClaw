@@ -27,11 +27,11 @@ class UserPointPagingSource : PagingSource<Int, UserPointItemData>() {
 
             val response = AppRepository().api.queryUserPointsPage(PagedBody(page, pageSize))
             if (response.data != null) {
-                val data = response.data.records
-                val nextKey = if (data.isNullOrEmpty()) null else page + 1
-                data?.let {
+                val items = response.data?.items
+                val nextKey = if (items.isNullOrEmpty()) null else page + 1
+                items?.let {
                     LoadResult.Page(
-                        data = data,
+                        data = items,
                         prevKey = if (page == 1) null else page - 1,
                         nextKey = nextKey
                     )

@@ -1,7 +1,6 @@
 package com.shiyuan.fastclaw.core.network.apis.request;
 
 
-import com.shiyuan.fastclaw.core.User;
 
 public class PagedBody {
 

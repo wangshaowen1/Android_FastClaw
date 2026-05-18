@@ -76,7 +76,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 账户虾条
      */
-    val userPonts by lazy { ObservableField<String>() }
+    val userPoints by lazy { ObservableField<String>() }
 
     /**
      * 虾条记录
@@ -117,7 +117,8 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     fun updateInformation() {
         //获取用户主页信息接口
-        getUserHomeInfo()
+//        getUserHomeInfo()
+        // 获取虾条信息接口
         getUserPoints()
     }
 
@@ -132,7 +133,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
                 return
             }
             noLogIn.value = false
-            Global.refreshBalance()
+//            Global.refreshBalance()
             launch {
                 response(
                     bean = mRepo.api.getUserHomeInfo(UserTokenBody()),
@@ -149,13 +150,14 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      * 获取积分信息(虾条)
      */
     private fun getUserPoints() {
-        if (noLogIn.value == false) {
+        val user = User.get()
+        user.token?.let {
             launch {
                 response(
                     bean = mRepo.api.getUserPoints(),
                     result = {
                         if (data == null) return@response
-                        userPonts.set("${data.pointsBalance}")
+                        userPoints.set("${data.pointsBalance}")
                     }
                 )
             }
@@ -172,7 +174,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         )
         noLogIn.value = true
         balance.set("0")
-        userPonts.set("-")
+        userPoints.set("-")
         workCourseBanner.set(Config.get().appConfig.workCourseBanner)
     }
 

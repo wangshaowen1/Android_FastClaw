@@ -137,7 +137,7 @@
     <string name="mobile_login">手机登录</string>
 
     <string name="app_not_agree_and_quit">不同意</string>
-    <string name="app_agree_and_sign_in">同意</string>
+    <string name="app_agree_and_sign_in">同意并登录</string>
     <string name="app_user_agreement_and_privacy_policy">用户协议和隐私政策</string>
     <!--制作绘本-->
     <string name="add_character">添加角色</string>
@@ -672,7 +672,12 @@
     <string name="report_analysis">报告分析中</string>
     <string name="report_analysis_r">你可以稍后在「我的报告」中查看生成结果</string>
     <string name="check_later">稍后查看</string>
-
+    <string name="policy_title">用户协议及隐私协议确认</string>
+    <string name="policy_content">为了更好地保障您的合法权益，请您阅读并同意以下协议《快龙虾用户协议》《隐私政策》未注册手机号验证登录后自动创建账号</string>
+    <string name="logout_dialog_title">确认要退出登录么？</string>
+    <string name="logout_dialog_content">退出登录不会丢失任何数据，你仍可以登录此账号</string>
+    <string name="logout_dialog_cancel">取消</string>
+    <string name="logout_dialog_confirm">确定退出</string>
 
 </resources>
 

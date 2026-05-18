@@ -397,6 +397,20 @@ class Config : NetworkChangedListener {
         sp.putBoolean("firstRechargeShown${User.get().userId}_$scene", true)
     }
 
+    /**
+     * 用户id作为key存储，记录用户是否第一次登录
+     */
+    fun recordFirstLogin(key: String) {
+        sp.putBoolean(key, false)
+    }
+
+    /**
+     * 用户是否第一次登录
+     */
+    fun isFirstLogin(key: String): Boolean {
+        return sp.getBoolean(key, true)
+    }
+
 
     companion object {
         const val FIRST_OPEN_APP: String = "firstOpenApp"
