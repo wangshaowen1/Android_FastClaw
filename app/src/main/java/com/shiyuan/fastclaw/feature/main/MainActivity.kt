@@ -65,11 +65,14 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         private const val KEY_SCHEME = "KEY_SCHEME"
         const val FROM_NEWER = "Newer"
 
-        fun start(activity: Activity?, scheme: String?) {
+        fun start(activity: Activity?, scheme: String?= null,flags:Int?= null) {
             if (activity == null) return
             val intent = Intent(activity, MainActivity::class.java)
             scheme?.let {
                 intent.putExtra(KEY_SCHEME, scheme)
+            }
+            flags?.let {
+                intent.flags = it
             }
             activity.startActivity(intent)
         }

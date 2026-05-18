@@ -9,7 +9,7 @@ data class ReportListData(
     val pageSize: String?,
     val pages: String?,
     val hasNext: Boolean?,
-    val list: List<ReportListItem>?
+    val items: List<ReportListItem>?
 )
 
 data class ReportListItem(
@@ -58,5 +58,5 @@ data class ReportListItem(
 }
 
 fun ReportListData.toReportInfoList(): List<ReportInfo> {
-    return list?.map { it.toReportInfo() } ?: emptyList()
+    return items?.map { it.toReportInfo() } ?: emptyList()
 }

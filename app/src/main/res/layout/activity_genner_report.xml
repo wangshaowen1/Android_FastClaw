@@ -194,6 +194,7 @@
 
                         <!-- 图片上传模式 -->
                         <LinearLayout
+                            android:visibility="gone"
                             android:id="@+id/rl_image"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -230,25 +231,20 @@
                                     android:textSize="12sp" />
                             </LinearLayout>
 
-                            <LinearLayout
-                                android:id="@+id/ll_up2"
+
+                            <com.shiyuan.fastclaw.widget.PhotoGridView
+                                android:visibility="gone"
+                                android:id="@+id/photo_grid"
                                 android:layout_width="match_parent"
                                 android:layout_height="112dp"
-                                android:orientation="vertical"
-                                android:visibility="gone">
+                                android:columnCount="3"
+                                app:add_button_src="@drawable/ic_jd_add"
+                                app:add_button_visible="true"
+                                app:child_height="112dp"
+                                app:delete_button_src="@drawable/ic_jd_close"
+                                app:divider_space="4dp"
+                                app:max_child_count="3" />
 
-                                <com.shiyuan.fastclaw.widget.PhotoGridView
-                                    android:id="@+id/photo_grid"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:columnCount="3"
-                                    app:add_button_src="@drawable/ic_jd_add"
-                                    app:add_button_visible="true"
-                                    app:child_height="112dp"
-                                    app:delete_button_src="@drawable/ic_jd_close"
-                                    app:divider_space="4dp"
-                                    app:max_child_count="3" />
-                            </LinearLayout>
 
                             <LinearLayout
                                 android:id="@+id/ll_jd_image_state"
@@ -284,8 +280,7 @@
                             android:id="@+id/rl_txt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone">
+                            android:orientation="vertical">
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -294,10 +289,11 @@
                                 android:orientation="vertical"
                                 android:padding="16dp">
 
-                                <EditText
+                                <com.shiyuan.fastclaw.widget.EditTextWithScrollView
                                     android:id="@+id/et_txt"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
+                                    android:layout_height="0dp"
+                                    android:layout_weight="1"
                                     android:background="@null"
                                     android:gravity="top|start"
                                     android:hint="@string/et_hit1"
@@ -446,16 +442,36 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/tv_true"
+            <RelativeLayout
+                android:id="@+id/rl_true"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@drawable/bg_0099ff_r100"
-                android:gravity="center"
-                android:text="@string/generate_precise_matching_report"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:background="@drawable/bg_upload_btn">
+
+                <TextView
+                    android:id="@+id/tv_true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/bg_0099ff_r100"
+                    android:gravity="center"
+                    android:text="@string/production_report"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/tv_true"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@id/tv_true"
+                    android:text="@string/shrimp_sticks"
+                    android:textColor="@color/color_60_ffffff"
+                    android:textSize="10sp" />
+
+            </RelativeLayout>
+
 
             <TextView
                 android:id="@+id/tv_skip"

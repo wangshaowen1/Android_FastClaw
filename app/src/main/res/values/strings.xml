@@ -631,6 +631,7 @@
 
 
     <string name="report_home_tip4">仅需一步，30秒生成报告</string>
+    <string name="report_home_tip4_2">仅需两步，30秒生成报告</string>
     <string name="up_resume_file">上传简历文件</string>
     <string name="report_home_tip5">PDF文件、Word文件、图片均可</string>
     <string name="report_home_tip6">需包含公司详细信息和岗位描述</string>
@@ -671,6 +672,7 @@
     <string name="parsing_failed">解析失败</string>
     <string name="report_analysis">报告分析中</string>
     <string name="report_analysis_r">你可以稍后在「我的报告」中查看生成结果</string>
+    <string name="report_r_time">预计剩余时间3min，请耐心等待</string>
     <string name="check_later">稍后查看</string>
 
 

@@ -28,6 +28,7 @@ import com.nhsd.mattise.MimeType
 import com.nhsd.mattise.engine.impl.GlideEngine
 import com.nhsd.mattise.internal.entity.CaptureStrategy
 import com.shiyuan.fastclaw.common.Constants
+import com.shiyuan.fastclaw.common.Constants.Extra.IMAGE
 import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
@@ -36,6 +37,7 @@ import com.shiyuan.fastclaw.feature.mine.AnalysisLoadingDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.widget.PhotoGridView
+import com.umeng.socialize.utils.UmengText
 
 /**
  * @Introduce: 历史报告列表页面
@@ -49,6 +51,9 @@ class GenerateReportActivity :
         const val PENDING = "PENDING"
         const val RUNNING = "RUNNING"
         const val FAILURE = "FAILURE"
+        const val JD_REPORT = "JD_REPORT"
+        const val PERSONAL_REPORT = "PERSONAL_REPORT"
+        const val TEXT = "TEXT"
 
         fun start(activity: Activity?, data: ResumeData) {
             activity ?: return
@@ -141,9 +146,9 @@ class GenerateReportActivity :
                 mRealVM.resumeData.value?.blockingIssuesMessage?.showToast()
                 return@setOnSingleClickListener
             }
-            ReportProgressActivity.start(this, resumeCheckId =mRealVM.resumeData.value?.checkId,null,reportType ="PERSONAL_REPORT")
+            ReportProgressActivity.start(this, resumeCheckId =mRealVM.resumeData.value?.checkId,null,reportType =PERSONAL_REPORT)
         }
-        binding.tvTrue.setOnSingleClickListener {//简历 +JD
+        binding.rlTrue.setOnSingleClickListener {//简历 +JD
             //校验简历要通过
             if(mRealVM.resumeData.value?.checkStatus != PASS){
                 mRealVM.resumeData.value?.blockingIssuesMessage?.showToast()
@@ -154,7 +159,7 @@ class GenerateReportActivity :
             if(mRealVM.isJd.value == true){
                 if(mRealVM.tableSelect.value == 0){ //选中截图
                     if(mRealVM.photoSize.value  == 0){
-                        "请上传图片".showToast()
+                        "请先添加目标岗位位信息".showToast()
                         return@setOnSingleClickListener
                     }
                       //校验截图
@@ -162,20 +167,16 @@ class GenerateReportActivity :
                         mRealVM.jdImageData.value?.blockingMessage?.showToast()
                         return@setOnSingleClickListener
                     }
-                    ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdImageData.value?.checkId,reportType ="JD_REPORT")
+                    ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdImageData.value?.checkId,reportType =JD_REPORT)
                 }else{ //选中粘贴
                    if(binding.etTxt.text.isNullOrBlank()){
                        "粘贴公司名称与岗位职责信息".showToast()
                       return@setOnSingleClickListener
                    }
-                  mRealVM.jdQualityQuality(null, binding.etTxt.text.toString(),"TEXT")
-                /*  if(mRealVM.jdTextData.value?.checkStatus != "PASS"){
-                      mRealVM.resumeData.value?.blockingMessage?.showToast()
-                      return@setOnSingleClickListener
-                  }*/
+                  mRealVM.jdQualityQuality(null, binding.etTxt.text.toString(),TEXT)
                 }
             }else{
-                ReportProgressActivity.start(this, resumeCheckId =mRealVM.resumeData.value?.checkId,null,reportType ="PERSONAL_REPORT")
+                ReportProgressActivity.start(this, resumeCheckId =mRealVM.resumeData.value?.checkId,null,reportType =PERSONAL_REPORT)
             }
         }
         binding.rlSelect1.setOnSingleClickListener {mRealVM.tableSelect.postValue(0)  }
@@ -189,12 +190,12 @@ class GenerateReportActivity :
             .into(binding.ivGif)
 
         // EditText 滚动处理
-        setupEtTxtScroll()
+        //setupEtTxtScroll()
     }
 
     private fun setupEtTxtScroll() {
         binding.etTxt.apply {
-            setOnTouchListener { v, event ->
+          /*  setOnTouchListener { v, event ->
                 // 当用户在 EditText 上滑动时，禁止父视图拦截触摸事件
                 if (event.action == MotionEvent.ACTION_UP) {
                     v.parent.requestDisallowInterceptTouchEvent(false)
@@ -202,14 +203,9 @@ class GenerateReportActivity :
                     v.parent.requestDisallowInterceptTouchEvent(true)
                 }
                 false
-            }
-            // 确保 EditText 可以滚动
-            movementMethod = ScrollingMovementMethod.getInstance()
-            isHorizontalScrollBarEnabled = false
-            isVerticalScrollBarEnabled = true
+            }*/
         }
     }
-
 
 
 
@@ -359,7 +355,7 @@ class GenerateReportActivity :
                     mRealVM.setLoading(false)
                     binding.llJdTxtState.visibility = View.GONE
                     stopJdPolling()  // ✅ 停止轮询
-                    ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdTextData.value?.checkId,reportType ="JD_REPORT")
+                    ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdTextData.value?.checkId,reportType =JD_REPORT)
                 }
                 RUNNING, PENDING -> {
                     binding.llJdTxtState.visibility = View.GONE
@@ -381,13 +377,18 @@ class GenerateReportActivity :
         }
 
         mRealVM.photoSize.observe(this) {
-            if (it > 0) {
+            Log.d("photoSize",it.toJsonString())
+            if (it >= 1) {
                 binding.llUp.visibility = View.GONE
-                binding.llUp2.visibility = View.VISIBLE
-
+                binding.photoGrid.visibility = View.VISIBLE
+                // 强制 PhotoGridView 重新布局
+                binding.photoGrid.post {
+                    binding.photoGrid.requestLayout()
+                    binding.photoGrid.invalidate()
+                }
             } else {
                 binding.llUp.visibility = View.VISIBLE
-                binding.llUp2.visibility = View.GONE
+                binding.photoGrid.visibility = View.GONE
 
                 binding.llJdImageState.visibility = View.GONE
             }
@@ -424,6 +425,7 @@ class GenerateReportActivity :
 
                 binding.llJt.visibility = View.GONE
                 binding.llAll.background = resources.getDrawable(R.drawable.bg_genner_left_top_12)
+
 
             }
         }
@@ -466,7 +468,7 @@ class GenerateReportActivity :
             override fun run() {
                 if (!isFinishing && !isDestroyed && isJdPolling) {
                     Log.d("Polling", "JD图片轮询...")
-                    mRealVM.jdMaterialQualityr(if (mRealVM.tableSelect.value == 0) "IMAGE" else "TEXT")   // ★ 这里调用 JD 图片专用的检查方法
+                    mRealVM.jdMaterialQualityr(if (mRealVM.tableSelect.value == 0) IMAGE else TEXT)   // ★ 这里调用 JD 图片专用的检查方法
                     handler.postDelayed(this, POLLING_INTERVAL)
                 }
             }
@@ -485,12 +487,13 @@ class GenerateReportActivity :
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
             val result = Matisse.obtainResult(data)
+            Log.d("photoSize2",result.toJsonString())
             binding.photoGrid.setAll(result as ArrayList<Uri?>, false)
             //上传图片
             val nonNullUris = result.filterNotNull()
             mRealVM.submitMultipleFiles(nonNullUris) { successUrls, failedUris ->
                 if (successUrls.isNotEmpty()) {
-                    mRealVM.jdQualityQuality(successUrls, null,"IMAGE")
+                    mRealVM.jdQualityQuality(successUrls, null, IMAGE)
                 } else {
                     "图片上传".showToast()
                 }

@@ -13,10 +13,13 @@ import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.common.Constants.SHRIMPSTICKS_URL
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.databinding.ActivityReportProgressBinding
+import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.mine.MyShrimpChipsActivity
 import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -39,6 +42,7 @@ class ReportProgressActivity :
             intent.putExtra("jdCheckId", jdCheckId)
             intent.putExtra("reportType", reportType)
             activity.startActivity(intent)
+            activity.finish()
         }
     }
 
@@ -93,9 +97,11 @@ class ReportProgressActivity :
                 "SUCCESS " -> {
                     stopJdPolling()
                     MyHistoryReportActivity.start(this)
+                    finish()
                 }
 
                 else -> {
+                    binding.viewFlipper.startFlipping()
                     startJdPolling()
                 }
             }

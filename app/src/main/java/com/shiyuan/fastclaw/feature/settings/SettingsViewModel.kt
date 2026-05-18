@@ -39,7 +39,7 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
-    val appVersion: String by lazy { "快龙虾版本："+ Session.getInstance().versionName }
+    val appVersion: String by lazy { "快龙虾Version："+ Session.getInstance().versionName }
 
     val beiAn by lazy { Config.get().appConfig.beianNo }
 

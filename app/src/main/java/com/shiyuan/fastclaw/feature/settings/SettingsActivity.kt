@@ -71,10 +71,9 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
 
     private fun initView() {
          if( User.get().isVisitor){
-             binding.tvLg.text = resources.getString(R.string.app_log)
+             binding.rl4.visibility = View.GONE
          }else{
-             binding.tvLg.text = resources.getString(R.string.app_log_out)
-
+             binding.rl4.visibility = View.VISIBLE
          }
     }
 
@@ -88,9 +87,6 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
 
     override fun onRestart() {
         super.onRestart()
-      /*  if (User.get().isVisitor) {
-            finish()
-        }*/
     }
 
     override fun <Data> onClick(view: View?, data: Data?) {

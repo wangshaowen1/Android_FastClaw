@@ -40,6 +40,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
+
     val mToolbarVM2 = ToolbarViewModel(
         navigationAction = { finish() },
         title = "",
@@ -60,7 +61,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
 
     fun interviewReport(data: InterviewReportData, callback: () -> Unit) {
-        launchWithLoading(true, block = {
+        launchWithLoading(false, block = {
             response(
                 mRepo.api.interviewReport(
                     data
@@ -81,7 +82,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
 
     fun interviewReportr() {
-        launchWithLoading(true, block = {
+        launchWithLoading(false, block = {
             response(
                 mRepo.api.interviewReportResult(
                     InterviewReportData(
