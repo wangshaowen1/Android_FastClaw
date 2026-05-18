@@ -26,8 +26,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.response
-import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.FAILURE
-import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.PENDING
+import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.FAILED
 
 /**
  * @Introduce: 历史报告列表 ViewModel
@@ -163,7 +162,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
                 }, error = {
                     val errorData = resumeData.value?.copy(
                         blockingIssuesMessage = "简历解析失败",
-                        checkStatus = FAILURE
+                        checkStatus = FAILED
                     )
                     errorData?.let {
                         resumeData.postValue(it)
@@ -173,7 +172,7 @@ class GenerateReportViewModel : AppRepositoryViewModel<AppRepository>() {
         }, onError = {
             val errorData = resumeData.value?.copy(
                 blockingIssuesMessage = "简历解析失败",
-                checkStatus = FAILURE
+                checkStatus = FAILED
             )
             errorData?.let { it ->
                 resumeData.postValue(it)
