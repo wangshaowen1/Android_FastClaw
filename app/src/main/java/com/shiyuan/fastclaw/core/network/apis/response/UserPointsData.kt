@@ -25,19 +25,9 @@ data class UserPointsData(
     val signedToday: Boolean? = false
 ) : Parcelable
 
-@Parcelize
-data class UserPointPageData(
-    val records: List<UserPointItemData>? = null,
-
-    val total: Int? = null,
-
-    val size: Int? = null,
-
-    val current: Int? = null,
-
-    val pages: Int? = null,
-) : Parcelable
-
+/**
+ * 虾条使用记录项
+ */
 @Parcelize
 data class UserPointItemData(
 
@@ -58,7 +48,7 @@ data class UserPointItemData(
 
     /**
      * 类型
-     * ADD
+     * ADD or SUBTRACT
      */
     val transactionType: String? = null,
 

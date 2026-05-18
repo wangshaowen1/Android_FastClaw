@@ -32,7 +32,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.ShelfStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
-import com.shiyuan.fastclaw.core.network.apis.response.UserPointPageData
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointsData
 import okhttp3.MultipartBody
 import retrofit2.http.Body
