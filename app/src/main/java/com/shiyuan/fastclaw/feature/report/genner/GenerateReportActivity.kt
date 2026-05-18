@@ -204,24 +204,7 @@ class GenerateReportActivity :
             }
         }
 
-        // EditText 滚动处理
-        //setupEtTxtScroll()
     }
-
-    private fun setupEtTxtScroll() {
-        binding.etTxt.apply {
-          /*  setOnTouchListener { v, event ->
-                // 当用户在 EditText 上滑动时，禁止父视图拦截触摸事件
-                if (event.action == MotionEvent.ACTION_UP) {
-                    v.parent.requestDisallowInterceptTouchEvent(false)
-                } else {
-                    v.parent.requestDisallowInterceptTouchEvent(true)
-                }
-                false
-            }*/
-        }
-    }
-
 
 
     private fun requestAlbumsPermission() {
