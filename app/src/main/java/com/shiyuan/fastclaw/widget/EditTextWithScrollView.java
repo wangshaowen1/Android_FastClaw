@@ -1,8 +1,11 @@
 package com.shiyuan.fastclaw.widget;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 
 /**
  * 用于解决嵌套Scrollview的时候由于多行而产生的滑动冲突问题
@@ -32,7 +35,27 @@ public class EditTextWithScrollView extends XEditText {
     }
 
     private void init() {
-        //setMovementMethod(ScrollingMovementMethod.getInstance());
+      /*  setVerticalScrollBarEnabled(true);
+        setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);*/
+        
+        addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mCanVerticalScroll = canVerticalScroll();
+            }
+        });
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mCanVerticalScroll = canVerticalScroll();
     }
 
     @Override

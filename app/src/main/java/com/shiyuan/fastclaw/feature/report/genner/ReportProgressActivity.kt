@@ -94,12 +94,11 @@ class ReportProgressActivity :
             })
         mRealVM.reportData.observe(this) {
             when (it.reportStatus) {
-                "SUCCESS " -> {
+                "SUCCESS","FAILED","CANCELLED" -> {
                     stopJdPolling()
                     MyHistoryReportActivity.start(this)
                     finish()
                 }
-
                 else -> {
                     binding.viewFlipper.startFlipping()
                     startJdPolling()

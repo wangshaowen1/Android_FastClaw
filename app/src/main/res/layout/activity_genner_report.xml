@@ -282,7 +282,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <LinearLayout
+                            <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="327dp"
                                 android:background="@drawable/bg_bg_screenshot_dashed"
@@ -290,28 +290,32 @@
                                 android:padding="16dp">
 
                                 <com.shiyuan.fastclaw.widget.EditTextWithScrollView
+                                    android:paddingBottom="14dp"
                                     android:id="@+id/et_txt"
                                     android:layout_width="match_parent"
-                                    android:layout_height="0dp"
+                                    android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     android:background="@null"
+                                    android:maxLength="2000"
                                     android:gravity="top|start"
                                     android:hint="@string/et_hit1"
                                     android:inputType="textMultiLine"
                                     android:overScrollMode="always"
-                                    android:scrollbars="vertical"
                                     android:scrollHorizontally="false"
                                     android:textColorHint="@color/color_999999"
                                     android:textSize="12sp" />
 
                                 <TextView
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:id="@+id/tv_word_count"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="end"
-                                    android:text="0/1000"
+                                    android:text="0/2000"
                                     android:textColor="@color/color_999999"
                                     android:textSize="10sp" />
-                            </LinearLayout>
+                            </RelativeLayout>
 
                             <LinearLayout
                                 android:id="@+id/ll_jd_txt_state"

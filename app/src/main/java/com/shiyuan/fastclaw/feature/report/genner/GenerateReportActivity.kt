@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.report.genner
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
@@ -14,6 +15,9 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
+import android.view.inputmethod.InputMethodManager
+import androidx.core.widget.doAfterTextChanged
+import com.blankj.utilcode.util.KeyboardUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.kuaige.imageloader.GlideApp
 import com.shiyuan.fastclaw.R
@@ -50,10 +54,12 @@ class GenerateReportActivity :
         const val PASS = "PASS"
         const val PENDING = "PENDING"
         const val RUNNING = "RUNNING"
-        const val FAILURE = "FAILURE"
+        const val FAILED = "FAILED"
         const val JD_REPORT = "JD_REPORT"
         const val PERSONAL_REPORT = "PERSONAL_REPORT"
         const val TEXT = "TEXT"
+
+        private val MAX_LENGTH = 2000
 
         fun start(activity: Activity?, data: ResumeData) {
             activity ?: return
@@ -189,24 +195,16 @@ class GenerateReportActivity :
             .load(R.drawable.img_jc_gif)
             .into(binding.ivGif)
 
-        // EditText 滚动处理
-        //setupEtTxtScroll()
-    }
-
-    private fun setupEtTxtScroll() {
-        binding.etTxt.apply {
-          /*  setOnTouchListener { v, event ->
-                // 当用户在 EditText 上滑动时，禁止父视图拦截触摸事件
-                if (event.action == MotionEvent.ACTION_UP) {
-                    v.parent.requestDisallowInterceptTouchEvent(false)
-                } else {
-                    v.parent.requestDisallowInterceptTouchEvent(true)
-                }
-                false
-            }*/
+        binding.etTxt.doAfterTextChanged { editable ->
+            val currentLength = editable?.length ?: 0
+            binding.tvWordCount.text = "$currentLength/$MAX_LENGTH"
+            // 达到2000字时提示
+            if (currentLength == MAX_LENGTH) {
+               "已达最大输入字数 $MAX_LENGTH 字".showToast()
+            }
         }
-    }
 
+    }
 
 
     private fun requestAlbumsPermission() {
@@ -414,6 +412,14 @@ class GenerateReportActivity :
 
 
             }else{
+                binding.etTxt.post {
+                    binding.etTxt.requestFocus()
+                    // 把光标移动到末尾
+                    binding.etTxt.text?.let { it1 -> binding.etTxt.setSelection(it1.length) }
+                    // 阻止键盘弹出
+                    val imm =getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(binding.etTxt.windowToken, 0)
+                }
 
                 binding.vBgSelect1.background = resources.getDrawable(R.drawable.bg_select_txt3)
                 binding.tvSelect1.setTextColor(resources.getColor(R.color.color_999999))
