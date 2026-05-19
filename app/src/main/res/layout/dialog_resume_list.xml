@@ -43,7 +43,7 @@
                 android:layout_width="26dp"
                 android:layout_height="26dp"
                 android:layout_alignParentRight="true"
-                android:src="@mipmap/ic_close">
+                android:src="@drawable/ic_close">
 
             </ImageView>
 
@@ -73,7 +73,7 @@
                 android:layout_height="28dp"
                 android:layout_gravity="center_vertical"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/ic_resume" />
+                android:src="@drawable/ic_resume" />
 
             <LinearLayout
                 android:layout_weight="1"

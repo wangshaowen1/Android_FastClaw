@@ -38,14 +38,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/ima_home_report_bg" />
+                        android:src="@drawable/ima_home_report_bg" />
 
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="150dp"
                         android:layout_gravity="bottom"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/img_home_report_bg2" />
+                        android:src="@drawable/img_home_report_bg2" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -93,7 +93,7 @@
                                 android:layout_width="18dp"
                                 android:layout_height="18dp"
                                 android:layout_marginStart="2dp"
-                                android:src="@mipmap/ic_arrow_right2" />
+                                android:src="@drawable/ic_arrow_right2" />
 
                         </LinearLayout>
 

@@ -61,7 +61,7 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/ic_resume"
+                        android:src="@drawable/ic_resume"
                         tools:ignore="ContentDescription" />
 
                     <LinearLayout
@@ -111,7 +111,7 @@
                         android:id="@+id/tv_upload"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:src="@mipmap/ic_more"
+                        android:src="@drawable/ic_more"
                         tools:ignore="ContentDescription" />
                 </LinearLayout>
 
@@ -212,7 +212,7 @@
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:layout_marginTop="20dp"
-                                    android:src="@mipmap/ic_example"
+                                    android:src="@drawable/ic_example"
                                     tools:ignore="ContentDescription" />
 
                                 <TextView
@@ -380,7 +380,7 @@
                                 <ImageView
                                     android:layout_width="12dp"
                                     android:layout_height="12dp"
-                                    android:src="@mipmap/ic_group"
+                                    android:src="@drawable/ic_group"
                                     tools:ignore="ContentDescription" />
 
                                 <View
@@ -392,7 +392,7 @@
                                 <ImageView
                                     android:layout_width="12dp"
                                     android:layout_height="12dp"
-                                    android:src="@mipmap/ic_group"
+                                    android:src="@drawable/ic_group"
                                     tools:ignore="ContentDescription" />
                             </LinearLayout>
 
