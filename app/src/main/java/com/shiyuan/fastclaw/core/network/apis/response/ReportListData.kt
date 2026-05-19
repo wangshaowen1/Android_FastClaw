@@ -1,16 +1,8 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
+import com.shiyuan.fastclaw.core.network.apis.PagedList
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
 import com.shiyuan.fastclaw.feature.report.data.ReportStatus
-
-data class ReportListData(
-    val total: String?,
-    val pageNum: String?,
-    val pageSize: String?,
-    val pages: String?,
-    val hasNext: Boolean?,
-    val items: List<ReportListItem>?
-)
 
 data class ReportListItem(
     val reportId: String?,
@@ -57,6 +49,6 @@ data class ReportListItem(
     )
 }
 
-fun ReportListData.toReportInfoList(): List<ReportInfo> {
-    return items?.map { it.toReportInfo() } ?: emptyList()
+fun PagedList<ReportListItem>.toReportInfoList(): List<ReportInfo> {
+    return getItems()?.map { it.toReportInfo() } ?: emptyList()
 }

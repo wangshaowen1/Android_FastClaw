@@ -27,12 +27,11 @@ import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.request.TipOffBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
-import com.shiyuan.fastclaw.core.network.apis.response.ReportListData
+import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.ShelfStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
-import com.shiyuan.fastclaw.core.network.apis.response.UserPointPageData
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointsData
 import okhttp3.MultipartBody
 import retrofit2.http.Body
@@ -192,7 +191,7 @@ interface ApiService {
      * 获取我的报告列表
      */
     @POST(ApiConstants.GET_MY_REPORT_LIST)
-    suspend fun getMyReportList(@Body body: PagedBody): ApiResponse<ReportListData?>
+    suspend fun getMyReportList(@Body body: PagedBody): ApiResponse<PagedList<ReportListItem>?>
 
     /**
      * 上传简历

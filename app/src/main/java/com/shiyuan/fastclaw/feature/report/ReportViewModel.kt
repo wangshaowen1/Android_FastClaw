@@ -40,75 +40,74 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private var listData = mutableListOf<ReportInfo>()
     private var currentPage = 1
-    private var isLoadingMore = false
+    private var isLoading = false
     private val pageSize = 10
 
     override fun onCreate() {
         super.onCreate()
     }
 
-    fun loadData() {
-        loadState.set(LoadState.Loading)
-        request(
-            apiBlock = { ApiFactory.apiService.getMyReportList(PagedBody(1, pageSize)) },
-            onSuccess = {
-                data?.let { data ->
-                    currentPage = 1
-                    listData = data.toReportInfoList().toMutableList()
-                    refreshList()
-                    val isEmpty = data.toReportInfoList().isEmpty()
-                    loadState.set(
-                        if (isEmpty) LoadState.Empty
-                        else LoadState.NotLoading(isEmpty)
-                    )
-                } ?: run {
-                    listData.clear()
-                    refreshList()
-                    loadState.set(LoadState.Empty)
-                }
-            },
-            onError = {
-                loadState.set(LoadState.Error(it ?: Exception("unknown")))
-            }
-        )
-    }
+    fun loadData(isRefresh: Boolean = true) {
+        if (isLoading) return
+        isLoading = true
 
-    fun refresh() {
-        currentPage = 1
-        isLoadingMore = false
-        loadData()
-    }
-
-    fun loadMore() {
-        if (isLoadingMore) return
+        val targetPage = if (isRefresh) 1 else currentPage + 1
         val currentState = loadState.get()
-        if (currentState is LoadState.NotLoading && currentState.endOfPaginationReached) return
 
-        isLoadingMore = true
-        val nextPage = currentPage + 1
+        if (isRefresh) {
+            loadState.set(LoadState.Loading)
+        } else if (currentState is LoadState.NotLoading && currentState.endOfPaginationReached) {
+            return
+        }
+
         request(
-            apiBlock = { ApiFactory.apiService.getMyReportList(PagedBody(nextPage, pageSize)) },
+            apiBlock = { ApiFactory.apiService.getMyReportList(PagedBody(targetPage, pageSize)) },
             onSuccess = {
-                isLoadingMore = false
+                isLoading = false
                 data?.let { data ->
                     val newData = data.toReportInfoList()
-                    if (newData.isEmpty()) {
-                        loadState.set(LoadState.NotLoading(true))
-                    } else {
-                        currentPage = nextPage
-                        listData.addAll(newData)
+                    if (isRefresh) {
+                        currentPage = 1
+                        listData = newData.toMutableList()
                         refreshList()
-                        loadState.set(LoadState.NotLoading(false))
+                        val isEmpty = newData.isEmpty()
+                        loadState.set(
+                            if (isEmpty) LoadState.Empty
+                            else LoadState.NotLoading(isEmpty)
+                        )
+                    } else {
+                        if (newData.isEmpty()) {
+                            loadState.set(LoadState.NotLoading(true))
+                        } else {
+                            currentPage = targetPage
+                            listData.addAll(newData)
+                            refreshList()
+                            loadState.set(LoadState.NotLoading(false))
+                        }
                     }
                 } ?: run {
-                    loadState.set(LoadState.NotLoading(true))
+                    isLoading = false
+                    if (isRefresh) {
+                        listData.clear()
+                        refreshList()
+                        loadState.set(LoadState.Empty)
+                    } else {
+                        loadState.set(LoadState.NotLoading(true))
+                    }
                 }
             },
             onError = {
-                isLoadingMore = false
+                isLoading = false
+                if (isRefresh) {
+                    loadState.set(LoadState.Error(it ?: Exception("unknown")))
+                }
             }
         )
     }
+
+    fun refresh() = loadData(isRefresh = true)
+
+    fun loadMore() = loadData(isRefresh = false)
 
     private fun refreshList() {
         val items = listData.map { info ->
@@ -124,23 +123,6 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
         listAdapter.submitList(items)
     }
 
-    /**
-     * 上传简历
-     * @param file 文件 MultipartBody
-     * @param fileName 文件名
-     * @param callback 上传结果回调
-     */
-    fun uploadResume(file: MultipartBody.Part, fileName: String, callback: (Boolean) -> Unit) {
-        request(
-            apiBlock = { ApiFactory.apiService.uploadResume(file, fileName) },
-            onSuccess = {
-                callback(true)
-            },
-            onError = {
-                callback(false)
-            }
-        )
-    }
 
     companion object {
         fun buildLayoutManager(context: Context?) = LinearLayoutManager(context).apply {

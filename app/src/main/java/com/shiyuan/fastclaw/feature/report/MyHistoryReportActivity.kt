@@ -30,7 +30,7 @@ class MyHistoryReportActivity : BaseViewModelActivity<ActivityMyHistoryReportBin
         super.onCreate(savedInstanceState)
         initView()
         initObservers()
-        mRealVM.loadData()
+        mRealVM.refresh()
     }
 
     override fun setTranslucentStatus() {
