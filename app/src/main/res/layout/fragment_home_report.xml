@@ -51,26 +51,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:layout_marginBottom="23dp"
+                        android:layout_marginBottom="29dp"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                        <ImageView
+                            android:src="@drawable/img_home_report_character2"
+                            android:layout_width="189dp"
+                            android:layout_height="30dp"
                             android:layout_marginStart="20dp"
                             android:text="@string/report_home_tip1"
                             android:textColor="@color/color_1a1a1a"
-                            android:textSize="22sp"
                             android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                        <ImageView
+                            android:src="@drawable/img_home_report_character1"
+                            android:layout_width="192dp"
+                            android:layout_height="40dp"
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="4dp"
                             android:text="@string/report_home_tip2"
                             android:textColor="@color/color_1a1a1a"
-                            android:textSize="32sp"
                             android:textStyle="bold" />
 
                         <LinearLayout
@@ -100,7 +100,7 @@
                         <!-- Tab切换区域 -->
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="50dp"
                             android:layout_marginHorizontal="16dp"
                             android:layout_marginTop="38dp"
                             android:background="@drawable/bg_ffffff_r100"
@@ -170,6 +170,7 @@
 
                 <!-- 内容区域 -->
                 <LinearLayout
+                    android:layout_marginTop="-17dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
@@ -180,14 +181,14 @@
                         android:id="@+id/rl_have"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_ffffff_r100"
+                        android:background="@drawable/bg_ffffff_r12"
                         android:padding="16dp">
 
                         <ImageView
                             android:id="@+id/iv_goal"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:src="@drawable/ic_home_have_jd" />
+                            android:src="@drawable/ic_home_no_jd" />
 
                         <TextView
                             android:id="@+id/tv_up_JD"
@@ -238,7 +239,7 @@
                             android:id="@+id/iv_goal2"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:src="@drawable/ic_home_no_jd" />
+                            android:src="@drawable/ic_home_have_jd" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -285,7 +286,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_ffffff_r12"
                             android:orientation="vertical"
-                            android:paddingHorizontal="6dp"
+                            android:paddingHorizontal="16dp"
                             android:paddingTop="12dp"
                             android:paddingBottom="16dp">
 
@@ -314,6 +315,7 @@
                             </LinearLayout>
 
                             <TextView
+                                android:lineSpacingExtra="3dp"
                                 android:id="@+id/tv_item1_2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -335,7 +337,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_ffffff_r12"
                             android:orientation="vertical"
-                            android:paddingHorizontal="6dp"
+                            android:paddingHorizontal="16dp"
                             android:paddingTop="12dp"
                             android:paddingBottom="16dp">
 
@@ -364,6 +366,7 @@
                             </LinearLayout>
 
                             <TextView
+                                android:lineSpacingExtra="3dp"
                                 android:id="@+id/tv_item2_2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -389,7 +392,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_ffffff_r12"
                             android:orientation="vertical"
-                            android:paddingHorizontal="6dp"
+                            android:paddingHorizontal="16dp"
                             android:paddingTop="12dp"
                             android:paddingBottom="16dp">
 
@@ -416,6 +419,7 @@
                             </LinearLayout>
 
                             <TextView
+                                android:lineSpacingExtra="3dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
@@ -436,7 +440,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/bg_ffffff_r12"
                             android:orientation="vertical"
-                            android:paddingHorizontal="6dp"
+                            android:paddingHorizontal="16dp"
                             android:paddingTop="12dp"
                             android:paddingBottom="16dp">
 
@@ -463,6 +467,7 @@
                             </LinearLayout>
 
                             <TextView
+                                android:lineSpacingExtra="3dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
@@ -686,6 +691,7 @@
                             </LinearLayout>
 
                             <TextView
+                                android:lineSpacingExtra="3dp"
                                 android:id="@+id/tv_report_home_tip1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -749,6 +755,7 @@
                             </LinearLayout>
 
                             <TextView
+                                android:lineSpacingExtra="3dp"
                                 android:id="@+id/tv_report_home_tip3"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -816,6 +823,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="12dp"
+                                android:lineSpacingExtra="3dp"
                                 android:text="@string/report_home_name6_tip1"
                                 android:textColor="@color/color_1a1a1a"
                                 android:textSize="13sp" />
