@@ -68,6 +68,12 @@ ext {
                     artifactId: 'umeng',
                     version   : '1.0.1',
                     gav       : 'com.kuaige.thirdparty:umeng:1.0.1'
+            ],
+            imsdk      : [
+                    groupId   : 'com.kuaige.thirdparty',
+                    artifactId: 'imsdk',
+                    version   : '1.0.0',
+                    gav       : 'com.kuaige.thirdparty:imsdk:1.0.0'
             ]
     ]
 }
