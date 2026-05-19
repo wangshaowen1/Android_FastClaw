@@ -303,6 +303,8 @@
                                     android:overScrollMode="always"
                                     android:scrollHorizontally="false"
                                     android:textColorHint="@color/color_999999"
+                                    android:textCursorDrawable="@drawable/cursor_genner_edit"
+                                    android:textColorHighlight="@color/color_20_0099FF"
                                     android:textSize="12sp" />
 
                                 <TextView
