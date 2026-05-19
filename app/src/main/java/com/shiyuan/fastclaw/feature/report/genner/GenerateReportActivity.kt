@@ -22,6 +22,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.kuaige.imageloader.GlideApp
 import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showAllowingStateLoss
 import com.nhsd.basic.ext.showToast
@@ -195,6 +196,9 @@ class GenerateReportActivity :
             .load(R.drawable.img_jc_gif)
             .into(binding.ivGif)
 
+        binding.etTxt.textSelectHandle?.setTint(R.color.color_0099FF.getResColor())
+        binding.etTxt.textSelectHandleLeft?.setTint(R.color.color_0099FF.getResColor())
+        binding.etTxt.textSelectHandleRight?.setTint(R.color.color_0099FF.getResColor())
         binding.etTxt.doAfterTextChanged { editable ->
             val currentLength = editable?.length ?: 0
             binding.tvWordCount.text = "$currentLength/$MAX_LENGTH"
