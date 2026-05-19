@@ -67,7 +67,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:importantForAccessibility="no"
-                        android:src="@mipmap/ic_arrow_right" />
+                        android:src="@drawable/ic_arrow_right" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -96,7 +96,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:importantForAccessibility="no"
-                        android:src="@mipmap/ic_arrow_right" />
+                        android:src="@drawable/ic_arrow_right" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -125,7 +125,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:importantForAccessibility="no"
-                        android:src="@mipmap/ic_arrow_right" />
+                        android:src="@drawable/ic_arrow_right" />
                 </RelativeLayout>
 
 

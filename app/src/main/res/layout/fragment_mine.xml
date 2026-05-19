@@ -47,7 +47,7 @@
             android:layout_marginEnd="13dp"
             android:importantForAccessibility="no"
             android:padding="3dp"
-            android:src="@mipmap/ic_mine_setting"
+            android:src="@drawable/ic_mine_setting"
             app:layout_constraintBottom_toBottomOf="@id/tv_mine_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_mine_title" />
@@ -131,7 +131,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:importantForAccessibility="no"
-                android:src="@mipmap/ic_arrow_right"
+                android:src="@drawable/ic_arrow_right"
                 app:layout_constraintBottom_toBottomOf="@id/tv_points"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_points" />
