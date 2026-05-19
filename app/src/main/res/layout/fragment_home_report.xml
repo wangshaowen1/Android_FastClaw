@@ -170,98 +170,131 @@
 
                 <!-- 内容区域 -->
                 <LinearLayout
-                    android:layout_marginTop="-17dp"
+                    android:layout_marginTop="-23dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:orientation="vertical">
 
                     <!-- 有目标状态的卡片 -->
+
                     <RelativeLayout
+
                         android:id="@+id/rl_have"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_ffffff_r12"
-                        android:padding="16dp">
+                        android:layout_height="wrap_content">
 
                         <ImageView
-                            android:id="@+id/iv_goal"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/ic_home_no_jd" />
+                            android:layout_marginStart="73.5dp"
+                            android:src="@drawable/ic_arrow"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"/>
 
-                        <TextView
-                            android:id="@+id/tv_up_JD"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_toEndOf="@id/iv_goal"
-                            android:text="@string/up_JD"
-                            android:textColor="@color/color_0099FF"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <RelativeLayout
+                            android:layout_marginTop="6dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignBottom="@id/iv_goal"
-                            android:layout_marginStart="12dp"
-                            android:layout_toEndOf="@id/iv_goal"
-                            android:text="@string/up_JD2"
-                            android:textColor="@color/color_999999"
-                            android:textSize="12sp" />
+                            android:background="@drawable/bg_ffffff_r12"
+                            android:padding="16dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="6dp"
-                            android:layout_toEndOf="@id/tv_up_JD"
-                            android:background="@drawable/bg_upload_btn"
-                            android:gravity="center"
-                            android:paddingHorizontal="7dp"
-                            android:paddingVertical="2dp"
-                            android:text="推荐"
-                            android:textColor="@color/white"
-                            android:textSize="10sp" />
+                            <ImageView
+                                android:id="@+id/iv_goal"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/ic_home_no_jd" />
+
+
+                            <TextView
+                                android:id="@+id/tv_up_JD"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_toEndOf="@id/iv_goal"
+                                android:text="@string/up_JD"
+                                android:textColor="@color/color_0099FF"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignBottom="@id/iv_goal"
+                                android:layout_marginStart="12dp"
+                                android:layout_toEndOf="@id/iv_goal"
+                                android:text="@string/up_JD2"
+                                android:textColor="@color/color_999999"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_toEndOf="@id/tv_up_JD"
+                                android:background="@drawable/bg_upload_btn"
+                                android:gravity="center"
+                                android:paddingHorizontal="7dp"
+                                android:paddingVertical="2dp"
+                                android:text="推荐"
+                                android:textColor="@color/white"
+                                android:textSize="10sp" />
+
+                        </RelativeLayout>
 
                     </RelativeLayout>
 
-                    <!-- 无目标状态的卡片 -->
                     <RelativeLayout
+                        android:visibility="gone"
                         android:id="@+id/rl_no"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_ffffff_r100"
-                        android:padding="16dp"
-                        android:visibility="gone">
+                        android:layout_height="wrap_content">
 
                         <ImageView
-                            android:id="@+id/iv_goal2"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/ic_home_have_jd" />
+                            android:layout_alignParentRight="true"
+                            android:layout_marginEnd="73.5dp"
+                            android:src="@drawable/ic_arrow"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <!-- 无目标状态的卡片 -->
+                        <RelativeLayout
+                            android:layout_marginTop="6dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
-                            android:layout_toEndOf="@id/iv_goal2"
-                            android:text="@string/no_JD"
-                            android:textColor="@color/color_1a1a1a"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:background="@drawable/bg_ffffff_r12"
+                            android:padding="16dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignBottom="@id/iv_goal2"
-                            android:layout_marginStart="12dp"
-                            android:layout_toEndOf="@id/iv_goal2"
-                            android:text="@string/no_JD2"
-                            android:textColor="@color/color_999999"
-                            android:textSize="12sp" />
+                            <ImageView
+                                android:id="@+id/iv_goal2"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:src="@drawable/ic_home_have_jd" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:layout_toEndOf="@id/iv_goal2"
+                                android:text="@string/no_JD"
+                                android:textColor="@color/color_1a1a1a"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignBottom="@id/iv_goal2"
+                                android:layout_marginStart="12dp"
+                                android:layout_toEndOf="@id/iv_goal2"
+                                android:text="@string/no_JD2"
+                                android:textColor="@color/color_999999"
+                                android:textSize="12sp" />
+
+                        </RelativeLayout>
 
                     </RelativeLayout>
+
+
 
                     <TextView
                         android:layout_width="wrap_content"
