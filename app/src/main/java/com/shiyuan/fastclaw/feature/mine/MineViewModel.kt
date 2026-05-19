@@ -76,7 +76,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 账户虾条
      */
-    val userPoints by lazy { ObservableField<String>() }
+    val userPoints = MutableLiveData<String>("-")
 
     /**
      * 虾条记录
@@ -157,7 +157,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
                     bean = mRepo.api.getUserPoints(),
                     result = {
                         if (data == null) return@response
-                        userPoints.set("${data.pointsBalance}")
+                        userPoints.postValue("${data.pointsBalance}")
                     }
                 )
             }
@@ -174,7 +174,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         )
         noLogIn.value = true
         balance.set("0")
-        userPoints.set("-")
+        userPoints.value = "-"
         workCourseBanner.set(Config.get().appConfig.workCourseBanner)
     }
 
