@@ -187,31 +187,30 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     )
                 }
 
-                R.id.rbWorks -> {
-                    //热门
-                    EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
-                    setKeepScreenOn(false)
-                    mRealVM.showTab.set(1)
-                    supportFragmentManager.switchFragment(
-                        R.id.fragment,
-                        HomeReportFragment::class.java
-                    )
-                }
+//                R.id.rbWorks -> {
+//                    //热门
+//                    EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
+//                    setKeepScreenOn(false)
+//                    mRealVM.showTab.set(1)
+//                    supportFragmentManager.switchFragment(
+//                        R.id.fragment,
+//                        HomeReportFragment::class.java
+//                    )
+//                }
 
 
                 R.id.rbMine -> {
                     //我的
                     EventManager.onAppTrack(AppEvent.SF_VIEW_MINE_TAB_PAGE)
                     setKeepScreenOn(false)
-                    mRealVM.showTab.set(2)
+                    mRealVM.showTab.set(1)
                     supportFragmentManager.switchFragment(R.id.fragment, MineFragment::class.java)
                 }
             }
         }
         when (Config.get().appConfig.openAppLoadTab) {
             0 -> binding.mrg.check(R.id.rbHome)
-            1 -> binding.mrg.check(R.id.rbWorks)
-            2 -> binding.mrg.check(R.id.rbMine)
+            1 -> binding.mrg.check(R.id.rbMine)
             else -> binding.mrg.check(R.id.rbHome)
         }
     }
@@ -220,8 +219,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     fun switchToTab(position:Int) {
         when(position){
             0 -> binding.mrg.check(R.id.rbHome)
-            1 -> binding.mrg.check(R.id.rbWorks)
-            2 ->binding.mrg.check(R.id.rbMine)
+            1 -> binding.mrg.check(R.id.rbMine)
             else -> binding.mrg.check(R.id.rbHome)
         }
 
@@ -266,15 +264,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 }
             }
 
-            R.id.tabWorks -> {
-                clickTab(
-                    tabId = R.id.rbWorks,
-                    null
-                ) {
-                    binding.mrg.check(R.id.rbWorks) // 真正执行切换
-                }
-            }
-
             R.id.tabMine -> {
                 clickTab(
                     tabId = R.id.tabMine,
@@ -282,6 +271,16 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 ) {
                     binding.mrg.check(R.id.rbMine) // 真正执行切换
                 }
+            }
+
+            R.id.iv_main_report -> {
+//                EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
+//                setKeepScreenOn(false)
+//                mRealVM.showTab.set(1)
+//                supportFragmentManager.switchFragment(
+//                    R.id.fragment,
+//                    HomeReportFragment::class.java
+//                )
             }
         }
     }
@@ -378,10 +377,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 when (event.type) {
                     Events.MainTabEvent.TAB_HOME -> {
                         toHome()
-                    }
-
-                    Events.MainTabEvent.TAB_MY_WORKS -> {
-                        binding.mrg.check(R.id.rbWorks)
                     }
 
                     Events.MainTabEvent.TAB_MINE -> {
