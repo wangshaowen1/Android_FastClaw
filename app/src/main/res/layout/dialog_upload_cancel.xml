@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_lefttop_righttop_r12"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_upload"
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="@color/color_90_000000"
+            android:text="@string/reupload"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"/>
+
+        <View
+            android:id="@+id/v_line"
+            app:layout_constraintTop_toBottomOf="@id/tv_upload"
+            android:background="@color/color_f7f7f7"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"/>
+
+        <TextView
+            android:id="@+id/tv_cancel"
+            app:layout_constraintTop_toBottomOf="@id/v_line"
+            android:gravity="center"
+            android:textSize="17sp"
+            android:textColor="@color/color_90_000000"
+            android:text="@string/cancel"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
