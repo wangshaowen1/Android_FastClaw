@@ -511,7 +511,8 @@
 
     <color name="color_70_4c4c4c">#B34C4C4C</color>
     <color name="color_25_343443">#40343443</color>
-    <color name="color_40_3c3c43">#403C3C43</color>
+    <color name="color_25_3c3c43">#403C3C43</color>
+    <color name="color_56_3c3c43">#403C3C43</color>
     <color name="color_e6_000000">#E6000000</color>
     <color name="color_1a_000000">#1A000000</color>
     <color name="color_214CA5">#214CA5</color>
