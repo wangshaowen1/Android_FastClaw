@@ -721,6 +721,12 @@
     <string name="str_agent_today_progress_align_title">我们的关系又近了一步</string>
     <string name="str_agent_today_progress_align_delta">对齐度+%1$s</string>
     <string name="str_agent_today_progress_view_report">查看完整报告</string>
+    <string name="str_agent_match_report_title">小虾教你如何快速能力提升</string>
+    <string name="str_agent_match_report_subtitle">每次面试前可以准备一份面试作战报告，可以更好的去应对面试哦~</string>
+    <string name="str_agent_match_company_template">你和\"%1$s\"</string>
+    <string name="str_agent_match_slogan">双向奔赴</string>
+    <string name="str_agent_match_rate_label">匹配率</string>
+    <string name="str_agent_match_generate_btn">去生成面试作战报告</string>
     <string name="str_notifications_switch_title">第一时间收到面试邀约</string>
     <string name="str_notifications_switch_content">开启系统通知，不错过求职消息与优质工作机会。</string>
     <string name="str_notifications_switch_agree">开启消息通知</string>

@@ -105,12 +105,12 @@
         android:id="@+id/tv_progress_view_report"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableEnd="@drawable/ic_arrow_right"
         android:drawablePadding="2dp"
         android:gravity="center_vertical"
         android:text="@string/str_agent_today_progress_view_report"
         android:textColor="@color/color_56_3c3c43"
         android:textSize="13sp"
+        app:drawableEndCompat="@drawable/ic_arrow_right"
         app:layout_constraintBottom_toBottomOf="@id/tv_progress_align_delta"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_progress_align_delta" />
