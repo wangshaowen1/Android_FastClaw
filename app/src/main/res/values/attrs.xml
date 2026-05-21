@@ -1058,4 +1058,19 @@
         <attr name="cpv_textSize" format="dimension" />
         <attr name="cpv_progress" format="integer" />
     </declare-styleable>
+
+    <!-- WaveProgressView 波浪进度条 -->
+    <declare-styleable name="WaveProgressView">
+        <attr name="wpv_progress" format="integer" />
+        <attr name="wpv_waveColor" format="color" />
+        <attr name="wpv_waveBackgroundColor" format="color" />
+        <attr name="wpv_waveAlpha" format="integer" />
+        <attr name="wpv_text" format="string" />
+        <attr name="wpv_textColor" format="color" />
+        <attr name="wpv_textSize" format="dimension" />
+        <attr name="wpv_waveAmplitude" format="dimension" />
+        <attr name="wpv_waveCount" format="float" />
+        <attr name="wpv_waveSpeed" format="float" />
+        <attr name="wpv_waveAnimEnabled" format="boolean" />
+    </declare-styleable>
 </resources>

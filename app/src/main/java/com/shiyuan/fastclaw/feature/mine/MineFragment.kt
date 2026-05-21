@@ -54,7 +54,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             } else {
                 binding.tvMinePointsTip.visibility = View.GONE
                 binding.tvMineTipBtn.visibility = View.GONE
-                binding.layoutMineLj.visibility = View.GONE
+                binding.layoutMineLj.visibility = View.VISIBLE
                 binding.layoutMineBj.visibility = View.GONE
             }
             if(!it){
@@ -121,6 +121,12 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             R.id.layout_mine_bj -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
                     MyResumeActivity.start(requireActivity())
+                }
+            }
+
+            R.id.layout_mine_lj  -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    ShrimpUnderstandsActivity.start(requireActivity())
                 }
             }
    /*         R.id.siv_avatar,
