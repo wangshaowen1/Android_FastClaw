@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_question_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_msg_agent_left"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="20dp">
+
+    <TextView
+        android:id="@+id/tv_question"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_90_000000"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="你目前找工作的紧迫度怎么样？" />
+
+    <!-- 选项容器（未回复状态可见）：Flow 为辅助布局，不增加 View 层级；
+         运行时将选项 View addView 到本 ConstraintLayout，
+         再通过 flowOptions.referencedIds 接入到垂直链中。 -->
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/flow_options"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="vertical"
+        app:flow_verticalGap="12dp"
+        app:flow_verticalStyle="packed"
+        app:flow_wrapMode="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_question" />
+
+    <!-- 已回复回显（已回复状态可见，与 flow_options 互斥） -->
+    <TextView
+        android:id="@+id/tv_replied"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/color_56_3c3c43"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_question"
+        tools:text="已回复：积极找"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

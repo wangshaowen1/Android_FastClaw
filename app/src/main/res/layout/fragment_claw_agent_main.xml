@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+        <ImageView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_main_top_bg"
+            android:layout_width="match_parent"
+            android:layout_height="108dp"/>
+
+        <com.shiyuan.fastclaw.widget.StatusBarView
+            android:id="@+id/sbv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_agent_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_agent_claw_avatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sbv" />
+
+        <TextView
+            android:id="@+id/tv_agent_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/str_agent_name"
+            android:textColor="@color/color_90_000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/tv_agent_desc"
+            app:layout_constraintStart_toEndOf="@id/iv_agent_avatar"
+            app:layout_constraintTop_toTopOf="@id/iv_agent_avatar" />
+
+        <TextView
+            android:id="@+id/tv_agent_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:gravity="center"
+            android:text="@string/str_agent_desc"
+            android:textColor="@color/color_90_000000"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_agent_avatar"
+            app:layout_constraintStart_toEndOf="@id/tv_agent_status"
+            app:layout_constraintTop_toBottomOf="@id/tv_agent_name" />
+
+        <View
+            android:id="@+id/tv_agent_status"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:background="@drawable/bg_agent_status"
+            app:layout_constraintBottom_toBottomOf="@id/tv_agent_desc"
+            app:layout_constraintStart_toStartOf="@id/tv_agent_name"
+            app:layout_constraintTop_toTopOf="@id/tv_agent_desc" />
+
+        <TextView
+            android:id="@+id/tv_agent_memory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_agent_memory"
+            android:paddingVertical="6dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="10dp"
+            android:text="@string/str_agent_memory"
+            android:textColor="@color/color_90_000000"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/iv_agent_avatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_agent_avatar" />
+
+        <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_chatbot"
+            app:layout_constraintBottom_toBottomOf="@id/tv_agent_memory"
+            app:layout_constraintStart_toStartOf="@id/tv_agent_memory"
+            app:layout_constraintTop_toTopOf="@id/tv_agent_memory" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toTopOf="@id/et_send"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_agent_avatar"
+            app:layout_constraintVertical_bias="0" />
+
+        <EditText
+            android:id="@+id/et_send"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_agent_edit"
+            android:hint="@string/str_agent_send_hint"
+            android:maxLines="2"
+            android:paddingVertical="14dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="60dp"
+            android:textColor="@color/color_90_000000"
+            android:textColorHighlight="@color/color_20_0099FF"
+            android:textColorHint="@color/color_56_3c3c43"
+            android:textCursorDrawable="@drawable/cursor_genner_edit"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="找工作需要帮助尽管问小虾找工作需要帮助尽管问小虾找工作需要帮助尽管问小虾找工作需要帮助尽管问小虾" />
+
+        <ImageView
+            singleClick="@{vm.clickHandler::onClick}"
+            android:id="@+id/iv_send"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_agent_send"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/et_send"
+            app:layout_constraintEnd_toEndOf="@id/et_send"
+            app:layout_constraintTop_toTopOf="@id/et_send"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
