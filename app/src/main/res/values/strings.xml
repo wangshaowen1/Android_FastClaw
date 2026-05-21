@@ -711,6 +711,7 @@
     <string name="str_agent_desc">求职顾问 · 我在听</string>
     <string name="str_agent_memory">我对你的理解</string>
     <string name="str_agent_send_hint">找工作需要帮助尽管问小虾</string>
+    <string name="str_agent_question_replied">已回复：%1$s</string>
     <string name="str_notifications_switch_title">第一时间收到面试邀约</string>
     <string name="str_notifications_switch_content">开启系统通知，不错过求职消息与优质工作机会。</string>
     <string name="str_notifications_switch_agree">开启消息通知</string>
