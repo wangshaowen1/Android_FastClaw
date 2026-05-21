@@ -50,9 +50,12 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     binding.tvMinePointsTip.visibility = if (firstLogin) View.VISIBLE else View.GONE
                     binding.tvMineTipBtn.visibility = if (firstLogin) View.VISIBLE else View.GONE
                 }
+                binding.layoutMineBj.visibility = View.VISIBLE
             } else {
                 binding.tvMinePointsTip.visibility = View.GONE
                 binding.tvMineTipBtn.visibility = View.GONE
+                binding.layoutMineLj.visibility = View.GONE
+                binding.layoutMineBj.visibility = View.GONE
             }
             if(!it){
                 binding.tvPoints.text = "-"
@@ -113,6 +116,11 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     Config.get().recordFirstLogin(it)
                     binding.tvMinePointsTip.visibility = View.GONE
                     binding.tvMineTipBtn.visibility = View.GONE
+                }
+            }
+            R.id.layout_mine_bj -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    MyResumeActivity.start(requireActivity())
                 }
             }
    /*         R.id.siv_avatar,

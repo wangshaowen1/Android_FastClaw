@@ -697,6 +697,8 @@
     <string name="logout_dialog_confirm">确定退出</string>
     <string name="resume_attachment">附件简历</string>
     <string name="resume_tip">你的简历是小虾理解你的关键信息，如重新上传将覆盖现有简历信息（不影响求职偏好)</string>
+    <string name="resume_understanding">小虾对我的理解</string>
+    <string name="resume_dn">对齐度越高，我越懂你。</string>
 
 
     ）

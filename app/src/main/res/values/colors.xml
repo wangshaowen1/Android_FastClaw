@@ -515,10 +515,17 @@
     <color name="color_40_3c3c43">#403C3C43</color>
     <color name="color_e6_000000">#E6000000</color>
     <color name="color_1a_000000">#1A000000</color>
+    <color name="color_52_ffffff">#7Affffff</color>
     <color name="color_214CA5">#214CA5</color>
 
     <color name="color_76_3c3c43">#c23c3c43</color>
     <color name="color_56_3c3c43">#8F3c3c43</color>
+    <color name="color_30817b">#30817b</color>
+
+    <color name="color_e6f7ff">#e6f7ff</color>
+    <color name="color_2a4b46">#2a4b46</color>
+    <color name="color_556973">#556973</color>
+
 </resources>
 
 
