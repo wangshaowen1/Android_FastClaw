@@ -210,7 +210,7 @@
 
                     <include
                         android:visibility="gone"
-                        android:id="@+id/toolbar"
+                        android:id="@+id/view_understands2"
                         layout="@layout/view_understands2" />
 
                 </FrameLayout>
