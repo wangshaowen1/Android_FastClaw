@@ -728,6 +728,10 @@
     <string name="str_agent_match_slogan">双向奔赴</string>
     <string name="str_agent_match_rate_label">匹配率</string>
     <string name="str_agent_match_generate_btn">去生成面试作战报告</string>
+    <string name="str_agent_searching_jobs_title">小虾正在努力寻找岗位中</string>
+    <string name="str_agent_searching_jobs_desc">我会24小时帮你自动筛选岗位，有合适的机会将第一时间通知你～</string>
+    <string name="str_agent_no_jobs_found_title">小虾暂未找到合适岗位</string>
+    <string name="str_agent_no_jobs_found_desc">别着急～我正在持续帮你盯着，一有合适的岗位马上通知你！</string>
     <string name="str_notifications_switch_title">第一时间收到面试邀约</string>
     <string name="str_notifications_switch_content">开启系统通知，不错过求职消息与优质工作机会。</string>
     <string name="str_notifications_switch_agree">开启消息通知</string>
