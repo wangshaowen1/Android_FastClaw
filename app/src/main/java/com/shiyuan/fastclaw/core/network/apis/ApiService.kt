@@ -6,6 +6,7 @@ import com.shiyuan.fastclaw.core.network.apis.entity.OrderStatusInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.PaymentData
 import com.shiyuan.fastclaw.core.network.apis.entity.ReportData
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
 import com.shiyuan.fastclaw.core.network.apis.entity.SensitiveWordCheckData
 import com.shiyuan.fastclaw.core.network.apis.entity.WalletInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.WorkInfo
@@ -251,6 +252,7 @@ interface ApiService {
     @POST(ApiConstants.SIGN_OUT)
     suspend fun signOut(): ApiResponse<Any>
 
-
+    @POST(ApiConstants.GET_SCHEME)
+    suspend fun getScheme(): ApiResponse<SchemeData?>
 
 }

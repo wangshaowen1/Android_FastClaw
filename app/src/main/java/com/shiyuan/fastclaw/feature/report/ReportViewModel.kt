@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.report
 import android.content.Context
 import android.graphics.Color
 import androidx.databinding.ObservableField
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
@@ -14,9 +15,14 @@ import com.shiyuan.fastclaw.core.network.apis.response.toReportInfoList
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.core.ext.launch
+import com.shiyuan.fastclaw.core.ext.parseMessage
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
+import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
+import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import okhttp3.MultipartBody
 
@@ -45,6 +51,26 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
     override fun onCreate() {
         super.onCreate()
+    }
+
+     var schemeData = MutableLiveData<SchemeData>()
+
+    fun getScheme(){
+        setLoading(true)
+        launch(block = {
+            response(
+                ApiFactory.apiService.getScheme(),
+                result = {
+                    schemeData.postValue(this.data)
+                },
+                error = {
+                    this?.msg?.showToast()
+                })
+        }, onError = {
+            parseMessage(it)?.showToast()
+        }, onComplete = {
+            setLoading(false)
+        })
     }
 
     fun loadData(isRefresh: Boolean = true) {
