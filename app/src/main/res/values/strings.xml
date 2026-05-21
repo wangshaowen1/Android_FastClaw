@@ -712,6 +712,15 @@
     <string name="str_agent_memory">我对你的理解</string>
     <string name="str_agent_send_hint">找工作需要帮助尽管问小虾</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>
+    <string name="str_agent_understanding_upgrade_title">理解升级</string>
+    <string name="str_agent_understanding_align_title">我与你对齐度达到%1$s！</string>
+    <string name="str_agent_understanding_align_subtitle">小虾对你有了更充分的理解！</string>
+    <string name="str_agent_understanding_section_title">小虾对你的理解</string>
+    <string name="str_agent_understanding_bottom_tip">现在，小虾可以为你自动找工作了！</string>
+    <string name="str_agent_today_progress_title">今日进展</string>
+    <string name="str_agent_today_progress_align_title">我们的关系又近了一步</string>
+    <string name="str_agent_today_progress_align_delta">对齐度+%1$s</string>
+    <string name="str_agent_today_progress_view_report">查看完整报告</string>
     <string name="str_notifications_switch_title">第一时间收到面试邀约</string>
     <string name="str_notifications_switch_content">开启系统通知，不错过求职消息与优质工作机会。</string>
     <string name="str_notifications_switch_agree">开启消息通知</string>
