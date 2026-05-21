@@ -57,6 +57,15 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     )
 
+    val mToolbarVMUnderstands = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = R.string.shrimp_understands.getResString(),
+        background = Color.TRANSPARENT,
+        menuAction = { view ->
+            onMenuClick?.invoke()
+        }
+    )
+
 
 
     //是否登录

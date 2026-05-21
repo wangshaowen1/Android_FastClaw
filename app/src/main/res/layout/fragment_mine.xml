@@ -182,7 +182,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:visibility="gone"
+            singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -253,7 +253,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             singleClick="@{layout.clickHandler::onClick}"
             android:id="@+id/layout_mine_bj"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"

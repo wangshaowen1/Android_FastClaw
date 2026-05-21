@@ -123,6 +123,12 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     MyResumeActivity.start(requireActivity())
                 }
             }
+
+            R.id.layout_mine_lj  -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    ShrimpUnderstandsActivity.start(requireActivity())
+                }
+            }
    /*         R.id.siv_avatar,
             R.id.tv_login,
             R.id.tv_name -> {

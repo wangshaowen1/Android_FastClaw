@@ -566,6 +566,7 @@
 
     <string name="mine_title">我的主页</string>
     <string name="mine_sticks">我的虾条</string>
+    <string name="shrimp_understands">小虾对我的理解</string>
     <string name="mine_current_sticks">可用虾条</string>
     <string name="mine_rule">虾条规则</string>
     <string name="mine_tip">每日打开APP都可以获得10根虾条哦～</string>
