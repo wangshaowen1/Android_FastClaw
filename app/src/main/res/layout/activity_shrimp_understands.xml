@@ -50,21 +50,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/ll_top"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="126dp"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="18dp"
                     android:background="@drawable/bg_f7f7f7_r16_w1_ffffff"
                     android:orientation="horizontal"
                     android:paddingLeft="16dp"
-                    android:paddingTop="20dp"
                     android:paddingRight="30dp"
-                    android:paddingBottom="20dp"
+
                     app:layout_constraintTop_toBottomOf="@id/toolbar">
 
                     <TextView
+                        android:layout_centerVertical="true"
                         android:id="@+id/tv_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -77,6 +77,8 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:layout_toRightOf="@id/tv_name"
+                        android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -89,36 +91,48 @@
                         android:textSize="11sp"
                         android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" />
 
-                    <LinearLayout
-                        android:id="@+id/ll"
+                    <RelativeLayout
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/rl_bfb"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp">
+
+                        <com.shiyuan.fastclaw.widget.progress.WaveProgressView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:wpv_progress="60"
+                            app:wpv_text="60%"
+                            app:wpv_textColor="@color/color_90_000000"
+                            app:wpv_textSize="18sp"
+                            app:wpv_waveAmplitude="8dp"
+                            app:wpv_waveBackgroundColor="#D9FBFE"
+                            app:wpv_waveColor="#54DAF0"
+                            app:wpv_waveCount="1" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/ic_pr_bg"/>
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:gravity="center"
+                        android:layout_below="@id/rl_bfb"
+                        android:layout_alignEnd="@id/rl_bfb"
+                        android:layout_alignStart="@id/rl_bfb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="对齐度"
+                        android:textColor="@color/color_407779"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
-                        <ImageView
-                            android:id="@+id/iv_bfb"
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:src="@drawable/ic_vx" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="10dp"
-                            android:text="对齐度"
-                            android:textColor="@color/color_407779"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

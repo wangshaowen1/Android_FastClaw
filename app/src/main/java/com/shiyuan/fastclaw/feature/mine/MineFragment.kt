@@ -54,7 +54,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             } else {
                 binding.tvMinePointsTip.visibility = View.GONE
                 binding.tvMineTipBtn.visibility = View.GONE
-                binding.layoutMineLj.visibility = View.GONE
+                binding.layoutMineLj.visibility = View.VISIBLE
                 binding.layoutMineBj.visibility = View.GONE
             }
             if(!it){
