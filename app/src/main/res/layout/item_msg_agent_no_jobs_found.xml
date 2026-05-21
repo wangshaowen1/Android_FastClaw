@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_no_jobs_found_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_msg_agent_left"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="20dp">
+
+    <TextView
+        android:id="@+id/tv_no_jobs_found_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/str_agent_no_jobs_found_title"
+        android:textColor="@color/color_90_000000"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/v_no_jobs_found_divider"
+        android:layout_width="0dp"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/color_10_000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_no_jobs_found_title" />
+
+    <ImageView
+        android:id="@+id/iv_no_jobs_found_icon"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="16dp"
+        android:importantForAccessibility="no"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_agent_no_jobs_found"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_no_jobs_found_divider" />
+
+    <TextView
+        android:id="@+id/tv_no_jobs_found_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="@string/str_agent_no_jobs_found_desc"
+        android:textColor="@color/color_90_000000"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_no_jobs_found_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_no_jobs_found_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_no_jobs_found_icon" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
