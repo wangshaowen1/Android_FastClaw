@@ -1,38 +1,26 @@
-package com.shiyuan.fastclaw.feature.mine
+package com.shiyuan.fastclaw.feature.mine.viewModel
 
 import android.graphics.Color
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
-import com.shiyuan.fastclaw.common.Constants.SHRIMPSTICKS_URL
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.Config
-import com.shiyuan.fastclaw.core.Global
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
-import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
-import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
 import com.shiyuan.fastclaw.core.response
-import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
-import com.umeng.analytics.pro.da
+import com.shiyuan.fastclaw.feature.mine.UserPointPagingSource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 
 /**
  * *****************************************
@@ -91,10 +79,12 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 虾条记录
      */
-    val userPointListFlow = Pager(PagingConfig(
-        pageSize = 10,
-        initialLoadSize = 10
-    )) {
+    val userPointListFlow = Pager(
+        PagingConfig(
+            pageSize = 10,
+            initialLoadSize = 10
+        )
+    ) {
         UserPointPagingSource()
     }.flow
         .flowOn(Dispatchers.Default)
@@ -111,7 +101,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      * 刷新用户信息
      */
     fun refreshUserInfo() {
-        User.get().let { user ->
+        User.Companion.get().let { user ->
             isLogin.postValue(!user.isVisitor)
             if (user.isVisitor) {
                 notLoggedIn()
@@ -136,7 +126,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      * 获取用户主页信息接口
      */
     private fun getUserHomeInfo() {
-        User.get().let { user ->
+        User.Companion.get().let { user ->
             isLogin.postValue(!user.isVisitor)
             if (user.isVisitor) {
                 notLoggedIn()
@@ -149,7 +139,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
                     bean = mRepo.api.getUserHomeInfo(UserTokenBody()),
                     result = {
                         if (data == null) return@response
-                        User.get().updateFrom(data)
+                        User.Companion.get().updateFrom(data)
                         logOn()
                     })
             }
@@ -160,7 +150,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      * 获取积分信息(虾条)
      */
     private fun getUserPoints() {
-        val user = User.get()
+        val user = User.Companion.get()
         user.token?.let {
             launch {
                 response(
@@ -185,11 +175,11 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         noLogIn.value = true
         balance.set("0")
         userPoints.value = "-"
-        workCourseBanner.set(Config.get().appConfig.workCourseBanner)
+        workCourseBanner.set(Config.Companion.get().appConfig.workCourseBanner)
     }
 
     private fun logOn() {
-        val user = User.get()
+        val user = User.Companion.get()
         userInfo.set(
             mapOf(
                 "id" to user.userUid,
@@ -198,6 +188,6 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
             )
         )
         balance.set(user.computingPower.toString())
-        workCourseBanner.set(if (user.isPurchasedCourse()) null else Config.get().appConfig.workCourseBanner)
+        workCourseBanner.set(if (user.isPurchasedCourse()) null else Config.Companion.get().appConfig.workCourseBanner)
     }
 }

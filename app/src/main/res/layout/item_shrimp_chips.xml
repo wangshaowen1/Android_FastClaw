@@ -12,7 +12,7 @@
             type="Boolean" />
         <variable
             name="item"
-            type="com.shiyuan.fastclaw.feature.mine.MineUserPointItemVm" />
+            type="com.shiyuan.fastclaw.feature.mine.viewModel.MineUserPointItemVm" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

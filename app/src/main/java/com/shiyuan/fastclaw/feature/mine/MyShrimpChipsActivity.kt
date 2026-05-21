@@ -18,6 +18,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants.SHRIMPSTICKS_URL
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
+import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

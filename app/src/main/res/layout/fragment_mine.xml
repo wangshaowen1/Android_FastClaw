@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.mine.MineViewModel" />
+            type="com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel" />
 
         <import type="android.view.View" />
 
@@ -292,7 +292,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="@string/resume_understanding"
+                android:text="@string/confirm_my_resume"
                 android:textColor="@color/color_90_000000"
                 android:textSize="14sp"
                 android:textStyle="bold"

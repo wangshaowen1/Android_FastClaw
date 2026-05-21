@@ -9,6 +9,7 @@ import com.nhsd.basic.item.BindingViewHolder
 import com.shiyuan.fastclaw.common.ext.getVm
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
 import com.shiyuan.fastclaw.databinding.ItemShrimpChipsBinding
+import com.shiyuan.fastclaw.feature.mine.viewModel.MineUserPointItemVm
 
 /**
  * @createtime 2026年05月13日 19:59

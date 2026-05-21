@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.mine.MineViewModel" />
+            type="com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -149,6 +149,7 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/tv_table1"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_centerInParent="true"
@@ -161,6 +162,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tv_table2"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_centerInParent="true"
@@ -185,6 +187,7 @@
                             android:layout_weight="1">
 
                             <ImageView
+                                android:id="@+id/iv_table1"
                                 android:layout_width="16dp"
                                 android:layout_height="8dp"
                                 android:layout_centerHorizontal="true"
@@ -194,11 +197,13 @@
                         </RelativeLayout>
 
                         <RelativeLayout
+                       
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1">
 
                             <ImageView
+                                android:id="@+id/iv_table2"
                                 android:layout_width="16dp"
                                 android:layout_height="8dp"
                                 android:layout_centerHorizontal="true"
@@ -213,6 +218,8 @@
                 </LinearLayout>
 
                 <FrameLayout
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_ffffff_r18"
                     android:layout_marginHorizontal="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
@@ -222,12 +229,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
 
-                    <include
-                        android:visibility="gone"
-                        android:id="@+id/view_understands2"
-                        layout="@layout/view_understands2" />
-
                 </FrameLayout>
+
+
+                <include
+                    android:visibility="gone"
+                    android:id="@+id/view_understands2"
+                    layout="@layout/view_understands2" />
 
             </LinearLayout>
 

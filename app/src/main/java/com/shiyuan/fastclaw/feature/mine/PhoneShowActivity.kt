@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.shiyuan.fastclaw.databinding.ActivityPhoneShowBinding
 import com.nhsd.basic.BaseViewModelActivity
+import com.shiyuan.fastclaw.feature.mine.viewModel.PhoneShowViewModel
 
 class PhoneShowActivity : BaseViewModelActivity<ActivityPhoneShowBinding, PhoneShowViewModel>() {
 

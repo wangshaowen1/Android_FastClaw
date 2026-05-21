@@ -18,6 +18,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /**
  * *****************************************
