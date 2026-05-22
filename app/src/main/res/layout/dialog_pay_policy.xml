@@ -14,7 +14,7 @@
         android:id="@+id/tvTitle"
         android:textStyle="bold"
         android:textSize="16sp"
-        android:textColor="@color/color_1a1a1a"
+        android:textColor="@color/color_90_000000"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="@dimen/lineSpacingExtra"
-        android:textColor="@color/color_1a1a1a"
+        android:textColor="@color/color_90_000000"
         android:text="@string/policy_content" />
 
     <TextView
@@ -49,7 +49,7 @@
         android:gravity="center"
         android:text="@string/app_not_agree_and_quit"
         android:textStyle="bold"
-        android:textColor="@color/color_1a1a1a"
+        android:textColor="@color/color_242424"
         android:textSize="14sp"/>
 
     <Button
@@ -61,7 +61,7 @@
         android:id="@+id/btnAgree"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:background="@drawable/bg_0099ff_r100"
+        android:background="@drawable/bg_242424_r100"
         android:gravity="center"
         android:text="@string/app_agree_and_sign_in"
         android:textStyle="bold"

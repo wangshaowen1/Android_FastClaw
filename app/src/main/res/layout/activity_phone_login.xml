@@ -12,7 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/login_bg"
+        android:background="@color/white"
         android:orientation="vertical">
 
         <com.shiyuan.fastclaw.widget.StatusBarView
@@ -49,7 +49,7 @@
                     android:layout_marginTop="18dp"
                     android:fontFamily="@font/alimama_shu_hei_ti_bold"
                     android:text="@string/login_page_title"
-                    android:textColor="@color/color_1a1a1a"
+                    android:textColor="@color/color_90_000000"
                     android:textSize="20sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="84dp"
-                    android:background="@drawable/bg_ffffff_r100"
+                    android:background="@drawable/bg_f7f7f7_r100"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/tv_title">
@@ -90,7 +90,7 @@
                         android:maxLength="11"
                         android:paddingHorizontal="12dp"
                         android:text="@={layout.mobile}"
-                        android:textColor="@color/color_1a1919"
+                        android:textColor="@color/color_90_000000"
                         android:textColorHint="@color/login_input_hint"
                         android:textCursorDrawable="@drawable/edittext_cursor"
                         android:textSize="14sp" />
@@ -109,7 +109,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_ffffff_r100"
+                        android:background="@drawable/bg_f7f7f7_r100"
                         android:gravity="center_vertical">
 
                         <EditText
@@ -122,7 +122,7 @@
                             android:maxLength="4"
                             android:paddingHorizontal="16dp"
                             android:text="@={layout.code}"
-                            android:textColor="@color/color_1a1919"
+                            android:textColor="@color/color_90_000000"
                             android:textColorHint="@color/login_input_hint"
                             android:textCursorDrawable="@drawable/edittext_cursor"
                             android:textSize="14sp" />
@@ -133,7 +133,7 @@
                         android:layout_width="109dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_0099ff_r100"
+                        android:background="@drawable/bg_242424_r100"
                         android:gravity="center"
                         android:paddingHorizontal="8dp"
                         android:text="@{layout.sendCodeText}"
@@ -146,7 +146,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="40dp"
-                    android:background="@drawable/bg_login_btn"
+                    android:background="@drawable/bg_242424_r100"
                     android:gravity="center"
                     android:text="@string/login_btn_text"
                     android:textColor="@color/white"

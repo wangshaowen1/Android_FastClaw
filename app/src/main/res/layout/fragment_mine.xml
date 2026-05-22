@@ -17,11 +17,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/color_f7f7f7">
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="108dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img_mine_top_bg"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,20 +34,51 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+        <TextView
+            android:id="@+id/tv_mine_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/mine_title"
+            android:textColor="@color/color_e6_000000"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sbv" />
+
+
+        <ImageView
+            android:id="@+id/iv_setting"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_mine_setting"
+            app:layout_constraintBottom_toBottomOf="@id/tv_mine_title"
+            app:layout_constraintTop_toTopOf="@id/tv_mine_title"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/siv_avatar"
             loadUri="@{layout.userInfo[`avatar`]}"
             placeHolder="@{@drawable/ic_default_avatar}"
             singleClick="@{layout.clickHandler::onClick}"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="30dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="26dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_default_avatar"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sbv"
+            app:layout_constraintStart_toStartOf="@id/tv_mine_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_mine_title"
             app:shapeAppearanceOverlay="@style/roundStyle_circle" />
+
+
+
 
         <TextView
             android:id="@+id/tv_name"
@@ -55,28 +86,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="12dp"
             android:text="@={layout.userInfo[`nickname`]}"
             android:textColor="@color/color_1a1a1a"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
             app:layout_constraintLeft_toRightOf="@id/siv_avatar"
             app:layout_constraintRight_toLeftOf="@id/iv_setting"
             app:layout_constraintTop_toTopOf="@id/siv_avatar"
             tools:text="虾米虾米" />
-
-        <ImageView
-            android:id="@+id/iv_setting"
-            singleClick="@{layout.clickHandler::onClick}"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="26dp"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_mine_setting"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sbv" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -85,48 +104,36 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/img_mine_xt_bg"
-            android:paddingHorizontal="10dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="10dp"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="20dp"
+            android:background="@drawable/bg_mine_carde"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/siv_avatar">
-
-
-            <TextView
-                android:id="@+id/tv_points"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:text="@{layout.userPoints}"
-                android:textColor="@color/color_242424"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="-" />
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/mine_sticks"
-                android:textColor="@color/color_242424"
-                android:textSize="12sp"
+                android:textColor="@color/color_56_3c3c43"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_points"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@{layout.userPoints}"
+                android:textColor="@color/color_e6_000000"
+                android:textSize="32sp"
                 android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="@id/tv_points"
-                app:layout_constraintTop_toBottomOf="@id/tv_points" />
-
-
-            <View
-                android:id="@+id/v"
-                android:layout_width="match_parent"
-                android:layout_height="12dp"
-                app:layout_constraintLeft_toLeftOf="@id/tv_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_title" />
-
+                app:layout_constraintStart_toStartOf="@id/tv_title"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                tools:text="0" />
 
             <ImageView
                 android:layout_width="16dp"
@@ -135,28 +142,27 @@
                 android:layout_centerVertical="true"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_arrow_right"
-                app:layout_constraintBottom_toBottomOf="@id/tv_title"
+                app:layout_constraintBottom_toBottomOf="@id/tv_points"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_points" />
-
 
             <TextView
                 android:id="@+id/tv_mine_points_tip"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bg_7affffff_r100"
-                android:paddingVertical="9dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_f7f7f7_r100"
+                android:paddingVertical="11dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="72dp"
                 android:text="@string/mine_tip"
-                android:textColor="@color/color_30817b"
-                android:textSize="13sp"
+                android:textColor="@color/color_76_3c3c43"
+                android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/v"
+                app:layout_constraintTop_toBottomOf="@id/tv_points"
                 tools:visibility="visible" />
 
             <TextView
@@ -171,7 +177,6 @@
                 android:text="@string/mine_tip2"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/tv_mine_points_tip"
                 app:layout_constraintEnd_toEndOf="@id/tv_mine_points_tip"
                 app:layout_constraintTop_toTopOf="@id/tv_mine_points_tip"
@@ -186,16 +191,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="17dp"
-            android:background="@drawable/gradient_top_e6f7ff_bottom_ffffff_r16"
-            android:padding="16dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_ffffff_r20"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="@dimen/dp20"
             app:layout_constraintTop_toBottomOf="@id/layout_mine_point">
 
 
             <RelativeLayout
                 android:id="@+id/rl_bfb"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 tools:ignore="MissingConstraints">
 
                 <com.shiyuan.fastclaw.widget.progress.WaveProgressView
@@ -203,7 +209,7 @@
                     android:layout_height="match_parent"
                     app:wpv_progress="60"
                     app:wpv_text="60%"
-                    app:wpv_textColor="@color/color_90_000000"
+                    app:wpv_textColor="@color/color_e6_000000"
                     app:wpv_textSize="18sp"
                     app:wpv_waveAmplitude="8dp"
                     app:wpv_waveBackgroundColor="#D9FBFE"
@@ -222,11 +228,11 @@
                 android:id="@+id/tv_dn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
                 android:text="@string/resume_understanding"
-                android:textColor="@color/color_2a4b46"
-                android:textSize="14sp"
+                android:textColor="@color/color_e6_000000"
+                android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/rl_bfb"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -236,21 +242,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/resume_dn"
-                android:textColor="@color/color_556973"
-                android:textSize="12sp"
+                android:textColor="@color/color_56_3c3c43"
+                android:textSize="13sp"
                 app:layout_constraintLeft_toLeftOf="@id/tv_dn"
                 app:layout_constraintTop_toBottomOf="@id/tv_dn" />
 
-            <TextView
-                android:id="@+id/tv_k"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="查看完整报告"
-                android:textColor="@color/color_56_3c3c43"
-                android:textSize="12dp"
-                app:layout_constraintBottom_toBottomOf="@id/tv_dn"
-                app:layout_constraintRight_toLeftOf="@id/iv"
-                app:layout_constraintTop_toTopOf="@id/tv_dn" />
 
             <ImageView
                 android:id="@+id/iv"
@@ -260,9 +256,9 @@
                 android:layout_centerVertical="true"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_arrow_right"
-                app:layout_constraintBottom_toBottomOf="@id/tv_k"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_k" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -274,10 +270,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_f7f7f7_r16"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_ffffff_r20"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="20dp"
+            android:paddingVertical="18dp"
             app:layout_constraintTop_toBottomOf="@id/layout_mine_lj">
 
             <ImageView
@@ -291,11 +287,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="12dp"
                 android:text="@string/confirm_my_resume"
                 android:textColor="@color/color_90_000000"
-                android:textSize="14sp"
-                android:textStyle="bold"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/iv_jl"
                 app:layout_constraintLeft_toRightOf="@id/iv_jl"
                 app:layout_constraintTop_toTopOf="@id/iv_jl" />
