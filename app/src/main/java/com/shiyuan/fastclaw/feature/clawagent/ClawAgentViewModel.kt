@@ -20,13 +20,15 @@ import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
+import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
+import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
-import com.shiyuan.fastclaw.core.network.sse.processor.PlainTextSseProcessor
+import com.shiyuan.fastclaw.core.network.sse.processor.ClawAgentSseProcessor
 import java.util.UUID
 
 /**
@@ -35,9 +37,6 @@ import java.util.UUID
  */
 
 class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
-
-    /** 流式输出的累积文本 */
-    val streamingText = MutableLiveData<String>()
 
     /** 流是否正在输出中 */
     val streaming = MutableLiveData<Boolean>(false)
@@ -59,6 +58,9 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
 
     /** 增量消息拉取结果（拉取游标之后的新消息） */
     val pulledMessages = MutableLiveData<MessagePullData?>()
+
+    /** 渲染用消息列表：已按端侧 itemType 映射并按序号排序，供 [ClawAgentMsgAdapter] submitList */
+    val messageList = MutableLiveData<List<ClawAgentMessageInfo>>()
 
     /** 当前可确认简历摘要 */
     val currentResume = MutableLiveData<CurrentResumeData?>()
@@ -84,16 +86,36 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     /** 已持有的最新消息游标，用于增量恢复 */
     private var latestCursor: String? = null
 
+    /** 按消息 ID 去重保存的原始消息，便于增量/历史合并后统一映射并按 sequenceNo 排序 */
+    private val messageStore = LinkedHashMap<String, JobAgentMessage>()
+
+    /** 当前 SSE 请求 ID（meta 事件下发），用于取消/断线重连 */
+    private var currentRequestId: String? = null
+
+    /** 已接收的最后一条 SSE 事件序号，用于断线重连 lastSeq */
+    private var lastSeq: Long? = null
+
+    /** 本地乐观插入的用户消息 ID，待服务端回显后把服务端字段填充进同一占位（保留 id） */
+    private val optimisticUserMessageIds = LinkedHashSet<String>()
+
     private val sseProcessor by lazy {
-        PlainTextSseProcessor(
-            scope = viewModelScope,
+        ClawAgentSseProcessor(
             onStart = {
                 streaming.value = true
                 streamError.value = null
-                streamingText.value = ""
             },
-            onUpdate = { content ->
-                streamingText.value = content
+            onMeta = { requestId, seq ->
+                // 保存本次请求 ID 与序号，供取消/重连使用
+                currentRequestId = requestId
+                seq?.let { lastSeq = it }
+            },
+            onMessage = { msg ->
+                // message/snapshot 是完整消息，按 messageId upsert
+                ingestMessages(listOf(msg))
+            },
+            onDone = { _, seq ->
+                seq?.let { lastSeq = it }
+                streaming.value = false
             },
             onComplete = {
                 streaming.value = false
@@ -108,6 +130,11 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     private val sseHandler by lazy {
         RawSSEStreamHandler(viewModelScope, sseProcessor)
     }
+
+    /**
+     * 发送消息时需要生成唯一clientMessageId，用于防重复提交
+     */
+    private fun generateClientMessageId(): String = "${UUID.randomUUID()}_${System.currentTimeMillis()}"
 
     /**
      * 进入或恢复会话：sessionId 为空表示首次进入，由服务端恢复最新会话
@@ -132,6 +159,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             conversationId = result.conversationId
             latestCursor = result.latestCursor
             sessionData.value = result
+            ingestMessages(result.messages)
         }
     }
 
@@ -163,6 +191,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             val result = this.data ?: return@request
             result.latestCursor?.let { latestCursor = it }
             attributeConfirmResult.value = result
+            ingestMessages(result.messages)
         }
     }
 
@@ -194,6 +223,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             val result = this.data ?: return@request
             result.latestCursor?.let { latestCursor = it }
             attributeRejectResult.value = result
+            ingestMessages(result.messages)
         }
     }
 
@@ -303,6 +333,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             val result = this.data ?: return@request
             result.latestCursor?.let { latestCursor = it }
             pulledMessages.value = result
+            ingestMessages(result.messages)
         }
     }
 
@@ -329,6 +360,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             showToast = true,
         ) {
             historyMessages.value = this.data
+            ingestMessages(this.data?.messages)
         }
     }
 
@@ -397,6 +429,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             val result = this.data ?: return@request
             result.latestCursor?.let { latestCursor = it }
             actionResult.value = result
+            ingestMessages(result.messages)
         }
     }
 
@@ -411,15 +444,39 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             streamError.value = IllegalStateException("会话未就绪，请先进入会话")
             return
         }
+        val clientMessageId = generateClientMessageId()
+        // 乐观插入：先把用户消息加入列表立即反馈；服务端随后回显由 ingestMessages 插入服务端数据，
+        // 但id用本地生成的，用服务端回显消息的话会因为id不同导致刷新两次体验不佳，(跟后端对齐过，这个消息的id只在sse流式中存在，拉历史数据影响不大)
+        appendLocalUserMessage(clientMessageId, content)
         val flow = mRepo.api.sendMsgToAgent(
             JobAgentStreamBody(
                 sessionId = currentSessionId,
                 conversationId = currentConversationId,
-                clientMessageId = UUID.randomUUID().toString(),
+                clientMessageId = clientMessageId,
                 content = content,
             )
         )
         sseHandler.start(flow)
+    }
+
+    /**
+     * 乐观插入本地用户消息：分配比当前最大序号更大的 sequenceNo 以排到列表末尾，messageId 取 clientMessageId。
+     * 服务端随后会通过 SSE message(USER) 回显（不同 messageId），由 [ingestMessages] 按内容把服务端字段填充进本占位（保留占位 id，不刷新）。
+     */
+    private fun appendLocalUserMessage(clientMessageId: String, content: String) {
+        val nextSeq = (messageStore.values.mapNotNull { it.sequenceNo }.maxOrNull() ?: 0L) + 1
+        optimisticUserMessageIds.add(clientMessageId)
+        ingestMessages(
+            listOf(
+                JobAgentMessage(
+                    messageId = clientMessageId,
+                    sequenceNo = nextSeq,
+                    senderType = SENDER_USER,
+                    messageType = MSG_TEXT,
+                    content = content,
+                )
+            )
+        )
     }
 
     /**
@@ -429,12 +486,14 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
      * @param flag         true为主动打断 false为新消息打断
      */
     fun cancelStream(requestId: String? = null, flag: Boolean = true) {
-        if (!requestId.isNullOrEmpty()) {
+        // 缺省用 meta 事件回填的 currentRequestId
+        val targetRequestId = requestId ?: currentRequestId
+        if (!targetRequestId.isNullOrEmpty()) {
             request(
                 apiBlock = {
                     mRepo.api.cancelStreamGenerate(
                         JobAgentCancelBody(
-                            requestId = requestId,
+                            requestId = targetRequestId,
                             conversationId = conversationId,
                             // 取消原因：USER_CANCEL 用户主动取消 / NEW_MESSAGE_INTERRUPTED 新消息打断
                             cancelReason = if (flag) "USER_CANCEL" else "NEW_MESSAGE_INTERRUPTED",
@@ -449,8 +508,113 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
         streaming.value = false
     }
 
+    /**
+     * 合并并刷新渲染列表：按消息 ID 去重（同 ID 覆盖以实现更新/替换），
+     * 再按 sequenceNo 升序映射为端侧 [ClawAgentMessageInfo] 后回推 [messageList]。
+     * TODO displayPolicy 为 REPLACE_TARGET/DISMISS_ON_TERMINAL 等终态策略暂未处理，后续按需补充。
+     */
+    private fun ingestMessages(messages: List<JobAgentMessage>?) {
+        if (messages.isNullOrEmpty()) return
+        messages.forEach { msg ->
+            val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: return@forEach
+            // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
+            // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
+            if (msg.senderType == SENDER_USER && key !in optimisticUserMessageIds) {
+                val localKey = optimisticUserMessageIds.firstOrNull { messageStore[it]?.content == msg.content }
+                if (localKey != null) {
+                    messageStore[localKey] = msg.copy(messageId = localKey)
+                    optimisticUserMessageIds.remove(localKey)
+                    // 已填充进占位，不再以服务端 messageId 另存，避免重复
+                    // TODO 若后续 /message/pull 或 /message/page 又以真实 messageId 返回本条，会产生重复，按需再做 id 映射
+                    return@forEach
+                }
+            }
+            messageStore[key] = msg
+        }
+        refreshMessageList()
+    }
+
+    /** 按 sequenceNo 升序映射并回推渲染列表 */
+    private fun refreshMessageList() {
+        messageList.value = messageStore.values
+            .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
+            .map { it.toMessageInfo() }
+    }
+
+    /** 将服务端消息映射为端侧渲染模型，messageType 取 [ClawAgentMsgAdapter] 的 TYPE_* itemType */
+    private fun JobAgentMessage.toMessageInfo(): ClawAgentMessageInfo {
+        val sender = senderType ?: ""
+        return ClawAgentMessageInfo(
+            id = messageId ?: cursor ?: sequenceNo?.toString() ?: UUID.randomUUID().toString(),
+            messageType = resolveItemType(this),
+            sendObj = sender,
+            receiveObj = if (sender == SENDER_USER) SENDER_AGENT else SENDER_USER,
+            content = content,
+            metaData = payloadJson,
+        )
+    }
+
+    /** 依据 senderType / messageType / messagePhase / cardType 解析端侧 itemType */
+    private fun resolveItemType(msg: JobAgentMessage): Int {
+        // 用户消息
+        if (msg.senderType == SENDER_USER) return ClawAgentMsgAdapter.TYPE_USER_TEXT
+        // 非卡片的处理中/流式消息按思考态展示
+        if (msg.messageType != MSG_CARD &&
+            (msg.messagePhase == PHASE_PROCESSING || msg.messageStatus == STATUS_STREAMING)
+        ) {
+            return ClawAgentMsgAdapter.TYPE_AGENT_THINK
+        }
+        // 卡片消息按 cardType 分发
+        if (msg.messageType == MSG_CARD) {
+            return when (msg.cardType) {
+                CARD_UPLOAD_RESUME -> ClawAgentMsgAdapter.TYPE_WELCOME
+                CARD_HISTORY_RESUME_CONFIRM -> ClawAgentMsgAdapter.TYPE_PENDING_CONFIRM
+                CARD_CORE_QUESTION, CARD_ATTRIBUTE_CONFIRM -> ClawAgentMsgAdapter.TYPE_QUESTION
+                CARD_UNDERSTANDING_SUMMARY -> ClawAgentMsgAdapter.TYPE_UNDERSTANDING_UPGRADE
+                CARD_RESUME_UPLOAD_SUCCESS -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
+                CARD_RESUME_UPLOAD_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
+                CARD_JOB_SEARCHING -> ClawAgentMsgAdapter.TYPE_SEARCHING_JOBS
+                CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
+                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
+                CARD_TODAY_PROGRESS -> ClawAgentMsgAdapter.TYPE_TODAY_PROGRESS
+                else -> ClawAgentMsgAdapter.TYPE_AGENT_TEXT
+            }
+        }
+        // 兜底：Agent 普通文本
+        return ClawAgentMsgAdapter.TYPE_AGENT_TEXT
+    }
+
     override fun onCleared() {
         sseHandler.cancel()
         super.onCleared()
+    }
+
+    companion object {
+        // senderType
+        private const val SENDER_USER = "USER"
+        private const val SENDER_AGENT = "AGENT"
+
+        // messageType
+        private const val MSG_TEXT = "TEXT"
+        private const val MSG_CARD = "CARD"
+
+        // messagePhase / messageStatus（思考态判定）
+        private const val PHASE_PROCESSING = "PROCESSING"
+        private const val STATUS_STREAMING = "STREAMING"
+
+        // cardType：以下 5 个为接口已定义取值
+        private const val CARD_UPLOAD_RESUME = "UPLOAD_RESUME"
+        private const val CARD_HISTORY_RESUME_CONFIRM = "HISTORY_RESUME_CONFIRM"
+        private const val CARD_CORE_QUESTION = "CORE_QUESTION"
+        private const val CARD_ATTRIBUTE_CONFIRM = "ATTRIBUTE_CONFIRM"
+        private const val CARD_UNDERSTANDING_SUMMARY = "UNDERSTANDING_SUMMARY"
+
+        //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
+        private const val CARD_RESUME_UPLOAD_SUCCESS = "RESUME_UPLOAD_SUCCESS"
+        private const val CARD_RESUME_UPLOAD_FAILED = "RESUME_UPLOAD_FAILED"
+        private const val CARD_JOB_SEARCHING = "JOB_SEARCHING"
+        private const val CARD_NO_JOB = "NO_JOB"
+        private const val CARD_JOB_MATCH_REPORT = "JOB_MATCH_REPORT"
+        private const val CARD_TODAY_PROGRESS = "TODAY_PROGRESS"
     }
 }

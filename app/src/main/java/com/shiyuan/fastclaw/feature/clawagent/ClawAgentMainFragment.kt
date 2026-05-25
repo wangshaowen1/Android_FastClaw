@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.ScreenUtils
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
@@ -20,6 +21,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
+import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import org.w3c.dom.Text
 
 /** 
@@ -41,6 +43,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
     }
 
+    private val msgAdapter by lazy { ClawAgentMsgAdapter() }
+
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
@@ -56,11 +60,18 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                     showMessage("发送内容不能为空")
                     return
                 }
+                mRealVM.sendMessage(content.toString().trim())
+                binding.etSend.text = null
             }
         }
     }
 
     private fun initView() {
+        // 消息列表：聊天场景内容自底部对齐
+        binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
+        binding.rvMsg.addItemDecoration(SpaceDecoration(12.dp, SpaceDecoration.Direction.TOP_WITH_BOTTOM))
+        binding.rvMsg.adapter = msgAdapter
+
         binding.ivAgentAvatar.setOnClickListener {
 
         }
@@ -90,7 +101,20 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     }
 
     private fun observeData() {
+        mRealVM.enterSession()
 
+        mRealVM.messageList.observe(viewLifecycleOwner) { list ->
+            // 提交前判断是否已在底部：是则随新消息/流式增量自动滚到最新，否则保留浏览历史的位置
+            val atBottom = !binding.rvMsg.canScrollVertically(1)
+            msgAdapter.submitList(list)
+            if (atBottom && list.isNotEmpty()) {
+                binding.rvMsg.scrollToPosition(list.size - 1)
+            }
+        }
+        mRealVM.streamError.observe(viewLifecycleOwner) { e ->
+            e ?: return@observe
+            showMessage(e.message ?: "对话出错")
+        }
     }
 
     // 记忆卡片
