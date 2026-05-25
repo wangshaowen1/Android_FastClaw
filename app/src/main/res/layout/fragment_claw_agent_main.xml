@@ -6,7 +6,7 @@
     <data>
 
         <variable
-            name="vm"
+            name="layout"
             type="com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel" />
     </data>
 
@@ -105,9 +105,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_msg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginVertical="12dp"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toTopOf="@id/et_send"
             app:layout_constraintEnd_toEndOf="parent"
@@ -138,7 +138,7 @@
             tools:text="找工作需要帮助尽管问小虾找工作需要帮助尽管问小虾找工作需要帮助尽管问小虾找工作需要帮助尽管问小虾" />
 
         <ImageView
-            singleClick="@{vm.clickHandler::onClick}"
+            singleClick="@{layout.clickHandler::onClick}"
             android:id="@+id/iv_send"
             android:layout_width="28dp"
             android:layout_height="28dp"

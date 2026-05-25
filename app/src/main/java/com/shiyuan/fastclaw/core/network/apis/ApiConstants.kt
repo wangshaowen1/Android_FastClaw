@@ -164,4 +164,64 @@ object ApiConstants {
 
     const val COMMON_INIT = "/api/app/common/init"
     const val SIGN_OUT = "/candidate/auth/sign-out"
+
+    /**
+     * 进入或恢复会话
+     */
+    const val SESSION_ENTER = "/api/candidate/app/jobAgent/session/enter"
+
+    /**
+     * 流式发送用户消息（求职 Agent SSE，text/event-stream）
+     */
+    const val JOB_AGENT_STREAM = "/api/candidate/app/jobAgent/stream"
+
+    /**
+     * 取消流式生成（求职 Agent）
+     */
+    const val JOB_AGENT_CANCEL = "/api/candidate/app/jobAgent/cancel"
+
+    /**
+     * 查询通信会话（求职 Agent，仅查状态不建 SSE）
+     */
+    const val JOB_AGENT_CONVERSATION_QUERY = "/api/candidate/app/jobAgent/conversation/query"
+
+    /**
+     * 提交卡片或按钮动作（求职 Agent）
+     */
+    const val JOB_AGENT_ACTION_SUBMIT = "/api/candidate/app/jobAgent/action/submit"
+
+    /**
+     * 查询历史消息分页（求职 Agent）
+     */
+    const val JOB_AGENT_MESSAGE_PAGE = "/api/candidate/app/jobAgent/message/page"
+
+    /**
+     * 拉取增量消息（求职 Agent）
+     */
+    const val JOB_AGENT_MESSAGE_PULL = "/api/candidate/app/jobAgent/message/pull"
+
+    /**
+     * 查询当前可确认简历（求职 Agent）
+     */
+    const val JOB_AGENT_RESUME_CURRENT_QUERY = "/api/candidate/app/jobAgent/resume/current/query"
+
+    /**
+     * 确认或否认当前简历（求职 Agent）
+     */
+    const val JOB_AGENT_RESUME_CURRENT_CONFIRM = "/api/candidate/app/jobAgent/resume/current/confirm"
+
+    /**
+     * 提交简历上传结果（求职 Agent）
+     */
+    const val JOB_AGENT_RESUME_UPLOAD_SUBMIT = "/api/candidate/app/jobAgent/resume/upload/submit"
+
+    /**
+     * 确认属性候选值（求职 Agent）
+     */
+    const val JOB_AGENT_ATTRIBUTE_CONFIRM = "/api/candidate/app/jobAgent/attribute/confirm"
+
+    /**
+     * 拒绝属性候选值（求职 Agent）
+     */
+    const val JOB_AGENT_ATTRIBUTE_REJECT = "/api/candidate/app/jobAgent/attribute/reject"
 }
