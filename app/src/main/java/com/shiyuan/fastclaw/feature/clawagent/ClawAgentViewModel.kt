@@ -62,6 +62,9 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     /** 渲染用消息列表：已按端侧 itemType 映射并按序号排序，供 [ClawAgentMsgAdapter] submitList */
     val messageList = MutableLiveData<List<ClawAgentMessageInfo>>()
 
+    /** 加载历史完成信号（一次性）：值为是否还有更早消息，供下拉结束刷新并决定是否继续可下拉 */
+    val historyLoadFinished = MutableLiveData<Boolean>()
+
     /** 当前可确认简历摘要 */
     val currentResume = MutableLiveData<CurrentResumeData?>()
 
@@ -85,6 +88,15 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
 
     /** 已持有的最新消息游标，用于增量恢复 */
     private var latestCursor: String? = null
+
+    /** 历史分页：下一页向上翻页游标（服务端 nextBeforeCursor） */
+    private var historyBeforeCursor: String? = null
+
+    /** 历史分页：是否还有更早消息 */
+    private var hasMoreHistory: Boolean = true
+
+    /** 历史分页：是否正在加载，防并发下拉 */
+    private var loadingHistory: Boolean = false
 
     /** 按消息 ID 去重保存的原始消息，便于增量/历史合并后统一映射并按 sequenceNo 排序 */
     private val messageStore = LinkedHashMap<String, JobAgentMessage>()
@@ -338,29 +350,46 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 查询历史消息分页（向上翻页加载更早消息）。
-     * beforeCursor 为空表示从当前最新消息之前查询；用返回的 nextBeforeCursor + hasMore 继续翻页。
+     * 加载更早历史消息（向上翻页 /message/page）。同时供「滚动接近顶部的无感知预取」和「下拉手动/重试」调用。
+     * 首页用当前最早一条消息的 cursor 作为 beforeCursor，之后沿用服务端返回的 nextBeforeCursor；
+     * loadingHistory / hasMoreHistory 守卫保证滚动中重复调用安全；通过 [historyLoadFinished] 通知 UI 结束下拉。
      */
-    fun loadHistoryMessages(beforeCursor: String? = null, pageSize: Int? = null) {
+    fun loadOlderHistory() {
         val currentSessionId = sessionId
-        if (currentSessionId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+        // 未就绪 / 加载中 / 没有更早消息：直接结束本次（下拉）
+        if (currentSessionId.isNullOrEmpty() || loadingHistory || !hasMoreHistory) {
+            historyLoadFinished.value = hasMoreHistory
             return
         }
+        loadingHistory = true
+        val beforeCursor = historyBeforeCursor
+            ?: messageStore.values.minByOrNull { it.sequenceNo ?: Long.MAX_VALUE }?.cursor
         request(
             apiBlock = {
                 mRepo.api.queryMessagePage(
                     MessagePageBody(
                         sessionId = currentSessionId,
                         beforeCursor = beforeCursor,
-                        pageSize = pageSize,
+                        pageSize = HISTORY_PAGE_SIZE,
                     )
                 )
             },
             showToast = true,
+            onError = {
+                loadingHistory = false
+                historyLoadFinished.value = hasMoreHistory
+            },
         ) {
-            historyMessages.value = this.data
-            ingestMessages(this.data?.messages)
+            loadingHistory = false
+            val result = this.data
+            historyMessages.value = result
+            result?.nextBeforeCursor?.let { historyBeforeCursor = it }
+            hasMoreHistory = result?.hasMore ?: false
+            // 更早消息 sequenceNo 更小，ingest 后按序排到列表顶部（DiffUtil 在 0 位插入，不跳动）
+            ingestMessages(result?.messages)
+            // 已加载到最早一页时给一次轻提示
+//            if (!hasMoreHistory) R.string.no_more_data_pull.getResString().showToast()
+            historyLoadFinished.value = hasMoreHistory
         }
     }
 
@@ -590,6 +619,9 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     companion object {
+        /** 历史消息分页每页条数 */
+        private const val HISTORY_PAGE_SIZE = 20
+
         // senderType
         private const val SENDER_USER = "USER"
         private const val SENDER_AGENT = "AGENT"
