@@ -117,6 +117,9 @@ object ApiConstants {
     const val INTERVIEW_REPORT_RESULT = "/api/candidate/app/interviewReport/report/status/query"
     const val GET_SCHEME = "/api/candidate/miniProgram/scheme"
 
+    const val UNDERSTANDING_SCORE = "/api/candidate/app/jobAgent/understanding/score/query"
+    const val UNDERSTANDING_DETAIL = "/api/candidate/app/jobAgent/understanding/detail/query"
+
     /**
      * 查询用户钱包信息
      */

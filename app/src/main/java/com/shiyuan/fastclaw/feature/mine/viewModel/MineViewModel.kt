@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.mine.viewModel
 
+import UnderstandingScore
 import android.graphics.Color
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +9,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
@@ -15,6 +17,9 @@ import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
+import com.shiyuan.fastclaw.core.ext.parseMessage
+import com.shiyuan.fastclaw.core.network.apis.ApiFactory
+import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
 import com.shiyuan.fastclaw.core.response
@@ -55,7 +60,6 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
     )
 
 
-
     //是否登录
     val isLogin by lazy { MutableLiveData(false) }
 
@@ -75,6 +79,10 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
      * 账户虾条
      */
     val userPoints = MutableLiveData<String>("-")
+
+
+
+    var underStandingScore = MutableLiveData<UnderstandingScore>()
 
     /**
      * 虾条记录
@@ -120,6 +128,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
 //        getUserHomeInfo()
         // 获取虾条信息接口
         getUserPoints()
+        understandingScore()
     }
 
     /**
@@ -163,6 +172,28 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
             }
         }
     }
+
+
+    private fun understandingScore() {
+        val user = User.Companion.get()
+        user.token?.let {
+            launch(block = {
+                response(
+                    ApiFactory.apiService.understandingScore(),
+                    result = {
+                        underStandingScore.postValue(this.data)
+                    },
+                    error = {
+                        this?.msg?.showToast()
+                    })
+            }, onError = {
+                parseMessage(it)?.showToast()
+            }, onComplete = {
+                setLoading(false)
+            })
+        }
+    }
+
 
     private fun notLoggedIn() {
         userInfo.set(

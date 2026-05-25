@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.mine
 
+import android.util.Log
 import android.view.View
 import com.blankj.utilcode.util.ClipboardUtils
 import com.shiyuan.fastclaw.R
@@ -59,9 +60,24 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 binding.layoutMineBj.visibility = View.GONE
             }
             if(!it){
-                binding.tvPoints.text = "-"
+                binding.tvPoints.text = "0"
             }
         })
+        mRealVM.underStandingScore.observe(this){
+            it?.understandingScore?.let {
+                if(it == 0){
+                    binding.layoutMineLj.visibility = View.VISIBLE
+                }else{
+                    binding.layoutMineLj.visibility = View.VISIBLE
+                    binding.waveView.progress =it
+                    binding.waveView.text ="${it}%"
+                }
+
+            } ?: run {
+                binding.layoutMineLj.visibility = View.GONE
+            }
+        }
+
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -121,13 +137,13 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
             R.id.layout_mine_bj -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    MyResumeActivity.start(requireActivity())
+                   MyResumeActivity.start(requireActivity())
                 }
             }
 
             R.id.layout_mine_lj  -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    ShrimpUnderstandsActivity.start(requireActivity())
+                    ShrimpUnderstandsActivity.start(requireActivity(),mRealVM.underStandingScore.value?.understandingScore ?: 0)
                 }
             }
    /*         R.id.siv_avatar,

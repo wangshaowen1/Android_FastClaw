@@ -1,5 +1,7 @@
 package com.shiyuan.fastclaw.core.network.apis
 
+import UnderstandingDetail
+import UnderstandingScore
 import com.shiyuan.fastclaw.core.model.H5PayInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.BannerInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.OrderStatusInfo
@@ -254,5 +256,16 @@ interface ApiService {
 
     @POST(ApiConstants.GET_SCHEME)
     suspend fun getScheme(): ApiResponse<SchemeData?>
+
+
+    @POST(ApiConstants.UNDERSTANDING_SCORE)
+    suspend fun understandingScore(): ApiResponse<UnderstandingScore?>
+
+
+    @POST(ApiConstants.UNDERSTANDING_DETAIL)
+    suspend fun understandingDetail(): ApiResponse<UnderstandingDetail?>
+
+
+
 
 }

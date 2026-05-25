@@ -108,6 +108,7 @@
                         app:layout_constraintTop_toTopOf="parent">
 
                         <com.shiyuan.fastclaw.widget.progress.WaveProgressView
+                            android:id="@+id/wave_view"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:wpv_progress="60"
@@ -163,9 +164,9 @@
                         android:id="@+id/tv_table1"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:background="@drawable/gradient_top_11c4cb_bottom_efcdaf"
                         android:gravity="center"
-                        android:text="@string/resume_information"
+                        android:text="@string/job_preference"
+                        android:background="@drawable/gradient_top_11c4cb_bottom_efcdaf"
                         android:textColor="@color/white"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -190,8 +191,9 @@
                         android:id="@+id/tv_table2"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
+
                         android:gravity="center"
-                        android:text="@string/job_preference"
+                        android:text="@string/resume_information"
                         android:textColor="@color/color_666666"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -199,6 +201,8 @@
                         app:layout_constraintRight_toRightOf="@id/bg_view"
                         app:layout_constraintTop_toTopOf="@id/bg_view"
                         app:layout_constraintWidth_percent="0.5" />
+
+
 
 
                     <ImageView
@@ -215,6 +219,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:paddingBottom="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -222,6 +227,8 @@
                     app:layout_constraintTop_toBottomOf="@id/layout_table">
 
                     <FrameLayout
+                        android:id="@+id/fl_understands1"
+                        android:padding="16dp"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_ffffff_r18">
@@ -233,10 +240,21 @@
 
                     </FrameLayout>
 
-                    <include
-                        android:id="@+id/view_understands2"
-                        layout="@layout/view_understands2"
-                        android:visibility="gone" />
+
+                    <FrameLayout
+                        android:visibility="gone"
+                        android:id="@+id/fl_understands2"
+                        android:padding="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_ffffff_r18">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_understands2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </FrameLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -252,7 +270,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            android:layout_marginBottom="55dp"
+            android:layout_marginBottom="44dp"
             android:background="@drawable/bg_upload_resume_btn"
             android:gravity="center"
             android:paddingVertical="12dp"

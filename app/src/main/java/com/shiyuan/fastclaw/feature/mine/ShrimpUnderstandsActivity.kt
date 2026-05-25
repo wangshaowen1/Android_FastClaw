@@ -1,48 +1,153 @@
 package com.shiyuan.fastclaw.feature.mine
 
+import FieldItems
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.AlignItems
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
-import com.nhsd.basic.item.QuickViewHolder
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.adapter.QuickAdapter
+import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
+import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.databinding.ActivityShrimpUnderstandsBinding
+import com.shiyuan.fastclaw.databinding.ItemJobPreference1Binding
+import com.shiyuan.fastclaw.databinding.ItemJobPreference1SonBinding
+import com.shiyuan.fastclaw.databinding.ItemJobPreference2Binding
+import com.shiyuan.fastclaw.databinding.ItemJobPreference2SonBinding
+import com.shiyuan.fastclaw.databinding.ItemJobPreference3SonBinding
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
-import com.shiyuan.fastclaw.feature.report.ItemReportVM
+import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
 /**
  * @Introduce: 小虾理解
  */
+
+// 在 ShrimpUnderstandsActivity 类外或内部定义（但需在调用前）
+fun FieldItems.maxDepth(): Int = 1 + (fieldItems.maxOfOrNull { it.maxDepth() } ?: 0)
 class ShrimpUnderstandsActivity :
     BaseViewModelActivity<ActivityShrimpUnderstandsBinding, UnderstandsViewModel>() {
 
     companion object {
-        fun start(activity: Activity?) {
+        private const val EXTRA_PROGRESS = "extra_progress"
+        fun start(activity: Activity?, progress: Int = 0) {
             activity ?: return
-            val intent = Intent(activity, ShrimpUnderstandsActivity::class.java)
+            val intent = Intent(activity, ShrimpUnderstandsActivity::class.java).apply {
+                putExtra(EXTRA_PROGRESS, progress)
+            }
             activity.startActivity(intent)
         }
     }
 
-    private val mAdapter by lazy {
-        object : QuickAdapter<ItemReportVM>(R.layout.item_report, emptyList()) {
-            override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: ItemReportVM?) {
-                //val binding = DataBindingUtil.bind<ItemReportBinding>(holder.itemView)
+    private val progress: Int by lazy { intent.getIntExtra(EXTRA_PROGRESS, 0) }
+    private val mAdapter1 by lazy {
+        SingleBindingAdapter<ItemJobPreference1Binding, FieldItems>(
+            R.layout.item_job_preference1,
+            emptyList(),
+            onBind = { binding, position, item ->
+                binding.tvTile.text = item.fieldName ?: ""
+                when (item.fieldType) {
+                    "JOB_EXPECTATION" -> {
+                        binding.tvConnect.visibility = View.GONE
+                        binding.rcConnect.visibility = View.VISIBLE
+                        val subAdapter =
+                            SingleBindingAdapter<ItemJobPreference1SonBinding, FieldItems>(
+                                R.layout.item_job_preference1_son,
+                                item.fieldItems,
+                                onBind = { b, _, sub -> b.tvTag.text = sub.fieldValue ?: "" })
+                        binding.rcConnect.apply {
+                            val layoutManager =
+                                FlexboxLayoutManager(this@ShrimpUnderstandsActivity).apply {
+                                    flexDirection = FlexDirection.ROW           // 水平方向排列
+                                    flexWrap = FlexWrap.WRAP                    // 自动换行
+                                    justifyContent =
+                                        JustifyContent.FLEX_START  // 起始对齐（可根据需要改为 CENTER / SPACE_BETWEEN）
+                                    alignItems =
+                                        AlignItems.STRETCH             // 拉伸以保持行高一致（或改为 FLEX_START）
+                                }
+                            addItemDecoration(
+                                SpaceDecoration(
+                                    10.dp,
+                                    SpaceDecoration.Direction.MIDDLE_HORIZONTAL
+                                )
+                            )
+                            this.layoutManager = layoutManager
+                            adapter = subAdapter
+                        }
+                    }
+
+                    else -> {
+                        binding.rcConnect.visibility = View.GONE
+                        binding.tvConnect.visibility = View.VISIBLE
+                        binding.tvConnect.text = item.fieldValue ?: ""
+                    }
+                }
             }
-        }
+        )
     }
+
+    private val mAdapter2 by lazy {
+        SingleBindingAdapter<ItemJobPreference2Binding, FieldItems>(
+            R.layout.item_job_preference2,
+            emptyList(),
+            onBind = { binding, position, item ->
+                binding.tvTile.text = item.fieldName ?: ""
+                when (item.fieldType) {
+                    "EDUCATION_INFO", "PROJECT_EXPERIENCE" ,"WORK_EXPERIENCE"-> {
+                        binding.tvConnect.visibility = View.GONE
+                        binding.rcConnect.visibility = View.VISIBLE
+                        val subAdapter = SingleBindingAdapter<ItemJobPreference2SonBinding, FieldItems>(
+                            R.layout.item_job_preference2_son,
+                            item.fieldItems,
+                            onBind = { binding, _, item ->
+                                binding.tvTile.text = item.fieldValue ?: ""
+                                val subAdapter = SingleBindingAdapter<ItemJobPreference3SonBinding, FieldItems>(
+                                    R.layout.item_job_preference3_son,
+                                    item.fieldItems,
+                                    onBind = { binding, _, item ->
+                                        binding.tvTile.text = item.fieldName ?: ""
+                                        binding.tvConnect.text = item.fieldValue ?: ""
+                                    })
+                                binding.rcConnect.apply {
+                                    layoutManager = LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
+                                    addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
+                                    adapter = subAdapter
+                                }
+                            })
+                        binding.rcConnect.apply {
+                            layoutManager = LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
+                            addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
+                            adapter = subAdapter
+                        }
+                    }
+                    else -> {
+                        binding.rcConnect.visibility = View.GONE
+                        binding.tvConnect.visibility = View.VISIBLE
+                        binding.tvConnect.text = item.fieldValue ?: ""
+                    }
+                }
+            }
+        )
+    }
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         initView()
         initObservers()
+        mRealVM.setMockData()
     }
 
     override fun setTranslucentStatus() {
@@ -55,16 +160,24 @@ class ShrimpUnderstandsActivity :
 
     private fun initView() {
         binding.rvUnderstands1.apply {
-            layoutManager = LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
-            adapter = mAdapter
+            layoutManager =
+                LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
+            addItemDecoration(SpaceDecoration(20.dp, SpaceDecoration.Direction.MIDDLE))
+            binding.rvUnderstands1.adapter = mAdapter1
         }
-        binding.tvTable1.setOnSingleClickListener {  mRealVM.tableIndex.postValue(0) }
+        binding.rvUnderstands2.apply {
+            layoutManager =
+                LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
+            addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
+            binding.rvUnderstands2.adapter = mAdapter2
+        }
+        binding.tvTable1.setOnSingleClickListener { mRealVM.tableIndex.postValue(0) }
         binding.tvTable2.setOnSingleClickListener { mRealVM.tableIndex.postValue(1) }
     }
 
     private fun initObservers() {
-        mRealVM.tableIndex.observe(this){
-            if(it == 0){
+        mRealVM.tableIndex.observe(this) {
+            if (it == 0) {
                 binding.tvTable1.setBackgroundResource(R.drawable.gradient_top_11c4cb_bottom_efcdaf)
                 binding.tvTable1.setTextColor(resources.getColor(R.color.white))
                 binding.ivTable1.visibility = View.VISIBLE
@@ -72,7 +185,13 @@ class ShrimpUnderstandsActivity :
                 binding.tvTable2.background = null
                 binding.tvTable2.setTextColor(resources.getColor(R.color.color_666666))
                 binding.ivTable2.visibility = View.GONE
-            }else{
+
+                binding.flUnderstands1.visibility = View.VISIBLE
+                binding.flUnderstands2.visibility = View.GONE
+                mRealVM.underStandingDetail.value?.let { detail ->
+                    mAdapter1.submitList(detail.jobPreference)
+                }
+            } else {
                 binding.tvTable1.background = null
                 binding.tvTable1.setTextColor(resources.getColor(R.color.color_666666))
                 binding.ivTable1.visibility = View.GONE
@@ -80,9 +199,28 @@ class ShrimpUnderstandsActivity :
                 binding.tvTable2.setBackgroundResource(R.drawable.gradient_top_11c4cb_bottom_efcdaf)
                 binding.tvTable2.setTextColor(resources.getColor(R.color.white))
                 binding.ivTable2.visibility = View.VISIBLE
+
+
+                binding.flUnderstands1.visibility = View.GONE
+                binding.flUnderstands2.visibility = View.VISIBLE
+                mRealVM.underStandingDetail.value?.let { detail ->
+                    mAdapter2.submitList(detail.resumeInfo)
+                }
             }
         }
+        mRealVM.underStandingDetail.observe(this) { detail ->
+            detail ?: return@observe
+            binding.tvName.text = detail.titleInfo.getOrNull(0)?.fieldValue ?: ""
+            binding.tvTip.text = detail.titleInfo.getOrNull(1)?.fieldValue ?: ""
+            binding.waveView.progress =progress
+            binding.waveView.text ="${progress}%"
+            val currentIndex = mRealVM.tableIndex.value ?: 0
+            if (currentIndex == 0) {
+                mAdapter1.submitList(detail.jobPreference)
+            } else {
+                mAdapter2.submitList(detail.resumeInfo)
+            }
+        }
+
     }
-
-
 }
