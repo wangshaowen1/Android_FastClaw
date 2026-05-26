@@ -60,19 +60,26 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/bg_understanding_align_bubble"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/v_progress_divider">
 
-        <TextView
-            android:id="@+id/tv_progress_percent"
+        <com.shiyuan.fastclaw.widget.progress.WaveProgressView
+            android:id="@+id/wpv_align_progress"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/color_90_000000"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="85%" />
+            app:wpv_progress="60"
+            app:wpv_text="60%"
+            app:wpv_textColor="@color/color_90_000000"
+            app:wpv_textSize="14sp"
+            app:wpv_waveAmplitude="8dp"
+            app:wpv_waveBackgroundColor="#D9FBFE"
+            app:wpv_waveColor="#54DAF0"
+            app:wpv_waveCount="1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_pr_bg" />
     </FrameLayout>
 
     <TextView

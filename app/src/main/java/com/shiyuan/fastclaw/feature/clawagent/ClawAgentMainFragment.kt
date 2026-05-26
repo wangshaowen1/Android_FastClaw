@@ -21,6 +21,7 @@ import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
@@ -50,6 +51,9 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
     private val msgAdapter by lazy { ClawAgentMsgAdapter() }
 
+    /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
+    private var forceScrollToBottom = false
+
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
@@ -68,6 +72,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 if (mRealVM.streaming.value == true) {
                     mRealVM.cancelStream(flag = false)
                 }
+                // 主动发送:本条乐观插入及随后的流式回复都强制滚到最新
+                forceScrollToBottom = true
                 mRealVM.sendMessage(content.toString().trim())
                 binding.etSend.text = null
             }
@@ -137,11 +143,14 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         mRealVM.enterSession()
 
         mRealVM.messageList.observe(viewLifecycleOwner) { list ->
-            // 提交前判断是否已在底部：是则随新消息/流式增量自动滚到最新，否则保留浏览历史的位置
-            val atBottom = !binding.rvMsg.canScrollVertically(1)
+            // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
+            // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
+            val scrollToLatest = forceScrollToBottom || !binding.rvMsg.canScrollVertically(1)
+            forceScrollToBottom = false
             msgAdapter.submitList(list)
-            if (atBottom && list.isNotEmpty()) {
-                binding.rvMsg.scrollToPosition(list.size - 1)
+            if (scrollToLatest && list.isNotEmpty()) {
+                // 跳转 + 补偿滚动距离，确保刚插入(尚未测量高度)的最后一条完整贴底
+                RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, 0)
             }
         }
         mRealVM.historyLoadFinished.observe(viewLifecycleOwner) { hasMore ->

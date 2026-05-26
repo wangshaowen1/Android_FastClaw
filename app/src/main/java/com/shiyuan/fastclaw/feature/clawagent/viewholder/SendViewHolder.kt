@@ -1,6 +1,10 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.ClipboardUtils
+import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -13,5 +17,14 @@ class SendViewHolder(private val binding: ItemMsgUserRightBinding) : RecyclerVie
 
     fun bind(item: ClawAgentMessageInfo) {
         binding.tvMsgContent.text = item.content
+        // 长按气泡复制消息内容
+        binding.tvMsgContent.setOnLongClickListener {
+            val content = item.content
+            if (!content.isNullOrEmpty()) {
+                ClipboardUtils.copyText(content)
+                R.string.copy_success.getResString().showToast()
+            }
+            true
+        }
     }
 }
