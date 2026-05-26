@@ -19,3 +19,28 @@ data class ResumeUploadSubmitData(
     /** 处理后的最新消息游标 */
     val latestCursor: String? = null,
 )
+
+
+
+/**
+ * 提交简历上传我的
+ *
+ */
+data class ResumeUploadSubmitMyData(
+    /** 服务端是否接收本次简历动作：true 已接收并进入处理 / false 未接收或被业务校验拒绝 */
+    val accepted: Boolean? = null,
+)
+
+
+
+/**
+ * 简历列表
+ *
+ */
+data class ResumeListData(
+    val updateTime: String? = null,
+    val resumeName: String? = null,
+    val fileName: String? = null,
+    val resumeId: String? = null,
+    val resumeTaskId: String? = null,
+)

@@ -267,21 +267,21 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
             R.id.tabMine -> {
                 clickTab(
-                    tabId = R.id.tabMine,
+                    tabId = R.id.rbMine,
                     null
                 ) {
-                    binding.mrg.check(R.id.rbMine) // 真正执行切换
+                    binding.mrg.check(R.id.rbMine)
                 }
             }
 
             R.id.iv_main_report -> {
-//                EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
-//                setKeepScreenOn(false)
-//                mRealVM.showTab.set(1)
-//                supportFragmentManager.switchFragment(
-//                    R.id.fragment,
-//                    HomeReportFragment::class.java
-//                )
+                binding.mrg.clearCheck()
+                EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
+                setKeepScreenOn(false)
+                supportFragmentManager.switchFragment(
+                    R.id.fragment,
+                    HomeReportFragment::class.java
+                )
             }
         }
     }
@@ -303,17 +303,17 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         // 无论是否登录，短时间内（如 500ms）这段代码只会往下走一次
         if (diff < CLICK_INTERVAL_TIME) {
             when (tabId) {
-                R.id.tabMine -> {
+                R.id.rbMine -> {
                     FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MINE))
                 }
-                R.id.tabHome -> {
+                R.id.rbHome -> {
                     FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
                 }
                 else -> {
                     FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_WORKS))
                 }
             }
-            return // 连续点击直接拦截，不再执行拦截器 check
+            return
         }
 
         // 只有过了防抖期，才更新时间，保证下一次连击被拦截

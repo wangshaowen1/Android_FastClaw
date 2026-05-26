@@ -20,3 +20,15 @@ data class ResumeUploadSubmitBody(
     val resumeTaskId: String? = null,
     val resumeFileUrl: String? = null,
 )
+/**
+ * 提交简历上传我的
+ *
+*/
+ class ResumeUploadSubmitMyBody(
+    val clientUploadId: String? = null,
+    val resumeFileUrl: String? = null,
+    val fileName: String? = null,
+    val fileSize: String? = null,
+    val replaceResumeTaskId: String? = null,
+    val replaceResumeId: String? = null,
+)
