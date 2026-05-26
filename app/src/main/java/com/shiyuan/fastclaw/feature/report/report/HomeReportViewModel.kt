@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.report.report
 
+import UnderstandingScore
 import android.graphics.Color
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -8,8 +9,10 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
+import com.shiyuan.fastclaw.core.ext.parseMessage
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
@@ -165,15 +168,13 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
 
     }*/
 
-    fun submitResumeUpload( resumeFileUrl: String?,fileName: String?, replaceResumeTaskId: String?, replaceResumeId: String?) {
+    fun submitResumeUpload( resumeFileUrl: String?,fileName: String?, replaceResumeTaskId: String?) {
         requestWithLoading(
             apiBlock = {
                 mRepo.api.submitResumeMyUpload(
                     ResumeUploadSubmitMyBody(
                         replaceResumeTaskId = replaceResumeTaskId,
                         fileName = fileName,
-                        replaceResumeId = replaceResumeId,
-                        clientUploadId = UUID.randomUUID().toString(),
                         resumeFileUrl = resumeFileUrl,
                     )
                 )

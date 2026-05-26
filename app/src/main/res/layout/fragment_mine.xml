@@ -185,7 +185,6 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:visibility="gone"
             android:id="@+id/layout_mine_lj"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
@@ -207,8 +206,8 @@
                 <com.shiyuan.fastclaw.widget.progress.WaveProgressView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:wpv_progress="60"
-                    app:wpv_text="60%"
+                    app:wpv_progress="10"
+                    app:wpv_text="0%"
                     android:id="@+id/wave_view"
                     app:wpv_textColor="@color/color_e6_000000"
                     app:wpv_textSize="18sp"

@@ -24,7 +24,9 @@ import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
+import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
 /** 
@@ -77,6 +79,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 mRealVM.sendMessage(content.toString().trim())
                 binding.etSend.text = null
             }
+            R.id.tv_agent_memory -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    ShrimpUnderstandsActivity.start(requireActivity())
+                }
+            }
+
         }
     }
 

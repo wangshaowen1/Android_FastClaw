@@ -18,6 +18,8 @@ import com.shiyuan.fastclaw.router.AppNavigator
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getViewModelOfActivity
+import com.nhsd.basic.ext.isNotNull
+import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
@@ -53,6 +55,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     binding.tvMinePointsTip.visibility = if (firstLogin) View.VISIBLE else View.GONE
                     binding.tvMineTipBtn.visibility = if (firstLogin) View.VISIBLE else View.GONE
                 }
+                binding.layoutMineLj.visibility = View.VISIBLE
                 binding.layoutMineBj.visibility = View.VISIBLE
             } else {
                 binding.tvMinePointsTip.visibility = View.GONE
@@ -65,18 +68,14 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         })
         mRealVM.underStandingScore.observe(this){
-            Log.d("underStandingScore",it.toJsonString())
             it?.understandingScore?.let {
-                if(it == 0){
-                    binding.layoutMineLj.visibility = View.GONE
+                if(it== 0 || it.isNull()){
+                    binding.waveView.progress =10
+                    binding.waveView.text ="${0}%"
                 }else{
-                    binding.layoutMineLj.visibility = View.VISIBLE
                     binding.waveView.progress =it
                     binding.waveView.text ="${it}%"
                 }
-
-            } ?: run {
-                binding.layoutMineLj.visibility = View.GONE
             }
         }
 

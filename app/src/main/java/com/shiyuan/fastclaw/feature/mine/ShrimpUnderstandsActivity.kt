@@ -15,6 +15,8 @@ import com.google.android.flexbox.JustifyContent
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.isNotNull
+import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
@@ -178,7 +180,8 @@ class ShrimpUnderstandsActivity :
         super.onCreate(savedInstanceState)
         initView()
         initObservers()
-          mRealVM.understandingDetail()
+        mRealVM.understandingScore()
+        mRealVM.understandingDetail()
         //mRealVM.setMockData()
     }
 
@@ -268,8 +271,17 @@ class ShrimpUnderstandsActivity :
             data ?: return@observe
             binding.tvName.text = data.getOrNull(0)?.fieldValue ?: "暂无"
             binding.tvTip.text = data.getOrNull(1)?.fieldValue ?: "暂无"
-            binding.waveView.progress =progress
-            binding.waveView.text ="${progress}%"
+        }
+        mRealVM.underStandingScore.observe(this){
+            it?.understandingScore?.let {
+                if(it== 0 || it.isNull()){
+                    binding.waveView.progress =10
+                    binding.waveView.text ="${0}%"
+                }else{
+                    binding.waveView.progress =it
+                    binding.waveView.text ="${it}%"
+                }
+            }
         }
     }
 
