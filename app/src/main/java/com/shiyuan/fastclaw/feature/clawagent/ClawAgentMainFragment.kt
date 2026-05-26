@@ -22,8 +22,9 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
+import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
-import org.w3c.dom.Text
 
 /** 
  * @createtime 2026年05月20日 10:25
@@ -78,6 +79,10 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
         binding.rvMsg.addItemDecoration(SpaceDecoration(12.dp, SpaceDecoration.Direction.TOP_WITH_BOTTOM))
         binding.rvMsg.adapter = msgAdapter
+
+        msgAdapter.onUploadClickAction = { data ->
+            showUploadResumeDialog(data)
+        }
 
         // 无感知加载：向上滚动到接近顶部时提前预取更早历史（DiffUtil 顶部静默插入，不出现下拉转圈）
         binding.rvMsg.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -147,6 +152,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         mRealVM.streamError.observe(viewLifecycleOwner) { e ->
             e ?: return@observe
             showMessage(e.message ?: "对话出错")
+        }
+    }
+
+    private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
+        UploadResumeDialog.show(manager = this.parentFragmentManager) { fileInfo ->
+
         }
     }
 

@@ -6,6 +6,7 @@ import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
+import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeRejectBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
@@ -164,7 +165,11 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
                 )
             },
             showToast = true,
+            onError = {
+                historyLoadFinished.value = hasMoreHistory
+            }
         ) {
+            historyLoadFinished.value = hasMoreHistory
             val result = this.data ?: return@request
             // 记录会话上下文，供后续发送消息/增量恢复使用
             sessionId = result.sessionId
@@ -483,6 +488,31 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
                 conversationId = currentConversationId,
                 clientMessageId = clientMessageId,
                 content = content,
+                interactionType = INTERACTION_TYPE_TEXT
+            )
+        )
+        sseHandler.start(flow)
+    }
+
+    /**
+     * 卡片交互 - sse流式
+     */
+    fun sendAction(desc: String, actionData: AgentMsgAction) {
+        val currentSessionId = sessionId
+        val currentConversationId = conversationId
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
+            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            return
+        }
+        val clientMessageId = generateClientMessageId()
+        val flow = mRepo.api.sendMsgToAgent(
+            JobAgentStreamBody(
+                sessionId = currentSessionId,
+                conversationId = currentConversationId,
+                clientMessageId = clientMessageId,
+                content = desc,
+                interactionType = INTERACTION_TYPE_ACTION,
+                action = actionData
             )
         )
         sseHandler.start(flow)
@@ -621,6 +651,9 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     companion object {
         /** 历史消息分页每页条数 */
         private const val HISTORY_PAGE_SIZE = 20
+        // actionType
+        private const val INTERACTION_TYPE_TEXT = "TEXT"
+        private const val INTERACTION_TYPE_ACTION = "ACTION"
 
         // senderType
         private const val SENDER_USER = "USER"

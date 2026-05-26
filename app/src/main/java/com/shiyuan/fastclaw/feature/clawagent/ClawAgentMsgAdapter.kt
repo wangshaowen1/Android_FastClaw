@@ -46,6 +46,8 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
  */
 class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
+    var onUploadClickAction: (itemData: ClawAgentMessageInfo) -> Unit = {}
+
     init {
         // 用户消息（靠右气泡）
         register(TYPE_USER_TEXT, { i, p -> SendViewHolder(ItemMsgUserRightBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
@@ -54,7 +56,16 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         // agent 思考中
         register(TYPE_AGENT_THINK, { i, p -> AgentThinkViewHolder(ItemMsgAgentThinkBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 欢迎引导卡
-        register(TYPE_WELCOME, { i, p -> AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_WELCOME,
+            { i, p ->
+                AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)).apply {
+                    onUploadClickListener = { itemData ->
+                        onUploadClickAction(itemData)
+                    }
+                }
+            }) { h, item ->
+                h.bind(item)
+            }
         // 核心补问卡
         register(TYPE_QUESTION, { i, p -> AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 历史简历确认卡
