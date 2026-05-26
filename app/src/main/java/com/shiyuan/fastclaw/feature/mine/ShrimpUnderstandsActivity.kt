@@ -4,7 +4,6 @@ import FieldItems
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,17 +15,14 @@ import com.google.android.flexbox.JustifyContent
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
-import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.databinding.ActivityShrimpUnderstandsBinding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference1Binding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference1SonBinding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference2Binding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference2SonBinding
-import com.shiyuan.fastclaw.databinding.ItemJobPreference3SonBinding
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
@@ -51,6 +47,8 @@ class ShrimpUnderstandsActivity :
     }
 
     private val progress: Int by lazy { intent.getIntExtra(EXTRA_PROGRESS, 0) }
+
+
     private val mAdapter2 by lazy {
         SingleBindingAdapter<ItemJobPreference1Binding, FieldItems>(
             R.layout.item_job_preference1,
@@ -61,11 +59,10 @@ class ShrimpUnderstandsActivity :
                     "JOB_EXPECTATION" -> {
                         binding.tvConnect.visibility = View.GONE
                         binding.rcConnect.visibility = View.VISIBLE
-                        val subAdapter =
-                            SingleBindingAdapter<ItemJobPreference1SonBinding, FieldItems>(
-                                R.layout.item_job_preference1_son,
-                                item.fieldItems,
-                                onBind = { b, _, sub -> b.tvTag.text = sub.fieldValue ?: "" })
+                        val subAdapter = SingleBindingAdapter<ItemJobPreference1SonBinding, FieldItems>(
+                            R.layout.item_job_preference1_son,
+                            item.fieldItems,
+                            onBind = { b, _, sub -> b.tvTag.text = sub.fieldValue ?: "" })
                         binding.rcConnect.apply {
                             val layoutManager =
                                 FlexboxLayoutManager(this@ShrimpUnderstandsActivity).apply {
@@ -86,7 +83,6 @@ class ShrimpUnderstandsActivity :
                             adapter = subAdapter
                         }
                     }
-
                     else -> {
                         binding.rcConnect.visibility = View.GONE
                         binding.tvConnect.visibility = View.VISIBLE
@@ -97,46 +93,80 @@ class ShrimpUnderstandsActivity :
         )
     }
 
-    private val mAdapter1 by lazy {
+    private val expandState = mutableMapOf<Int, Boolean>()
+    private val mAdapter1: SingleBindingAdapter<ItemJobPreference2Binding, FieldItems> by lazy {
         SingleBindingAdapter<ItemJobPreference2Binding, FieldItems>(
             R.layout.item_job_preference2,
             emptyList(),
             onBind = { binding, position, item ->
                 binding.tvTile.text = item.fieldName ?: ""
-                when (item.fieldType) {
-                    "EDUCATION_INFO", "PROJECT_EXPERIENCE" ,"WORK_EXPERIENCE","CERTIFICATE_INFO"-> {
-                        binding.tvConnect.visibility = View.GONE
-                        binding.rcConnect.visibility = View.VISIBLE
-                        val subAdapter = SingleBindingAdapter<ItemJobPreference2SonBinding, FieldItems>(
-                            R.layout.item_job_preference2_son,
-                            item.fieldItems,
-                            onBind = { binding, _, item ->
-                                binding.tvTile.text = item.fieldValue ?: ""
-                                val subAdapter = SingleBindingAdapter<ItemJobPreference3SonBinding, FieldItems>(
-                                    R.layout.item_job_preference3_son,
-                                    item.fieldItems,
-                                    onBind = { binding, _, item ->
-                                        binding.tvTile.text = item.fieldName ?: ""
-                                        binding.tvConnect.text = item.fieldValue ?: ""
-                                    })
-                                binding.rcConnect.apply {
-                                    layoutManager = LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
-                                    addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
-                                    adapter = subAdapter
-                                }
-                            })
-                        binding.rcConnect.apply {
-                            layoutManager = LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
-                            addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
-                            adapter = subAdapter
-                        }
-                    }
-                    else -> {
-                        binding.rcConnect.visibility = View.GONE
-                        binding.tvConnect.visibility = View.VISIBLE
-                        binding.tvConnect.text =item.fieldItems.firstOrNull()?.fieldValue ?: item.fieldValue ?: ""
+                if(item.fieldItems.isNullOrEmpty()){
+                    binding.ll.visibility =View.VISIBLE
+                    binding.rcConnect.visibility =View.GONE
+                    binding.tvLlTile.text = item.fieldName ?: ""
+                    binding.tvLlConnect.text = item.fieldValue ?: ""
 
+                    // 展开按钮不可见
+                    binding.llExpand.visibility = View.GONE
+                }else{
+                    binding.ll.visibility =View.GONE
+                    binding.rcConnect.visibility =View.VISIBLE
+
+                    val totalSize = item.fieldItems.size
+                    val isExpanded = expandState[position] == true
+                    // 决定显示哪些子项
+                    val displayList = if (isExpanded) {
+                        item.fieldItems
+                    } else {
+                        item.fieldItems.take(4)
                     }
+
+                    val subAdapter = SingleBindingAdapter<ItemJobPreference2SonBinding, FieldItems>(
+                        R.layout.item_job_preference2_son,
+                        displayList,
+                        onBind = { sonBinding, _, sonItem ->
+                            val hasExtra = item.fieldItems.any { it.extra != null }
+                            if(hasExtra){
+                               if(sonItem.extra.isNullOrEmpty()){
+                                    sonBinding.tvParentTile.visibility = View.VISIBLE
+                                    sonBinding.llSon.visibility = View.GONE
+                                    sonBinding.tvParentTile.text = sonItem.fieldValue ?: ""
+                                }else{
+                                    sonBinding.tvParentTile.visibility = View.GONE
+                                    sonBinding.llSon.visibility = View.VISIBLE
+                                    sonBinding.tvTile.text = sonItem.fieldName  ?: ""
+                                    sonBinding.tvConnect.text = sonItem.fieldValue ?: ""
+                                }
+                            }else{
+                                sonBinding.tvParentTile.visibility = View.GONE
+                                sonBinding.llSon.visibility = View.VISIBLE
+                                sonBinding.tvTile.text = sonItem.fieldName  ?: ""
+                                sonBinding.tvConnect.text = sonItem.fieldValue ?: ""
+                            }
+
+                        })
+                    binding.rcConnect.apply {
+                        layoutManager = LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
+                        adapter = subAdapter
+                    }
+
+                    // 处理展开/收起按钮
+                    if (totalSize > 4) {
+                        binding.llExpand.visibility = View.VISIBLE
+                        // 设置按钮文字和箭头方向
+                        binding.tvExpand.text = if (isExpanded) "收起全部" else "展开全部"
+                        binding.ivArrow.rotation = if (isExpanded) 180f else 0f
+
+                        binding.llExpand.setOnSingleClickListener {
+                            // 切换状态
+                            expandState[position] = !isExpanded
+                            // 刷新当前 item，重新执行 onBind
+                            mAdapter1.notifyItemChanged(position)
+                        }
+                    } else {
+                        binding.llExpand.visibility = View.GONE
+                    }
+
                 }
             }
         )
@@ -144,13 +174,12 @@ class ShrimpUnderstandsActivity :
 
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
         initObservers()
-        mRealVM.understandingDetail()
-        // mRealVM.setMockData()
+          mRealVM.understandingDetail()
+        //mRealVM.setMockData()
     }
 
     override fun setTranslucentStatus() {
@@ -189,7 +218,8 @@ class ShrimpUnderstandsActivity :
                 binding.viewUnderstands.root.visibility = View.GONE
                 binding.flUnderstands1.visibility = View.VISIBLE
             }
-            mAdapter1.submitList(mRealVM.resumeInfo.value)
+           val data = convertToTwoLevels(mRealVM.resumeInfo.value ?: emptyList())
+            mAdapter1.submitList(data)
         }else{
             binding.flUnderstands1.visibility = View.GONE
             if( mRealVM.jobPreference.value.isNullOrEmpty()){
@@ -199,7 +229,7 @@ class ShrimpUnderstandsActivity :
                 binding.viewUnderstands.root.visibility = View.GONE
                 binding.flUnderstands2.visibility = View.VISIBLE
             }
-            mAdapter2.submitList(mRealVM.resumeInfo.value)
+            mAdapter2.submitList(mRealVM.jobPreference.value)
         }
     }
     private fun initObservers() {
@@ -241,6 +271,71 @@ class ShrimpUnderstandsActivity :
             binding.waveView.progress =progress
             binding.waveView.text ="${progress}%"
         }
+    }
+
+    /**
+     * 将整个简历信息列表转换为两层结构（顶层节点下的 fieldItems 不再包含嵌套）
+     */
+    fun convertToTwoLevels(items: List<FieldItems>): List<FieldItems> {
+        return items.map { convertTopLevelItem(it) }
+    }
+
+    /**
+     * 转换单个顶层节点（例如 workExperience, educationInfo 等）
+     */
+    private fun convertTopLevelItem(item: FieldItems): FieldItems {
+        // 判断是否有需要展平的嵌套（即存在子节点且子节点中还有子节点）
+        val hasNestedChildren = item.fieldItems.any { it.fieldItems.isNotEmpty() }
+        if (!hasNestedChildren) {
+            // 没有嵌套，直接返回原对象（注意：为避免外部修改，可浅拷贝，但原对象可复用）
+            return item
+        }
+
+        // 新的 fieldItems 列表
+        val newFieldItems = mutableListOf<FieldItems>()
+
+        for (groupItem in item.fieldItems) {
+            // 1) 分组节点本身：清空 fieldItems，保留其他属性，但需要重新构造（无 copy）
+            val groupNodeWithoutChildren = FieldItems(
+                fieldCode = groupItem.fieldCode,
+                fieldName = groupItem.fieldName,
+                fieldType = groupItem.fieldType,
+                fieldValue = groupItem.fieldValue,
+                fieldItems = emptyList(),          // 清空子节点
+                extra = groupItem.extra            // 保留原有 extra（如果有）
+            )
+            newFieldItems.add(groupNodeWithoutChildren)
+
+            // 确定用于标记的 parentTag：优先使用 fieldValue（如公司名/学校名），否则使用 fieldName
+            val parentTag = groupItem.fieldValue ?: groupItem.fieldName ?: groupItem.fieldCode ?: ""
+
+            // 2) 将分组下的所有子节点提升，并标记 parent
+            for (child in groupItem.fieldItems) {
+                // 构造新的 extra，包含 parent 标记（合并原有的 extra）
+                val mergedExtra = (child.extra ?: emptyMap()).toMutableMap()
+                mergedExtra["parent"] = parentTag
+
+                val liftedChild = FieldItems(
+                    fieldCode = child.fieldCode,
+                    fieldName = child.fieldName,
+                    fieldType = child.fieldType,
+                    fieldValue = child.fieldValue,
+                    fieldItems = child.fieldItems,  // 子节点本身可能还有更深嵌套？按需递归展平？按你的需求，只展平一层即可，但为安全可递归调用
+                    extra = mergedExtra
+                )
+                newFieldItems.add(liftedChild)
+            }
+        }
+
+        // 返回新的顶层节点
+        return FieldItems(
+            fieldCode = item.fieldCode,
+            fieldName = item.fieldName,
+            fieldType = item.fieldType,
+            fieldValue = item.fieldValue,
+            fieldItems = newFieldItems,
+            extra = item.extra
+        )
     }
 
 }

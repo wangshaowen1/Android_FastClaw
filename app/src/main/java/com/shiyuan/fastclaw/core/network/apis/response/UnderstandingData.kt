@@ -19,7 +19,8 @@ class FieldItems(
     var fieldName: String? = null,
     var fieldType: String? = null,
     var fieldValue: String? = null,
-    var fieldItems: List<FieldItems> = emptyList()
+    var fieldItems: List<FieldItems> = emptyList(),
+    val extra: Map<String, Any>? = null   // 用于存放额外标记
 ){
 
 }

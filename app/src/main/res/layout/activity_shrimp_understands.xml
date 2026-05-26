@@ -77,7 +77,7 @@
                         app:layout_constraintHorizontal_chainStyle="packed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="王直至王直至" />
+                        tools:text="王直至王" />
 
                     <TextView
 
@@ -99,11 +99,11 @@
                         app:layout_constraintTop_toTopOf="@id/tv_name" />
 
                     <RelativeLayout
+                        android:layout_marginTop="30dp"
                         android:id="@+id/rl_bfb"
                         android:layout_width="56dp"
                         android:layout_height="56dp"
                         android:layout_marginEnd="30dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 

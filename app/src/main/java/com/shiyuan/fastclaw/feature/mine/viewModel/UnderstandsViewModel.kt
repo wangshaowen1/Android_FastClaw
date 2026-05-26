@@ -176,12 +176,8 @@ class UnderstandsViewModel : AppRepositoryViewModel<AppRepository>() {
             FieldItems(
                 "languageSkills", "语言能力", "SKILL_INFO",
                 fieldItems = listOf(
-                    FieldItems(
-                        "languageName", "语言名称", fieldValue = "英语",
-                        fieldItems = listOf(
-                            FieldItems("level", "等级", fieldValue = "CET-6")
-                        )
-                    )
+                    FieldItems("languageName", "语言名称", fieldValue = "英语",),
+                    FieldItems("languageName", "语言名称", fieldValue = "英语",)
                 )
             ),
             // 证书
