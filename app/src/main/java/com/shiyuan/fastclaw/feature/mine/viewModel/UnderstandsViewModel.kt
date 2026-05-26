@@ -297,7 +297,23 @@ class UnderstandsViewModel : AppRepositoryViewModel<AppRepository>() {
         this. titleInfo.postValue(titleInfo)
     }
 
-
+    var underStandingScore = MutableLiveData<UnderstandingScore>()
+     fun understandingScore() {
+            launch(block = {
+                response(
+                    ApiFactory.apiService.understandingScore(),
+                    result = {
+                        underStandingScore.postValue(this.data)
+                    },
+                    error = {
+                        this?.msg?.showToast()
+                    })
+            }, onError = {
+                parseMessage(it)?.showToast()
+            }, onComplete = {
+                setLoading(false)
+            })
+        }
 
     fun understandingDetail() {
         setLoading(true)
