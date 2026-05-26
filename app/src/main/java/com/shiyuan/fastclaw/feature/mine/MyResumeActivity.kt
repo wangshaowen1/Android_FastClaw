@@ -43,10 +43,10 @@ import kotlinx.coroutines.launch
  */
 class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeReportViewModel>() {
 
-    private val handler = Handler(Looper.getMainLooper())
+/*    private val handler = Handler(Looper.getMainLooper())
     private val POLLING_INTERVAL = 2000L // 2秒
     private var resumePollingRunnable: Runnable? = null
-    private var isResumePolling = false
+    private var isResumePolling = false*/
 
 
     companion object {
@@ -90,16 +90,15 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         //上传简历
         UploadResumeDialog.show(manager = this.supportFragmentManager) { fileInfo ->
             if (fileInfo != null) {
-                mRealVM.submitResume(fileInfo.uri) {
-                    mRealVM.setLoading(true)
-                    mRealVM.resumeMaterialQuality(it ?: "", fileInfo.fileName ?: "")
+                mRealVM.submitResume(fileInfo.uri) { resumeFileUrl ->
+                    mRealVM.submitResumeUpload(resumeFileUrl,fileInfo.fileName,mRealVM.resumeListData.value?.resumeTaskId,mRealVM.resumeListData.value?.resumeId)
                 }
             }
         }
     }
 
     private fun initObservers() {
-        mRealVM.resumeData.observe(this) {
+        mRealVM.resumeListData.observe(this) {
             it?.let {
                     binding.tvTip.text =resources.getString(R.string.resume_tip)
                     binding.cl.visibility= View.VISIBLE
@@ -114,7 +113,12 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             }
         }
 
-        mRealVM.resumeDetectionData.observe(this) { data ->
+        mRealVM.resumeUploadResult.observe(this) { data ->
+               mRealVM.queryResumeList()
+            }
+        }
+
+/*        mRealVM.resumeDetectionData.observe(this) { data ->
             Log.d("checkStatus", data.safeCheckStatus)
             when (data.safeCheckStatus) {
                 PASS -> {
@@ -134,10 +138,10 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                     stopResumePolling()  // ✅ 停止轮询
                 }
             }
-        }
-    }
+        }*/
 
-    private fun startResumePolling() {
+
+/*    private fun startResumePolling() {
         if (isResumePolling) return  // ✅ 防止重复启动
 
         isResumePolling = true
@@ -163,10 +167,10 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             resumePollingRunnable = null
         }
         Log.d("Polling", "停止轮询")
-    }
+    }*/
 
-    override fun onDestroy() {
+  /*  override fun onDestroy() {
         super.onDestroy()
-        stopResumePolling()
-    }
+       // stopResumePolling()
+    }*/
 }

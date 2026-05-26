@@ -42,6 +42,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.request.TipOffBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.SSEvent
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import kotlinx.coroutines.flow.Flow
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
@@ -52,7 +53,9 @@ import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
+import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
+import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
 import com.shiyuan.fastclaw.core.network.apis.response.ShelfStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
@@ -376,9 +379,9 @@ interface ApiService {
 
 
     @POST(ApiConstants.RESUME_QUERY)
-    suspend fun resumeQuery(@Body body: PagedBody): ApiResponse<PagedList<ResumeData>?>
+    suspend fun resumeQuery(@Body body: PagedBody): ApiResponse<PagedList<ResumeListData>?>
 
-
-
+    @POST(ApiConstants.JOB_AGENT_RESUME_UPLOAD_MY_SUBMIT)
+    suspend fun submitResumeMyUpload(@Body body: ResumeUploadSubmitMyBody): ApiResponse<ResumeUploadSubmitMyData?>
 
 }

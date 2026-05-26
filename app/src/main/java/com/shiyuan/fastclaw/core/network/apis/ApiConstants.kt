@@ -220,6 +220,13 @@ object ApiConstants {
      */
     const val JOB_AGENT_RESUME_UPLOAD_SUBMIT = "/api/candidate/app/jobAgent/resume/upload/submit"
 
+
+    /**
+     * 提交简历上传我的
+     */
+    const val JOB_AGENT_RESUME_UPLOAD_MY_SUBMIT = "/api/candidate/app/jobAgent/resume/my/upload/submit"
+
+
     /**
      * 确认属性候选值（求职 Agent）
      */
