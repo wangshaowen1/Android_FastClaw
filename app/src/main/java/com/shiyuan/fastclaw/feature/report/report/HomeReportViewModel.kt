@@ -23,8 +23,10 @@ import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.loginToast
+import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
+import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.feature.report.data.ReportRepository
@@ -46,7 +48,8 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
 
     val bannerList = ObservableField<List<Int>>()
 
-    val resumeData = MutableLiveData<ResumeData>()
+    val resumeData = MutableLiveData<ResumeData?>()
+
 
     val resumeDetectionData = MutableLiveData<ResumeData>()
 
@@ -55,6 +58,21 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
     override fun onCreate() {
         super.onCreate()
         initBannerData()
+    }
+
+
+    fun queryResumeList() {
+        launchWithLoading(true, block = {
+            response(ApiFactory.apiService.resumeQuery(PagedBody(1, 100)), result = {
+                 if(this.data?.items.isNullOrEmpty()){
+                     resumeData.postValue(null)
+                 }else{
+                     resumeData.postValue(this.data?.items?.first())
+                 }
+
+            }, error = { this?.msg?.showToast() })
+        }, onError = { it.message.toString().showToast() })
+
     }
 
 

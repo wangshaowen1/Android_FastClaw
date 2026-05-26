@@ -225,7 +225,8 @@ android {
         //开发测试环境
         develop {
             dimension 'env'
-              buildConfigField 'String', 'SERVER_URL', '"http://119.23.72.183:8088"'
+             buildConfigField 'String', 'SERVER_URL', '"http://119.23.72.183:8088"'
+             //buildConfigField 'String', 'SERVER_URL', '"http://192.168.10.64:8088"'
         }
         //预发布
         preview {

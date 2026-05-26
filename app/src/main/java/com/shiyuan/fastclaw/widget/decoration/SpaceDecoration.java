@@ -14,8 +14,10 @@ public class SpaceDecoration extends RecyclerView.ItemDecoration {
     private int rowCount = UNSPECIFIED;
 
     public enum Direction {
-        MIDDLE, TOP, BOTTOM, TOP_WITH_BOTTOM
+        MIDDLE, TOP, BOTTOM, TOP_WITH_BOTTOM, MIDDLE_HORIZONTAL
     }
+
+      // 新增用于水平流式布局
 
     private Direction direction;
 
@@ -66,6 +68,11 @@ public class SpaceDecoration extends RecyclerView.ItemDecoration {
                 }
             } else if (direction == Direction.BOTTOM) {
                 outRect.bottom = spacing;
+            }else if (direction == Direction.MIDDLE_HORIZONTAL) {
+                // 除了第一个 item，其他 item 添加右间距
+                if (position != 0) {
+                    outRect.left = spacing;
+                }
             }
         }
     }

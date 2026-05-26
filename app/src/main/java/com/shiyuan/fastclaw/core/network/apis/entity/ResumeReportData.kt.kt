@@ -20,6 +20,9 @@ import kotlinx.parcelize.Parcelize
     val resumeFileType: String ?,
     val submitTime: String ? = null,
     var checkId: String ? = null,
+    var fileName: String ? = null,
+    var resumeName: String ? = null,
+    var updateTime: String ? = null,
 ): Parcelable{
 
 
@@ -38,11 +41,14 @@ import kotlinx.parcelize.Parcelize
         resumeFileName: String? = this.resumeFileName,
         resumeFileType: String? = this.resumeFileType,
         submitTime: String? = this.submitTime,
-        checkId: String? = this.checkId
+        checkId: String? = this.checkId,
+        fileName: String? = this.fileName,
+        resumeName: String? = this.resumeName,
+         updateTime: String? = this.updateTime
     ) = ResumeData(
         hasLatestResume, isJd, blockingIssuesMessage, blockingMessage,
         blockingIssues, resumeFileUrl, checkStatus, resumeFileName,
-        resumeFileType, submitTime, checkId
+        resumeFileType, submitTime, checkId,fileName,resumeName,updateTime
     )
 }
 

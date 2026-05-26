@@ -10,11 +10,14 @@ import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.response
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.core.ext.launch
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
+import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.FAILED
 import com.shiyuan.fastclaw.kit.SignUtils
 
 /**
@@ -39,10 +42,9 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
-    val appVersion: String by lazy { "快龙虾Version："+ Session.getInstance().versionName }
+    val appVersion: String by lazy { "快龙虾Version：" + Session.getInstance().versionName }
 
     val beiAn by lazy { Config.get().appConfig.beianNo }
-
 
 
     override fun onCreate() {
@@ -54,13 +56,18 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
      * 退出登录
      */
     fun logoutApp() {
-        SignUtils.signOut()
-        AppUtils.relaunchApp()
-        launch { response(mRepo.api.signOut()) {
-
-        } }
+       /* SignUtils.signOut()
+        //AppUtils.relaunchApp()
+        finish()*/
+        // launch { block ={ response(mRepo.api.signOut()) },onError ={},onComplete ={}}
+        launch({
+            response(mRepo.api.signOut(), result = {}, error = {})
+        }, onError = {},
+            onComplete = {
+                SignUtils.signOut()
+                //AppUtils.relaunchApp()
+                finish()
+            })
     }
 
-    override fun onResume() {
-    }
 }

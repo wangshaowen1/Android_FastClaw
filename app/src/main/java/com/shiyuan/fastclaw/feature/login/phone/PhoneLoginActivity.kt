@@ -162,16 +162,16 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
         }
 
         mRealVM.phoneBg.observe(this){
-            binding.llPhone.background =if(it) resources.getDrawable(R.drawable.bg_ffffff_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_f74c30)
+            binding.llPhone.background =if(it) resources.getDrawable(R.drawable.bg_f7f7f7_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424)
         }
 
         mRealVM.codeBg.observe(this){
-            binding.llVerifyCode.background =if(it) resources.getDrawable(R.drawable.bg_ffffff_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_f74c30)
+            binding.llVerifyCode.background =if(it) resources.getDrawable(R.drawable.bg_f7f7f7_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424)
         }
 
         mRealVM.codeSendBg.observe(this){
-            binding.btnSend.background =if(it) resources.getDrawable(R.drawable.bg_00000_r100_w1_0099ff) else  resources.getDrawable(R.drawable.bg_0099ff_r100)
-            binding.btnSend.setTextColor(if(it) resources.getColor(R.color.color_0099FF) else resources.getColor(R.color.white))
+            binding.btnSend.background =if(it) resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424) else  resources.getDrawable(R.drawable.bg_242424_r100)
+            binding.btnSend.setTextColor(if(it) resources.getColor(R.color.color_242424) else resources.getColor(R.color.white))
         }
 
 

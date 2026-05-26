@@ -17,7 +17,8 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="108dp"
+            android:importantForAccessibility="no"
             android:scaleType="centerCrop"
             android:src="@drawable/img_mine_top_bg"
             app:layout_constraintTop_toTopOf="parent" />
@@ -42,64 +43,72 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/tvbt"
+            app:layout_constraintBottom_toTopOf="@id/tv_bt"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp">
 
-                <RelativeLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/ll_top"
                     android:layout_width="match_parent"
                     android:layout_height="126dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="18dp"
                     android:background="@drawable/bg_f7f7f7_r16_w1_ffffff"
-                    android:orientation="horizontal"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="30dp"
-
-                    app:layout_constraintTop_toBottomOf="@id/toolbar">
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
-                        android:layout_centerVertical="true"
                         android:id="@+id/tv_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="16dp"
                         android:ellipsize="end"
                         android:maxLines="2"
-                        android:text="王直至"
-                        android:textColor="@color/color_90_000000"
+                        android:textColor="@color/black"
                         android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tv_tip"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="王直至王" />
 
                     <TextView
-                        android:layout_toRightOf="@id/tv_name"
-                        android:layout_centerVertical="true"
+
+                        android:id="@+id/tv_tip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="8dp"
                         android:background="@drawable/bg_def3e9_r54"
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="3dp"
-                        android:text="在职-月底岗位"
+                        tools:text="@string/end_month_position"
                         android:textColor="@color/color_009E96"
                         android:textSize="11sp"
-                        android:textStyle="bold" />
-
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_name"
+                        app:layout_constraintEnd_toStartOf="@id/rl_bfb"
+                        app:layout_constraintStart_toEndOf="@id/tv_name"
+                        app:layout_constraintTop_toTopOf="@id/tv_name" />
 
                     <RelativeLayout
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
+                        android:layout_marginTop="30dp"
                         android:id="@+id/rl_bfb"
                         android:layout_width="56dp"
-                        android:layout_height="56dp">
+                        android:layout_height="56dp"
+                        android:layout_marginEnd="30dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <com.shiyuan.fastclaw.widget.progress.WaveProgressView
+                            android:id="@+id/wave_view"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:wpv_progress="60"
@@ -114,151 +123,173 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@drawable/ic_pr_bg"/>
+                            android:background="@drawable/ic_pr_bg" />
 
                     </RelativeLayout>
 
                     <TextView
-                        android:gravity="center"
-                        android:layout_below="@id/rl_bfb"
-                        android:layout_alignEnd="@id/rl_bfb"
-                        android:layout_alignStart="@id/rl_bfb"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:text="对齐度"
+                        android:text="@string/alignment_degree"
                         android:textColor="@color/color_407779"
                         android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@id/rl_bfb"
+                        app:layout_constraintStart_toStartOf="@id/rl_bfb"
+                        app:layout_constraintTop_toBottomOf="@id/rl_bfb" />
 
-                </RelativeLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_table"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="23dp"
                     android:orientation="vertical"
                     app:layout_constraintTop_toBottomOf="@id/ll_top">
 
-                    <LinearLayout
+                    <View
+                        android:id="@+id/bg_view"
                         android:layout_width="match_parent"
                         android:layout_height="37dp"
                         android:background="@drawable/bg_ededed_r10"
-                        android:orientation="horizontal">
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/tv_table1"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:layout_weight="1"
-                            android:background="@drawable/gradient_top_11c4cb_bottom_efcdaf"
-                            android:gravity="center"
-                            android:text="简历信息"
-                            android:textColor="@color/white"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/tv_table2"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="求职偏好"
-                            android:textColor="@color/color_666666"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tv_table1"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/gradient_top_11c4cb_bottom_efcdaf"
+                        android:gravity="center"
+                        android:text="@string/resume_information"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/bg_view"
+                        app:layout_constraintLeft_toLeftOf="@id/bg_view"
+                        app:layout_constraintTop_toTopOf="@id/bg_view"
+                        app:layout_constraintWidth_percent="0.5" />
 
-                    </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        android:id="@+id/iv_table1"
+                        android:layout_width="16dp"
+                        android:layout_height="8dp"
                         android:layout_marginTop="1dp"
-                        android:orientation="horizontal">
-
-                        <RelativeLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <ImageView
-                                android:id="@+id/iv_table1"
-                                android:layout_width="16dp"
-                                android:layout_height="8dp"
-                                android:layout_centerHorizontal="true"
-                                android:layout_gravity="center_horizontal"
-                                android:src="@drawable/ic_bottom_jt" />
-
-                        </RelativeLayout>
-
-                        <RelativeLayout
-                       
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-
-                            <ImageView
-                                android:id="@+id/iv_table2"
-                                android:layout_width="16dp"
-                                android:layout_height="8dp"
-                                android:layout_centerHorizontal="true"
-                                android:src="@drawable/ic_bottom_jt"
-                                android:visibility="gone" />
-
-                        </RelativeLayout>
-
-                    </LinearLayout>
+                        android:src="@drawable/ic_bottom_jt"
+                        app:layout_constraintLeft_toLeftOf="@id/tv_table1"
+                        app:layout_constraintRight_toRightOf="@id/tv_table1"
+                        app:layout_constraintTop_toBottomOf="@id/bg_view" />
 
 
-                </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_table2"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:gravity="center"
+                        android:text="@string/job_preference"
+                        android:textColor="@color/color_666666"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/bg_view"
+                        app:layout_constraintRight_toRightOf="@id/bg_view"
+                        app:layout_constraintTop_toTopOf="@id/bg_view"
+                        app:layout_constraintWidth_percent="0.5" />
 
-                <FrameLayout
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_ffffff_r18"
-                    android:layout_marginHorizontal="16dp"
+
+                    <ImageView
+                        android:id="@+id/iv_table2"
+                        android:layout_width="16dp"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="1dp"
+                        android:src="@drawable/ic_bottom_jt"
+                        android:visibility="gone"
+                        app:layout_constraintLeft_toLeftOf="@id/tv_table2"
+                        app:layout_constraintRight_toRightOf="@id/tv_table2"
+                        app:layout_constraintTop_toBottomOf="@id/bg_view" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    android:paddingBottom="20dp"
+                    app:layout_constraintTop_toBottomOf="@id/layout_table">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_understands1"
+
+                    <FrameLayout
+                        android:visibility="gone"
+                        android:id="@+id/fl_understands1"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_ffffff_r18"
+                        android:padding="16dp">
 
-                </FrameLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_understands1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
 
-                <include
-                    android:visibility="gone"
-                    android:id="@+id/view_understands2"
-                    layout="@layout/view_understands2" />
+                    </FrameLayout>
 
-            </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/fl_understands2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_ffffff_r18"
+                        android:padding="16dp"
+                        android:visibility="gone">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_understands2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </FrameLayout>
+
+
+
+                    <include
+                        android:id="@+id/view_understands"
+                        layout="@layout/view_understands1"
+                        android:layout_width="match_parent"
+                        android:layout_height="191dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>
 
 
         <TextView
-            android:gravity="center"
-            android:id="@+id/tvbt"
+            android:id="@+id/tv_bt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="55dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="44dp"
             android:background="@drawable/bg_upload_resume_btn"
+            android:gravity="center"
             android:paddingVertical="12dp"
-            android:text="不准确？告诉小虾修改"
+            android:text="@string/inaccurate"
             android:textColor="@color/white"
             android:textSize="15sp"
             android:textStyle="bold"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintRight_toRightOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
