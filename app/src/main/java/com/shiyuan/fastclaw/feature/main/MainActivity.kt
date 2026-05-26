@@ -275,13 +275,16 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
 
             R.id.iv_main_report -> {
-//                EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
-//                setKeepScreenOn(false)
-//                mRealVM.showTab.set(1)
-//                supportFragmentManager.switchFragment(
-//                    R.id.fragment,
-//                    HomeReportFragment::class.java
-//                )
+                binding.mrg.check(0)
+                binding.rbMine.isChecked = false
+                binding.rbHome.isChecked = false
+                EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
+                setKeepScreenOn(false)
+                mRealVM.showTab.set(2)
+                supportFragmentManager.switchFragment(
+                    R.id.fragment,
+                    HomeReportFragment::class.java
+                )
             }
         }
     }
