@@ -124,7 +124,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             },
             onMessage = { msg ->
                 // message/snapshot 是完整消息，按 messageId upsert
-                ingestMessages(listOf(msg))
+                sseInsertMessages(msg)
             },
             onDone = { _, seq ->
                 seq?.let { lastSeq = it }
@@ -176,7 +176,8 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             conversationId = result.conversationId
             latestCursor = result.latestCursor
             sessionData.value = result
-            ingestMessages(result.messages)
+            // 恢复的最近消息为终态数据，过滤掉残留的思考态(think)中间态消息
+            ingestMessages(result.messages?.filterNot { it.isThinkMessage() })
         }
     }
 
@@ -391,7 +392,8 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             result?.nextBeforeCursor?.let { historyBeforeCursor = it }
             hasMoreHistory = result?.hasMore ?: false
             // 更早消息 sequenceNo 更小，ingest 后按序排到列表顶部（DiffUtil 在 0 位插入，不跳动）
-            ingestMessages(result?.messages)
+            // 历史分页为终态数据，过滤掉残留的思考态(think)中间态消息
+            ingestMessages(result?.messages?.filterNot { it.isThinkMessage() })
             // 已加载到最早一页时给一次轻提示
 //            if (!hasMoreHistory) R.string.no_more_data_pull.getResString().showToast()
             historyLoadFinished.value = hasMoreHistory
@@ -568,6 +570,34 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * SSE 流-单条消息插入：按文档 5.3 displayPolicy 在插入前对「链表上一条思考态消息」做即时收口。
+     * SSE 是顺序流，结果消息通常紧跟在 think 占位之后，故先取 [messageStore] 最后一条（上一条）：
+     * 若它是 think 中间态、且与新消息非同一条（messageId 不同，排除 think→RESULT 的同条更新），
+     * 再按其 displayPolicy 决定去留——
+     * REPLACE_ON_TERMINAL（被结果替换）/ DISMISS_ON_TERMINAL（结果到达后收起）→ 移除该 think；
+     * APPEND（追加）/ KEEP（保留）/ 其它 → 原样保留。最后统一交 [ingestMessages] upsert 并刷新。
+     */
+    private fun sseInsertMessages(newMsg: JobAgentMessage?) {
+        newMsg ?: return
+        val lastEntry = messageStore.entries.lastOrNull()
+        val lastMsg = lastEntry?.value
+        if (lastMsg != null &&
+            lastMsg.messageId != newMsg.messageId &&
+            resolveItemType(lastMsg) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
+        ) {
+            when (lastMsg.displayPolicy) {
+                // 终态替换：结果消息取代 think 占位
+                POLICY_REPLACE_ON_TERMINAL -> messageStore.remove(lastEntry.key)
+                // 终态移除：think / 轻提示在结果到达后收起
+                POLICY_DISMISS_ON_TERMINAL -> messageStore.remove(lastEntry.key)
+                // APPEND / KEEP / 其它：保留上一条 think
+                else -> Unit
+            }
+        }
+        ingestMessages(listOf(newMsg))
+    }
+
+    /**
      * 合并并刷新渲染列表：按消息 ID 去重（同 ID 覆盖以实现更新/替换），
      * 再按 sequenceNo 升序映射为端侧 [ClawAgentMessageInfo] 后回推 [messageList]。
      * TODO displayPolicy 为 REPLACE_TARGET/DISMISS_ON_TERMINAL 等终态策略暂未处理，后续按需补充。
@@ -643,6 +673,10 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
         return ClawAgentMsgAdapter.TYPE_AGENT_TEXT
     }
 
+    /** 是否思考态（think）中间态消息：enterSession / 历史分页等终态数据里的此类残留不再展示 */
+    private fun JobAgentMessage.isThinkMessage(): Boolean =
+        resolveItemType(this) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
+
     override fun onCleared() {
         sseHandler.cancel()
         super.onCleared()
@@ -666,6 +700,10 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
         // messagePhase / messageStatus（思考态判定）
         private const val PHASE_PROCESSING = "PROCESSING"
         private const val STATUS_STREAMING = "STREAMING"
+
+        // displayPolicy（端侧展示策略）：think 等中间态消息在结果消息到达后的收口方式
+        private const val POLICY_REPLACE_ON_TERMINAL = "REPLACE_ON_TERMINAL"
+        private const val POLICY_DISMISS_ON_TERMINAL = "DISMISS_ON_TERMINAL"
 
         // cardType：以下 5 个为接口已定义取值
         private const val CARD_UPLOAD_RESUME = "UPLOAD_RESUME"
