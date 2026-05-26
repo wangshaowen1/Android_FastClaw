@@ -266,6 +266,10 @@ interface ApiService {
     suspend fun understandingDetail(): ApiResponse<UnderstandingDetail?>
 
 
+    @POST(ApiConstants.RESUME_QUERY)
+    suspend fun resumeQuery(@Body body: PagedBody): ApiResponse<PagedList<ResumeData>?>
+
+
 
 
 }

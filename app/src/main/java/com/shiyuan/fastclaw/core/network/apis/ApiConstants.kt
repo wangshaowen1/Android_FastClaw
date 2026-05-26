@@ -120,6 +120,8 @@ object ApiConstants {
     const val UNDERSTANDING_SCORE = "/api/candidate/app/jobAgent/understanding/score/query"
     const val UNDERSTANDING_DETAIL = "/api/candidate/app/jobAgent/understanding/detail/query"
 
+    const val RESUME_QUERY = "/api/candidate/app/jobAgent/resume/list/query"
+
     /**
      * 查询用户钱包信息
      */

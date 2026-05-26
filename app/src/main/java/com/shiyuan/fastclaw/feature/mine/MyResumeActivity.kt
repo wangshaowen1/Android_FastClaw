@@ -63,7 +63,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         super.onCreate(savedInstanceState)
         initView()
         initObservers()
-        mRealVM.queryLatestResume()
+        mRealVM.queryResumeList()
     }
 
     override fun setTranslucentStatus() {
@@ -79,6 +79,10 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             UploadCancelDialog.show(this.supportFragmentManager,{
                 uploadResume()
             })
+        }
+
+        binding.btnUploadResume.setOnSingleClickListener {
+            uploadResume()
         }
     }
 
@@ -97,11 +101,16 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
     private fun initObservers() {
         mRealVM.resumeData.observe(this) {
             it?.let {
-                binding.ll.visibility = if(it.hasLatestResume) View.VISIBLE else View.GONE
-                if(it.hasLatestResume){
-                    binding.tvTime.text = "上传于 ${it.submitTime}"
-                    binding.tvName.text = it.resumeFileName ?: ""
-                }
+                    binding.tvTip.text =resources.getString(R.string.resume_tip)
+                    binding.cl.visibility= View.VISIBLE
+                    binding.btnUploadResume.visibility= View.GONE
+
+                    binding.tvTime.text = "上传于 ${it.updateTime}"
+                    binding.tvName.text = it.resumeName ?:  it.fileName
+            } ?:run {
+                binding.tvTip.text =resources.getString(R.string.resume_tip2)
+                binding.cl.visibility= View.GONE
+                binding.btnUploadResume.visibility= View.VISIBLE
             }
         }
 
@@ -109,7 +118,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             Log.d("checkStatus", data.safeCheckStatus)
             when (data.safeCheckStatus) {
                 PASS -> {
-                    mRealVM.queryLatestResume()
+                    mRealVM.queryResumeList()
                     "简历上传成功".showToast()
                     stopResumePolling()  // ✅ 停止轮询
                 }

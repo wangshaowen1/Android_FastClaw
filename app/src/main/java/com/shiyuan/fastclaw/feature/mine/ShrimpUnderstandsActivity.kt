@@ -16,6 +16,7 @@ import com.google.android.flexbox.JustifyContent
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
@@ -50,7 +51,7 @@ class ShrimpUnderstandsActivity :
     }
 
     private val progress: Int by lazy { intent.getIntExtra(EXTRA_PROGRESS, 0) }
-    private val mAdapter1 by lazy {
+    private val mAdapter2 by lazy {
         SingleBindingAdapter<ItemJobPreference1Binding, FieldItems>(
             R.layout.item_job_preference1,
             emptyList(),
@@ -96,14 +97,14 @@ class ShrimpUnderstandsActivity :
         )
     }
 
-    private val mAdapter2 by lazy {
+    private val mAdapter1 by lazy {
         SingleBindingAdapter<ItemJobPreference2Binding, FieldItems>(
             R.layout.item_job_preference2,
             emptyList(),
             onBind = { binding, position, item ->
                 binding.tvTile.text = item.fieldName ?: ""
                 when (item.fieldType) {
-                    "EDUCATION_INFO", "PROJECT_EXPERIENCE" ,"WORK_EXPERIENCE"-> {
+                    "EDUCATION_INFO", "PROJECT_EXPERIENCE" ,"WORK_EXPERIENCE","CERTIFICATE_INFO"-> {
                         binding.tvConnect.visibility = View.GONE
                         binding.rcConnect.visibility = View.VISIBLE
                         val subAdapter = SingleBindingAdapter<ItemJobPreference2SonBinding, FieldItems>(
@@ -133,7 +134,8 @@ class ShrimpUnderstandsActivity :
                     else -> {
                         binding.rcConnect.visibility = View.GONE
                         binding.tvConnect.visibility = View.VISIBLE
-                        binding.tvConnect.text = item.fieldValue ?: ""
+                        binding.tvConnect.text =item.fieldItems.firstOrNull()?.fieldValue ?: item.fieldValue ?: ""
+
                     }
                 }
             }
@@ -147,7 +149,8 @@ class ShrimpUnderstandsActivity :
         super.onCreate(savedInstanceState)
         initView()
         initObservers()
-        mRealVM.setMockData()
+        mRealVM.understandingDetail()
+        // mRealVM.setMockData()
     }
 
     override fun setTranslucentStatus() {
@@ -165,6 +168,7 @@ class ShrimpUnderstandsActivity :
             addItemDecoration(SpaceDecoration(20.dp, SpaceDecoration.Direction.MIDDLE))
             binding.rvUnderstands1.adapter = mAdapter1
         }
+
         binding.rvUnderstands2.apply {
             layoutManager =
                 LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
@@ -175,6 +179,29 @@ class ShrimpUnderstandsActivity :
         binding.tvTable2.setOnSingleClickListener { mRealVM.tableIndex.postValue(1) }
     }
 
+    fun setConnectVisibility(){
+        if(mRealVM.tableIndex.value == 0){
+            binding.flUnderstands2.visibility = View.GONE
+            if( mRealVM.resumeInfo.value.isNullOrEmpty()){
+                binding.viewUnderstands.root.visibility = View.VISIBLE
+                binding.flUnderstands1.visibility = View.GONE
+            }else{
+                binding.viewUnderstands.root.visibility = View.GONE
+                binding.flUnderstands1.visibility = View.VISIBLE
+            }
+            mAdapter1.submitList(mRealVM.resumeInfo.value)
+        }else{
+            binding.flUnderstands1.visibility = View.GONE
+            if( mRealVM.jobPreference.value.isNullOrEmpty()){
+                binding.viewUnderstands.root.visibility = View.VISIBLE
+                binding.flUnderstands2.visibility = View.GONE
+            }else{
+                binding.viewUnderstands.root.visibility = View.GONE
+                binding.flUnderstands2.visibility = View.VISIBLE
+            }
+            mAdapter2.submitList(mRealVM.resumeInfo.value)
+        }
+    }
     private fun initObservers() {
         mRealVM.tableIndex.observe(this) {
             if (it == 0) {
@@ -186,11 +213,7 @@ class ShrimpUnderstandsActivity :
                 binding.tvTable2.setTextColor(resources.getColor(R.color.color_666666))
                 binding.ivTable2.visibility = View.GONE
 
-                binding.flUnderstands1.visibility = View.VISIBLE
-                binding.flUnderstands2.visibility = View.GONE
-                mRealVM.underStandingDetail.value?.let { detail ->
-                    mAdapter1.submitList(detail.jobPreference)
-                }
+                setConnectVisibility()
             } else {
                 binding.tvTable1.background = null
                 binding.tvTable1.setTextColor(resources.getColor(R.color.color_666666))
@@ -200,27 +223,24 @@ class ShrimpUnderstandsActivity :
                 binding.tvTable2.setTextColor(resources.getColor(R.color.white))
                 binding.ivTable2.visibility = View.VISIBLE
 
-
-                binding.flUnderstands1.visibility = View.GONE
-                binding.flUnderstands2.visibility = View.VISIBLE
-                mRealVM.underStandingDetail.value?.let { detail ->
-                    mAdapter2.submitList(detail.resumeInfo)
-                }
+                setConnectVisibility()
             }
         }
-        mRealVM.underStandingDetail.observe(this) { detail ->
-            detail ?: return@observe
-            binding.tvName.text = detail.titleInfo.getOrNull(0)?.fieldValue ?: ""
-            binding.tvTip.text = detail.titleInfo.getOrNull(1)?.fieldValue ?: ""
+
+
+        mRealVM.resumeInfo.observe(this) { data ->
+            setConnectVisibility()
+        }
+        mRealVM.jobPreference.observe(this) { data ->
+            setConnectVisibility()
+        }
+        mRealVM.titleInfo.observe(this) { data ->
+            data ?: return@observe
+            binding.tvName.text = data.getOrNull(0)?.fieldValue ?: "暂无"
+            binding.tvTip.text = data.getOrNull(1)?.fieldValue ?: "暂无"
             binding.waveView.progress =progress
             binding.waveView.text ="${progress}%"
-            val currentIndex = mRealVM.tableIndex.value ?: 0
-            if (currentIndex == 0) {
-                mAdapter1.submitList(detail.jobPreference)
-            } else {
-                mAdapter2.submitList(detail.resumeInfo)
-            }
         }
-
     }
+
 }

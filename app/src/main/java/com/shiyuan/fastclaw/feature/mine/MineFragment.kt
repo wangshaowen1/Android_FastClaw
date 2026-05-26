@@ -19,6 +19,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /**
@@ -64,9 +65,10 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         })
         mRealVM.underStandingScore.observe(this){
+            Log.d("underStandingScore",it.toJsonString())
             it?.understandingScore?.let {
                 if(it == 0){
-                    binding.layoutMineLj.visibility = View.VISIBLE
+                    binding.layoutMineLj.visibility = View.GONE
                 }else{
                     binding.layoutMineLj.visibility = View.VISIBLE
                     binding.waveView.progress =it

@@ -9,9 +9,25 @@
 
 
     <LinearLayout
+        android:background="@drawable/bg_ffffff_r18"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="191dp"
+        android:gravity="center"
         android:orientation="vertical">
+        
+        <ImageView
+            android:src="@drawable/ic_empty2"
+            android:layout_width="61dp"
+            android:layout_height="61dp">
+        </ImageView>
+
+        <TextView
+            android:textColor="@color/color_999999"
+            android:textSize="12sp"
+            android:layout_marginTop="10dp"
+            android:text="@string/report_empty_tip2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 
     </LinearLayout>
