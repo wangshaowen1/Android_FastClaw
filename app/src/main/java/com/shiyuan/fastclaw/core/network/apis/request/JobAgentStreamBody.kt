@@ -38,7 +38,7 @@ data class JobAgentStreamBody(
  */
 data class AgentMsgAction(
     val actionCode: String? = null,
-    val sourceMessageId: Long? = null,
-    val questionQueueId: Long? = null,
+    val sourceMessageId: String? = null,
+    val questionQueueId: String? = null,
     val actionPayloadJson: String? = null
 )

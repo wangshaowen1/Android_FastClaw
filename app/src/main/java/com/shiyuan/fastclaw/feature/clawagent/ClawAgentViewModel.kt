@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
+import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
@@ -37,7 +38,7 @@ import java.util.UUID
  * @author TooWhiteT
  */
 
-class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
+class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 流是否正在输出中 */
     val streaming = MutableLiveData<Boolean>(false)
@@ -111,6 +112,9 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     /** 本地乐观插入的用户消息 ID，待服务端回显后把服务端字段填充进同一占位（保留 id） */
     private val optimisticUserMessageIds = LinkedHashSet<String>()
 
+    /** 记录是否初始化会话id, 用于判断是否拉取增量数据 */
+    val hasInitSession = MutableLiveData<Boolean>(false)
+
     private val sseProcessor by lazy {
         ClawAgentSseProcessor(
             onStart = {
@@ -123,6 +127,8 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
                 seq?.let { lastSeq = it }
             },
             onMessage = { msg ->
+                // 记录游标
+                latestCursor = msg.cursor
                 // message/snapshot 是完整消息，按 messageId upsert
                 sseInsertMessages(msg)
             },
@@ -150,6 +156,15 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
     private fun generateClientMessageId(): String = "${UUID.randomUUID()}_${System.currentTimeMillis()}"
 
     /**
+     * 获取消息缓存中最后一条的Cursor
+     */
+    fun getLastMessageCursor(): String? {
+        val lastEntry = messageStore.entries.lastOrNull()
+        val lastMsg = lastEntry?.value
+        return lastMsg?.cursor
+    }
+
+    /**
      * 进入或恢复会话：sessionId 为空表示首次进入，由服务端恢复最新会话
      */
     fun enterSession() {
@@ -169,6 +184,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
                 historyLoadFinished.value = hasMoreHistory
             }
         ) {
+            hasInitSession.value = true
             historyLoadFinished.value = hasMoreHistory
             val result = this.data ?: return@request
             // 记录会话上下文，供后续发送消息/增量恢复使用
@@ -330,9 +346,10 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
      * 拉取增量消息：服务端返回游标之后的新消息。
      * afterCursor 为空时默认用本地缓存的 latestCursor；成功后回写 latestCursor 供下次增量拉取。
      */
-    fun pullMessages(afterCursor: String? = null, limit: Int? = null) {
+    fun pullMessages(afterCursor: String? = null, limit: Int = 20) {
         val currentSessionId = sessionId
-        if (currentSessionId.isNullOrEmpty()) {
+        val currentConversationId = conversationId
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
             streamError.value = IllegalStateException("会话未就绪，请先进入会话")
             return
         }
@@ -341,6 +358,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
                 mRepo.api.pullMessages(
                     MessagePullBody(
                         sessionId = currentSessionId,
+                        conversationId = currentConversationId,
                         afterCursor = afterCursor ?: latestCursor,
                         limit = limit,
                     )
@@ -351,7 +369,12 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
             val result = this.data ?: return@request
             result.latestCursor?.let { latestCursor = it }
             pulledMessages.value = result
+            // 插入数据
             ingestMessages(result.messages)
+            // 递归拉取
+            if (result.hasMore == true) {
+                pullMessages(latestCursor, limit)
+            }
         }
     }
 
@@ -362,9 +385,10 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     fun loadOlderHistory() {
         val currentSessionId = sessionId
+        val currentConversationId = conversationId
         // 未就绪 / 加载中 / 没有更早消息：直接结束本次（下拉）
-        if (currentSessionId.isNullOrEmpty() || loadingHistory || !hasMoreHistory) {
-            historyLoadFinished.value = hasMoreHistory
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty() || loadingHistory || !hasMoreHistory) {
+//            historyLoadFinished.value = hasMoreHistory
             return
         }
         loadingHistory = true
@@ -375,6 +399,7 @@ class ClawAgentViewModel : AppRepositoryViewModel<AppRepository>() {
                 mRepo.api.queryMessagePage(
                     MessagePageBody(
                         sessionId = currentSessionId,
+                        conversationId = currentConversationId,
                         beforeCursor = beforeCursor,
                         pageSize = HISTORY_PAGE_SIZE,
                     )

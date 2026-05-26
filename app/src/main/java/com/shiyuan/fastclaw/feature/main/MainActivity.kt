@@ -258,7 +258,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         when (view?.id) {
             R.id.tabHome -> {
                 clickTab(
-                    tabId = R.id.rbHome,
+                    tabId = R.id.tabHome,
                     null
                 ) {
                     binding.mrg.check(R.id.rbHome) // 真正执行切换
@@ -275,9 +275,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
 
             R.id.iv_main_report -> {
-                binding.mrg.check(0)
-                binding.rbMine.isChecked = false
-                binding.rbHome.isChecked = false
+                binding.mrg.clearCheck()
                 EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
                 setKeepScreenOn(false)
                 mRealVM.showTab.set(2)

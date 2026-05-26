@@ -15,6 +15,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
@@ -22,6 +23,8 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
+import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
@@ -58,6 +61,14 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         super.onPrepareView()
         initView()
         observeData()
+    }
+
+    // 调用拉取增量消息
+    override fun onResume() {
+        super.onResume()
+        if (mRealVM.hasInitSession.value == true) {
+            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+        }
     }
 
     override fun <Data> onClick(view: View, data: Data?) {
@@ -166,7 +177,23 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
         UploadResumeDialog.show(manager = this.parentFragmentManager) { fileInfo ->
-
+            if (fileInfo != null) {
+                mRealVM.submitResume(fileInfo.uri) { path ->
+                    val map = mapOf<String, String>(
+                        "resumeFileUrl" to path,
+                        "fileName" to "${fileInfo.fileName}"
+                    )
+                    // sse 上传简历动作
+                    mRealVM.sendAction(
+                        desc = "这是我的简历",
+                        actionData = AgentMsgAction(
+                            actionCode = "RESUME_UPLOAD_SUBMIT",
+                            sourceMessageId = data.id,
+                            actionPayloadJson = GsonUtils.toJson(map)
+                        )
+                    )
+                }
+            }
         }
     }
 
