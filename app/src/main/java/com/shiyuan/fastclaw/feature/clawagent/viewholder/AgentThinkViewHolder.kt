@@ -13,6 +13,7 @@ class AgentThinkViewHolder(private val binding: ItemMsgAgentThinkBinding) : Recy
 
     fun bind(item: ClawAgentMessageInfo) {
         //TODO 绑定思考态消息数据
+        binding.tvThink.text = "${item.content}"
     }
 
 }

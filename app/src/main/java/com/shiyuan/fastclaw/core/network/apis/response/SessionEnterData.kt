@@ -115,6 +115,29 @@ data class JobAgentMessage(
 
     /** 消息创建时间，格式 yyyy-MM-dd HH:mm:ss */
     val createTime: String? = null,
+
+    /** 已有对话 ID；为空表示服务端恢复或创建 */
+    val conversationId: String? = null,
+)
+
+data class PayLoadBean(
+    val interactionState: InteractionStateBean? = null,
+    val questionQueueId: Long? = null,
+    val questionType: String? = null,
+    val questionText: String? = null,
+    val attributeGroupCode: String? = null,
+    val metaCode: String? = null,
+)
+
+data class InteractionStateBean(
+    /**
+     * ANSWERED or ACTIVE
+     */
+    val status: String? = null,
+    /**
+     * true  or  false
+     */
+    val disabled: Boolean? = null,
 )
 
 /**

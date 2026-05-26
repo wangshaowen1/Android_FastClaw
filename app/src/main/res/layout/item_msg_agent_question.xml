@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="vertical"
+        android:visibility="gone"
         app:flow_verticalGap="12dp"
         app:flow_verticalStyle="packed"
         app:flow_wrapMode="none"
