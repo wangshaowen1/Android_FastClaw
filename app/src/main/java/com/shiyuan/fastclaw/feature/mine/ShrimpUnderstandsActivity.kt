@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.AlignItems
@@ -14,17 +15,21 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isNotNull
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
+import com.shiyuan.fastclaw.common.ext.toJsonString
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.databinding.ActivityShrimpUnderstandsBinding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference1Binding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference1SonBinding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference2Binding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference2SonBinding
+import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
@@ -57,39 +62,40 @@ class ShrimpUnderstandsActivity :
             emptyList(),
             onBind = { binding, position, item ->
                 binding.tvTile.text = item.fieldName ?: ""
-                when (item.fieldType) {
-                    "JOB_EXPECTATION" -> {
-                        binding.tvConnect.visibility = View.GONE
-                        binding.rcConnect.visibility = View.VISIBLE
-                        val subAdapter = SingleBindingAdapter<ItemJobPreference1SonBinding, FieldItems>(
-                            R.layout.item_job_preference1_son,
-                            item.fieldItems,
-                            onBind = { b, _, sub -> b.tvTag.text = sub.fieldValue ?: "" })
-                        binding.rcConnect.apply {
-                            val layoutManager =
-                                FlexboxLayoutManager(this@ShrimpUnderstandsActivity).apply {
-                                    flexDirection = FlexDirection.ROW           // 水平方向排列
-                                    flexWrap = FlexWrap.WRAP                    // 自动换行
-                                    justifyContent =
-                                        JustifyContent.FLEX_START  // 起始对齐（可根据需要改为 CENTER / SPACE_BETWEEN）
-                                    alignItems =
-                                        AlignItems.STRETCH             // 拉伸以保持行高一致（或改为 FLEX_START）
-                                }
-                            addItemDecoration(
-                                SpaceDecoration(
-                                    10.dp,
-                                    SpaceDecoration.Direction.MIDDLE_HORIZONTAL
-                                )
+                if (!item.fieldItems.isNullOrEmpty() &&  item.fieldItems.size > 1) {
+                    binding.tvConnect.visibility = View.GONE
+                    binding.rcConnect.visibility = View.VISIBLE
+                    val subAdapter = SingleBindingAdapter<ItemJobPreference1SonBinding, FieldItems>(
+                        R.layout.item_job_preference1_son,
+                        item.fieldItems,
+                        onBind = { b, _, sub -> b.tvTag.text = sub.fieldValue.toString() ?: "" })
+                    binding.rcConnect.apply {
+                        val layoutManager =
+                            FlexboxLayoutManager(this@ShrimpUnderstandsActivity).apply {
+                                flexDirection = FlexDirection.ROW           // 水平方向排列
+                                flexWrap = FlexWrap.WRAP                    // 自动换行
+                                justifyContent =
+                                    JustifyContent.FLEX_START  // 起始对齐（可根据需要改为 CENTER / SPACE_BETWEEN）
+                                alignItems =
+                                    AlignItems.STRETCH             // 拉伸以保持行高一致（或改为 FLEX_START）
+                            }
+                        addItemDecoration(
+                            SpaceDecoration(
+                                10.dp,
+                                SpaceDecoration.Direction.MIDDLE_HORIZONTAL
                             )
-                            this.layoutManager = layoutManager
-                            adapter = subAdapter
-                        }
+                        )
+                        this.layoutManager = layoutManager
+                        adapter = subAdapter
                     }
-                    else -> {
-                        binding.rcConnect.visibility = View.GONE
-                        binding.tvConnect.visibility = View.VISIBLE
-                        binding.tvConnect.text = item.fieldValue ?: ""
-                    }
+                } else if(!item.fieldItems.isNullOrEmpty() &&  item.fieldItems.size == 1){
+                    binding.rcConnect.visibility = View.GONE
+                    binding.tvConnect.visibility = View.VISIBLE
+                    binding.tvConnect.text = item.fieldItems[0]?.fieldValue.toString() ?: ""
+                }else {
+                    binding.rcConnect.visibility = View.GONE
+                    binding.tvConnect.visibility = View.VISIBLE
+                    binding.tvConnect.text = item.fieldValue?.toString() ?: ""
                 }
             }
         )
@@ -102,17 +108,17 @@ class ShrimpUnderstandsActivity :
             emptyList(),
             onBind = { binding, position, item ->
                 binding.tvTile.text = item.fieldName ?: ""
-                if(item.fieldItems.isNullOrEmpty()){
-                    binding.ll.visibility =View.VISIBLE
-                    binding.rcConnect.visibility =View.GONE
+                if (item.fieldItems.isNullOrEmpty()) {
+                    binding.ll.visibility = View.VISIBLE
+                    binding.rcConnect.visibility = View.GONE
                     binding.tvLlTile.text = item.fieldName ?: ""
-                    binding.tvLlConnect.text = item.fieldValue ?: ""
+                    binding.tvLlConnect.text = item.fieldValue?.toString() ?: ""
 
                     // 展开按钮不可见
                     binding.llExpand.visibility = View.GONE
-                }else{
-                    binding.ll.visibility =View.GONE
-                    binding.rcConnect.visibility =View.VISIBLE
+                } else {
+                    binding.ll.visibility = View.GONE
+                    binding.rcConnect.visibility = View.VISIBLE
 
                     val totalSize = item.fieldItems.size
                     val isExpanded = expandState[position] == true
@@ -128,27 +134,33 @@ class ShrimpUnderstandsActivity :
                         displayList,
                         onBind = { sonBinding, _, sonItem ->
                             val hasExtra = item.fieldItems.any { it.extra != null }
-                            if(hasExtra){
-                               if(sonItem.extra.isNullOrEmpty()){
+                            if (hasExtra) {
+                                if (sonItem.extra.isNullOrEmpty()) {
                                     sonBinding.tvParentTile.visibility = View.VISIBLE
                                     sonBinding.llSon.visibility = View.GONE
-                                    sonBinding.tvParentTile.text = sonItem.fieldValue ?: ""
-                                }else{
+                                    sonBinding.tvParentTile.text =
+                                        sonItem.fieldValue?.toString() ?: ""
+                                } else {
                                     sonBinding.tvParentTile.visibility = View.GONE
                                     sonBinding.llSon.visibility = View.VISIBLE
-                                    sonBinding.tvTile.text = sonItem.fieldName  ?: ""
-                                    sonBinding.tvConnect.text = sonItem.fieldValue ?: ""
+                                    sonBinding.tvTile.text = sonItem.fieldName ?: ""
+                                    sonBinding.tvConnect.text =
+                                        sonItem.fieldValue?.toString() ?: ""
                                 }
-                            }else{
+                            } else {
                                 sonBinding.tvParentTile.visibility = View.GONE
                                 sonBinding.llSon.visibility = View.VISIBLE
-                                sonBinding.tvTile.text = sonItem.fieldName  ?: ""
-                                sonBinding.tvConnect.text = sonItem.fieldValue ?: ""
+                                sonBinding.tvTile.text = sonItem.fieldName ?: ""
+                                sonBinding.tvConnect.text = sonItem.fieldValue?.toString() ?: ""
                             }
 
                         })
                     binding.rcConnect.apply {
-                        layoutManager = LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
+                        layoutManager = LinearLayoutManager(
+                            this@ShrimpUnderstandsActivity,
+                            RecyclerView.VERTICAL,
+                            false
+                        )
                         adapter = subAdapter
                     }
 
@@ -175,14 +187,13 @@ class ShrimpUnderstandsActivity :
     }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
         initObservers()
         mRealVM.understandingScore()
         mRealVM.understandingDetail()
-        //mRealVM.setMockData()
+        // mRealVM.setMockData()
     }
 
     override fun setTranslucentStatus() {
@@ -209,32 +220,37 @@ class ShrimpUnderstandsActivity :
         }
         binding.tvTable1.setOnSingleClickListener { mRealVM.tableIndex.postValue(0) }
         binding.tvTable2.setOnSingleClickListener { mRealVM.tableIndex.postValue(1) }
+        binding.tvBt.setOnSingleClickListener {
+            finish()
+            FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
+        }
     }
 
-    fun setConnectVisibility(){
-        if(mRealVM.tableIndex.value == 0){
+    fun setConnectVisibility() {
+        if (mRealVM.tableIndex.value == 0) {
             binding.flUnderstands2.visibility = View.GONE
-            if( mRealVM.resumeInfo.value.isNullOrEmpty()){
+            if (mRealVM.resumeInfo.value.isNullOrEmpty()) {
                 binding.viewUnderstands.root.visibility = View.VISIBLE
                 binding.flUnderstands1.visibility = View.GONE
-            }else{
+            } else {
                 binding.viewUnderstands.root.visibility = View.GONE
                 binding.flUnderstands1.visibility = View.VISIBLE
             }
-           val data = convertToTwoLevels(mRealVM.resumeInfo.value ?: emptyList())
+            val data = convertToTwoLevels(mRealVM.resumeInfo.value ?: emptyList())
             mAdapter1.submitList(data)
-        }else{
+        } else {
             binding.flUnderstands1.visibility = View.GONE
-            if( mRealVM.jobPreference.value.isNullOrEmpty()){
+            if (mRealVM.jobPreference.value.isNullOrEmpty()) {
                 binding.viewUnderstands.root.visibility = View.VISIBLE
                 binding.flUnderstands2.visibility = View.GONE
-            }else{
+            } else {
                 binding.viewUnderstands.root.visibility = View.GONE
                 binding.flUnderstands2.visibility = View.VISIBLE
             }
             mAdapter2.submitList(mRealVM.jobPreference.value)
         }
     }
+
     private fun initObservers() {
         mRealVM.tableIndex.observe(this) {
             if (it == 0) {
@@ -269,17 +285,17 @@ class ShrimpUnderstandsActivity :
         }
         mRealVM.titleInfo.observe(this) { data ->
             data ?: return@observe
-            binding.tvName.text = data.getOrNull(0)?.fieldValue ?: "暂无"
-            binding.tvTip.text = data.getOrNull(1)?.fieldValue ?: "暂无"
+            binding.tvName.text = data.getOrNull(0)?.fieldValue?.toString() ?: "暂无"
+            binding.tvTip.text = data.getOrNull(1)?.fieldValue?.toString() ?: "暂无"
         }
-        mRealVM.underStandingScore.observe(this){
+        mRealVM.underStandingScore.observe(this) {
             it?.understandingScore?.let {
-                if(it== 0 || it.isNull()){
-                    binding.waveView.progress =10
-                    binding.waveView.text ="${0}%"
-                }else{
-                    binding.waveView.progress =it
-                    binding.waveView.text ="${it}%"
+                if (it == 0 || it.isNull()) {
+                    binding.waveView.progress = 10
+                    binding.waveView.text = "${0}%"
+                } else {
+                    binding.waveView.progress = it
+                    binding.waveView.text = "${it}%"
                 }
             }
         }
