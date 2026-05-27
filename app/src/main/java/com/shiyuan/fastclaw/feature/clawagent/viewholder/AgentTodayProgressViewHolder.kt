@@ -12,7 +12,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 class AgentTodayProgressViewHolder(private val binding: ItemMsgAgentTodayProgressBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo) {
-        //TODO 绑定今日进度数据
+        //TODO 待后端确认今日进展数据
     }
 
 }

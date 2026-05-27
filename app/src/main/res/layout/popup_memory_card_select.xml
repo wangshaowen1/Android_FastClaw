@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:text="小虾记住了"
+                android:text="@string/str_agent_memory_title"
                 android:textColor="@color/color_90_000000"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@id/iv_tick"
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
-                android:text="查看全部记忆"
+                android:text="@string/str_agent_memory_all"
                 android:textColor="@color/color_76_3c3c43"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@id/tv_title"
@@ -71,7 +71,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
                 android:textSize="18sp"
-                android:text="具体原因：对公司大小周不满" />
+                tools:text="具体原因：对公司大小周不满" />
 
             <TextView
                 android:id="@+id/tv_negation"
@@ -81,7 +81,7 @@
                 android:background="@drawable/bg_s1_10_000000_ffffff_r90"
                 android:paddingHorizontal="26dp"
                 android:paddingVertical="10dp"
-                android:text="不对"
+                android:text="@string/str_agent_memory_negation"
                 android:textSize="14sp"
                 android:textColor="@color/color_90_000000"
                 app:layout_constraintBottom_toBottomOf="@id/tv_confirm"
@@ -95,7 +95,7 @@
                 android:background="@drawable/bg_242424_r90"
                 android:paddingHorizontal="19dp"
                 android:paddingVertical="10dp"
-                android:text="记下了"
+                android:text="@string/str_agent_memory_confirm"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -20,6 +20,8 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadFailedBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadSuccessBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
+import com.shiyuan.fastclaw.core.network.apis.response.CardAction
+import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMatchReportViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
@@ -48,6 +50,15 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     var onUploadClickAction: (itemData: ClawAgentMessageInfo) -> Unit = {}
 
+    /** 补问卡选项点击（B 方案：仅暴露，提交后续统一接 sendAction(QUESTION_OPTION_SUBMIT)） */
+    var onQuestionOptionClickAction: (item: ClawAgentMessageInfo, option: CardOption) -> Unit = { _, _ -> }
+
+    /** 补问卡动作按钮（如跳过）点击 */
+//    var onQuestionActionClickAction: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
+
+    /** 历史简历确认卡 确认(true)/否认(false) 点击（B 方案：仅暴露，提交后续统一接） */
+    var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
+
     init {
         // 用户消息（靠右气泡）
         register(TYPE_USER_TEXT, { i, p -> SendViewHolder(ItemMsgUserRightBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
@@ -67,21 +78,38 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                 h.bind(item)
             }
         // 核心补问卡
-        register(TYPE_QUESTION, { i, p -> AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_QUESTION,
+            { i, p ->
+                AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
+                    onOptionClickListener = { item, option -> onQuestionOptionClickAction(item, option) }
+//                    onActionClickListener = { item, action -> onQuestionActionClickAction(item, action) }
+                }
+            }) { h, item -> h.bind(item) }
         // 历史简历确认卡
-        register(TYPE_PENDING_CONFIRM, { i, p -> AgentPendingConfirmViewHolder(ItemMsgAgentPendingConfirmBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_PENDING_CONFIRM,
+            { i, p ->
+                AgentPendingConfirmViewHolder(ItemMsgAgentPendingConfirmBinding.inflate(i, p, false)).apply {
+                    onConfirmClickListener = { onResumeConfirmClickAction(it, true) }
+                    onRejectClickListener = { onResumeConfirmClickAction(it, false) }
+                }
+            }) { h, item -> h.bind(item) }
         // 简历上传成功
         register(TYPE_UPLOAD_SUCCESS, { i, p -> AgentUploadSuccessViewHolder(ItemMsgAgentUploadSuccessBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 简历上传失败
-        register(TYPE_UPLOAD_FAILED, { i, p -> AgentUploadFailedViewHolder(ItemMsgAgentUploadFailedBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_UPLOAD_FAILED,
+            { i, p ->
+                AgentUploadFailedViewHolder(ItemMsgAgentUploadFailedBinding.inflate(i, p, false)).apply {
+                    onReUploadClickListener = { onUploadClickAction(it) }
+                }
+            }) { h, item -> h.bind(item) }
         // 正在寻找岗位
         register(TYPE_SEARCHING_JOBS, { i, p -> AgentSearchingJobsViewHolder(ItemMsgAgentSearchingJobsBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 暂未找到岗位
         register(TYPE_NO_JOBS_FOUND, { i, p -> AgentNoJobsFoundViewHolder(ItemMsgAgentNoJobsFoundBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
-        // 岗位匹配报告卡
-        register(TYPE_MATCH_REPORT, { i, p -> AgentMatchReportViewHolder(ItemMsgAgentMatchReportBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
-        // 今日进度卡
-        register(TYPE_TODAY_PROGRESS, { i, p -> AgentTodayProgressViewHolder(ItemMsgAgentTodayProgressBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 岗位匹配报告卡 // todo: v1.2 暂不支持
+//        register(TYPE_MATCH_REPORT, { i, p -> AgentMatchReportViewHolder(ItemMsgAgentMatchReportBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 今日进度卡 // todo: v1.2 暂不支持
+//        register(TYPE_TODAY_PROGRESS, { i, p -> AgentTodayProgressViewHolder(ItemMsgAgentTodayProgressBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 理解度升级卡
         register(TYPE_UNDERSTANDING_UPGRADE, { i, p -> AgentUnderstandingUpgradeViewHolder(ItemMsgAgentUnderstandingUpgradeBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
 
