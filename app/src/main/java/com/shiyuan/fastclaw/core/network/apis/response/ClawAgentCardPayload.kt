@@ -143,6 +143,14 @@ data class UploadResumePayloadBean(
     val title: String? = null,
     /** 卡片说明 */
     val description: String? = null,
+    /** 理解 */
+    val understandingScore: Int? = null,
+    /** 对齐度 */
+    val alignmentScore: Int? = null,
+    /** 对齐度文案 */
+    val scoreChangeText: String? = null,
+    /** 描述 */
+    val nextStepText: String? = null,
     /** 上传/解析状态：WAITING_UPLOAD / PARSING / PARSE_SUCCESS / PARSE_FAILED */
     val resumeUploadStatus: String? = null,
     /** 状态短文案，如「简历解析中」「已上传」「解析失败」 */

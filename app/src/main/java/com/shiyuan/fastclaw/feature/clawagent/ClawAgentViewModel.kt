@@ -179,8 +179,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             conversationId = result.conversationId
             latestCursor = result.latestCursor
             sessionData.value = result
-            // 恢复的最近消息为终态数据，过滤掉残留的思考态(think)中间态消息
-            ingestMessages(result.messages?.filterNot { it.isThinkMessage() })
+            // 恢复的最近消息为终态数据，过滤掉残留的思考态(think)中间态消息；并在 UPLOAD_RESUME 卡前补自我介绍卡
+            ingestMessages(expandIntroduceBeforeUploadResume(result.messages?.filterNot { it.isThinkMessage() }))
         }
     }
 
@@ -291,8 +291,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             result?.nextBeforeCursor?.let { historyBeforeCursor = it }
             hasMoreHistory = result?.hasMore ?: false
             // 更早消息 sequenceNo 更小，ingest 后按序排到列表顶部（DiffUtil 在 0 位插入，不跳动）
-            // 历史分页为终态数据，过滤掉残留的思考态(think)中间态消息
-            ingestMessages(result?.messages?.filterNot { it.isThinkMessage() })
+            // 历史分页为终态数据，过滤掉残留的思考态(think)中间态消息；并在 UPLOAD_RESUME 卡前补自我介绍卡
+            ingestMessages(expandIntroduceBeforeUploadResume(result?.messages?.filterNot { it.isThinkMessage() }))
             // 已加载到最早一页时给一次轻提示
 //            if (!hasMoreHistory) R.string.no_more_data_pull.getResString().showToast()
             historyLoadFinished.value = hasMoreHistory
@@ -452,12 +452,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // 卡片消息按 cardType 分发
         if (msg.messageType == MSG_CARD) {
             return when (msg.cardType) {
+                // 引导上传、上传状态
+                CARD_INTRODUCE_YOURSELF -> ClawAgentMsgAdapter.TYPE_WELCOME
                 CARD_UPLOAD_RESUME -> resolveUploadResumeItemType(msg)
                 CARD_HISTORY_RESUME_CONFIRM -> ClawAgentMsgAdapter.TYPE_PENDING_CONFIRM
                 CARD_CORE_QUESTION -> ClawAgentMsgAdapter.TYPE_QUESTION
                 CARD_UNDERSTANDING_SUMMARY -> ClawAgentMsgAdapter.TYPE_UNDERSTANDING_UPGRADE
-                CARD_RESUME_UPLOAD_SUCCESS -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
-                CARD_RESUME_UPLOAD_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
+                CARD_RESUME_RECEIVED -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
                 CARD_JOB_SEARCHING -> ClawAgentMsgAdapter.TYPE_SEARCHING_JOBS
                 CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
                 // todo: v1.2 暂时不做
@@ -476,9 +477,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.resumeUploadStatus }.getOrNull()
         }
         return when (status) {
-            UPLOAD_STATUS_PARSE_SUCCESS -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
             UPLOAD_STATUS_PARSE_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
-            else -> ClawAgentMsgAdapter.TYPE_WELCOME // WAITING_UPLOAD / PARSING / null
+            UPLOAD_STATUS_WAITING_UPLOAD -> ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT
+            else -> ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT // WAITING_UPLOAD / PARSING / null
         }
     }
 
@@ -489,6 +490,32 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否属性确认卡（ATTRIBUTE_CONFIRM）：走记忆确认弹窗，不进对话列表 */
     private fun JobAgentMessage.isAttributeConfirm(): Boolean =
         messageType == MSG_CARD && cardType == CARD_ATTRIBUTE_CONFIRM
+
+    /** 是否上传简历卡（UPLOAD_RESUME） */
+    private fun JobAgentMessage.isUploadResumeCard(): Boolean =
+        messageType == MSG_CARD && cardType == CARD_UPLOAD_RESUME
+
+    /**
+     * 终态消息列表展开：在每条 UPLOAD_RESUME 卡前补一条端侧自我介绍(CARD_INTRODUCE_YOURSELF/欢迎)卡。
+     * 仅 enterSession / loadOlderHistory 的终态数据会下发 UPLOAD_RESUME，故只在这两处入口展开（SSE/增量拉取不经此）。
+     * 合成卡 .copy 自来源卡（沿用 sequenceNo/cursor/payloadJson），messageId 由来源派生以保证 upsert 幂等；
+     * 凭相同 sequenceNo + 稳定排序、且先于上传卡插入 [messageStore]，渲染时紧贴在上传卡上方。
+     */
+    private fun expandIntroduceBeforeUploadResume(messages: List<JobAgentMessage>?): List<JobAgentMessage>? {
+        if (messages.isNullOrEmpty()) return messages
+        return messages.flatMap { msg ->
+            if (msg.isUploadResumeCard()) {
+                val sourceId = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: UUID.randomUUID().toString()
+                val introduce = msg.copy(
+                    messageId = "${sourceId}_$CARD_INTRODUCE_YOURSELF",
+                    cardType = CARD_INTRODUCE_YOURSELF,
+                )
+                listOf(introduce, msg)
+            } else {
+                listOf(msg)
+            }
+        }
+    }
 
     // endregion
 
@@ -744,9 +771,12 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // resumeUploadStatus：上传简历卡状态机（PARSE_SUCCESS / PARSE_FAILED 路由到独立卡）
         private const val UPLOAD_STATUS_PARSE_SUCCESS = "PARSE_SUCCESS"
         private const val UPLOAD_STATUS_PARSE_FAILED = "PARSE_FAILED"
+        private const val UPLOAD_STATUS_WAITING_UPLOAD = "WAITING_UPLOAD"
 
         // cardType：以下 5 个为接口已定义取值
         private const val CARD_UPLOAD_RESUME = "UPLOAD_RESUME"
+        // 收到简历
+        private const val CARD_RESUME_RECEIVED = "RESUME_RECEIVED"
         // 历史已上传过简历确认卡片
         private const val CARD_HISTORY_RESUME_CONFIRM = "HISTORY_RESUME_CONFIRM"
         // 问答卡片
@@ -755,13 +785,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_ATTRIBUTE_CONFIRM = "ATTRIBUTE_CONFIRM"
         // 理解升级
         private const val CARD_UNDERSTANDING_SUMMARY = "UNDERSTANDING_SUMMARY"
-
+        // 自我介绍
+        private const val CARD_INTRODUCE_YOURSELF = "CARD_INTRODUCE_YOURSELF"
         //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
 
-        // 上传成功
-        private const val CARD_RESUME_UPLOAD_SUCCESS = "RESUME_UPLOAD_SUCCESS"
-        // 上传失败
-        private const val CARD_RESUME_UPLOAD_FAILED = "RESUME_UPLOAD_FAILED"
         // 寻找岗位中
         private const val CARD_JOB_SEARCHING = "JOB_SEARCHING"
         // 暂未找到合适岗位

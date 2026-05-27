@@ -22,11 +22,13 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMatchReportViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPendingConfirmViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentResumeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentSearchingJobsViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentThinkViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTodayProgressViewHolder
@@ -67,16 +69,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         // agent 思考中
         register(TYPE_AGENT_THINK, { i, p -> AgentThinkViewHolder(ItemMsgAgentThinkBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 欢迎引导卡
-        register(TYPE_WELCOME,
-            { i, p ->
-                AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)).apply {
-                    onUploadClickListener = { itemData ->
-                        onUploadClickAction(itemData)
-                    }
-                }
-            }) { h, item ->
-                h.bind(item)
-            }
+        register(TYPE_WELCOME, { i, p -> AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 核心补问卡
         register(TYPE_QUESTION,
             { i, p ->
@@ -95,6 +88,17 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             }) { h, item -> h.bind(item) }
         // 简历上传成功
         register(TYPE_UPLOAD_SUCCESS, { i, p -> AgentUploadSuccessViewHolder(ItemMsgAgentUploadSuccessBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 简历上传指引
+        register(TYPE_UPLOAD_WAIT,
+            { i, p ->
+                AgentResumeViewHolder(ItemMsgAgentResumeBinding.inflate(i, p, false)).apply {
+                    onUploadClickListener = { itemData ->
+                        onUploadClickAction(itemData)
+                    }
+                }
+            }) { h, item ->
+            h.bind(item)
+        }
         // 简历上传失败
         register(TYPE_UPLOAD_FAILED,
             { i, p ->
@@ -183,22 +187,25 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         /** 简历上传成功 */
         const val TYPE_UPLOAD_SUCCESS = 6
 
+        /** 引导简历上传 */
+        const val TYPE_UPLOAD_WAIT = 7
+
         /** 简历上传失败 */
-        const val TYPE_UPLOAD_FAILED = 7
+        const val TYPE_UPLOAD_FAILED = 8
 
         /** 正在寻找岗位 */
-        const val TYPE_SEARCHING_JOBS = 8
+        const val TYPE_SEARCHING_JOBS = 9
 
         /** 暂未找到岗位 */
-        const val TYPE_NO_JOBS_FOUND = 9
+        const val TYPE_NO_JOBS_FOUND = 10
 
         /** 岗位匹配报告卡 */
-        const val TYPE_MATCH_REPORT = 10
+        const val TYPE_MATCH_REPORT = 11
 
         /** 今日进度卡 */
-        const val TYPE_TODAY_PROGRESS = 11
+        const val TYPE_TODAY_PROGRESS = 12
 
         /** 理解度升级卡 */
-        const val TYPE_UNDERSTANDING_UPGRADE = 12
+        const val TYPE_UNDERSTANDING_UPGRADE = 13
     }
 }
