@@ -244,7 +244,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             result.latestCursor?.let { latestCursor = it }
             pulledMessages.value = result
             // 插入数据
-            ingestMessages(result.messages)
+            ingestMessages(result.messages?.filterNot { it.isThinkMessage() })
             // 递归拉取
             if (result.hasMore == true) {
                 pullMessages(latestCursor, limit)
