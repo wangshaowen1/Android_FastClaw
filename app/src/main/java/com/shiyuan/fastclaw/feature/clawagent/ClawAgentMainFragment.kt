@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -26,9 +27,11 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
@@ -118,13 +121,50 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         msgAdapter.onUploadClickAction = { data ->
             showUploadResumeDialog(data)
         }
-        // 补问卡选项/动作点击（B 方案：暂只暴露，提交后续统一接 sendAction）
+        // 补问卡选项点击：actionCode 取自 payload option（如 QUESTION_OPTION_SUBMIT），actionPayload 原样回传
         msgAdapter.onQuestionOptionClickAction = { item, option ->
-            // TODO 接 sendAction(actionCode = QUESTION_OPTION_SUBMIT, sourceMessageId = item.id, ...)
+            forceScrollToBottom = true
+            mRealVM.sendAction(
+                desc = option.text ?: option.label.orEmpty(),
+                actionData = AgentMsgAction(
+                    actionCode = option.actionCode,
+                    sourceMessageId = item.id,
+                    actionPayloadJson = option.actionPayload?.let { GsonUtils.toJson(it) },
+                )
+            )
         }
-        // 历史简历确认卡 确认/否认（B 方案：暂只暴露，提交后续统一接 sendAction(RESUME_CONFIRM_YES/NO)）
+        // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
+        msgAdapter.onQuestionActionClickAction = { item, action ->
+            forceScrollToBottom = true
+            mRealVM.sendAction(
+                desc = action.text.orEmpty(),
+                actionData = AgentMsgAction(
+                    actionCode = action.actionCode,
+                    sourceMessageId = item.id,
+                    actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
+                )
+            )
+        }
+        // 历史简历确认卡 确认/否认：actionCode 用端侧动作枚举，回传 resumeId/resumeStructId/resumeTaskId
         msgAdapter.onResumeConfirmClickAction = { item, confirmed ->
-            // TODO 接 sendAction(actionCode = if (confirmed) RESUME_CONFIRM_YES else RESUME_CONFIRM_NO, sourceMessageId = item.id, ...)
+            forceScrollToBottom = true
+            val payload = item.metaData?.let {
+                runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
+            }
+            val payloadMap = buildMap {
+                payload?.resumeId?.let { put("resumeId", it) }
+                payload?.resumeStructId?.let { put("resumeStructId", it) }
+                payload?.resumeTaskId?.let { put("resumeTaskId", it) }
+            }
+            mRealVM.sendAction(
+                desc = getString(if (confirmed) R.string.confirm_my_resume else R.string.not_my_resume),
+                actionData = AgentMsgAction(
+                    actionCode = (if (confirmed) CandidateJobAgentClientActionEnum.RESUME_CONFIRM_YES
+                    else CandidateJobAgentClientActionEnum.RESUME_CONFIRM_NO).name,
+                    sourceMessageId = item.id,
+                    actionPayloadJson = payloadMap.takeIf { it.isNotEmpty() }?.let { GsonUtils.toJson(it) },
+                )
+            )
         }
 
         // 无感知加载：向上滚动到接近顶部时提前预取更早历史（DiffUtil 顶部静默插入，不出现下拉转圈）
@@ -149,7 +189,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
 
         binding.ivAgentAvatar.setOnClickListener {
-
+//            mRealVM.testPopupMsg()
         }
 
         binding.etSend.doAfterTextChanged { editable ->
@@ -177,6 +217,19 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     }
 
     private fun observeData() {
+        observeEvents {
+            on<Events.UserChangedEvent> { event ->
+                // 用户操作重置
+                mRealVM.reset()
+                if (event.eventType == Events.UserChangedEvent.SIGN_IN) {
+                    // 登录重新建立会话
+                    if (!AppNavigator.checkLoginIntercepted(false)) {
+                        mRealVM.enterSession()
+                    }
+                }
+            }
+        }
+
         if (!AppNavigator.checkLoginIntercepted(false)) {
             mRealVM.enterSession()
         }

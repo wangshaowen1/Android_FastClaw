@@ -54,7 +54,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     var onQuestionOptionClickAction: (item: ClawAgentMessageInfo, option: CardOption) -> Unit = { _, _ -> }
 
     /** 补问卡动作按钮（如跳过）点击 */
-//    var onQuestionActionClickAction: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
+    var onQuestionActionClickAction: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
 
     /** 历史简历确认卡 确认(true)/否认(false) 点击（B 方案：仅暴露，提交后续统一接） */
     var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
@@ -82,7 +82,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             { i, p ->
                 AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
                     onOptionClickListener = { item, option -> onQuestionOptionClickAction(item, option) }
-//                    onActionClickListener = { item, action -> onQuestionActionClickAction(item, action) }
+                    onActionClickListener = { item, action -> onQuestionActionClickAction(item, action) }
                 }
             }) { h, item -> h.bind(item) }
         // 历史简历确认卡

@@ -134,7 +134,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             },
             onComplete = {
                 checkLastMessages()
-                // 拉取增量消息
+                // 拉取增量消息 前端兜底
                 pullMessages()
                 streaming.value = false
             },
@@ -375,6 +375,20 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
         ingestMessages(listOf(newMsg))
     }
+
+    /**
+     * 测试记忆卡片弹窗
+     */
+//    fun testPopupMsg() {
+//        attributeConfirmPopup.value = ClawAgentMessageInfo(
+//            id = generateClientMessageId(),
+//            messageType = 1,
+//            sendObj = SENDER_AGENT,
+//            receiveObj = SENDER_USER,
+//            content = "记忆卡片测试",
+//            metaData = GsonUtils.toJson(mapOf<String, String>("memoryText" to "记忆卡片 - 问题"))
+//        )
+//    }
 
     /**
      * 合并并刷新渲染列表：按消息 ID 去重（同 ID 覆盖以实现更新/替换），
@@ -685,6 +699,18 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             actionResult.value = result
             ingestMessages(result.messages)
         }
+    }
+
+    /**
+     * 退出登录 用来重置
+     */
+    fun reset() {
+        sseHandler.cancel()
+        sessionId = null
+        conversationId = null
+        latestCursor = null
+        messageStore.clear()
+        messageList.value = listOf()
     }
 
     override fun onCleared() {

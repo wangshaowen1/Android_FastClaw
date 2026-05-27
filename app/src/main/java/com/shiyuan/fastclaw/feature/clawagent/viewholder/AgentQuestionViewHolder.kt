@@ -25,7 +25,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     var onOptionClickListener: (item: ClawAgentMessageInfo, option: CardOption) -> Unit = { _, _ -> }
 
     /** 动作按钮（如跳过）点击回调（B 方案：仅暴露，提交后续统一接） */
-//    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
+    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
 
     /** 上次动态添加的选项/动作行，复用前先移除 */
     private val optionRows = ArrayList<View>()
@@ -43,7 +43,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             val repliedText = payload?.answeredText
                 ?: payload?.interactionState?.selectedText
                 ?: ""
-            binding.tvReplied.text = binding.root.context.getString(R.string.str_agent_question_replied, repliedText)
+            binding.tvReplied.text = "${repliedText}"
         } else {
             // 未回复：展示选项 + 动作按钮
             binding.tvReplied.gone()
@@ -82,16 +82,16 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             optionRows.add(view)
         }
         // 动作按钮（如跳过）布局无专用位置，渲染到选项流末尾
-//        payload?.actions?.forEach { action ->
-//            val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
-//            view.text = action.text.orEmpty()
-//            view.isEnabled = action.disabled != true
-//            view.id = View.generateViewId()
-//            view.setOnClickListener { onActionClickListener(item, action) }
-//            parent.addView(view)
-//            ids.add(view.id)
-//            optionRows.add(view)
-//        }
+        payload?.actions?.forEach { action ->
+            val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
+            view.text = action.text.orEmpty()
+            view.isEnabled = action.disabled != true
+            view.id = View.generateViewId()
+            view.setOnClickListener { onActionClickListener(item, action) }
+            parent.addView(view)
+            ids.add(view.id)
+            optionRows.add(view)
+        }
         binding.flowOptions.referencedIds = ids.toIntArray()
     }
 
