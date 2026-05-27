@@ -31,7 +31,7 @@
     <string name="resume_recognized_confirm">识别到你有简历上传，请确认</string>
     <string name="resume_recognized_desc">这会非常重要，我会根据简历来了解你。</string>
     <string name="not_my_resume">不是，重新上传</string>
-    <string name="confirm_my_resume">是我的简历</string>
+    <string name="confirm_my_resume">我的简历</string>
     <string name="confirm_delete">确认删除</string>
     <string name="copy_success">复制成功</string>
     <string name="mp3">MP3</string>
@@ -581,7 +581,7 @@
     <string name="shrimp_understands">小虾对我的理解</string>
     <string name="mine_current_sticks">可用虾条</string>
     <string name="mine_rule">虾条规则</string>
-    <string name="mine_tip">每日打开APP都可以获得10根虾条哦～</string>
+    <string name="mine_tip">每日打开APP都可以获得2根虾条哦～</string>
     <string name="mine_tip2">知道了</string>
 
     <string name="report_my_name">我的报告</string>

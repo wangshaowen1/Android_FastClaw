@@ -4,6 +4,7 @@ import FieldItems
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,6 +33,8 @@ import com.shiyuan.fastclaw.databinding.ItemJobPreference2SonBinding
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+import kotlin.collections.component1
+import kotlin.collections.iterator
 
 /**
  * @Introduce: 小虾理解
@@ -62,7 +65,7 @@ class ShrimpUnderstandsActivity :
             emptyList(),
             onBind = { binding, position, item ->
                 binding.tvTile.text = item.fieldName ?: ""
-                if (!item.fieldItems.isNullOrEmpty() &&  item.fieldItems.size > 1) {
+                if (!item.fieldItems.isNullOrEmpty() && item.fieldItems.size > 1) {
                     binding.tvConnect.visibility = View.GONE
                     binding.rcConnect.visibility = View.VISIBLE
                     val subAdapter = SingleBindingAdapter<ItemJobPreference1SonBinding, FieldItems>(
@@ -88,11 +91,11 @@ class ShrimpUnderstandsActivity :
                         this.layoutManager = layoutManager
                         adapter = subAdapter
                     }
-                } else if(!item.fieldItems.isNullOrEmpty() &&  item.fieldItems.size == 1){
+                } else if (!item.fieldItems.isNullOrEmpty() && item.fieldItems.size == 1) {
                     binding.rcConnect.visibility = View.GONE
                     binding.tvConnect.visibility = View.VISIBLE
                     binding.tvConnect.text = item.fieldItems[0]?.fieldValue.toString() ?: ""
-                }else {
+                } else {
                     binding.rcConnect.visibility = View.GONE
                     binding.tvConnect.visibility = View.VISIBLE
                     binding.tvConnect.text = item.fieldValue?.toString() ?: ""
@@ -192,8 +195,8 @@ class ShrimpUnderstandsActivity :
         initView()
         initObservers()
         mRealVM.understandingScore()
-        mRealVM.understandingDetail()
-        // mRealVM.setMockData()
+          mRealVM.understandingDetail()
+        //mRealVM.setMockData()
     }
 
     override fun setTranslucentStatus() {
@@ -236,7 +239,8 @@ class ShrimpUnderstandsActivity :
                 binding.viewUnderstands.root.visibility = View.GONE
                 binding.flUnderstands1.visibility = View.VISIBLE
             }
-            val data = convertToTwoLevels(mRealVM.resumeInfo.value ?: emptyList())
+            val merged = mergeFieldItems(mRealVM.resumeInfo.value ?: emptyList())
+            val data = convertToTwoLevels(merged)
             mAdapter1.submitList(data)
         } else {
             binding.flUnderstands1.visibility = View.GONE
@@ -285,8 +289,12 @@ class ShrimpUnderstandsActivity :
         }
         mRealVM.titleInfo.observe(this) { data ->
             data ?: return@observe
-            binding.tvName.text = data.getOrNull(0)?.fieldValue?.toString() ?: "暂无"
-            binding.tvTip.text = data.getOrNull(1)?.fieldValue?.toString() ?: "暂无"
+            // 安全获取 jobStatus，若为 null 则显示“暂无”
+            binding.tvTip.text = data.firstOrNull { it.fieldCode == "jobStatus" }
+                ?.fieldValue?.toString() ?: "暂无"
+            // 安全获取 name，若为 null 则显示“暂无”
+            binding.tvName.text = data.firstOrNull { it.fieldCode == "name" }
+                ?.fieldValue?.toString() ?: "暂无"
         }
         mRealVM.underStandingScore.observe(this) {
             it?.understandingScore?.let {
@@ -366,4 +374,54 @@ class ShrimpUnderstandsActivity :
         )
     }
 
+    fun mergeFieldItems(items: List<FieldItems>): List<FieldItems> {
+        if (items.isEmpty()) return emptyList()
+
+        // 1. 先递归处理每个节点的子项，得到新的节点列表
+        val processed = items.map { item ->
+            FieldItems(
+                fieldCode = item.fieldCode,
+                fieldName = item.fieldName,
+                fieldType = item.fieldType,
+                fieldValue = item.fieldValue,
+                fieldItems = mergeFieldItems(item.fieldItems), // 递归处理子项
+                extra = item.extra
+            )
+        }
+
+        // 2. 按 fieldCode 分组（过滤掉 fieldCode 为空的项）
+        val grouped = processed.filter { it.fieldCode != null }.groupBy { it.fieldCode!! }
+        val result = mutableListOf<FieldItems>()
+
+        for ((code, group) in grouped) {
+            // 检查该组中所有节点的 fieldItems 是否都为空（即都是叶子节点）
+            val allLeaf = group.all { it.fieldItems.isEmpty() }
+            if (allLeaf && group.size > 1) {
+                // 合并：拼接 fieldValue
+                val mergedValue = group.mapNotNull { it.fieldValue?.toString() }
+                    .filter { it.isNotBlank() }
+                    .joinToString(",")
+                    .takeIf { it.isNotEmpty() }
+                val first = group.first()
+                result.add(
+                    FieldItems(
+                        fieldCode = code,
+                        fieldName = first.fieldName,
+                        fieldType = first.fieldType,
+                        fieldValue = mergedValue,
+                        fieldItems = emptyList(),
+                        extra = first.extra
+                    )
+                )
+            } else {
+                // 不合并，直接添加所有节点
+                result.addAll(group)
+            }
+        }
+
+        // 3. 添加 fieldCode 为 null 的节点（原样保留）
+        result.addAll(processed.filter { it.fieldCode == null })
+
+        return result
+    }
 }
