@@ -133,6 +133,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 streaming.value = false
             },
             onComplete = {
+                checkLastMessages()
+                // 拉取增量消息
+                pullMessages()
                 streaming.value = false
             },
             onErrorCallback = { e ->
@@ -308,6 +311,17 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val lastEntry = messageStore.entries.lastOrNull()
         val lastMsg = lastEntry?.value
         return lastMsg?.cursor
+    }
+
+    /**
+     * stream 结束 or 断开时如果最近消息是 Think类型，则移除
+     */
+    private fun checkLastMessages() {
+        val lastEntry = messageStore.entries.lastOrNull()
+        val lastMsg = lastEntry?.value
+        if (lastMsg != null && resolveItemType(lastMsg) == ClawAgentMsgAdapter.TYPE_AGENT_THINK) {
+            messageStore.remove(lastEntry.key)
+        }
     }
 
     /**

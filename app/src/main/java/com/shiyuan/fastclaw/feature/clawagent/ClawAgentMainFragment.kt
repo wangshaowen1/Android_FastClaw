@@ -76,8 +76,10 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     // 调用拉取增量消息
     override fun onResume() {
         super.onResume()
-        if (mRealVM.hasInitSession.value == true) {
-            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+        if (!AppNavigator.checkLoginIntercepted(false)) {
+            if (mRealVM.hasInitSession.value == true) {
+                mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+            }
         }
     }
 
@@ -175,7 +177,9 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     }
 
     private fun observeData() {
-        mRealVM.enterSession()
+        if (!AppNavigator.checkLoginIntercepted(false)) {
+            mRealVM.enterSession()
+        }
 
         mRealVM.messageList.observe(viewLifecycleOwner) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
