@@ -48,6 +48,9 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
     }
 
     private fun initView() {
+        mRealVM.userPoints.observe(this){
+            binding.tvPoints.text = it ?:"0"
+        }
         mRealVM.isLogin.observe(this,{
             if (it) {
                 User.get().userId?.let { uid ->

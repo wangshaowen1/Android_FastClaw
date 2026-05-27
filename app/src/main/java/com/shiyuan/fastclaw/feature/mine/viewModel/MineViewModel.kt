@@ -78,7 +78,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 账户虾条
      */
-    val userPoints = MutableLiveData<String>("-")
+    val userPoints = MutableLiveData<String>("0")
 
 
 
@@ -205,7 +205,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         )
         noLogIn.value = true
         balance.set("0")
-        userPoints.value = "-"
+        userPoints.value = "0"
         workCourseBanner.set(Config.Companion.get().appConfig.workCourseBanner)
     }
 
