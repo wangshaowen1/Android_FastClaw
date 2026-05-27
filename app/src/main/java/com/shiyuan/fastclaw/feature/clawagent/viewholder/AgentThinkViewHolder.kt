@@ -12,7 +12,6 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 class AgentThinkViewHolder(private val binding: ItemMsgAgentThinkBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo) {
-        //TODO 绑定思考态消息数据
         binding.tvThink.text = "${item.content}"
     }
 

@@ -12,7 +12,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 class AgentSearchingJobsViewHolder(private val binding: ItemMsgAgentSearchingJobsBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo) {
-        //TODO 绑定寻找岗位数据
+        // 暂无数据绑定
     }
 
 }

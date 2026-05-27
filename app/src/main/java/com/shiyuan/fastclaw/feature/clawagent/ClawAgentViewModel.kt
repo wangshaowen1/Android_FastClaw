@@ -2,14 +2,12 @@ package com.shiyuan.fastclaw.feature.clawagent
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
+import com.blankj.utilcode.util.GsonUtils
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
-import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
-import com.shiyuan.fastclaw.core.network.apis.request.AttributeRejectBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
@@ -28,6 +26,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
+import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.ClawAgentSseProcessor
@@ -76,11 +75,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 提交简历上传结果的返回 */
     val resumeUploadResult = MutableLiveData<ResumeUploadSubmitData?>()
 
-    /** 确认属性候选值的结果（复用动作响应 envelope，含产生的消息） */
-    val attributeConfirmResult = MutableLiveData<ActionSubmitData?>()
-
-    /** 拒绝属性候选值的结果（复用动作响应 envelope，含产生的消息） */
-    val attributeRejectResult = MutableLiveData<ActionSubmitData?>()
+    /** 收到 ATTRIBUTE_CONFIRM 卡时触发记忆确认弹窗（一次性事件，携带消息供弹窗解析展示） */
+    val attributeConfirmPopup = MutableLiveData<ClawAgentMessageInfo?>()
 
     /** 当前会话 ID，发送消息/提交动作时回传 */
     private var sessionId: String? = null
@@ -137,6 +133,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 streaming.value = false
             },
             onComplete = {
+                checkLastMessages()
+                // 拉取增量消息
+                pullMessages()
                 streaming.value = false
             },
             onErrorCallback = { e ->
@@ -150,19 +149,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         RawSSEStreamHandler(viewModelScope, sseProcessor)
     }
 
-    /**
-     * 发送消息时需要生成唯一clientMessageId，用于防重复提交
-     */
-    private fun generateClientMessageId(): String = "${UUID.randomUUID()}_${System.currentTimeMillis()}"
-
-    /**
-     * 获取消息缓存中最后一条的Cursor
-     */
-    fun getLastMessageCursor(): String? {
-        val lastEntry = messageStore.entries.lastOrNull()
-        val lastMsg = lastEntry?.value
-        return lastMsg?.cursor
-    }
+    // region 会话相关
 
     /**
      * 进入或恢复会话：sessionId 为空表示首次进入，由服务端恢复最新会话
@@ -198,149 +185,36 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 确认属性候选值：questionQueueId 来自属性确认卡（ATTRIBUTE_CONFIRM）所在消息。
-     * 复用缓存的会话上下文，成功后回写 latestCursor；reason 为可选的拒绝原因或确认备注。
+     * 查询通信会话：仅查询当前候选人的求职 Agent 实例、活跃对话和流式请求状态，不建立 SSE 连接。
+     * requestId 为空查询最近一次请求；sceneType 见接口枚举（1 / 2）。查询结果会同步本地缓存的会话上下文。
      */
-    fun confirmAttribute(questionQueueId: String, reason: String? = null) {
-        val currentSessionId = sessionId
-        val currentConversationId = conversationId
-        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
-            return
-        }
+    fun queryConversation(requestId: String? = null, sceneType: Int? = null) {
         request(
             apiBlock = {
-                mRepo.api.confirmAttribute(
-                    AttributeConfirmBody(
-                        sessionId = currentSessionId,
-                        conversationId = currentConversationId,
-                        clientActionId = UUID.randomUUID().toString(),
-                        questionQueueId = questionQueueId,
-                        reason = reason,
+                mRepo.api.queryConversation(
+                    ConversationQueryBody(
+                        conversationId = conversationId,
+                        sessionId = sessionId,
+                        requestId = requestId,
+                        sceneType = sceneType,
                     )
                 )
             },
             showToast = true,
         ) {
             val result = this.data ?: return@request
+            // 同步会话上下文，供发送消息/取消/增量恢复复用
+            result.sessionId?.let { sessionId = it }
+            result.conversationId?.let { conversationId = it }
             result.latestCursor?.let { latestCursor = it }
-            attributeConfirmResult.value = result
-            ingestMessages(result.messages)
+            conversationData.value = result
         }
     }
 
-    /**
-     * 拒绝属性候选值：questionQueueId 来自属性确认卡（ATTRIBUTE_CONFIRM）所在消息。
-     * 复用缓存的会话上下文，成功后回写 latestCursor；reason 为可选的拒绝原因。
-     */
-    fun rejectAttribute(questionQueueId: String, reason: String? = null) {
-        val currentSessionId = sessionId
-        val currentConversationId = conversationId
-        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
-            return
-        }
-        request(
-            apiBlock = {
-                mRepo.api.rejectAttribute(
-                    AttributeRejectBody(
-                        sessionId = currentSessionId,
-                        conversationId = currentConversationId,
-                        clientActionId = UUID.randomUUID().toString(),
-                        questionQueueId = questionQueueId,
-                        reason = reason,
-                    )
-                )
-            },
-            showToast = true,
-        ) {
-            val result = this.data ?: return@request
-            result.latestCursor?.let { latestCursor = it }
-            attributeRejectResult.value = result
-            ingestMessages(result.messages)
-        }
-    }
+    // endregion
 
-    /**
-     * 提交简历上传结果：端侧先完成文件上传后，回传 resumeId / resumeTaskId / resumeFileUrl 之一衔接解析。
-     * 复用缓存的会话上下文，成功后回写 latestCursor。
-     */
-    fun submitResumeUpload(
-        resumeId: String? = null,
-        resumeTaskId: String? = null,
-        resumeFileUrl: String? = null,
-    ) {
-        val currentSessionId = sessionId
-        val currentConversationId = conversationId
-        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
-            return
-        }
-        request(
-            apiBlock = {
-                mRepo.api.submitResumeUpload(
-                    ResumeUploadSubmitBody(
-                        sessionId = currentSessionId,
-                        conversationId = currentConversationId,
-                        clientActionId = UUID.randomUUID().toString(),
-                        resumeId = resumeId,
-                        resumeTaskId = resumeTaskId,
-                        resumeFileUrl = resumeFileUrl,
-                    )
-                )
-            },
-            showToast = true,
-        ) {
-            val result = this.data ?: return@request
-            result.latestCursor?.let { latestCursor = it }
-            resumeUploadResult.value = result
-        }
-    }
 
-    /**
-     * 确认或否认当前历史简历是否本人当前可用简历。
-     * resumeId 来自 queryCurrentResume / enterSession；复用缓存的会话上下文，成功后回写 latestCursor。
-     */
-    fun confirmCurrentResume(resumeId: String, confirmed: Boolean) {
-        val currentSessionId = sessionId
-        val currentConversationId = conversationId
-        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
-            return
-        }
-        request(
-            apiBlock = {
-                mRepo.api.confirmCurrentResume(
-                    ResumeConfirmBody(
-                        sessionId = currentSessionId,
-                        conversationId = currentConversationId,
-                        clientActionId = UUID.randomUUID().toString(),
-                        resumeId = resumeId,
-                        confirmed = confirmed,
-                    )
-                )
-            },
-            showToast = true,
-        ) {
-            val result = this.data ?: return@request
-            result.latestCursor?.let { latestCursor = it }
-            resumeConfirmResult.value = result
-        }
-    }
-
-    /**
-     * 查询当前可确认简历：sessionId 为空时只按当前登录候选人查询可确认简历摘要（可在进入会话前调用）。
-     */
-    fun queryCurrentResume() {
-        request(
-            apiBlock = {
-                mRepo.api.queryCurrentResume(CurrentResumeQueryBody(sessionId = sessionId))
-            },
-            showToast = true,
-        ) {
-            currentResume.value = this.data
-        }
-    }
+    // region 消息相关
 
     /**
      * 拉取增量消息：服务端返回游标之后的新消息。
@@ -426,73 +300,187 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 查询通信会话：仅查询当前候选人的求职 Agent 实例、活跃对话和流式请求状态，不建立 SSE 连接。
-     * requestId 为空查询最近一次请求；sceneType 见接口枚举（1 / 2）。查询结果会同步本地缓存的会话上下文。
+     * 发送消息时需要生成唯一clientMessageId，用于防重复提交
      */
-    fun queryConversation(requestId: String? = null, sceneType: Int? = null) {
-        request(
-            apiBlock = {
-                mRepo.api.queryConversation(
-                    ConversationQueryBody(
-                        conversationId = conversationId,
-                        sessionId = sessionId,
-                        requestId = requestId,
-                        sceneType = sceneType,
-                    )
-                )
-            },
-            showToast = true,
-        ) {
-            val result = this.data ?: return@request
-            // 同步会话上下文，供发送消息/取消/增量恢复复用
-            result.sessionId?.let { sessionId = it }
-            result.conversationId?.let { conversationId = it }
-            result.latestCursor?.let { latestCursor = it }
-            conversationData.value = result
+    private fun generateClientMessageId(): String = "${UUID.randomUUID()}_${System.currentTimeMillis()}"
+
+    /**
+     * 获取消息缓存中最后一条的Cursor
+     */
+    fun getLastMessageCursor(): String? {
+        val lastEntry = messageStore.entries.lastOrNull()
+        val lastMsg = lastEntry?.value
+        return lastMsg?.cursor
+    }
+
+    /**
+     * stream 结束 or 断开时如果最近消息是 Think类型，则移除
+     */
+    private fun checkLastMessages() {
+        val lastEntry = messageStore.entries.lastOrNull()
+        val lastMsg = lastEntry?.value
+        if (lastMsg != null && resolveItemType(lastMsg) == ClawAgentMsgAdapter.TYPE_AGENT_THINK) {
+            messageStore.remove(lastEntry.key)
         }
     }
 
     /**
-     * 提交卡片或按钮动作（如点击上传简历入口、确认/否认历史简历、跳过问题、确认属性等）。
-     * 复用 enterSession/queryConversation 缓存的会话上下文；actionCode 见 [ActionSubmitBody] 白名单。
-     * @param messageId         动作来源消息 ID（卡片/按钮所在消息）
-     * @param questionQueueId   动作来源问题队列 ID
-     * @param actionPayloadJson 动作扩展 JSON（按钮值、确认值等）
+     * 乐观插入本地用户消息：分配比当前最大序号更大的 sequenceNo 以排到列表末尾，messageId 取 clientMessageId。
+     * 服务端随后会通过 SSE message(USER) 回显（不同 messageId），由 [ingestMessages] 按内容把服务端字段填充进本占位（保留占位 id，不刷新）。
      */
-    fun submitAction(
-        actionCode: String,
-        messageId: String? = null,
-        questionQueueId: String? = null,
-        actionPayloadJson: String? = null,
-    ) {
-        val currentSessionId = sessionId
-        val currentConversationId = conversationId
-        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
-            return
-        }
-        request(
-            apiBlock = {
-                mRepo.api.submitAction(
-                    ActionSubmitBody(
-                        sessionId = currentSessionId,
-                        conversationId = currentConversationId,
-                        clientActionId = UUID.randomUUID().toString(),
-                        actionCode = actionCode,
-                        messageId = messageId,
-                        questionQueueId = questionQueueId,
-                        actionPayloadJson = actionPayloadJson,
-                    )
+    private fun appendLocalUserMessage(clientMessageId: String, content: String) {
+        val nextSeq = (messageStore.values.mapNotNull { it.sequenceNo }.maxOrNull() ?: 0L) + 1
+        optimisticUserMessageIds.add(clientMessageId)
+        ingestMessages(
+            listOf(
+                JobAgentMessage(
+                    messageId = clientMessageId,
+                    sequenceNo = nextSeq,
+                    senderType = SENDER_USER,
+                    messageType = MSG_TEXT,
+                    content = content,
                 )
-            },
-            showToast = true,
+            )
+        )
+    }
+
+    /**
+     * SSE 流-单条消息插入：按文档 5.3 displayPolicy 在插入前对「链表上一条思考态消息」做即时收口。
+     * SSE 是顺序流，结果消息通常紧跟在 think 占位之后，故先取 [messageStore] 最后一条（上一条）：
+     * 若它是 think 中间态、且与新消息非同一条（messageId 不同，排除 think→RESULT 的同条更新），
+     * 再按其 displayPolicy 决定去留——
+     * REPLACE_ON_TERMINAL（被结果替换）/ DISMISS_ON_TERMINAL（结果到达后收起）→ 移除该 think；
+     * APPEND（追加）/ KEEP（保留）/ 其它 → 原样保留。最后统一交 [ingestMessages] upsert 并刷新。
+     */
+    private fun sseInsertMessages(newMsg: JobAgentMessage?) {
+        newMsg ?: return
+        val lastEntry = messageStore.entries.lastOrNull()
+        val lastMsg = lastEntry?.value
+        if (lastMsg != null &&
+            lastMsg.messageId != newMsg.messageId &&
+            resolveItemType(lastMsg) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
         ) {
-            val result = this.data ?: return@request
-            result.latestCursor?.let { latestCursor = it }
-            actionResult.value = result
-            ingestMessages(result.messages)
+            when (lastMsg.displayPolicy) {
+                // 终态替换：结果消息取代 think 占位
+                POLICY_REPLACE_ON_TERMINAL -> messageStore.remove(lastEntry.key)
+                // 终态移除：think / 轻提示在结果到达后收起
+                POLICY_DISMISS_ON_TERMINAL -> messageStore.remove(lastEntry.key)
+                // APPEND / KEEP / 其它：保留上一条 think
+                else -> Unit
+            }
+        }
+        // ATTRIBUTE_CONFIRM 卡：触发记忆确认弹窗（不进列表，由 ingestMessages 统一过滤）
+        if (newMsg.isAttributeConfirm()) {
+            attributeConfirmPopup.value = newMsg.toMessageInfo()
+        }
+        ingestMessages(listOf(newMsg))
+    }
+
+    /**
+     * 合并并刷新渲染列表：按消息 ID 去重（同 ID 覆盖以实现更新/替换），
+     * 再按 sequenceNo 升序映射为端侧 [ClawAgentMessageInfo] 后回推 [messageList]。
+     */
+    private fun ingestMessages(messages: List<JobAgentMessage>?) {
+        if (messages.isNullOrEmpty()) return
+        messages.forEach { msg ->
+            // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
+            if (msg.isAttributeConfirm()) return@forEach
+            val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: return@forEach
+            // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
+            // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
+            if (msg.senderType == SENDER_USER && key !in optimisticUserMessageIds) {
+                val localKey = optimisticUserMessageIds.firstOrNull { messageStore[it]?.content == msg.content }
+                if (localKey != null) {
+                    messageStore[localKey] = msg.copy(messageId = localKey)
+                    optimisticUserMessageIds.remove(localKey)
+                    // 已填充进占位，不再以服务端 messageId 另存，避免重复
+                    // TODO 若后续 /message/pull 或 /message/page 又以真实 messageId 返回本条，会产生重复，按需再做 id 映射
+                    return@forEach
+                }
+            }
+            messageStore[key] = msg
+        }
+        refreshMessageList()
+    }
+
+    // region 消息列表相关
+
+    /** 按 sequenceNo 升序映射并回推渲染列表 */
+    private fun refreshMessageList() {
+        messageList.value = messageStore.values
+            .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
+            .map { it.toMessageInfo() }
+    }
+
+    /** 将服务端消息映射为端侧渲染模型，messageType 取 [ClawAgentMsgAdapter] 的 TYPE_* itemType */
+    private fun JobAgentMessage.toMessageInfo(): ClawAgentMessageInfo {
+        val sender = senderType ?: ""
+        return ClawAgentMessageInfo(
+            id = messageId ?: cursor ?: sequenceNo?.toString() ?: UUID.randomUUID().toString(),
+            messageType = resolveItemType(this),
+            sendObj = sender,
+            receiveObj = if (sender == SENDER_USER) SENDER_AGENT else SENDER_USER,
+            content = content,
+            metaData = payloadJson,
+        )
+    }
+
+    /** 依据 senderType / messageType / messagePhase / cardType 解析端侧 itemType */
+    private fun resolveItemType(msg: JobAgentMessage): Int {
+        // 用户消息
+        if (msg.senderType == SENDER_USER) return ClawAgentMsgAdapter.TYPE_USER_TEXT
+        // 非卡片的处理中/流式消息按思考态展示
+        if (msg.messageType != MSG_CARD &&
+            (msg.messagePhase == PHASE_PROCESSING || msg.messageStatus == STATUS_STREAMING)
+        ) {
+            return ClawAgentMsgAdapter.TYPE_AGENT_THINK
+        }
+        // 卡片消息按 cardType 分发
+        if (msg.messageType == MSG_CARD) {
+            return when (msg.cardType) {
+                CARD_UPLOAD_RESUME -> resolveUploadResumeItemType(msg)
+                CARD_HISTORY_RESUME_CONFIRM -> ClawAgentMsgAdapter.TYPE_PENDING_CONFIRM
+                CARD_CORE_QUESTION -> ClawAgentMsgAdapter.TYPE_QUESTION
+                CARD_UNDERSTANDING_SUMMARY -> ClawAgentMsgAdapter.TYPE_UNDERSTANDING_UPGRADE
+                CARD_RESUME_UPLOAD_SUCCESS -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
+                CARD_RESUME_UPLOAD_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
+                CARD_JOB_SEARCHING -> ClawAgentMsgAdapter.TYPE_SEARCHING_JOBS
+                CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
+                // todo: v1.2 暂时不做
+//                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
+//                CARD_TODAY_PROGRESS -> ClawAgentMsgAdapter.TYPE_TODAY_PROGRESS
+                else -> ClawAgentMsgAdapter.TYPE_AGENT_TEXT
+            }
+        }
+        // 兜底：Agent 普通文本, 防止适配器报错
+        return ClawAgentMsgAdapter.TYPE_AGENT_TEXT
+    }
+
+    /** UPLOAD_RESUME 按 resumeUploadStatus 路由：解析成功/失败走独立卡，引导/解析中走欢迎卡（同 messageId upsert 后切卡） */
+    private fun resolveUploadResumeItemType(msg: JobAgentMessage): Int {
+        val status = msg.payloadJson?.let {
+            runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.resumeUploadStatus }.getOrNull()
+        }
+        return when (status) {
+            UPLOAD_STATUS_PARSE_SUCCESS -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
+            UPLOAD_STATUS_PARSE_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
+            else -> ClawAgentMsgAdapter.TYPE_WELCOME // WAITING_UPLOAD / PARSING / null
         }
     }
+
+    /** 是否思考态（think）中间态消息：enterSession / 历史分页等终态数据里的此类残留不再展示 */
+    private fun JobAgentMessage.isThinkMessage(): Boolean =
+        resolveItemType(this) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
+
+    /** 是否属性确认卡（ATTRIBUTE_CONFIRM）：走记忆确认弹窗，不进对话列表 */
+    private fun JobAgentMessage.isAttributeConfirm(): Boolean =
+        messageType == MSG_CARD && cardType == CARD_ATTRIBUTE_CONFIRM
+
+    // endregion
+
+    // endregion
+
+    // region 对话SSE流相关
 
     /**
      * 流式发送用户消息：复用 enterSession 缓存的会话上下文，通过 SSE 接收增量回复。
@@ -546,26 +534,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 乐观插入本地用户消息：分配比当前最大序号更大的 sequenceNo 以排到列表末尾，messageId 取 clientMessageId。
-     * 服务端随后会通过 SSE message(USER) 回显（不同 messageId），由 [ingestMessages] 按内容把服务端字段填充进本占位（保留占位 id，不刷新）。
-     */
-    private fun appendLocalUserMessage(clientMessageId: String, content: String) {
-        val nextSeq = (messageStore.values.mapNotNull { it.sequenceNo }.maxOrNull() ?: 0L) + 1
-        optimisticUserMessageIds.add(clientMessageId)
-        ingestMessages(
-            listOf(
-                JobAgentMessage(
-                    messageId = clientMessageId,
-                    sequenceNo = nextSeq,
-                    senderType = SENDER_USER,
-                    messageType = MSG_TEXT,
-                    content = content,
-                )
-            )
-        )
-    }
-
-    /**
      * 取消当前流式生成。
      * @param requestId    服务端在流式 meta 事件中下发的 SSE 请求 ID；非空时会通知服务端取消，
      *                     为空则仅取消本地 SSE 收集（meta 事件解析落地后回填该值即可联通服务端取消）。
@@ -594,113 +562,130 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         streaming.value = false
     }
 
-    /**
-     * SSE 流-单条消息插入：按文档 5.3 displayPolicy 在插入前对「链表上一条思考态消息」做即时收口。
-     * SSE 是顺序流，结果消息通常紧跟在 think 占位之后，故先取 [messageStore] 最后一条（上一条）：
-     * 若它是 think 中间态、且与新消息非同一条（messageId 不同，排除 think→RESULT 的同条更新），
-     * 再按其 displayPolicy 决定去留——
-     * REPLACE_ON_TERMINAL（被结果替换）/ DISMISS_ON_TERMINAL（结果到达后收起）→ 移除该 think；
-     * APPEND（追加）/ KEEP（保留）/ 其它 → 原样保留。最后统一交 [ingestMessages] upsert 并刷新。
-     */
-    private fun sseInsertMessages(newMsg: JobAgentMessage?) {
-        newMsg ?: return
-        val lastEntry = messageStore.entries.lastOrNull()
-        val lastMsg = lastEntry?.value
-        if (lastMsg != null &&
-            lastMsg.messageId != newMsg.messageId &&
-            resolveItemType(lastMsg) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
-        ) {
-            when (lastMsg.displayPolicy) {
-                // 终态替换：结果消息取代 think 占位
-                POLICY_REPLACE_ON_TERMINAL -> messageStore.remove(lastEntry.key)
-                // 终态移除：think / 轻提示在结果到达后收起
-                POLICY_DISMISS_ON_TERMINAL -> messageStore.remove(lastEntry.key)
-                // APPEND / KEEP / 其它：保留上一条 think
-                else -> Unit
-            }
-        }
-        ingestMessages(listOf(newMsg))
-    }
+    // endregion
 
     /**
-     * 合并并刷新渲染列表：按消息 ID 去重（同 ID 覆盖以实现更新/替换），
-     * 再按 sequenceNo 升序映射为端侧 [ClawAgentMessageInfo] 后回推 [messageList]。
-     * TODO displayPolicy 为 REPLACE_TARGET/DISMISS_ON_TERMINAL 等终态策略暂未处理，后续按需补充。
+     * 提交简历上传结果：端侧先完成文件上传后，回传 resumeId / resumeTaskId / resumeFileUrl 之一衔接解析。
+     * 复用缓存的会话上下文，成功后回写 latestCursor。
      */
-    private fun ingestMessages(messages: List<JobAgentMessage>?) {
-        if (messages.isNullOrEmpty()) return
-        messages.forEach { msg ->
-            val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: return@forEach
-            // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
-            // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
-            if (msg.senderType == SENDER_USER && key !in optimisticUserMessageIds) {
-                val localKey = optimisticUserMessageIds.firstOrNull { messageStore[it]?.content == msg.content }
-                if (localKey != null) {
-                    messageStore[localKey] = msg.copy(messageId = localKey)
-                    optimisticUserMessageIds.remove(localKey)
-                    // 已填充进占位，不再以服务端 messageId 另存，避免重复
-                    // TODO 若后续 /message/pull 或 /message/page 又以真实 messageId 返回本条，会产生重复，按需再做 id 映射
-                    return@forEach
-                }
-            }
-            messageStore[key] = msg
+    fun submitResumeUpload(
+        resumeId: String? = null,
+        resumeTaskId: String? = null,
+        resumeFileUrl: String? = null,
+    ) {
+        val currentSessionId = sessionId
+        val currentConversationId = conversationId
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
+            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            return
         }
-        refreshMessageList()
-    }
-
-    /** 按 sequenceNo 升序映射并回推渲染列表 */
-    private fun refreshMessageList() {
-        messageList.value = messageStore.values
-            .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
-            .map { it.toMessageInfo() }
-    }
-
-    /** 将服务端消息映射为端侧渲染模型，messageType 取 [ClawAgentMsgAdapter] 的 TYPE_* itemType */
-    private fun JobAgentMessage.toMessageInfo(): ClawAgentMessageInfo {
-        val sender = senderType ?: ""
-        return ClawAgentMessageInfo(
-            id = messageId ?: cursor ?: sequenceNo?.toString() ?: UUID.randomUUID().toString(),
-            messageType = resolveItemType(this),
-            sendObj = sender,
-            receiveObj = if (sender == SENDER_USER) SENDER_AGENT else SENDER_USER,
-            content = content,
-            metaData = payloadJson,
-        )
-    }
-
-    /** 依据 senderType / messageType / messagePhase / cardType 解析端侧 itemType */
-    private fun resolveItemType(msg: JobAgentMessage): Int {
-        // 用户消息
-        if (msg.senderType == SENDER_USER) return ClawAgentMsgAdapter.TYPE_USER_TEXT
-        // 非卡片的处理中/流式消息按思考态展示
-        if (msg.messageType != MSG_CARD &&
-            (msg.messagePhase == PHASE_PROCESSING || msg.messageStatus == STATUS_STREAMING)
+        request(
+            apiBlock = {
+                mRepo.api.submitResumeUpload(
+                    ResumeUploadSubmitBody(
+                        sessionId = currentSessionId,
+                        conversationId = currentConversationId,
+                        clientActionId = UUID.randomUUID().toString(),
+                        resumeId = resumeId,
+                        resumeTaskId = resumeTaskId,
+                        resumeFileUrl = resumeFileUrl,
+                    )
+                )
+            },
+            showToast = true,
         ) {
-            return ClawAgentMsgAdapter.TYPE_AGENT_THINK
+            val result = this.data ?: return@request
+            result.latestCursor?.let { latestCursor = it }
+            resumeUploadResult.value = result
         }
-        // 卡片消息按 cardType 分发
-        if (msg.messageType == MSG_CARD) {
-            return when (msg.cardType) {
-                CARD_UPLOAD_RESUME -> ClawAgentMsgAdapter.TYPE_WELCOME
-                CARD_HISTORY_RESUME_CONFIRM -> ClawAgentMsgAdapter.TYPE_PENDING_CONFIRM
-                CARD_CORE_QUESTION, CARD_ATTRIBUTE_CONFIRM -> ClawAgentMsgAdapter.TYPE_QUESTION
-                CARD_UNDERSTANDING_SUMMARY -> ClawAgentMsgAdapter.TYPE_UNDERSTANDING_UPGRADE
-                CARD_RESUME_UPLOAD_SUCCESS -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
-                CARD_RESUME_UPLOAD_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
-                CARD_JOB_SEARCHING -> ClawAgentMsgAdapter.TYPE_SEARCHING_JOBS
-                CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
-                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
-                CARD_TODAY_PROGRESS -> ClawAgentMsgAdapter.TYPE_TODAY_PROGRESS
-                else -> ClawAgentMsgAdapter.TYPE_AGENT_TEXT
-            }
-        }
-        // 兜底：Agent 普通文本
-        return ClawAgentMsgAdapter.TYPE_AGENT_TEXT
     }
 
-    /** 是否思考态（think）中间态消息：enterSession / 历史分页等终态数据里的此类残留不再展示 */
-    private fun JobAgentMessage.isThinkMessage(): Boolean =
-        resolveItemType(this) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
+    /**
+     * 确认或否认当前历史简历是否本人当前可用简历。
+     * resumeId 来自 queryCurrentResume / enterSession；复用缓存的会话上下文，成功后回写 latestCursor。
+     */
+    fun confirmCurrentResume(resumeId: String, confirmed: Boolean) {
+        val currentSessionId = sessionId
+        val currentConversationId = conversationId
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
+            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            return
+        }
+        request(
+            apiBlock = {
+                mRepo.api.confirmCurrentResume(
+                    ResumeConfirmBody(
+                        sessionId = currentSessionId,
+                        conversationId = currentConversationId,
+                        clientActionId = UUID.randomUUID().toString(),
+                        resumeId = resumeId,
+                        confirmed = confirmed,
+                    )
+                )
+            },
+            showToast = true,
+        ) {
+            val result = this.data ?: return@request
+            result.latestCursor?.let { latestCursor = it }
+            resumeConfirmResult.value = result
+        }
+    }
+
+    /**
+     * 查询当前可确认简历：sessionId 为空时只按当前登录候选人查询可确认简历摘要（可在进入会话前调用）。
+     */
+    fun queryCurrentResume() {
+        request(
+            apiBlock = {
+                mRepo.api.queryCurrentResume(CurrentResumeQueryBody(sessionId = sessionId))
+            },
+            showToast = true,
+        ) {
+            currentResume.value = this.data
+        }
+    }
+
+    /**
+     * 提交卡片或按钮动作（如点击上传简历入口、确认/否认历史简历、跳过问题、确认属性等）。
+     * 复用 enterSession/queryConversation 缓存的会话上下文；actionCode 见 [ActionSubmitBody] 白名单。
+     * @param messageId         动作来源消息 ID（卡片/按钮所在消息）
+     * @param questionQueueId   动作来源问题队列 ID
+     * @param actionPayloadJson 动作扩展 JSON（按钮值、确认值等）
+     */
+    fun submitAction(
+        actionCode: String,
+        messageId: String? = null,
+        questionQueueId: String? = null,
+        actionPayloadJson: String? = null,
+    ) {
+        val currentSessionId = sessionId
+        val currentConversationId = conversationId
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
+            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            return
+        }
+        request(
+            apiBlock = {
+                mRepo.api.submitAction(
+                    ActionSubmitBody(
+                        sessionId = currentSessionId,
+                        conversationId = currentConversationId,
+                        clientActionId = UUID.randomUUID().toString(),
+                        actionCode = actionCode,
+                        messageId = messageId,
+                        questionQueueId = questionQueueId,
+                        actionPayloadJson = actionPayloadJson,
+                    )
+                )
+            },
+            showToast = true,
+        ) {
+            val result = this.data ?: return@request
+            result.latestCursor?.let { latestCursor = it }
+            actionResult.value = result
+            ingestMessages(result.messages)
+        }
+    }
 
     override fun onCleared() {
         sseHandler.cancel()
@@ -730,19 +715,34 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val POLICY_REPLACE_ON_TERMINAL = "REPLACE_ON_TERMINAL"
         private const val POLICY_DISMISS_ON_TERMINAL = "DISMISS_ON_TERMINAL"
 
+        // resumeUploadStatus：上传简历卡状态机（PARSE_SUCCESS / PARSE_FAILED 路由到独立卡）
+        private const val UPLOAD_STATUS_PARSE_SUCCESS = "PARSE_SUCCESS"
+        private const val UPLOAD_STATUS_PARSE_FAILED = "PARSE_FAILED"
+
         // cardType：以下 5 个为接口已定义取值
         private const val CARD_UPLOAD_RESUME = "UPLOAD_RESUME"
+        // 历史已上传过简历确认卡片
         private const val CARD_HISTORY_RESUME_CONFIRM = "HISTORY_RESUME_CONFIRM"
+        // 问答卡片
         private const val CARD_CORE_QUESTION = "CORE_QUESTION"
+        // 记忆卡片
         private const val CARD_ATTRIBUTE_CONFIRM = "ATTRIBUTE_CONFIRM"
+        // 理解升级
         private const val CARD_UNDERSTANDING_SUMMARY = "UNDERSTANDING_SUMMARY"
 
         //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
+
+        // 上传成功
         private const val CARD_RESUME_UPLOAD_SUCCESS = "RESUME_UPLOAD_SUCCESS"
+        // 上传失败
         private const val CARD_RESUME_UPLOAD_FAILED = "RESUME_UPLOAD_FAILED"
+        // 寻找岗位中
         private const val CARD_JOB_SEARCHING = "JOB_SEARCHING"
+        // 暂未找到合适岗位
         private const val CARD_NO_JOB = "NO_JOB"
+        // 岗位匹配-快速能力提升
         private const val CARD_JOB_MATCH_REPORT = "JOB_MATCH_REPORT"
+        // 今日进展卡片 TODO: 后端未给出type
         private const val CARD_TODAY_PROGRESS = "TODAY_PROGRESS"
     }
 }
