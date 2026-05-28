@@ -18,8 +18,8 @@ class AgentUploadSuccessViewHolder(private val binding: ItemMsgAgentUploadSucces
             runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java) }.getOrNull()
         }
         // 标题：statusText（如「已上传」），兜底保留布局默认「简历上传成功」
-        payload?.title?.takeIf { it.isNotBlank() }?.let { binding.tvTitle.text = it }
-        payload?.description?.takeIf { it.isNotBlank() }?.let { binding.tvTitle.text = it }
+//        payload?.title?.takeIf { it.isNotBlank() }?.let { binding.tvTitle.text = it }
+//        payload?.description?.takeIf { it.isNotBlank() }?.let { binding.tvTitle.text = it }
         payload?.alignmentScore?.let {
             binding.wpvAlignProgress.progress = it
             binding.wpvAlignProgress.text = "${it}%"
@@ -28,7 +28,7 @@ class AgentUploadSuccessViewHolder(private val binding: ItemMsgAgentUploadSucces
             binding.wpvAlignProgress.text = "0%"
         }
         payload?.scoreChangeText?.takeIf { it.isNotBlank() }?.let { binding.tvProgressDesc.text = it }
-        payload?.nextStepText?.takeIf { it.isNotBlank() }?.let { binding.tvHelping.text = it }
+//        payload?.nextStepText?.takeIf { it.isNotBlank() }?.let { binding.tvHelping.text = it }
     }
 
 }

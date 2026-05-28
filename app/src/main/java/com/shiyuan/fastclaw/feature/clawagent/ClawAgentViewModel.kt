@@ -18,6 +18,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
@@ -371,7 +372,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // ATTRIBUTE_CONFIRM 卡：触发记忆确认弹窗（不进列表，由 ingestMessages 统一过滤）
         if (newMsg.isAttributeConfirm()) {
             val payload = newMsg.payloadJson?.let {
-                runCatching { GsonUtils.fromJson(newMsg.payloadJson, UploadResumePayloadBean::class.java) }.getOrNull()
+                runCatching { GsonUtils.fromJson(newMsg.payloadJson, AttributeConfirmPayloadBean::class.java) }.getOrNull()
             }
             payload?.interactionState?.let { state ->
                 // 未消费，消费过的卡片不再弹
@@ -743,6 +744,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         messageList.value = listOf()
     }
 
+    fun hardPreMsgListCard(list: List<ClawAgentMessageInfo>) {
+        messageList.value = list
+    }
+
     override fun onCleared() {
         sseHandler.cancel()
         super.onCleared()
@@ -756,8 +761,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val INTERACTION_TYPE_ACTION = "ACTION"
 
         // senderType
-        private const val SENDER_USER = "USER"
-        private const val SENDER_AGENT = "AGENT"
+        const val SENDER_USER = "USER"
+        const val SENDER_AGENT = "AGENT"
 
         // messageType
         private const val MSG_TEXT = "TEXT"

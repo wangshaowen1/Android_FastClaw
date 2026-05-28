@@ -23,8 +23,8 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
             runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java) }.getOrNull()
         }
         // 标题/说明：payload 非空时覆盖布局默认引导文案
-        payload?.title?.takeIf { it.isNotBlank() }?.let { binding.tvUploadTitle.text = it }
-        payload?.description?.takeIf { it.isNotBlank() }?.let { binding.tvUploadSubtitle.text = it }
+//        payload?.title?.takeIf { it.isNotBlank() }?.let { binding.tvUploadTitle.text = it }
+//        payload?.description?.takeIf { it.isNotBlank() }?.let { binding.tvUploadSubtitle.text = it }
         // 仅 WAITING_UPLOAD（或无状态）且整卡未禁用时可点上传；解析中等态置灰防重复提交
         val status = payload?.resumeUploadStatus
         val isWaiting = status.isNullOrBlank() || status == STATUS_WAITING_UPLOAD
@@ -32,11 +32,11 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
         // 按钮文案：非等待态优先 statusText（如「简历解析中」），否则上传按钮 action.text / 默认
         val statusText = payload?.statusText
         val uploadActionText = payload?.actions?.firstOrNull()?.text
-        binding.tvUploadBtn.text = when {
-            !isWaiting && !statusText.isNullOrBlank() -> statusText
-            !uploadActionText.isNullOrBlank() -> uploadActionText
-            else -> binding.root.context.getString(R.string.home_upload_resume_btn)
-        }
+//        binding.tvUploadBtn.text = when {
+//            !isWaiting && !statusText.isNullOrBlank() -> statusText
+//            !uploadActionText.isNullOrBlank() -> uploadActionText
+//            else -> binding.root.context.getString(R.string.home_upload_resume_btn)
+//        }
         binding.btnUploadResume.isEnabled = enabled
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
         binding.btnUploadResume.setOnSingleClickListener {

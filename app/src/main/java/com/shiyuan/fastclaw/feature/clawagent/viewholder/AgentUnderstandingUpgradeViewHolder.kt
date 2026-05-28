@@ -33,7 +33,7 @@ class AgentUnderstandingUpgradeViewHolder(private val binding: ItemMsgAgentUnder
         // 标题：我与你对齐度达到 85%！
         binding.tvAlignTitle.text = context.getString(R.string.str_agent_understanding_align_title, "$score%")
         // 摘要主文案非空时覆盖副标题，否则保留布局默认文案
-        payload?.summary?.text?.takeIf { it.isNotBlank() }?.let { binding.tvAlignSubtitle.text = it }
+//        payload?.summary?.text?.takeIf { it.isNotBlank() }?.let { binding.tvAlignSubtitle.text = it }
         // 理解明细行
         bindDetailRows(payload?.summary?.fields)
     }

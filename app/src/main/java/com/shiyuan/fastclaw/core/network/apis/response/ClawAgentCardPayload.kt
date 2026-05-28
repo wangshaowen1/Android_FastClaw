@@ -66,12 +66,12 @@ data class AttributeConfirmPayloadBean(
     val memoryText: String? = null,
     /** 属性名称，如「意向岗位」 */
     val fieldName: String? = null,
-    /** 变更前的值 */
-    val oldValue: String? = null,
+    /** 变更前的值 有毒 */
+//    val oldValue: String? = null,
     /** 变更后的值 */
-    val newValue: String? = null,
+//    val newValue: String? = null,
     /** 待确认候选值 */
-    val candidateValue: String? = null,
+//    val candidateValue: String? = null,
     /** 拒绝行为，当前为 REASK（拒绝后服务端重新下发问题卡） */
     val rejectBehavior: String? = null,
     /** 拒绝后重问文案 */
@@ -114,9 +114,9 @@ data class CardActionPayloadBean(
     val attributeGroupCode: String? = null,
     val metaCode: String? = null,
     val selectedText: String? = null,
-    val value: String? = null,
-    val candidateValue: String? = null,
-    val newValue: String? = null,
+//    val value: String? = null,
+//    val candidateValue: String? = null,
+//    val newValue: String? = null,
     val rejectBehavior: String? = null,
 )
 
@@ -125,7 +125,7 @@ data class CardOption(
     val text: String? = null,
     val label: String? = null,
     val value: String? = null,
-    val selectedValue: String? = null,
+//    val selectedValue: String? = null,
     /** 问题卡选项当前固定 QUESTION_OPTION_SUBMIT */
     val actionCode: String? = null,
     val disabled: Boolean? = null,
