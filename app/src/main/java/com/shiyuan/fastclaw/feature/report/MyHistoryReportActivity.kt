@@ -75,7 +75,7 @@ class MyHistoryReportActivity :
      */
     private fun onReportItemClick(info: ReportInfo) {
         when (info.status) {
-            ReportStatus.OTHER, ReportStatus.FAILED -> {
+            ReportStatus.OTHER -> {
                 SimpleBrowserActivity.launch(
                     this,
                     info.detailUrl,

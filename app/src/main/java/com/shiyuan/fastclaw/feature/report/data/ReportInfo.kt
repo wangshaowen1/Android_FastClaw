@@ -14,7 +14,6 @@ data class ReportInfo(
     val progress: Int = 0,
     val progressText: String?,
     val jobTitleStd: String?,
-    val progressPercent: Int?,
     val reportType: String? = null,
     val createTime: String? = null,
     val reportName: String? = null,
@@ -23,6 +22,7 @@ data class ReportInfo(
     val detailQuery: String? = null,
     val detailPath: String? = null,
     val estimateMessage: String? = null,
+    val failReason: String? = null,
     val totalScore: Int = 0,
 )
 

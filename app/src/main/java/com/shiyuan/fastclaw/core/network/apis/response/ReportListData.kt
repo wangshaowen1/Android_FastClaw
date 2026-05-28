@@ -12,7 +12,7 @@ data class ReportListItem(
     val reportType: String?,
     val reportStatus: String?,
     val currentStage: String?,
-    val progress: Int?,
+    val progress: Int = 0,
     val totalScore: Int?,
     val title: String?,
     val createTime: String?,
@@ -21,14 +21,15 @@ data class ReportListItem(
     val canViewReport: Boolean? = null,
     val detailUrl: String? = null,
     val detailQuery: String? = null,
-    val estimateMessage: String? = null
+    val estimateMessage: String? = null,
+    val failReason: String? = null
 ) {
     fun toReportInfo() = ReportInfo(
         id = reportId.orEmpty(),
         title = title ?: reportName.orEmpty(),
         status = when (reportStatus) {
-            "RUNNING", "GENERATING"-> ReportStatus.IN_PROGRESS
-            "FAILED "-> ReportStatus.FAILED
+            "RUNNING", "GENERATING","RETRY_WAITING"-> ReportStatus.IN_PROGRESS
+            "FAILED"-> ReportStatus.FAILED
             else -> ReportStatus.OTHER
         },
         companyName = companyName,
@@ -37,7 +38,7 @@ data class ReportListItem(
         tag = tag,
         tagColor = tagColor,
         progressText = null,
-        progressPercent = progress,
+        progress = progress,
         reportType = reportType,
         reportName = reportName,
         canViewReport = canViewReport ?: false,
@@ -45,6 +46,7 @@ data class ReportListItem(
         jobTitleStd = jobTitleStd,
         detailQuery = detailQuery,
         estimateMessage = estimateMessage,
+        failReason = failReason,
         totalScore = totalScore ?: 0,
     )
 }

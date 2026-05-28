@@ -24,6 +24,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.feature.mine.UserPointPagingSource
+import com.umeng.commonsdk.debug.UMLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 
@@ -206,6 +207,7 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         noLogIn.value = true
         balance.set("0")
         userPoints.value = "0"
+        underStandingScore.value = UnderstandingScore(0)
         workCourseBanner.set(Config.Companion.get().appConfig.workCourseBanner)
     }
 
