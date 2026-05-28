@@ -48,12 +48,16 @@ data class UnderstandingSummaryPayloadBean(
 data class AttributeConfirmPayloadBean(
     /** 卡片标题 */
     val title: String? = null,
+    /** 控制整卡置灰 */
+    val interactionState: CardInteractionState? = null,
     /** 问题队列 ID，确认/拒绝时回传 */
     val questionQueueId: String? = null,
     /** 属性分组编码，回传辅助定位 */
     val attributeGroupCode: String? = null,
     /** 元属性编码，回传辅助定位 */
     val metaCode: String? = null,
+    /** 固定 ATTRIBUTE_CONFIRM */
+    val questionType: String? = null,
     /** 确认问题文案 */
     val questionText: String? = null,
     /** 记忆确认场景，当前固定 MEMORY_CONFIRM */
@@ -72,6 +76,8 @@ data class AttributeConfirmPayloadBean(
     val rejectBehavior: String? = null,
     /** 拒绝后重问文案 */
     val reaskQuestionText: String? = null,
+    /** 展示确认、拒绝按钮 */
+    val actions: List<CardAction>? = null
 )
 
 /** CARD 公共：整卡交互状态（7.4.1） */
@@ -100,7 +106,18 @@ data class CardAction(
     /** 端侧本地行为，如 UPLOAD_FILE_THEN_SUBMIT */
     val clientBehavior: String? = null,
     /** 回传参数，原样转 actionPayloadJson */
-    val actionPayload: Map<String, Any?>? = null,
+    val actionPayload: CardActionPayloadBean? = null,
+)
+
+data class CardActionPayloadBean(
+    val questionQueueId: String? = null,
+    val attributeGroupCode: String? = null,
+    val metaCode: String? = null,
+    val selectedText: String? = null,
+    val value: String? = null,
+    val candidateValue: String? = null,
+    val newValue: String? = null,
+    val rejectBehavior: String? = null,
 )
 
 /** CARD 公共：问题卡选项（7.4.3） */

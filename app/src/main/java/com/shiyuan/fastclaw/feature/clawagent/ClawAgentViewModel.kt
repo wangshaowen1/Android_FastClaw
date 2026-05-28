@@ -371,7 +371,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
         // ATTRIBUTE_CONFIRM 卡：触发记忆确认弹窗（不进列表，由 ingestMessages 统一过滤）
         if (newMsg.isAttributeConfirm()) {
-            attributeConfirmPopup.value = newMsg.toMessageInfo()
+            val payload = newMsg.payloadJson?.let {
+                runCatching { GsonUtils.fromJson(newMsg.payloadJson, UploadResumePayloadBean::class.java) }.getOrNull()
+            }
+            payload?.interactionState?.let { state ->
+                // 未消费，消费过的卡片不再弹
+                if (state.disabled == false) {
+                    attributeConfirmPopup.value = newMsg.toMessageInfo()
+                }
+            }
         }
         ingestMessages(listOf(newMsg))
     }
@@ -488,8 +496,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         resolveItemType(this) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
 
     /** 是否属性确认卡（ATTRIBUTE_CONFIRM）：走记忆确认弹窗，不进对话列表 */
-    private fun JobAgentMessage.isAttributeConfirm(): Boolean =
-        messageType == MSG_CARD && cardType == CARD_ATTRIBUTE_CONFIRM
+    private fun JobAgentMessage.isAttributeConfirm(): Boolean = messageType == MSG_CARD && cardType == CARD_ATTRIBUTE_CONFIRM
 
     /** 是否上传简历卡（UPLOAD_RESUME） */
     private fun JobAgentMessage.isUploadResumeCard(): Boolean =
