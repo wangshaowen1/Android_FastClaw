@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
@@ -79,7 +80,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     // 调用拉取增量消息
     override fun onResume() {
         super.onResume()
-        if (!AppNavigator.checkLoginIntercepted(false)) {
+        if (!User.get().isVisitor) {
             if (mRealVM.hasInitSession.value == true) {
                 mRealVM.pullMessages(mRealVM.getLastMessageCursor())
             }
@@ -104,7 +105,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 binding.etSend.text = null
             }
             R.id.tv_agent_memory -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
+                if(!User.get().isVisitor){
                     ShrimpUnderstandsActivity.start(requireActivity())
                 }
             }
@@ -223,14 +224,14 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 mRealVM.reset()
                 if (event.eventType == Events.UserChangedEvent.SIGN_IN) {
                     // 登录重新建立会话
-                    if (!AppNavigator.checkLoginIntercepted(false)) {
+                    if (!User.get().isVisitor) {
                         mRealVM.enterSession()
                     }
                 }
             }
         }
 
-        if (!AppNavigator.checkLoginIntercepted(false)) {
+        if (!User.get().isVisitor) {
             mRealVM.enterSession()
         }
 
