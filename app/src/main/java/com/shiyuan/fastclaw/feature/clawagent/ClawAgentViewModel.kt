@@ -63,8 +63,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 渲染用消息列表：已按端侧 itemType 映射并按序号排序，供 [ClawAgentMsgAdapter] submitList */
     val messageList = MutableLiveData<List<ClawAgentMessageInfo>>()
 
-    /** 加载历史完成信号（一次性）：值为是否还有更早消息，供下拉结束刷新并决定是否继续可下拉 */
-    val historyLoadFinished = MutableLiveData<Boolean>()
+    /**
+     * 下拉刷新是否开启
+     */
+    val hasCanRefresh = MutableLiveData<Boolean>(false)
 
     /** 当前可确认简历摘要 */
     val currentResume = MutableLiveData<CurrentResumeData?>()
@@ -168,17 +170,18 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             },
             showToast = true,
             onError = {
-                historyLoadFinished.value = hasMoreHistory
+                hasCanRefresh.value = true
             }
         ) {
             hasInitSession.value = true
-            historyLoadFinished.value = hasMoreHistory
             val result = this.data ?: return@request
             // 记录会话上下文，供后续发送消息/增量恢复使用
             sessionId = result.sessionId
             conversationId = result.conversationId
             latestCursor = result.latestCursor
             sessionData.value = result
+
+            hasCanRefresh.value = result.sessionId.isNullOrBlank() || result.conversationId.isNullOrBlank()
             // 恢复的最近消息为终态数据，过滤掉残留的思考态(think)中间态消息；并在 UPLOAD_RESUME 卡前补自我介绍卡
             ingestMessages(expandIntroduceBeforeUploadResume(result.messages?.filterNot { it.isThinkMessage() }))
         }
@@ -255,14 +258,12 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /**
      * 加载更早历史消息（向上翻页 /message/page）。同时供「滚动接近顶部的无感知预取」和「下拉手动/重试」调用。
      * 首页用当前最早一条消息的 cursor 作为 beforeCursor，之后沿用服务端返回的 nextBeforeCursor；
-     * loadingHistory / hasMoreHistory 守卫保证滚动中重复调用安全；通过 [historyLoadFinished] 通知 UI 结束下拉。
      */
     fun loadOlderHistory() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         // 未就绪 / 加载中 / 没有更早消息：直接结束本次（下拉）
-        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty() || loadingHistory || !hasMoreHistory) {
-//            historyLoadFinished.value = hasMoreHistory
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty() || loadingHistory) {
             return
         }
         loadingHistory = true
@@ -282,7 +283,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             showToast = true,
             onError = {
                 loadingHistory = false
-                historyLoadFinished.value = hasMoreHistory
             },
         ) {
             loadingHistory = false
@@ -295,7 +295,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             ingestMessages(expandIntroduceBeforeUploadResume(result?.messages?.filterNot { it.isThinkMessage() }))
             // 已加载到最早一页时给一次轻提示
 //            if (!hasMoreHistory) R.string.no_more_data_pull.getResString().showToast()
-            historyLoadFinished.value = hasMoreHistory
         }
     }
 

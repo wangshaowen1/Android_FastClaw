@@ -91,6 +91,10 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         super.onClick(view, data)
         when (view.id) {
             R.id.iv_send -> {
+                if (User.get().isVisitor) {
+                    showMessage("请先登录")
+                    return
+                }
                 val content = binding.etSend.text
                 if (content.isBlank()) {
                     showMessage("发送内容不能为空")
@@ -246,8 +250,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, 0)
             }
         }
-        mRealVM.historyLoadFinished.observe(viewLifecycleOwner) { hasMore ->
-            // 结束下拉刷新；没有更早消息则关闭下拉手势
+        // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭
+        mRealVM.hasCanRefresh.observe(viewLifecycleOwner) { hasMore ->
             binding.srlMsg.finishRefresh()
             binding.srlMsg.setEnableRefresh(hasMore)
         }
