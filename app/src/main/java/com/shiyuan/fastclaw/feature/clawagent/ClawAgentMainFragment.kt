@@ -34,6 +34,7 @@ import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
@@ -125,7 +126,9 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         binding.rvMsg.adapter = msgAdapter
 
         msgAdapter.onUploadClickAction = { data ->
-            showUploadResumeDialog(data)
+            if (!AppNavigator.checkLoginIntercepted(false)) {
+                showUploadResumeDialog(data)
+            }
         }
         // 补问卡选项点击：actionCode 取自 payload option（如 QUESTION_OPTION_SUBMIT），actionPayload 原样回传
         msgAdapter.onQuestionOptionClickAction = { item, option, queueId ->
@@ -229,10 +232,15 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             on<Events.UserChangedEvent> { event ->
                 // 用户操作重置
                 mRealVM.reset()
-                if (event.eventType == Events.UserChangedEvent.SIGN_IN) {
-                    // 登录重新建立会话
-                    if (!User.get().isVisitor) {
-                        mRealVM.enterSession()
+                when (event.eventType) {
+                    Events.UserChangedEvent.SIGN_IN -> {
+                        // 登录重新建立会话
+                        if (!User.get().isVisitor) {
+                            mRealVM.enterSession()
+                        }
+                    }
+                    Events.UserChangedEvent.SIGN_OUT -> {
+                        mRealVM.hardPreMsgListCard(insertPreCard())
                     }
                 }
             }
@@ -240,6 +248,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
         if (!User.get().isVisitor) {
             mRealVM.enterSession()
+        } else {
+            mRealVM.hardPreMsgListCard(insertPreCard())
         }
 
         mRealVM.messageList.observe(viewLifecycleOwner) { list ->
@@ -268,6 +278,17 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             showMemoryCardPopup(info)
             mRealVM.attributeConfirmPopup.value = null
         }
+    }
+
+    /**
+     * 插入初始状态
+     */
+    private fun insertPreCard(): List<ClawAgentMessageInfo> {
+        val tempList = listOf<ClawAgentMessageInfo>(
+            ClawAgentMessageInfo(id = "-1", messageType = ClawAgentMsgAdapter.TYPE_WELCOME, sendObj = ClawAgentViewModel.SENDER_AGENT, receiveObj = ClawAgentViewModel.SENDER_USER),
+            ClawAgentMessageInfo(id = "-2", messageType = ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT, sendObj = ClawAgentViewModel.SENDER_AGENT, receiveObj = ClawAgentViewModel.SENDER_USER),
+        )
+        return tempList
     }
 
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
@@ -369,7 +390,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             payload?.questionQueueId?.let { put("questionQueueId", it) }
             payload?.attributeGroupCode?.let { put("attributeGroupCode", it) }
             payload?.metaCode?.let { put("metaCode", it) }
-            payload?.candidateValue?.let { put("candidateValue", it) }
+//            payload?.candidateValue?.let { put("candidateValue", it) }
             put("selectedText", selectedText)
         }
         return GsonUtils.toJson(map)
