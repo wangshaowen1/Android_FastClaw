@@ -706,6 +706,7 @@
     </declare-styleable>
     <declare-styleable name="AutoRotateLayout">
         <attr name="duration" format="integer" />
+        <attr name="autoRotate" format="boolean" />
     </declare-styleable>
 
     <!-- The DatePicker style. -->
