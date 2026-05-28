@@ -496,19 +496,16 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         messageType == MSG_CARD && cardType == CARD_UPLOAD_RESUME
 
     /**
-     * 终态消息列表展开：在每条 UPLOAD_RESUME 卡前补一条端侧自我介绍(CARD_INTRODUCE_YOURSELF/欢迎)卡。
-     * 仅 enterSession / loadOlderHistory 的终态数据会下发 UPLOAD_RESUME，故只在这两处入口展开（SSE/增量拉取不经此）。
-     * 合成卡 .copy 自来源卡（沿用 sequenceNo/cursor/payloadJson），messageId 由来源派生以保证 upsert 幂等；
-     * 凭相同 sequenceNo + 稳定排序、且先于上传卡插入 [messageStore]，渲染时紧贴在上传卡上方。
+     * 始终第一条插入自我介绍卡片
      */
     private fun expandIntroduceBeforeUploadResume(messages: List<JobAgentMessage>?): List<JobAgentMessage>? {
         if (messages.isNullOrEmpty()) return messages
         return messages.flatMap { msg ->
-            if (msg.isUploadResumeCard()) {
-                val sourceId = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: UUID.randomUUID().toString()
+            if (msg.sequenceNo == 1L) {
                 val introduce = msg.copy(
-                    messageId = "${sourceId}_$CARD_INTRODUCE_YOURSELF",
+                    messageId = generateClientMessageId(),
                     cardType = CARD_INTRODUCE_YOURSELF,
+                    sequenceNo = 0L
                 )
                 listOf(introduce, msg)
             } else {
