@@ -104,27 +104,11 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
             } else {
                 phoneLogin()
             }
-//            if (mRealVM.isBind.get() || mRealVM.checkedPolicy.get()) {
-//                phoneLogin()
-//                return@setOnClickListener
-//            }
-//            // mRealVM.checkedPolicy.set(true)
-//            phoneLogin()
         }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private fun dataUpdate() {
-        mRealVM.promptGenerating.observe(this) {
-            if (it.first) {
-                dialog?.dismiss()
-                dialog = GeneratingDialog(this, it.second)
-                dialog?.show()
-                return@observe
-            }
-            dialog?.dismiss()
-        }
-
         mRealVM.loginResult.observe(this) {
             if (!it) return@observe
             mRealVM.loginResult.value = false

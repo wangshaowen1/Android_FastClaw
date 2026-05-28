@@ -133,14 +133,14 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        val loginType = mBundle.getInt(PhoneLoginDialog.LOGIN_TYPE, SHOW_LOADING)
+     /*   val loginType = mBundle.getInt(PhoneLoginDialog.LOGIN_TYPE, SHOW_LOADING)
         if (loginType == SHOW_LOADING || loginType == SHOW_ONE_KEY_LOGIN) {
             //初始化闪验并获取内容
             initFlashTest()
         } else {
             checkedPolicyChange.value = true
         }
-        showState.set(loginType)
+        showState.set(loginType)*/
     }
 
     /**

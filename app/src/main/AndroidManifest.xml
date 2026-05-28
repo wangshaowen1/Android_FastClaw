@@ -141,7 +141,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="um.${UMENG_APP_KEY}" />
-                <data android:scheme="goldenfruit" />
+                <data android:scheme="__fastclaw__" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -317,7 +317,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="__kuaige__" />
+                <data android:scheme="__fastclaw__" />
             </intent-filter>
         </activity>
         <activity
