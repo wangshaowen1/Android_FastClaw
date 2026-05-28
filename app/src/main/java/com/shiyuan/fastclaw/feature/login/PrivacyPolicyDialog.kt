@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.login
 
 import android.annotation.SuppressLint
 import android.graphics.Typeface
+import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
@@ -27,8 +28,15 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
 
     companion object {
-        fun show(manager: FragmentManager): PrivacyPolicyDialog {
+        private const val ARG_AGREE_TEXT = "agree_text"
+
+        fun show(manager: FragmentManager, agreeText: String? = null): PrivacyPolicyDialog {
             val dialog = PrivacyPolicyDialog()
+            agreeText?.let {
+                dialog.arguments = Bundle().apply {
+                    putString(ARG_AGREE_TEXT, it)
+                }
+            }
             dialog.show(manager)
             return dialog
         }
@@ -101,7 +109,8 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
         binding.tvContent.text = text
 
         binding.btnReject.text = R.string.app_not_agree_and_quit.getResString()
-        binding.btnAgree.text = R.string.app_agree_and_sign_in.getResString()
+        binding.btnAgree.text = arguments?.getString(ARG_AGREE_TEXT)
+            ?: R.string.app_agree_and_sign_in.getResString()
 
         binding.btnAgree.setOnSingleClickListener {
             dismiss()
