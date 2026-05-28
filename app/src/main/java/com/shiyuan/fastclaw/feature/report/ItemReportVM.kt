@@ -20,6 +20,7 @@ class ItemReportVM(data: ReportInfo?) : AppItemViewModel<ReportInfo>(data) {
     val isOther = ObservableField(data?.status == ReportStatus.OTHER)
 
     val estimateMessage = ObservableField(data?.estimateMessage.orEmpty())
+    val failReason = ObservableField(data?.failReason.orEmpty())
 
     val progress = ObservableField(data?.progress)
 
