@@ -10,10 +10,12 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.databinding.ActivitySplashBinding
+import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginActivity
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.utils.Logger
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.router.AppRouter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,8 +23,9 @@ import kotlinx.coroutines.launch
 /**
  * @Introduce: 招聘启动页
  */
-class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewModel>(),
-    PolicyDialog.PolicyCallback {
+class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewModel>() {
+
+    private var pendingDialog: PrivacyPolicyDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -59,7 +62,18 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
 
     private fun checkLaunch() {
         if (!mRealVM.hasAgreed) {
-            PolicyDialog().show(supportFragmentManager)
+            pendingDialog = PrivacyPolicyDialog.show(
+                supportFragmentManager,
+                getString(R.string.app_agree)
+            )
+            pendingDialog?.callback = { agreed ->
+                if (agreed) {
+                    mRealVM.onPolicyAgreed()
+                } else {
+                    finish()
+                }
+                pendingDialog = null
+            }
             return
         }
         lifecycleScope.launch {
@@ -74,14 +88,5 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
             .transparentStatusBar()
             .transparentNavigationBar()
             .init()
-    }
-
-    override fun onAgreePolicy(dialog: PolicyDialog) {
-        dialog.dismissAllowingStateLoss()
-        mRealVM.onPolicyAgreed()
-    }
-
-    override fun onRejectPolicy(dialog: PolicyDialog) {
-        finish()
     }
 }
