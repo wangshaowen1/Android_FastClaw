@@ -66,10 +66,10 @@ data class AttributeConfirmPayloadBean(
     val memoryText: String? = null,
     /** 属性名称，如「意向岗位」 */
     val fieldName: String? = null,
-    /** 变更前的值 */
-    val oldValue: String? = null,
+    /** 变更前的值 有毒 */
+//    val oldValue: String? = null,
     /** 变更后的值 */
-    val newValue: String? = null,
+//    val newValue: String? = null,
     /** 待确认候选值 */
     val candidateValue: String? = null,
     /** 拒绝行为，当前为 REASK（拒绝后服务端重新下发问题卡） */

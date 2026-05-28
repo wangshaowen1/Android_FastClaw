@@ -303,7 +303,6 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             runCatching { GsonUtils.fromJson(it, AttributeConfirmPayloadBean::class.java) }.getOrNull()
         }
         val queueId = payload?.questionQueueId
-        Log.i(TAG, "showMemoryCardPopup questionQueueId: ${queueId}")
         val contentView = LayoutInflater.from(context).inflate(R.layout.popup_memory_card_select, null, false)
         val contentTv = contentView.findViewById<TextView>(R.id.tv_content)
         val confirmBtn = contentView.findViewById<TextView>(R.id.tv_confirm)
@@ -359,7 +358,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         // 弹出 1s 后自动触发"确认"事件并关闭弹窗（随 view 生命周期取消）
         autoConfirmJob?.cancel()
         autoConfirmJob = viewLifecycleOwner.lifecycleScope.launch {
-            delay(1000)
+            delay(2000L)
             confirmBtn.performClick()
         }
     }
