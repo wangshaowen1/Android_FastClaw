@@ -4,6 +4,10 @@ import android.content.Context
 import android.graphics.Color
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
@@ -23,7 +27,11 @@ import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.response
+import com.shiyuan.fastclaw.feature.mine.UserPointPagingSource
+import com.shiyuan.fastclaw.feature.report.data.ReportPagingSource
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.MultipartBody
 
 /**
@@ -37,21 +45,14 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
-    val loadState = ObservableField<LoadState>(LoadState.NotLoading(false))
+    val reportListFlow = Pager(
+        PagingConfig(pageSize = 10)
+    ) {
+        ReportPagingSource()
+    }.flow
+        .flowOn(Dispatchers.Default)
+        .cachedIn(viewModelScope)
 
-    val listAdapter = QuickAdapter<ItemReportVM>(R.layout.item_report, emptyList())
-
-    // 外部注入的 item 点击回调（由 Activity 设置）
-    var itemClickListener: ((ReportInfo) -> Unit)? = null
-
-    private var listData = mutableListOf<ReportInfo>()
-    private var currentPage = 1
-    private var isLoading = false
-    private val pageSize = 10
-
-    override fun onCreate() {
-        super.onCreate()
-    }
 
      var schemeData = MutableLiveData<SchemeData>()
 
@@ -73,81 +74,7 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
         })
     }
 
-    fun loadData(isRefresh: Boolean = true) {
-        if (isLoading) return
-        isLoading = true
 
-        val targetPage = if (isRefresh) 1 else currentPage + 1
-        val currentState = loadState.get()
-
-        if (isRefresh) {
-            loadState.set(LoadState.Loading)
-        } else if (currentState is LoadState.NotLoading && currentState.endOfPaginationReached) {
-            return
-        }
-
-        request(
-            apiBlock = { ApiFactory.apiService.getMyReportList(PagedBody(targetPage, pageSize)) },
-            onSuccess = {
-                isLoading = false
-                data?.let { data ->
-                    val newData = data.toReportInfoList()
-                    if (isRefresh) {
-                        currentPage = 1
-                        listData = newData.toMutableList()
-                        refreshList()
-                        val isEmpty = newData.isEmpty()
-                        loadState.set(
-                            if (isEmpty) LoadState.Empty
-                            else LoadState.NotLoading(isEmpty)
-                        )
-                    } else {
-                        if (newData.isEmpty()) {
-                            loadState.set(LoadState.NotLoading(true))
-                        } else {
-                            currentPage = targetPage
-                            listData.addAll(newData)
-                            refreshList()
-                            loadState.set(LoadState.NotLoading(false))
-                        }
-                    }
-                } ?: run {
-                    isLoading = false
-                    if (isRefresh) {
-                        listData.clear()
-                        refreshList()
-                        loadState.set(LoadState.Empty)
-                    } else {
-                        loadState.set(LoadState.NotLoading(true))
-                    }
-                }
-            },
-            onError = {
-                isLoading = false
-                if (isRefresh) {
-                    loadState.set(LoadState.Error(it ?: Exception("unknown")))
-                }
-            }
-        )
-    }
-
-    fun refresh() = loadData(isRefresh = true)
-
-    fun loadMore() = loadData(isRefresh = false)
-
-    private fun refreshList() {
-        val items = listData.map { info ->
-            ItemReportVM(info).apply {
-                // 使用外部回调设置点击事件（如果回调不为空）
-                onItemClick.value = if (itemClickListener != null) {
-                    { itemClickListener?.invoke(info) }
-                } else {
-                    null
-                }
-            }
-        }
-        listAdapter.submitList(items)
-    }
 
 
     companion object {

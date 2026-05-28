@@ -3,20 +3,24 @@ package com.shiyuan.fastclaw.feature.report
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.LoadState
 import com.shiyuan.fastclaw.databinding.ActivityMyHistoryReportBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.getResString
+import com.shiyuan.fastclaw.common.ext.startRefreshWithAdapter
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
 import com.shiyuan.fastclaw.feature.report.data.ReportStatus
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * @Introduce: 历史报告列表页面
  */
-class MyHistoryReportActivity : BaseViewModelActivity<ActivityMyHistoryReportBinding, ReportViewModel>() {
+class MyHistoryReportActivity :
+    BaseViewModelActivity<ActivityMyHistoryReportBinding, ReportViewModel>() {
 
     companion object {
         fun start(activity: Activity?) {
@@ -30,7 +34,6 @@ class MyHistoryReportActivity : BaseViewModelActivity<ActivityMyHistoryReportBin
         super.onCreate(savedInstanceState)
         initView()
         initObservers()
-        mRealVM.refresh()
     }
 
     override fun setTranslucentStatus() {
@@ -41,33 +44,30 @@ class MyHistoryReportActivity : BaseViewModelActivity<ActivityMyHistoryReportBin
             .init()
     }
 
+    private val mListAdapter by lazy {
+        ReportAdapter() {
+            onReportItemClick(it)
+        }
+    }
+
     private fun initView() {
-        binding.srl.setOnRefreshListener {
-            mRealVM.refresh()
-        }
-
-        binding.srl.setOnLoadMoreListener {
-            mRealVM.loadMore()
-        }
-
         binding.recyclerView.apply {
             layoutManager = ReportViewModel.buildLayoutManager(context)
             addItemDecoration(ReportViewModel.buildItemDecoration(context))
-            adapter = mRealVM.listAdapter
+            adapter = mListAdapter
         }
+        binding.srl.startRefreshWithAdapter(
+            mListAdapter,
+            binding.lsv,
+            onRefreshListener = {
 
-        binding.lsv.setRetryListener {
-            mRealVM.refresh()
-        }
+            },
+            addExtraLoadStateListener = {
 
+            })
         // 配置空视图
         binding.lsv.setDefaultEmptyImage(R.drawable.ic_empty)
         binding.lsv.setNoDataPrompt(R.string.report_empty_tip.getResString())
-
-        // 设置 item 点击回调（将点击事件移到 Activity）
-        mRealVM.itemClickListener = { reportInfo ->
-            onReportItemClick(reportInfo)
-        }
     }
 
     /**
@@ -75,7 +75,7 @@ class MyHistoryReportActivity : BaseViewModelActivity<ActivityMyHistoryReportBin
      */
     private fun onReportItemClick(info: ReportInfo) {
         when (info.status) {
-            ReportStatus.OTHER ,  ReportStatus.FAILED -> {
+            ReportStatus.OTHER, ReportStatus.FAILED -> {
                 SimpleBrowserActivity.launch(
                     this,
                     info.detailUrl,
@@ -88,34 +88,10 @@ class MyHistoryReportActivity : BaseViewModelActivity<ActivityMyHistoryReportBin
     }
 
     private fun initObservers() {
-        mRealVM.loadState.addOnPropertyChangedCallback(object : androidx.databinding.Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: androidx.databinding.Observable?, propertyId: Int) {
-                binding.srl.finishRefresh()
-                when (val state = mRealVM.loadState.get()) {
-                    is LoadState.Loading -> {
-                        if (mRealVM.listAdapter.itemCount == 0) {
-                            binding.lsv.showLoading()
-                        }
-                    }
-                    is LoadState.NotLoading -> {
-                        binding.lsv.showContent()
-                        if (state.endOfPaginationReached) {
-                            binding.srl.finishLoadMoreWithNoMoreData()
-                        } else {
-                            binding.srl.finishLoadMore()
-                        }
-                    }
-                    is LoadState.Empty -> binding.lsv.showEmpty()
-                    is LoadState.Error -> {
-                        if (mRealVM.listAdapter.itemCount > 0) {
-                            binding.srl.finishLoadMore(false)
-                        } else {
-                            binding.lsv.showRetry(state.error)
-                        }
-                    }
-                    else -> { }
-                }
+        lifecycleScope.launch {
+            mRealVM.reportListFlow.collectLatest { pagingData ->
+                mListAdapter.submitData(pagingData)
             }
-        })
+        }
     }
 }
