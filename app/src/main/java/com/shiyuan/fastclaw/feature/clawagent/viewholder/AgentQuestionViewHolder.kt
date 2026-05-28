@@ -22,10 +22,10 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) : RecyclerView.ViewHolder(binding.root) {
 
     /** 选项点击回调（B 方案：仅暴露，提交由后续统一接 sendAction(QUESTION_OPTION_SUBMIT)） */
-    var onOptionClickListener: (item: ClawAgentMessageInfo, option: CardOption) -> Unit = { _, _ -> }
+    var onOptionClickListener: (item: ClawAgentMessageInfo, option: CardOption, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 动作按钮（如跳过）点击回调（B 方案：仅暴露，提交后续统一接） */
-    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
+    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 上次动态添加的选项/动作行，复用前先移除 */
     private val optionRows = ArrayList<View>()
@@ -76,7 +76,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             view.text = option.text ?: option.label.orEmpty()
             view.isEnabled = option.disabled != true
             view.id = View.generateViewId()
-            view.setOnClickListener { onOptionClickListener(item, option) }
+            view.setOnClickListener { onOptionClickListener(item, option, payload.questionQueueId) }
             parent.addView(view)
             ids.add(view.id)
             optionRows.add(view)
@@ -87,7 +87,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             view.text = action.text.orEmpty()
             view.isEnabled = action.disabled != true
             view.id = View.generateViewId()
-            view.setOnClickListener { onActionClickListener(item, action) }
+            view.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
             parent.addView(view)
             ids.add(view.id)
             optionRows.add(view)

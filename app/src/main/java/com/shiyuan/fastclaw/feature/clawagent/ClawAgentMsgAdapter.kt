@@ -53,10 +53,10 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     var onUploadClickAction: (itemData: ClawAgentMessageInfo) -> Unit = {}
 
     /** 补问卡选项点击（B 方案：仅暴露，提交后续统一接 sendAction(QUESTION_OPTION_SUBMIT)） */
-    var onQuestionOptionClickAction: (item: ClawAgentMessageInfo, option: CardOption) -> Unit = { _, _ -> }
+    var onQuestionOptionClickAction: (item: ClawAgentMessageInfo, option: CardOption, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 补问卡动作按钮（如跳过）点击 */
-    var onQuestionActionClickAction: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
+    var onQuestionActionClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 历史简历确认卡 确认(true)/否认(false) 点击（B 方案：仅暴露，提交后续统一接） */
     var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
@@ -74,15 +74,15 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_QUESTION,
             { i, p ->
                 AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
-                    onOptionClickListener = { item, option -> onQuestionOptionClickAction(item, option) }
-                    onActionClickListener = { item, action -> onQuestionActionClickAction(item, action) }
+                    onOptionClickListener = { item, option, queueId -> onQuestionOptionClickAction(item, option, queueId) }
+                    onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item) }
         // 历史简历确认卡
         register(TYPE_PENDING_CONFIRM,
             { i, p ->
                 AgentPendingConfirmViewHolder(ItemMsgAgentPendingConfirmBinding.inflate(i, p, false)).apply {
-                    onConfirmClickListener = { onResumeConfirmClickAction(it, true) }
+                    onConfirmClickListener = { onResumeConfirmClickAction(it, true, ) }
                     onRejectClickListener = { onResumeConfirmClickAction(it, false) }
                 }
             }) { h, item -> h.bind(item) }

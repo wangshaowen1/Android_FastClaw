@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.clawagent
 
 import android.graphics.Color
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -127,11 +128,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             showUploadResumeDialog(data)
         }
         // 补问卡选项点击：actionCode 取自 payload option（如 QUESTION_OPTION_SUBMIT），actionPayload 原样回传
-        msgAdapter.onQuestionOptionClickAction = { item, option ->
+        msgAdapter.onQuestionOptionClickAction = { item, option, queueId ->
             forceScrollToBottom = true
             mRealVM.sendAction(
                 desc = option.text ?: option.label.orEmpty(),
                 actionData = AgentMsgAction(
+                    questionQueueId = queueId,
                     actionCode = option.actionCode,
                     sourceMessageId = item.id,
                     actionPayloadJson = option.actionPayload?.let { GsonUtils.toJson(it) },
@@ -139,11 +141,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             )
         }
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
-        msgAdapter.onQuestionActionClickAction = { item, action ->
+        msgAdapter.onQuestionActionClickAction = { item, action, queueId ->
             forceScrollToBottom = true
             mRealVM.sendAction(
                 desc = action.text.orEmpty(),
                 actionData = AgentMsgAction(
+                    questionQueueId = queueId,
                     actionCode = action.actionCode,
                     sourceMessageId = item.id,
                     actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
@@ -299,6 +302,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, AttributeConfirmPayloadBean::class.java) }.getOrNull()
         }
+        val queueId = payload?.questionQueueId
+        Log.i(TAG, "showMemoryCardPopup questionQueueId: ${queueId}")
         val contentView = LayoutInflater.from(context).inflate(R.layout.popup_memory_card_select, null, false)
         val contentTv = contentView.findViewById<TextView>(R.id.tv_content)
         val confirmBtn = contentView.findViewById<TextView>(R.id.tv_confirm)
@@ -320,7 +325,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 actionData = AgentMsgAction(
                     actionCode = CandidateJobAgentClientActionEnum.ATTRIBUTE_CONFIRM.name,
                     sourceMessageId = item.id,
-                    questionQueueId = payload?.questionQueueId,
+                    questionQueueId = queueId,
                     actionPayloadJson = buildAttributeActionPayload(payload, str),
                 )
             )
@@ -335,7 +340,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 actionData = AgentMsgAction(
                     actionCode = CandidateJobAgentClientActionEnum.ATTRIBUTE_REJECT.name,
                     sourceMessageId = item.id,
-                    questionQueueId = payload?.questionQueueId,
+                    questionQueueId = queueId,
                     actionPayloadJson = buildAttributeActionPayload(payload, str),
                 )
             )
