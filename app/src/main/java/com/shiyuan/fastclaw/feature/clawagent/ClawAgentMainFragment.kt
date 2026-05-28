@@ -105,7 +105,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 binding.etSend.text = null
             }
             R.id.tv_agent_memory -> {
-                if(!User.get().isVisitor){
+                if(!AppNavigator.checkLoginIntercepted(false)){
                     ShrimpUnderstandsActivity.start(requireActivity())
                 }
             }

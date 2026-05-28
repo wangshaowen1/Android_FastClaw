@@ -181,7 +181,10 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.bannerView.create(imageList)
         }
         binding.llViewReport.setOnSingleClickListener {
-            MyHistoryReportActivity.start(requireActivity())
+            if (!AppNavigator.checkLoginIntercepted(true)) {
+                //跳转
+                MyHistoryReportActivity.start(requireActivity())
+            }
         }
     }
 
