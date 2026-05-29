@@ -6,9 +6,7 @@
     android:id="@+id/cl_question_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_msg_agent_left"
-    android:paddingHorizontal="16dp"
-    android:paddingVertical="20dp">
+    android:background="@drawable/bg_msg_agent_left">
 
     <TextView
         android:id="@+id/tv_question"
@@ -16,6 +14,8 @@
         android:layout_height="wrap_content"
         android:textColor="@color/color_90_000000"
         android:textSize="15sp"
+        android:layout_marginTop="14dp"
+        android:layout_marginHorizontal="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -25,18 +25,42 @@
          运行时将选项 View addView 到本 ConstraintLayout，
          再通过 flowOptions.referencedIds 接入到垂直链中。 -->
     <androidx.constraintlayout.helper.widget.Flow
+        tools:visibility="gone"
         android:id="@+id/flow_options"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:orientation="vertical"
         android:visibility="gone"
+        android:layout_marginBottom="18dp"
+        android:paddingHorizontal="16dp"
         app:flow_verticalGap="12dp"
         app:flow_verticalStyle="packed"
         app:flow_wrapMode="none"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_question" />
+
+    <!--  跳过按钮  -->
+    <TextView
+        android:id="@+id/tv_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_agent_question_skip"
+        android:textColor="@color/color_56_3c3c43"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_question"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="invisible" />
 
     <!-- 已回复回显（已回复状态可见，与 flow_options 互斥） -->
     <TextView
@@ -47,10 +71,14 @@
         android:textColor="@color/color_56_3c3c43"
         android:textSize="13sp"
         android:visibility="gone"
+        android:layout_marginBottom="14dp"
+        android:layout_marginHorizontal="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_question"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="已回复：积极找"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

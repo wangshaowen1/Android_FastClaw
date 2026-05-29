@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
+import com.shiyuan.fastclaw.common.ext.invisible
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
@@ -36,23 +37,23 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         }
         binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
         if (payload.isAnswered()) {
-            // 已回复：隐藏选项，展示回显
+            // 已回复：隐藏选项与跳过，展示回显
             clearOptionRows()
             binding.flowOptions.gone()
+            binding.tvSkip.gone()
             binding.tvReplied.visible()
-            val repliedText = payload?.answeredText
-                ?: payload?.interactionState?.selectedText
-                ?: ""
+            val repliedText = payload?.answeredText ?: payload?.interactionState?.selectedText ?: ""
             binding.tvReplied.text = "${repliedText}"
         } else {
-            // 未回复：展示选项 + 动作按钮
+            // 未回复：展示选项 + 独立跳过按钮
             binding.tvReplied.gone()
-            binding.flowOptions.visibility = if (payload?.options?.isEmpty() == true) {
-                View.GONE
+            if (payload?.options.isNullOrEmpty()) {
+                binding.flowOptions.gone()
+                bindSkipAction(item, payload)
             } else {
-                View.VISIBLE
+                binding.flowOptions.visible()
+                bindOptionRows(item, payload)
             }
-            bindOptionRows(item, payload)
         }
     }
 
@@ -65,7 +66,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             state.status == STATUS_SKIPPED
     }
 
-    /** 渲染选项 + 动作按钮到 Flow：先移除旧行，再 inflate + addView，最后接入 flow.referencedIds */
+    /** 渲染选项到 Flow：先移除旧行，再 inflate + addView，最后接入 flow.referencedIds */
     private fun bindOptionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         val parent = binding.clQuestionCard
         clearOptionRows()
@@ -81,18 +82,22 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             ids.add(view.id)
             optionRows.add(view)
         }
-        // 动作按钮（如跳过）布局无专用位置，渲染到选项流末尾
-        payload?.actions?.forEach { action ->
-            val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
-            view.text = action.text.orEmpty()
-            view.isEnabled = action.disabled != true
-            view.id = View.generateViewId()
-            view.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
-            parent.addView(view)
-            ids.add(view.id)
-            optionRows.add(view)
-        }
         binding.flowOptions.referencedIds = ids.toIntArray()
+    }
+
+    /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */
+    private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
+        val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
+            ?: payload?.actions?.firstOrNull()
+        if (action == null) {
+            // 不gone 撑起边距
+            binding.tvSkip.invisible()
+            binding.tvSkip.setOnClickListener(null)
+            return
+        }
+        binding.tvSkip.visible()
+        binding.tvSkip.isEnabled = action.disabled != true
+        binding.tvSkip.setOnClickListener { onActionClickListener(item, action, payload?.questionQueueId) }
     }
 
     private fun clearOptionRows() {
@@ -106,6 +111,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         private const val STATUS_ANSWERED = "ANSWERED"
         private const val STATUS_SUBMITTED = "SUBMITTED"
         private const val STATUS_SKIPPED = "SKIPPED"
+        private const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
     }
 
 }

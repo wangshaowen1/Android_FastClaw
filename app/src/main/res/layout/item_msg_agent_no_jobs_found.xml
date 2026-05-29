@@ -39,9 +39,8 @@
         android:layout_height="46dp"
         android:layout_marginTop="16dp"
         android:importantForAccessibility="no"
-        android:padding="5dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_agent_no_jobs_found"
+        android:src="@drawable/ic_agent_searching_star"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/v_no_jobs_found_divider" />
 

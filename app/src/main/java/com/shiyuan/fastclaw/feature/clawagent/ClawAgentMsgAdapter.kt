@@ -122,6 +122,25 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     }
 
     /**
+     * 思考中消息的旋转动画在可见时启动、滑出/回收时停止，
+     * 避免 [ObjectAnimator] 持有已脱离窗口的 ImageView 引发泄漏。
+     */
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        if (holder is AgentThinkViewHolder) holder.startRotate()
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        if (holder is AgentThinkViewHolder) holder.stopRotate()
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        if (holder is AgentThinkViewHolder) holder.stopRotate()
+        super.onViewRecycled(holder)
+    }
+
+    /**
      * 提交新列表：基于 [DiffUtil] 做差量更新（按 [ClawAgentMessageInfo.id] 判断同一条消息，
      * 内容变化用 data class 全等比较），相比父类 [submitList] 的整表刷新可保留动画、减少重绘。
      */
