@@ -55,6 +55,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
     companion object {
         const val TAG = "ClawAgentMainFragment"
+        /** 记忆卡片等待时长 */
+        private const val MEMORY_CARD_WAIT_TIME = 5000L
 
         /** 距顶部多少条时开始预取更早历史 */
         private const val PREFETCH_THRESHOLD = 5
@@ -379,7 +381,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         // 弹出 1s 后自动触发"确认"事件并关闭弹窗（随 view 生命周期取消）
         autoConfirmJob?.cancel()
         autoConfirmJob = viewLifecycleOwner.lifecycleScope.launch {
-            delay(2000L)
+            delay(MEMORY_CARD_WAIT_TIME)
             confirmBtn.performClick()
         }
     }
