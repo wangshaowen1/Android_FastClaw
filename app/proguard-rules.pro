@@ -82,7 +82,7 @@
 -keep public class * extends android.app.backup.BackupAgentHelper
 -keep public class * extends android.preference.Preference
 #keep 反射相关
--keepnames class com.kgmedia.fastfilm.core.media.**
+-keepnames class com.shiyuan.fastclaw.core.media.**
 # 保留我们自定义控件（继承自View）不被混淆
 -keep public class * extends android.view.View{
     *** get*();
@@ -92,7 +92,7 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keep public class com.android.vending.licensing.ILicensingService
--keep class com.kgmedia.fastfilm.core.media.** { *; }
+-keep class com.shiyuan.fastclaw.core.media.** { *; }
 #v4
 -dontwarn android.support.v4.**
 -keep class android.support.v4.app.** { *; }
@@ -171,21 +171,21 @@
 #---------------------------------webview----------------------------------
 
 #--------------------------------实体相关------------------------------
--keep class com.kgmedia.fastfilm.common.entity.**{*;}
--keep class com.kgmedia.fastfilm.common.jsbridge.data.**{*;}
--keep class com.kgmedia.fastfilm.core.network.apis.**{*;}
--keep class com.kgmedia.fastfilm.core.db.**{*;}
--keep class com.kgmedia.fastfilm.core.model.**{*;}
+-keep class com.shiyuan.fastclaw.common.entity.**{*;}
+-keep class com.shiyuan.fastclaw.common.jsbridge.data.**{*;}
+-keep class com.shiyuan.fastclaw.core.network.apis.**{*;}
+-keep class com.shiyuan.fastclaw.core.db.**{*;}
+-keep class com.shiyuan.fastclaw.core.model.**{*;}
 #--------用户信息相关------
--keep class com.kgmedia.fastfilm.core.User{*;}
--keep class com.kgmedia.fastfilm.core.User$*{*;}
+-keep class com.shiyuan.fastclaw.core.User{*;}
+-keep class com.shiyuan.fastclaw.core.User$*{*;}
 
--keep class com.kgmedia.fastfilm.core.Config{*;}
--keep class com.kgmedia.fastfilm.core.Config$*{*;}
--keep class com.kgmedia.fastfilm.common.Constants{*;}
--keep class com.kgmedia.fastfilm.common.Constants$*{*;}
--keep class com.kgmedia.fastfilm.common.Events*{*;}
--keep class com.kgmedia.fastfilm.common.Events$*{*;}
+-keep class com.shiyuan.fastclaw.core.Config{*;}
+-keep class com.shiyuan.fastclaw.core.Config$*{*;}
+-keep class com.shiyuan.fastclaw.common.Constants{*;}
+-keep class com.shiyuan.fastclaw.common.Constants$*{*;}
+-keep class com.shiyuan.fastclaw.common.Events*{*;}
+-keep class com.shiyuan.fastclaw.common.Events$*{*;}
 
 #封装ViewBinding 用了反射需要这个
 -keepclassmembers class * implements androidx.viewbinding.ViewBinding {
@@ -346,7 +346,7 @@
 -keep class org.android.agoo.honor.* {*;}
 
 #自定义push
--keep class com.kgmedia.fastfilm.feature.push.*{*;}
+-keep class com.shiyuan.fastclaw.feature.push.*{*;}
 
 
 #新加的
@@ -366,7 +366,7 @@
 -keep class com.heytap.** {*;}
 -keep class a.** {*;}
 -keep class com.vivo.** {*;}
--keep public class com.kgmedia.fastfilm.R$*{
+-keep public class com.shiyuan.fastclaw.R$*{
     public static final int *;
 }
 -keep public class com.sina.weibo.sdk.**{*;}

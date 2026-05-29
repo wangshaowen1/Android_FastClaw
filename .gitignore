@@ -15,3 +15,6 @@ local.properties
 /app/seeds.txt
 /.claude/CLAUDE.md
 /.claude
+/.cursor/
+/.codegraph/
+/docs/
