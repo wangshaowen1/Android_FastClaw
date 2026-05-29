@@ -53,7 +53,7 @@ class UploadResumeDialog : BaseBottomPushVMDialogFragment<DialogUploadResumeBind
             onResult = { fileInfo ->
                 if (fileInfo != null) {
                     onFileSelected?.invoke(fileInfo)
-                   "已选择: ${fileInfo.fileName}".showToast()
+                  // "已选择: ${fileInfo.fileName}".showToast()
                     dismiss()
                 } else {
                     // 这里只处理非大小超限的错误（例如无法读取文件）

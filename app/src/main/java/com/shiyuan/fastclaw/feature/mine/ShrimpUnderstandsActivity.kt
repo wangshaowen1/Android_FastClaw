@@ -291,7 +291,7 @@ class ShrimpUnderstandsActivity :
             data ?: return@observe
             // 安全获取 jobStatus，若为 null 则显示“暂无”
             binding.tvTip.text = data.firstOrNull { it.fieldCode == "jobStatus" }
-                ?.fieldValue?.toString() ?: "暂无"
+                ?.fieldValue?.toString() ?: "求职状态"
             // 安全获取 name，若为 null 则显示“暂无”
             binding.tvName.text = data.firstOrNull { it.fieldCode == "name" }
                 ?.fieldValue?.toString() ?: "暂无"
