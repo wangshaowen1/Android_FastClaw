@@ -107,6 +107,11 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
 
+                    <!--    <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/ic_pr_bg2" />-->
+
                         <com.shiyuan.fastclaw.widget.progress.WaveProgressView
                             android:id="@+id/wave_view"
                             android:layout_width="match_parent"
