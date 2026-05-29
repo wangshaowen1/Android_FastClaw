@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.clawagent.viewholder
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.shiyuan.fastclaw.R
@@ -42,17 +43,18 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             binding.flowOptions.gone()
             binding.tvSkip.gone()
             binding.tvReplied.visible()
-            val repliedText = payload?.answeredText ?: payload?.interactionState?.selectedText ?: ""
+            val repliedText = payload?.answeredText ?: ""
             binding.tvReplied.text = "${repliedText}"
         } else {
             // 未回复：展示选项 + 独立跳过按钮
             binding.tvReplied.gone()
             if (payload?.options.isNullOrEmpty()) {
                 binding.flowOptions.gone()
-                bindSkipAction(item, payload)
+                bindSkipAction(item, payload, false)
             } else {
                 binding.flowOptions.visible()
                 bindOptionRows(item, payload)
+                bindSkipAction(item, payload, false)
             }
         }
     }
@@ -86,12 +88,16 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     }
 
     /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */
-    private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
+    private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, center: Boolean = false) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
             ?: payload?.actions?.firstOrNull()
+
+        val layoutParams = binding.tvSkip.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.horizontalBias = if (center) 0.5f else 1f
+        binding.tvSkip.layoutParams = layoutParams
         if (action == null) {
             // 不gone 撑起边距
-            binding.tvSkip.invisible()
+            binding.tvSkip.gone()
             binding.tvSkip.setOnClickListener(null)
             return
         }
