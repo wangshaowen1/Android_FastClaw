@@ -19,9 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ScreenUtils
+import com.blankj.utilcode.util.SpanUtils
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
@@ -41,7 +43,6 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
-import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -124,7 +125,20 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     private fun initView() {
         // 消息列表：聊天场景内容自底部对齐
         binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
-        binding.rvMsg.addItemDecoration(SpaceDecoration(12.dp, SpaceDecoration.Direction.TOP_WITH_BOTTOM))
+        // 底部间距高点
+        binding.rvMsg.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: android.graphics.Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                val position = parent.getChildAdapterPosition(view)
+                if (position == 0) outRect.top = 12.dp
+                val itemCount = state.itemCount
+                outRect.bottom = if (position == itemCount - 1) 21.dp else 12.dp
+            }
+        })
         binding.rvMsg.adapter = msgAdapter
 
         msgAdapter.onUploadClickAction = { data ->
@@ -332,12 +346,49 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         val negationBtn = contentView.findViewById<TextView>(R.id.tv_negation)
         val jumpMemory = contentView.findViewById<TextView>(R.id.tv_all_memory)
 
-        contentTv.text = payload?.memoryText ?: payload?.questionText ?: item.content
+        val spanUtils = SpanUtils.with(contentTv)
+        if (payload?.confirmationItems.isNullOrEmpty()) {
+            // 单个改动，取外层
+            spanUtils.append("${payload?.fieldName}：")
+                .append("${payload?.displayText}")
+                .setForegroundColor(R.color.color_90_000000.getResColor())
+                .setBold()
+        } else {
+            // 多个改动，取里层
+            val confirmationItems = payload.confirmationItems
+            val size = confirmationItems.size
+            confirmationItems.forEachIndexed { index, actionItem ->
+                spanUtils.append("${actionItem.fieldName}：")
+                    .append("${actionItem.displayText}")
+                    .setForegroundColor(R.color.color_90_000000.getResColor())
+                    .setBold()
+                // 添加换行
+                if (index < size - 1) {
+                    spanUtils.append("\n")
+                }
+            }
+        }
+
+        spanUtils.create()
+
         jumpMemory.setOnSingleClickListener {
             if(!AppNavigator.checkLoginIntercepted(false)){
                 ShrimpUnderstandsActivity.start(requireActivity())
             }
         }
+
+        // 根据后台消息设置卡片按钮文案
+        payload?.actions?.forEach { action ->
+            when (action.actionCode) {
+                CandidateJobAgentClientActionEnum.ATTRIBUTE_CONFIRM.name -> {
+                    confirmBtn.text = "${action.text ?: R.string.str_agent_memory_confirm.getResString()}"
+                }
+                CandidateJobAgentClientActionEnum.ATTRIBUTE_REJECT.name -> {
+                    negationBtn.text = "${action.text ?: R.string.str_agent_memory_negation.getResString()}"
+                }
+            }
+        }
+
         // 确认：ATTRIBUTE_CONFIRM
         confirmBtn.setOnClickListener {
             forceScrollToBottom = true
@@ -392,6 +443,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             payload?.questionQueueId?.let { put("questionQueueId", it) }
             payload?.attributeGroupCode?.let { put("attributeGroupCode", it) }
             payload?.metaCode?.let { put("metaCode", it) }
+            payload?.confirmMode?.let { put("confirmMode", it) }
 //            payload?.candidateValue?.let { put("candidateValue", it) }
             put("selectedText", selectedText)
         }

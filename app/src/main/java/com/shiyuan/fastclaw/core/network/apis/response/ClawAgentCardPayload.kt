@@ -64,8 +64,12 @@ data class AttributeConfirmPayloadBean(
     val confirmScene: String? = null,
     /** 记忆确认展示文案，如「我听到了：意向岗位 → AI 大模型工程师」 */
     val memoryText: String? = null,
+    val confirmMode: String? = null,
+    /** 候选值 */
+    val confirmationItems: List<ConfirmActionItemBean>? = null,
     /** 属性名称，如「意向岗位」 */
     val fieldName: String? = null,
+    val displayText: String? = null,
     /** 变更前的值 有毒 */
 //    val oldValue: String? = null,
     /** 变更后的值 */
@@ -78,6 +82,22 @@ data class AttributeConfirmPayloadBean(
     val reaskQuestionText: String? = null,
     /** 展示确认、拒绝按钮 */
     val actions: List<CardAction>? = null
+)
+
+/** 候选属性 */
+data class ConfirmActionItemBean(
+
+    val attributeGroupCode: String? = null,
+
+    val metaCode: String? = null,
+
+    val fieldName: String? = null,
+
+    val displayText: String? = null,
+
+    val collectMode: String? = null,
+
+    val groupValueType: String? = null,
 )
 
 /** CARD 公共：整卡交互状态（7.4.1） */

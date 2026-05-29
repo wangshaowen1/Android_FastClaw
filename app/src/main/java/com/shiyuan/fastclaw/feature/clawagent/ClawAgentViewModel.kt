@@ -407,6 +407,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         messages.forEach { msg ->
             // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
             if (msg.isAttributeConfirm()) return@forEach
+            // 已操作过的不展示
+            if (msg.isUploadResumeCard()) {
+                val interactionState = msg.payloadJson?.let {
+                    runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
+                }
+                if (interactionState?.disabled == true) {
+                    return@forEach
+                }
+            }
             val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: return@forEach
             // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
             // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
