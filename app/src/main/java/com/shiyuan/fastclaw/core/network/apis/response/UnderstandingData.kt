@@ -1,3 +1,4 @@
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -21,7 +22,14 @@ class FieldItems(
     var fieldValue: Any? = null,
     var fieldItems: List<FieldItems> = emptyList(),
     val extra: Map<String, Any>? = null   // 用于存放额外标记
-){
+){}
 
+fun formatValueToString(value: Any?): String {
+    return when (value) {
+        null -> ""
+        is Number -> value.toString().replace(Regex("\\.0+$"), "") ?: ""
+        is Boolean -> if (value) "是" else "否"
+        else -> value.toString()
+    }
 }
 
