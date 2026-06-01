@@ -1,3 +1,4 @@
+/*
 package com.shiyuan.fastclaw.core
 
 import com.kuaige.videoedit.resource.Resource
@@ -7,21 +8,27 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+*/
 /**
  * 文件缓存管理器
  * 优化：移除 Listener，使用 GlobalScope 执行下载任务（Fire-and-forget）
- */
+ *//*
+
 object FileCacheManager {
     private val cache by lazy { mutableMapOf<String, Resource>() }
 
-    /**
+    */
+/**
      * 获取缓存 Resource 对象
-     */
+     *//*
+
     fun getCache(url: String): Resource = cache.getOrPut(url) { UrlResource(url, RetrofitClient.httpClient) }
 
-    /**
+    */
+/**
      * 预加载/缓存文件
-     */
+     *//*
+
     @OptIn(DelicateCoroutinesApi::class)
     fun cache(url: String) {
         // 作为全局单例缓存工具，使用 GlobalScope 是可以接受的，或者使用自定义的 Application Scope
@@ -34,4 +41,4 @@ object FileCacheManager {
             }
         }
     }
-}
+}*/

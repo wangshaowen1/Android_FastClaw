@@ -285,7 +285,7 @@ dependencies {
     implementation rootProject.ext.modules.baselibrary.gav
     implementation rootProject.ext.modules.imageloader.gav
     implementation rootProject.ext.modules.oss.gav
-    implementation rootProject.ext.modules.videoedit.gav
+    //implementation rootProject.ext.modules.videoedit.gav
     implementation rootProject.ext.modules.luban.gav
     implementation rootProject.ext.modules.payment.gav
     implementation rootProject.ext.modules.permissionx.gav
@@ -362,7 +362,7 @@ dependencies {
     //implementation libs.face.detection
 
     //implementation 'com.arthenica:ffmpeg-kit-full-gpl:6.0-2'
-    implementation 'org.jcodec:jcodec:0.2.5'        // 基础库
+  //  implementation 'org.jcodec:jcodec:0.2.5'        // 基础库
     implementation 'com.tencent:mmkv:2.3.0'
     implementation libs.okhttp3.okhttp
     implementation libs.okhttp3.sse

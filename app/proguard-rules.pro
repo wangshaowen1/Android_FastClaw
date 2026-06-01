@@ -37,10 +37,10 @@
 -verbose
 # 忽略警告 gradle3.5以前为-ignorewarning
 -ignorewarnings
-# 代码优化
--dontshrink
-# 不优化输入的类文件
--dontoptimize
+## 代码优化
+#-dontshrink
+## 不优化输入的类文件
+#-dontoptimize
 # 保留注解不混淆
 -keepattributes *Annotation*,InnerClasses
 # 避免混淆泛型
@@ -402,8 +402,6 @@
 -keep public class **.R$*{
    public static final int *;
 }
--dontshrink
--dontoptimize
 -dontwarn com.google.android.maps.**
 -dontwarn android.webkit.WebView
 -dontwarn com.umeng.**
