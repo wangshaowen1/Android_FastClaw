@@ -263,8 +263,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     fun loadOlderHistory() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
-        // 未就绪 / 加载中 / 没有更早消息：直接结束本次（下拉）
-        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty() || loadingHistory) {
+        // 未就绪
+        if (currentSessionId.isNullOrEmpty() ||
+            currentConversationId.isNullOrEmpty() ||
+            // 加载中
+            loadingHistory ||
+            // 没有更早消息
+            (!hasMoreHistory && historyBeforeCursor == null)
+        ) {
+            // 直接结束本次（下拉）
             return
         }
         loadingHistory = true
@@ -381,7 +388,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
         }
-        ingestMessages(listOf(newMsg))
+        ingestMessages(listOf(newMsg), isReal = true)
     }
 
     /**
@@ -402,13 +409,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 合并并刷新渲染列表：按消息 ID 去重（同 ID 覆盖以实现更新/替换），
      * 再按 sequenceNo 升序映射为端侧 [ClawAgentMessageInfo] 后回推 [messageList]。
      */
-    private fun ingestMessages(messages: List<JobAgentMessage>?) {
+    private fun ingestMessages(messages: List<JobAgentMessage>?, isReal: Boolean = false) {
         if (messages.isNullOrEmpty()) return
         messages.forEach { msg ->
             // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
             if (msg.isAttributeConfirm()) return@forEach
-            // 已操作过的不展示
-            if (msg.isUploadResumeCard()) {
+            // 历史消息已操作过的不展示，实时sse的要进行更新展示
+            if (msg.isUploadResumeCard() && !isReal) {
                 val interactionState = msg.payloadJson?.let {
                     runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
                 }
@@ -745,12 +752,19 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 退出登录 用来重置
      */
     fun reset() {
+        // sse 重置
         sseHandler.cancel()
+        // 会话列表重置
         sessionId = null
         conversationId = null
+        // 消息列表重置
         latestCursor = null
         messageStore.clear()
         messageList.value = listOf()
+        // 下拉判定条件重置
+        historyBeforeCursor = null
+        hasMoreHistory = true
+        loadingHistory = false
     }
 
     fun hardPreMsgListCard(list: List<ClawAgentMessageInfo>) {
