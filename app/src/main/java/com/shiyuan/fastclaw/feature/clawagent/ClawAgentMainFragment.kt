@@ -265,6 +265,14 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                     }
                 }
             }
+            on<Events.ResumeEvent> { event ->
+                // 上传简历通知拉取
+                if (!User.get().isVisitor) {
+                    if (mRealVM.hasInitSession.value == true) {
+                        mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+                    }
+                }
+            }
         }
 
         if (!User.get().isVisitor) {
@@ -300,6 +308,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             showMemoryCardPopup(info)
             mRealVM.attributeConfirmPopup.value = null
         }
+        // 达到开启消息通知弹窗
+        mRealVM.understandingSummaryDialog.observe(viewLifecycleOwner) { info ->
+            info ?: return@observe
+            showNotificationSwitchDialog()
+            mRealVM.understandingSummaryDialog.value = null
+        }
     }
 
     /**
@@ -311,6 +325,15 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             ClawAgentMessageInfo(id = "-2", messageType = ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT, sendObj = ClawAgentViewModel.SENDER_AGENT, receiveObj = ClawAgentViewModel.SENDER_USER),
         )
         return tempList
+    }
+
+    private fun showNotificationSwitchDialog() {
+        val dialog = NotificationsSwitchDialog.show(childFragmentManager)
+        dialog.clickListener = { flag ->
+            if (flag) {
+                // todo: 检测通知权限
+            }
+        }
     }
 
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {

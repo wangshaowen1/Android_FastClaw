@@ -21,12 +21,14 @@ import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
+import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
+import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingSummaryPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
@@ -80,6 +82,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 收到 ATTRIBUTE_CONFIRM 卡时触发记忆确认弹窗（一次性事件，携带消息供弹窗解析展示） */
     val attributeConfirmPopup = MutableLiveData<ClawAgentMessageInfo?>()
+
+    /** 开启消息通知弹窗 */
+    val understandingSummaryDialog = MutableLiveData<ClawAgentMessageInfo?>()
 
     /** 当前会话 ID，发送消息/提交动作时回传 */
     private var sessionId: String? = null
@@ -388,6 +393,16 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
         }
+        if (newMsg.isUnderstandingSummaryCard()) {
+            val payload = newMsg.payloadJson?.let {
+                runCatching { GsonUtils.fromJson(newMsg.payloadJson, UnderstandingSummaryPayloadBean::class.java) }.getOrNull()
+            }
+            payload?.understandingScore?.let { score ->
+                if (score >= SHOW_DIALOG_SCORE) {
+                    understandingSummaryDialog.value = newMsg.toMessageInfo()
+                }
+            }
+        }
         ingestMessages(listOf(newMsg), isReal = true)
     }
 
@@ -414,15 +429,36 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         messages.forEach { msg ->
             // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
             if (msg.isAttributeConfirm()) return@forEach
-            // 历史消息已操作过的不展示，实时sse的要进行更新展示
-//            if (msg.isUploadResumeCard() && !isReal) {
-//                val interactionState = msg.payloadJson?.let {
-//                    runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
-//                }
-//                if (interactionState?.disabled == true) {
-//                    return@forEach
-//                }
-//            }
+            // HISTORY_RESUME_CONFIRM 已操作过（interactionState.disabled=true）的不展示：
+            // 覆盖 SSE 实时操作后服务端回写禁用态 与 enterSession / 历史分页里已操作过的残留两种场景；
+            // 同时把 messageStore 里已渲染的同 id 旧卡移除，避免之前的可点击态滞留在列表
+            if (msg.isHistoryResumeConfirmCard()) {
+                val disabled = msg.payloadJson?.let {
+                    runCatching {
+                        GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java)?.interactionState?.disabled
+                    }.getOrNull()
+                }
+                if (disabled == true) {
+                    val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString()
+                    key?.let { messageStore.remove(it) }
+                    return@forEach
+                }
+            }
+            // 待上传和上传失败 在历史消息中已操作过的不展示，在实时sse的消息中要进行更新展示
+            if (msg.isUploadResumeCard()) {
+                val interactionState = msg.payloadJson?.let {
+                    runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
+                }
+                if (interactionState?.disabled == true) {
+                    // 实时sse需要删除操作过的消息，历史和拉取
+                    if (isReal) {
+                        val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString()
+                        key?.let { messageStore.remove(it) }
+                    }
+                    return@forEach
+                }
+            }
+
             val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: return@forEach
             // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
             // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
@@ -517,6 +553,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否上传简历卡（UPLOAD_RESUME） */
     private fun JobAgentMessage.isUploadResumeCard(): Boolean =
         messageType == MSG_CARD && cardType == CARD_UPLOAD_RESUME
+
+    /** 是否历史简历确认卡（HISTORY_RESUME_CONFIRM） */
+    private fun JobAgentMessage.isHistoryResumeConfirmCard(): Boolean =
+        messageType == MSG_CARD && cardType == CARD_HISTORY_RESUME_CONFIRM
+
+    /** 是否理解升级（UNDERSTANDING_SUMMARY） */
+    private fun JobAgentMessage.isUnderstandingSummaryCard(): Boolean =
+        messageType == MSG_CARD && cardType == CARD_UNDERSTANDING_SUMMARY
 
     /**
      * 始终第一条插入自我介绍卡片
@@ -782,6 +826,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // actionType
         private const val INTERACTION_TYPE_TEXT = "TEXT"
         private const val INTERACTION_TYPE_ACTION = "ACTION"
+
+        // 显示开启消息通知弹窗分值
+        const val SHOW_DIALOG_SCORE = 85
 
         // senderType
         const val SENDER_USER = "USER"
