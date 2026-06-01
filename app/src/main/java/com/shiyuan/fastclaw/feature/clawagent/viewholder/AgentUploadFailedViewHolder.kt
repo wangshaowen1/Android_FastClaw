@@ -18,7 +18,16 @@ class AgentUploadFailedViewHolder(private val binding: ItemMsgAgentUploadFailedB
     var onReUploadClickListener: (item: ClawAgentMessageInfo) -> Unit = {}
 
     fun bind(item: ClawAgentMessageInfo) {
-        binding.btnReUpload.setOnSingleClickListener { onReUploadClickListener(item) }
+        val payload = item.metaData?.let {
+            runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java) }.getOrNull()
+        }
+        // 是否可以点击
+        val enabled = payload?.interactionState?.disabled != true
+        binding.btnReUpload.isEnabled = enabled
+        binding.btnReUpload.alpha = if (enabled) 1f else 0.5f
+        binding.btnReUpload.setOnSingleClickListener {
+            if (enabled) onReUploadClickListener(item)
+        }
     }
 
 }

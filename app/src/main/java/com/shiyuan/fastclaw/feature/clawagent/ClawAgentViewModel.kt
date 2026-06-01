@@ -269,7 +269,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             // 加载中
             loadingHistory ||
             // 没有更早消息
-            (!hasMoreHistory && historyBeforeCursor == null)
+            !hasMoreHistory
         ) {
             // 直接结束本次（下拉）
             return
@@ -277,6 +277,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         loadingHistory = true
         val beforeCursor = historyBeforeCursor
             ?: messageStore.values.minByOrNull { it.sequenceNo ?: Long.MAX_VALUE }?.cursor
+        // 用 invokeOnCompletion 兜底复位：业务错误走 request 的 onError，但 IO/解析异常被基础库 launch 的
+        // CoroutineExceptionHandler 直接吞掉，不会回到这里的 onError，导致 loadingHistory 卡死
         request(
             apiBlock = {
                 mRepo.api.queryMessagePage(
@@ -289,11 +291,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 )
             },
             showToast = true,
-            onError = {
-                loadingHistory = false
-            },
         ) {
-            loadingHistory = false
             val result = this.data
             historyMessages.value = result
             result?.nextBeforeCursor?.let { historyBeforeCursor = it }
@@ -303,6 +301,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             ingestMessages(expandIntroduceBeforeUploadResume(result?.messages?.filterNot { it.isThinkMessage() }))
             // 已加载到最早一页时给一次轻提示
 //            if (!hasMoreHistory) R.string.no_more_data_pull.getResString().showToast()
+        }.invokeOnCompletion {
+            loadingHistory = false
         }
     }
 
@@ -415,14 +415,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
             if (msg.isAttributeConfirm()) return@forEach
             // 历史消息已操作过的不展示，实时sse的要进行更新展示
-            if (msg.isUploadResumeCard() && !isReal) {
-                val interactionState = msg.payloadJson?.let {
-                    runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
-                }
-                if (interactionState?.disabled == true) {
-                    return@forEach
-                }
-            }
+//            if (msg.isUploadResumeCard() && !isReal) {
+//                val interactionState = msg.payloadJson?.let {
+//                    runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
+//                }
+//                if (interactionState?.disabled == true) {
+//                    return@forEach
+//                }
+//            }
             val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: return@forEach
             // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
             // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
