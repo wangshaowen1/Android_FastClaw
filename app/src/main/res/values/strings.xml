@@ -754,6 +754,7 @@
     <string name="job_preference">求职偏好</string>
     <string name="inaccurate">不准确？告诉小虾修改</string>
     <string name="str_agent_question_skip">跳过</string>
+    <string name="str_agent_intercept_hint">AI正在回复中，请稍后</string>
 
 
 </resources>

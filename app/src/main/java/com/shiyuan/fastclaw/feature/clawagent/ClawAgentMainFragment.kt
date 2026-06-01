@@ -105,9 +105,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                     showMessage("发送内容不能为空")
                     return
                 }
-                if (mRealVM.streaming.value == true) {
-                    mRealVM.cancelStream(flag = false)
-                }
+                // SSE 仍在 done / 断开 / 关闭之前（streaming=true），拦截发送，不打断当前流
+                if (interceptIfStreaming()) return
                 // 主动发送:本条乐观插入及随后的流式回复都强制滚到最新
                 forceScrollToBottom = true
                 mRealVM.sendMessage(content.toString().trim())
@@ -148,50 +147,56 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
         // 补问卡选项点击：actionCode 取自 payload option（如 QUESTION_OPTION_SUBMIT），actionPayload 原样回传
         msgAdapter.onQuestionOptionClickAction = { item, option, queueId ->
-            forceScrollToBottom = true
-            mRealVM.sendAction(
-                desc = option.text ?: option.label.orEmpty(),
-                actionData = AgentMsgAction(
-                    questionQueueId = queueId,
-                    actionCode = option.actionCode,
-                    sourceMessageId = item.id,
-                    actionPayloadJson = option.actionPayload?.let { GsonUtils.toJson(it) },
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.sendAction(
+                    desc = option.text ?: option.label.orEmpty(),
+                    actionData = AgentMsgAction(
+                        questionQueueId = queueId,
+                        actionCode = option.actionCode,
+                        sourceMessageId = item.id,
+                        actionPayloadJson = option.actionPayload?.let { GsonUtils.toJson(it) },
+                    )
                 )
-            )
+            }
         }
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
         msgAdapter.onQuestionActionClickAction = { item, action, queueId ->
-            forceScrollToBottom = true
-            mRealVM.sendAction(
-                desc = action.text.orEmpty(),
-                actionData = AgentMsgAction(
-                    questionQueueId = queueId,
-                    actionCode = action.actionCode,
-                    sourceMessageId = item.id,
-                    actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.sendAction(
+                    desc = action.text.orEmpty(),
+                    actionData = AgentMsgAction(
+                        questionQueueId = queueId,
+                        actionCode = action.actionCode,
+                        sourceMessageId = item.id,
+                        actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
+                    )
                 )
-            )
+            }
         }
         // 历史简历确认卡 确认/否认：actionCode 用端侧动作枚举，回传 resumeId/resumeStructId/resumeTaskId
         msgAdapter.onResumeConfirmClickAction = { item, confirmed ->
-            forceScrollToBottom = true
-            val payload = item.metaData?.let {
-                runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
-            }
-            val payloadMap = buildMap {
-                payload?.resumeId?.let { put("resumeId", it) }
-                payload?.resumeStructId?.let { put("resumeStructId", it) }
-                payload?.resumeTaskId?.let { put("resumeTaskId", it) }
-            }
-            mRealVM.sendAction(
-                desc = getString(if (confirmed) R.string.confirm_my_resume else R.string.not_my_resume),
-                actionData = AgentMsgAction(
-                    actionCode = (if (confirmed) CandidateJobAgentClientActionEnum.RESUME_CONFIRM_YES
-                    else CandidateJobAgentClientActionEnum.RESUME_CONFIRM_NO).name,
-                    sourceMessageId = item.id,
-                    actionPayloadJson = payloadMap.takeIf { it.isNotEmpty() }?.let { GsonUtils.toJson(it) },
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                val payload = item.metaData?.let {
+                    runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
+                }
+                val payloadMap = buildMap {
+                    payload?.resumeId?.let { put("resumeId", it) }
+                    payload?.resumeStructId?.let { put("resumeStructId", it) }
+                    payload?.resumeTaskId?.let { put("resumeTaskId", it) }
+                }
+                mRealVM.sendAction(
+                    desc = getString(if (confirmed) R.string.confirm_my_resume else R.string.not_my_resume),
+                    actionData = AgentMsgAction(
+                        actionCode = (if (confirmed) CandidateJobAgentClientActionEnum.RESUME_CONFIRM_YES
+                        else CandidateJobAgentClientActionEnum.RESUME_CONFIRM_NO).name,
+                        sourceMessageId = item.id,
+                        actionPayloadJson = payloadMap.takeIf { it.isNotEmpty() }?.let { GsonUtils.toJson(it) },
+                    )
                 )
-            )
+            }
         }
 
         // 无感知加载：向上滚动到接近顶部时提前预取更早历史（DiffUtil 顶部静默插入，不出现下拉转圈）
@@ -287,6 +292,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         mRealVM.streamError.observe(viewLifecycleOwner) { e ->
             e ?: return@observe
             showMessage(e.message ?: "对话出错")
+            mRealVM.streamError.value = null
         }
         // 收到属性确认卡：弹出记忆确认弹窗（一次性事件，消费后置空防重入）
         mRealVM.attributeConfirmPopup.observe(viewLifecycleOwner) { info ->
@@ -311,6 +317,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         UploadResumeDialog.show(manager = this.parentFragmentManager) { fileInfo ->
             if (fileInfo != null) {
                 mRealVM.submitResume(fileInfo.uri) { path ->
+                    // 文件上传完成回调里可能 AI 已开始回复，此时拦截避免新开 SSE 打断当前流
+                    if (interceptIfStreaming()) return@submitResume
                     val map = mapOf<String, String>(
                         "resumeFileUrl" to path,
                         "fileName" to "${fileInfo.fileName}"
@@ -329,6 +337,18 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
     }
 
+    /**
+     * SSE 仍在 done / 断开 / 关闭之前（streaming=true）时拦截用户交互：
+     * 弹 Toast 提示并返回 true 表示已拦截，调用方应直接结束本次操作。
+     */
+    private fun interceptIfStreaming(): Boolean {
+        if (mRealVM.streaming.value == true) {
+            showMessage(R.string.str_agent_intercept_hint.getResString())
+            return true
+        }
+        return false
+    }
+
     // 记忆卡片
     private var popup: PopupWindow? = null
 
@@ -336,6 +356,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     private var autoConfirmJob: Job? = null
 
     private fun showMemoryCardPopup(item: ClawAgentMessageInfo) {
+        dismissMemoryCard()
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, AttributeConfirmPayloadBean::class.java) }.getOrNull()
         }
@@ -429,7 +450,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         popup?.isOutsideTouchable = false
         popup?.showAtLocation(binding.root, Gravity.TOP, 0, 0)
 
-        // 弹出 1s 后自动触发"确认"事件并关闭弹窗（随 view 生命周期取消）
+        // 弹出 5s 后自动触发"确认"事件并关闭弹窗（随 view 生命周期取消）
         autoConfirmJob?.cancel()
         autoConfirmJob = viewLifecycleOwner.lifecycleScope.launch {
             delay(MEMORY_CARD_WAIT_TIME)
