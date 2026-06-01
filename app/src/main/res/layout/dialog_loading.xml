@@ -13,15 +13,12 @@
         android:orientation="vertical"
         android:paddingBottom="4dp">
 
-        <com.airbnb.lottie.LottieAnimationView
+        <ImageView
+            android:importantForAccessibility="no"
+            android:src="@mipmap/ic_alpha_notification_logo"
             android:id="@+id/loading_image"
             android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="loading_ball/loading_ball.json"
-            app:lottie_imageAssetsFolder="loading_ball/images"
-            app:lottie_loop="true"
-            app:lottie_repeatMode="reverse" />
+            android:layout_height="60dp" />
 
         <TextView
             android:id="@+id/title"
