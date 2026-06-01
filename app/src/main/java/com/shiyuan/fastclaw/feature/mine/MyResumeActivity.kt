@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
@@ -23,6 +24,7 @@ import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants.SHRIMPSTICKS_URL
 import com.shiyuan.fastclaw.core.Config
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.databinding.setLoadState
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.ActivityMyResumeBinding
@@ -114,9 +116,11 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         }
 
         mRealVM.resumeUploadResult.observe(this) { data ->
-               mRealVM.queryResumeList()
-            }
+            mRealVM.queryResumeList()
+            //解析简成功发送消息
+            FlowEventBus.postSync(Events.ResumeEvent(true))
         }
+    }
 
 /*        mRealVM.resumeDetectionData.observe(this) { data ->
             Log.d("checkStatus", data.safeCheckStatus)

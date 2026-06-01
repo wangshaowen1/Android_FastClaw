@@ -22,6 +22,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.kuaige.imageloader.GlideApp
 import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showAllowingStateLoss
@@ -36,6 +37,7 @@ import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.Constants.Extra.IMAGE
 import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.ActivityGennerReportBinding
 import com.shiyuan.fastclaw.feature.mine.AnalysisLoadingDialog
@@ -250,6 +252,8 @@ class GenerateReportActivity :
                 binding.tvState.text = blockingIssuesMessage
                 binding.tvState.setTextColor(resources.getColor(R.color.color_15D173))
                 stopRotation()   // 停止旋转
+                //解析简成功发送消息
+                FlowEventBus.postSync(Events.ResumeEvent(true))
             }
 
             RUNNING, PENDING -> {

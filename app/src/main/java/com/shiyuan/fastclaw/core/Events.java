@@ -231,4 +231,15 @@ public class Events {
         }
     }
 
+
+    /**
+     * 简历通知
+     */
+    public static class ResumeEvent implements AppEvent {
+        public  Boolean resumeUploadSuccess ;  //简历上传成功
+        public ResumeEvent(Boolean resumeUploadSuccess) {
+            this.resumeUploadSuccess = resumeUploadSuccess;
+        }
+    }
+
 }
