@@ -33,6 +33,7 @@ import com.shiyuan.fastclaw.databinding.ItemJobPreference2SonBinding
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+import formatValueToString
 import kotlin.collections.component1
 import kotlin.collections.iterator
 
@@ -147,14 +148,13 @@ class ShrimpUnderstandsActivity :
                                     sonBinding.tvParentTile.visibility = View.GONE
                                     sonBinding.llSon.visibility = View.VISIBLE
                                     sonBinding.tvTile.text = sonItem.fieldName ?: ""
-                                    sonBinding.tvConnect.text =
-                                        sonItem.fieldValue?.toString() ?: ""
+                                    sonBinding.tvConnect.text = formatValueToString(sonItem.fieldValue)
                                 }
                             } else {
                                 sonBinding.tvParentTile.visibility = View.GONE
                                 sonBinding.llSon.visibility = View.VISIBLE
                                 sonBinding.tvTile.text = sonItem.fieldName ?: ""
-                                sonBinding.tvConnect.text = sonItem.fieldValue?.toString() ?: ""
+                                sonBinding.tvConnect.text = formatValueToString(sonItem.fieldValue)
                             }
 
                         })

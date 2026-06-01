@@ -91,7 +91,7 @@
                     android:layout_width="8dp"
                     android:layout_height="16dp"
                     android:rotation="0"
-                    android:src="@drawable/ic_arrow_dow_gray" />
+                    android:src="@drawable/ic_arrow_up_gray" />
 
             </LinearLayout>
 
