@@ -1,8 +1,10 @@
 package com.shiyuan.fastclaw.core
 
 import android.os.Build
+import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.CookieSyncManager
+import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.utils.Utils
 import java.net.MalformedURLException
 import java.net.URL
@@ -39,7 +41,7 @@ object CookieUtils {
             domainList = arrayListOf()
             domainList.add(domain)
         }
-
+        domainList?.toJsonString()?.let { Log.d("syncCookie解析出来的域名",it) }
         //        CookieSyncManager.createInstance(App.getInstance());
         val cookieManager = CookieManager.getInstance()
         cookieManager.setAcceptCookie(true)
@@ -83,9 +85,14 @@ object CookieUtils {
             if (index == -1) break
             candidate = candidate.substring(index + 1)
             if (candidate in publicSuffixSet) {
-                return host.substring(host.lastIndexOf(candidate))
+                // 找到公共后缀，再往前取一级（如果存在）
+                // 从 host 中寻找 candidate 前面的最后一个点
+                val suffixStartInHost = host.lastIndexOf(candidate)
+                val prevDot = host.lastIndexOf('.', suffixStartInHost - 1)
+                return if (prevDot != -1) host.substring(prevDot + 1) else host
             }
         }
+        // 理论上不会到这里，但作为保底返回最后一个 candidate
         return candidate
     }
 

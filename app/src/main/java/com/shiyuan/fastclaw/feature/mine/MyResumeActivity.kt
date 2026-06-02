@@ -22,7 +22,6 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.Constants.SHRIMPSTICKS_URL
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.databinding.setLoadState
