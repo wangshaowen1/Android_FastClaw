@@ -16,9 +16,12 @@
         android:textSize="15sp"
         android:layout_marginTop="14dp"
         android:layout_marginHorizontal="16dp"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/flow_options"
         tools:text="你目前找工作的紧迫度怎么样？" />
 
     <!-- 选项容器（未回复状态可见）：Flow 为辅助布局，不增加 View 层级；

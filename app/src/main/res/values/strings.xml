@@ -713,7 +713,7 @@
     <string name="str_agent_name">小虾</string>
     <string name="str_agent_desc">求职经纪人 · 我在听</string>
     <string name="str_agent_memory">我对你的理解</string>
-    <string name="str_agent_send_hint">找工作需要帮助尽管问小虾</string>
+    <string name="str_agent_send_hint">求职需要帮助尽管问小虾</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>
     <string name="str_agent_understanding_upgrade_title">理解升级</string>
     <string name="str_agent_understanding_align_title">我与你对齐度达到%1$s！</string>

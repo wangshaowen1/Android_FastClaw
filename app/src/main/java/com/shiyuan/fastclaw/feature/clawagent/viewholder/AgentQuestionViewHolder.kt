@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
+import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.invisible
@@ -96,11 +97,19 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         layoutParams.horizontalBias = if (center) 0.5f else 1f
         binding.tvSkip.layoutParams = layoutParams
         if (action == null) {
-            // 不gone 撑起边距
+            // 底部边距
+            val textLayoutParams = binding.tvQuestion.layoutParams as ConstraintLayout.LayoutParams
+            textLayoutParams.goneBottomMargin = 14.dp
+            binding.tvQuestion.layoutParams = textLayoutParams
+
             binding.tvSkip.gone()
             binding.tvSkip.setOnClickListener(null)
             return
         }
+        val textLayoutParams = binding.tvQuestion.layoutParams as ConstraintLayout.LayoutParams
+        textLayoutParams.goneBottomMargin = 0.dp
+        binding.tvQuestion.layoutParams = textLayoutParams
+
         binding.tvSkip.visible()
         binding.tvSkip.isEnabled = action.disabled != true
         binding.tvSkip.setOnClickListener { onActionClickListener(item, action, payload?.questionQueueId) }
