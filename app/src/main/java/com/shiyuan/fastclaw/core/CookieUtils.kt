@@ -85,14 +85,9 @@ object CookieUtils {
             if (index == -1) break
             candidate = candidate.substring(index + 1)
             if (candidate in publicSuffixSet) {
-                // 找到公共后缀，再往前取一级（如果存在）
-                // 从 host 中寻找 candidate 前面的最后一个点
-                val suffixStartInHost = host.lastIndexOf(candidate)
-                val prevDot = host.lastIndexOf('.', suffixStartInHost - 1)
-                return if (prevDot != -1) host.substring(prevDot + 1) else host
+                return host.substring(host.lastIndexOf(candidate))
             }
         }
-        // 理论上不会到这里，但作为保底返回最后一个 candidate
         return candidate
     }
 
