@@ -3,33 +3,17 @@ package com.shiyuan.fastclaw.feature.settings
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.core.util.Pair
 import com.gyf.immersionbar.ImmersionBar
-import com.shiyuan.fastclaw.BuildConfig
-import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
-import com.shiyuan.fastclaw.common.utils.DebugUtils
-import com.shiyuan.fastclaw.core.Config
-import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.ext.openTheCustomerServiceChat
-import com.shiyuan.fastclaw.databinding.ActivitySettingsBinding
-import com.shiyuan.fastclaw.feature.login.flash.PhoneLoginDialogActivity
-import com.shiyuan.fastclaw.feature.mine.PhoneShowActivity
-import com.shiyuan.fastclaw.feature.settings.about.AboutUsActivity
-import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity
-import com.shiyuan.fastclaw.feature.settings.logoff.LogoffActivity
-import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
-import com.shiyuan.fastclaw.kit.SignUtils
-import com.shiyuan.fastclaw.router.AppNavigator
-import com.shiyuan.fastclaw.widget.actionsheet.ActionSheetHelper
 import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.Session
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
-import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.databinding.ActivityAboutBinding
-import com.shiyuan.fastclaw.databinding.ActivityAboutUsBinding
+import com.shiyuan.fastclaw.feature.PhotoPagerActivity
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+
 
 /**
  * *****************************************
@@ -65,13 +49,10 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
      }
 
         binding.businessLicense.setOnSingleClickListener {
-            Log.d("TAG", "🏁 ======= 启动性能监控开始 =======")
-            SimpleBrowserActivity.launch(
-                this,
-                Config.get().appConfig.beianNoJumpUrl,
-                getString(R.string.record_filing_information)
-            )
-
+            val uri = "android.resource://" + getPackageName() + "/" + R.mipmap.business_license
+            val uris = ArrayList<String?>()
+            uris.add(uri)
+            PhotoPagerActivity. launch(this, uris) // 复用现有的 launch 方法
         }
 
 
