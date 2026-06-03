@@ -55,7 +55,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             } else {
                 binding.flowOptions.visible()
                 bindOptionRows(item, payload)
-                bindSkipAction(item, payload, false)
+                bindSkipAction(item, payload, true)
             }
         }
     }
