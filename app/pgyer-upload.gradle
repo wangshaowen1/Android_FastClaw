@@ -1,0 +1,243 @@
+import groovy.json.JsonSlurper
+
+import java.net.HttpURLConnection
+import java.net.URLEncoder
+
+def pgyerTargets = ['developArch64Debug', 'developArch64Release'] as Set
+
+def loadPgyerProperties = {
+    def props = new Properties()
+    def localFile = rootProject.file('local.properties')
+    if (localFile.exists()) {
+        localFile.withInputStream { props.load(it) }
+    }
+    return props
+}
+
+def urlEncode = { String value ->
+    URLEncoder.encode(value ?: '', 'UTF-8')
+}
+
+def asString = { Object value ->
+    value == null ? '' : String.valueOf(value)
+}
+
+def postForm = { String url, Map<String, ?> fields ->
+    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection()
+    connection.requestMethod = 'POST'
+    connection.connectTimeout = 30000
+    connection.readTimeout = 30000
+    connection.doOutput = true
+    connection.setRequestProperty('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
+
+    def body = fields.findAll { it.value != null && asString(it.value).length() > 0 }
+            .collect { entry -> "${urlEncode(entry.key)}=${urlEncode(asString(entry.value))}" }
+            .join('&')
+
+    connection.outputStream.withWriter('UTF-8') { writer ->
+        writer << body
+    }
+
+    def responseCode = connection.responseCode
+    def stream = responseCode >= 400 ? connection.errorStream : connection.inputStream
+    def response = stream == null ? '' : stream.getText('UTF-8')
+    connection.disconnect()
+
+    return [code: responseCode, body: response]
+}
+
+def getJsonValue = { Map json, String key ->
+    json == null ? null : json[key]
+}
+
+def multipartField = { OutputStream output, String boundary, String name, String value ->
+    output.write("--${boundary}\r\n".getBytes('UTF-8'))
+    output.write("Content-Disposition: form-data; name=\"${name}\"\r\n\r\n".getBytes('UTF-8'))
+    output.write((value ?: '').getBytes('UTF-8'))
+    output.write("\r\n".getBytes('UTF-8'))
+}
+
+def uploadFileToCos = { String endpoint, Map<String, ?> fields, File apkFile ->
+    def boundary = "----PgyerUpload${System.currentTimeMillis()}"
+    HttpURLConnection connection = (HttpURLConnection) new URL(endpoint).openConnection()
+    connection.requestMethod = 'POST'
+    connection.connectTimeout = 30000
+    connection.readTimeout = 120000
+    connection.doOutput = true
+    connection.setRequestProperty('Content-Type', "multipart/form-data; boundary=${boundary}")
+
+    connection.outputStream.withCloseable { output ->
+        fields.each { entry ->
+            multipartField(output, boundary, entry.key, asString(entry.value))
+        }
+        if (!fields.containsKey('x-cos-meta-file-name')) {
+            multipartField(output, boundary, 'x-cos-meta-file-name', apkFile.name)
+        }
+
+        output.write("--${boundary}\r\n".getBytes('UTF-8'))
+        output.write("Content-Disposition: form-data; name=\"file\"; filename=\"${apkFile.name}\"\r\n".getBytes('UTF-8'))
+        output.write("Content-Type: application/vnd.android.package-archive\r\n\r\n".getBytes('UTF-8'))
+        apkFile.withInputStream { input ->
+            byte[] buffer = new byte[1024 * 1024]
+            int length
+            while ((length = input.read(buffer)) != -1) {
+                output.write(buffer, 0, length)
+            }
+        }
+        output.write("\r\n--${boundary}--\r\n".getBytes('UTF-8'))
+    }
+
+    def responseCode = connection.responseCode
+    def stream = responseCode >= 400 ? connection.errorStream : connection.inputStream
+    def response = stream == null ? '' : stream.getText('UTF-8')
+    connection.disconnect()
+
+    return [code: responseCode, body: response]
+}
+
+def getJson = { String url, Map<String, ?> fields ->
+    def query = fields.findAll { it.value != null && asString(it.value).length() > 0 }
+            .collect { entry -> "${urlEncode(entry.key)}=${urlEncode(asString(entry.value))}" }
+            .join('&')
+    HttpURLConnection connection = (HttpURLConnection) new URL("${url}?${query}").openConnection()
+    connection.requestMethod = 'GET'
+    connection.connectTimeout = 30000
+    connection.readTimeout = 30000
+
+    def responseCode = connection.responseCode
+    def stream = responseCode >= 400 ? connection.errorStream : connection.inputStream
+    def response = stream == null ? '' : stream.getText('UTF-8')
+    connection.disconnect()
+
+    return [code: responseCode, body: response]
+}
+
+def findApkFile = { String flavorName, String buildType ->
+    def outputDir = file("${buildDir}/outputs/apk/${flavorName}/${buildType}")
+    if (!outputDir.exists()) {
+        throw new GradleException("Pgyer upload failed: APK output directory does not exist: ${outputDir}")
+    }
+
+    def apkFiles = fileTree(outputDir) {
+        include '*.apk'
+    }.files.sort { a, b -> b.lastModified() <=> a.lastModified() }
+
+    if (apkFiles.isEmpty()) {
+        throw new GradleException("Pgyer upload failed: no APK found in ${outputDir}")
+    }
+
+    return apkFiles.first()
+}
+
+def pollBuildInfo = { String apiKey, String buildKey ->
+    def deadline = System.currentTimeMillis() + 60000L
+    def lastMessage = ''
+
+    while (System.currentTimeMillis() < deadline) {
+        sleep(5000L)
+        def response = getJson('https://api.pgyer.com/apiv2/app/buildInfo', [
+                _api_key: apiKey,
+                buildKey: buildKey
+        ])
+        if (response.code != 200) {
+            lastMessage = "HTTP ${response.code}: ${response.body}"
+            logger.lifecycle("Pgyer publish pending: ${lastMessage}")
+            continue
+        }
+
+        def json = new JsonSlurper().parseText(response.body) as Map
+        if (json.code == 0) {
+            return json.data as Map
+        }
+
+        lastMessage = "${json.code}: ${json.message ?: response.body}"
+        logger.lifecycle("Pgyer publish pending: ${lastMessage}")
+    }
+
+    throw new GradleException("Pgyer upload failed: buildInfo polling timed out. Last response: ${lastMessage}")
+}
+
+afterEvaluate {
+    android.applicationVariants.all { variant ->
+        def variantName = variant.name
+        def variantTaskName = variantName.capitalize()
+        if (pgyerTargets.contains(variantName)) {
+            def uploadTask = tasks.register("uploadPgyer${variantTaskName}") {
+                group = 'pgyer'
+                description = "Upload ${variantTaskName} APK to Pgyer after assemble."
+
+                doLast {
+                    def props = loadPgyerProperties()
+                    def apiKey = props.getProperty('PGYER_API_KEY')?.trim()
+                    if (!apiKey) {
+                        throw new GradleException('Pgyer upload failed: please add PGYER_API_KEY=your_api_key to local.properties')
+                    }
+
+                    def apkFile = findApkFile(variant.flavorName, variant.buildType.name)
+                    logger.lifecycle("Pgyer upload APK: ${apkFile.absolutePath}")
+
+                    def tokenFields = [
+                            _api_key              : apiKey,
+                            buildType             : 'apk',
+                            buildInstallType      : props.getProperty('PGYER_INSTALL_TYPE', '1'),
+                            buildPassword         : props.getProperty('PGYER_BUILD_PASSWORD', ''),
+                            buildUpdateDescription: props.getProperty('PGYER_UPDATE_DESCRIPTION', '')
+                    ]
+                    def tokenResponse = postForm('https://api.pgyer.com/apiv2/app/getCOSToken', tokenFields)
+                    if (tokenResponse.code != 200) {
+                        throw new GradleException("Pgyer upload failed: getCOSToken HTTP ${tokenResponse.code}: ${tokenResponse.body}")
+                    }
+
+                    def tokenJson = new JsonSlurper().parseText(tokenResponse.body) as Map
+                    if (tokenJson.code != 0) {
+                        throw new GradleException("Pgyer upload failed: getCOSToken ${tokenJson.code}: ${tokenJson.message ?: tokenResponse.body}")
+                    }
+
+                    def tokenData = tokenJson.data as Map
+                    def endpoint = getJsonValue(tokenData, 'endpoint') as String
+                    def buildKey = getJsonValue(tokenData, 'key') as String
+                    def params = getJsonValue(tokenData, 'params') as Map
+                    if (!endpoint || !buildKey || !params) {
+                        throw new GradleException("Pgyer upload failed: invalid getCOSToken response: ${tokenResponse.body}")
+                    }
+
+                    def uploadResponse = uploadFileToCos(endpoint, params, apkFile)
+                    if (uploadResponse.code != 204) {
+                        throw new GradleException("Pgyer upload failed: COS upload HTTP ${uploadResponse.code}: ${uploadResponse.body}")
+                    }
+
+                    logger.lifecycle('Pgyer upload completed, waiting for publish result...')
+                    def buildInfo = pollBuildInfo(apiKey, buildKey)
+                    def shortcut = buildInfo.buildShortcutUrl ? "https://www.pgyer.com/${buildInfo.buildShortcutUrl}" : ''
+                    logger.lifecycle("Pgyer publish success: ${buildInfo.buildName ?: ''} ${buildInfo.buildVersion ?: ''} (${buildInfo.buildVersionNo ?: ''})")
+                    logger.lifecycle("Pgyer buildKey: ${buildInfo.buildKey ?: buildKey}")
+                    if (shortcut) {
+                        logger.lifecycle("Pgyer install URL: ${shortcut}")
+                    }
+                }
+            }
+
+            def assembleTask = tasks.named("assemble${variantTaskName}")
+            assembleTask.configure {
+                finalizedBy(uploadTask)
+            }
+            uploadTask.configure {
+                mustRunAfter(assembleTask)
+                onlyIf {
+                    assembleTask.get().state.failure == null
+                }
+            }
+
+            def buildTypeTaskName = variant.buildType.name.capitalize()
+            def flavorTaskName = variantTaskName.substring(0, variantTaskName.length() - buildTypeTaskName.length())
+            def aliasTaskName = "assemble${flavorTaskName}${variant.buildType.name}"
+            if (aliasTaskName != "assemble${variantTaskName}" && tasks.findByName(aliasTaskName) == null) {
+                tasks.register(aliasTaskName) {
+                    group = 'build'
+                    description = "Alias for assemble${variantTaskName}."
+                    dependsOn(assembleTask)
+                }
+            }
+        }
+    }
+}

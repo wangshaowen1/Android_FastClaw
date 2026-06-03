@@ -7,6 +7,8 @@ plugins {
     id 'com.growingio.android.autotracker'
 }
 
+apply from: 'pgyer-upload.gradle'
+
 void genProguardDict() {
     def file = file('proguard-dict.txt')
     if (file.exists()) {
