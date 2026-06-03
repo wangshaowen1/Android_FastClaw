@@ -870,7 +870,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // 寻找岗位中
         private const val CARD_JOB_SEARCHING = "JOB_SEARCHING"
         // 暂未找到合适岗位
-        private const val CARD_NO_JOB = "NO_JOB"
+        private const val CARD_NO_JOB = "NO_JOB_TEMPORARILY"
         // 岗位匹配-快速能力提升
         private const val CARD_JOB_MATCH_REPORT = "JOB_MATCH_REPORT"
         // 今日进展卡片 TODO: 后端未给出type
