@@ -1,6 +1,5 @@
 package com.shiyuan.fastclaw.feature.report.report
 
-import UnderstandingScore
 import android.graphics.Color
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData

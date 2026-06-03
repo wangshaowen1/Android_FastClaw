@@ -571,7 +571,7 @@
 
 -keep class com.shizhefei.** {*;}
 -keep class com.tulele.im.** {*;}
--keep class com.kgmedia.fastfilm.common.ait.** {*;}
+-keep class com.shiyuan.fastclaw.common.ait.** {*;}
 -keep class com.tbruyelle.** {*;}
 -keep class com.dinuscxj.progressbar.** {*;}
 -keep class pl.droidsonroids.gif.** {*;}

@@ -1,6 +1,5 @@
 package com.shiyuan.fastclaw.feature.mine
 
-import FieldItems
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -25,6 +24,8 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.network.apis.response.FieldItems
+import com.shiyuan.fastclaw.core.network.apis.response.formatValueToString
 import com.shiyuan.fastclaw.databinding.ActivityShrimpUnderstandsBinding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference1Binding
 import com.shiyuan.fastclaw.databinding.ItemJobPreference1SonBinding
@@ -33,7 +34,6 @@ import com.shiyuan.fastclaw.databinding.ItemJobPreference2SonBinding
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
-import formatValueToString
 import kotlin.collections.component1
 import kotlin.collections.iterator
 
@@ -41,8 +41,6 @@ import kotlin.collections.iterator
  * @Introduce: 小虾理解
  */
 
-// 在 ShrimpUnderstandsActivity 类外或内部定义（但需在调用前）
-fun FieldItems.maxDepth(): Int = 1 + (fieldItems.maxOfOrNull { it.maxDepth() } ?: 0)
 class ShrimpUnderstandsActivity :
     BaseViewModelActivity<ActivityShrimpUnderstandsBinding, UnderstandsViewModel>() {
 

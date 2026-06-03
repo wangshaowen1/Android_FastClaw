@@ -1,7 +1,7 @@
 package com.shiyuan.fastclaw.feature.mine.viewModel
 
-import UnderstandingScore
 import android.graphics.Color
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,6 +13,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
+import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.User
@@ -22,6 +23,7 @@ import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
+import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingScore
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.feature.mine.UserPointPagingSource
 import com.umeng.commonsdk.debug.UMLog

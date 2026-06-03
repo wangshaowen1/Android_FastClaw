@@ -1,7 +1,5 @@
 package com.shiyuan.fastclaw.core.network.apis
 
-import UnderstandingDetail
-import UnderstandingScore
 import com.shiyuan.fastclaw.core.model.H5PayInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.BannerInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.OrderStatusInfo
@@ -58,6 +56,8 @@ import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
 import com.shiyuan.fastclaw.core.network.apis.response.ShelfStatusData
+import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingDetail
+import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingScore
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData

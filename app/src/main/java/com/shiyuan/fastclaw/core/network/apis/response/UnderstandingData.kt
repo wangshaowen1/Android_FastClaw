@@ -1,5 +1,5 @@
-import android.util.Log
-import com.google.gson.annotations.SerializedName
+package com.shiyuan.fastclaw.core.network.apis.response
+
 
 /**
  *  理解分数
