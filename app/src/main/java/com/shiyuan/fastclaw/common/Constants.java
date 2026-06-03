@@ -11,7 +11,8 @@ public class Constants {
 //    public static final String LOCAL_HTTP_BASIC_URL = "http://192.168.0.113:8286";//王富强
 
 
-    public static final String BUGLY_APP_ID = "f2a68e3399";
+
+    public static final String BUGLY_APP_ID = "7ad8a49a20";
 
     @NotNull
     public static final String LIKED = "-1";
