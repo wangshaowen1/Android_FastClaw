@@ -1,6 +1,8 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.GsonUtils
+import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentNoJobsFoundBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -13,6 +15,18 @@ class AgentNoJobsFoundViewHolder(private val binding: ItemMsgAgentNoJobsFoundBin
 
     fun bind(item: ClawAgentMessageInfo) {
         // 暂无数据绑定
+        val payload = item.metaData?.let {
+            runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java) }.getOrNull()
+        }
+
+        payload?.title?.let {
+            binding.tvNoJobsFoundTitle.text = "$it"
+        }
+
+        payload?.description?.let {
+            binding.tvNoJobsFoundDesc.text = "$it"
+        }
+
     }
 
 }
