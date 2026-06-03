@@ -404,6 +404,14 @@ class Config : NetworkChangedListener {
         sp.putBoolean(key, false)
     }
 
+    fun hasEnableNotification(): Boolean {
+        return sp.getBoolean(NOTIFICATION_SWITCH_KEY, false)
+    }
+
+    fun switchNotification(flag: Boolean) {
+        sp.putBoolean(NOTIFICATION_SWITCH_KEY, flag)
+    }
+
     /**
      * 用户是否第一次登录
      */
@@ -415,6 +423,7 @@ class Config : NetworkChangedListener {
     companion object {
         const val FIRST_OPEN_APP: String = "firstOpenApp"
         const val FIRST_SET_BOOK_VOICE: String = "firstSetBookVoice"
+        private const val NOTIFICATION_SWITCH_KEY = "notification_switch_key"
 
         const val FIRST_EYE_PROTECTION_SETTING: String = "firstEyeProtectionSetting"
         private const val OBJECT_ID = "objectId"

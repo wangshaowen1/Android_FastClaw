@@ -393,15 +393,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
         }
-        if (newMsg.isUnderstandingSummaryCard()) {
-            val payload = newMsg.payloadJson?.let {
-                runCatching { GsonUtils.fromJson(newMsg.payloadJson, UnderstandingSummaryPayloadBean::class.java) }.getOrNull()
-            }
-            payload?.understandingScore?.let { score ->
-                if (score >= SHOW_DIALOG_SCORE) {
-                    understandingSummaryDialog.value = newMsg.toMessageInfo()
-                }
-            }
+        if (newMsg.isNotificationSwitch()) {
+            understandingSummaryDialog.value = newMsg.toMessageInfo()
         }
         ingestMessages(listOf(newMsg), isReal = true)
     }
@@ -429,6 +422,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         messages.forEach { msg ->
             // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
             if (msg.isAttributeConfirm()) return@forEach
+            if (msg.isNotificationSwitch()) return@forEach
             // HISTORY_RESUME_CONFIRM 已操作过（interactionState.disabled=true）的不展示：
             // 覆盖 SSE 实时操作后服务端回写禁用态 与 enterSession / 历史分页里已操作过的残留两种场景；
             // 同时把 messageStore 里已渲染的同 id 旧卡移除，避免之前的可点击态滞留在列表
@@ -549,6 +543,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 是否属性确认卡（ATTRIBUTE_CONFIRM）：走记忆确认弹窗，不进对话列表 */
     private fun JobAgentMessage.isAttributeConfirm(): Boolean = messageType == MSG_CARD && cardType == CARD_ATTRIBUTE_CONFIRM
+
+    /** 是否对齐度达到要求唤起开启通知弹窗，不进对话列表 */
+    private fun JobAgentMessage.isNotificationSwitch(): Boolean = messageType == MSG_CARD && cardType == CARD_NOTIFICATION_SWITCH
 
     /** 是否上传简历卡（UPLOAD_RESUME） */
     private fun JobAgentMessage.isUploadResumeCard(): Boolean =
@@ -861,6 +858,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_CORE_QUESTION = "CORE_QUESTION"
         // 记忆卡片
         private const val CARD_ATTRIBUTE_CONFIRM = "ATTRIBUTE_CONFIRM"
+        // 对齐度85 唤起消息通知
+        private const val CARD_NOTIFICATION_SWITCH = "NOTIFICATION_SWITCH"
         // 理解升级
         private const val CARD_UNDERSTANDING_SUMMARY = "UNDERSTANDING_SUMMARY"
         // 自我介绍

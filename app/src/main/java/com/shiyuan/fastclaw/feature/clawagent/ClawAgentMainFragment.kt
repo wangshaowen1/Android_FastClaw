@@ -30,6 +30,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
+import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
@@ -328,8 +329,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     }
 
     private fun showNotificationSwitchDialog() {
+        if (Config.get().hasEnableNotification()) {
+            return
+        }
         val dialog = NotificationsSwitchDialog.show(childFragmentManager)
         dialog.clickListener = { flag ->
+            Config.get().switchNotification(flag)
             if (flag) {
                 // todo: 检测通知权限
             }
