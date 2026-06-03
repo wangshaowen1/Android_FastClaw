@@ -15,6 +15,7 @@
 @rem
 
 @if "%DEBUG%" == "" @echo off
+@chcp 65001 >NUL 2>&1
 @rem ##########################################################################
 @rem
 @rem  Gradle startup script for Windows
