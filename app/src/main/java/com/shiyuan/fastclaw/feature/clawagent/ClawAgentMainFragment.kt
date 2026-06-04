@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.clawagent
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.util.Log
 import android.view.Gravity
@@ -29,6 +30,8 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
@@ -113,7 +116,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 mRealVM.sendMessage(content.toString().trim())
                 binding.etSend.text = null
             }
-            R.id.tv_agent_memory -> {
+            R.id.iv_agent_memory -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
                     ShrimpUnderstandsActivity.start(requireActivity())
                 }
@@ -122,6 +125,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         // 消息列表：聊天场景内容自底部对齐
         binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
@@ -210,6 +214,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 }
             }
         })
+        binding.rvMsg.setOnTouchListener { _, _ ->
+            if (KeyboardUtils.isSoftInputShown(activity?.window)) {
+                hideKeyboard(binding.etSend)
+            }
+            false // 不影响 RecyclerView 正常滑动
+        }
 
         // 下拉加载更早历史消息（顶部下拉）
         binding.srlMsg.setOnRefreshListener {
