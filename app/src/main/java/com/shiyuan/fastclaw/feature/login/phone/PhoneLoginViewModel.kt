@@ -369,7 +369,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
         setLoading(true)
         launchWithLoading(false, block = {
             if (isBind.get()) {
-                response(mRepo.bindPhone(mobile, code.toString()), {
+                response(mRepo.bindPhone(mobile, code.value.toString()), {
                     showToast(R.string.bind_success)
                     User.get().apply {
                         storePhoneNum(mobile)
@@ -380,7 +380,7 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                     setLoading(false)
                 })
             } else {
-                response(mRepo.loginByPhone(mobile, code.toString()), {
+                response(mRepo.loginByPhone(mobile, code.value.toString()), {
                     User.get().updateFrom(data)
                     SignUtils.signIn()
                     data.loginToast()
