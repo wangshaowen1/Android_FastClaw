@@ -3,8 +3,11 @@ package com.shiyuan.fastclaw.common.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.blankj.utilcode.util.ScreenUtils;
@@ -58,5 +61,35 @@ public class KeyboardUtils {
             return keyboardHeight;
         }
         return 0;
+    }
+
+    public static void hideKeyBoard(Window window) {
+        InputMethodManager imm = (InputMethodManager) App.instance.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            if (isSoftInputShown(window)) {
+                imm.toggleSoftInput(0, 0);
+            }
+        }
+    }
+
+    public static boolean isSoftInputShown(Window window) {
+        View decorView = window.getDecorView();
+        int screenHeight = decorView.getHeight();
+        Rect rect = new Rect();
+        decorView.getWindowVisibleDisplayFrame(rect);
+        return screenHeight - rect.bottom - getNavigateBarHeight(window.getWindowManager()) >= 0;
+    }
+
+    public static int getNavigateBarHeight(WindowManager windowManager) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(metrics);
+        int usableHeight = metrics.heightPixels;
+        windowManager.getDefaultDisplay().getRealMetrics(metrics);
+        int realHeight = metrics.heightPixels;
+        if (realHeight > usableHeight) {
+            return realHeight - usableHeight;
+        } else {
+            return 0;
+        }
     }
 }

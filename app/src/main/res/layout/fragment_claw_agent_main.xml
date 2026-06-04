@@ -64,7 +64,7 @@
             android:layout_marginStart="6dp"
             android:gravity="center"
             android:text="@string/str_agent_desc"
-            android:textColor="@color/color_90_000000"
+            android:textColor="@color/color_C23C3C43"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@id/iv_agent_avatar"
             app:layout_constraintStart_toEndOf="@id/tv_agent_status"
@@ -79,31 +79,16 @@
             app:layout_constraintStart_toStartOf="@id/tv_agent_name"
             app:layout_constraintTop_toTopOf="@id/tv_agent_desc" />
 
-        <TextView
+        <ImageView
             singleClick="@{layout.clickHandler::onClick}"
-            android:id="@+id/tv_agent_memory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/bg_agent_memory"
-            android:paddingVertical="6dp"
-            android:paddingStart="30dp"
-            android:paddingEnd="10dp"
-            android:text="@string/str_agent_memory"
-            android:textColor="@color/color_90_000000"
-            android:textStyle="bold"
+            android:id="@+id/iv_agent_memory"
+            android:layout_width="136dp"
+            android:layout_height="34dp"
+            android:src="@drawable/ic_agent_memory"
+            android:layout_marginEnd="12dp"
             app:layout_constraintBottom_toBottomOf="@id/iv_agent_avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/iv_agent_avatar" />
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/ic_chatbot"
-            app:layout_constraintBottom_toBottomOf="@id/tv_agent_memory"
-            app:layout_constraintStart_toStartOf="@id/tv_agent_memory"
-            app:layout_constraintTop_toTopOf="@id/tv_agent_memory" />
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/srl_msg"
