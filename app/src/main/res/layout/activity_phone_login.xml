@@ -74,13 +74,14 @@
                     app:layout_constraintTop_toBottomOf="@id/iv_phone_login_top">
 
                     <TextView
+                        android:id="@+id/tv_86"
                         android:fontFamily="sans-serif-medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="16dp"
                         android:paddingEnd="@dimen/spacing_s"
                         android:text="@string/mobile_phone_prefix"
-                        android:textColor="@color/color_55_343443"
+                        android:textColor="@color/color_55_3c3c43"
                         android:textSize="16sp" />
 
                     <View
@@ -103,7 +104,7 @@
                         android:paddingHorizontal="12dp"
                         android:text="@={layout.mobile}"
                         android:textColor="@color/color_90_000000"
-                        android:textColorHint="@color/color_55_343443"
+                        android:textColorHint="@color/color_55_3c3c43"
                         android:textCursorDrawable="@drawable/edittext_cursor"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -137,17 +138,18 @@
                             android:paddingHorizontal="16dp"
                             android:text="@={layout.code}"
                             android:textColor="@color/color_90_000000"
-                            android:textColorHint="@color/color_55_343443"
+                            android:textColorHint="@color/color_55_3c3c43"
                             android:textCursorDrawable="@drawable/edittext_cursor"
                             android:textSize="16sp" />
                     </LinearLayout>
 
                     <TextView
+                        android:fontFamily="sans-serif-medium"
                         android:id="@+id/btnSend"
                         android:layout_width="109dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_242424_r100"
+                        android:background="@drawable/bg_336fff_r100"
                         android:gravity="center"
                         android:paddingHorizontal="8dp"
                         android:text="@{layout.sendCodeText}"
@@ -156,12 +158,13 @@
                 </LinearLayout>
 
                 <TextView
+                    android:fontFamily="sans-serif-medium"
                     android:id="@+id/bt_verification_code_login"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginHorizontal="@dimen/spacing_xl"
                     android:layout_marginTop="40dp"
-                    android:background="@drawable/bg_242424_r100"
+                    android:background="@drawable/bg_336fff_r100"
                     android:gravity="center"
                     android:text="@string/login_btn_text"
                     android:textColor="@color/white"
@@ -193,7 +196,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:lineSpacingExtra="2dp"
-                android:textColor="@color/login_agreement_text"
+                android:textColor="@color/color_55_3c3c43"
                 android:textSize="11sp"
                 tools:text="我已阅读并同意《快龙虾用户协议》和《隐私政策》" />
         </LinearLayout>

@@ -3,7 +3,6 @@ package com.shiyuan.fastclaw.feature.login.phone
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
@@ -11,7 +10,6 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan
 import android.util.Log
 import android.view.View
@@ -89,6 +87,13 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
 
         // 如果只需要监听 afterTextChanged，可以这样简化
         binding.etPhone.doAfterTextChanged { editable ->
+            editable?.toString()?.length?.let {
+                if( it > 0){
+                    binding.tv86.setTextColor( resources.getColor(R.color.color_90_000000))
+                }else{
+                    binding.tv86.setTextColor( resources.getColor(R.color.color_55_3c3c43))
+                }
+            }
             mRealVM.mobile.value = editable?.toString()
         }
         binding.etVerifyCode.doAfterTextChanged { editable ->
@@ -165,16 +170,16 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
         }
 
         mRealVM.phoneBg.observe(this){
-            binding.llPhone.background =if(it) resources.getDrawable(R.drawable.bg_f7f7f7_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424)
+            binding.llPhone.background =if(it) resources.getDrawable(R.drawable.bg_f2f3f7_r100) else  resources.getDrawable(R.drawable.bg_f2f3f7_r100_w1_ff0000)
         }
 
         mRealVM.codeBg.observe(this){
-            binding.llVerifyCode.background =if(it) resources.getDrawable(R.drawable.bg_f7f7f7_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424)
+            binding.llVerifyCode.background =if(it) resources.getDrawable(R.drawable.bg_f2f3f7_r100) else  resources.getDrawable(R.drawable.bg_f2f3f7_r100_w1_ff0000)
         }
 
         mRealVM.codeSendBg.observe(this){
-            binding.btnSend.background =if(it) resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424) else  resources.getDrawable(R.drawable.bg_242424_r100)
-            binding.btnSend.setTextColor(if(it) resources.getColor(R.color.color_242424) else resources.getColor(R.color.white))
+            binding.btnSend.background =if(it) resources.getDrawable(R.drawable.bg_f2f3f7_r100) else  resources.getDrawable(R.drawable.bg_336fff_r100)
+            binding.btnSend.setTextColor(if(it) resources.getColor(R.color.color_90_000000) else resources.getColor(R.color.white))
         }
 
 
@@ -261,7 +266,7 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
                     ds.color =
                         ContextCompat.getColor(
                             this@PhoneLoginActivity,
-                            R.color.login_agreement_link
+                            R.color.color_336fff
                         )
                     ds.isUnderlineText = false
                 }
@@ -286,7 +291,7 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
                     ds.color =
                         ContextCompat.getColor(
                             this@PhoneLoginActivity,
-                            R.color.login_agreement_link
+                            R.color.color_336fff
                         )
                     ds.isUnderlineText = false
                 }

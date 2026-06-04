@@ -80,7 +80,7 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
                 ds.setColor(
                     ContextCompat.getColor(
                         requireActivity(),
-                        R.color.login_agreement_link
+                        R.color.color_336fff
                     )
                 )
                 ds.isUnderlineText = false
@@ -99,7 +99,7 @@ class PrivacyPolicyDialog : BaseDialogFragment<DialogPayPolicyBinding>() {
                 ds.setColor(
                     ContextCompat.getColor(
                         requireActivity(),
-                        R.color.login_agreement_link
+                        R.color.color_336fff
                     )
                 )
                 ds.isUnderlineText = false
