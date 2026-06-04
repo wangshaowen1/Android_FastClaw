@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="layout"
             type="com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel" />
@@ -15,10 +16,6 @@
         android:background="@color/white"
         android:orientation="vertical">
 
-        <com.shiyuan.fastclaw.widget.StatusBarView
-            android:id="@+id/statusBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -28,50 +25,63 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/spacing_xl">
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_phone_login_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="230dp"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_phone_login_top"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/iv_logo"
-                    android:layout_width="63dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="70dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="12dp"
                     android:importantForAccessibility="no"
                     android:src="@drawable/img_splash_logo"
+                    app:layout_constraintBottom_toTopOf="@id/tv_title"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginBottom="6dp"
                     android:fontFamily="@font/alimama_shu_hei_ti_bold"
                     android:text="@string/login_page_title"
                     android:textColor="@color/color_90_000000"
                     android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_phone_login_top"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_logo" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <LinearLayout
                     android:id="@+id/ll_phone"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_marginTop="84dp"
-                    android:background="@drawable/bg_f7f7f7_r100"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="74dp"
+                    android:background="@drawable/bg_f2f3f7_r100"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    app:layout_constraintTop_toBottomOf="@id/tv_title">
+                    app:layout_constraintTop_toBottomOf="@id/iv_phone_login_top">
 
                     <TextView
+                        android:id="@+id/tv_86"
+                        android:fontFamily="sans-serif-medium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="16dp"
                         android:paddingEnd="@dimen/spacing_s"
                         android:text="@string/mobile_phone_prefix"
-                        android:textColor="@color/login_input_hint"
+                        android:textColor="@color/color_55_3c3c43"
                         android:textSize="16sp" />
 
                     <View
@@ -80,26 +90,30 @@
                         android:background="@color/login_input_divider" />
 
                     <EditText
+                        android:fontFamily="sans-serif-medium"
                         android:id="@+id/et_phone"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@null"
                         android:hint="@string/login_phone_hint"
+                        android:importantForAutofill="no"
                         android:inputType="phone"
                         android:maxLength="11"
+                        tools:text="183796552845"
                         android:paddingHorizontal="12dp"
                         android:text="@={layout.mobile}"
                         android:textColor="@color/color_90_000000"
-                        android:textColorHint="@color/login_input_hint"
+                        android:textColorHint="@color/color_55_3c3c43"
                         android:textCursorDrawable="@drawable/edittext_cursor"
-                        android:textSize="14sp" />
+                        android:textSize="16sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/ll_code"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
+                    android:layout_marginHorizontal="@dimen/spacing_xl"
                     android:layout_marginTop="20dp"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/ll_phone">
@@ -109,10 +123,11 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:background="@drawable/bg_f7f7f7_r100"
+                        android:background="@drawable/bg_f2f3f7_r100"
                         android:gravity="center_vertical">
 
                         <EditText
+                            android:fontFamily="sans-serif-medium"
                             android:id="@+id/et_verify_code"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -123,17 +138,18 @@
                             android:paddingHorizontal="16dp"
                             android:text="@={layout.code}"
                             android:textColor="@color/color_90_000000"
-                            android:textColorHint="@color/login_input_hint"
+                            android:textColorHint="@color/color_55_3c3c43"
                             android:textCursorDrawable="@drawable/edittext_cursor"
-                            android:textSize="14sp" />
+                            android:textSize="16sp" />
                     </LinearLayout>
 
                     <TextView
+                        android:fontFamily="sans-serif-medium"
                         android:id="@+id/btnSend"
                         android:layout_width="109dp"
                         android:layout_height="match_parent"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/bg_242424_r100"
+                        android:background="@drawable/bg_336fff_r100"
                         android:gravity="center"
                         android:paddingHorizontal="8dp"
                         android:text="@{layout.sendCodeText}"
@@ -142,11 +158,13 @@
                 </LinearLayout>
 
                 <TextView
+                    android:fontFamily="sans-serif-medium"
                     android:id="@+id/bt_verification_code_login"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
+                    android:layout_marginHorizontal="@dimen/spacing_xl"
                     android:layout_marginTop="40dp"
-                    android:background="@drawable/bg_242424_r100"
+                    android:background="@drawable/bg_336fff_r100"
                     android:gravity="center"
                     android:text="@string/login_btn_text"
                     android:textColor="@color/white"
@@ -178,7 +196,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:lineSpacingExtra="2dp"
-                android:textColor="@color/login_agreement_text"
+                android:textColor="@color/color_55_3c3c43"
                 android:textSize="11sp"
                 tools:text="我已阅读并同意《快龙虾用户协议》和《隐私政策》" />
         </LinearLayout>

@@ -32,10 +32,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="@dimen/lineSpacingExtra"
-        android:textColor="@color/color_90_000000"
+        android:textColor="@color/color_75_3c3c43"
         android:text="@string/policy_content" />
 
     <TextView
+        android:fontFamily="sans-serif-medium"
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btnAgree"
@@ -49,10 +50,11 @@
         android:gravity="center"
         android:text="@string/app_not_agree_and_quit"
         android:textStyle="bold"
-        android:textColor="@color/color_242424"
+        android:textColor="@color/color_75_3c3c43"
         android:textSize="14sp"/>
 
     <Button
+        android:fontFamily="sans-serif-medium"
         android:layout_marginTop="24dp"
         app:layout_constraintStart_toEndOf="@id/btnReject"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,11 +63,10 @@
         android:id="@+id/btnAgree"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:background="@drawable/bg_242424_r100"
+        android:background="@drawable/bg_336fff_r100"
         android:gravity="center"
         android:text="@string/app_agree_and_sign_in"
-        android:textStyle="bold"
         android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:textSize="16sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

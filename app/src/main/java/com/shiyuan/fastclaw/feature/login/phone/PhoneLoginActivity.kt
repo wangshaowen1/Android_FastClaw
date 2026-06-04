@@ -5,24 +5,28 @@ import android.content.Intent
 import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
+import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
+import android.text.style.TypefaceSpan
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import com.gyf.immersionbar.ImmersionBar
+import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.databinding.ActivityPhoneLoginBinding
+import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.widget.GeneratingDialog
-import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.bus.FlowEventBus
-import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
+
 
 /**
  * @Introduce: 手机号登录页面
@@ -68,8 +72,28 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
     }
 
     private fun initView() {
+        val spannableHint1 = SpannableString(resources.getString(R.string.login_phone_hint)).apply {
+            setSpan(AbsoluteSizeSpan(14, true), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(TypefaceSpan("sans-serif"), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        binding.etPhone.hint = spannableHint1;
+
+        val spannableHint2 = SpannableString(resources.getString(R.string.login_code_hint)).apply {
+            setSpan(AbsoluteSizeSpan(14, true), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(TypefaceSpan("sans-serif"), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        binding.etVerifyCode.hint = spannableHint2;
+
+
         // 如果只需要监听 afterTextChanged，可以这样简化
         binding.etPhone.doAfterTextChanged { editable ->
+            editable?.toString()?.length?.let {
+                if( it > 0){
+                    binding.tv86.setTextColor( resources.getColor(R.color.color_90_000000))
+                }else{
+                    binding.tv86.setTextColor( resources.getColor(R.color.color_55_3c3c43))
+                }
+            }
             mRealVM.mobile.value = editable?.toString()
         }
         binding.etVerifyCode.doAfterTextChanged { editable ->
@@ -146,16 +170,16 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
         }
 
         mRealVM.phoneBg.observe(this){
-            binding.llPhone.background =if(it) resources.getDrawable(R.drawable.bg_f7f7f7_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424)
+            binding.llPhone.background =if(it) resources.getDrawable(R.drawable.bg_f2f3f7_r100) else  resources.getDrawable(R.drawable.bg_f2f3f7_r100_w1_ff0000)
         }
 
         mRealVM.codeBg.observe(this){
-            binding.llVerifyCode.background =if(it) resources.getDrawable(R.drawable.bg_f7f7f7_r100) else  resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424)
+            binding.llVerifyCode.background =if(it) resources.getDrawable(R.drawable.bg_f2f3f7_r100) else  resources.getDrawable(R.drawable.bg_f2f3f7_r100_w1_ff0000)
         }
 
         mRealVM.codeSendBg.observe(this){
-            binding.btnSend.background =if(it) resources.getDrawable(R.drawable.bg_ffffff_r100_w1_242424) else  resources.getDrawable(R.drawable.bg_242424_r100)
-            binding.btnSend.setTextColor(if(it) resources.getColor(R.color.color_242424) else resources.getColor(R.color.white))
+            binding.btnSend.background =if(it) resources.getDrawable(R.drawable.bg_f2f3f7_r100) else  resources.getDrawable(R.drawable.bg_336fff_r100)
+            binding.btnSend.setTextColor(if(it) resources.getColor(R.color.color_90_000000) else resources.getColor(R.color.white))
         }
 
 
@@ -242,7 +266,7 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
                     ds.color =
                         ContextCompat.getColor(
                             this@PhoneLoginActivity,
-                            R.color.login_agreement_link
+                            R.color.color_336fff
                         )
                     ds.isUnderlineText = false
                 }
@@ -267,7 +291,7 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
                     ds.color =
                         ContextCompat.getColor(
                             this@PhoneLoginActivity,
-                            R.color.login_agreement_link
+                            R.color.color_336fff
                         )
                     ds.isUnderlineText = false
                 }
