@@ -6,11 +6,17 @@
 
     </data>
     <!-- ============ 上传气泡 ============ -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
         android:background="@drawable/bg_msg_agent_left"
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="20dp"
+        app:background_startColor="#F9FAFE"
+        app:background_endColor="#FFFFFF"
+        app:background_colorOrientation="top_bottom"
+        app:super_corner="20dp"
+        app:border_color="@color/color_ffffff"
+        app:view_border_width="1dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -39,11 +45,13 @@
             app:layout_constraintTop_toBottomOf="@id/tv_upload_title" />
 
         <!-- 上传按钮:沿用 id btn_upload_resume,图标+文案水平居中(packed 链) -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
             android:id="@+id/btn_upload_resume"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:background_normalColor="#336FFF"
+            app:super_corner="24dp"
             android:background="@drawable/bg_upload_resume_btn"
             android:paddingVertical="13dp"
             app:layout_constraintVertical_bias="0"
@@ -56,7 +64,7 @@
                 android:id="@+id/iv_upload_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:src="@drawable/home_upload_resume_btn"
+                android:src="@drawable/ic_upload_resume"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tv_upload_btn"
                 app:layout_constraintHorizontal_chainStyle="packed"
@@ -77,6 +85,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_upload_icon"
                 app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+    </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 </layout>
