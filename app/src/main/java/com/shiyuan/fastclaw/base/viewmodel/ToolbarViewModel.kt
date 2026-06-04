@@ -14,11 +14,11 @@ import com.nhsd.crop.util.ViewUtils
 
 class ToolbarViewModel(
     var navigationText: String? = "",
-    var navigationDrawable: Drawable? = R.drawable.ic_back_left.getDrawable(),
+    var navigationDrawable: Drawable? = R.drawable.icon_back_left.getDrawable(),
     var navigationAction: (() -> Unit)? = null,
     var title: String? = "",
-    var navigationColor: Int = R.color.color_e6_000000.getResColor(),
-    var titleColor: Int = R.color.color_e6_000000.getResColor(),
+    var navigationColor: Int = R.color.color_90_000000.getResColor(),
+    var titleColor: Int = R.color.color_96_000000.getResColor(),
     var paddingTop: Int = ViewUtils.getStatusBarHeight(App.instance),
     var menuText: String? = "",
     var menuTextSize: Int = 14.dp,
@@ -38,7 +38,7 @@ class ToolbarViewModel(
     var menuTextVerPadding: Int = 0,
     var menuButtonHorPadding: Int = 12.dp,
     var menuButtonVerPadding: Int = 5.dp,
-    var menuTextColorRes: Int = R.color.color_e6_000000,
+    var menuTextColorRes: Int = R.color.color_90_000000,
     var menuButtonTextColor: Int = Color.WHITE,
     var menuIconMarginEnd: Int = 12.dp,
     var menuButtonMarginEnd: Int = 8.dp,

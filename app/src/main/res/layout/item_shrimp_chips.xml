@@ -21,6 +21,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/tv_time"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{item.data.businessDesc}"
-            android:textColor="@color/color_1a1a1a"
+            android:textColor="@color/color_90_000000"
             android:textSize="14sp"
             tools:text="生成报告"/>
 
@@ -50,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{item.data.createTime}"
-            android:textColor="@color/color_999999"
+            android:textColor="@color/color_55_3c3c43"
             android:textSize="12sp"
             tools:text="2026.06.06"/>
 
@@ -61,7 +62,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/tv_number"
             android:text="@{item.data.showTransaction()}"
-            android:textColor="@color/color_1a1a1a"
+            android:textColor="@color/color_90_000000"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_alignParentEnd="true"

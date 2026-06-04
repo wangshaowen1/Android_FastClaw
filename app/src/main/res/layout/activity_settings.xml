@@ -45,29 +45,28 @@
                     singleClick="@{layout.clickHandler::onClick}"
                     android:id="@+id/rl1"
                     android:background="@drawable/bg_ffffff_r12"
-                    android:paddingVertical="18dp"
                     android:paddingHorizontal="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     tools:ignore="UselessParent">
 
                     <TextView
                         android:text="@string/app_user_agreement"
-                        android:textColor="@color/color_1a1a1a"
-                        android:textSize="16sp"
-
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp"
+                        android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                     </TextView>
 
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:importantForAccessibility="no"
-                        android:src="@drawable/ic_arrow_right" />
+                        android:src="@drawable/ic_item_arrow_right2" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -75,28 +74,28 @@
                     android:layout_marginTop="16dp"
                     android:id="@+id/rl2"
                     android:background="@drawable/bg_ffffff_r12"
-                    android:paddingVertical="18dp"
                     android:paddingHorizontal="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     tools:ignore="UselessParent">
 
                     <TextView
+                        android:layout_centerVertical="true"
                         android:text="@string/app_privacy_policy"
-                        android:textColor="@color/color_1a1a1a"
-                        android:textSize="16sp"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                     </TextView>
 
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:importantForAccessibility="no"
-                        android:src="@drawable/ic_arrow_right" />
+                        android:src="@drawable/ic_item_arrow_right2" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -104,28 +103,28 @@
                     android:id="@+id/rl3"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_ffffff_r12"
-                    android:paddingVertical="18dp"
                     android:paddingHorizontal="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     tools:ignore="UselessParent">
 
                     <TextView
+                        android:layout_centerVertical="true"
                         android:text="@string/app_about_fast_claw"
-                        android:textColor="@color/color_1a1a1a"
-                        android:textSize="16sp"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                     </TextView>
 
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:importantForAccessibility="no"
-                        android:src="@drawable/ic_arrow_right" />
+                        android:src="@drawable/ic_item_arrow_right2" />
                 </RelativeLayout>
 
 
@@ -134,17 +133,15 @@
                     android:id="@+id/rl4"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_ffffff_r12"
-                    android:paddingVertical="18dp"
-                    android:paddingHorizontal="16dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     tools:ignore="UselessParent">
 
                     <TextView
                         android:id="@+id/tv_lg"
                         android:layout_centerInParent="true"
                         android:text="@string/app_log_out"
-                        android:textColor="@color/color_1a1a1a"
+                        android:textColor="@color/color_F74C30"
                         android:textSize="16sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
