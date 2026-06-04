@@ -17,13 +17,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_f7f7f7">
+        android:background="@color/color_f5f6fa">
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="108dp"
+            android:layout_height="287dp"
+            android:importantForAccessibility="no"
             android:scaleType="centerCrop"
-            android:src="@drawable/img_mine_top_bg"
+            android:src="@drawable/img_mine_top_bg2"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.shiyuan.fastclaw.widget.StatusBarView
@@ -35,49 +36,20 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <TextView
-            android:id="@+id/tv_mine_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/mine_title"
-            android:textColor="@color/color_e6_000000"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sbv" />
-
-
-        <ImageView
-            android:id="@+id/iv_setting"
-            singleClick="@{layout.clickHandler::onClick}"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="16dp"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_mine_setting"
-            app:layout_constraintBottom_toBottomOf="@id/tv_mine_title"
-            app:layout_constraintTop_toTopOf="@id/tv_mine_title"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-
-
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/siv_avatar"
             loadUri="@{layout.userInfo[`avatar`]}"
             placeHolder="@{@drawable/ic_default_avatar}"
             singleClick="@{layout.clickHandler::onClick}"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:layout_marginTop="26dp"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_default_avatar"
-            app:layout_constraintStart_toStartOf="@id/tv_mine_title"
-            app:layout_constraintTop_toBottomOf="@id/tv_mine_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sbv"
             app:shapeAppearanceOverlay="@style/roundStyle_circle" />
-
-
 
 
         <TextView
@@ -85,17 +57,18 @@
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
+            android:fontFamily="sans-serif-medium"
             android:text="@={layout.userInfo[`nickname`]}"
             android:textColor="@color/color_1a1a1a"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/siv_avatar"
             app:layout_constraintLeft_toRightOf="@id/siv_avatar"
-            app:layout_constraintRight_toLeftOf="@id/iv_setting"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/siv_avatar"
-            tools:text="虾米虾米" />
+            tools:text="虾米虾" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -104,10 +77,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_mine_shrimp_card"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="20dp"
-            android:background="@drawable/bg_mine_carde"
+            android:paddingTop="24dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/siv_avatar">
@@ -116,8 +90,9 @@
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/mine_sticks"
-                android:textColor="@color/color_56_3c3c43"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -127,7 +102,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:textColor="@color/color_e6_000000"
+                android:fontFamily="@font/outfit_600"
+                android:textColor="@color/white"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/tv_title"
@@ -135,180 +111,216 @@
                 tools:text="0" />
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:importantForAccessibility="no"
-                android:src="@drawable/ic_arrow_right"
+                android:src="@drawable/ic_item_arrow_right"
                 app:layout_constraintBottom_toBottomOf="@id/tv_points"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/tv_points" />
 
-            <TextView
-                android:id="@+id/tv_mine_points_tip"
-                singleClick="@{layout.clickHandler::onClick}"
+            <LinearLayout
+                android:id="@+id/ll_mine_points_tip"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/bg_f7f7f7_r100"
-                android:paddingVertical="11dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="72dp"
-                android:text="@string/mine_tip"
-                android:textColor="@color/color_76_3c3c43"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@drawable/bg_mine_shrimp_tip"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_points"
-                tools:visibility="visible" />
+                app:layout_constraintTop_toBottomOf="@id/tv_points">
 
-            <TextView
-                android:id="@+id/tv_mine_tip_btn"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:background="@drawable/bg_242424_r100"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:text="@string/mine_tip2"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@id/tv_mine_points_tip"
-                app:layout_constraintEnd_toEndOf="@id/tv_mine_points_tip"
-                app:layout_constraintTop_toTopOf="@id/tv_mine_points_tip"
-                tools:visibility="visible" />
+                <ImageView
+                    android:id="@+id/iv_pack"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_pack" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/tv_mine_points_tip"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/mine_tip"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_mine_lj"
-            singleClick="@{layout.clickHandler::onClick}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_ffffff_r20"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="@dimen/dp20"
-            app:layout_constraintTop_toBottomOf="@id/layout_mine_point">
-
-
-            <RelativeLayout
-                android:id="@+id/rl_bfb"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                tools:ignore="MissingConstraints">
-
-                <com.shiyuan.fastclaw.widget.progress.WaveProgressView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:wpv_progress="10"
-                    app:wpv_text="0%"
-                    android:id="@+id/wave_view"
-                    app:wpv_textColor="@color/color_e6_000000"
-                    app:wpv_textSize="18sp"
-                    app:wpv_waveAmplitude="8dp"
-                    app:wpv_waveBackgroundColor="#D9FBFE"
-                    app:wpv_waveColor="#54DAF0"
-                    app:wpv_waveCount="1" />
 
                 <View
-                    android:layout_width="match_parent"
+                    android:layout_width="@dimen/dp_0"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ic_pr_bg"/>
+                    android:layout_weight="1" />
 
-            </RelativeLayout>
-
-
-            <TextView
-                android:id="@+id/tv_dn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="10dp"
-                android:text="@string/resume_understanding"
-                android:textColor="@color/color_e6_000000"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:layout_constraintLeft_toRightOf="@id/rl_bfb"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="@string/resume_dn"
-                android:textColor="@color/color_56_3c3c43"
-                android:textSize="13sp"
-                app:layout_constraintLeft_toLeftOf="@id/tv_dn"
-                app:layout_constraintTop_toBottomOf="@id/tv_dn" />
+                <TextView
+                    android:id="@+id/tv_mine_tip_btn"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_ffffff_r45"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="5dp"
+                    android:text="@string/mine_tip2"
+                    android:textColor="@color/color_336fff"
+                    android:textSize="12sp" />
 
 
-            <ImageView
-                android:id="@+id/iv"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_arrow_right"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+            </LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_understanding_xt"
+            android:layout_width="match_parent"
+            android:layout_height="71dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="@id/layout_mine_point"
+            app:layout_constraintTop_toBottomOf="@id/layout_mine_point">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_mine_bj"
+            <LinearLayout
+                android:id="@+id/layout_mine_lj"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_ffffff_r20"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/rl_bfb"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    tools:ignore="MissingConstraints">
+
+                    <com.shiyuan.fastclaw.widget.progress.WaveProgressView
+                        android:id="@+id/wave_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:wpv_progress="10"
+                        app:wpv_text="0%"
+                        app:wpv_textColor="@color/color_e6_000000"
+                        app:wpv_textSize="18sp"
+                        app:wpv_waveAmplitude="8dp"
+                        app:wpv_waveBackgroundColor="#D9FBFE"
+                        app:wpv_waveColor="#54DAF0"
+                        app:wpv_waveCount="1" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/ic_pr_bg" />
+
+                </RelativeLayout>
+
+
+                <TextView
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/tv_dn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/resume_understanding"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="@id/rl_bfb"
+                    app:layout_constraintLeft_toRightOf="@id/rl_bfb"
+                    app:layout_constraintTop_toTopOf="@id/rl_bfb" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/layout_mine_bj"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_ffffff_r20"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:id="@+id/iv_jl"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_jl" />
+
+                <TextView
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6.5dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/confirm_my_resume"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_jl"
+                    app:layout_constraintLeft_toRightOf="@id/iv_jl"
+                    app:layout_constraintTop_toTopOf="@id/iv_jl" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_setting"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="76dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_ffffff_r20"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="18dp"
-            app:layout_constraintTop_toBottomOf="@id/layout_mine_lj">
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_ffffff_r18"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="@id/ll_understanding_xt"
+            app:layout_constraintTop_toBottomOf="@id/ll_understanding_xt">
 
             <ImageView
-                android:id="@+id/iv_jl"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_file_success"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_mine_setting" />
+
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
-                android:text="@string/confirm_my_resume"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/title_settings"
                 android:textColor="@color/color_90_000000"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@id/iv_jl"
-                app:layout_constraintLeft_toRightOf="@id/iv_jl"
-                app:layout_constraintTop_toTopOf="@id/iv_jl" />
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
+            <View
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
             <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_arrow_right"
-                app:layout_constraintBottom_toBottomOf="@id/iv_jl"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@id/iv_jl" />
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_item_arrow_right2" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

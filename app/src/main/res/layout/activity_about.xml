@@ -16,7 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:windowBackground"
+        android:background="@color/color_f5f6fa"
         android:orientation="vertical">
 
         <include
@@ -33,9 +33,9 @@
                 <ImageView
                     android:layout_marginTop="42.5dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/img_splash_logo"
-                    android:layout_width="54dp"
-                    android:layout_height="51dp">
+                    android:src="@drawable/img_logo2"
+                    android:layout_width="68dp"
+                    android:layout_height="68dp">
                 </ImageView>
 
 
@@ -44,7 +44,7 @@
                     android:id="@+id/tv_name"
                     android:layout_marginTop="12dp"
                     android:layout_gravity="center_horizontal"
-                    android:textColor="@color/black"
+                    android:textColor="@color/color_90_000000"
                     android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
@@ -68,20 +68,20 @@
 
                        <TextView
                            android:text="@string/business_license"
-                           android:textColor="@color/color_1a1a1a"
-                           android:textSize="16sp"
+                           android:textColor="@color/color_90_000000"
+                           android:textSize="15sp"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content">
                        </TextView>
 
 
                        <ImageView
-                           android:layout_width="16dp"
-                           android:layout_height="16dp"
+                           android:layout_width="20dp"
+                           android:layout_height="20dp"
                            android:layout_alignParentEnd="true"
                            android:layout_centerVertical="true"
                            android:importantForAccessibility="no"
-                           android:src="@drawable/ic_arrow_right" />
+                           android:src="@drawable/ic_item_arrow_right2" />
                    </RelativeLayout>
 
                    <View
@@ -99,20 +99,20 @@
 
                        <TextView
                            android:text="@string/record_filing_information"
-                           android:textColor="@color/color_1a1a1a"
-                           android:textSize="16sp"
+                           android:textColor="@color/color_90_000000"
+                           android:textSize="15sp"
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content">
                        </TextView>
 
 
                        <ImageView
-                           android:layout_width="16dp"
-                           android:layout_height="16dp"
+                           android:layout_width="20dp"
+                           android:layout_height="20dp"
                            android:layout_alignParentEnd="true"
                            android:layout_centerVertical="true"
                            android:importantForAccessibility="no"
-                           android:src="@drawable/ic_arrow_right" />
+                           android:src="@drawable/ic_item_arrow_right2" />
                    </RelativeLayout>
 
                </LinearLayout>

@@ -55,12 +55,10 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             if (it) {
                 User.get().userId?.let { uid ->
                     val firstLogin = Config.get().isFirstLogin(uid)
-                    binding.tvMinePointsTip.visibility = if (firstLogin) View.VISIBLE else View.GONE
-                    binding.tvMineTipBtn.visibility = if (firstLogin) View.VISIBLE else View.GONE
+                    binding.llMinePointsTip.visibility = if (firstLogin) View.VISIBLE else View.GONE
                 }
             } else {
-                binding.tvMinePointsTip.visibility = View.GONE
-                binding.tvMineTipBtn.visibility = View.GONE
+                binding.llMinePointsTip.visibility = View.GONE
             }
             if(!it){
                 binding.tvPoints.text = "0"
@@ -125,14 +123,13 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     MyShrimpChipsActivity.start(requireActivity())
                 }
             }
-            R.id.iv_setting -> {
+            R.id.ll_setting -> {
                 SettingsActivity.start(requireActivity())
             }
             R.id.tv_mine_tip_btn -> {
                 User.get().userId?.let {
                     Config.get().recordFirstLogin(it)
-                    binding.tvMinePointsTip.visibility = View.GONE
-                    binding.tvMineTipBtn.visibility = View.GONE
+                    binding.llMinePointsTip.visibility = View.GONE
                 }
             }
             R.id.layout_mine_bj -> {
