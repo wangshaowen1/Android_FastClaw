@@ -3,26 +3,32 @@ package com.shiyuan.fastclaw.feature.login.phone
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
+import android.text.style.AbsoluteSizeSpan
 import android.text.style.ClickableSpan
+import android.text.style.StyleSpan
+import android.text.style.TypefaceSpan
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import com.gyf.immersionbar.ImmersionBar
+import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.databinding.ActivityPhoneLoginBinding
+import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.widget.GeneratingDialog
-import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.bus.FlowEventBus
-import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
+
 
 /**
  * @Introduce: 手机号登录页面
@@ -68,6 +74,19 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
     }
 
     private fun initView() {
+        val spannableHint1 = SpannableString(resources.getString(R.string.login_phone_hint)).apply {
+            setSpan(AbsoluteSizeSpan(14, true), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(TypefaceSpan("sans-serif"), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        binding.etPhone.hint = spannableHint1;
+
+        val spannableHint2 = SpannableString(resources.getString(R.string.login_code_hint)).apply {
+            setSpan(AbsoluteSizeSpan(14, true), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(TypefaceSpan("sans-serif"), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        binding.etVerifyCode.hint = spannableHint2;
+
+
         // 如果只需要监听 afterTextChanged，可以这样简化
         binding.etPhone.doAfterTextChanged { editable ->
             mRealVM.mobile.value = editable?.toString()
