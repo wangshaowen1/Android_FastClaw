@@ -52,327 +52,127 @@ object EventManager {
  * App功能使用数据
  */
 object AppEvent {
-    /**
-     * 访问首页｜用户进入App访问首页页面
-     */
-    const val SF_VIEW_HOME_PAGE = "sf_view_home_page"
+
 
     /**
-     * 浏览首页推荐视频点击观看｜用户在首页浏览推荐视频内容并进行观看
+     * 快龙虾｜C端APP-小虾页面访问
+     * 用户访问APP小虾页面时上报
      */
-    const val SF_CLICK_HOME_RECOMMEND_VIDEO = "sf_click_home_recommend_video"
+    const val KLX_CAPP_XIAOXIA_PAGE = "klx_capp_xiaoxia_page"
 
     /**
-     * 访问作品tab页｜用户点击底部导航栏作品Tab，进入个人作品页
+     * 快龙虾｜C端APP-我的页面访问
+     * 用户访问APP我的页面时上报
      */
-    const val SF_VIEW_WORKS_TAB_PAGE = "sf_view_works_tab_page"
+    const val KLX_CAPP_MY_PAGE = "klx_capp_my_page"
 
     /**
-     * 访问我的tab页｜用户点击底部导航栏我的Tab，进入个人页面
+     * 快龙虾｜C端APP-登录页面访问
+     * 用户访问APP登录页时上报
      */
-    const val SF_VIEW_MINE_TAB_PAGE = "sf_view_mine_tab_page"
+    const val KLX_CAPP_LOGIN_PAGE = "klx_capp_login_page"
 
     /**
-     * 算力充值页面｜用户进入算力充值页面
+     * 快龙虾｜C端APP-小虾对你的理解-我的简历页面访问
+     * 用户访问APP小虾对你的理解页-我的简历tab时上报
      */
-    const val SF_VIEW_RECHARGE_PAGE = "sf_view_recharge_page"
+    const val KLX_CAPP_UNDERSTANDING_MYRESUME_PAGE = "klx_capp_understanding_myresume_page"
 
     /**
-     * 用户进入故事灵感页面｜用户进入故事灵感页面
+     * 快龙虾｜C端APP-小虾对你的理解-求职偏好页面访问
+     * 用户访问APP小虾对你的理解页-求职偏好tab时上报
      */
-    const val SF_VIEW_STORY_INSPIRATION_PAGE = "sf_view_story_inspiration_page"
+    const val KLX_CAPP_UNDERSTANDING_PREFERENCE_PAGE = "klx_capp_understanding_preference_page"
 
     /**
-     * 故事灵感tab｜用户进入故事灵感页面
+     * 快龙虾｜C端APP-我的简历页面访问
+     * 用户访问APP我的-我的简历页时上报
      */
-    const val SF_VIEW_STORY_INSPIRATION_TAB = "sf_view_story_inspiration_tab"
+    const val KLX_CAPP_MY_RESUME_PAGE = "klx_capp_my_resume_page"
 
     /**
-     * 故事灵感页面的下一步按钮｜用户在故事灵感tab页 输入文字后点击下一步按钮
+     * 快龙虾｜C端APP-我的虾条页面访问
+     * 用户访问APP我的-我的虾条页时上报
      */
-    const val SF_CLICK_STORY_INSPIRATION_NEXT_BUTTON = "sf_click_story_inspiration_next_button"
+    const val KLX_CAPP_MY_SHRIMPSTICK_PAGE = "klx_capp_my_shrimpstick_page"
 
     /**
-     * 小说改编tab页面｜用户进入小说改编
+     * 快龙虾｜C端APP-面试宝典落地页访问
+     * 用户访问APP面试宝典落地页时上报
      */
-    const val SF_VIEW_NOVEL_ADAPTATION_TAB = "sf_view_novel_adaptation_tab"
+    const val KLX_CAPP_INTERVIEWREPORT_LANDING_PAGE = "klx_capp_interviewreport_landing_page"
 
     /**
-     * 小说改编页面的下一步按钮｜用户在小说改编tab页 输入文字后点击下一步按钮
+     * 快龙虾｜C端APP-面试宝典加载报告页访问
+     * 用户在APP面试宝典上传简历后，报告加载页时上报
      */
-    const val SF_CLICK_NOVEL_ADAPTATION_NEXT_BUTTON = "sf_click_novel_adaptation_next_button"
+    const val KLX_CAPP_INTERVIEWREPORT_LOADINGREPORT_PAGE = "klx_capp_interviewreport_loadingreport_page"
 
     /**
-     * 故事梗概环节｜用户进入创作流程中的故事梗概环节页面
+     * 快龙虾｜C端APP-面试宝典报告页访问
+     * 用户在APP面试宝典上传简历后，访问报告页时上报
      */
-    const val SF_VIEW_STORY_OUTLINE_PAGE = "sf_view_story_outline_page"
+    const val KLX_CAPP_INTERVIEWREPORT_REPORT_PAGE = "klx_capp_interviewreport_report_page"
 
     /**
-     * 故事剧本环节｜用户进入创作流程中的故事剧本环节页面
+     * 快龙虾｜C端APP-登陆成功（归到同一动作中）
+     * 用户在APP登录页登陆成功时上报
      */
-    const val SF_VIEW_SCRIPT_PAGE = "sf_view_script_page"
+    const val KLX_C_LOGIN_SUCCESS = "klx_c_login_success"
 
     /**
-     * 资产管理环节｜用户进入资产管理页面（角色/场景/道具管理）
+     * 快龙虾｜C端APP-上传附件简历（归到同一动作中）
+     * 用户在APP点击上传附件简历时上报
      */
-    const val SF_VIEW_ASSET_MANAGEMENT_PAGE = "sf_view_asset_management_page"
+    const val KLX_C_UPLOAD_RESUME = "klx_c_upload_resume"
 
     /**
-     * 资产管理页的一键生成｜用户在资产管理页面点击“一键生成”按钮进行资产生成
+     * 快龙虾｜C端APP-确认绑定简历
+     * 用户在APP小虾对话页被小虾询问确认是否绑定简历时，点击是我的简历时上报
      */
-    const val SF_CLICK_ASSET_GENERATE_BUTTON = "sf_click_asset_generate_button"
+    const val KLX_CAPP_CONFIRM_RESUME = "klx_capp_confirm_resume"
 
     /**
-     * 分镜设计环节｜用户进入创作流程中的分镜设计环节页面
+     * 快龙虾｜C端APP-拒绝绑定简历
+     * 用户在APP小虾对话页被小虾询问确认是否绑定简历时，点击不是，重新上传时上报
      */
-    const val SF_VIEW_STORYBOARD_DESIGN_PAGE = "sf_view_storyboard_design_page"
+    const val KLX_CAPP_DENY_RESUME = "klx_capp_deny_resume"
 
     /**
-     * 分镜视频生成环节｜用户进入创作流程中的分镜视频生成环节页面
+     * 快龙虾｜C端APP-点击我没有简历
+     * 用户在APP小虾对话页，在上传简历卡片信息点击我没有简历时上报
      */
-    const val SF_VIEW_VIDEO_GENERATION_PAGE = "sf_view_video_generation_page"
+    const val KLX_CAPP_NO_RESUME = "klx_capp_no_resume"
 
     /**
-     * 重绘分镜按钮｜在重绘已合成视频页面 或新集创作的分镜视频合成页面，用户点击左下角“重绘分镜”按钮
+     * 快龙虾｜C端APP-简历上传失败点击重新上传
+     * 用户在APP小虾对话页，上传简历失败后点击重新上传时上报
      */
-    const val SF_CLICK_REDRAW_STORYBOARD_BUTTON = "sf_click_redraw_storyboard_button"
+    const val KLX_CAPP_UPLOAD_FAILED_RE_RESUME = "klx_capp_upload_failed_re_resume"
 
     /**
-     * 合成按钮｜在分镜视频生成页面 和重绘视频页面的 右上角的用户点击“合成”按钮开始视频生成
+     * 快龙虾｜填写意向岗位（归到同一动作中）
+     * 用户在APP小虾对话过程中。完成意向岗位填写时上报
      */
-    const val SF_CLICK_COMBINE_VIDEO_BUTTON = "sf_click_combine_video_button"
+    const val KLX_C_EXPECTED_JOB_COMPLETED = "klx_c_expected_job_completed"
 
     /**
-     * 用户作品播放页重绘视频按钮｜在用户作品播放页中，用户点击“重绘视频”按钮进行视频重绘
+     * 快龙虾｜填写意向城市（归到同一动作中）
+     * 用户在APP小虾对话过程中。完成意向城市填写时上报
      */
-    const val SF_CLICK_WORK_REPLAY_REDRAW_BUTTON = "sf_click_work_replay_redraw_button"
+    const val KLX_C_EXPECTED_CITY_COMPLETED = "klx_c_expected_city_completed"
 
     /**
-     * 算力充值支付弹窗｜在创作各流程（如生成资产、分镜或合成视频）算力不足或需付费时，系统弹出支付弹窗
+     * 快龙虾｜填写意向薪资（归到同一动作中）
+     * 用户在APP小虾对话过程中。完成意向薪资填写时上报
      */
-    const val SF_SHOW_COMPUTE_RECHARGE_PAYMENT_POPUP = "sf_show_compute_recharge_payment_popup"
+    const val KLX_C_EXPECTED_SALARY_COMPLETED = "klx_c_expected_salary_completed"
 
     /**
-     * 算力充值支付弹窗购买按钮｜用户在购买弹窗点击了购买按钮
+     * 快龙虾｜填写求职状态（归到同一动作中）
+     * 用户在APP小虾对话过程中。完成求职状态填写时上报
      */
-    const val SF_CLICK_COMPUTE_RECHARGE_PAYMENT_BUTTON = "sf_click_compute_recharge_payment_button"
-
-    /**
-     * 首页课程报名弹窗｜首页的课程弹窗
-     */
-    const val SF_SHOW_COURSE_ENROLL_POPUP = "sf_show_course_enroll_popup"
-
-    /**
-     * 悬浮窗课程报名｜用户点击页面悬浮窗中的“课程报名”按钮
-     */
-    const val SF_CLICK_FLOATING_COURSE_ENROLL = "sf_click_floating_course_enroll"
-
-    /**
-     * H5的课程页面｜用户通过课程入口进入访问H5课程页面
-     */
-    const val SF_VIEW_H5_COURSE_PAGE = "sf_view_h5_course_page"
-
-    /**
-     * 课程报名支付弹窗｜用户在课程报名流程中触发并看到课程支付弹窗
-     */
-    const val SF_SHOW_COURSE_PAYMENT_POPUP = "sf_show_course_payment_popup"
-
-    /**
-     * 课程报名支付弹窗购买按钮｜用户点击课程购买按钮
-     */
-    const val SF_CLICK_COURSE_PAYMENT_BUTTON = "sf_click_course_payment_button"
-
-    /**
-     * 去发行按钮｜在作品完成页或签约入口页，用户点击“去发行”按钮
-     */
-    const val SF_CLICK_GO_PUBLISH_BUTTON = "sf_click_go_publish_button"
-
-    /**
-     * 提交申请按钮｜在签约/发行申请填写完成后，用户点击“提交申请”按钮
-     */
-    const val SF_CLICK_SUBMIT_APPLY_BUTTON = "sf_click_submit_apply_button"
-
-    /**
-     * 申请签约按钮｜在签约/发行页面中，用户点击“申请签约”按钮
-     */
-    const val SF_CLICK_SIGN_CONTRACT_BUTTON = "sf_click_sign_contract_button"
-
-    /**
-     * 签约/发行主页面｜用户进入签约/发行主页面
-     */
-    const val SF_VIEW_SIGN_PUBLISH_MAIN_PAGE = "sf_view_sign_publish_main_page"
-
-    /**
-     *快出片｜课程页面支付成功
-     */
-    const val SF_CLICK_COURSE_PAYMENT_BUTTON_PAYSUCCESS = "sf_click_course_payment_button_paysuccess"
-
-    /**
-     *快出片｜算力商城页面支付成功
-     */
-    const val SF_CLICK_RECHARGE_PAGE_PAYSUCCESS = "sf_click_recharge_page_paysuccess"
-
-    /**
-     *快出片｜算力充值支付弹窗支付成功
-     */
-    const val SF_CLICK_COMPUTE_RECHARGE_PAYMENT_POPUP_PAYSUCCESS = "sf_click_compute_recharge_payment_popup_paysuccess"
-
-    /**
-     *
-     * 快出片｜分镜视频字幕生成失败点击“重试按钮”
-     */
-    const val SF_CLICK_SUBTITLE_FAIL_PROMT_BUTTON = "sf_click_subtitle_fail_promt_button"
-
-    /**
-     *快出片｜分镜视频字幕生成失败
-     */
-    const val SF_VIEW_SUBTITLE_FAIL_PROMT = "sf_view_subtitle_fail_promt"
-
-    /**
-     *快出片｜创作流程新人礼包支付成功
-     */
-    const val SF_CLICK_CREATE_NEWCOMER_GIFTPACK_PAYSUCCESS = "sf_click_create_newcomer_giftpack_paysuccess"
-
-    /**
-     *
-     * 快出片｜创作流程新人礼包点击“立即支付”按钮
-     */
-    const val SF_CLICK_CREATE_NEWCOMER_GIFTPACK_PAGE = "sf_click_create_newcomer_giftpack_page"
-
-    /**
-     *快出片｜创作流程新人礼包曝光
-     */
-    const val SF_VIEW_CREATE_NEWCOMER_GIFTPACK_PAGE = "sf_view_create_newcomer_giftpack_page"
-
-    /**
-     *快出片｜首页新人礼包支付成功
-     */
-    const val SF_CLICK_HOME_NEWCOMER_GIFTPACK_PAYSUCCESS = "sf_click_home_newcomer_giftpack_paysuccess"
-
-    /**
-     *快出片｜首页新人礼包点击 "立即支付"
-     */
-    const val SF_CLICK_HOME_NEWCOMER_GIFTPACK_PAGE = "sf_click_home_newcomer_giftpack_page"
-
-    /**
-     *
-     * 快出片｜新手创作营引导首页"立即体验"按钮
-     */
-    const val SF_CLICK_BEGINNER_CREATION_GUIDE_PAGE_BUTTON = "sf_click_beginner_creation_guide_page_button"
-
-    /**
-     *快出片｜新手创作营故事选择页曝光
-     */
-    const val SF_VIEW_BEGINNER_CREATION_STORY_PAGE = "sf_view_beginner_creation_story_page"
-
-    /**
-     *
-     * 快出片｜新手创作营故事选择页点击 “跳过”按钮
-     */
-    const val SF_CLICK_BEGINNER_CREATION_STORY_PAGE_SKIP = "sf_click_beginner_creation_story_page_skip"
-
-    /**
-     *快出片｜新手创作营故事选择页“立即生成”按钮
-     */
-    const val SF_CLICK_BEGINNER_CREATION_STORY_PAGE_BUTTON = "sf_click_beginner_creation_story_page_button"
-
-    /**
-     *
-     * 快出片｜新手创作营故事生成页曝光
-     */
-    const val SF_VIEW_BEGINNER_CREATION_GENERATE_PAGE = "sf_view_beginner_creation_generate_page"
-
-    /**
-     *快出片｜新手创作营成片结果页曝光
-     */
-    const val SF_VIEW_BEGINNER_CREATION_RESULT_PAGE = "sf_view_beginner_creation_result_page"
-
-    /**
-     *快出片 | 新手创作营成片结果页点击“开启我的创作变现”按钮
-     */
-    const val SF_CLICK_BEGINNER_CREATION_RESULT_PAGE_BUTTON = "sf_click_beginner_creation_result_page_button"
-
-    /**
-     *快出片 | 首页新人礼包曝光
-     */
-    const val SF_VIEW_HOME_NEWCOMER_GIFTPACK_PAGE = "sf_view_home_newcomer_giftpack_page"
-
-    /**
-     *
-     * 快出片 | 新手创作营首页曝光
-     */
-    const val SF_VIEW_BEGINNER_CREATION_GUIDE_PAGE = "sf_view_beginner_creation_guide_page"
-
-    /**
-     * 新人礼包-付费用户添加客服弹窗曝光
-     */
-    const val SF_VIEW_GIFTPACK_PAYCUSTOMER_SERVICE_PAGE = "sf_view_giftpack_paycustomer_service_page"
-
-    /**
-     *新人礼包-付费用户添加客服弹窗点击
-     */
-    const val SF_CLICK_GIFTPACK_PAYCUSTOMER_SERVICE_BUTTON = "sf_click_giftpack_paycustomer_service_button"
-
-    /**
-     * 新人礼包-免费用户添加客服弹窗曝光
-     */
-    const val SF_VIEW_GIFTPACK_FREECUSTOMER_SERVICE_PAGE = "sf_view_giftpack_freecustomer_service_page"
-
-    /**
-     *点击新人礼包处免费用户添加客服弹窗跳转按钮
-     */
-    const val SF_CLICK_GIFTPACK_FREECUSTOMER_SERVICE_BUTTON = "sf_click_giftpack_freecustomer_service_button"
-
-    /**
-     *
-     * 首页付费用户添加客服弹窗曝光
-     */
-    const val SF_VIEW_HOME_PAYCUSTOMER_SERVICE_PAGE = "sf_view_home_paycustomer_service_page"
-
-    /**
-     *
-     * 点击首页付费用户添加客服弹窗跳转按钮
-     */
-    const val SF_CLICK_HOME_PAYCUSTOMER_SERVICE_BUTTON = "sf_click_home_paycustomer_service_button"
-
-    /**
-     *首页免费用户添加客服弹窗曝光
-     */
-    const val SF_VIEW_HOME_FREECUSTOMER_SERVICE_PAGE = "sf_view_home_freecustomer_service_page"
-
-    /**
-     * 点击首页免费用户添加客服弹窗跳转按钮
-     */
-    const val SF_CLICK_HOME_FREECUSTOMER_SERVICE_BUTTON = "sf_click_home_freecustomer_service_button"
-
-    /**
-     *商城付费用户添加客服弹窗曝光
-     */
-    const val SF_VIEW_PAYSTORE_PAYCUSTOMER_SERVICE_PAGE = "sf_view_paystore_paycustomer_service_page"
-
-    /**
-     *
-     * 点击商城付费用户添加客服弹窗跳转按钮
-     */
-    const val SF_CLICK_PAYSTORE_PAYCUSTOMER_SERVICE_BUTTON = "sf_click_paystore_paycustomer_service_button"
-
-    /**
-     *
-     * 点击首页悬浮窗
-     */
-    const val SF_CLICK_HOME_CUSTOMER_SERVICE_FLOAT_WIN = "sf_click_home_customer_service_float_win"
-
-    /**
-     *
-     * 首页客服悬浮窗曝光
-     */
-    const val SF_VIEW_HOME_CUSTOMER_SERVICE_FLOAT_WIN = "sf_view_home_customer_service_float_win"
-
-    /**
-     *
-     * 点击作品播放器页面“跳转”发布平台按钮
-     */
-    const val SF_CLICK_WORK_VIDEO_BUTTON = "sf_click_work_video_button"
+    const val KLX_C_JOBSEEKING_STATUS_COMPLETED = "klx_c_jobseeking_status_completed"
 
 }
 

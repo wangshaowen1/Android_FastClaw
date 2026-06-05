@@ -36,6 +36,8 @@ import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
@@ -147,6 +149,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
         msgAdapter.onUploadClickAction = { data ->
             if (!AppNavigator.checkLoginIntercepted(false)) {
+                EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME)
                 showUploadResumeDialog(data)
             }
         }

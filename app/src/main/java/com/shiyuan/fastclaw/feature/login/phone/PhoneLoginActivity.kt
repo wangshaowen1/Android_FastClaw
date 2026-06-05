@@ -22,6 +22,8 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.databinding.ActivityPhoneLoginBinding
 import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
@@ -45,10 +47,7 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
             val activity = topActivity ?: return
             val intent = Intent(activity, PhoneLoginActivity::class.java)
             activity.startActivity(intent)
-            /* activity.overridePendingTransition(
-                 R.anim.push_bottom_in,
-                 R.anim.push_bottom_out
-             )*/
+            EventManager.onAppTrack(AppEvent.KLX_CAPP_LOGIN_PAGE)
         }
     }
 

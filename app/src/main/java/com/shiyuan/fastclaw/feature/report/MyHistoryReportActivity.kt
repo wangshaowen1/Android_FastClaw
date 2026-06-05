@@ -13,6 +13,8 @@ import com.shiyuan.fastclaw.databinding.ActivityMyHistoryReportBinding
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.getResString
 import com.shiyuan.fastclaw.common.ext.startRefreshWithAdapter
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
 import com.shiyuan.fastclaw.feature.report.data.ReportStatus
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
@@ -94,6 +96,7 @@ class MyHistoryReportActivity :
     private fun onReportItemClick(info: ReportInfo) {
         when (info.status) {
             ReportStatus.OTHER -> {
+                EventManager.onAppTrack(AppEvent.KLX_CAPP_INTERVIEWREPORT_REPORT_PAGE)
                 SimpleBrowserActivity.launch(
                     this,
                     info.detailUrl,

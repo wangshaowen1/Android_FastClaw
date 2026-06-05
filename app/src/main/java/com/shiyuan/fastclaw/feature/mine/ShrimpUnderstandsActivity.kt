@@ -25,6 +25,8 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.FieldItems
 import com.shiyuan.fastclaw.core.network.apis.response.formatValueToString
 import com.shiyuan.fastclaw.databinding.ActivityShrimpUnderstandsBinding
@@ -220,8 +222,16 @@ class ShrimpUnderstandsActivity :
             addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
             binding.rvUnderstands2.adapter = mAdapter2
         }
-        binding.llTab1.setOnSingleClickListener { mRealVM.tableIndex.postValue(0) }
-        binding.llTab2.setOnSingleClickListener { mRealVM.tableIndex.postValue(1) }
+        mRealVM.tableIndex.postValue(0)
+        binding.llTab1.setOnSingleClickListener {
+            mRealVM.tableIndex.postValue(0)
+            EventManager.onAppTrack(AppEvent.KLX_CAPP_UNDERSTANDING_MYRESUME_PAGE)
+        }
+        binding.llTab2.setOnSingleClickListener {
+            EventManager.onAppTrack(AppEvent.KLX_CAPP_UNDERSTANDING_PREFERENCE_PAGE)
+            mRealVM.tableIndex.postValue(1)
+        }
+
         binding.tvBt.setOnSingleClickListener {
             finish()
             FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))

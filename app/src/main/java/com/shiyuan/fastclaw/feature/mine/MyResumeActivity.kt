@@ -25,6 +25,8 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.databinding.setLoadState
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.ActivityMyResumeBinding
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
@@ -55,6 +57,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             activity ?: return
             val intent = Intent(activity, MyResumeActivity::class.java)
             activity.startActivity(intent)
+            EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_RESUME_PAGE)
         }
     }
 

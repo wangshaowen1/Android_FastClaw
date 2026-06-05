@@ -179,7 +179,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             when (checkedId) {
                 R.id.rbHome -> {
                     //首页
-                    EventManager.onAppTrack(AppEvent.SF_VIEW_HOME_PAGE)
+                    EventManager.onAppTrack(AppEvent.KLX_CAPP_XIAOXIA_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(0)
                     supportFragmentManager.switchFragment(
@@ -187,6 +187,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                         ClawAgentMainFragment::class.java
                     )
                 }
+
 
 //                R.id.rbWorks -> {
 //                    //热门
@@ -202,7 +203,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
                 R.id.rbMine -> {
                     //我的
-                    EventManager.onAppTrack(AppEvent.SF_VIEW_MINE_TAB_PAGE)
+                    EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(1)
                     supportFragmentManager.switchFragment(R.id.fragment, MineFragment::class.java)
@@ -276,7 +277,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
             R.id.iv_main_report -> {
                 binding.mrg.clearCheck()
-                EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
+                EventManager.onAppTrack(AppEvent.KLX_CAPP_INTERVIEWREPORT_LANDING_PAGE)
                 setKeepScreenOn(false)
                 mRealVM.showTab.set(2)
                 supportFragmentManager.switchFragment(

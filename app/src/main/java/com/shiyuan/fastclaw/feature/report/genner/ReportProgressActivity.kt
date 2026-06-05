@@ -13,6 +13,8 @@ import com.gyf.immersionbar.ImmersionBar
 import com.shiyuan.fastclaw.R
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.databinding.ActivityReportProgressBinding
 import com.shiyuan.fastclaw.feature.main.MainActivity
@@ -42,6 +44,7 @@ class ReportProgressActivity :
             intent.putExtra("reportType", reportType)
             activity.startActivity(intent)
             activity.finish()
+            EventManager.onAppTrack(AppEvent.KLX_CAPP_INTERVIEWREPORT_LOADINGREPORT_PAGE)
         }
     }
 

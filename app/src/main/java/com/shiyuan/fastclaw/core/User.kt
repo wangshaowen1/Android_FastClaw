@@ -10,6 +10,8 @@ import com.shiyuan.fastclaw.core.network.apis.request.CompleteUserDataInfoBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.nhsd.basic.Session
 import com.nhsd.basic.bus.FlowEventBus
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.EventManager
 
 /**
  * 当前登录角色信息
@@ -130,13 +132,19 @@ class User : IUser {
             return
         }
         GrowingAutotracker.get().setLoginUserId(id)
-        val mutableMap = mutableMapOf(
+       /* val mutableMap = mutableMapOf(
             "jg_user_jinguo_id" to get().userId,//用户金果唯一 Id，用户成功注册时更新，或用户登录到新版本后上初始化上传数据时候更新
             "\$basic_mobile" to get().phoneNum,//手机号
             "\$basic_gender" to if (gender == FEMALE) "FEMALE" else "MALE",//性别
             "\$basic_name" to nickName,//姓名
         ).filterValues { !it.isNullOrBlank() }
-//        GrowingAutotracker.get().setLoginUserAttributes(mutableMap)
+        //GrowingAutotracker.get().setLoginUserAttributes(mutableMap)*/
+
+     /*   val mutableMap = mutableMapOf(
+            "klx_pipe_source" to "APP",
+        ).filterValues { !it.isNullOrBlank() }
+
+        EventManager.onAppTrack(AppEvent.KLX_C_LOGIN_SUCCESS,mutableMap)*/
     }
 
 
