@@ -126,7 +126,6 @@
             android:id="@+id/layout_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginHorizontal="16dp"
             app:background_normalColor="@color/color_ffffff"
             app:super_corner="27dp"
