@@ -63,7 +63,10 @@ android {
         buildConfigField "String", "DY_CLIENT_KEY", '"YOUR_DY_CLIENT_KEY"'
         buildConfigField "String", "WX_APP_ID", '"YOUR_WX_APP_ID"' //微信AppKey
         buildConfigField "String", "WX_APP_SECRET", '"YOUR_WX_APP_SECRET"'//微信Secret
-        def growingScheme = "YOUR_GROWING_SCHEME"
+        def growingScheme = "2537e0c6ff0ab48e"
+        buildConfigField "String", "GROWING_ACCOUNT_ID", '"2f313003f3995a31"'
+        buildConfigField "String", "GROWING_DATA_SOURCE_ID", '"b2e375170e9dcee6"'
+        buildConfigField "String", "GROWING_SERVER_HOST", '"https://napi.growingio.com"'
         buildConfigField "String", "GROWING_URL_SCHEME", '\"' + growingScheme + '\"' //埋点库GROWINGIO的Urlscheme
         manifestPlaceholders = [
                 "GROWING_URL_SCHEME": growingScheme, // 埋点库GROWINGIO的Urlscheme
@@ -375,7 +378,7 @@ dependencies {
     implementation libs.retrofit2.retrofit
     implementation libs.retrofit2.converter.gson
 
-    implementation 'com.growingio.android:autotracker:4.5.2'
+    implementation 'com.growingio.android:autotracker:4.5.3'
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     // 经典的字符探测库，体积小，零外部依赖

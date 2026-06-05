@@ -340,15 +340,18 @@ class App : BaseApp() {
 
     private fun initGrowingIO() {
         //GrowingIO埋点库初始化
-        val sConfiguration = AutotrackConfiguration("2f313003f3995a31", "growing.${BuildConfig.GROWING_URL_SCHEME}")
-            .setDataCollectionServerHost("https://napi.growingio.com/")
-            .setDataSourceId("ba330a3932a8625a")
+        val sConfiguration = AutotrackConfiguration(
+            BuildConfig.GROWING_ACCOUNT_ID,
+            "growing.${BuildConfig.GROWING_URL_SCHEME}"
+        )
+            .setDataCollectionServerHost(BuildConfig.GROWING_SERVER_HOST)
+            .setDataSourceId(BuildConfig.GROWING_DATA_SOURCE_ID)
             .setDebugEnabled(BuildConfig.DEBUG)
             .setAndroidIdEnabled(true)
             .setChannel(Session.getInstance().channel)
             .setRequireAppProcessesEnabled(true)
             .setDataCollectionEnabled(hasAgree())
-            .setAutotrack(false)
+            .setAutotrack(true)
         GrowingAutotracker.startWithConfiguration(this, sConfiguration)
     }
 
