@@ -227,18 +227,20 @@ android {
         //开发测试环境
         develop {
             dimension 'env'
-             buildConfigField 'String', 'SERVER_URL', '"http://119.23.72.183:8088"'
-             //buildConfigField 'String', 'SERVER_URL', '"http://192.168.10.64:8088"'
+            buildConfigField 'String', 'SERVER_URL', '"http://119.23.72.183:8088"'
+            buildConfigField 'String', 'H5_SERVER_URL', '"http://192.168.10.23:5555"'
         }
         //预发布
         preview {
             dimension 'env'
             buildConfigField 'String', 'SERVER_URL', '"http://119.23.72.183:8088"'
+            buildConfigField 'String', 'H5_SERVER_URL', '"http://192.168.10.23:5555"'
         }
         //生产环境
         production {
             dimension 'env'
-            buildConfigField 'String', 'SERVER_URL', '"https://your-production-server.com"'
+            buildConfigField 'String', 'SERVER_URL', '"https://api.aishiyuan.cn"'
+            buildConfigField 'String', 'H5_SERVER_URL', '"https://m.aishiyuan.cn"'
         }
         arch32 {
             dimension 'arch'

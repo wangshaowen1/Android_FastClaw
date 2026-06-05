@@ -19,9 +19,9 @@
             android:id="@+id/tv_parent_tile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/color_e6_000000"
+            android:textColor="@color/color_90_000000"
             android:textSize="15sp"
-            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
             tools:text="北京大学" />
 
         <LinearLayout
@@ -36,7 +36,7 @@
                 android:id="@+id/tv_tile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/color_999999"
+                android:textColor="@color/color_55_3c3c43"
                 android:textSize="14sp"
                 tools:text="团队气氛" />
 
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textColor="@color/color_000000"
+                android:textColor="@color/color_90_000000"
                 android:textSize="14sp"
                 tools:text="团队气氛" />
 

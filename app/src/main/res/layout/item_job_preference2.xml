@@ -15,31 +15,45 @@
         android:orientation="vertical"
         tools:ignore="UselessLeaf">
 
-        <TextView
-            android:id="@+id/tv_tile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_000000"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:text="团队气氛" />
+       <androidx.constraintlayout.widget.ConstraintLayout
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content">
+
+           <TextView
+               app:layout_constraintRight_toRightOf="parent"
+               app:layout_constraintLeft_toLeftOf="parent"
+               app:layout_constraintBottom_toBottomOf="parent"
+               app:layout_constraintTop_toTopOf="parent"
+               android:id="@+id/tv_tile"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textColor="@color/color_96_000000"
+               android:textSize="16sp"
+               android:textStyle="bold"
+               tools:text="团队气氛" />
+
+           <ImageView
+               app:layout_constraintRight_toRightOf="@id/tv_tile"
+               app:layout_constraintLeft_toLeftOf="@id/tv_tile"
+               app:layout_constraintBottom_toBottomOf="@id/tv_tile"
+               android:src="@drawable/img_zhuangshi"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content">
+           </ImageView>
+       </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_f7f7f7_r16"
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:paddingHorizontal="16dp"
-                android:paddingBottom="16dp"
                 android:id="@+id/rc_connect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <LinearLayout
-                android:padding="16dp"
                 android:visibility="gone"
                 android:id="@+id/ll"
                 android:layout_width="match_parent"
@@ -51,7 +65,7 @@
                     android:id="@+id/tv_ll_tile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/color_999999"
+                    android:textColor="@color/color_55_3c3c43"
                     android:textSize="14sp"
                     tools:text="团队气氛" />
 
@@ -60,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:textColor="@color/color_000000"
+                    android:textColor="@color/color_90_000000"
                     android:textSize="14sp"
                     tools:text="团队气氛" />
 
@@ -68,6 +82,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:visibility="gone"
                 android:id="@+id/ll_expand"

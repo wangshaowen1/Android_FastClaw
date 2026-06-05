@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.mine
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -209,7 +210,7 @@ class ShrimpUnderstandsActivity :
         binding.rvUnderstands1.apply {
             layoutManager =
                 LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
-            addItemDecoration(SpaceDecoration(20.dp, SpaceDecoration.Direction.MIDDLE))
+            addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
             binding.rvUnderstands1.adapter = mAdapter1
         }
 
@@ -219,8 +220,8 @@ class ShrimpUnderstandsActivity :
             addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
             binding.rvUnderstands2.adapter = mAdapter2
         }
-        binding.tvTable1.setOnSingleClickListener { mRealVM.tableIndex.postValue(0) }
-        binding.tvTable2.setOnSingleClickListener { mRealVM.tableIndex.postValue(1) }
+        binding.llTab1.setOnSingleClickListener { mRealVM.tableIndex.postValue(0) }
+        binding.llTab2.setOnSingleClickListener { mRealVM.tableIndex.postValue(1) }
         binding.tvBt.setOnSingleClickListener {
             finish()
             FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
@@ -256,22 +257,18 @@ class ShrimpUnderstandsActivity :
     private fun initObservers() {
         mRealVM.tableIndex.observe(this) {
             if (it == 0) {
-                binding.tvTable1.setBackgroundResource(R.drawable.gradient_top_11c4cb_bottom_efcdaf)
-                binding.tvTable1.setTextColor(resources.getColor(R.color.white))
+                binding.layoutTable.setBackgroundResource(R.drawable.ic_understands_table1)
+                binding.tvTable1.setTypeface( Typeface.DEFAULT_BOLD)
+                binding.tvTable2.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
                 binding.ivTable1.visibility = View.VISIBLE
-
-                binding.tvTable2.background = null
-                binding.tvTable2.setTextColor(resources.getColor(R.color.color_666666))
                 binding.ivTable2.visibility = View.GONE
 
                 setConnectVisibility()
             } else {
-                binding.tvTable1.background = null
-                binding.tvTable1.setTextColor(resources.getColor(R.color.color_666666))
+                binding.layoutTable.setBackgroundResource(R.drawable.ic_understands_table2)
+                binding.tvTable1.setTypeface( Typeface.create("sans-serif-medium", Typeface.NORMAL))
+                binding.tvTable2.setTypeface(Typeface.DEFAULT_BOLD)
                 binding.ivTable1.visibility = View.GONE
-
-                binding.tvTable2.setBackgroundResource(R.drawable.gradient_top_11c4cb_bottom_efcdaf)
-                binding.tvTable2.setTextColor(resources.getColor(R.color.white))
                 binding.ivTable2.visibility = View.VISIBLE
 
                 setConnectVisibility()
