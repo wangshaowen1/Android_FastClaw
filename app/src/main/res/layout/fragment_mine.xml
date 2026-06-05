@@ -142,9 +142,11 @@
                     android:src="@drawable/ic_pack" />
 
                 <TextView
+                    android:layout_gravity="center_vertical"
                     android:id="@+id/tv_mine_points_tip"
                     singleClick="@{layout.clickHandler::onClick}"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:text="@string/mine_tip"
@@ -152,12 +154,8 @@
                     android:textSize="12sp" />
 
 
-                <View
-                    android:layout_width="@dimen/dp_0"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
                 <TextView
+                    android:layout_gravity="center_vertical"
                     android:id="@+id/tv_mine_tip_btn"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"
