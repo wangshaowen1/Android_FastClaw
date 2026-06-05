@@ -234,20 +234,18 @@
             <androidx.core.widget.NestedScrollView
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:fillViewport="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingHorizontal="16dp">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
+                        android:layout_height="wrap_content"
                         android:background="@drawable/bg_ffffff_br_lb_r18"
                         android:layout_marginBottom="@dimen/dp20">
 
@@ -258,7 +256,7 @@
                             android:visibility="gone"
                             android:id="@+id/fl_understands1"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content">
 
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -276,7 +274,7 @@
                             android:paddingHorizontal="16dp"
                             android:id="@+id/fl_understands2"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:visibility="gone">
 
                             <androidx.recyclerview.widget.RecyclerView
@@ -293,9 +291,9 @@
                             android:id="@+id/view_understands"
                             layout="@layout/view_understands1"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="wrap_content" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    </FrameLayout>
 
 
                 </LinearLayout>

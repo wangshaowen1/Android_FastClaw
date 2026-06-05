@@ -91,6 +91,7 @@ class ShrimpUnderstandsActivity :
                             )
                         )
                         this.layoutManager = layoutManager
+                        isNestedScrollingEnabled = false
                         adapter = subAdapter
                     }
                 } else if (!item.fieldItems.isNullOrEmpty() && item.fieldItems.size == 1) {
@@ -165,6 +166,7 @@ class ShrimpUnderstandsActivity :
                             RecyclerView.VERTICAL,
                             false
                         )
+                        isNestedScrollingEnabled = false
                         adapter = subAdapter
                     }
 
@@ -212,6 +214,7 @@ class ShrimpUnderstandsActivity :
         binding.rvUnderstands1.apply {
             layoutManager =
                 LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
+            isNestedScrollingEnabled = false
             addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
             binding.rvUnderstands1.adapter = mAdapter1
         }
@@ -219,6 +222,7 @@ class ShrimpUnderstandsActivity :
         binding.rvUnderstands2.apply {
             layoutManager =
                 LinearLayoutManager(this@ShrimpUnderstandsActivity, RecyclerView.VERTICAL, false)
+            isNestedScrollingEnabled = false
             addItemDecoration(SpaceDecoration(16.dp, SpaceDecoration.Direction.MIDDLE))
             binding.rvUnderstands2.adapter = mAdapter2
         }
