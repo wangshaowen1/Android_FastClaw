@@ -168,7 +168,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_icon"
-                tools:text="找工作需要帮助尽管问小虾" />
+                tools:text="有什么求职问题，随时问小虾" />
 
             <ImageView
                 singleClick="@{layout.clickHandler::onClick}"

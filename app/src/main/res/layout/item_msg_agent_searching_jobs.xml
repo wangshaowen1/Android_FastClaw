@@ -36,10 +36,10 @@
     <ImageView
         android:id="@+id/iv_searching_jobs_icon"
         android:layout_width="46dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="8dp"
         android:importantForAccessibility="no"
-        android:src="@drawable/ic_agent_searching_star"
+        android:src="@drawable/ic_agent_searching_robot"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/v_searching_jobs_divider" />
 

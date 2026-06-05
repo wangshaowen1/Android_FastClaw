@@ -104,7 +104,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@drawable/bg_ffffff_r12"
+        android:background="@drawable/bg_f5f6fa_r12"
         android:paddingHorizontal="16dp"
         android:paddingVertical="16dp"
         app:layout_constraintEnd_toEndOf="parent"

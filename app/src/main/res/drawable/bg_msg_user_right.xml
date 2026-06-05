@@ -7,4 +7,10 @@
         android:bottomLeftRadius="20dp"
         android:bottomRightRadius="20dp"
         android:topRightRadius="6dp"/>
+
+    <gradient
+        android:type="linear"
+        android:startColor="#1B7DFF"
+        android:endColor="#7A69FF"
+        android:angle="0" />
 </shape>

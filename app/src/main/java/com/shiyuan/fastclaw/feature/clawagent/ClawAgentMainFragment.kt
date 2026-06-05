@@ -255,7 +255,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 if (ime.bottom <= 0) {
                     bottomMargin = 12.dp
                 } else {
-                    bottomMargin = ime.bottom - 85.dp
+                    bottomMargin = ime.bottom - 82.dp
                 }
             }
             insets
