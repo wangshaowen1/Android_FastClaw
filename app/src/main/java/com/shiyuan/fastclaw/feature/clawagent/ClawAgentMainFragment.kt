@@ -239,20 +239,23 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             editable?.let {
                 if (it.isNotEmpty()) {
                     binding.ivSend.visible()
+                    binding.ivIcon.gone()
                 } else {
+                    binding.ivIcon.visible()
                     binding.ivSend.gone()
                 }
             } ?: run {
+                binding.ivIcon.visible()
                 binding.ivSend.gone()
             }
         }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.etSend) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 if (ime.bottom <= 0) {
                     bottomMargin = 12.dp
                 } else {
-                    bottomMargin = ime.bottom - 90.dp
+                    bottomMargin = ime.bottom - 82.dp
                 }
             }
             insets

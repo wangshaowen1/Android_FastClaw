@@ -572,7 +572,7 @@
     <string name="home_service_interview_desc">背调公司、面试押题</string>
     <string name="home_service_resume_title">简历优化</string>
     <string name="home_service_resume_desc">精准诊改，专业优化</string>
-    <string name="home_upload_resume_title">上传简历，创建你的专属职业经纪人</string>
+    <string name="home_upload_resume_title">上传简历，小虾开始替你工作</string>
     <string name="home_upload_resume_subtitle">帮你提升求职竞争力</string>
     <string name="home_upload_resume_btn">上传我的简历</string>
 
@@ -713,7 +713,7 @@
     <string name="str_agent_name">小虾</string>
     <string name="str_agent_desc">求职经纪人 · 我在听</string>
     <string name="str_agent_memory">我对你的理解</string>
-    <string name="str_agent_send_hint">求职需要帮助尽管问小虾</string>
+    <string name="str_agent_send_hint">有什么求职问题，随时问小虾</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>
     <string name="str_agent_understanding_upgrade_title">理解升级</string>
     <string name="str_agent_understanding_align_title">我与你对齐度达到%1$s！</string>

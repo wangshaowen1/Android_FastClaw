@@ -10,21 +10,25 @@
 
         <!-- ============ 欢迎气泡 ============ -->
         <!-- 气泡底:小虾从顶部探出 26dp,故顶部下移 26dp,底边对齐毛玻璃卡底边 -->
-        <View
-            android:id="@+id/v_welcome_bg"
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:id="@+id/sb_welcome_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="26dp"
-            android:background="@drawable/bg_msg_agent_left"
             app:layout_constraintBottom_toBottomOf="@id/card_services"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:sCornersRadius="20dp"
+            app:sSolidColor="#F9FAFE"
+            app:sStrokeColor="@color/color_ffffff"
+            app:sStrokeWidth="1dp"
+            />
 
         <ImageView
             android:id="@+id/iv_shrimp"
-            android:layout_width="152dp"
-            android:layout_height="152dp"
+            android:layout_width="162dp"
+            android:layout_height="126dp"
             android:src="@drawable/img_home_shrimp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -57,14 +61,19 @@
             tools:text="你的职业经纪人，我能帮你：" />
 
         <!-- 毛玻璃服务卡:垂直摆放 3 个白色胶囊 -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
             android:id="@+id/card_services"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@drawable/bg_home_welcome_glass"
             android:paddingHorizontal="12dp"
             android:paddingVertical="12dp"
+            app:background_startColor="#F9FAFE"
+            app:background_endColor="#FFFFFF"
+            app:background_colorOrientation="top_bottom"
+            app:super_corner="20dp"
+            app:border_color="@color/color_ffffff"
+            app:view_border_width="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_shrimp_tip2">
@@ -208,6 +217,6 @@
                     app:layout_constraintBottom_toBottomOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -6,11 +6,17 @@
 
     </data>
     <!-- ============ 上传气泡 ============ -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
         android:background="@drawable/bg_msg_agent_left"
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="20dp"
+        app:background_startColor="#F9FAFE"
+        app:background_endColor="#FFFFFF"
+        app:background_colorOrientation="top_bottom"
+        app:super_corner="20dp"
+        app:border_color="@color/color_ffffff"
+        app:view_border_width="1dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -56,7 +62,7 @@
                 android:id="@+id/iv_upload_icon"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                android:src="@drawable/home_upload_resume_btn"
+                android:src="@drawable/ic_upload_resume"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/tv_upload_btn"
                 app:layout_constraintHorizontal_chainStyle="packed"
@@ -78,5 +84,5 @@
                 app:layout_constraintStart_toEndOf="@id/iv_upload_icon"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 </layout>

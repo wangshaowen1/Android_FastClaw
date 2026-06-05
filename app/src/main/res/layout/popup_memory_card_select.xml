@@ -92,7 +92,7 @@
                 android:id="@+id/tv_confirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_242424_r90"
+                android:background="@drawable/bg_336fff_r90"
                 android:paddingHorizontal="19dp"
                 android:paddingVertical="10dp"
                 android:text="@string/str_agent_memory_confirm"
