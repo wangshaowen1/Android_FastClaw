@@ -36,244 +36,271 @@
             app:layout_constraintTop_toTopOf="parent"
             app:toolbar="@{layout.mToolbarVMUnderstands}" />
 
-
-
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:fillViewport="true"
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             app:layout_constraintBottom_toTopOf="@id/ll_bt"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:layout_marginTop="18dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
 
-            <LinearLayout
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:orientation="vertical"
+            app:elevation="0dp">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/coll_toolbar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ll_top"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingHorizontal="16dp"
-                android:paddingTop="18dp">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/ll_top"
-                    android:layout_width="match_parent"
-                    android:layout_height="126dp"
-                    android:background="@drawable/bg_ffffff_r16_w1_e8ecff"
-                    app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="126dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_ffffff_r16_w1_e8ecff"
+                app:layout_constraintTop_toTopOf="parent">
 
 
-                    <LinearLayout
-                        android:layout_marginStart="24dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/tv_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:maxLines="2"
-                            android:textColor="@color/color_96_000000"
-                            android:textSize="24sp"
-                            android:textStyle="bold"
-                            tools:text="王直至王" />
-
-                        <TextView
-                            android:id="@+id/tv_tip"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="12dp"
-                            tools:text="@string/end_month_position"
-                            android:textColor="@color/color_75_3c3c43"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-
-                    <RelativeLayout
-                        android:id="@+id/rl_bfb"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_marginEnd="24dp"
-                        app:layout_constraintVertical_chainStyle="packed"
-                        app:layout_constraintBottom_toTopOf="@id/tv_dqd"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintRight_toRightOf="parent">
-
-
-                        <com.shiyuan.fastclaw.widget.progress.WaveProgressView
-                            android:id="@+id/wave_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:wpv_progress="60"
-                            app:wpv_text="60%"
-                            app:wpv_textColor="@color/color_90_000000"
-                            app:wpv_textSize="18sp"
-                            app:wpv_waveAmplitude="8dp"
-                            app:wpv_waveBackgroundColor="#D9FBFE"
-                            app:wpv_waveColor="#54DAF0"
-                            app:wpv_waveCount="1" />
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/ic_pr_bg" />
-
-                    </RelativeLayout>
+                <LinearLayout
+                    android:layout_marginStart="24dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/tv_dqd"
+                        android:id="@+id/tv_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/alignment_degree"
-                        android:textColor="@color/color_407779"
-                        android:textSize="12sp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="@color/color_96_000000"
+                        android:textSize="24sp"
                         android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@id/rl_bfb"
-                        app:layout_constraintStart_toStartOf="@id/rl_bfb"
-                        app:layout_constraintTop_toBottomOf="@id/rl_bfb" />
+                        tools:text="王直至王" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tv_tip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        tools:text="@string/end_month_position"
+                        android:textColor="@color/color_75_3c3c43"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/layout_table"
-                    android:layout_width="match_parent"
-                    android:layout_height="66dp"
-                    android:layout_marginTop="20dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/ic_understands_table1"
-                    app:layout_constraintTop_toBottomOf="@id/ll_top">
-
-                    <LinearLayout
-                        android:id="@+id/ll_tab1"
-                        android:paddingTop="16dp"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_percent="0.5"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/tv_table1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/resume_information"
-                            android:textColor="@color/color_90_000000"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-                        
-                        <ImageView
-                            android:id="@+id/iv_table1"
-                            android:layout_marginTop="2dp"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_tab_cur_line"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                </LinearLayout>
 
 
-                    </LinearLayout>
+                <RelativeLayout
+                    android:id="@+id/rl_bfb"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginEnd="24dp"
+                    app:layout_constraintVertical_chainStyle="packed"
+                    app:layout_constraintBottom_toTopOf="@id/tv_dqd"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent">
 
 
-                    <LinearLayout
-                        android:id="@+id/ll_tab2"
-                        android:orientation="vertical"
-                        android:paddingTop="16dp"
-                        android:gravity="center_horizontal"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_percent="0.5"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content">
-
-
-                        <TextView
-                            android:fontFamily="sans-serif-medium"
-                            android:id="@+id/tv_table2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/job_preference"
-                            android:textColor="@color/color_90_000000"
-                            android:textSize="16sp" />
-
-                        <ImageView
-                            android:id="@+id/iv_table2"
-                            android:visibility="gone"
-                            android:layout_marginTop="2dp"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_tab_cur_line"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-
-                    </LinearLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_ffffff_br_lb_r18"
-                    android:layout_marginBottom="@dimen/dp20"
-                    app:layout_constraintTop_toBottomOf="@id/layout_table">
-
-
-                    <FrameLayout
-                        android:paddingBottom="16dp"
-                        android:paddingHorizontal="16dp"
-                        android:visibility="gone"
-                        android:id="@+id/fl_understands1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rv_understands1"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-
-                    </FrameLayout>
-
-
-                    <FrameLayout
-                        android:paddingBottom="16dp"
-                        android:paddingHorizontal="16dp"
-                        android:id="@+id/fl_understands2"
+                    <com.shiyuan.fastclaw.widget.progress.WaveProgressView
+                        android:id="@+id/wave_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:visibility="gone">
+                        app:wpv_progress="60"
+                        app:wpv_text="60%"
+                        app:wpv_textColor="@color/color_90_000000"
+                        app:wpv_textSize="18sp"
+                        app:wpv_waveAmplitude="8dp"
+                        app:wpv_waveBackgroundColor="#D9FBFE"
+                        app:wpv_waveColor="#54DAF0"
+                        app:wpv_waveCount="1" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rv_understands2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </FrameLayout>
-
-
-                    <include
-                        android:id="@+id/view_understands"
-                        layout="@layout/view_understands1"
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        android:background="@drawable/ic_pr_bg" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tv_dqd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/alignment_degree"
+                    android:textColor="@color/color_407779"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/rl_bfb"
+                    app:layout_constraintStart_toStartOf="@id/rl_bfb"
+                    app:layout_constraintTop_toBottomOf="@id/rl_bfb" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_table"
+                android:layout_width="match_parent"
+                android:layout_height="66dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="vertical"
+                android:background="@drawable/ic_understands_table1"
+                app:layout_constraintTop_toBottomOf="@id/ll_top">
+
+                <LinearLayout
+                    android:id="@+id/ll_tab1"
+                    android:paddingTop="16dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_table1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/resume_information"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/iv_table1"
+                        android:layout_marginTop="2dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_tab_cur_line"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
 
-            </LinearLayout>
+                </LinearLayout>
 
-        </androidx.core.widget.NestedScrollView>
+
+                <LinearLayout
+                    android:id="@+id/ll_tab2"
+                    android:orientation="vertical"
+                    android:paddingTop="16dp"
+                    android:gravity="center_horizontal"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:fontFamily="sans-serif-medium"
+                        android:id="@+id/tv_table2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/job_preference"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_table2"
+                        android:visibility="gone"
+                        android:layout_marginTop="2dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_tab_cur_line"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.core.widget.NestedScrollView
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_ffffff_br_lb_r18"
+                        android:layout_marginBottom="@dimen/dp20">
+
+
+                        <FrameLayout
+                            android:paddingBottom="16dp"
+                            android:paddingHorizontal="16dp"
+                            android:visibility="gone"
+                            android:id="@+id/fl_understands1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_understands1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+
+                        </FrameLayout>
+
+
+                        <FrameLayout
+                            android:paddingBottom="16dp"
+                            android:paddingHorizontal="16dp"
+                            android:id="@+id/fl_understands2"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_understands2"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                        </FrameLayout>
+
+
+                        <include
+
+                            android:id="@+id/view_understands"
+                            layout="@layout/view_understands1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
         <RelativeLayout
