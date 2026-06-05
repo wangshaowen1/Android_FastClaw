@@ -12,6 +12,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
@@ -81,6 +82,9 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
     /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
     private var forceScrollToBottom = false
+
+    /** IME 动画进行中flag */
+    private var hasRunningImeAnimation = false
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -252,17 +256,45 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 binding.ivSend.gone()
             }
         }
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                if (ime.bottom <= 0) {
-                    bottomMargin = 12.dp
-                } else {
-                    bottomMargin = ime.bottom - 82.dp
+            // 动画期间不再改变margin，防多次分发触发动画
+            if (!hasRunningImeAnimation) {
+                val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    bottomMargin = resolveBottomMargin(imeBottom)
                 }
             }
             insets
         }
+        // 键盘动画监听期间逐帧跟随 IME，键盘弹/收过程中 layoutSend 跟随改变底部边距
+        ViewCompat.setWindowInsetsAnimationCallback(
+            binding.layoutSend,
+            object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+                override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                    if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                        hasRunningImeAnimation = true
+                    }
+                }
+
+                override fun onProgress(
+                    insets: WindowInsetsCompat,
+                    runningAnimations: MutableList<WindowInsetsAnimationCompat>
+                ): WindowInsetsCompat {
+                    val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                    binding.layoutSend.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                        bottomMargin = resolveBottomMargin(imeBottom)
+                    }
+                    return insets
+                }
+
+                override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                    if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                        hasRunningImeAnimation = false
+                    }
+                }
+            }
+        )
     }
 
     private fun observeData() {
@@ -514,6 +546,11 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
         return GsonUtils.toJson(map)
     }
+
+    // 计算 layoutSend 相对父容器底部应有的 margin
+    private fun resolveBottomMargin(imeBottom: Int): Int =
+        // 弹出键盘距离底部距离，收起键盘距离底部距离（82dp距离底部导航栏）
+        maxOf(12.dp, imeBottom - 82.dp)
 
     private fun dismissMemoryCard() {
         autoConfirmJob?.cancel()
