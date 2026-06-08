@@ -1075,12 +1075,6 @@
         <attr name="wpv_waveAnimEnabled" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="SuperView2">
-    <!--默认背景颜色-->
-    <attr name="background_normalColor2" format="reference|color" />
-    </declare-styleable>
-
-
     <!-- 超级控件 支持修圆角，渐变，边框 -->
     <declare-styleable name="SuperView">
         <!--默认背景颜色-->
