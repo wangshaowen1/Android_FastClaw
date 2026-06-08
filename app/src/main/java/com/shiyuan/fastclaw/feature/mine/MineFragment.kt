@@ -1,27 +1,23 @@
 package com.shiyuan.fastclaw.feature.mine
 
-import android.util.Log
 import android.view.View
-import com.blankj.utilcode.util.ClipboardUtils
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
+import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.FragmentMineBinding
+import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
 import com.shiyuan.fastclaw.feature.main.MainViewModel
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
-import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity
-import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getViewModelOfActivity
-import com.nhsd.basic.ext.isNotNull
 import com.nhsd.basic.ext.isNull
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /**
@@ -74,6 +70,49 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     binding.waveView.text ="${it}%"
                 }
             }
+        }
+        binding.sivAvatar.setOnSingleClickListener {
+ /*           WorkExperienceDialog.show(
+                childFragmentManager,
+                arrayListOf(
+                    ResumeData(
+                        resumeFileUrl = "https://example.com/resume/tencent-ui.pdf",
+                        isJd = false,
+                        resumeFileName = "UI设计师-张三.pdf",
+                        resumeFileType = "pdf",
+                        submitTime = "2021.09 - 2024.05",
+                        fileName = "高级UI设计师",
+                        resumeName = "腾讯科技（深圳）有限公司",
+                        blockingMessage = "内容：负责设计系统搭建、核心业务改版及跨端体验统一，推动多个版本迭代上线。"
+                    ),
+                    ResumeData(
+                        resumeFileUrl = "https://example.com/resume/bytedance-product.pdf",
+                        isJd = false,
+                        resumeFileName = "产品经理-李四.pdf",
+                        resumeFileType = "pdf",
+                        submitTime = "2019.03 - 2021.08",
+                        fileName = "高级产品经理",
+                        resumeName = "北京字节跳动科技有限公司",
+                        blockingMessage = "内容：主导增长产品策略、需求拆解与数据复盘，协同研发与设计推进项目落地。"
+                    ),
+                    ResumeData(
+                        resumeFileUrl = "https://example.com/resume/alibaba-operation.pdf",
+                        isJd = false,
+                        resumeFileName = "运营主管-王五.pdf",
+                        resumeFileType = "pdf",
+                        submitTime = "2017.06 - 2019.02",
+                        fileName = "运营主管",
+                        resumeName = "阿里巴巴（中国）网络技术有限公司",
+                        blockingMessage = "内容：负责活动运营、用户增长和渠道合作，搭建标准化运营流程并提升转化效率。"
+                    )
+                ),
+                onAddClick = {
+                    "点击了添加工作经历".showToast()
+                },
+                onItemClick = {
+                    "点击了：${it.resumeName ?: it.resumeFileName.orEmpty()}".showToast()
+                }
+            )*/
         }
 
     }
