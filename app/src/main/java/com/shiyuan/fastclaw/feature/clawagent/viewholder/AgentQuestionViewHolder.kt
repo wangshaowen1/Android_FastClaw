@@ -37,25 +37,48 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
         }
-        binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
-        if (payload.isAnswered()) {
-            // 已回复：隐藏选项与跳过，展示回显
+        if (payload?.inputMode == MODE_ARRAY_FORM && payload.attributeGroupCode == "workExperience") {// 数组表单 & 选择工作经历
+            binding.layoutWorked.visible()
+            binding.layoutProblem.gone()
+        }
+        else if (payload?.inputMode == MODE_DICT_MULTI && payload.attributeGroupCode == "expectedCity") {// 字典多选 & 选择工作城市
             clearOptionRows()
-            binding.flowOptions.gone()
+            binding.tvQuestion.text = payload.questionText ?: payload.question ?: item.content
+            binding.layoutProblem.visible()
+            binding.flowOptions.visible()
+            binding.layoutWorked.gone()
             binding.tvSkip.gone()
-            binding.tvReplied.visible()
-            val repliedText = payload?.answeredText ?: ""
-            binding.tvReplied.text = "${repliedText}"
-        } else {
-            // 未回复：展示选项 + 独立跳过按钮
             binding.tvReplied.gone()
-            if (payload?.options.isNullOrEmpty()) {
+            bindOptionRows(item, payload)
+        }
+        else if (payload?.inputMode == MODE_SALARY_RANGE) { //薪资范围
+            binding.layoutProblem.visible()
+            binding.layoutWorked.gone()
+
+        }
+        else { //通用问题
+            binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
+            binding.layoutProblem.visible()
+            binding.layoutWorked.gone()
+            if (payload.isAnswered()) {
+                // 已回复：隐藏选项与跳过，展示回显
+                clearOptionRows()
                 binding.flowOptions.gone()
-                bindSkipAction(item, payload, false)
+                binding.tvSkip.gone()
+                binding.tvReplied.visible()
+                val repliedText = payload?.answeredText ?: ""
+                binding.tvReplied.text = "${repliedText}"
             } else {
-                binding.flowOptions.visible()
-                bindOptionRows(item, payload)
-                bindSkipAction(item, payload, true)
+                // 未回复：展示选项 + 独立跳过按钮
+                binding.tvReplied.gone()
+                if (payload?.options.isNullOrEmpty()) {
+                    binding.flowOptions.gone()
+                    bindSkipAction(item, payload, false)
+                } else {
+                    binding.flowOptions.visible()
+                    bindOptionRows(item, payload)
+                    bindSkipAction(item, payload, true)
+                }
             }
         }
     }
@@ -71,7 +94,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
 
     /** 渲染选项到 Flow：先移除旧行，再 inflate + addView，最后接入 flow.referencedIds */
     private fun bindOptionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
-        val parent = binding.clQuestionCard
+        val parent = binding.layoutQuestionCard
         clearOptionRows()
         val inflater = LayoutInflater.from(parent.context)
         val ids = ArrayList<Int>()
@@ -87,6 +110,25 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         }
         binding.flowOptions.referencedIds = ids.toIntArray()
     }
+
+//    private fun bindOptionSingle(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
+//        val parent = binding.layoutQuestionCard
+//        clearOptionRows()
+//        val inflater = LayoutInflater.from(parent.context)
+//        val ids = ArrayList<Int>()
+//        if (payload?.options?.isNotEmpty() == true) {
+//            val option = payload.options[0]
+//            val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
+//            view.text = if (payload.isAnswered()) "已选择" else "请选择"
+//            view.isEnabled = option.disabled != true
+//            view.id = View.generateViewId()
+//            view.setOnClickListener { onOptionClickListener(item, option, payload.questionQueueId) }
+//            parent.addView(view)
+//            ids.add(view.id)
+//            optionRows.add(view)
+//            binding.flowOptions.referencedIds = ids.toIntArray()
+//        }
+//    }
 
     /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */
     private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, center: Boolean = false) {
@@ -116,7 +158,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     }
 
     private fun clearOptionRows() {
-        val parent = binding.clQuestionCard
+        val parent = binding.layoutQuestionCard
         optionRows.forEach { parent.removeView(it) }
         optionRows.clear()
         binding.flowOptions.referencedIds = IntArray(0)
@@ -127,6 +169,9 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         private const val STATUS_SUBMITTED = "SUBMITTED"
         private const val STATUS_SKIPPED = "SKIPPED"
         private const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
+        private const val MODE_DICT_MULTI = "DICT_MULTI"
+        private const val MODE_SALARY_RANGE = "SALARY_RANGE"
+        private const val MODE_ARRAY_FORM = "ARRAY_FORM"
     }
 
 }
