@@ -575,7 +575,7 @@
     <string name="home_upload_resume_title">上传简历，小虾开始替你工作</string>
     <string name="home_upload_resume_subtitle">帮你提升求职竞争力</string>
     <string name="home_upload_resume_btn">上传我的简历</string>
-
+    <string name="home_upload_resume_not">我没有简历</string>
 
     <string name="mine_title">我的主页</string>
     <string name="mine_sticks">我的虾条</string>
@@ -757,6 +757,8 @@
     <string name="str_agent_intercept_hint">AI正在回复中，请稍后</string>
     <string name="record_name">粤ICP备2026052853号-6A</string>
     <string name="record_tip">快龙虾备案号</string>
+
+    <string name="toast_resume_not_conversation">没有简历不能对话</string>
 
 
 </resources>
