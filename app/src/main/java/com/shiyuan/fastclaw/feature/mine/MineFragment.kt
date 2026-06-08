@@ -18,6 +18,7 @@ import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.feature.information.SkillActivity
 import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
 import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
@@ -75,7 +76,8 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            CertificateSkillsAwardsDialog.show(
+            SkillActivity.start(this.requireActivity())
+     /*       CertificateSkillsAwardsDialog.show(
                 childFragmentManager,
                 type="Certificate",
                 arrayListOf(
@@ -116,7 +118,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 onItemClick = { _ , _->
 
                 }
-            )
+            )*/
         }
 
     }

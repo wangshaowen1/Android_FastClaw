@@ -61,6 +61,8 @@
     <dimen name="spacing_xl">24dp</dimen>
     <!--16px  大间距 主要用在不同模块之间需要严格划分的大间距、卡片间距-->
     <dimen name="spacing_l">16dp</dimen>
+    <dimen name="common_form_field_min_height">78dp</dimen>
+    <dimen name="common_form_field_vertical_padding">16dp</dimen>
     <!--12px  中间距 主要用在输入框中文字与边框的距离、按钮文字与边缘-->
     <dimen name="spacing_m">12dp</dimen>
     <!--8px  小间距 主要用在列表之间的垂直间距、图标与文字间隔、行内元素-->

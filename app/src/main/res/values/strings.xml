@@ -345,6 +345,8 @@
     <string name="storyboard_preview">分镜预览</string>
     <string name="refresh">刷新</string>
     <string name="edit">编辑</string>
+    <string name="edit_award">编辑奖项</string>
+    <string name="add_award">添加奖项</string>
     <string name="manage">管理</string>
     <string name="report_details_required_10_plus">请输入10个字以上的举报描述（必填）</string>
     <string name="collapse">收起</string>
@@ -760,6 +762,15 @@
 
     <string name="toast_resume_not_conversation">没有简历不能对话</string>
 
+
+    <string name="city_selector_title">选择城市</string>
+    <string name="city_selector_selected_count">已选 %1$d/%2$d</string>
+    <string name="city_selector_search_hint">搜索城市名/拼音</string>
+    <string name="city_selector_empty">暂未搜到相关的城市</string>
+    <string name="city_selector_history">历史城市</string>
+    <string name="city_selector_hot">热门城市</string>
+    <string name="city_selector_search_result">搜索结果</string>
+    <string name="city_selector_max_select_tip">最多选择%1$d个城市</string>
 
 </resources>
 

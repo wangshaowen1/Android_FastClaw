@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_marginHorizontal="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_marginTop="24dp"
+                    tools:text="编辑奖项"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="24sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <com.shiyuan.fastclaw.widget.CommonFormFieldView
+                    android:id="@+id/v_form1"
+                    android:layout_marginTop="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="技能名称"
+                    app:formPlaceholderText="掌握的技能名称" />
+
+                <com.shiyuan.fastclaw.widget.CommonFormFieldView
+                    android:id="@+id/v_form2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="熟练度"
+                    app:formPlaceholderText="如：精通" />
+
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="40dp">
+
+            <com.shiyuan.fastclaw.widget.DualActionButtonView
+                android:id="@+id/view_action_buttons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:secondaryText="删除"
+                app:primaryText="保存" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+</layout>

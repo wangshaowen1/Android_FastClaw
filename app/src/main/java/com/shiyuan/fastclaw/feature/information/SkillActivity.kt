@@ -1,0 +1,74 @@
+package com.shiyuan.fastclaw.feature.information
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.core.util.Pair
+import com.gyf.immersionbar.ImmersionBar
+import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.core.Config
+import com.shiyuan.fastclaw.databinding.ActivityAboutBinding
+import com.shiyuan.fastclaw.databinding.ActivitySkillBinding
+import com.shiyuan.fastclaw.feature.PhotoPagerActivity
+import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import com.shiyuan.fastclaw.feature.settings.RecordFilingInformationActivity
+import com.shiyuan.fastclaw.feature.settings.SettingsViewModel
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+
+
+
+class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationViewModel>() {
+    companion object {
+        private const val EXTRA_IS_EDIT = "extra_is_edit"
+
+        fun start(activity: Activity?, isEdit: Boolean = true) {
+            activity ?: return
+            val intent = Intent(activity, SkillActivity::class.java).apply {
+                putExtra(EXTRA_IS_EDIT, isEdit)
+            }
+            activity.startActivity(intent)
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initView()
+    }
+
+    private fun initView() {
+        val isEdit = intent?.getBooleanExtra(EXTRA_IS_EDIT, true) ?: true
+        if(isEdit){
+            binding.tvTitle.text = getString(R.string.edit_award)
+            binding.viewActionButtons.setSecondaryText(getString(R.string.del))
+            binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
+           /* binding.vForm1.setValueText("R2R2R2R2R2R2R2")
+            binding.vForm2.setValueText("R2R2R2R2R2R2R2")*/
+            binding.viewActionButtons.setOnSecondaryClickListener {
+                finish()
+            }
+            binding.viewActionButtons.setOnPrimaryClickListener {
+                finish()
+            }
+        }else{
+            binding.tvTitle.text = getString(R.string.add_award)
+            binding.viewActionButtons.setPrimaryText(getString(R.string.save))
+            binding.viewActionButtons.setOnPrimaryClickListener {
+                finish()
+            }
+        }
+        binding.viewActionButtons.setSecondaryVisible(isEdit)
+
+    }
+
+    override fun setTranslucentStatus() {
+        ImmersionBar.with(this)
+            .statusBarDarkFont(true)
+            .navigationBarColor(R.color.white)
+            .transparentStatusBar()
+            .init()
+    }
+
+}
