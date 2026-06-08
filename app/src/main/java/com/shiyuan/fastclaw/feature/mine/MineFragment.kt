@@ -18,6 +18,9 @@ import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
+import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
+import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /**
@@ -72,8 +75,9 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
- /*           WorkExperienceDialog.show(
+            CertificateSkillsAwardsDialog.show(
                 childFragmentManager,
+                type="Certificate",
                 arrayListOf(
                     ResumeData(
                         resumeFileUrl = "https://example.com/resume/tencent-ui.pdf",
@@ -106,13 +110,13 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                         blockingMessage = "内容：负责活动运营、用户增长和渠道合作，搭建标准化运营流程并提升转化效率。"
                     )
                 ),
-                onAddClick = {
-                    "点击了添加工作经历".showToast()
+                onAddClick = { _ ->
+
                 },
-                onItemClick = {
-                    "点击了：${it.resumeName ?: it.resumeFileName.orEmpty()}".showToast()
+                onItemClick = { _ , _->
+
                 }
-            )*/
+            )
         }
 
     }

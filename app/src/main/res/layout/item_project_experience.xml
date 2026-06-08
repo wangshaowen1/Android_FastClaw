@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.shiyuan.fastclaw.feature.information.dialog.ItemProjectExperienceVm" />
+
+    </data>
+
+    <LinearLayout
+        singleClick="@{()->item.onItemClick()}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_r12"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_company"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text='@{item.data.resumeName != null ? item.data.resumeName : item.data.resumeFileName}'
+                android:textColor="@color/color_90_000000"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="深圳市乘海科技有限公司" />
+
+            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                android:visibility="gone"
+                android:layout_marginRight="4dp"
+                android:paddingVertical="6dp"
+                app:super_corner="8dp"
+                android:paddingHorizontal="10dp"
+                app:background_normalColor="@color/color_1AF74C30"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/iv_arrow"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_warning"
+                    tools:ignore="ContentDescription" />
+
+
+                <TextView
+                    android:layout_marginLeft="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="待补充"
+                    android:textColor="@color/color_F74C30"
+                    android:textSize="12sp" />
+
+            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_arrow"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_item_arrow_right3"
+                tools:ignore="ContentDescription" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{item.data.submitTime != null ? item.data.submitTime : "2021.09 - 2024.05"}'
+                android:textColor="@color/color_75_3c3c43"
+                android:textSize="12sp"
+                tools:text="2021.09 - 2024.05" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="12dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/color_75_3c3c43" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{item.data.fileName != null ? item.data.fileName : "UI设计师"}'
+                android:textColor="@color/color_75_3c3c43"
+                android:textSize="12sp"
+                tools:text="UI设计师" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text='@{item.data.blockingMessage != null ? item.data.blockingMessage : "内容：1.负责主导beela海外语聊app风格定义、视觉改版、组件、控件搭建以及日常的产品迭代，保证产品的用户体验..."}'
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="13sp"
+            tools:text="内容：1.负责主导beela海外语聊app风格定义、视觉改版、组件、控件搭建以及日常的产品迭代，保证产品的用户体验..." />
+
+    </LinearLayout>
+</layout>

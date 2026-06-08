@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.report.ReportViewModel" />
+            type="com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel" />
 
     </data>
 

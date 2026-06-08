@@ -37,7 +37,41 @@
                 android:textStyle="bold"
                 tools:text="深圳市乘海科技有限公司" />
 
+            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                android:visibility="gone"
+                android:layout_marginRight="4dp"
+                android:paddingVertical="6dp"
+                app:super_corner="8dp"
+                android:paddingHorizontal="10dp"
+                app:background_normalColor="@color/color_1AF74C30"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/iv_arrow"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/ic_warning"
+                    tools:ignore="ContentDescription" />
+
+
+                <TextView
+                    android:layout_marginLeft="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="待补充"
+                    android:textColor="@color/color_F74C30"
+                    android:textSize="12sp" />
+
+            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
             <ImageView
+                android:id="@+id/iv_arrow"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_alignParentEnd="true"
