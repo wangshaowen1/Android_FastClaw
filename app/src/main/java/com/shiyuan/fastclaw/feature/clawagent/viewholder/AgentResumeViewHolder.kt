@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.clawagent.viewholder
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
@@ -41,6 +42,9 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
         binding.btnUploadResume.setOnSingleClickListener {
             if (enabled) onUploadClickListener(item)
+        }
+        binding.tvNotResume.setOnSingleClickListener {
+            showToast(R.string.toast_resume_not_conversation)
         }
     }
 
