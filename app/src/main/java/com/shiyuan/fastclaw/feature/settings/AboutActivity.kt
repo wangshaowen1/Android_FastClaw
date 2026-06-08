@@ -40,12 +40,7 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
 
     private fun initView() {
      binding.recordFilingInformation.setOnSingleClickListener {
-         SimpleBrowserActivity.launch(
-             this,
-             Config.get().appConfig.beianNoJumpUrl,
-             getString(R.string.record_filing_information)
-         )
-
+         RecordFilingInformationActivity.start(this)
      }
 
         binding.businessLicense.setOnSingleClickListener {

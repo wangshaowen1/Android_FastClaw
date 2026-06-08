@@ -151,9 +151,13 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         })
         binding.rvMsg.adapter = msgAdapter
 
-        msgAdapter.onUploadClickAction = { data ->
+        msgAdapter.onUploadClickAction = { data,reUpload ->
             if (!AppNavigator.checkLoginIntercepted(false)) {
-                EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME)
+                if(reUpload){
+                    EventManager.onAppTrack(AppEvent.KLX_CAPP_UPLOAD_FAILED_RE_RESUME)
+                }else{
+                    EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME,mutableMapOf("klx_pipe_source" to "APP"))
+                }
                 showUploadResumeDialog(data)
             }
         }
@@ -190,6 +194,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         // 历史简历确认卡 确认/否认：actionCode 用端侧动作枚举，回传 resumeId/resumeStructId/resumeTaskId
         msgAdapter.onResumeConfirmClickAction = { item, confirmed ->
             if (!interceptIfStreaming()) {
+                EventManager.onAppTrack(if(forceScrollToBottom) AppEvent.KLX_CAPP_CONFIRM_RESUME else AppEvent.KLX_CAPP_DENY_RESUME )
                 forceScrollToBottom = true
                 val payload = item.metaData?.let {
                     runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()

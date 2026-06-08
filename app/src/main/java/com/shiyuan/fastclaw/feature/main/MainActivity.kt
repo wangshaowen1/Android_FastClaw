@@ -179,7 +179,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             when (checkedId) {
                 R.id.rbHome -> {
                     //首页
-                    EventManager.onAppTrack(AppEvent.KLX_CAPP_XIAOXIA_PAGE)
+                    EventManager.onAppTrack(AppEvent.KLX_CAPP_XIAOXIA_PAGE,mutableMapOf("klx_is_login" to if(User.get().isVisitor) "否" else "是"))
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(0)
                     supportFragmentManager.switchFragment(
@@ -203,7 +203,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
                 R.id.rbMine -> {
                     //我的
-                    EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_PAGE)
+                    EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_PAGE,mutableMapOf("klx_is_login" to if(User.get().isVisitor) "否" else "是"))
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(1)
                     supportFragmentManager.switchFragment(R.id.fragment, MineFragment::class.java)

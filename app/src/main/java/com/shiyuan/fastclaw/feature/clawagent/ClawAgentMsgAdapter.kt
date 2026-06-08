@@ -38,6 +38,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadSuccessViewH
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentWelcomeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
+import com.uyumao.b
 
 /**
  * agent对话消息适配器
@@ -50,7 +51,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
  */
 class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
-    var onUploadClickAction: (itemData: ClawAgentMessageInfo) -> Unit = {}
+    var onUploadClickAction: (itemData: ClawAgentMessageInfo,reUpload: Boolean) -> Unit = { _, _ -> }
 
     /** 补问卡选项点击（B 方案：仅暴露，提交后续统一接 sendAction(QUESTION_OPTION_SUBMIT)） */
     var onQuestionOptionClickAction: (item: ClawAgentMessageInfo, option: CardOption, questionQueueId: String?) -> Unit = { _, _, _ -> }
@@ -93,7 +94,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             { i, p ->
                 AgentResumeViewHolder(ItemMsgAgentResumeBinding.inflate(i, p, false)).apply {
                     onUploadClickListener = { itemData ->
-                        onUploadClickAction(itemData)
+                        onUploadClickAction(itemData,false)
                     }
                 }
             }) { h, item ->
@@ -103,7 +104,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_UPLOAD_FAILED,
             { i, p ->
                 AgentUploadFailedViewHolder(ItemMsgAgentUploadFailedBinding.inflate(i, p, false)).apply {
-                    onReUploadClickListener = { onUploadClickAction(it) }
+                    onReUploadClickListener = { onUploadClickAction(it,true) }
                 }
             }) { h, item -> h.bind(item) }
         // 正在寻找岗位

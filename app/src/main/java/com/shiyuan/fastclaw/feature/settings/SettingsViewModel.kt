@@ -42,6 +42,12 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
+    val mToolbarVM3 = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = R.string.record_filing_information.getResString(),
+        background = Color.TRANSPARENT,
+    )
+
     val appVersion: String by lazy { "快龙虾Version：" + Session.getInstance().versionName }
 
     val beiAn by lazy { Config.get().appConfig.beianNo }

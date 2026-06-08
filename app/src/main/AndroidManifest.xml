@@ -203,6 +203,10 @@
         <activity
             android:name=".feature.settings.AboutActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.settings.RecordFilingInformationActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".feature.report.MyHistoryReportActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />

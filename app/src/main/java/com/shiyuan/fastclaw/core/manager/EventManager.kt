@@ -130,7 +130,7 @@ object AppEvent {
      * 快龙虾｜C端APP-确认绑定简历
      * 用户在APP小虾对话页被小虾询问确认是否绑定简历时，点击是我的简历时上报
      */
-    const val KLX_CAPP_CONFIRM_RESUME = "klx_capp_confirm_resume"
+    const val KLX_CAPP_CONFIRM_RESUME = "klx_capp_confrim_resume"
 
     /**
      * 快龙虾｜C端APP-拒绝绑定简历
