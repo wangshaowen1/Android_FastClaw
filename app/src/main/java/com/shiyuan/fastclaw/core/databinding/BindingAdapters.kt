@@ -1808,3 +1808,9 @@ fun setAutoRotate(view: ImageView, isRotating: Boolean) {
         (view.getTag(R.id.viewAnimator) as? ObjectAnimator)?.cancel()
     }
 }
+
+
+@BindingAdapter("android:textStyle")
+fun setTextStyle(textView: TextView, style: Int) {
+    textView.setTypeface(textView.typeface, style)
+}

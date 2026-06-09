@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.core;
 
 
 import com.nhsd.basic.bus.AppEvent;
+import com.shiyuan.fastclaw.core.network.apis.response.CommonItems;
 
 /**
  * Created by ymh on 2016/7/1 0001.
@@ -239,6 +240,14 @@ public class Events {
         public  Boolean resumeUploadSuccess ;  //简历上传成功
         public ResumeEvent(Boolean resumeUploadSuccess) {
             this.resumeUploadSuccess = resumeUploadSuccess;
+        }
+    }
+
+
+    public static class CommonItemsEvent implements AppEvent {
+        public CommonItems commonItems ;  //简历上传成功
+        public CommonItemsEvent(CommonItems commonItems) {
+            this.commonItems = commonItems;
         }
     }
 

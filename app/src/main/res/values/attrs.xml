@@ -197,6 +197,24 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="CommonFormFieldView">
+        <attr name="formLabelText" format="string" />
+        <attr name="formValueText" format="string" />
+        <attr name="formPlaceholderText" format="string" />
+        <attr name="formValueTextColor" format="color" />
+        <attr name="formPlaceholderTextColor" format="color" />
+        <attr name="formArrowVisible" format="boolean" />
+        <attr name="formArrowDrawable" format="reference" />
+        <attr name="formArrowTint" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="DualActionButtonView">
+        <attr name="primaryText" format="string" />
+        <attr name="secondaryText" format="string" />
+        <attr name="primaryVisible" format="boolean" />
+        <attr name="secondaryVisible" format="boolean" />
+    </declare-styleable>
+
     <declare-styleable name="PagerIndicator">
         <attr name="indicator_spacing" format="dimension" />
         <attr name="indicator_type" format="enum">

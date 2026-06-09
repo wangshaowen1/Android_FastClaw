@@ -105,6 +105,9 @@ public class EditTextWithScrollView extends XEditText {
      * @return true：可以滚动   false：不可以滚动
      */
     private boolean canVerticalScroll() {
+        if (getLayout() == null) {
+            return false;
+        }
         //滚动的距离
         int scrollY = getScrollY();
         //控件内容的总高度

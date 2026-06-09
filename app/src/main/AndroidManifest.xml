@@ -191,6 +191,38 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.information.SkillActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.information.AwardActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.information.CertificateActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.information.EducationalActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.information.WorkActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.information.ProjectActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.information.PublicFreeFillInActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+
+        <activity
+            android:name=".feature.information.PublicDescriptionActivity"
+            android:windowSoftInputMode="stateVisible" />
+
+        <activity
             android:name="com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
