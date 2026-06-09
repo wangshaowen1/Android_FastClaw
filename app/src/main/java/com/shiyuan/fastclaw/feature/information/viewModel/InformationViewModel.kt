@@ -20,7 +20,7 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { finish() },
-        title = R.string.record_filing_information.getResString(),
+        title = "",
         background = Color.TRANSPARENT,
     )
 

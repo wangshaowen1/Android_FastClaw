@@ -347,6 +347,9 @@
     <string name="edit">编辑</string>
     <string name="edit_award">编辑奖项</string>
     <string name="add_award">添加奖项</string>
+    <string name="edit_skill">编辑技能</string>
+    <string name="add_skill">添加技能</string>
+    <string name="award_level">奖项等级</string>
     <string name="manage">管理</string>
     <string name="report_details_required_10_plus">请输入10个字以上的举报描述（必填）</string>
     <string name="collapse">收起</string>

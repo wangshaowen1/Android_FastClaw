@@ -742,6 +742,29 @@ public class NumberPicker extends LinearLayout {
         this.wheelScale=wheelScale;
         if( mWheelPaint!=null){
             mWheelPaint.setTextSize(mTextSize*wheelScale);
+            invalidate();
+        }
+    }
+
+    public void setSelectedTextSizeSp(float textSizeSp) {
+        if (mSelectorWheelPaint != null) {
+            mSelectorWheelPaint.setTextSize(TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_SP,
+                    textSizeSp,
+                    getResources().getDisplayMetrics()
+            ));
+            invalidate();
+        }
+    }
+
+    public void setUnselectedTextSizeSp(float textSizeSp) {
+        float textSizePx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_SP,
+                textSizeSp,
+                getResources().getDisplayMetrics()
+        );
+        if (mTextSize != 0) {
+            setWheelScale(textSizePx / mTextSize);
         }
     }
 

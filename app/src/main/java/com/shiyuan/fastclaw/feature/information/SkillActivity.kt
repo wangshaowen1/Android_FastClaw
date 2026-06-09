@@ -17,6 +17,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.core.network.apis.response.FieldItems
 import com.shiyuan.fastclaw.databinding.ActivitySkillBinding
+import com.shiyuan.fastclaw.feature.information.dialog.AwardLevelDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import com.shiyuan.fastclaw.router.AppNavigator
 import kotlinx.coroutines.delay
@@ -38,7 +39,10 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
     private val fakeProficiencyList = listOf(
         CommonEnumItem(code = "expert", name = "精通"),
         CommonEnumItem(code = "skilled", name = "熟练"),
-        CommonEnumItem(code = "beginner", name = "入门"),
+        CommonEnumItem(code = "beginner", name = "入门1"),
+        CommonEnumItem(code = "beginner", name = "入门2"),
+        CommonEnumItem(code = "beginner", name = "入门3"),
+        CommonEnumItem(code = "beginner", name = "入门4")
     )
 
     private var selectedProficiencyCode: String? = null
@@ -52,7 +56,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
     private fun initView() {
         val isEdit = intent?.getBooleanExtra(EXTRA_IS_EDIT, true) ?: true
         if (isEdit) {
-            binding.tvTitle.text = getString(R.string.edit_award)
+            binding.tvTitle.text = getString(R.string.edit_skill)
             binding.viewActionButtons.setSecondaryText(getString(R.string.del))
             binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
             binding.viewActionButtons.setOnSecondaryClickListener {
@@ -62,7 +66,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
                 finish()
             }
         } else {
-            binding.tvTitle.text = getString(R.string.add_award)
+            binding.tvTitle.text = getString(R.string.add_skill)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
                 finish()
@@ -73,7 +77,14 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         }
 
         binding.vForm2.setOnSingleClickListener {
-
+            AwardLevelDialog.show(
+                manager = supportFragmentManager,
+                awardLevels = fakeProficiencyList,
+                selectedItem = fakeProficiencyList.firstOrNull { it.code == selectedProficiencyCode },
+            ) { selectedItem ->
+                selectedProficiencyCode = selectedItem.code
+                binding.vForm2.setData(CommonItems(fieldName = "熟练度", fieldValue = selectedItem.name))
+            }
         }
         binding.viewActionButtons.setSecondaryVisible(isEdit)
     }

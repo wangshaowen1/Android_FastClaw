@@ -195,6 +195,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.information.AwardActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.information.PublicFreeFillInActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
