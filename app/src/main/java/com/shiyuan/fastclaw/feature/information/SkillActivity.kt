@@ -3,25 +3,17 @@ package com.shiyuan.fastclaw.feature.information
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
-import com.google.common.base.Joiner.on
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
-import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
-import com.shiyuan.fastclaw.core.network.apis.response.FieldItems
 import com.shiyuan.fastclaw.databinding.ActivitySkillBinding
-import com.shiyuan.fastclaw.feature.information.dialog.AwardLevelDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
-import com.shiyuan.fastclaw.router.AppNavigator
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationViewModel>() {
     companion object {
@@ -77,7 +69,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         }
 
         binding.vForm2.setOnSingleClickListener {
-            AwardLevelDialog.show(
+            SingleSelectDialog.show(
                 manager = supportFragmentManager,
                 awardLevels = fakeProficiencyList,
                 selectedItem = fakeProficiencyList.firstOrNull { it.code == selectedProficiencyCode },

@@ -24,6 +24,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -104,6 +105,7 @@ public class NumberPicker extends LinearLayout {
      */
     private static final long DEFAULT_LONG_PRESS_UPDATE_INTERVAL = 300;
     private int selectorWheelItemCount = SELECTOR_WHEEL_ITEM_COUNT;
+    private boolean mSelectedTextBold = false;
 
     /**
      * The index of the middle selector item.
@@ -680,6 +682,9 @@ public class NumberPicker extends LinearLayout {
 
         // input text
         mInputText = (TextView) findViewById(R.id.np__numberpicker_input);
+        if (mHasSelectorWheel) {
+            mInputText.setVisibility(View.INVISIBLE);
+        }
 //        mInputText.setOnFocusChangeListener(new OnFocusChangeListener() {
 //            public void onFocusChange(View v, boolean hasFocus) {
 //                if (hasFocus) {
@@ -721,6 +726,7 @@ public class NumberPicker extends LinearLayout {
         selectedPaint.setTextAlign(Align.CENTER);
         selectedPaint.setTextSize(mTextSize);
         selectedPaint.setTypeface(mInputText.getTypeface());
+        selectedPaint.setFakeBoldText(mSelectedTextBold);
         selectedPaint.setColor(color);
         mSelectorWheelPaint = selectedPaint;
 
@@ -755,6 +761,36 @@ public class NumberPicker extends LinearLayout {
             ));
             invalidate();
         }
+    }
+
+    public void setSelectedTextBold(boolean bold) {
+        mSelectedTextBold = bold;
+        if (mSelectorWheelPaint != null) {
+            mSelectorWheelPaint.setFakeBoldText(bold);
+        }
+        if (mInputText != null) {
+            mInputText.getPaint().setFakeBoldText(bold);
+            mInputText.invalidate();
+        }
+        invalidate();
+    }
+
+    public void setSelectedTextColor(int color) {
+        if (mSelectorWheelPaint != null) {
+            mSelectorWheelPaint.setColor(color);
+        }
+        if (mInputText != null) {
+            mInputText.setTextColor(color);
+        }
+        invalidate();
+    }
+
+    public void setUnselectedTextColor(int color) {
+        if (mWheelPaint != null) {
+            mWheelPaint.setColor(color);
+            mWheelPaint.setAlpha(255);
+        }
+        invalidate();
     }
 
     public void setUnselectedTextSizeSp(float textSizeSp) {
