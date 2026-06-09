@@ -1,6 +1,8 @@
 package com.shiyuan.fastclaw.feature.information.viewModel
 
 import android.graphics.Color
+import com.nhsd.basic.ext.getResString
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.AppRepository
@@ -18,7 +20,7 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val mToolbarVM = ToolbarViewModel(
         navigationAction = { finish() },
-        title = "编辑证书",
+        title = R.string.record_filing_information.getResString(),
         background = Color.TRANSPARENT,
     )
 

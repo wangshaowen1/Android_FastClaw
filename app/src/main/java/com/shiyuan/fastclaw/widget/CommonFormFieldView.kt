@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import androidx.databinding.BindingAdapter
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 
 class CommonFormFieldView @JvmOverloads constructor(
     context: Context,
@@ -84,8 +85,15 @@ class CommonFormFieldView @JvmOverloads constructor(
         labelView.text = text ?: ""
     }
 
+    private var data :CommonItems? = null
     fun setValueText(text: CharSequence?) {
         rawValueText = text ?: ""
+        refreshValueState()
+    }
+
+    fun setData(data: CommonItems?) {
+        this.data = data
+        rawValueText = data?.fieldValue ?: ""
         refreshValueState()
     }
 
