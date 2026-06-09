@@ -199,6 +199,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.information.CertificateActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.information.PublicFreeFillInActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 

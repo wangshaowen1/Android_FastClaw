@@ -349,6 +349,8 @@
     <string name="add_award">添加奖项</string>
     <string name="edit_skill">编辑技能</string>
     <string name="add_skill">添加技能</string>
+    <string name="edit_certificate">编辑证书</string>
+    <string name="add_certificate">添加证书</string>
     <string name="award_level">奖项等级</string>
     <string name="manage">管理</string>
     <string name="report_details_required_10_plus">请输入10个字以上的举报描述（必填）</string>

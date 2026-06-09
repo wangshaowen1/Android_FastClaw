@@ -39,10 +39,10 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
     private val fakeProficiencyList = listOf(
         CommonEnumItem(code = "expert", name = "精通"),
         CommonEnumItem(code = "skilled", name = "熟练"),
-        CommonEnumItem(code = "beginner", name = "入门1"),
-        CommonEnumItem(code = "beginner", name = "入门2"),
-        CommonEnumItem(code = "beginner", name = "入门3"),
-        CommonEnumItem(code = "beginner", name = "入门4")
+        CommonEnumItem(code = "beginner_1", name = "入门1"),
+        CommonEnumItem(code = "beginner_2", name = "入门2"),
+        CommonEnumItem(code = "beginner_3", name = "入门3"),
+        CommonEnumItem(code = "beginner_4", name = "入门4")
     )
 
     private var selectedProficiencyCode: String? = null
