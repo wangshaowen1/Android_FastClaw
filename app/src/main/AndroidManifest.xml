@@ -210,6 +210,9 @@
             android:name=".feature.information.PublicFreeFillInActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
+        <activity
+            android:name=".feature.information.PublicDescriptionActivity"
+            android:windowSoftInputMode="stateVisible" />
 
         <activity
             android:name="com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity"

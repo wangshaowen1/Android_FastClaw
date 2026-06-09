@@ -79,6 +79,10 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                 binding.vForm2.setData(CommonItems(fieldName = "熟练度", fieldValue = selectedItem.name))
             }
         }
+        binding.vForm10.setOnSingleClickListener {
+            PublicDescriptionActivity.start(this,isEdit, CommonItems(fieldName = "项目描述"))
+        }
+
         binding.viewActionButtons.setSecondaryVisible(isEdit)
     }
 
