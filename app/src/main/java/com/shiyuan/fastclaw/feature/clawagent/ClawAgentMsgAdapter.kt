@@ -56,8 +56,11 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     /** 补问卡选项点击（B 方案：仅暴露，提交后续统一接 sendAction(QUESTION_OPTION_SUBMIT)） */
     var onQuestionOptionClickAction: (item: ClawAgentMessageInfo, option: CardOption, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
-    /** 补问卡动作按钮（如跳过）点击 */
+    /** 补问卡动作按钮点击 */
     var onQuestionActionClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+
+    /**（如跳过）点击 */
+    var onQuestionSkipClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 历史简历确认卡 确认(true)/否认(false) 点击（B 方案：仅暴露，提交后续统一接） */
     var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
@@ -77,6 +80,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                 AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
                     onOptionClickListener = { item, option, queueId -> onQuestionOptionClickAction(item, option, queueId) }
                     onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
+                    onSkipClickListener = { item, action, queueId -> onQuestionSkipClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item) }
         // 历史简历确认卡
@@ -146,7 +150,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
      * 内容变化用 data class 全等比较），相比父类 [submitList] 的整表刷新可保留动画、减少重绘。
      */
     override fun submitList(list: List<ClawAgentMessageInfo>?) {
-        val newList = list ?: emptyList()
+        var newList = list ?: emptyList()
+        //测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试试测试测试测试
+        newList = DataTest.getDataList(newList)
         val result = DiffUtil.calculateDiff(MessageDiffCallback(items, newList))
         items = newList
         result.dispatchUpdatesTo(this)

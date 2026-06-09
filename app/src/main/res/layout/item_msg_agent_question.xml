@@ -96,7 +96,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layout_worked"
+        android:id="@+id/layout_undergo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="14dp"
@@ -106,7 +106,7 @@
         app:layout_constraintTop_toBottomOf="@id/layout_problem">
 
         <ImageView
-            android:id="@+id/iv_worked_image"
+            android:id="@+id/iv_undergo_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -116,7 +116,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/iv_worked_lack"
+            android:id="@+id/tv_undergo_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -127,25 +127,25 @@
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_worked_image"
+            app:layout_constraintTop_toBottomOf="@id/iv_undergo_image"
             tools:text="识别到你的工作经历不太完整，\n可以告诉我详细信息吗？" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_worked_write"
+            android:id="@+id/btn_undergo_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/bg_upload_resume_btn"
+            android:background="@drawable/bg_option_selected"
             android:paddingVertical="13dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_worked_lack"
+            app:layout_constraintTop_toBottomOf="@id/tv_undergo_title"
             app:layout_constraintVertical_bias="0">
 
             <TextView
-                android:id="@+id/tv_worked_write"
+                android:id="@+id/btn_undergo_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -161,7 +161,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/tv_worked_skip"
+            android:id="@+id/tv_undergo_skip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -173,7 +173,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_worked_write" />
+            app:layout_constraintTop_toBottomOf="@id/btn_undergo_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
