@@ -353,6 +353,10 @@
     <string name="add_educational">添加技能</string>
     <string name="edit_certificate">编辑教育经历</string>
     <string name="add_certificate">添加教育经历</string>
+    <string name="edit_project">编辑教育经历</string>
+    <string name="add_project">添加教育经历</string>
+    <string name="edit_work">编辑教育经历</string>
+    <string name="add_work">添加教育经历</string>
     <string name="award_level">奖项等级</string>
     <string name="manage">管理</string>
     <string name="report_details_required_10_plus">请输入10个字以上的举报描述（必填）</string>
