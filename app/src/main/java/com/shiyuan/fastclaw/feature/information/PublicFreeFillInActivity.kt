@@ -51,6 +51,7 @@ class PublicFreeFillInActivity : BaseViewModelActivity<ActivityPublicFreeFillInB
             val imm = getSystemService(InputMethodManager::class.java)
             imm.showSoftInput( binding.et, InputMethodManager.SHOW_IMPLICIT)
         }
+        binding.tvTitle.text = data.fieldName.toString()
         binding.et.hint = data.fieldName.toString()
         binding.et.setText(data.fieldValue ?: "")
         binding.et.doAfterTextChanged { editable ->

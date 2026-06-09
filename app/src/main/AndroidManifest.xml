@@ -203,6 +203,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.information.EducationalActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.information.PublicFreeFillInActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
