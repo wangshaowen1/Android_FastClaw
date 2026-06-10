@@ -198,7 +198,8 @@ class JobSelectionActivity :
         updateCompleteButtonState(emptyList())
 
         binding.layoutPrimary.setOnSingleClickListener {
-            FlowEventBus.postSticky(Events.CommonEnumItemEvent(null));
+           // mRealVM.selectPositionData.value?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
+            FlowEventBus.postSticky(Events.ClawAgentEvent(mRealVM.selectPositionData.value?.toJsonString()))
             finish()
         }
     }

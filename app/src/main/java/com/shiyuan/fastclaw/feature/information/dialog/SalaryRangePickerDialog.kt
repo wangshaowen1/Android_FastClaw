@@ -31,8 +31,8 @@ class SalaryRangePickerDialog : BaseBottomPushDialogFragment<DialogSalaryRangePi
 
         fun show(
             manager: FragmentManager,
-            minSalary: String? = null,
-            maxSalary: String? = null,
+            minSalary: String? = "10K",
+            maxSalary: String? = "12K",
             title: String? = null,
             onConfirm: ((minSalary: String, maxSalary: String?) -> Unit)? = null,
         ): SalaryRangePickerDialog {
