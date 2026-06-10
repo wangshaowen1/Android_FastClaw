@@ -360,7 +360,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 desc = action?.text.orEmpty(),
                 actionData = AgentMsgAction(
                     questionQueueId = queueId,
-                    actionCode = "QUESTION_OPTION_SUBMIT",
+                    actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name,
                     sourceMessageId = item?.id,
                     actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
                 )

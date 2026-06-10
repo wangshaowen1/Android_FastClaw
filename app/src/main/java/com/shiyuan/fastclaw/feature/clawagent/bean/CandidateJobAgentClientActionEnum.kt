@@ -40,5 +40,12 @@ enum class CandidateJobAgentClientActionEnum {
     /**
      * 记忆卡片 拒绝
      */
-    ATTRIBUTE_REJECT
+    ATTRIBUTE_REJECT,
+
+    /**
+     * 输入模式清单
+     */
+    QUESTION_OPTION_SUBMIT,
+
+
 }

@@ -85,9 +85,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         binding.tvSubtitle.text = if (mType == JobCityQueryBody.EXPECTED_CITY) {
-            "添加多个城市，可以获得更多工作机会？"
+            getString(R.string.city_selector_add_multiple)
         } else {
-            "你现在在哪座城市？"
+            getString(R.string.city_selector_now_city)
         }
         binding.ivClose.setOnSingleClickListener { finish() }
         binding.ivClearSearch.setOnSingleClickListener {

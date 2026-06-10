@@ -1,7 +1,5 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
-import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
-
 /**
  * 求职 Agent 各 cardType 的 payloadJson 端侧渲染模型。
  *
@@ -177,6 +175,11 @@ data class CoreQuestionPayloadBean(
     val actions: List<CardAction>? = null,
 ) {
     companion object {
+        const val STATUS_ANSWERED = "ANSWERED"
+        const val STATUS_SUBMITTED = "SUBMITTED"
+        const val STATUS_SKIPPED = "SKIPPED"
+        const val STATUS_REASKED = "REASKED"
+
         /** 文本输入 */
         const val MODE_TEXT = "TEXT"
         /** 字典单选 */
@@ -193,6 +196,24 @@ data class CoreQuestionPayloadBean(
         const val MODE_SALARY_RANGE = "SALARY_RANGE"
         /** 数组表单 */
         const val MODE_ARRAY_FORM = "ARRAY_FORM"
+    }
+
+    /** 整卡是否已回答：状态机终态或整卡禁用 */
+    fun isAnswered(): Boolean {
+        val state = interactionState ?: return false
+        return state.disabled == true ||
+                state.status == STATUS_ANSWERED ||
+                state.status == STATUS_SUBMITTED ||
+                state.status == STATUS_SKIPPED ||
+                state.status == STATUS_REASKED
+    }
+
+    fun isAnsweredV2(): Boolean {
+        val state = interactionState ?: return false
+        return state.status == STATUS_ANSWERED ||
+                state.status == STATUS_SUBMITTED ||
+                state.status == STATUS_SKIPPED ||
+                state.status == STATUS_REASKED
     }
 
     //`现居住城市-location`、`民族-ethnicity`

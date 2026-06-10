@@ -76,11 +76,11 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
                 binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
                 binding.layoutProblem.visible()
                 binding.layoutUndergo.gone()
-                if (payload.isAnswered()) {
+                if (payload?.isAnswered() == true) {
                     // 已回复：隐藏跳过，展示选项/回显
                     binding.tvSkip.gone()
-                    if (payload?.options.isNullOrEmpty()) {
-                        val repliedText = payload?.answeredText ?: ""
+                    if (payload.options.isNullOrEmpty()) {
+                        val repliedText = payload.answeredText ?: ""
                         binding.tvReplied.text = "${repliedText}"
                         binding.tvReplied.visible()
                         binding.flowOptions.gone()
@@ -114,15 +114,12 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         payload?.options?.forEach { option ->
             val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
              if (payload.isAnswered() && option.selected == true) { //已回答
-                view.isEnabled = false
                 view.setBackgroundResource(R.drawable.bg_option_selected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else if (option.disabled == true) { //置灰
-                view.isEnabled = false
                 view.setBackgroundResource(R.drawable.bg_option_unselected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
              } else { //未回答
-                view.isEnabled = true
                 view.setBackgroundResource(R.drawable.bg_option_ripple)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_90_000000))
             }
@@ -144,16 +141,13 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val ids = ArrayList<Int>()
         payload?.actions?.forEach { action ->
             val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
-            if (payload.isAnswered() && action.selected == true) { //已回答
-                view.isEnabled = false
+            if (payload.isAnswered()) { //已回答
                 view.setBackgroundResource(R.drawable.bg_option_selected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else if (action.disabled == true) { //置灰
-                view.isEnabled = false
                 view.setBackgroundResource(R.drawable.bg_option_unselected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
             } else { //未回答
-                view.isEnabled = true
                 view.setBackgroundResource(R.drawable.bg_option_ripple)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_90_000000))
             }
@@ -172,7 +166,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         if (payload?.actions?.isNotEmpty() == true) {
             val action = payload.actions[0]
             binding.btnUndergoName.text = action.text
-            if (payload.isAnswered() && action.selected == true) { //已回答
+            if (payload.isAnswered()) { //已回答
                 binding.btnUndergoLayout.isEnabled = false
                 binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_selected)
                 binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
@@ -215,16 +209,6 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         binding.tvSkip.setOnClickListener { onSkipClickListener(item, action, payload?.questionQueueId) }
     }
 
-    /** 整卡是否已回答：状态机终态或整卡禁用 */
-    private fun CoreQuestionPayloadBean?.isAnswered(): Boolean {
-        val state = this?.interactionState ?: return false
-        return state.disabled == true ||
-                state.status == STATUS_ANSWERED ||
-                state.status == STATUS_SUBMITTED ||
-                state.status == STATUS_SKIPPED ||
-                state.status == STATUS_REASKED
-    }
-
     private fun clearOptionRows() {
         val parent = binding.layoutProblem
         optionRows.forEach { parent.removeView(it) }
@@ -233,10 +217,6 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     }
 
     companion object {
-        private const val STATUS_ANSWERED = "ANSWERED"
-        private const val STATUS_SUBMITTED = "SUBMITTED"
-        private const val STATUS_SKIPPED = "SKIPPED"
-        private const val STATUS_REASKED = "REASKED"
         private const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
     }
 
