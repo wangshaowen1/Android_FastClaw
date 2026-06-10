@@ -89,4 +89,37 @@ fun getInstall(delay: Int = 0, callback: ((installData: String?) -> Unit)? = nul
     }
 }
 
+/**
+ * Bundle获取传递的值
+ *
+ * @param key
+ * @param defaultValue
+ */
+fun <Value> Intent?.getBundleValue(key: String?, defaultValue: Value): Value {
+    val result: Any? = this?.extras?.get(key)
+    if (result != null) {
+        try {
+            return result as Value
+        } catch (ignore: ClassCastException) {
+        }
+    }
+    return defaultValue
+}
+
+/**
+ * Bundle获取传递的值
+ *
+ * @param key
+ */
+fun <Value> Intent?.getBundleValue(key: String?): Value? {
+    val result: Any? = this?.extras?.get(key)
+    if (result != null) {
+        try {
+            return result as Value
+        } catch (ignore: ClassCastException) {
+        }
+    }
+    return null
+}
+
 

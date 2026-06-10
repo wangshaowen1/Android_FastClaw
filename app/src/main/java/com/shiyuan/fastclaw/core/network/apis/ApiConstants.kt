@@ -236,4 +236,9 @@ object ApiConstants {
      * 拒绝属性候选值（求职 Agent）
      */
     const val JOB_AGENT_ATTRIBUTE_REJECT = "/api/candidate/app/jobAgent/attribute/reject"
+
+    /**
+     * 查询城市字典组件提供已选、历史、热门、A-Z 分组和搜索数据。
+     */
+    const val JOB_AGENT_DICT_REGION_QUERY = "/api/candidate/app/jobAgent/dict/region/query"
 }

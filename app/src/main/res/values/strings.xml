@@ -789,6 +789,7 @@
     <string name="city_selector_hot">热门城市</string>
     <string name="city_selector_search_result">搜索结果</string>
     <string name="city_selector_max_select_tip">最多选择%1$d个城市</string>
+    <string name="city_selector_at_least">请选择至少一个城市</string>
 
 </resources>
 

@@ -15,6 +15,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeRejectBody
 import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
+import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.FeedbackBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
@@ -44,6 +45,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import kotlinx.coroutines.flow.Flow
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
+import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
@@ -64,7 +66,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.UserPointItemData
 import com.shiyuan.fastclaw.core.network.apis.response.UserPointsData
 import okhttp3.MultipartBody
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -383,5 +384,8 @@ interface ApiService {
 
     @POST(ApiConstants.JOB_AGENT_RESUME_UPLOAD_MY_SUBMIT)
     suspend fun submitResumeMyUpload(@Body body: ResumeUploadSubmitMyBody): ApiResponse<ResumeUploadSubmitMyData?>
+
+    @POST(ApiConstants.JOB_AGENT_DICT_REGION_QUERY)
+    suspend fun queryCityList(@Body body: JobCityQueryBody): ApiResponse<JobCityData?>
 
 }
