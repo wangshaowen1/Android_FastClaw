@@ -105,16 +105,6 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         }
     }
 
-    /** 整卡是否已回答：状态机终态或整卡禁用 */
-    private fun CoreQuestionPayloadBean?.isAnswered(): Boolean {
-        val state = this?.interactionState ?: return false
-        return state.disabled == true ||
-            state.status == STATUS_ANSWERED ||
-            state.status == STATUS_SUBMITTED ||
-            state.status == STATUS_SKIPPED ||
-            state.status == STATUS_REASKED
-    }
-
     /** 渲染选项到 Flow：先移除旧行，再 inflate + addView，最后接入 flow.referencedIds */
     private fun bindOptionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         clearOptionRows()
@@ -223,6 +213,16 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         binding.tvSkip.visible()
         binding.tvSkip.isEnabled = action.disabled != true
         binding.tvSkip.setOnClickListener { onSkipClickListener(item, action, payload?.questionQueueId) }
+    }
+
+    /** 整卡是否已回答：状态机终态或整卡禁用 */
+    private fun CoreQuestionPayloadBean?.isAnswered(): Boolean {
+        val state = this?.interactionState ?: return false
+        return state.disabled == true ||
+                state.status == STATUS_ANSWERED ||
+                state.status == STATUS_SUBMITTED ||
+                state.status == STATUS_SKIPPED ||
+                state.status == STATUS_REASKED
     }
 
     private fun clearOptionRows() {
