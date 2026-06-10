@@ -130,7 +130,7 @@ class JobSelectionActivity :
 
     private fun initView() {
         if (isMultiple) {
-            binding.tvTitle.text = getString(R.string.select_job_title)
+            binding.tvTitle.text = getString(R.string.choose_desired_position)
             binding.llMultipleTop.visibility = View.VISIBLE
             binding.llMultipleBot.visibility = View.VISIBLE
             binding.rcSelected.apply {
@@ -143,7 +143,7 @@ class JobSelectionActivity :
                 adapter = selectCyIyPnAdapter
             }
         } else {
-            binding.tvTitle.text = getString(R.string.select_job_title)
+            binding.tvTitle.text = getString(R.string.choose_desired_position)
             binding.llMultipleTop.visibility = View.GONE
             binding.llMultipleBot.visibility = View.GONE
         }
@@ -194,15 +194,18 @@ class JobSelectionActivity :
         }
         binding.ivBack.setOnSingleClickListener { finish() }
 
+        updateCompleteButtonState(emptyList())
+
         binding.layoutPrimary.setOnSingleClickListener {
-            val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
-            if (selectedList.size == 3) {
-                "最少选择一个".showToast()
-                return@setOnSingleClickListener
-            }
             FlowEventBus.postSticky(Events.CommonEnumItemEvent(null));
             finish()
         }
+    }
+
+    private fun updateCompleteButtonState(selectedList: List<com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem>) {
+        val hasSelection = selectedList.isNotEmpty()
+        binding.layoutPrimary.isEnabled = hasSelection
+        binding.layoutPrimary.alpha = if (hasSelection) 1f else 0.3f
     }
 
     private fun observeEvents() {
@@ -210,6 +213,7 @@ class JobSelectionActivity :
             binding.tvWordCount.text = it.size.toString()
             selectCyIyPnAdapter.submitList(it)
             cyIyJobPnSonAdapter.notifyDataSetChanged()
+            updateCompleteButtonState(it)
         }
 
         mRealVM.searchPositionData.observe(this) {

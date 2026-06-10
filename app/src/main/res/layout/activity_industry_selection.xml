@@ -184,7 +184,7 @@
                     android:id="@+id/ll_multiple_bot"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="18dp"
                     android:layout_marginBottom="40dp"
                     android:background="@color/white"
                     android:orientation="vertical">
@@ -205,7 +205,7 @@
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rc_selected"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="22dp"
                             app:orientation="horizontal"
                             tools:itemCount="0"
                             tools:listitem="@layout/item_selected" />

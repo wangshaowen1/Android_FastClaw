@@ -82,13 +82,14 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            SalaryRangePickerDialog.show(
+         /*   SalaryRangePickerDialog.show(
                 manager = childFragmentManager,
                 minSalary = "10K",
                 maxSalary = "12K",
             ) { minSalary, maxSalary ->
                 // 处理结果
-            }
+            }*/
+            JobSelectionActivity.start(requireActivity(),true)
      /*       CertificateSkillsAwardsDialog.show(
                 childFragmentManager,
                 type="Certificate",

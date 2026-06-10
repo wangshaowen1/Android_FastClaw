@@ -61,7 +61,7 @@ class SelectedIyPnAdapter(
         }else{
             binding.tvName.text = item.positionName+ ""
         }
-        binding.icClose.setOnSingleClickListener {
+        binding.sl.setOnSingleClickListener {
             onRemove?.invoke(item)
         }
     }
@@ -102,7 +102,7 @@ class IyPnSonAdapter( private val onSelected: ((CommonEnumItem, Int) -> Unit)? =
         if (item.isSelected) {
             binding.suItem.setNormalColor(ContextCompat.getColor(binding.root.context, R.color.color_E8F1FF))
             binding.suItem.setBorderColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
-            binding.suItem.setBorderWidth(1)
+            binding.suItem.setBorderWidth(2)
         } else {
             binding.suItem.setNormalColor(ContextCompat.getColor(binding.root.context, R.color.color_F4F4F4))
             binding.suItem.setBorderColor(ContextCompat.getColor(binding.root.context, R.color.color_F4F4F4))
