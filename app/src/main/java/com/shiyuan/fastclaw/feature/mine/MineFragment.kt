@@ -20,6 +20,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.feature.information.AwardActivity
 import com.shiyuan.fastclaw.feature.information.EducationalActivity
+import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.SkillActivity
 import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
 import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
@@ -78,7 +79,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            EducationalActivity.start(this.requireActivity())
+            IndustrySelectionActivity.start(this.requireActivity(),true)
      /*       CertificateSkillsAwardsDialog.show(
                 childFragmentManager,
                 type="Certificate",

@@ -16,7 +16,7 @@ import com.nhsd.basic.item.QuickViewHolder
  * @param layoutId    布局资源 ID
  * @param onBind      绑定回调：(binding, position, item) -> Unit
  */
-class SingleBindingAdapter<B : ViewDataBinding, T>(
+open class SingleBindingAdapter<B : ViewDataBinding, T>(
     @LayoutRes private val layoutId: Int,
     mData: List<T>,
     private val onBind: (binding: B, position: Int, item: T) -> Unit

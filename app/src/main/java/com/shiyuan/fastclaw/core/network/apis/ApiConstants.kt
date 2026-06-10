@@ -121,6 +121,7 @@ object ApiConstants {
     const val UNDERSTANDING_DETAIL = "/api/candidate/app/jobAgent/understanding/detail/query"
 
     const val RESUME_QUERY = "/api/candidate/app/jobAgent/resume/list/query"
+    const val QUERY_REGION_DICT = "/api/candidate/app/jobAgent/dict/region/query"
 
     /**
      * 查询用户钱包信息
@@ -236,4 +237,9 @@ object ApiConstants {
      * 拒绝属性候选值（求职 Agent）
      */
     const val JOB_AGENT_ATTRIBUTE_REJECT = "/api/candidate/app/jobAgent/attribute/reject"
+
+    /**
+     * 查询小虾行业字典
+     */
+    const val DICT_INDUSTRY_QUERY = "/api/candidate/app/jobAgent/dict/industry/query"
 }
