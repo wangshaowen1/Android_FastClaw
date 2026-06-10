@@ -216,6 +216,11 @@ data class CoreQuestionPayloadBean(
                 state.status == STATUS_REASKED
     }
 
+    fun isDisabled(): Boolean {
+        val state = interactionState ?: return true
+        return state.disabled == true
+    }
+
     //`现居住城市-location`、`民族-ethnicity`
     fun isLocationCity(): Boolean {// 现居住城市
         return inputMode == MODE_DICT_SINGLE && attributeGroupCode == "location"

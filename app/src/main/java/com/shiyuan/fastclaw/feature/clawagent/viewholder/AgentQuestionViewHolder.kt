@@ -113,7 +113,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val ids = ArrayList<Int>()
         payload?.options?.forEach { option ->
             val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
-             if (payload.isAnswered() && option.selected == true) { //已回答
+             if (payload.isAnsweredV2() && option.selected == true) { //已回答
                 view.setBackgroundResource(R.drawable.bg_option_selected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else if (option.disabled == true) { //置灰
@@ -139,20 +139,22 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val parent = binding.layoutProblem
         val inflater = LayoutInflater.from(parent.context)
         val ids = ArrayList<Int>()
-        payload?.actions?.forEach { action ->
-            val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
-            if (payload.isAnswered()) { //已回答
+        val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
+        payload?.let {
+            if (payload.isAnsweredV2()) { //已回答
+                view.text = "已选择"
                 view.setBackgroundResource(R.drawable.bg_option_selected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
-            } else if (action.disabled == true) { //置灰
+            } else if (payload.isDisabled()) { //置灰
+                view.text = "请选择"
                 view.setBackgroundResource(R.drawable.bg_option_unselected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
             } else { //未回答
+                view.text = "请选择"
                 view.setBackgroundResource(R.drawable.bg_option_ripple)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_90_000000))
             }
-            view.text = action.text
-            view.isEnabled = action.disabled != true
+            view.isEnabled = payload.isDisabled() != true
             view.id = View.generateViewId()
             view.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
             parent.addView(view)
@@ -166,7 +168,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         if (payload?.actions?.isNotEmpty() == true) {
             val action = payload.actions[0]
             binding.btnUndergoName.text = action.text
-            if (payload.isAnswered()) { //已回答
+            if (payload.isAnsweredV2()) { //已回答
                 binding.btnUndergoLayout.isEnabled = false
                 binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_selected)
                 binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
