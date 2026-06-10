@@ -214,11 +214,6 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 } else {
                     startMsgAction(item, action, queueId)
                 }
-                /*observeEvents {
-                    on<Events.UserChangedEvent> { event ->
-                        startMsgAction(item, action, queueId)
-                    }
-                }*/
             }
         }
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
@@ -386,6 +381,10 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                         mRealVM.pullMessages(mRealVM.getLastMessageCursor())
                     }
                 }
+            }
+            on<Events.ClawAgentEvent> { event ->
+                //聊天对话选择后回传
+
             }
         }
 
