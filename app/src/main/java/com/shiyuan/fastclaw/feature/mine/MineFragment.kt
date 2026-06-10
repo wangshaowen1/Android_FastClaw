@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.feature.information.EducationalActivity
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.SkillActivity
+import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
 import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
@@ -80,7 +81,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            JobSelectionActivity.start(this.requireActivity(),true)
+            BirthYearMonthPickerDialog.show(childFragmentManager)
      /*       CertificateSkillsAwardsDialog.show(
                 childFragmentManager,
                 type="Certificate",

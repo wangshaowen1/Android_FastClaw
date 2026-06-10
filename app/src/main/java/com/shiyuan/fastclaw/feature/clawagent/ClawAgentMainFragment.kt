@@ -24,6 +24,7 @@ import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SpanUtils
 import com.netease.nimlib.session.ac
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
@@ -56,6 +57,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -211,7 +213,9 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 } else if (payload?.isLanguageSkills() ?: false) { //语言能力
 
                 } else if (payload?.isBirthday() ?: false) { //出生年月
-
+                    BirthYearMonthPickerDialog.show(childFragmentManager){ year,month->
+                        FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
+                    }
                 } else if (payload?.isExpectedSalary() ?: false) { //薪资范围
 
                 } else if (payload?.isWorkExperience() ?: false) { //工作经历
