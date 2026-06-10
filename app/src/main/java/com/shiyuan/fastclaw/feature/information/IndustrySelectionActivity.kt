@@ -187,9 +187,11 @@ class IndustrySelectionActivity :
         }
         binding.ivBack.setOnSingleClickListener { finish() }
 
+        updateCompleteButtonState(emptyList())
+
         binding.layoutPrimary.setOnSingleClickListener {
             val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
-            if (selectedList.size == 3) {
+            if (selectedList.isEmpty()) {
                 "最少选择一个".showToast()
                 return@setOnSingleClickListener
             }
@@ -198,10 +200,17 @@ class IndustrySelectionActivity :
         }
     }
 
+    private fun updateCompleteButtonState(selectedList: List<com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem>) {
+        val hasSelection = selectedList.isNotEmpty()
+        binding.layoutPrimary.isEnabled = hasSelection
+        binding.layoutPrimary.alpha = if (hasSelection) 1f else 0.3f
+    }
+
     private fun observeEvents() {
         mRealVM.selectData.observe(this) {
             binding.tvWordCount.text = it.size.toString()
             selectCyIyPnAdapter.submitList(it)
+            updateCompleteButtonState(it)
         }
 
         mRealVM.searchData.observe(this) {

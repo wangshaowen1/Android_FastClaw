@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-        android:layout_marginLeft="9dp"
+        android:id="@+id/sl"
+        android:layout_marginLeft="8dp"
         android:paddingHorizontal="8dp"
         app:super_corner="4dp"
         android:orientation="horizontal"

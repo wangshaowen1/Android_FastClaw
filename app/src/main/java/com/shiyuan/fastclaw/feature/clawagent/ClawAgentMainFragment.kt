@@ -49,6 +49,7 @@ import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
+import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
@@ -199,7 +200,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 } else if (payload?.isExpectedCity() ?: false) { //意向城市
                     JobCitySelectorActivity.start(activity, JobCityQueryBody.EXPECTED_CITY)
                 } else if (payload?.isJobIntention() ?: false) { //意向岗位
-
+                    JobSelectionActivity.start(activity,true)
                 } else if (payload?.isExpectedIndustry() ?: false) { //期望行业
 
                 } else if (payload?.isLanguageSkills() ?: false) { //语言能力
