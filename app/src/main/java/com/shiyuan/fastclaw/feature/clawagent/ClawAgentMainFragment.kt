@@ -45,12 +45,14 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBe
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -210,7 +212,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                         FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
                     }
                 } else if (payload?.isExpectedSalary() ?: false) { //薪资范围
-
+                    SalaryRangePickerDialog.show(
+                        manager = childFragmentManager
+                    ) { minSalary, maxSalary ->
+                        val salaryPayloadJson = SalaryRangePayload.fromPicker(minSalary, maxSalary).toJson()
+                        FlowEventBus.postSticky(Events.ClawAgentEvent(salaryPayloadJson))
+                    }
                 } else if (payload?.isWorkExperience() ?: false) { //工作经历
 
                 } else if (payload?.isEducationInfo() ?: false) { //教育经历
@@ -218,6 +225,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 } else if (payload?.isSkills() ?: false) { //技能
 
                 } else if (payload?.isProjectExperience() ?: false) { //项目经历
+
 
                 } else if (payload?.isCertificates() ?: false) { //证书
 

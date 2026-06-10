@@ -120,7 +120,7 @@ class IndustrySelectionActivity :
                 finish()
             }
 
-        },0)
+        },0){ binding.et.text?.toString().orEmpty() }
     }
 
     private fun initView() {

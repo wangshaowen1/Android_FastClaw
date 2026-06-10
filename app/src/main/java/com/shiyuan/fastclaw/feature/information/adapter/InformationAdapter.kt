@@ -1,6 +1,9 @@
 package com.shiyuan.fastclaw.feature.information.adapter
 
 import android.graphics.Color
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.util.SparseArray
 import android.util.TypedValue
@@ -23,6 +26,23 @@ import com.shiyuan.fastclaw.databinding.ItemJobIyCyPnBinding
 import com.shiyuan.fastclaw.databinding.ItemSelectedBinding
 import kotlin.collections.distinctBy
 import kotlin.collections.plus
+
+private fun highlightSearchKeyword(text: String?, keyword: String): CharSequence {
+    if (text.isNullOrEmpty() || keyword.isEmpty()) return text.orEmpty()
+    val builder = SpannableStringBuilder(text)
+    var startIndex = text.indexOf(keyword, ignoreCase = true)
+    while (startIndex >= 0) {
+        builder.setSpan(
+            ForegroundColorSpan(Color.parseColor("#2F6BFF")),
+            startIndex,
+            startIndex + keyword.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        startIndex = text.indexOf(keyword, startIndex + keyword.length, ignoreCase = true)
+    }
+    return builder
+}
+
 
 class IyPnAdapter(
     private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null,type: Int
@@ -72,24 +92,27 @@ class SelectedIyPnAdapter(
  * 已选选项适配器（原 createSelectedIyPnAdapter）
  */
 class SearchAdapter(
-    private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null,type: Int
+    private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null,
+    type: Int,
+    private val keywordProvider: (() -> String)? = null
 ) : SingleBindingAdapter<ItemIySearchBinding, CommonEnumItem>(
     layoutId = R.layout.item_iy_search,
     mData = emptyList(),
     onBind = { binding, position, item ->
         if(type == 0){
-            binding.tvName1.text = item.name+ ""
-            binding.tvName2.text = item.fullNamePath+ ""
+            val keyword = keywordProvider?.invoke().orEmpty().trim()
+            binding.tvName1.text = highlightSearchKeyword(item.name+"", keyword)
+            binding.tvName2.text = highlightSearchKeyword( item.fullNamePath+ "", keyword)
         }else{
-            binding.tvName1.text = item.positionName+ ""
-            binding.tvName2.text = item.categoryPath+ ""
+            val keyword = keywordProvider?.invoke().orEmpty().trim()
+            binding.tvName1.text = highlightSearchKeyword(item.positionName+"", keyword)
+            binding.tvName2.text = highlightSearchKeyword( item.categoryPath+ "", keyword)
         }
         binding.suItem.setOnSingleClickListener {
             onSelected?.invoke(item, position)
         }
     }
 )
-
 class IyPnSonAdapter( private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null,type: Int) : SingleBindingAdapter<ItemIyCyPnBinding, CommonEnumItem>(
     layoutId = R.layout.item_iy_cy_pn,
     mData = emptyList(),
