@@ -46,7 +46,11 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBe
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_ARRAY_FORM
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DATE_MONTH
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DICT_MULTI
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DICT_SINGLE
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_SALARY_RANGE
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
@@ -90,6 +94,12 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
     /** IME 动画进行中flag */
     private var hasRunningImeAnimation = false
+
+    private var mCurrentMessage: ClawAgentMessageInfo? = null
+
+    private var mCurrentAction: CardAction? = null
+
+    private var mCurrentQuestionId: String? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -185,31 +195,34 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         msgAdapter.onQuestionActionClickAction = { item, action, queueId ->
             if (!interceptIfStreaming()) {
                 val payload = item.metaData?.let {
+                    mCurrentMessage = item
+                    mCurrentAction = action
+                    mCurrentQuestionId = queueId
                     runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
                 }
-                if (payload?.isLocationCity() == true) {// 现居住城市
+                if (payload?.isLocationCity() ?: false) {// 现居住城市
 
-                } else if (payload?.isExpectedCity() == true) { //意向城市
+                } else if (payload?.isExpectedCity() ?: false) { //意向城市
 
-                } else if (payload?.isJobIntention() == true) { //意向岗位
+                } else if (payload?.isJobIntention() ?: false) { //意向岗位
 
-                } else if (payload?.isExpectedIndustry() == true) { //期望行业
+                } else if (payload?.isExpectedIndustry() ?: false) { //期望行业
 
-                } else if (payload?.isLanguageSkills() == true) { //语言能力
+                } else if (payload?.isLanguageSkills() ?: false) { //语言能力
 
-                } else if (payload?.isBirthday() == true) { //出生年月
+                } else if (payload?.isBirthday() ?: false) { //出生年月
 
-                } else if (payload?.isExpectedSalary() == true) { //薪资范围
+                } else if (payload?.isExpectedSalary() ?: false) { //薪资范围
 
-                } else if (payload?.isWorkExperience() == true) { //工作经历
+                } else if (payload?.isWorkExperience() ?: false) { //工作经历
 
-                } else if (payload?.isEducationInfo() == true) { //教育经历
+                } else if (payload?.isEducationInfo() ?: false) { //教育经历
 
-                } else if (payload?.isSkills() == true) { //技能
+                } else if (payload?.isSkills() ?: false) { //技能
 
-                } else if (payload?.isProjectExperience() == true) { //项目经历
+                } else if (payload?.isProjectExperience() ?: false) { //项目经历
 
-                } else if (payload?.isCertificates() == true) { //证书
+                } else if (payload?.isCertificates() ?: false) { //证书
 
                 } else {
                     startMsgAction(item, action, queueId)
@@ -342,16 +355,17 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         )
     }
 
-    private fun startMsgAction(item: ClawAgentMessageInfo, action: CardAction, queueId: String?) {
+    private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null) {
         if (!interceptIfStreaming()) {
             forceScrollToBottom = true
+            action?.actionPayload?.selectedValue = msgGson
             mRealVM.sendAction(
-                desc = action.text.orEmpty(),
+                desc = action?.text.orEmpty(),
                 actionData = AgentMsgAction(
                     questionQueueId = queueId,
-                    actionCode = action.actionCode,
-                    sourceMessageId = item.id,
-                    actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
+                    actionCode = action?.actionCode,
+                    sourceMessageId = item?.id,
+                    actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
                 )
             )
         }
@@ -384,7 +398,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             }
             on<Events.ClawAgentEvent> { event ->
                 //聊天对话选择后回传
-
+                startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, event.msgGson)
             }
         }
 

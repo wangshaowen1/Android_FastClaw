@@ -154,14 +154,14 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val ids = ArrayList<Int>()
         payload?.actions?.forEach { action ->
             val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
-            if (action.disabled == true) { //置灰
+            if (payload.isAnswered() && action.selected == true) { //已回答
+                view.isEnabled = false
+                view.setBackgroundResource(R.drawable.bg_option_selected)
+                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
+            } else if (action.disabled == true) { //置灰
                 view.isEnabled = false
                 view.setBackgroundResource(R.drawable.bg_option_unselected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
-            } else if (payload.isAnswered()) { //已回答
-                view.isEnabled = true
-                view.setBackgroundResource(R.drawable.bg_option_selected)
-                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else { //未回答
                 view.isEnabled = true
                 view.setBackgroundResource(R.drawable.bg_option_ripple)
@@ -182,14 +182,14 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         if (payload?.actions?.isNotEmpty() == true) {
             val action = payload.actions[0]
             binding.btnUndergoName.text = action.text
-            if (payload.interactionState?.disabled == true) { //置灰
+            if (payload.isAnswered() && action.selected == true) { //已回答
+                binding.btnUndergoLayout.isEnabled = false
+                binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_selected)
+                binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
+            } else if (action.disabled == true) { //置灰
                 binding.btnUndergoLayout.isEnabled = false
                 binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_unselected)
                 binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
-            } else if (payload.isAnswered()) { //已回答
-                binding.btnUndergoLayout.isEnabled = true
-                binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_selected)
-                binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
             } else { //未回答
                 binding.btnUndergoLayout.isEnabled = true
                 binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_upload_resume_btn)

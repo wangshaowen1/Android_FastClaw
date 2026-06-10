@@ -140,7 +140,7 @@ data class CardActionPayloadBean(
 //    val candidateValue: String? = null,
 //    val newValue: String? = null,
     val rejectBehavior: String? = null,
-    val selectedValue: String? = null,
+    var selectedValue: String? = null,
 )
 
 /** CARD 公共：问题卡选项（7.4.3） */
