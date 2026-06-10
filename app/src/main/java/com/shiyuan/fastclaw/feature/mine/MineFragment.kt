@@ -79,7 +79,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            IndustrySelectionActivity.start(this.requireActivity(),true)
+            IndustrySelectionActivity.start(this.requireActivity(),false)
      /*       CertificateSkillsAwardsDialog.show(
                 childFragmentManager,
                 type="Certificate",

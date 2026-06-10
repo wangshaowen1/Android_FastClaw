@@ -6,11 +6,13 @@ import kotlinx.parcelize.Parcelize
 data class CommonEnumItem(
     val code: String? = null,
     val name: String? = null,
+    val fullNamePath: String? = null,
     val parentCode: String? = null,
     val level: Int? = null,
     val enabled: Boolean? = null,
     val sortOrder: Int? = null,
     var isSelected: Boolean = false,
+    var children:  List<CommonEnumItem> = emptyList()
 )
 
 
@@ -32,6 +34,10 @@ data class IndustryDict(
 
 
 object CommonEnumTreeUtil {
+
+
+    fun List<CommonEnumItem>.getSecondLevelItems(): List<CommonEnumItem> =
+        flatMap { it.children }
 
     /**
      * 根据 level 筛选

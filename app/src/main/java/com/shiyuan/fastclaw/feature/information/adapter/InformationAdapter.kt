@@ -12,6 +12,7 @@ import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ItemIyCyPnBinding
 import com.shiyuan.fastclaw.databinding.ItemIyPnBinding
+import com.shiyuan.fastclaw.databinding.ItemIySearchBinding
 import com.shiyuan.fastclaw.databinding.ItemSelectedBinding
 
 class IyPnAdapter(
@@ -49,6 +50,24 @@ class SelectedIyPnAdapter(
     }
 )
 
+
+/**
+ * 已选选项适配器（原 createSelectedIyPnAdapter）
+ */
+class SearchAdapter(
+    private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null
+) : SingleBindingAdapter<ItemIySearchBinding, CommonEnumItem>(
+    layoutId = R.layout.item_iy_search,
+    mData = emptyList(),
+    onBind = { binding, position, item ->
+        binding.tvName1.text = item.name
+        binding.tvName2.text = item.fullNamePath
+        binding.suItem.setOnSingleClickListener {
+            onSelected?.invoke(item, position)
+        }
+    }
+)
+
 class IyPnSonAdapter( private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null) : SingleBindingAdapter<ItemIyCyPnBinding, CommonEnumItem>(
     layoutId = R.layout.item_iy_cy_pn,
     mData = emptyList(),
@@ -59,7 +78,9 @@ class IyPnSonAdapter( private val onSelected: ((CommonEnumItem, Int) -> Unit)? =
             binding.suItem.setBorderColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
             binding.suItem.setBorderWidth(1)
         } else {
+            binding.suItem.setNormalColor(ContextCompat.getColor(binding.root.context, R.color.color_F4F4F4))
             binding.suItem.setBorderColor(ContextCompat.getColor(binding.root.context, R.color.color_F4F4F4))
+            binding.suItem.setBorderWidth(0)
         }
         binding.suItem.setOnSingleClickListener {
             onSelected?.invoke(item, position)

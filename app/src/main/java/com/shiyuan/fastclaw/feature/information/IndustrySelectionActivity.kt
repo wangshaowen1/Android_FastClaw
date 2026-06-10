@@ -22,8 +22,11 @@ import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil
 import com.shiyuan.fastclaw.databinding.ActivityIndustrySelectionBinding
 import com.shiyuan.fastclaw.feature.information.adapter.IyPnAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.IyPnSonAdapter
+import com.shiyuan.fastclaw.feature.information.adapter.SearchAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.SelectedIyPnAdapter
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import kotlin.collections.distinctBy
+import kotlin.collections.plus
 
 
 class IndustrySelectionActivity :
@@ -52,36 +55,32 @@ class IndustrySelectionActivity :
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
     private val cyIyPnAdapter: IyPnAdapter by lazy {
         IyPnAdapter { item, position ->
-            mRealVM.levelData.value?.forEach { it.isSelected = false }
+            mRealVM.allData.value?.forEach { it.isSelected = false }
             item.isSelected = true
             cyIyPnAdapter.notifyDataSetChanged()
-            mRealVM.lastSelectedPosition.value = position
+            cyIyPnSonAdapter.submitList(mRealVM.allData.value?.get(position)?.children)
+            mRealVM.lastSelectedPosition.value  = position
         }
     }
     private val cyIyPnSonAdapter: IyPnSonAdapter by lazy {
         IyPnSonAdapter() { item, _ ->
-            val currentList = mRealVM.levelDataSong.value?.toMutableList() ?: mutableListOf()
-            val targetItem = currentList.firstOrNull { it.code == item.code } ?: item
             if (isMultiple) {
-
-                /*val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
-                if (targetItem.isSelected) {
-                    targetItem.isSelected = false
-                    mRealVM.selectData.value = selectedList.filterNot { it.code == targetItem.code }
-                } else {
+                val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
+                if(item.isSelected){
+                    item.isSelected  =false
+                    mRealVM.selectData.value = selectedList.filterNot { it.code == item.code }
+                }else{
                     if (selectedList.size >= 3) {
                         "最多选择三个".showToast()
                         return@IyPnSonAdapter
                     }
-                    targetItem.isSelected = true
-                    mRealVM.selectData.value = (selectedList + targetItem).distinctBy { it.code }
-                }*/
-
+                    item.isSelected = true
+                    mRealVM.selectData.value = (selectedList + item).distinctBy { it.code }
+                }
             } else {
                 FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
                 finish()
             }
-           // mRealVM.levelDataSong.value = currentList
             cyIyPnSonAdapter.notifyDataSetChanged()
         }
     }
@@ -90,6 +89,35 @@ class IndustrySelectionActivity :
         SelectedIyPnAdapter { item ->
             val newList = mRealVM.selectData.value?.filterNot { it.code == item.code }
             mRealVM.selectData.value = newList
+
+            mRealVM.allData.value?.forEach { parent ->
+                parent.children.firstOrNull { child -> child.code == item.code }?.isSelected = false
+            }
+            cyIyPnSonAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private val searchAdapter: SearchAdapter by lazy {
+        SearchAdapter { item, position ->
+            if (isMultiple) {
+                val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
+                if (selectedList.size >= 3) {
+                    "最多选择三个".showToast()
+                    return@SearchAdapter
+                }
+                item.isSelected = true
+                mRealVM.selectData.value = (selectedList + item).distinctBy { it.code }
+
+                mRealVM.allData.value?.forEach { parent ->
+                    parent.children.firstOrNull { child -> child.code == item.code }?.isSelected = true
+                }
+                cyIyPnSonAdapter.notifyDataSetChanged()
+                binding.rcSc.visibility = View.GONE
+            } else {
+                FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
+                finish()
+            }
+
         }
     }
 
@@ -131,19 +159,41 @@ class IndustrySelectionActivity :
             )
             adapter = cyIyPnSonAdapter
         }
+
+        binding.rcSc.apply {
+            layoutManager = LinearLayoutManager(
+                this@IndustrySelectionActivity,
+                RecyclerView.VERTICAL,
+                false
+            )
+            adapter = searchAdapter
+        }
         binding.et.doAfterTextChanged { editable ->
             val showIcon = !editable.isNullOrEmpty()
             if (showIcon) {
                 mRealVM.queryDictIndustryQuery(editable.toString())
                 binding.ivClear.visibility = View.VISIBLE
+                binding.rlSc.visibility = View.VISIBLE
             } else {
+                binding.rlSc.visibility = View.GONE
                 binding.ivClear.visibility = View.GONE
             }
         }
         binding.ivClear.setOnSingleClickListener {
+            binding.rlSc.visibility = View.GONE
             binding.et.text.clear()
         }
         binding.ivBack.setOnSingleClickListener { finish() }
+
+        binding.layoutPrimary.setOnSingleClickListener {
+            val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
+            if (selectedList.size == 3) {
+                "最少选择一个".showToast()
+                return@setOnSingleClickListener
+            }
+            FlowEventBus.postSticky(Events.CommonEnumItemEvent(null));
+            finish()
+        }
     }
 
     private fun observeEvents() {
@@ -151,16 +201,25 @@ class IndustrySelectionActivity :
             binding.tvWordCount.text = it.size.toString()
             selectCyIyPnAdapter.submitList(it)
         }
-        mRealVM.levelData.observe(this) {
-            Log.d("levelData", it.toJsonString())
+
+        mRealVM.searchData.observe(this) {
+            if(it.isNullOrEmpty()){
+              binding.tvEm.visibility = View.VISIBLE
+              binding.rcSc.visibility = View.GONE
+            }else{
+                binding.tvEm.visibility = View.GONE
+                binding.rcSc.visibility = View.VISIBLE
+            }
+            searchAdapter.submitList(it)
+        }
+        mRealVM.allData.observe(this){
             cyIyPnAdapter.submitList(it)
-        }
-        mRealVM.levelDataSong.observe(this) {
-            Log.d("levelDataSong", it.toJsonString())
-            cyIyPnSonAdapter.submitList(it)
-        }
-        mRealVM.lastSelectedPosition.observe(this) {
-            mRealVM.levelDataSong.value = CommonEnumTreeUtil.getChildrenByParentCode(mRealVM.allData.value?: emptyList() , mRealVM.allData.value?.get(it)?.code.toString())
+
+            //默认第 2个
+            mRealVM.allData.value?.getOrNull(mRealVM.lastSelectedPosition.value ?: 1)?.also { node ->
+                node.isSelected = true
+                cyIyPnSonAdapter.submitList(node.children ?: emptyList())
+            } ?: cyIyPnSonAdapter.submitList(emptyList())
         }
         observeEvents {
 

@@ -35,30 +35,31 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
     var allData = MutableLiveData<List<CommonEnumItem>>()
+    var searchData = MutableLiveData<List<CommonEnumItem>>()
     var selectData = MutableLiveData<List<CommonEnumItem>>()
-    var levelData = MutableLiveData<List<CommonEnumItem>>()
-    var levelDataSong = MutableLiveData<List<CommonEnumItem>>()
     var lastSelectedPosition = MutableLiveData<Int>(1)
-    fun queryDictIndustryQuery(keyword: String? = null) {
+    fun queryDictIndustryQuery() {
         launchWithLoading(true, block = {
-            val requestBody = DictIndustryQueryBody(sessionId = "56317951643738",conversationId ="56317951643739",keyword = keyword)
+            val requestBody = DictIndustryQueryBody(sessionId = "56317951643738", conversationId = "56317951643739")
             response(ApiFactory.apiService.queryDictIndustryQuery(requestBody), result = {
                 allData.postValue(this.data?.items)
                 if (selectData.value.isNullOrEmpty()) {
                     selectData.postValue(this.data?.selectedItems)
                 }
-                this.data?.items?.let {
-                    val data = CommonEnumTreeUtil.filterByLevel(it , 1)
-                    if (data.size > 1) { data[1].isSelected = true }
-                    levelData.postValue(data)
-                }
-                this.data?.items?.let {
-                    ///默认选中第2个
-                    val data = CommonEnumTreeUtil.getChildrenByParentCode(it , this.data?.items?.get(lastSelectedPosition.value ?: 1)?.code.toString())
+            }, error = { this?.msg?.showToast() })
+        }, onError = { it.message.toString().showToast() })
 
-                    levelDataSong.postValue(data)
-                }
+    }
 
+    fun queryDictIndustryQuery(keyword: String? = null) {
+        launchWithLoading(false, block = {
+            val requestBody = DictIndustryQueryBody(
+                sessionId = "56317951643738",
+                conversationId = "56317951643739",
+                keyword = keyword
+            )
+            response(ApiFactory.apiService.queryDictIndustryQuery(requestBody), result = {
+                searchData.postValue(this.data?.items?.flatMap { it.children } ?: emptyList())
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
 
