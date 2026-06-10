@@ -195,7 +195,7 @@ class IndustrySelectionActivity :
                 "最少选择一个".showToast()
                 return@setOnSingleClickListener
             }
-            FlowEventBus.postSticky(Events.CommonEnumItemEvent(selectedList));
+            FlowEventBus.postSticky(Events.CommonEnumItemEvent(null));
             finish()
         }
     }
