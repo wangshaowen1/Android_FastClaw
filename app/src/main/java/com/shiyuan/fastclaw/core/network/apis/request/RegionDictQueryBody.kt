@@ -23,4 +23,9 @@ data class DictIndustryQueryBody(
 }
 
 
+data class DictPositionQueryBody(
+    val keyword: String? = null,
+)  {
+}
+
 

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel" />
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <com.shiyuan.fastclaw.widget.StatusBarView
+            android:id="@+id/sbv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+         <ImageView
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="16dp"
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:src="@drawable/ic_close2" />
+
+         <LinearLayout
+            android:paddingHorizontal="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/color_90_000000"
+                android:textSize="20sp"
+                tools:text="选择意向岗位" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/ll_multiple_top"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_word_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@color/color_2f6bff"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="/3"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+         <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+            android:layout_marginHorizontal="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            app:background_normalColor="@color/color_f4f4f4"
+            app:super_corner="8dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:src="@drawable/ic_search" />
+
+            <EditText
+                android:id="@+id/et"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:background="@null"
+                android:ellipsize="end"
+                android:hint="搜索行业名称"
+                android:maxLines="1"
+                android:textColor="@color/color_90_000000"
+                android:textColorHint="@color/color_25_3c3c43"
+                android:textSize="11sp"
+                tools:text="" />
+
+
+            <ImageView
+                android:id="@+id/iv_clear"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_close"
+                android:visibility="gone" />
+
+        </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+             <!--   <androidx.core.widget.NestedScrollView
+                    android:layout_marginTop="9dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:fillViewport="true">-->
+
+                    <LinearLayout
+                        android:layout_marginTop="9dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+
+                        <com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout
+                            android:layout_width="113dp"
+                            app:background_normalColor="@color/white"
+                            app:corner_rightTop="8dp"
+                            app:corner_rightBottom="8dp"
+                            android:layout_height="match_parent">
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rc_left"
+                                tools:itemCount="30"
+                                tools:listitem="@layout/item_iy_pn"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                        </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rc_right"
+                            tools:listitem="@layout/item_iy_cy_pn"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="7dp"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent"/>
+
+                    </LinearLayout>
+
+<!--
+                </androidx.core.widget.NestedScrollView>-->
+
+                <LinearLayout
+                    android:paddingHorizontal="16dp"
+                    android:id="@+id/ll_multiple_bot"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="40dp"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="已选"
+                            android:textColor="@color/color_90_000000"
+                            android:textSize="12sp" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rc_selected"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:orientation="horizontal"
+                            tools:itemCount="0"
+                            tools:listitem="@layout/item_selected" />
+                    </LinearLayout>
+
+                    <com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout
+                        android:id="@+id/layout_primary"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="16dp"
+                        app:background_normalColor="@color/color_2f6bff"
+                        app:super_corner="8dp">
+
+                        <TextView
+                            android:id="@+id/tv_bc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:text="保存" />
+
+                    </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/rl_sc"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_em"
+                    android:visibility="gone"
+                    android:textColor="@color/color_75_3c3c43"
+                    android:textSize="13sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="43dp"
+                    android:text="暂未搜到相关的行业"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:paddingTop="20dp"
+                    android:id="@+id/rc_sc"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </androidx.recyclerview.widget.RecyclerView>
+
+
+            </RelativeLayout>
+
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</layout>

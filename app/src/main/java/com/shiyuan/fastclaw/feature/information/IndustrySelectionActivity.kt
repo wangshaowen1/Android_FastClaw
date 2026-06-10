@@ -17,6 +17,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.toJsonString
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil
 import com.shiyuan.fastclaw.databinding.ActivityIndustrySelectionBinding
@@ -54,16 +55,16 @@ class IndustrySelectionActivity :
 
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
     private val cyIyPnAdapter: IyPnAdapter by lazy {
-        IyPnAdapter { item, position ->
+        IyPnAdapter( { item, position ->
             mRealVM.allData.value?.forEach { it.isSelected = false }
             item.isSelected = true
             cyIyPnAdapter.notifyDataSetChanged()
             cyIyPnSonAdapter.submitList(mRealVM.allData.value?.get(position)?.children)
             mRealVM.lastSelectedPosition.value  = position
-        }
+        },0)
     }
     private val cyIyPnSonAdapter: IyPnSonAdapter by lazy {
-        IyPnSonAdapter() { item, _ ->
+        IyPnSonAdapter( { item, _ ->
             if (isMultiple) {
                 val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
                 if(item.isSelected){
@@ -82,23 +83,23 @@ class IndustrySelectionActivity :
                 finish()
             }
             cyIyPnSonAdapter.notifyDataSetChanged()
-        }
+        },0)
     }
 
     private val selectCyIyPnAdapter: SelectedIyPnAdapter by lazy {
-        SelectedIyPnAdapter { item ->
+        SelectedIyPnAdapter( { item ->
             val newList = mRealVM.selectData.value?.filterNot { it.code == item.code }
             mRealVM.selectData.value = newList
 
             mRealVM.allData.value?.forEach { parent ->
-                parent.children.firstOrNull { child -> child.code == item.code }?.isSelected = false
+                parent.children?.firstOrNull { child -> child.code == item.code }?.isSelected = false
             }
             cyIyPnSonAdapter.notifyDataSetChanged()
-        }
+        },1)
     }
 
     private val searchAdapter: SearchAdapter by lazy {
-        SearchAdapter { item, position ->
+        SearchAdapter( { item, position ->
             if (isMultiple) {
                 val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
                 if (selectedList.size >= 3) {
@@ -109,16 +110,17 @@ class IndustrySelectionActivity :
                 mRealVM.selectData.value = (selectedList + item).distinctBy { it.code }
 
                 mRealVM.allData.value?.forEach { parent ->
-                    parent.children.firstOrNull { child -> child.code == item.code }?.isSelected = true
+                    parent.children?.firstOrNull { child -> child.code == item.code }?.isSelected = true
                 }
                 cyIyPnSonAdapter.notifyDataSetChanged()
-                binding.rcSc.visibility = View.GONE
+                binding.rlSc.visibility = View.GONE
+                hideKeyboard(binding.et)
             } else {
                 FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
                 finish()
             }
 
-        }
+        },0)
     }
 
     private fun initView() {
@@ -136,7 +138,7 @@ class IndustrySelectionActivity :
                 adapter = selectCyIyPnAdapter
             }
         } else {
-            binding.tvTitle.text = getString(R.string.select_job_title)
+            binding.tvTitle.text = getString(R.string.choose_desired_position)
             binding.llMultipleTop.visibility = View.GONE
             binding.llMultipleBot.visibility = View.GONE
         }

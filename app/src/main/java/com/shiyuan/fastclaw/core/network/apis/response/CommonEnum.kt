@@ -11,8 +11,17 @@ data class CommonEnumItem(
     val level: Int? = null,
     val enabled: Boolean? = null,
     val sortOrder: Int? = null,
+    val firstCategoryCode: String? = null,
+    val firstCategoryName: String? = null,
+    val secondCategoryCode: String? = null,
+    val secondCategoryName: String? = null,
+    val positionName: String? = null,
     var isSelected: Boolean = false,
-    var children:  List<CommonEnumItem> = emptyList()
+    var children:  List<CommonEnumItem>? = null,
+    var secondCategories:  List<CommonEnumItem>? = null,
+    var positions:  List<CommonEnumItem>? = null,
+    var positionCode: String? = null,
+    var categoryPath: String? = null
 )
 
 
@@ -32,12 +41,16 @@ data class IndustryDict(
     val selectedItems: List<CommonEnumItem> = emptyList(),
 )
 
+data class PositionDict(
+    val dictType: String? = null,
+    val selectedItems: List<CommonEnumItem> = emptyList(),
+    val matchedPositions: List<CommonEnumItem> = emptyList(),
+    val firstCategories: List<CommonEnumItem> = emptyList(),
+)
+
+
 
 object CommonEnumTreeUtil {
-
-
-    fun List<CommonEnumItem>.getSecondLevelItems(): List<CommonEnumItem> =
-        flatMap { it.children }
 
     /**
      * 根据 level 筛选

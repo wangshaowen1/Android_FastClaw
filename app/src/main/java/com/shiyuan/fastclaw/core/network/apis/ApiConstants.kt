@@ -242,4 +242,10 @@ object ApiConstants {
      * 查询小虾行业字典
      */
     const val DICT_INDUSTRY_QUERY = "/api/candidate/app/jobAgent/dict/industry/query"
+
+
+    /**
+     * 查询小虾岗位字典
+     */
+    const val DICT_POSITION_QUERY = "/api/candidate/app/jobAgent/dict/position/query"
 }

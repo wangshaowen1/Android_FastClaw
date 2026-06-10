@@ -42,6 +42,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.TipOffBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.SSEvent
 import com.shiyuan.fastclaw.core.network.apis.request.DictIndustryQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.DictPositionQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import kotlinx.coroutines.flow.Flow
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
@@ -52,6 +53,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
+import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.RegionDictData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
@@ -379,6 +381,10 @@ interface ApiService {
 
     @POST(ApiConstants.DICT_INDUSTRY_QUERY)
     suspend fun queryDictIndustryQuery(@Body body: DictIndustryQueryBody?): ApiResponse<IndustryDict?>
+
+
+    @POST(ApiConstants.DICT_POSITION_QUERY)
+    suspend fun queryDictPositionQuery(@Body body: DictPositionQueryBody?): ApiResponse<PositionDict?>
 
 
     @POST(ApiConstants.UNDERSTANDING_SCORE)
