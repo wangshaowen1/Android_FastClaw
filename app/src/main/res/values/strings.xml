@@ -353,11 +353,13 @@
     <string name="add_educational">添加技能</string>
     <string name="edit_certificate">编辑教育经历</string>
     <string name="add_certificate">添加教育经历</string>
-    <string name="edit_project">编辑教育经历</string>
-    <string name="add_project">添加教育经历</string>
-    <string name="edit_work">编辑教育经历</string>
-    <string name="add_work">添加教育经历</string>
+    <string name="edit_project">编辑项目经历</string>
+    <string name="add_project">添加项目经历</string>
+    <string name="edit_working">编辑工作经历</string>
+    <string name="add_working">添加工作经历</string>
     <string name="award_level">奖项等级</string>
+    <string name="choose_desired_position">选择意向岗位</string>
+    <string name="select_job_title">选择职位名称</string>
     <string name="manage">管理</string>
     <string name="report_details_required_10_plus">请输入10个字以上的举报描述（必填）</string>
     <string name="collapse">收起</string>
