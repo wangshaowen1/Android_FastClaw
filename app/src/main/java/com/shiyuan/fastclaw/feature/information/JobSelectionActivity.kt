@@ -125,7 +125,7 @@ class JobSelectionActivity :
                 finish()
             }
 
-        },1)
+        }, 1) { binding.et.text?.toString().orEmpty() }
     }
 
     private fun initView() {
@@ -178,9 +178,10 @@ class JobSelectionActivity :
             adapter = searchAdapter
         }
         binding.et.doAfterTextChanged { editable ->
-            val showIcon = !editable.isNullOrEmpty()
+            val keyword = editable?.toString().orEmpty()
+            val showIcon = keyword.isNotEmpty()
             if (showIcon) {
-                mRealVM.queryDictPositionQuery(editable.toString())
+                mRealVM.queryDictPositionQuery(keyword)
                 binding.ivClear.visibility = View.VISIBLE
                 binding.rlSc.visibility = View.VISIBLE
             } else {
