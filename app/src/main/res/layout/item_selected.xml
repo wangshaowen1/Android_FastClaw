@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+        android:layout_marginLeft="9dp"
+        android:paddingHorizontal="8dp"
+        app:super_corner="4dp"
+        android:orientation="horizontal"
+        app:background_normalColor="@color/color_E8F1FF"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp">
+
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="原画师"
+            android:textColor="@color/color_2f6bff"
+            android:textSize="11sp"/>
+
+        <ImageView
+            android:id="@+id/ic_close"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginLeft="2dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_close3" />
+
+
+    </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
+</layout>

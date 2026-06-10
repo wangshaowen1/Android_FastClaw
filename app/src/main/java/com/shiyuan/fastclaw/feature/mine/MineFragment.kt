@@ -20,10 +20,14 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.feature.information.AwardActivity
 import com.shiyuan.fastclaw.feature.information.EducationalActivity
+import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
+import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.SkillActivity
+import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
 import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /**
@@ -78,7 +82,13 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            EducationalActivity.start(this.requireActivity())
+            SalaryRangePickerDialog.show(
+                manager = childFragmentManager,
+                minSalary = "10K",
+                maxSalary = "12K",
+            ) { minSalary, maxSalary ->
+                // 处理结果
+            }
      /*       CertificateSkillsAwardsDialog.show(
                 childFragmentManager,
                 type="Certificate",

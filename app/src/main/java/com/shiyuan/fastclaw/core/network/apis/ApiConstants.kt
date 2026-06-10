@@ -121,6 +121,7 @@ object ApiConstants {
     const val UNDERSTANDING_DETAIL = "/api/candidate/app/jobAgent/understanding/detail/query"
 
     const val RESUME_QUERY = "/api/candidate/app/jobAgent/resume/list/query"
+    const val QUERY_REGION_DICT = "/api/candidate/app/jobAgent/dict/region/query"
 
     /**
      * 查询用户钱包信息
@@ -241,4 +242,13 @@ object ApiConstants {
      * 查询城市字典组件提供已选、历史、热门、A-Z 分组和搜索数据。
      */
     const val JOB_AGENT_DICT_REGION_QUERY = "/api/candidate/app/jobAgent/dict/region/query"
+    /**
+     * 查询小虾行业字典
+     */
+    const val DICT_INDUSTRY_QUERY = "/api/candidate/app/jobAgent/dict/industry/query"
+
+    /**
+     * 查询小虾岗位字典
+     */
+    const val DICT_POSITION_QUERY = "/api/candidate/app/jobAgent/dict/position/query"
 }

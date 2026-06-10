@@ -219,6 +219,15 @@
             android:name=".feature.information.ProjectActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
+
+        <activity
+            android:name=".feature.information.IndustrySelectionActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.information.JobSelectionActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity
             android:name=".feature.information.PublicFreeFillInActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />

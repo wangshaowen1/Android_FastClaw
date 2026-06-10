@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.core;
 
 
 import com.nhsd.basic.bus.AppEvent;
+import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem;
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems;
 
 /**
@@ -248,6 +249,14 @@ public class Events {
         public CommonItems commonItems ;  //简历上传成功
         public CommonItemsEvent(CommonItems commonItems) {
             this.commonItems = commonItems;
+        }
+    }
+
+
+    public static class CommonEnumItemEvent implements AppEvent {
+        public CommonEnumItem commonEnumItems ;  //简历上传成功
+        public CommonEnumItemEvent(CommonEnumItem commonEnumItems) {
+            this.commonEnumItems = commonEnumItems;
         }
     }
 
