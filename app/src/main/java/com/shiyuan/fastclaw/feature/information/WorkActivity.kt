@@ -50,7 +50,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     private fun initView() {
         val isEdit = intent?.getBooleanExtra(EXTRA_IS_EDIT, true) ?: true
         if (isEdit) {
-            binding.tvTitle.text = getString(R.string.edit_work)
+            binding.tvTitle.text = getString(R.string.edit_working)
             binding.viewActionButtons.setSecondaryText(getString(R.string.del))
             binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
             binding.viewActionButtons.setOnSecondaryClickListener {
@@ -60,7 +60,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                 finish()
             }
         } else {
-            binding.tvTitle.text = getString(R.string.add_work)
+            binding.tvTitle.text = getString(R.string.add_working)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
                 finish()
@@ -80,7 +80,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                 binding.vForm2.setData(CommonItems(fieldName = "熟练度", fieldValue = selectedItem.name))
             }
         }
-        binding.vForm10.setOnSingleClickListener {
+        binding.vForm9.setOnSingleClickListener {
             PublicDescriptionActivity.start(this,isEdit, CommonItems(fieldName = "项目描述"))
         }
 
