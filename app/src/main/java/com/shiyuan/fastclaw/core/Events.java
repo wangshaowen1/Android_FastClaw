@@ -251,4 +251,14 @@ public class Events {
         }
     }
 
+    /**
+     * 聊天对话选择后回传
+     */
+    public static class ClawAgentEvent implements AppEvent {
+        public String msgGson ;
+        public ClawAgentEvent(String msgGson) {
+            this.msgGson = msgGson;
+        }
+    }
+
 }
