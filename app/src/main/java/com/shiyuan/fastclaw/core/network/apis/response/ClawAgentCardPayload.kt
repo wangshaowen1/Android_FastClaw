@@ -1,5 +1,7 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
+
 /**
  * 求职 Agent 各 cardType 的 payloadJson 端侧渲染模型。
  *
@@ -138,6 +140,7 @@ data class CardActionPayloadBean(
 //    val candidateValue: String? = null,
 //    val newValue: String? = null,
     val rejectBehavior: String? = null,
+    val selectedValue: String? = null,
 )
 
 /** CARD 公共：问题卡选项（7.4.3） */
@@ -172,7 +175,79 @@ data class CoreQuestionPayloadBean(
     val interactionState: CardInteractionState? = null,
     val options: List<CardOption>? = null,
     val actions: List<CardAction>? = null,
-)
+) {
+    companion object {
+        /** 文本输入 */
+        const val MODE_TEXT = "TEXT"
+        /** 字典单选 */
+        const val MODE_SINGLE_CHOICE = "SINGLE_CHOICE"
+        /** 枚举多选 */
+        const val MODE_MULTI_CHOICE = "MULTI_CHOICE"
+        /** 枚举单选 */
+        const val MODE_DICT_SINGLE = "DICT_SINGLE"
+        /** 字典多选 */
+        const val MODE_DICT_MULTI = "DICT_MULTI"
+        /** 年月选择 */
+        const val MODE_DATE_MONTH = "DATE_MONTH"
+        /** 薪资范围 */
+        const val MODE_SALARY_RANGE = "SALARY_RANGE"
+        /** 数组表单 */
+        const val MODE_ARRAY_FORM = "ARRAY_FORM"
+    }
+
+    //`现居住城市-location`、`民族-ethnicity`
+    fun isLocationCity(): Boolean {// 现居住城市
+        return inputMode == MODE_DICT_SINGLE && attributeGroupCode == "location"
+    }
+
+    //意向城市-expectedCity`、`意向岗位-jobIntention`、`期望行业-expectedIndustry`、`语言能力-languageSkills`
+    fun isExpectedCity(): Boolean {// 意向城市
+        return inputMode == MODE_DICT_MULTI && attributeGroupCode == "expectedCity"
+    }
+
+    fun isJobIntention(): Boolean {// 意向岗位
+        return inputMode == MODE_DICT_MULTI && attributeGroupCode == "jobIntention"
+    }
+
+    fun isExpectedIndustry(): Boolean {// 期望行业
+        return inputMode == MODE_DICT_MULTI && attributeGroupCode == "expectedIndustry"
+    }
+
+    fun isLanguageSkills(): Boolean {// 语言能力
+        return inputMode == MODE_DICT_MULTI && attributeGroupCode == "languageSkills"
+    }
+
+    //``出生年月-birthday`
+    fun isBirthday(): Boolean {// 出生年月
+        return inputMode == MODE_DATE_MONTH && attributeGroupCode == "birthday"
+    }
+
+    //``期望薪资-expectedSalary`
+    fun isExpectedSalary(): Boolean {// 薪资范围
+        return inputMode == MODE_SALARY_RANGE &&  attributeGroupCode == "expectedSalary"
+    }
+
+   // `工作经历-workExperience`、`教育经历-educationInfo`、`技能-skills`、`项目经历-projectExperience`、`证书-certificates`、`奖项-awards`
+    fun isWorkExperience(): Boolean {// 工作经历
+       return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "workExperience"
+    }
+
+    fun isEducationInfo(): Boolean {// 教育经历
+        return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "educationInfo"
+    }
+
+    fun isSkills(): Boolean {// 技能
+        return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "skills"
+    }
+
+    fun isProjectExperience(): Boolean {// 项目经历
+        return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "projectExperience"
+    }
+
+    fun isCertificates(): Boolean {// 证书
+        return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "certificates"
+    }
+}
 
 /** UPLOAD_RESUME 上传简历卡（7.5.1）；端侧按 resumeUploadStatus 路由到 引导 / 成功 / 失败 卡 */
 data class UploadResumePayloadBean(

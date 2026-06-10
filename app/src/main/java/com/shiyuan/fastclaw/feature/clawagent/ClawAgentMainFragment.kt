@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SpanUtils
+import com.netease.nimlib.session.ac
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
@@ -42,6 +43,10 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CardAction
+import com.shiyuan.fastclaw.core.network.apis.response.CardOption
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DICT_SINGLE
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
@@ -176,8 +181,48 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 )
             }
         }
-        // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
+        // 补问卡动作按钮：actionCode 取自 payload action
         msgAdapter.onQuestionActionClickAction = { item, action, queueId ->
+            if (!interceptIfStreaming()) {
+                val payload = item.metaData?.let {
+                    runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
+                }
+                if (payload?.isLocationCity() == true) {// 现居住城市
+
+                } else if (payload?.isExpectedCity() == true) { //意向城市
+
+                } else if (payload?.isJobIntention() == true) { //意向岗位
+
+                } else if (payload?.isExpectedIndustry() == true) { //期望行业
+
+                } else if (payload?.isLanguageSkills() == true) { //语言能力
+
+                } else if (payload?.isBirthday() == true) { //出生年月
+
+                } else if (payload?.isExpectedSalary() == true) { //薪资范围
+
+                } else if (payload?.isWorkExperience() == true) { //工作经历
+
+                } else if (payload?.isEducationInfo() == true) { //教育经历
+
+                } else if (payload?.isSkills() == true) { //技能
+
+                } else if (payload?.isProjectExperience() == true) { //项目经历
+
+                } else if (payload?.isCertificates() == true) { //证书
+
+                } else {
+                    startMsgAction(item, action, queueId)
+                }
+                /*observeEvents {
+                    on<Events.UserChangedEvent> { event ->
+                        startMsgAction(item, action, queueId)
+                    }
+                }*/
+            }
+        }
+        // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
+        msgAdapter.onQuestionSkipClickAction = { item, action, queueId ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.sendAction(
@@ -300,6 +345,21 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 }
             }
         )
+    }
+
+    private fun startMsgAction(item: ClawAgentMessageInfo, action: CardAction, queueId: String?) {
+        if (!interceptIfStreaming()) {
+            forceScrollToBottom = true
+            mRealVM.sendAction(
+                desc = action.text.orEmpty(),
+                actionData = AgentMsgAction(
+                    questionQueueId = queueId,
+                    actionCode = action.actionCode,
+                    sourceMessageId = item.id,
+                    actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
+                )
+            )
+        }
     }
 
     private fun observeData() {

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.dp
@@ -12,8 +13,15 @@ import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.invisible
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
+import com.shiyuan.fastclaw.core.network.apis.response.CardActionPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CardInteractionState
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_ARRAY_FORM
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DATE_MONTH
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DICT_MULTI
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DICT_SINGLE
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_SALARY_RANGE
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentQuestionBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -27,8 +35,11 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     /** 选项点击回调（B 方案：仅暴露，提交由后续统一接 sendAction(QUESTION_OPTION_SUBMIT)） */
     var onOptionClickListener: (item: ClawAgentMessageInfo, option: CardOption, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
-    /** 动作按钮（如跳过）点击回调（B 方案：仅暴露，提交后续统一接） */
+    /** 动作按钮点击回调（B 方案：仅暴露，提交后续统一接） */
     var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+
+    /** 动作按钮（如跳过）点击回调 */
+    var onSkipClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 上次动态添加的选项/动作行，复用前先移除 */
     private val optionRows = ArrayList<View>()
@@ -37,25 +48,60 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
         }
-        binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
-        if (payload.isAnswered()) {
-            // 已回复：隐藏选项与跳过，展示回显
-            clearOptionRows()
-            binding.flowOptions.gone()
-            binding.tvSkip.gone()
-            binding.tvReplied.visible()
-            val repliedText = payload?.answeredText ?: ""
-            binding.tvReplied.text = "${repliedText}"
-        } else {
-            // 未回复：展示选项 + 独立跳过按钮
-            binding.tvReplied.gone()
-            if (payload?.options.isNullOrEmpty()) {
-                binding.flowOptions.gone()
-                bindSkipAction(item, payload, false)
-            } else {
+        when (payload?.inputMode) {
+            MODE_DICT_SINGLE, MODE_DICT_MULTI, MODE_DATE_MONTH, MODE_SALARY_RANGE -> { //枚举等等
+                binding.tvQuestion.text = payload.questionText ?: payload.question ?: item.content
+                binding.layoutProblem.visible()
                 binding.flowOptions.visible()
-                bindOptionRows(item, payload)
-                bindSkipAction(item, payload, true)
+                binding.layoutUndergo.gone()
+                binding.tvSkip.gone()
+                binding.tvReplied.gone()
+                bindActionRows(item, payload)
+            }
+            MODE_ARRAY_FORM -> { //数组表单
+                binding.layoutUndergo.visible()
+                binding.layoutProblem.gone()
+                binding.tvUndergoTitle.text = payload.questionText ?: payload.question ?: item.content
+                bindUndergoRows(item, payload)
+                val action = payload.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
+                    ?: payload.actions?.firstOrNull()
+                if (action == null) {
+                    binding.tvUndergoSkip.gone()
+                    return
+                }
+                binding.tvUndergoSkip.visible()
+                binding.tvUndergoSkip.isEnabled = action.disabled != true
+                binding.tvUndergoSkip.setOnClickListener { onSkipClickListener(item, action, payload.questionQueueId) }
+            }
+            else -> { //通用问题
+                binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
+                binding.layoutProblem.visible()
+                binding.layoutUndergo.gone()
+                if (payload.isAnswered()) {
+                    // 已回复：隐藏跳过，展示选项/回显
+                    binding.tvSkip.gone()
+                    if (payload?.options.isNullOrEmpty()) {
+                        val repliedText = payload?.answeredText ?: ""
+                        binding.tvReplied.text = "${repliedText}"
+                        binding.tvReplied.visible()
+                        binding.flowOptions.gone()
+                    } else {
+                        binding.tvReplied.gone()
+                        binding.flowOptions.visible()
+                        bindOptionRows(item, payload)
+                    }
+                } else {
+                    // 未回复：展示选项 + 独立跳过按钮
+                    binding.tvReplied.gone()
+                    if (payload?.options.isNullOrEmpty()) {
+                        binding.flowOptions.gone()
+                        bindSkipAction(item, payload, false)
+                    } else {
+                        binding.flowOptions.visible()
+                        bindOptionRows(item, payload)
+                        bindSkipAction(item, payload, true)
+                    }
+                }
             }
         }
     }
@@ -66,17 +112,31 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         return state.disabled == true ||
             state.status == STATUS_ANSWERED ||
             state.status == STATUS_SUBMITTED ||
-            state.status == STATUS_SKIPPED
+            state.status == STATUS_SKIPPED ||
+            state.status == STATUS_REASKED
     }
 
     /** 渲染选项到 Flow：先移除旧行，再 inflate + addView，最后接入 flow.referencedIds */
     private fun bindOptionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
-        val parent = binding.clQuestionCard
         clearOptionRows()
+        val parent = binding.layoutProblem
         val inflater = LayoutInflater.from(parent.context)
         val ids = ArrayList<Int>()
         payload?.options?.forEach { option ->
             val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
+             if (payload.isAnswered() && option.selected == true) { //已回答
+                view.isEnabled = false
+                view.setBackgroundResource(R.drawable.bg_option_selected)
+                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
+            } else if (option.disabled == true) { //置灰
+                view.isEnabled = false
+                view.setBackgroundResource(R.drawable.bg_option_unselected)
+                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
+             } else { //未回答
+                view.isEnabled = true
+                view.setBackgroundResource(R.drawable.bg_option_ripple)
+                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_90_000000))
+            }
             view.text = option.text ?: option.label.orEmpty()
             view.isEnabled = option.disabled != true
             view.id = View.generateViewId()
@@ -86,6 +146,58 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             optionRows.add(view)
         }
         binding.flowOptions.referencedIds = ids.toIntArray()
+    }
+
+    private fun bindActionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
+        clearOptionRows()
+        val parent = binding.layoutProblem
+        val inflater = LayoutInflater.from(parent.context)
+        val ids = ArrayList<Int>()
+        payload?.actions?.forEach { action ->
+            val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
+            if (action.disabled == true) { //置灰
+                view.isEnabled = false
+                view.setBackgroundResource(R.drawable.bg_option_unselected)
+                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
+            } else if (payload.isAnswered()) { //已回答
+                view.isEnabled = true
+                view.setBackgroundResource(R.drawable.bg_option_selected)
+                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
+            } else { //未回答
+                view.isEnabled = true
+                view.setBackgroundResource(R.drawable.bg_option_ripple)
+                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_90_000000))
+            }
+            view.text = action.text
+            view.isEnabled = action.disabled != true
+            view.id = View.generateViewId()
+            view.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
+            parent.addView(view)
+            ids.add(view.id)
+            optionRows.add(view)
+        }
+        binding.flowOptions.referencedIds = ids.toIntArray()
+    }
+
+    private fun bindUndergoRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
+        if (payload?.actions?.isNotEmpty() == true) {
+            val action = payload.actions[0]
+            binding.btnUndergoName.text = action.text
+            if (payload.interactionState?.disabled == true) { //置灰
+                binding.btnUndergoLayout.isEnabled = false
+                binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_unselected)
+                binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
+            } else if (payload.isAnswered()) { //已回答
+                binding.btnUndergoLayout.isEnabled = true
+                binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_selected)
+                binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
+            } else { //未回答
+                binding.btnUndergoLayout.isEnabled = true
+                binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_upload_resume_btn)
+                binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_ffffff))
+            }
+            binding.btnUndergoLayout.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
+        }
     }
 
     /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */
@@ -112,11 +224,11 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
 
         binding.tvSkip.visible()
         binding.tvSkip.isEnabled = action.disabled != true
-        binding.tvSkip.setOnClickListener { onActionClickListener(item, action, payload?.questionQueueId) }
+        binding.tvSkip.setOnClickListener { onSkipClickListener(item, action, payload?.questionQueueId) }
     }
 
     private fun clearOptionRows() {
-        val parent = binding.clQuestionCard
+        val parent = binding.layoutProblem
         optionRows.forEach { parent.removeView(it) }
         optionRows.clear()
         binding.flowOptions.referencedIds = IntArray(0)
@@ -126,6 +238,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         private const val STATUS_ANSWERED = "ANSWERED"
         private const val STATUS_SUBMITTED = "SUBMITTED"
         private const val STATUS_SKIPPED = "SKIPPED"
+        private const val STATUS_REASKED = "REASKED"
         private const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
     }
 

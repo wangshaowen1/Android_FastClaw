@@ -1,88 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_question_card"
+    android:id="@+id/layout_question_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_msg_agent_left">
 
-    <TextView
-        android:id="@+id/tv_question"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_problem"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/color_90_000000"
-        android:textSize="15sp"
-        android:layout_marginTop="14dp"
-        android:layout_marginHorizontal="16dp"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintVertical_chainStyle="packed"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/flow_options"
-        tools:text="你目前找工作的紧迫度怎么样？" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- 选项容器（未回复状态可见）：Flow 为辅助布局，不增加 View 层级；
-         运行时将选项 View addView 到本 ConstraintLayout，
-         再通过 flowOptions.referencedIds 接入到垂直链中。 -->
-    <androidx.constraintlayout.helper.widget.Flow
-        tools:visibility="gone"
-        android:id="@+id/flow_options"
-        android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_question"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="14dp"
+            android:textColor="@color/color_90_000000"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@id/flow_options"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="你目前找工作的紧迫度怎么样？" />
+
+        <!-- 选项容器（未回复状态可见）：Flow 为辅助布局，不增加 View 层级；
+             运行时将选项 View addView 到本 ConstraintLayout，
+             再通过 flowOptions.referencedIds 接入到垂直链中。 -->
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/flow_options"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:visibility="gone"
+            app:flow_verticalGap="12dp"
+            app:flow_verticalStyle="packed"
+            app:flow_wrapMode="none"
+            app:layout_constraintBottom_toTopOf="@id/tv_skip"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_question"
+            app:layout_constraintVertical_bias="0"
+            app:layout_goneMarginBottom="18dp"
+            tools:visibility="gone" />
+
+        <!--  跳过按钮  -->
+        <TextView
+            android:id="@+id/tv_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="4dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="10dp"
+            android:text="@string/str_agent_question_skip"
+            android:textColor="@color/color_56_3c3c43"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/flow_options"
+            tools:visibility="visible" />
+
+        <!-- 已回复回显（已回复状态可见，与 flow_options 互斥） -->
+        <TextView
+            android:id="@+id/tv_replied"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="14dp"
+            android:textColor="@color/color_56_3c3c43"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_question"
+            app:layout_constraintVertical_bias="0"
+            tools:text="已回复：积极找"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_undergo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
+        android:paddingBottom="14dp"
         android:visibility="gone"
-        app:layout_goneMarginBottom="18dp"
-        android:paddingHorizontal="16dp"
-        app:flow_verticalGap="12dp"
-        app:flow_verticalStyle="packed"
-        app:flow_wrapMode="none"
-        app:layout_constraintBottom_toTopOf="@id/tv_skip"
-        app:layout_constraintVertical_bias="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_question" />
+        app:layout_constraintTop_toBottomOf="@id/layout_problem">
 
-    <!--  跳过按钮  -->
-    <TextView
-        android:id="@+id/tv_skip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/str_agent_question_skip"
-        android:textColor="@color/color_56_3c3c43"
-        android:textSize="12sp"
-        android:visibility="gone"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="10dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/flow_options"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_bias="1"
-        tools:visibility="visible" />
+        <ImageView
+            android:id="@+id/iv_undergo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_work_experience"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 已回复回显（已回复状态可见，与 flow_options 互斥） -->
-    <TextView
-        android:id="@+id/tv_replied"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:textColor="@color/color_56_3c3c43"
-        android:textSize="13sp"
-        android:visibility="gone"
-        android:layout_marginBottom="14dp"
-        android:layout_marginHorizontal="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_question"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:text="已回复：积极找"
-        tools:visibility="visible" />
+        <TextView
+            android:id="@+id/tv_undergo_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/work_experience_lack"
+            android:textColor="@color/color_90_000000"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_undergo_image"
+            tools:text="识别到你的工作经历不太完整，\n可以告诉我详细信息吗？" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/btn_undergo_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_option_selected"
+            android:paddingVertical="13dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_undergo_title"
+            app:layout_constraintVertical_bias="0">
+
+            <TextView
+                android:id="@+id/btn_undergo_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/please_write"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_undergo_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="12dp"
+            android:text="@string/skip"
+            android:textColor="@color/color_55_3c3c43"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_undergo_layout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

@@ -42,6 +42,8 @@
     <string name="tab_mine">我的</string>
     <string name="creation">创作</string>
     <string name="tab_claw">小虾</string>
+    <string name="please_write">请填写</string>
+    <string name="please_selected">请选择</string>
 
     <string name="customize">自定义</string>
     <string name="confirm_ok">确定</string>
@@ -591,6 +593,9 @@
     <string name="home_upload_resume_subtitle">帮你提升求职竞争力</string>
     <string name="home_upload_resume_btn">上传我的简历</string>
     <string name="home_upload_resume_not">我没有简历</string>
+
+    <!-- 工作经历 -->
+    <string name="work_experience_lack">识别到你的工作经历不太完整，\n可以告诉我详细信息吗？</string>
 
     <string name="mine_title">我的主页</string>
     <string name="mine_sticks">我的虾条</string>
