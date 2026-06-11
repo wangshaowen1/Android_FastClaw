@@ -27,7 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <RelativeLayout
+            <LinearLayout
+                android:orientation="horizontal"
                 android:id="@+id/layout_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,6 +37,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
+                    android:layout_gravity="center_vertical"
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -44,14 +46,57 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
+                <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+                    android:layout_marginLeft="18dp"
+                    android:layout_alignRight="@id/tv_title"
+                    android:id="@+id/cl_add_experience"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    app:background_normalColor="@color/color_E8F1FF"
+                    app:super_corner="100dp">
+
+                    <ImageView
+                        android:src="@drawable/ic_add"
+                        android:id="@+id/tv_add_prefix"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:textColor="@color/color_2f6bff"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tv_add_text"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_add_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4.6dp"
+                        android:text="添加"
+                        android:textColor="@color/color_2f6bff"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tv_add_prefix"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+
+                <View
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
                 <ImageView
+                    android:layout_gravity="center_vertical"
                     android:id="@+id/iv_close"
                     android:layout_width="26dp"
                     android:layout_height="26dp"
-                    android:layout_alignParentRight="true"
                     android:src="@drawable/ic_close"
                     tools:ignore="ContentDescription" />
-            </RelativeLayout>
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_experience"
@@ -68,44 +113,26 @@
                 tools:listitem="@layout/item_project_experience" />
 
             <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
-                android:id="@+id/cl_add_experience"
+                android:id="@+id/cl_wc_experience"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
                 android:layout_marginTop="14dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                app:background_normalColor="@color/color_E8F1FF"
+                app:background_normalColor="@color/color_2f6bff"
                 app:super_corner="100dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" >
-
                 <TextView
-                    android:id="@+id/tv_add_prefix"
+                    android:id="@+id/tv_wc_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="+"
-                    android:textColor="@color/color_2f6bff"
+                    android:text="完成"
+                    android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/tv_add_text"
-                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_add_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:text="添加项目经历"
-                    android:textColor="@color/color_2f6bff"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/tv_add_prefix"
                     app:layout_constraintTop_toTopOf="parent" />
             </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 

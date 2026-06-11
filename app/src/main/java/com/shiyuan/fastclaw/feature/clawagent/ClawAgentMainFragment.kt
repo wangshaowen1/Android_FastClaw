@@ -52,7 +52,9 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -220,9 +222,16 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                     }
                 } else if (payload?.isWorkExperience() ?: false) { //工作经历
                     mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        // result 即 AttributeArrayQueryData
-                    }
+                        result?.let { attrData ->
+                            WorkExperienceDialog.show(
+                                manager = childFragmentManager,
+                                attributeData = attrData,
+                                onFieldTreeItemClick = {_, _ ->
 
+                                }
+                            )
+                        }
+                    }
                 } else if (payload?.isEducationInfo() ?: false) { //教育经历
                     mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
                         // result 即 AttributeArrayQueryData
@@ -233,9 +242,18 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                     }
 
                 } else if (payload?.isProjectExperience() ?: false) { //项目经历
-                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        // result 即 AttributeArrayQueryData
-                    }
+                          // result 即 AttributeArrayQueryData
+                        mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                            result?.let { attrData ->
+                                ProjectExperienceDialog.show(
+                                    manager = childFragmentManager,
+                                    attributeData = attrData,
+                                    onFieldTreeItemClick = {_, _ ->
+
+                                    }
+                                )
+                            }
+                        }
                 } else if (payload?.isCertificates() ?: false) { //证书
                     mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
                         // result 即 AttributeArrayQueryData
