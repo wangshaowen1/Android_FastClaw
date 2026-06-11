@@ -48,17 +48,13 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         when (payload?.inputMode) {
             MODE_DICT_SINGLE, MODE_DICT_MULTI, MODE_DATE_MONTH, MODE_SALARY_RANGE -> { //枚举等等
                 binding.tvQuestion.text = payload.questionText ?: payload.question ?: item.content
-                binding.layoutProblem.visible()
                 binding.flowOptions.visible()
-                binding.layoutUndergo.gone()
                 binding.tvSkip.gone()
                 binding.tvReplied.gone()
                 bindActionRows(item, payload)
             }
             else -> { //通用问题
                 binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
-                binding.layoutProblem.visible()
-                binding.layoutUndergo.gone()
                 if (payload?.isAnswered() == true || payload?.isDisabled() == true) {
                     // 已回复：隐藏跳过，展示选项/回显
                     binding.tvSkip.gone()
@@ -91,7 +87,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     /** 渲染选项到 Flow：先移除旧行，再 inflate + addView，最后接入 flow.referencedIds */
     private fun bindOptionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         clearOptionRows()
-        val parent = binding.layoutProblem
+        val parent = binding.layoutQuestionCard
         val inflater = LayoutInflater.from(parent.context)
         val ids = ArrayList<Int>()
         payload?.options?.forEach { option ->
@@ -119,7 +115,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
 
     private fun bindActionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         clearOptionRows()
-        val parent = binding.layoutProblem
+        val parent = binding.layoutQuestionCard
         val inflater = LayoutInflater.from(parent.context)
         val ids = ArrayList<Int>()
         val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
@@ -174,7 +170,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     }
 
     private fun clearOptionRows() {
-        val parent = binding.layoutProblem
+        val parent = binding.layoutQuestionCard
         optionRows.forEach { parent.removeView(it) }
         optionRows.clear()
         binding.flowOptions.referencedIds = IntArray(0)
