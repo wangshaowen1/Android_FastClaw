@@ -208,7 +208,7 @@ class JobSelectionActivity :
         binding.layoutPrimary.setOnSingleClickListener {
             mRealVM.selectPositionData.value?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
             val categoryList = mRealVM.selectPositionData.value?.map {
-                mapOf("code" to it.secondCategoryCode, "name" to it.secondCategoryName)
+                mapOf("code" to it.positionCode, "name" to it.positionName)
             }
             categoryList?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
             FlowEventBus.postSticky(Events.ClawAgentEvent(categoryList?.toJsonString()))
