@@ -10,6 +10,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
+import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 /**
@@ -54,6 +55,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
                 binding.btnName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_ffffff))
                 binding.btnLayout.setBackgroundResource(R.drawable.bg_upload_resume_btn)
             }
+            action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
             binding.btnLayout.isEnabled = payload.isDisabled() != true
             binding.btnLayout.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
         }

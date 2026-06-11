@@ -132,7 +132,7 @@ data class CardActionPayloadBean(
 
 /** CARD 公共：按钮（7.4.2） */
 data class CardAction(
-    val actionCode: String? = null,
+    var actionCode: String? = null,
     val text: String? = null,
     val primary: Boolean? = null,
     val disabled: Boolean? = null,
