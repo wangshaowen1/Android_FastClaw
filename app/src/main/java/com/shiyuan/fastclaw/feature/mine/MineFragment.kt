@@ -19,7 +19,11 @@ import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.MOCK_WORK_EXPERIENCE
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldValue
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeOption
 import com.shiyuan.fastclaw.feature.information.AwardActivity
 import com.shiyuan.fastclaw.feature.information.EducationalActivity
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
@@ -42,6 +46,240 @@ import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
  * *****************************************
  */
 class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>() {
+
+    val MOCK_WORK_EXPERIENCE: AttributeArrayQueryData = AttributeArrayQueryData(
+        sessionId = "1",
+        conversationId = "2",
+        questionQueueId = "200",
+        attributeGroupCode = "workExperience",
+        attributeGroupName = "工作经历",
+        skippable = false,
+        complete = false,
+        missingMetaCodes = listOf("position", "workContent"),
+        fieldTree = listOf(
+            AttributeFieldTree(
+                instanceIndex = 0,
+                fieldCode = "companyName",
+                fieldName = "公司名称",
+                fieldValue = AttributeFieldValue(value = "字节跳动", displayText = "字节跳动"),
+                displayValue = "字节跳动",
+                inputMode = "TEXT",
+                dictType = null,
+                dictApi = null,
+                required = true,
+                missing = false,
+                questionOptionsJson = null,
+                options = emptyList(),
+                validationRuleJson = "{\"maxLength\":128}",
+                sortOrder = 10,
+                complete = false,
+                statusCode = "INCOMPLETE",
+                statusText = "待补充",
+                missingMetaCodes = listOf("position", "workContent"),
+                fieldItems = listOf(
+                    AttributeFieldItem(
+                        fieldCode = "companyName",
+                        fieldName = "公司名称",
+                        fieldValue = AttributeFieldValue(
+                            value = "字节跳动",
+                            displayText = "字节跳动"
+                        ),
+                        displayValue = "字节跳动",
+                        inputMode = "TEXT",
+                        dictType = null,
+                        dictApi = null,
+                        required = true,
+                        missing = false,
+                        questionOptionsJson = null,
+                        options = emptyList(),
+                        validationRuleJson = "{\"maxLength\":128}",
+                        sortOrder = 10,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "position",
+                        fieldName = "职位名称",
+                        fieldValue = AttributeFieldValue(value = null, displayText = null),
+                        displayValue = null,
+                        inputMode = "DICT_SINGLE",
+                        dictType = "POSITION",
+                        dictApi = "/candidate/app/jobAgent/dict/position/query",
+                        required = true,
+                        missing = true,
+                        questionOptionsJson = null,
+                        options = emptyList(),
+                        validationRuleJson = null,
+                        sortOrder = 20,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "startDate",
+                        fieldName = "开始时间",
+                        fieldValue = AttributeFieldValue(
+                            value = "2022-09",
+                            displayText = "2022-09"
+                        ),
+                        displayValue = "2022-09",
+                        inputMode = "DATE_MONTH",
+                        dictType = null,
+                        dictApi = null,
+                        required = true,
+                        missing = false,
+                        questionOptionsJson = null,
+                        options = emptyList(),
+                        validationRuleJson = "{\"format\":\"yyyy-MM\"}",
+                        sortOrder = 30,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "endDate",
+                        fieldName = "结束时间",
+                        fieldValue = AttributeFieldValue(
+                            value = "PRESENT",
+                            displayText = "至今"
+                        ),
+                        displayValue = "至今",
+                        inputMode = "DATE_MONTH",
+                        dictType = null,
+                        dictApi = null,
+                        required = true,
+                        missing = false,
+                        questionOptionsJson = null,
+                        options = emptyList(),
+                        validationRuleJson = "{\"format\":\"yyyy-MM\",\"allowPresent\":true}",
+                        sortOrder = 40,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "workContent",
+                        fieldName = "工作内容",
+                        fieldValue = AttributeFieldValue(value = null, displayText = null),
+                        displayValue = null,
+                        inputMode = "TEXT",
+                        dictType = null,
+                        dictApi = null,
+                        required = true,
+                        missing = true,
+                        questionOptionsJson = null,
+                        options = emptyList(),
+                        validationRuleJson = "{\"maxLength\":3000}",
+                        sortOrder = 50,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "industry",
+                        fieldName = "所属行业",
+                        fieldValue = AttributeFieldValue(
+                            value = "{\"code\":\"internet_ai\",\"name\":\"人工智能/大模型\"}",
+                            displayText = "人工智能/大模型"
+                        ),
+                        displayValue = "人工智能/大模型",
+                        inputMode = "DICT_SINGLE",
+                        dictType = "INDUSTRY",
+                        dictApi = "/candidate/app/jobAgent/dict/industry/query",
+                        required = false,
+                        missing = false,
+                        questionOptionsJson = null,
+                        options = emptyList(),
+                        validationRuleJson = null,
+                        sortOrder = 70,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "companyScale",
+                        fieldName = "公司规模",
+                        fieldValue = AttributeFieldValue(
+                            value = "{\"code\":\"SIZE_100_499\",\"name\":\"100-499\"}",
+                            displayText = "100-499"
+                        ),
+                        displayValue = "100-499",
+                        inputMode = "SINGLE_CHOICE",
+                        dictType = null,
+                        dictApi = null,
+                        required = false,
+                        missing = false,
+                        questionOptionsJson = "[{\"code\":\"SIZE_100_499\",\"name\":\"100-499\",\"enabled\":true,\"sortOrder\":30}]",
+                        options = listOf(
+                            AttributeOption(
+                                code = "SIZE_100_499",
+                                name = "100-499",
+                                enabled = true,
+                                sortOrder = 30
+                            )
+                        ),
+                        validationRuleJson = null,
+                        sortOrder = 80,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "companyType",
+                        fieldName = "公司类型",
+                        fieldValue = AttributeFieldValue(
+                            value = "{\"code\":\"PRIVATE\",\"name\":\"民营企业\"}",
+                            displayText = "民营企业"
+                        ),
+                        displayValue = "民营企业",
+                        inputMode = "SINGLE_CHOICE",
+                        dictType = null,
+                        dictApi = null,
+                        required = false,
+                        missing = false,
+                        questionOptionsJson = "[{\"code\":\"PRIVATE\",\"name\":\"民营企业\",\"enabled\":true,\"sortOrder\":40}]",
+                        options = listOf(
+                            AttributeOption(
+                                code = "PRIVATE",
+                                name = "民营企业",
+                                enabled = true,
+                                sortOrder = 40
+                            )
+                        ),
+                        validationRuleJson = null,
+                        sortOrder = 90,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "teamSize",
+                        fieldName = "团队规模",
+                        fieldValue = AttributeFieldValue(value = "12人", displayText = "12人"),
+                        displayValue = "12人",
+                        inputMode = "TEXT",
+                        dictType = null,
+                        dictApi = null,
+                        required = false,
+                        missing = false,
+                        questionOptionsJson = null,
+                        options = emptyList(),
+                        validationRuleJson = "{\"maxLength\":64}",
+                        sortOrder = 100,
+                        fieldItems = emptyList()
+                    ),
+                    AttributeFieldItem(
+                        fieldCode = "leavingReason",
+                        fieldName = "离职原因",
+                        fieldValue = AttributeFieldValue(value = null, displayText = null),
+                        displayValue = null,
+                        inputMode = "SINGLE_CHOICE",
+                        dictType = null,
+                        dictApi = null,
+                        required = false,
+                        missing = false,
+                        questionOptionsJson = "[{\"code\":\"CAREER_DEVELOPMENT\",\"name\":\"个人职业发展规划调整\",\"enabled\":true,\"sortOrder\":10}]",
+                        options = listOf(
+                            AttributeOption(
+                                code = "CAREER_DEVELOPMENT",
+                                name = "个人职业发展规划调整",
+                                enabled = true,
+                                sortOrder = 10
+                            )
+                        ),
+                        validationRuleJson = null,
+                        sortOrder = 110,
+                        fieldItems = emptyList()
+                    )
+                )
+            )
+        )
+    )
 
     private var userId: String? = null
     private val parentVm by lazy {
