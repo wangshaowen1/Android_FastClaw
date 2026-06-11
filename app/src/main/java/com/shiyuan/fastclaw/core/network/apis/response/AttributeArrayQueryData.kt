@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.core.network.apis.response
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 /**
  * 查询属性数组候选值响应数据（求职 Agent）
@@ -57,7 +58,7 @@ data class AttributeFieldTree(
     val instanceIndex: Long? = null,
     val fieldCode: String? = null,
     val fieldName: String? = null,
-    val fieldValue: AttributeFieldValue? = null,
+    val fieldValue:@RawValue Any? = null,
     val displayValue: String? = null,
     val inputMode: String? = null,
     val dictType: String? = null,
@@ -129,7 +130,7 @@ data class AttributeOption(
 data class AttributeFieldItem(
     val fieldCode: String? = null,
     val fieldName: String? = null,
-    val fieldValue: AttributeFieldValue? = null,
+    val fieldValue: @RawValue Any? = null,
     var displayValue: String? = null,
     val inputMode: String? = null,
     val dictType: String? = null,
@@ -216,3 +217,95 @@ object AttributeFieldItemFinder {
         return result
     }
 }
+
+object AttributeDataHelper {
+
+    /**
+     * 更新或添加指定实例中的某个字段项。
+     * @param attributeData 原始数据（可为 null）
+     * @param instanceIndex 目标实例的索引
+     * @param fieldCode 要更新的字段编码
+     * @param newItemProvider 根据原有字段项（可能为 null）生成新字段项的函数
+     * @return 更新后的 AttributeArrayQueryData，如果输入为 null 或未找到实例则返回原值
+     */
+    fun updateOrAddFieldItem(
+        attributeData: AttributeArrayQueryData?,
+        instanceIndex: Long,
+        fieldCode: String,
+        newItemProvider: (oldItem: AttributeFieldItem?) -> AttributeFieldItem
+    ): AttributeArrayQueryData? {
+        val tree = attributeData?.fieldTree ?: return attributeData
+        val targetInstance = tree.find { it.instanceIndex == instanceIndex } ?: return attributeData
+
+        val currentItems = targetInstance.fieldItems?.toMutableList() ?: mutableListOf()
+        val index = currentItems.indexOfFirst { it.fieldCode == fieldCode }
+        val oldItem = if (index >= 0) currentItems[index] else null
+        val newItem = newItemProvider(oldItem)
+
+        if (index >= 0) {
+            currentItems[index] = newItem
+        } else {
+            currentItems.add(newItem)
+        }
+        targetInstance.fieldItems = currentItems
+        return attributeData
+    }
+
+    /**
+     * 简化版：直接替换或添加字段项。
+     * @param attributeData 原始数据
+     * @param instanceIndex 目标实例索引
+     * @param fieldCode 字段编码
+     * @param fieldName 字段名称
+     * @param fieldValue 字段值（Map 或任意类型，需匹配 AttributeFieldItem 构造函数）
+     * @param displayValue 显示值
+     */
+    @JvmOverloads
+    fun updateFieldItemSimple(
+        attributeData: AttributeArrayQueryData?,
+        instanceIndex: Long,
+        fieldCode: String,
+        fieldName: String,
+        fieldValue: Map<String, String?>,
+        displayValue: String
+    ): AttributeArrayQueryData? {
+        return updateOrAddFieldItem(attributeData, instanceIndex, fieldCode) { oldItem ->
+            AttributeFieldItem(
+                fieldCode = fieldCode,
+                fieldName = fieldName,
+                fieldValue = fieldValue,
+                displayValue = displayValue
+            )
+        }
+    }
+
+    /**
+     * 直接替换或添加一个字段项到指定的实例中。
+     * @param attributeData 原始数据
+     * @param instanceIndex 目标实例的索引
+     * @param newItem 新的字段项（fieldCode 将作为替换或添加的依据）
+     * @return 更新后的 AttributeArrayQueryData，如果未找到实例或输入为 null 则返回原值
+     */
+    fun updateFieldItemDirect(
+        attributeData: AttributeArrayQueryData?,
+        instanceIndex: Long,
+        newItem: AttributeFieldItem
+    ): AttributeArrayQueryData? {
+        val targetInstance = attributeData?.fieldTree?.find { it.instanceIndex == instanceIndex }
+            ?: return attributeData
+
+        val currentItems = targetInstance.fieldItems?.toMutableList() ?: mutableListOf()
+        val index = currentItems.indexOfFirst { it.fieldCode == newItem.fieldCode }
+        if (index >= 0) {
+            currentItems[index] = newItem
+        } else {
+            currentItems.add(newItem)
+        }
+        targetInstance.fieldItems = currentItems
+        return attributeData
+    }
+
+
+}
+
+
