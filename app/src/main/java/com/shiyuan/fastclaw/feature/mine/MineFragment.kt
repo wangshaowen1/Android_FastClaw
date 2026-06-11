@@ -13,11 +13,13 @@ import com.shiyuan.fastclaw.feature.main.MainViewModel
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.MOCK_WORK_EXPERIENCE
 import com.shiyuan.fastclaw.feature.information.AwardActivity
 import com.shiyuan.fastclaw.feature.information.EducationalActivity
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
@@ -82,6 +84,13 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
+            WorkExperienceDialog.show(
+                manager = childFragmentManager,
+                attributeData = MOCK_WORK_EXPERIENCE,
+                onCompleteClick = { ->
+                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
+                }
+            )
          /*   SalaryRangePickerDialog.show(
                 manager = childFragmentManager,
                 minSalary = "10K",
@@ -89,7 +98,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             ) { minSalary, maxSalary ->
                 // 处理结果
             }*/
-            JobSelectionActivity.start(requireActivity(),true)
+            //JobSelectionActivity.start(requireActivity(),true)
      /*       CertificateSkillsAwardsDialog.show(
                 childFragmentManager,
                 type="Certificate",
