@@ -66,15 +66,15 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
                 attributeData?.let { attr ->
                     when (type) {
                         "skills" -> {
-                            SkillActivity.start(requireActivity(), true, attr)
+                            SkillActivity.start(requireActivity(), true, attr, item.instanceIndex)
                         }
 
                         "certificates" -> {
-                            CertificateActivity.start(requireActivity(), true, attr)
+                            CertificateActivity.start(requireActivity(), true, attr, item.instanceIndex)
                         }
 
                         else -> {
-                            AwardActivity.start(requireActivity(), true, attr)
+                            AwardActivity.start(requireActivity(), true, attr, item.instanceIndex)
                         }
                     }
                 }

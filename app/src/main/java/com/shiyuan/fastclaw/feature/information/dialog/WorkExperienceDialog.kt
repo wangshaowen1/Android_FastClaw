@@ -97,7 +97,7 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
             }
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->
-                    WorkActivity.start(requireActivity(), true, attr)
+                    WorkActivity.start(requireActivity(), true, attr, item.instanceIndex)
                 }
             }
         }

@@ -88,7 +88,7 @@ class EducationExperienceDialog : BaseBottomPushVMDialogFragment<DialogEducation
 
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->
-                    EducationalActivity.start(requireActivity(), true, attr)
+                    EducationalActivity.start(requireActivity(), true, attr, item.instanceIndex)
                 }
             }
         }
