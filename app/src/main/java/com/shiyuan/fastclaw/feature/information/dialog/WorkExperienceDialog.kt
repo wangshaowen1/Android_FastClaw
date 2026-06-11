@@ -1,19 +1,23 @@
 package com.shiyuan.fastclaw.feature.information.dialog
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.base.item.AppItemViewModel
-import com.shiyuan.fastclaw.common.adapter.QuickAdapter
-import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
 import com.shiyuan.fastclaw.databinding.DialogWorkExperienceBinding
+import com.shiyuan.fastclaw.databinding.ItemWorkExperienceBinding
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
 class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperienceBinding, InformationViewModel>() {
@@ -21,33 +25,81 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
     companion object {
         const val TAG = "WorkExperienceDialog"
         private var onAddClick: (() -> Unit)? = null
-        private var onItemClick: ((ResumeData) -> Unit)? = null
+        private var onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null
 
         fun show(
             manager: FragmentManager,
-            experiences: ArrayList<ResumeData>,
+            attributeData: AttributeArrayQueryData? = null,
             onAddClick: (() -> Unit)? = null,
-            onItemClick: ((ResumeData) -> Unit)? = null,
+            onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null,
         ): WorkExperienceDialog {
             this.onAddClick = onAddClick
-            this.onItemClick = onItemClick
+            this.onFieldTreeItemClick = onFieldTreeItemClick
             return WorkExperienceDialog().apply {
                 arguments = Bundle().apply {
-                    putParcelableArrayList(ARG_EXPERIENCES, experiences)
+                    attributeData?.let { putParcelable(ARG_ATTRIBUTE_DATA, it) }
                 }
                 show(manager)
             }
         }
-
-        private const val ARG_EXPERIENCES = "arg_experiences"
+        private const val INCOMPLETE = "INCOMPLETE"
+        private const val START_DATE = "startDate"
+        private const val END_DATE = "endDate"
+        private const val POSITION = "position"
+        private const val WORK_CONTENT = "workContent"
+        private const val ARG_ATTRIBUTE_DATA = "arg_attribute_data"
     }
 
-    private val adapter by lazy {
-        QuickAdapter<ItemWorkExperienceVm>(R.layout.item_work_experience, emptyList())
+    private var attributeData: AttributeArrayQueryData? = null
+
+    private val fieldTreeAdapter by lazy {
+        SingleBindingAdapter<ItemWorkExperienceBinding, AttributeFieldTree>(
+            R.layout.item_work_experience,
+            emptyList()
+        ) { binding, position, item ->
+            binding.tvCompany.text = item.displayValue ?:  "暂无"
+            binding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
+            val  startDate = AttributeFieldItemFinder.findFirst(item.fieldItems,START_DATE)
+            val  endDate = AttributeFieldItemFinder.findFirst(item.fieldItems,END_DATE)
+            val  position = AttributeFieldItemFinder.findFirst(item.fieldItems,POSITION)
+            val  workContent = AttributeFieldItemFinder.findFirst(item.fieldItems,WORK_CONTENT)
+            binding.tvTime.text = (startDate?.displayValue ?: "") + " - " +  (endDate?.displayValue ?: "")
+            binding.tvJob.text = position?.displayValue ?: ""
+            workContent?.displayValue?.let {
+                binding.tvDesc.text = "内容:"+workContent?.displayValue ?: ""
+            }
+
+            if( binding.tvTime.text == " - "){
+                binding.tvTime.visibility = View.GONE
+                binding.v.visibility = View.GONE
+            }else{
+                binding.tvTime.visibility = View.VISIBLE
+            }
+
+            if( binding.tvJob.text.isNullOrEmpty()){
+                binding.v.visibility = View.GONE
+                binding.tvJob.visibility = View.GONE
+            }else{
+                binding.tvJob.visibility = View.VISIBLE
+            }
+
+            if( workContent?.displayValue.isNullOrEmpty()){
+                binding.tvDesc.visibility = View.GONE
+            }else{
+                binding.tvDesc.visibility = View.VISIBLE
+            }
+            binding.root.setOnClickListener {
+                dismiss()
+                attributeData?.let { attr ->
+                    onFieldTreeItemClick?.invoke(item, attr)
+                }
+            }
+        }
     }
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
+        attributeData = getAttributeData()
         initRecyclerView()
         initView()
         bindData()
@@ -59,7 +111,6 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
         if (binding.rvExperience.itemDecorationCount == 0) {
             binding.rvExperience.addItemDecoration(SpaceDecoration(12.dp))
         }
-        binding.rvExperience.adapter = adapter
     }
 
     private fun initView() {
@@ -71,36 +122,23 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
     }
 
     private fun bindData() {
-        val experiences = getExperiences()
-        val items = experiences.map { data ->
-            ItemWorkExperienceVm(data).apply {
-                onItemClick.value = {
-                    dismiss()
-                       WorkExperienceDialog.onItemClick?.invoke(data)
-                }
-            }
-        }
-        adapter.submitList(items)
+        val fieldTree = attributeData?.fieldTree ?: emptyList()
+        binding.rvExperience.adapter = fieldTreeAdapter
+        @SuppressLint("NotifyDataSetChanged")
+        fieldTreeAdapter.submitList(fieldTree)
     }
 
     @Suppress("DEPRECATION")
-    private fun getExperiences(): ArrayList<ResumeData> {
-        val bundle = arguments ?: return arrayListOf()
+    private fun getAttributeData(): AttributeArrayQueryData? {
+        val bundle = arguments ?: return null
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            bundle.getParcelableArrayList(ARG_EXPERIENCES, ResumeData::class.java) ?: arrayListOf()
+            bundle.getParcelable(ARG_ATTRIBUTE_DATA, AttributeArrayQueryData::class.java)
         } else {
-            bundle.getParcelableArrayList(ARG_EXPERIENCES) ?: arrayListOf()
+            bundle.getParcelable(ARG_ATTRIBUTE_DATA)
         }
     }
 
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
-    }
-}
-
-class ItemWorkExperienceVm(data: ResumeData?) : AppItemViewModel<ResumeData>(data) {
-
-    fun onItemClick() {
-        onItemClick.value?.invoke(null)
     }
 }
