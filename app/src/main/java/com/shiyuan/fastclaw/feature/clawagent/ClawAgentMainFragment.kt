@@ -52,6 +52,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
@@ -235,6 +236,17 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 } else if (payload?.isEducationInfo() ?: false) { //教育经历
                     mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
                         // result 即 AttributeArrayQueryData
+                        mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                            result?.let { attrData ->
+                                EducationExperienceDialog.show(
+                                    manager = childFragmentManager,
+                                    attributeData = attrData,
+                                    onFieldTreeItemClick = {_, _ ->
+
+                                    }
+                                )
+                            }
+                        }
                     }
                 } else if (payload?.isSkills() ?: false) { //技能
                     mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->

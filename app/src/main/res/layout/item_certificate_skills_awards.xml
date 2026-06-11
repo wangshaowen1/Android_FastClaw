@@ -3,16 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="item"
-            type="com.shiyuan.fastclaw.feature.information.dialog.ItemCertificateSkillsAwardsVm" />
-
-    </data>
-
     <LinearLayout
-        singleClick="@{()->item.onItemClick()}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_ffffff_r12"
@@ -24,19 +15,17 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/tv_company"
+                android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text='@{item.data.resumeName != null ? item.data.resumeName : item.data.resumeFileName}'
                 android:textColor="@color/color_90_000000"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 tools:text="深圳市乘海科技有限公司" />
-
 
             <ImageView
                 android:id="@+id/iv_arrow"
@@ -47,39 +36,6 @@
                 android:src="@drawable/ic_item_arrow_right3"
                 tools:ignore="ContentDescription" />
         </RelativeLayout>
-
-        <LinearLayout
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text='@{item.data.submitTime != null ? item.data.submitTime : "2021.09 - 2024.05"}'
-                android:textColor="@color/color_75_3c3c43"
-                android:textSize="12sp"
-                tools:text="2021.09 - 2024.05" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="12dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:background="@color/color_75_3c3c43" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text='@{item.data.fileName != null ? item.data.fileName : "UI设计师"}'
-                android:textColor="@color/color_75_3c3c43"
-                android:textSize="12sp"
-                tools:text="UI设计师" />
-        </LinearLayout>
-
 
     </LinearLayout>
 </layout>
