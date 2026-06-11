@@ -111,11 +111,23 @@ data class CardInteractionState(
     /** 已选动作编码 */
     val selectedActionCode: String? = null,
     /** 已选值 */
-    val selectedValue: String? = null,
+    //val selectedValue: String? = null,
     /** 已选展示文案 */
     val selectedText: String? = null,
     /** 端侧幂等提交 ID */
     val clientActionId: String? = null,
+)
+
+data class CardActionPayloadBean(
+    val questionQueueId: String? = null,
+    val attributeGroupCode: String? = null,
+    val metaCode: String? = null,
+    val selectedText: String? = null,
+//    val value: String? = null,
+//    val candidateValue: String? = null,
+//    val newValue: String? = null,
+    val rejectBehavior: String? = null,
+    var selectedValue: String? = null,
 )
 
 /** CARD 公共：按钮（7.4.2） */
@@ -131,23 +143,11 @@ data class CardAction(
     val actionPayload: CardActionPayloadBean? = null,
 )
 
-data class CardActionPayloadBean(
-    val questionQueueId: String? = null,
-    val attributeGroupCode: String? = null,
-    val metaCode: String? = null,
-    val selectedText: String? = null,
-//    val value: String? = null,
-//    val candidateValue: String? = null,
-//    val newValue: String? = null,
-    val rejectBehavior: String? = null,
-    var selectedValue: String? = null,
-)
-
 /** CARD 公共：问题卡选项（7.4.3） */
 data class CardOption(
     val text: String? = null,
     val label: String? = null,
-    val value: String? = null,
+//    val value: String? = null,
 //    val selectedValue: String? = null,
     /** 问题卡选项当前固定 QUESTION_OPTION_SUBMIT */
     val actionCode: String? = null,
