@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
+import android.graphics.Typeface
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
@@ -44,19 +45,22 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
             //binding.btnName.text = action.text
             if (payload.isAnsweredV2()) { //已回答
                 binding.btnName.text = parent.context.getString(R.string.already_write)
+                binding.btnName.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
                 binding.btnName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
                 binding.btnLayout.setBackgroundResource(R.drawable.bg_option_selected)
             } else if (action.disabled == true) { //置灰
                 binding.btnName.text = parent.context.getString(R.string.please_write)
+                binding.btnName.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 binding.btnName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
                 binding.btnLayout.setBackgroundResource(R.drawable.bg_option_unselected)
             } else { //未回答
                 binding.btnName.text = parent.context.getString(R.string.please_write)
+                binding.btnName.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
                 binding.btnName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_ffffff))
                 binding.btnLayout.setBackgroundResource(R.drawable.bg_upload_resume_btn)
             }
             action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
-            binding.btnLayout.isEnabled = payload.isDisabled() != true
+            binding.btnLayout.isEnabled = true
             binding.btnLayout.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
         }
     }

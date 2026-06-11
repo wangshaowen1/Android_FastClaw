@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -92,18 +93,21 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val ids = ArrayList<Int>()
         payload?.options?.forEach { option ->
             val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
-             if (payload.isAnswered() && option.selected == true) { //已回答
+            if (payload.isAnswered() && option.selected == true) { //已回答
                 view.setBackgroundResource(R.drawable.bg_option_selected)
-                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
+                view.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                view.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
             } else if (option.disabled == true) { //置灰
                 view.setBackgroundResource(R.drawable.bg_option_unselected)
-                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
-             } else { //未回答
+                view.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
+                view.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
+            } else { //未回答
                 view.setBackgroundResource(R.drawable.bg_option_ripple)
-                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_90_000000))
+                view.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                view.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_90_000000))
             }
             view.text = option.text ?: option.label.orEmpty()
-            view.isEnabled = option.disabled != true
+            view.isEnabled = true
             view.id = View.generateViewId()
             view.setOnClickListener { onOptionClickListener(item, option, payload.questionQueueId) }
             parent.addView(view)
@@ -122,18 +126,21 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         payload?.let {
             if (payload.isAnsweredV2()) { //已回答
                 view.text = parent.context.getString(R.string.already_selected)
+                view.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
                 view.setBackgroundResource(R.drawable.bg_option_selected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else if (payload.isDisabled()) { //置灰
                 view.text = parent.context.getString(R.string.please_selected)
+                view.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 view.setBackgroundResource(R.drawable.bg_option_unselected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
             } else { //未回答
                 view.text = parent.context.getString(R.string.please_selected)
+                view.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 view.setBackgroundResource(R.drawable.bg_option_ripple)
-                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_90_000000))
+                view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_75_3c3c43))
             }
-            view.isEnabled = payload.isDisabled() != true
+            view.isEnabled = true
             view.id = View.generateViewId()
             view.setOnClickListener { onActionClickListener(item, payload.buildAction(), payload.questionQueueId) }
             parent.addView(view)

@@ -49,7 +49,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     private val sectionTitleViews = linkedMapOf<String, View>()
     private var alphabetIndex = emptyList<String>()
     private var selectedAlphabet: String? = null
-    private val mType by lazy { intent.getBundleValue<String>("sceneCode", "") }
+    private val mType by lazy { intent.getBundleValue("sceneCode", "") }
     private val mCityParams by lazy { JobCityQueryBody(sceneCode = mType) }
     private var mData: JobCityData? = null
     private val mSearchDelayTime = 300L
@@ -103,7 +103,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
             if (selectedLocations.isEmpty()) {
                 showToast(R.string.city_selector_at_least)
             } else {
-                val msgGson = JobCityData.toJson(selectedLocations)
+                val msgGson = JobCityData.toJson(mType, selectedLocations)
                 FlowEventBus.postSync(Events.ClawAgentEvent(msgGson))
                 finish()
             }
