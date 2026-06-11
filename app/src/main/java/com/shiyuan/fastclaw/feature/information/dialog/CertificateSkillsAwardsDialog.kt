@@ -16,6 +16,9 @@ import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.feature.information.AwardActivity
+import com.shiyuan.fastclaw.feature.information.CertificateActivity
+import com.shiyuan.fastclaw.feature.information.SkillActivity
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
 class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCertificateSkillsAwardsBinding, InformationViewModel>() {
@@ -23,18 +26,22 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
     companion object {
         const val TAG = "CertificateSkillsAwardsDialog"
         private var onAddClick: ((String) -> Unit)? = null
+
+        private var onCompleteClick: (() -> Unit)? = null
         private var onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null
-        private var type: String = "Certificate"
+        private var type: String = "certificates"
 
         fun show(
             manager: FragmentManager,
             attributeData: AttributeArrayQueryData? = null,
-            type: String = "Certificate",
+            type: String = "certificates",
+            onCompleteClick: (() -> Unit)? = null,
             onAddClick: ((String) -> Unit)? = null,
             onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null,
         ): CertificateSkillsAwardsDialog {
             this.onAddClick = onAddClick
             this.onFieldTreeItemClick = onFieldTreeItemClick
+            this.onCompleteClick = onCompleteClick
             this.type = type
             return CertificateSkillsAwardsDialog().apply {
                 arguments = Bundle().apply {
@@ -56,9 +63,20 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         ) { binding, position, item ->
             binding.tvName.text = item.displayValue ?: "暂无"
             binding.root.setOnClickListener {
-                dismiss()
                 attributeData?.let { attr ->
-                    onFieldTreeItemClick?.invoke(item, attr)
+                    when (type) {
+                        "skills" -> {
+                            SkillActivity.start(requireActivity(), true, attr)
+                        }
+
+                        "certificates" -> {
+                            CertificateActivity.start(requireActivity(), true, attr)
+                        }
+
+                        else -> {
+                            AwardActivity.start(requireActivity(), true, attr)
+                        }
+                    }
                 }
             }
         }
@@ -82,20 +100,35 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
 
     private fun initView() {
         when (type) {
-            "Skills" -> {
+            "skills" -> {
                 binding.tvTitle.text = "技能"
             }
-            "Awards" -> {
-                binding.tvTitle.text = "奖项"
+            "certificates" -> {
+                binding.tvTitle.text = "证书"
             }
             else -> {
-                binding.tvTitle.text = "证书"
+                binding.tvTitle.text = "奖项"
             }
         }
         binding.ivClose.setOnSingleClickListener { dismiss() }
         binding.clAddExperience.setOnSingleClickListener {
+            when (type) {
+                "skills" -> {
+                    SkillActivity.start(requireActivity(), false, attributeData)
+                }
+
+                "certificates" -> {
+                    CertificateActivity.start(requireActivity(), false, attributeData)
+                }
+
+                else -> {
+                    AwardActivity.start(requireActivity(), false, attributeData)
+                }
+            }
+        }
+        binding.clWcExperience.setOnSingleClickListener {
             dismiss()
-            onAddClick?.invoke(type)
+            onCompleteClick?.invoke()
         }
     }
 

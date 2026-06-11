@@ -13,6 +13,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.core.network.apis.response.FieldItems
@@ -27,11 +28,13 @@ import kotlinx.coroutines.launch
 class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, InformationViewModel>() {
     companion object {
         private const val EXTRA_IS_EDIT = "extra_is_edit"
+        private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
 
-        fun start(activity: Activity?, isEdit: Boolean = true) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null) {
             activity ?: return
             val intent = Intent(activity, CertificateActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
+                attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
             }
             activity.startActivity(intent)
         }

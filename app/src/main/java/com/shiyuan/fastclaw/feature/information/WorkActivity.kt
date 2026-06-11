@@ -9,6 +9,7 @@ import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.databinding.ActivityEducationalBinding
@@ -20,11 +21,13 @@ import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewModel>() {
     companion object {
         private const val EXTRA_IS_EDIT = "extra_is_edit"
+        private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
 
-        fun start(activity: Activity?, isEdit: Boolean = true) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null) {
             activity ?: return
             val intent = Intent(activity, WorkActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
+                attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
             }
             activity.startActivity(intent)
         }

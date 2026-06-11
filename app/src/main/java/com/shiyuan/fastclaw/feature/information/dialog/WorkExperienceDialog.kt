@@ -18,6 +18,8 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
+import com.shiyuan.fastclaw.feature.information.EducationalActivity
+import com.shiyuan.fastclaw.feature.information.WorkActivity
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
 class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperienceBinding, InformationViewModel>() {
@@ -27,11 +29,15 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
         private var onAddClick: (() -> Unit)? = null
         private var onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null
 
+        private var onCompleteClick: (() -> Unit)? = null
+
+
         fun show(
             manager: FragmentManager,
             attributeData: AttributeArrayQueryData? = null,
             onAddClick: (() -> Unit)? = null,
             onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null,
+            onCompleteClick: (() -> Unit)? = null,
         ): WorkExperienceDialog {
             this.onAddClick = onAddClick
             this.onFieldTreeItemClick = onFieldTreeItemClick
@@ -89,9 +95,8 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
                 binding.tvDesc.visibility = View.VISIBLE
             }
             binding.root.setOnClickListener {
-                dismiss()
                 attributeData?.let { attr ->
-                    onFieldTreeItemClick?.invoke(item, attr)
+                    WorkActivity.start(requireActivity(), true, attr)
                 }
             }
         }
@@ -116,8 +121,11 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
     private fun initView() {
         binding.ivClose.setOnSingleClickListener { dismiss() }
         binding.clAddExperience.setOnSingleClickListener {
+            WorkActivity.start(requireActivity(), false, attributeData)
+        }
+        binding.clWcExperience.setOnSingleClickListener {
             dismiss()
-            onAddClick?.invoke()
+            onCompleteClick?.invoke()
         }
     }
 

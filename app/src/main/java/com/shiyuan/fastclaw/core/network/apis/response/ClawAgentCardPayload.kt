@@ -292,6 +292,10 @@ data class CoreQuestionPayloadBean(
     fun isCertificates(): Boolean {// 证书
         return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "certificates"
     }
+
+    fun isAwards(): Boolean {//
+        return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "awards"
+    }
 }
 
 /** UPLOAD_RESUME 上传简历卡（7.5.1）；端侧按 resumeUploadStatus 路由到 引导 / 成功 / 失败 卡 */
