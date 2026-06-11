@@ -22,12 +22,14 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     companion object {
         private const val EXTRA_IS_EDIT = "extra_is_edit"
         private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
+        private const val EXTRA_INSTANCE_INDEX = "extra_instance_index"
 
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, instanceIndex: Long? = null) {
             activity ?: return
             val intent = Intent(activity, WorkActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
+                instanceIndex?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
             }
             activity.startActivity(intent)
         }

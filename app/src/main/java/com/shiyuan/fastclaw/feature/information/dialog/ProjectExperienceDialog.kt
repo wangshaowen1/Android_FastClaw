@@ -97,7 +97,7 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
             }
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->
-                    ProjectActivity.start(requireActivity(), true, attr)
+                    ProjectActivity.start(requireActivity(), true, attr, item.instanceIndex)
                 }
             }
 
