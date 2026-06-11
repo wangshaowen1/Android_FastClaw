@@ -11,6 +11,7 @@ import com.shiyuan.fastclaw.core.network.apis.entity.SensitiveWordCheckData
 import com.shiyuan.fastclaw.core.network.apis.entity.WalletInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.WorkInfo
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
+import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeRejectBody
 import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
@@ -48,6 +49,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import kotlinx.coroutines.flow.Flow
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
@@ -401,6 +403,12 @@ interface ApiService {
 
     @POST(ApiConstants.JOB_AGENT_RESUME_UPLOAD_MY_SUBMIT)
     suspend fun submitResumeMyUpload(@Body body: ResumeUploadSubmitMyBody): ApiResponse<ResumeUploadSubmitMyData?>
+
+    /**
+     * 查询属性数组候选值（求职 Agent）
+     */
+    @POST(ApiConstants.JOB_AGENT_ATTRIBUTE_ARRAY_QUERY)
+    suspend fun queryAttributeArray(@Body body: AttributeArrayQueryBody): ApiResponse<AttributeArrayQueryData?>
 
     @POST(ApiConstants.JOB_AGENT_DICT_REGION_QUERY)
     suspend fun queryCityList(@Body body: JobCityQueryBody): ApiResponse<JobCityData?>
