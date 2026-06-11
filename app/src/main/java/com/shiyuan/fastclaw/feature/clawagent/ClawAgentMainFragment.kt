@@ -209,8 +209,6 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                     JobSelectionActivity.start(activity,true)
                 } else if (payload?.isExpectedIndustry() ?: false) { //期望行业
 
-                } else if (payload?.isLanguageSkills() ?: false) { //语言能力
-
                 } else if (payload?.isBirthday() ?: false) { //出生年月
                     BirthYearMonthPickerDialog.show(childFragmentManager){ year,month->
                         FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
