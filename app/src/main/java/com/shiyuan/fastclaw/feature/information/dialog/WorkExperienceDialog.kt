@@ -41,6 +41,7 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
         ): WorkExperienceDialog {
             this.onAddClick = onAddClick
             this.onFieldTreeItemClick = onFieldTreeItemClick
+            this.onCompleteClick = onCompleteClick
             return WorkExperienceDialog().apply {
                 arguments = Bundle().apply {
                     attributeData?.let { putParcelable(ARG_ATTRIBUTE_DATA, it) }
