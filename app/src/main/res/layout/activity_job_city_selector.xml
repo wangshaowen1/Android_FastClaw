@@ -35,11 +35,10 @@
 
                 <ImageView
                     android:id="@+id/iv_close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
                     android:layout_gravity="start|center_vertical"
-                    android:padding="10dp"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="16dp"
                     android:src="@drawable/ic_close_dialog" />
             </FrameLayout>
 
