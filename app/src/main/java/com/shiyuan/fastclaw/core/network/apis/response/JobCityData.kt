@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
+import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -23,13 +24,19 @@ data class JobCityData(
     val alphabetIndex: List<String>? = null,
 ) {
     companion object {
-        fun toJson(data: LinkedHashMap<String, CityLocation>): String? {
-            val jsonString = Json.encodeToString(
-                data.values.map { city ->
-                    SimpleLocation(code = city.regionCode, name = city.regionName)
-                }
-            )
-            return jsonString
+        fun toJson(type: String, data: LinkedHashMap<String, CityLocation>): String? {
+            return if (type == JobCityQueryBody.EXPECTED_CITY) {
+                Json.encodeToString(
+                    data.values.map { city ->
+                        SimpleLocation(code = city.regionCode, name = city.regionName)
+                    }
+                )
+            } else {
+                val first = data.values.first()
+                Json.encodeToString(
+                    SimpleLocation(code = first.regionCode, name = first.regionName)
+                )
+            }
         }
     }
 }
