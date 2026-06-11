@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMatchReportViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
@@ -30,6 +31,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPendingConfirmView
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentResumeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentSearchingJobsViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTableFormViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentThinkViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTodayProgressViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUnderstandingUpgradeViewHolder
@@ -79,6 +81,13 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             { i, p ->
                 AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
                     onOptionClickListener = { item, option, queueId -> onQuestionOptionClickAction(item, option, queueId) }
+                    onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
+                    onSkipClickListener = { item, action, queueId -> onQuestionSkipClickAction(item, action, queueId) }
+                }
+            }) { h, item -> h.bind(item) }
+        register(TYPE_TABLE_FORM,
+            { i, p ->
+                AgentTableFormViewHolder(ItemMsgAgentTableFormBinding.inflate(i, p, false)).apply {
                     onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
                     onSkipClickListener = { item, action, queueId -> onQuestionSkipClickAction(item, action, queueId) }
                 }
@@ -233,5 +242,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 理解度升级卡 */
         const val TYPE_UNDERSTANDING_UPGRADE = 13
+
+        /** 表单相关 - 如工作经历、教育经历、技能、项目经历、证书、奖项 */
+        const val TYPE_TABLE_FORM = 14
     }
 }

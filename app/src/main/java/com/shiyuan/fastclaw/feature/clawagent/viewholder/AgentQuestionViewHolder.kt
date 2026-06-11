@@ -10,14 +10,11 @@ import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
-import com.shiyuan.fastclaw.common.ext.invisible
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
-import com.shiyuan.fastclaw.core.network.apis.response.CardActionPayloadBean
-import com.shiyuan.fastclaw.core.network.apis.response.CardInteractionState
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
-import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_ARRAY_FORM
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DATE_MONTH
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DICT_MULTI
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_DICT_SINGLE
@@ -58,25 +55,11 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
                 binding.tvReplied.gone()
                 bindActionRows(item, payload)
             }
-            MODE_ARRAY_FORM -> { //数组表单
-                binding.layoutUndergo.visible()
-                binding.layoutProblem.gone()
-                binding.tvUndergoTitle.text = payload.questionText ?: payload.question ?: item.content
-                bindUndergoRows(item, payload)
-                val action = payload.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
-                if (action != null) {
-                    binding.tvUndergoSkip.visible()
-                    binding.tvUndergoSkip.isEnabled = action.disabled != true
-                    binding.tvUndergoSkip.setOnClickListener { onSkipClickListener(item, action, payload.questionQueueId) }
-                } else {
-                    binding.tvUndergoSkip.gone()
-                }
-            }
             else -> { //通用问题
                 binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
                 binding.layoutProblem.visible()
                 binding.layoutUndergo.gone()
-                if (payload?.isAnswered() == true) {
+                if (payload?.isAnswered() == true || payload?.isDisabled() == true) {
                     // 已回复：隐藏跳过，展示选项/回显
                     binding.tvSkip.gone()
                     if (payload.options.isNullOrEmpty()) {
@@ -113,7 +96,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val ids = ArrayList<Int>()
         payload?.options?.forEach { option ->
             val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
-             if (payload.isAnsweredV2() && option.selected == true) { //已回答
+             if (payload.isAnswered() && option.selected == true) { //已回答
                 view.setBackgroundResource(R.drawable.bg_option_selected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else if (option.disabled == true) { //置灰
@@ -164,27 +147,6 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         binding.flowOptions.referencedIds = ids.toIntArray()
     }
 
-    private fun bindUndergoRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
-        if (payload?.actions?.isNotEmpty() == true) {
-            val action = payload.actions[0]
-            binding.btnUndergoName.text = action.text
-            if (payload.isAnsweredV2()) { //已回答
-                binding.btnUndergoLayout.isEnabled = false
-                binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_selected)
-                binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
-            } else if (action.disabled == true) { //置灰
-                binding.btnUndergoLayout.isEnabled = false
-                binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_option_unselected)
-                binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
-            } else { //未回答
-                binding.btnUndergoLayout.isEnabled = true
-                binding.btnUndergoLayout.setBackgroundResource(R.drawable.bg_upload_resume_btn)
-                binding.btnUndergoName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_ffffff))
-            }
-            binding.btnUndergoLayout.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
-        }
-    }
-
     /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */
     private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, center: Boolean = false) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
@@ -217,9 +179,4 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         optionRows.clear()
         binding.flowOptions.referencedIds = IntArray(0)
     }
-
-    companion object {
-        private const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
-    }
-
 }

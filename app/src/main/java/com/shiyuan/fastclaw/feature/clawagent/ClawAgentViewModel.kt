@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
@@ -516,7 +517,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 CARD_INTRODUCE_YOURSELF -> ClawAgentMsgAdapter.TYPE_WELCOME
                 CARD_UPLOAD_RESUME -> resolveUploadResumeItemType(msg)
                 CARD_HISTORY_RESUME_CONFIRM -> ClawAgentMsgAdapter.TYPE_PENDING_CONFIRM
-                CARD_CORE_QUESTION -> ClawAgentMsgAdapter.TYPE_QUESTION
+                CARD_CORE_QUESTION -> resolveQuestionItemType(msg)
                 CARD_UNDERSTANDING_SUMMARY -> ClawAgentMsgAdapter.TYPE_UNDERSTANDING_UPGRADE
                 CARD_RESUME_RECEIVED -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
                 CARD_JOB_SEARCHING -> ClawAgentMsgAdapter.TYPE_SEARCHING_JOBS
@@ -540,6 +541,16 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             UPLOAD_STATUS_PARSE_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
             UPLOAD_STATUS_WAITING_UPLOAD -> ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT
             else -> ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT // WAITING_UPLOAD / PARSING / null
+        }
+    }
+
+    private fun resolveQuestionItemType(msg: JobAgentMessage): Int {
+        val inputMode = msg.payloadJson?.let {
+            runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java)?.inputMode }.getOrNull()
+        }
+        return when (inputMode) {
+            CoreQuestionPayloadBean.MODE_ARRAY_FORM -> ClawAgentMsgAdapter.TYPE_TABLE_FORM
+            else -> ClawAgentMsgAdapter.TYPE_QUESTION
         }
     }
 
