@@ -229,6 +229,11 @@ object ApiConstants {
 
 
     /**
+     * 查询属性数组候选值（求职 Agent）
+     */
+    const val JOB_AGENT_ATTRIBUTE_ARRAY_QUERY = "/api/candidate/app/jobAgent/attribute/array/query"
+
+    /**
      * 确认属性候选值（求职 Agent）
      */
     const val JOB_AGENT_ATTRIBUTE_CONFIRM = "/api/candidate/app/jobAgent/attribute/confirm"
