@@ -52,6 +52,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
 import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
@@ -227,50 +228,78 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                             WorkExperienceDialog.show(
                                 manager = childFragmentManager,
                                 attributeData = attrData,
-                                onFieldTreeItemClick = {_, _ ->
-
+                                onCompleteClick = { ->
+                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                                 }
                             )
                         }
                     }
                 } else if (payload?.isEducationInfo() ?: false) { //教育经历
-                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
                         // result 即 AttributeArrayQueryData
                         mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
                             result?.let { attrData ->
                                 EducationExperienceDialog.show(
                                     manager = childFragmentManager,
                                     attributeData = attrData,
-                                    onFieldTreeItemClick = {_, _ ->
-
+                                    onCompleteClick = {->
+                                        FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                                     }
                                 )
                             }
+                        }
+                } else if (payload?.isProjectExperience() ?: false) { //项目经历
+                    // result 即 AttributeArrayQueryData
+                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                        result?.let { attrData ->
+                            ProjectExperienceDialog.show(
+                                manager = childFragmentManager,
+                                attributeData = attrData,
+                                onCompleteClick = {->
+                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
+                                }
+                            )
                         }
                     }
                 } else if (payload?.isSkills() ?: false) { //技能
                     mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        // result 即 AttributeArrayQueryData
-                    }
-
-                } else if (payload?.isProjectExperience() ?: false) { //项目经历
-                          // result 即 AttributeArrayQueryData
-                        mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                            result?.let { attrData ->
-                                ProjectExperienceDialog.show(
-                                    manager = childFragmentManager,
-                                    attributeData = attrData,
-                                    onFieldTreeItemClick = {_, _ ->
-
-                                    }
-                                )
-                            }
+                        result?.let { attrData ->
+                            CertificateSkillsAwardsDialog.show(
+                                manager = childFragmentManager,
+                                type = payload.attributeGroupCode ?: "",
+                                attributeData = attrData,
+                                onCompleteClick = { ->
+                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
+                                }
+                            )
                         }
+                    }
                 } else if (payload?.isCertificates() ?: false) { //证书
                     mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        // result 即 AttributeArrayQueryData
+                        result?.let { attrData ->
+                            CertificateSkillsAwardsDialog.show(
+                                manager = childFragmentManager,
+                                type = payload.attributeGroupCode ?: "",
+                                attributeData = attrData,
+                                onCompleteClick = { ->
+                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
+                                }
+                            )
+                        }
                     }
-                } else {
+                }else if (payload?.isAwards() ?: false) { //奖项
+                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                        result?.let { attrData ->
+                            CertificateSkillsAwardsDialog.show(
+                                manager = childFragmentManager,
+                                type = payload.attributeGroupCode ?: "",
+                                attributeData = attrData,
+                                onCompleteClick = {->
+                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
+                                }
+                            )
+                        }
+                    }
+                }  else {
                     startMsgAction(item, action, queueId)
                 }
             }

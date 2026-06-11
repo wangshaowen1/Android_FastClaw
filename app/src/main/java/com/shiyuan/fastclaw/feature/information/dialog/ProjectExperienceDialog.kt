@@ -18,6 +18,7 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
+import com.shiyuan.fastclaw.feature.information.ProjectActivity
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
 class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExperienceBinding, InformationViewModel>() {
@@ -27,14 +28,19 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
         private var onAddClick: (() -> Unit)? = null
         private var onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null
 
+        private var onCompleteClick: (() -> Unit)? = null
+
+
         fun show(
             manager: FragmentManager,
             attributeData: AttributeArrayQueryData? = null,
             onAddClick: (() -> Unit)? = null,
             onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null,
+            onCompleteClick: (() -> Unit)? = null,
         ): ProjectExperienceDialog {
             this.onAddClick = onAddClick
             this.onFieldTreeItemClick = onFieldTreeItemClick
+            this.onCompleteClick = onCompleteClick
             return ProjectExperienceDialog().apply {
                 arguments = Bundle().apply {
                     attributeData?.let { putParcelable(ARG_ATTRIBUTE_DATA, it) }
@@ -90,11 +96,11 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
                 binding.tvDesc.visibility = View.VISIBLE
             }
             binding.root.setOnClickListener {
-                dismiss()
                 attributeData?.let { attr ->
-                    onFieldTreeItemClick?.invoke(item, attr)
+                    ProjectActivity.start(requireActivity(), true, attr)
                 }
             }
+
         }
     }
 
@@ -117,8 +123,11 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
     private fun initView() {
         binding.ivClose.setOnSingleClickListener { dismiss() }
         binding.clAddExperience.setOnSingleClickListener {
+            ProjectActivity.start(requireActivity(), false, attributeData)
+        }
+        binding.clWcExperience.setOnSingleClickListener {
             dismiss()
-            onAddClick?.invoke()
+            onCompleteClick?.invoke()
         }
     }
 
