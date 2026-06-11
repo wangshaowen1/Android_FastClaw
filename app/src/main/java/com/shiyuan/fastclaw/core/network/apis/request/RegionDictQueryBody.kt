@@ -25,6 +25,8 @@ data class DictIndustryQueryBody(
 
 data class DictPositionQueryBody(
     val keyword: String? = null,
+    val sessionId: String? = null,
+    val conversationId: String? = null,
 )  {
 }
 

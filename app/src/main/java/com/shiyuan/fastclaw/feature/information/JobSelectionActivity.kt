@@ -34,10 +34,15 @@ class JobSelectionActivity :
     companion object {
         private const val EXTRA_IS_MULTIPLE = "extra_is_multiple"
 
-        fun start(activity: Activity?, isMultiple: Boolean = false) {
+        private const val SESSIONID = "SESSIONID"
+        private const val CONVERSATIONID = "CONVERSATIONID"
+
+        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String? = "", conversationId: String? = "") {
             activity ?: return
             val intent = Intent(activity, JobSelectionActivity::class.java).apply {
                 putExtra(EXTRA_IS_MULTIPLE, isMultiple)
+                putExtra(JobSelectionActivity.Companion.SESSIONID, sessionId)
+                putExtra(JobSelectionActivity.Companion.CONVERSATIONID, conversationId)
             }
             activity.startActivity(intent)
         }
@@ -48,11 +53,14 @@ class JobSelectionActivity :
         super.onCreate(savedInstanceState)
         initView()
         observeEvents()
-        mRealVM.queryDictPositionQuery()
+        mRealVM.queryDictPositionQuery(sessionId,conversationId)
     }
 
 
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
+
+    private val sessionId: String by lazy { intent.getStringExtra(JobSelectionActivity.Companion.SESSIONID) ?: "" }
+    private val conversationId: String by lazy { intent.getStringExtra(JobSelectionActivity.Companion.CONVERSATIONID)  ?: ""}
     private val cyIyPnAdapter: IyPnAdapter by lazy {
         IyPnAdapter( { item, position ->
             mRealVM.allPositioData.value?.forEach { it.isSelected = false }
@@ -181,7 +189,7 @@ class JobSelectionActivity :
             val keyword = editable?.toString().orEmpty()
             val showIcon = keyword.isNotEmpty()
             if (showIcon) {
-                mRealVM.queryDictPositionQuery(keyword)
+                mRealVM.queryDictPositionQuery(keyword,sessionId,conversationId)
                 binding.ivClear.visibility = View.VISIBLE
                 binding.rlSc.visibility = View.VISIBLE
             } else {
@@ -198,8 +206,12 @@ class JobSelectionActivity :
         updateCompleteButtonState(emptyList())
 
         binding.layoutPrimary.setOnSingleClickListener {
-           // mRealVM.selectPositionData.value?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
-            FlowEventBus.postSticky(Events.ClawAgentEvent(mRealVM.selectPositionData.value?.toJsonString()))
+            mRealVM.selectPositionData.value?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
+            val categoryList = mRealVM.selectPositionData.value?.map {
+                mapOf("code" to it.secondCategoryCode, "name" to it.secondCategoryName)
+            }
+            categoryList?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
+            FlowEventBus.postSticky(Events.ClawAgentEvent(categoryList?.toJsonString()))
             finish()
         }
     }

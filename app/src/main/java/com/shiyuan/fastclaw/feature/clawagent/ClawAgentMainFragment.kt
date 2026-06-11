@@ -206,7 +206,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 } else if (payload?.isExpectedCity() ?: false) { //意向城市
                     JobCitySelectorActivity.start(activity, JobCityQueryBody.EXPECTED_CITY)
                 } else if (payload?.isJobIntention() ?: false) { //意向岗位
-                    JobSelectionActivity.start(activity,true)
+                    JobSelectionActivity.start(activity,true,mRealVM.sessionId,mRealVM.conversationId)
                 } else if (payload?.isExpectedIndustry() ?: false) { //期望行业
 
                 } else if (payload?.isLanguageSkills() ?: false) { //语言能力

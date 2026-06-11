@@ -39,9 +39,9 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
     var searchData = MutableLiveData<List<CommonEnumItem>>()
     var selectData = MutableLiveData<List<CommonEnumItem>>()
     var lastSelectedPosition = MutableLiveData<Int>(1)
-    fun queryDictIndustryQuery() {
+    fun queryDictIndustryQuery(sessionId: String? = null,conversationId: String? = null) {
         launchWithLoading(true, block = {
-            val requestBody = DictIndustryQueryBody(sessionId = "56317951643738", conversationId = "56317951643739")
+            val requestBody = DictIndustryQueryBody(sessionId = sessionId, conversationId = conversationId)
             response(ApiFactory.apiService.queryDictIndustryQuery(requestBody), result = {
                 allData.postValue(this.data?.items)
                 if (selectData.value.isNullOrEmpty()) {
@@ -52,11 +52,11 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
 
     }
 
-    fun queryDictIndustryQuery(keyword: String? = null) {
+    fun queryDictIndustryQuery(keyword: String? = null,sessionId: String? = null,conversationId: String? = null) {
         launchWithLoading(false, block = {
             val requestBody = DictIndustryQueryBody(
-                sessionId = "56317951643738",
-                conversationId = "56317951643739",
+                sessionId = sessionId,
+                conversationId = conversationId,
                 keyword = keyword
             )
             response(ApiFactory.apiService.queryDictIndustryQuery(requestBody), result = {
@@ -73,9 +73,9 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
     var selectPositionData = MutableLiveData<List<CommonEnumItem>>()
     var lastSelectedPosition2 = MutableLiveData<Int>(1)
 
-    fun queryDictPositionQuery() {
+    fun queryDictPositionQuery(sessionId: String? = null,conversationId: String? = null) {
         launchWithLoading(true, block = {
-            val requestBody = DictPositionQueryBody()
+            val requestBody = DictPositionQueryBody(sessionId = sessionId, conversationId = conversationId)
             response(ApiFactory.apiService.queryDictPositionQuery(requestBody), result = {
                 allPositioData.postValue(this.data?.firstCategories)
                 if (selectData.value.isNullOrEmpty()) {
@@ -86,9 +86,9 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
 
     }
 
-    fun queryDictPositionQuery(keyword: String? = null) {
+    fun queryDictPositionQuery(keyword: String? = null,sessionId: String? = null,conversationId: String? = null) {
         launchWithLoading(false, block = {
-            val requestBody = DictPositionQueryBody(keyword = keyword)
+            val requestBody = DictPositionQueryBody(keyword = keyword,sessionId = sessionId, conversationId = conversationId)
             response(ApiFactory.apiService.queryDictPositionQuery(requestBody), result = {
                 searchPositionData.postValue(this.data?.matchedPositions)
             }, error = { this?.msg?.showToast() })

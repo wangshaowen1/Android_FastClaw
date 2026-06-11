@@ -34,11 +34,15 @@ class IndustrySelectionActivity :
     BaseViewModelActivity<ActivityIndustrySelectionBinding, InformationViewModel>() {
     companion object {
         private const val EXTRA_IS_MULTIPLE = "extra_is_multiple"
+        private const val SESSIONID = "SESSIONID"
+        private const val CONVERSATIONID = "CONVERSATIONID"
 
-        fun start(activity: Activity?, isMultiple: Boolean = false) {
+        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String = "", conversationId: String = "") {
             activity ?: return
             val intent = Intent(activity, IndustrySelectionActivity::class.java).apply {
                 putExtra(EXTRA_IS_MULTIPLE, isMultiple)
+                putExtra(SESSIONID, sessionId)
+                putExtra(CONVERSATIONID, conversationId)
             }
             activity.startActivity(intent)
         }
@@ -49,11 +53,13 @@ class IndustrySelectionActivity :
         super.onCreate(savedInstanceState)
         initView()
         observeEvents()
-        mRealVM.queryDictIndustryQuery()
+        mRealVM.queryDictIndustryQuery(sessionId,conversationId)
     }
 
 
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
+    private val sessionId: String by lazy { intent.getStringExtra(SESSIONID) ?: "" }
+    private val conversationId: String by lazy { intent.getStringExtra(CONVERSATIONID)  ?: ""}
     private val cyIyPnAdapter: IyPnAdapter by lazy {
         IyPnAdapter( { item, position ->
             mRealVM.allData.value?.forEach { it.isSelected = false }
@@ -173,7 +179,7 @@ class IndustrySelectionActivity :
         binding.et.doAfterTextChanged { editable ->
             val showIcon = !editable.isNullOrEmpty()
             if (showIcon) {
-                mRealVM.queryDictIndustryQuery(editable.toString())
+                mRealVM.queryDictIndustryQuery(sessionId,conversationId,editable.toString())
                 binding.ivClear.visibility = View.VISIBLE
                 binding.rlSc.visibility = View.VISIBLE
             } else {

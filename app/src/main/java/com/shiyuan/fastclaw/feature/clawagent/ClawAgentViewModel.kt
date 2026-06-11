@@ -94,10 +94,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     val attributeArrayResult = MutableLiveData<AttributeArrayQueryData?>()
 
     /** 当前会话 ID，发送消息/提交动作时回传 */
-    private var sessionId: String? = null
+    public var sessionId: String? = null
 
     /** 当前对话 ID */
-    private var conversationId: String? = null
+    public var conversationId: String? = null
 
     /** 已持有的最新消息游标，用于增量恢复 */
     private var latestCursor: String? = null
