@@ -54,12 +54,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     private val mType by lazy { intent.getBundleValue<String>("sceneCode", "") }
     private val mCityParams by lazy { JobCityQueryBody(sceneCode = mType) }
     private var mData: JobCityData? = null
+    private val mSearchDelayTime = 300L
 
     companion object {
-        const val EXTRA_SELECTED_REGION_CODES = "extra_selected_region_codes"
-        const val EXTRA_SELECTED_REGION_NAMES = "extra_selected_region_names"
-        private const val SEARCH_DELAY_MS = 300L
-
         fun start(activity: Activity?, sceneCode: String) {
             activity ?: return
             val intent = Intent(activity, JobCitySelectorActivity::class.java)
@@ -84,10 +81,12 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
-        binding.tvSubtitle.text = if (mType == JobCityQueryBody.EXPECTED_CITY) {
-            getString(R.string.city_selector_add_multiple)
+        if (mType == JobCityQueryBody.EXPECTED_CITY) {
+            binding.tvSubtitle.text = getString(R.string.city_selector_add_multiple)
+            maxSelectCount = 3
         } else {
-            getString(R.string.city_selector_now_city)
+            binding.tvSubtitle.text = getString(R.string.city_selector_now_city)
+            maxSelectCount = 1
         }
         binding.ivClose.setOnSingleClickListener { finish() }
         binding.ivClearSearch.setOnSingleClickListener {
@@ -120,7 +119,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
                 pendingSearch = Runnable {
                     mRealVM.getJobCityList(mCityParams.apply { keyword = text })
                 }.also {
-                    searchHandler.postDelayed(it, SEARCH_DELAY_MS)
+                    searchHandler.postDelayed(it, mSearchDelayTime)
                 }
             }
             override fun afterTextChanged(s: Editable?) = Unit
@@ -146,7 +145,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     }
 
     private fun renderCityData() {
-        maxSelectCount = mData?.maxSelectCount ?: maxSelectCount
+        //maxSelectCount = mData?.maxSelectCount ?: maxSelectCount
         mData?.selectedLocations.orEmpty().forEach { item ->
             item.regionCode?.let { selectedLocations[it] = item }
         }

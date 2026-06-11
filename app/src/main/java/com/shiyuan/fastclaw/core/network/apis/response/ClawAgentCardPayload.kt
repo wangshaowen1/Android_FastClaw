@@ -178,9 +178,17 @@ data class CoreQuestionPayloadBean(
 ) {
 
     companion object {
+
+        const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
+        /** 当前卡可操作 */
+        const val STATUS_ACTIVE = "ACTIVE"
+        /** 当前题已有效提交或已填写 */
         const val STATUS_ANSWERED = "ANSWERED"
+        /** 其他系统关闭或兼容动作已提交 */
         const val STATUS_SUBMITTED = "SUBMITTED"
+        /** 用户明确点击跳过或拒绝 */
         const val STATUS_SKIPPED = "SKIPPED"
+        /** 旧题未完成，已被重发题卡替代 */
         const val STATUS_REASKED = "REASKED"
 
         /** 文本输入 */
@@ -215,8 +223,7 @@ data class CoreQuestionPayloadBean(
     /** 整卡是否已回答：状态机终态或整卡禁用 */
     fun isAnswered(): Boolean {
         val state = interactionState ?: return false
-        return state.disabled == true ||
-                state.status == STATUS_ANSWERED ||
+        return state.status == STATUS_ANSWERED ||
                 state.status == STATUS_SUBMITTED ||
                 state.status == STATUS_SKIPPED ||
                 state.status == STATUS_REASKED
@@ -225,9 +232,7 @@ data class CoreQuestionPayloadBean(
     fun isAnsweredV2(): Boolean {
         val state = interactionState ?: return false
         return state.status == STATUS_ANSWERED ||
-                state.status == STATUS_SUBMITTED ||
-                state.status == STATUS_SKIPPED ||
-                state.status == STATUS_REASKED
+                state.status == STATUS_SUBMITTED
     }
 
     fun isDisabled(): Boolean {
