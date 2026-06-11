@@ -142,15 +142,15 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val view = inflater.inflate(R.layout.item_agent_question_option, parent, false) as TextView
         payload?.let {
             if (payload.isAnsweredV2()) { //已回答
-                view.text = "已选择"
+                view.text = parent.context.getString(R.string.already_selected)
                 view.setBackgroundResource(R.drawable.bg_option_selected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else if (payload.isDisabled()) { //置灰
-                view.text = "请选择"
+                view.text = parent.context.getString(R.string.please_selected)
                 view.setBackgroundResource(R.drawable.bg_option_unselected)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
             } else { //未回答
-                view.text = "请选择"
+                view.text = parent.context.getString(R.string.please_selected)
                 view.setBackgroundResource(R.drawable.bg_option_ripple)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_90_000000))
             }

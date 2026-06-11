@@ -44,6 +44,7 @@
     <string name="tab_claw">小虾</string>
     <string name="please_write">请填写</string>
     <string name="please_selected">请选择</string>
+    <string name="already_selected">已选择</string>
 
     <string name="customize">自定义</string>
     <string name="confirm_ok">确定</string>
