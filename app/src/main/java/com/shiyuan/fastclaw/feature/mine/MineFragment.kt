@@ -322,10 +322,18 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            WorkExperienceDialog.show(
+           /* WorkExperienceDialog.show(
                 manager = childFragmentManager,
                 attributeData = MOCK_WORK_EXPERIENCE,
                 onCompleteClick = { ->
+                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
+                }
+            )*/
+            CertificateSkillsAwardsDialog.show(
+                manager = childFragmentManager,
+                type = "skills",
+                attributeData = MOCK_WORK_EXPERIENCE,
+                onCompleteClick = {->
                     FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                 }
             )

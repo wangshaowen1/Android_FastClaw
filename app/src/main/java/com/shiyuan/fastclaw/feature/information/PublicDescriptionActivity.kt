@@ -9,11 +9,13 @@ import androidx.core.widget.doAfterTextChanged
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.Events.TrackCreatedEvent
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.databinding.ActivityPublicDescriptionBinding
 import com.shiyuan.fastclaw.databinding.ActivityPublicFreeFillInBinding
@@ -27,7 +29,7 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
 
         private val MAX_LENGTH = 3000
 
-        fun start(activity: Activity?, isEdit: Boolean = true, data: CommonItems) {
+        fun start(activity: Activity?, isEdit: Boolean = true, data: AttributeFieldItem) {
             activity ?: return
             Intent(activity, PublicDescriptionActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
@@ -37,11 +39,11 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
     }
     private val isEdit: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_EDIT, true) }
 
-    private  var data: CommonItems = CommonItems()
+    private  var data: AttributeFieldItem = AttributeFieldItem()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        data = intent.getParcelableExtra(EXTRA_DATA)!!
+        data = intent.getParcelableExtra(EXTRA_DATA) ?: AttributeFieldItem()
         initView()
     }
 
@@ -57,7 +59,8 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
         }
         binding.tvTitle.text = data.fieldName.toString()
         binding.tvTip.text = data.fieldName.toString()
-        binding.et.setText(data.fieldValue ?: "")
+        binding.et.setText(data.displayValue ?: "")
+        binding.tvWordCount.text = if(binding.et.text?.length.isNull()) "0" else  binding.et.text?.length.toString()
         binding.et.doAfterTextChanged { editable ->
             val currentLength = editable?.length ?: 0
             binding.tvWordCount.text = "$currentLength"
@@ -65,13 +68,17 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
             if (currentLength == MAX_LENGTH) {
                 "已达最大输入字数 $MAX_LENGTH 字".showToast()
             }
-            data.fieldValue= editable.toString()
+            data.displayValue= editable.toString()
         }
         binding.rlBack.setOnSingleClickListener {
             finish()
         }
         binding.tvQr.setOnSingleClickListener {
-            FlowEventBus.postSticky(Events.CommonItemsEvent(data));
+            if(binding.et.text.isNullOrEmpty()){
+                "请输入".showToast()
+                return@setOnSingleClickListener
+            }
+            FlowEventBus.postSticky(Events.CommonAttributeFieldItemEvent(data));
             finish()
         }
     }

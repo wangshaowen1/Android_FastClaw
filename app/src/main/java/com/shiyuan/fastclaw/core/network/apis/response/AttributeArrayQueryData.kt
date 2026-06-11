@@ -72,7 +72,7 @@ data class AttributeFieldTree(
     val statusCode: String? = null,
     val statusText: String? = null,
     val missingMetaCodes: List<String>? = null,
-    val fieldItems: List<AttributeFieldItem>? = null,
+    var fieldItems: List<AttributeFieldItem>? = null,
 ) : Parcelable
 
 /**
@@ -130,7 +130,7 @@ data class AttributeFieldItem(
     val fieldCode: String? = null,
     val fieldName: String? = null,
     val fieldValue: AttributeFieldValue? = null,
-    val displayValue: String? = null,
+    var displayValue: String? = null,
     val inputMode: String? = null,
     val dictType: String? = null,
     val dictApi: String? = null,
@@ -144,7 +144,7 @@ data class AttributeFieldItem(
     val statusCode: String? = null,
     val statusText: String? = null,
     val missingMetaCodes: List<String>? = null,
-    val fieldItems: List<AttributeFieldItem>? = null,
+    var fieldItems: List<AttributeFieldItem>? = null,
 ) : Parcelable
 
 
