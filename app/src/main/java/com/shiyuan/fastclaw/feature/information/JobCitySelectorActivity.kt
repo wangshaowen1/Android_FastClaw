@@ -30,11 +30,9 @@ import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.CityLocation
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
-import com.shiyuan.fastclaw.core.network.apis.response.SimpleLocation
 import com.shiyuan.fastclaw.databinding.ActivityJobCitySelectorBinding
 import com.shiyuan.fastclaw.feature.information.viewHolder.LocationSearchAdapter
 import com.shiyuan.fastclaw.feature.information.viewModel.JobCitySelectorModel
-import kotlinx.serialization.json.Json
 
 /**
  * @desc：工作城市选择
@@ -57,6 +55,12 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     private val mSearchDelayTime = 300L
 
     companion object {
+        /**
+         * 打开城市选择器页面。
+         *
+         * @param activity 当前页面 Activity。
+         * @param sceneCode 城市字段场景编码，区分现居住城市和意向城市。
+         */
         fun start(activity: Activity?, sceneCode: String) {
             activity ?: return
             val intent = Intent(activity, JobCitySelectorActivity::class.java)
@@ -79,6 +83,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
             .init()
     }
 
+    /**
+     * 初始化页面文案、点击事件、搜索输入、字母索引触摸和列表适配器。
+     */
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         if (mType == JobCityQueryBody.EXPECTED_CITY) {
@@ -135,6 +142,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         mRealVM.getJobCityList(mCityParams)
     }
 
+    /**
+     * 监听城市接口数据变化，收到新数据后刷新页面。
+     */
     private fun initObserve() {
         mRealVM.jobCityList.observe(this) {
             it?.let {
@@ -144,6 +154,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         }
     }
 
+    /**
+     * 根据当前是否处于搜索状态，渲染普通城市分组或搜索结果。
+     */
     private fun renderCityData() {
         //maxSelectCount = mData?.maxSelectCount ?: maxSelectCount
         mData?.selectedLocations.orEmpty().forEach { item ->
@@ -166,6 +179,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         refreshSelectedState()
     }
 
+    /**
+     * 渲染历史城市、热门城市和 A-Z 分组城市列表。
+     */
     private fun renderNormalSections(data: JobCityData?) {
         binding.llSections.removeAllViews()
         sectionTitleViews.clear()
@@ -181,6 +197,12 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         binding.tvAlphabetIndex.visibility = if (alphabetIndex.isEmpty()) View.GONE else View.VISIBLE
     }
 
+    /**
+     * 添加一个城市分组标题和分组内的城市按钮。
+     *
+     * @param title 分组标题，包含历史城市、热门城市或字母。
+     * @param locations 当前分组下的城市列表。
+     */
     private fun addSection(title: String, locations: List<CityLocation>) {
         if (title.isBlank() || locations.isEmpty()) return
         binding.llSections.addView(TextView(this).apply {
@@ -210,6 +232,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         binding.llSections.addView(grid)
     }
 
+    /**
+     * 处理右侧 A-Z 索引的点击和滑动选择。
+     */
     private fun handleAlphabetTouch(event: MotionEvent): Boolean {
         if (alphabetIndex.isEmpty() || binding.scrollNormal.visibility != View.VISIBLE) return false
         when (event.actionMasked) {
@@ -225,12 +250,18 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         return false
     }
 
+    /**
+     * 选中一个字母索引，并滚动左侧列表到对应分组。
+     */
     private fun selectAlphabet(letter: String) {
         selectedAlphabet = letter
         refreshAlphabetIndexText()
         scrollToLetter(letter)
     }
 
+    /**
+     * 刷新右侧 A-Z 索引文本，高亮当前选中的字母。
+     */
     private fun refreshAlphabetIndexText() {
         val normalColor = ContextCompat.getColor(this, R.color.color_55_3c3c43)
         val selectedColor = ContextCompat.getColor(this, R.color.color_2f6bff)
@@ -267,6 +298,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         binding.tvAlphabetIndex.text = spannable
     }
 
+    /**
+     * 将左侧城市列表滚动到指定字母分组。
+     */
     private fun scrollToLetter(letter: String) {
         val target = sectionTitleViews[letter.uppercase()] ?: return
         binding.scrollNormal.post {
@@ -274,6 +308,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         }
     }
 
+    /**
+     * 根据左侧列表滚动位置，同步右侧 A-Z 索引的选中态。
+     */
     private fun syncAlphabetByScroll(scrollY: Int) {
         if (alphabetIndex.isEmpty() || binding.scrollNormal.visibility != View.VISIBLE) return
         val contentScrollY = scrollY - binding.llSections.top
@@ -289,6 +326,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         }
     }
 
+    /**
+     * 创建普通城市列表中的城市按钮，并按选中状态切换样式。
+     */
     private fun createLocationChip(item: CityLocation): TextView {
         val code = item.regionCode.orEmpty()
         val selected = code.isNotBlank() && selectedLocations.containsKey(code)
@@ -319,6 +359,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         }
     }
 
+    /**
+     * 切换城市选中状态，并处理最大可选数量限制。
+     */
     private fun toggleLocation(item: CityLocation) {
         val code = item.regionCode
         if (code.isNullOrBlank()) return
@@ -339,6 +382,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         refreshSelectedState()
     }
 
+    /**
+     * 从底部已选城市中删除指定城市，并同步列表选中态。
+     */
     private fun removeSelectedLocation(item: CityLocation) {
         val code = item.regionCode
         if (code.isNullOrBlank()) return
@@ -351,6 +397,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         }
     }
 
+    /**
+     * 刷新底部已选城市区域，包括数量、上限和可删除城市标签。
+     */
     private fun refreshSelectedState() {
         binding.tvCount.text = "${selectedLocations.size}"
         binding.tvMax.text = "/$maxSelectCount"
