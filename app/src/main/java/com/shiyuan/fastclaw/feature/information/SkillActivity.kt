@@ -12,8 +12,8 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
-import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.databinding.ActivitySkillBinding
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
@@ -40,6 +40,8 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
     private var attributeData: AttributeArrayQueryData? = null
     private var instanceIndex: Long? = null
     private var selectedProficiencyCode: String? = null
+
+    private val fieldItemsMap = mutableMapOf<String, AttributeFieldItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,7 +85,12 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
             }
         }
         binding.vForm1.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "技能名称"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_SKILL_NAME] ?: AttributeFieldItem(fieldCode = FIELD_SKILL_NAME, fieldName = "技能名称")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_SKILL_NAME, fieldName = "技能名称")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
 
         binding.vForm2.setOnSingleClickListener {
@@ -101,21 +108,42 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         } ?: return
 
         val skillNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_SKILL_NAME)
-        skillNameItem?.displayValue?.let {
-            binding.vForm1.setData(CommonItems(fieldName = "技能名称", fieldValue = it))
+        skillNameItem?.let {
+            fieldItemsMap[FIELD_SKILL_NAME] = it
+            binding.vForm1.setValueText(it.displayValue)
         }
 
         val proficiencyItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_PROFICIENCY)
-        proficiencyItem?.displayValue?.let {
-            selectedProficiencyCode = proficiencyItem.fieldValue?.value
-            binding.vForm2.setData(CommonItems(fieldName = "熟练度", fieldValue = it))
+        proficiencyItem?.let {
+            fieldItemsMap[FIELD_PROFICIENCY] = it
+            selectedProficiencyCode = it.fieldValue?.value
+            binding.vForm2.setValueText(it.displayValue)
         }
     }
 
     private fun observeEvents() {
         observeEvents {
-            on<Events.CommonItemsEvent> { event ->
-                binding.vForm1.setData(event.commonItems)
+            on<Events.CommonAttributeFieldItemEvent> { event ->
+                event.attributeFieldItem?.fieldCode?.let { fieldCode ->
+                    attributeData?.fieldTree?.forEach { instance ->
+                        val currentItems = instance.fieldItems?.toMutableList() ?: mutableListOf()
+                        val index = currentItems.indexOfFirst { it.fieldCode == fieldCode }
+                        if (index >= 0) {
+                            currentItems[index] = event.attributeFieldItem
+                        } else {
+                            currentItems.add(event.attributeFieldItem)
+                        }
+                        instance.fieldItems = currentItems
+                        return@forEach
+                    }
+                    when (fieldCode) {
+                        FIELD_SKILL_NAME -> {
+                            fieldItemsMap[FIELD_SKILL_NAME] = event.attributeFieldItem
+                            binding.vForm1.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_PROFICIENCY -> fieldItemsMap[FIELD_PROFICIENCY] = event.attributeFieldItem
+                    }
+                }
             }
         }
     }

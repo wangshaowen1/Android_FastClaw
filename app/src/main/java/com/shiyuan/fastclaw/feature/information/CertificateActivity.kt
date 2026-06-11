@@ -12,8 +12,8 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
-import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.databinding.ActivityCertificateBinding
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
@@ -41,6 +41,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
     private var attributeData: AttributeArrayQueryData? = null
     private var instanceIndex: Long? = null
 
+    private val fieldItemsMap = mutableMapOf<String, AttributeFieldItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,11 +85,21 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
             }
         }
         binding.vForm1.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "证书名称"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_CERTIFICATE_NAME] ?: AttributeFieldItem(fieldCode = FIELD_CERTIFICATE_NAME, fieldName = "证书名称")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_CERTIFICATE_NAME, fieldName = "证书名称")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
 
         binding.vForm2.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "颁发机构"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_ISSUE_ORG] ?: AttributeFieldItem(fieldCode = FIELD_ISSUE_ORG, fieldName = "颁发机构")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_ISSUE_ORG, fieldName = "颁发机构")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm3.setOnSingleClickListener {
 
@@ -105,25 +116,51 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         } ?: return
 
         val certificateNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_CERTIFICATE_NAME)
-        certificateNameItem?.displayValue?.let {
-            binding.vForm1.setData(CommonItems(fieldName = "证书名称", fieldValue = it))
+        certificateNameItem?.let {
+            fieldItemsMap[FIELD_CERTIFICATE_NAME] = it
+            binding.vForm1.setValueText(it.displayValue)
         }
 
         val issueOrgItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_ISSUE_ORG)
-        issueOrgItem?.displayValue?.let {
-            binding.vForm2.setData(CommonItems(fieldName = "颁发机构", fieldValue = it))
+        issueOrgItem?.let {
+            fieldItemsMap[FIELD_ISSUE_ORG] = it
+            binding.vForm2.setValueText(it.displayValue)
         }
 
         val issueTimeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_ISSUE_TIME)
-        issueTimeItem?.displayValue?.let {
-            binding.vForm3.setData(CommonItems(fieldName = "时间", fieldValue = it))
+        issueTimeItem?.let {
+            fieldItemsMap[FIELD_ISSUE_TIME] = it
+            binding.vForm3.setValueText(it.displayValue)
         }
     }
 
     private fun observeEvents() {
         observeEvents {
-            on<Events.CommonItemsEvent> { event ->
-                binding.vForm1.setData(event.commonItems)
+            on<Events.CommonAttributeFieldItemEvent> { event ->
+                event.attributeFieldItem?.fieldCode?.let { fieldCode ->
+                    attributeData?.fieldTree?.forEach { instance ->
+                        val currentItems = instance.fieldItems?.toMutableList() ?: mutableListOf()
+                        val index = currentItems.indexOfFirst { it.fieldCode == fieldCode }
+                        if (index >= 0) {
+                            currentItems[index] = event.attributeFieldItem
+                        } else {
+                            currentItems.add(event.attributeFieldItem)
+                        }
+                        instance.fieldItems = currentItems
+                        return@forEach
+                    }
+                    when (fieldCode) {
+                        FIELD_CERTIFICATE_NAME -> {
+                            fieldItemsMap[FIELD_CERTIFICATE_NAME] = event.attributeFieldItem
+                            binding.vForm1.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_ISSUE_ORG -> {
+                            fieldItemsMap[FIELD_ISSUE_ORG] = event.attributeFieldItem
+                            binding.vForm2.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_ISSUE_TIME -> fieldItemsMap[FIELD_ISSUE_TIME] = event.attributeFieldItem
+                    }
+                }
             }
         }
     }

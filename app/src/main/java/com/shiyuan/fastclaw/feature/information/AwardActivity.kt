@@ -12,8 +12,8 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
-import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.databinding.ActivityAwardBinding
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
@@ -42,6 +42,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
     private var instanceIndex: Long? = null
     private var selectedAwardLevelCode: String? = null
 
+    private val fieldItemsMap = mutableMapOf<String, AttributeFieldItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,7 +86,12 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
             }
         }
         binding.vForm1.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "奖励名称"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_AWARD_NAME] ?: AttributeFieldItem(fieldCode = FIELD_AWARD_NAME, fieldName = "奖励名称")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_AWARD_NAME, fieldName = "奖励名称")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
 
         binding.vForm2.setOnSingleClickListener {
@@ -106,26 +112,52 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
         } ?: return
 
         val awardNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_AWARD_NAME)
-        awardNameItem?.displayValue?.let {
-            binding.vForm1.setData(CommonItems(fieldName = "奖励名称", fieldValue = it))
+        awardNameItem?.let {
+            fieldItemsMap[FIELD_AWARD_NAME] = it
+            binding.vForm1.setValueText(it.displayValue)
         }
 
         val awardLevelItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_AWARD_LEVEL)
-        awardLevelItem?.displayValue?.let {
-            selectedAwardLevelCode = awardLevelItem.fieldValue?.value
-            binding.vForm2.setData(CommonItems(fieldName = "奖励等级", fieldValue = it))
+        awardLevelItem?.let {
+            fieldItemsMap[FIELD_AWARD_LEVEL] = it
+            selectedAwardLevelCode = it.fieldValue?.value
+            binding.vForm2.setValueText(it.displayValue)
         }
 
         val awardTimeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_AWARD_TIME)
-        awardTimeItem?.displayValue?.let {
-            binding.vForm3.setData(CommonItems(fieldName = "奖励时间", fieldValue = it))
+        awardTimeItem?.let {
+            fieldItemsMap[FIELD_AWARD_TIME] = it
+            binding.vForm3.setValueText(it.displayValue)
         }
     }
 
     private fun observeEvents() {
         observeEvents {
-            on<Events.CommonItemsEvent> { event ->
-                binding.vForm1.setData(event.commonItems)
+            on<Events.CommonAttributeFieldItemEvent> { event ->
+                event.attributeFieldItem?.fieldCode?.let { fieldCode ->
+                    attributeData?.fieldTree?.forEach { instance ->
+                        val currentItems = instance.fieldItems?.toMutableList() ?: mutableListOf()
+                        val index = currentItems.indexOfFirst { it.fieldCode == fieldCode }
+                        if (index >= 0) {
+                            currentItems[index] = event.attributeFieldItem
+                        } else {
+                            currentItems.add(event.attributeFieldItem)
+                        }
+                        instance.fieldItems = currentItems
+                        return@forEach
+                    }
+                    when (fieldCode) {
+                        FIELD_AWARD_NAME -> {
+                            fieldItemsMap[FIELD_AWARD_NAME] = event.attributeFieldItem
+                            binding.vForm1.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_AWARD_LEVEL -> fieldItemsMap[FIELD_AWARD_LEVEL] = event.attributeFieldItem
+                        FIELD_AWARD_TIME -> {
+                            fieldItemsMap[FIELD_AWARD_TIME] = event.attributeFieldItem
+                            binding.vForm3.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                    }
+                }
             }
         }
     }

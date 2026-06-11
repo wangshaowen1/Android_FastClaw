@@ -12,8 +12,8 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
-import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.databinding.ActivityWorkBinding
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
@@ -48,6 +48,8 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     private var attributeData: AttributeArrayQueryData? = null
     private var instanceIndex: Long? = null
 
+    private val fieldItemsMap = mutableMapOf<String, AttributeFieldItem>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseIntent()
@@ -71,6 +73,12 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
 
     private var isEdit = true
 
+    private fun getOrCreateFieldItem(fieldCode: String, fieldName: String): AttributeFieldItem {
+        return fieldItemsMap.getOrPut(fieldCode) {
+            fieldItemsMap[fieldCode] ?: AttributeFieldItem(fieldCode = fieldCode, fieldName = fieldName)
+        }
+    }
+
     private fun initView() {
         if (isEdit) {
             binding.tvTitle.text = getString(R.string.edit_working)
@@ -90,11 +98,21 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             }
         }
         binding.vForm1.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "公司名称"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_COMPANY_NAME] ?: AttributeFieldItem(fieldCode = FIELD_COMPANY_NAME, fieldName = "公司名称")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_COMPANY_NAME, fieldName = "公司名称")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
 
         binding.vForm2.setOnSingleClickListener {
-
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_POSITION] ?: AttributeFieldItem(fieldCode = FIELD_POSITION, fieldName = "职位名称")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_POSITION, fieldName = "职位名称")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.tvStart.setOnClickListener {
 
@@ -103,22 +121,52 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
 
         }
         binding.vForm3.setOnSingleClickListener {
-
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_WORK_CONTENT] ?: AttributeFieldItem(fieldCode = FIELD_WORK_CONTENT, fieldName = "工作内容")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_WORK_CONTENT, fieldName = "工作内容")
+            }
+            PublicDescriptionActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm5.setOnSingleClickListener {
-
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_INDUSTRY] ?: AttributeFieldItem(fieldCode = FIELD_INDUSTRY, fieldName = "所属行业")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_INDUSTRY, fieldName = "所属行业")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm6.setOnSingleClickListener {
-
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_COMPANY_SCALE] ?: AttributeFieldItem(fieldCode = FIELD_COMPANY_SCALE, fieldName = "公司规模")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_COMPANY_SCALE, fieldName = "公司规模")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm7.setOnSingleClickListener {
-
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_COMPANY_TYPE] ?: AttributeFieldItem(fieldCode = FIELD_COMPANY_TYPE, fieldName = "公司类型")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_COMPANY_TYPE, fieldName = "公司类型")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm8.setOnSingleClickListener {
-
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_TEAM_SIZE] ?: AttributeFieldItem(fieldCode = FIELD_TEAM_SIZE, fieldName = "团队规模")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_TEAM_SIZE, fieldName = "团队规模")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm9.setOnSingleClickListener {
-
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_LEAVING_REASON] ?: AttributeFieldItem(fieldCode = FIELD_LEAVING_REASON, fieldName = "离职原因")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_LEAVING_REASON, fieldName = "离职原因")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
 
         binding.viewActionButtons.setSecondaryVisible(isEdit)
@@ -133,13 +181,15 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         } ?: return
 
         val companyNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_COMPANY_NAME)
-        companyNameItem?.displayValue?.let {
-            binding.vForm1.setData(CommonItems(fieldName = "公司名称", fieldValue = it))
+        companyNameItem?.let {
+            fieldItemsMap[FIELD_COMPANY_NAME] = it
+            binding.vForm1.setValueText(it.displayValue)
         }
 
         val positionItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_POSITION)
-        positionItem?.displayValue?.let {
-            binding.vForm2.setData(CommonItems(fieldName = "职位名称", fieldValue = it))
+        positionItem?.let {
+            fieldItemsMap[FIELD_POSITION] = it
+            binding.vForm2.setValueText(it.displayValue)
         }
 
         val startDateItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_START_DATE)
@@ -153,40 +203,92 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         }
 
         val workContentItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_WORK_CONTENT)
-        workContentItem?.displayValue?.let {
-            binding.vForm3.setData(CommonItems(fieldName = "工作内容", fieldValue = it))
+        workContentItem?.let {
+            fieldItemsMap[FIELD_WORK_CONTENT] = it
+            binding.vForm3.setValueText(it.displayValue)
         }
 
         val industryItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_INDUSTRY)
-        industryItem?.displayValue?.let {
-            binding.vForm5.setData(CommonItems(fieldName = "所属行业", fieldValue = it))
+        industryItem?.let {
+            fieldItemsMap[FIELD_INDUSTRY] = it
+            binding.vForm5.setValueText(it.displayValue)
         }
 
         val companyScaleItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_COMPANY_SCALE)
-        companyScaleItem?.displayValue?.let {
-            binding.vForm6.setData(CommonItems(fieldName = "公司规模", fieldValue = it))
+        companyScaleItem?.let {
+            fieldItemsMap[FIELD_COMPANY_SCALE] = it
+            binding.vForm6.setValueText(it.displayValue)
         }
 
         val companyTypeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_COMPANY_TYPE)
-        companyTypeItem?.displayValue?.let {
-            binding.vForm7.setData(CommonItems(fieldName = "公司类型", fieldValue = it))
+        companyTypeItem?.let {
+            fieldItemsMap[FIELD_COMPANY_TYPE] = it
+            binding.vForm7.setValueText(it.displayValue)
         }
 
         val teamSizeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_TEAM_SIZE)
-        teamSizeItem?.displayValue?.let {
-            binding.vForm8.setData(CommonItems(fieldName = "团队规模", fieldValue = it))
+        teamSizeItem?.let {
+            fieldItemsMap[FIELD_TEAM_SIZE] = it
+            binding.vForm8.setValueText(it.displayValue)
         }
 
         val leavingReasonItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_LEAVING_REASON)
-        leavingReasonItem?.displayValue?.let {
-            binding.vForm9.setData(CommonItems(fieldName = "离职原因", fieldValue = it))
+        leavingReasonItem?.let {
+            fieldItemsMap[FIELD_LEAVING_REASON] = it
+            binding.vForm9.setValueText(it.displayValue)
         }
     }
 
     private fun observeEvents() {
         observeEvents {
-            on<Events.CommonItemsEvent> { event ->
-                binding.vForm1.setData(event.commonItems)
+            on<Events.CommonAttributeFieldItemEvent> { event ->
+                event.attributeFieldItem?.fieldCode?.let { fieldCode ->
+                    attributeData?.fieldTree?.forEach { instance ->
+                        val currentItems = instance.fieldItems?.toMutableList() ?: mutableListOf()
+                        val index = currentItems.indexOfFirst { it.fieldCode == fieldCode }
+                        if (index >= 0) {
+                            currentItems[index] = event.attributeFieldItem
+                        } else {
+                            currentItems.add(event.attributeFieldItem)
+                        }
+                        instance.fieldItems = currentItems
+                        return@forEach
+                    }
+                    when (fieldCode) {
+                        FIELD_COMPANY_NAME -> {
+                            fieldItemsMap[FIELD_COMPANY_NAME] = event.attributeFieldItem
+                            binding.vForm1.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_POSITION -> {
+                            fieldItemsMap[FIELD_POSITION] = event.attributeFieldItem
+                            binding.vForm2.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_WORK_CONTENT -> {
+                            fieldItemsMap[FIELD_WORK_CONTENT] = event.attributeFieldItem
+                            binding.vForm3.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_INDUSTRY -> {
+                            fieldItemsMap[FIELD_INDUSTRY] = event.attributeFieldItem
+                            binding.vForm5.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_COMPANY_SCALE -> {
+                            fieldItemsMap[FIELD_COMPANY_SCALE] = event.attributeFieldItem
+                            binding.vForm6.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_COMPANY_TYPE -> {
+                            fieldItemsMap[FIELD_COMPANY_TYPE] = event.attributeFieldItem
+                            binding.vForm7.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_TEAM_SIZE -> {
+                            fieldItemsMap[FIELD_TEAM_SIZE] = event.attributeFieldItem
+                            binding.vForm8.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_LEAVING_REASON -> {
+                            fieldItemsMap[FIELD_LEAVING_REASON] = event.attributeFieldItem
+                            binding.vForm9.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                    }
+                }
             }
         }
     }

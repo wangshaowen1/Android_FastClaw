@@ -12,8 +12,8 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
-import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.databinding.ActivityEducationalBinding
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
@@ -48,6 +48,8 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
 
     private var attributeData: AttributeArrayQueryData? = null
     private var instanceIndex: Long? = null
+
+    private val fieldItemsMap = mutableMapOf<String, AttributeFieldItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,14 +93,24 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
             }
         }
         binding.vForm1.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "院校名称"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_SCHOOL_NAME] ?: AttributeFieldItem(fieldCode = FIELD_SCHOOL_NAME, fieldName = "院校名称")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_SCHOOL_NAME, fieldName = "院校名称")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
 
         binding.vForm2.setOnSingleClickListener {
 
         }
         binding.vForm3.setOnSingleClickListener {
-
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_MAJOR] ?: AttributeFieldItem(fieldCode = FIELD_MAJOR, fieldName = "专业")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_MAJOR, fieldName = "专业")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.tvStart.setOnClickListener {
 
@@ -113,16 +125,36 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
 
         }
         binding.vForm7.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "GPA成绩"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_GPA] ?: AttributeFieldItem(fieldCode = FIELD_GPA, fieldName = "GPA成绩")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_GPA, fieldName = "GPA成绩")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm8.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "在校排名/荣誉"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_RANKING_OR_HONORS] ?: AttributeFieldItem(fieldCode = FIELD_RANKING_OR_HONORS, fieldName = "在校排名/荣誉")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_RANKING_OR_HONORS, fieldName = "在校排名/荣誉")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm9.setOnSingleClickListener {
-            PublicFreeFillInActivity.start(this, isEdit, CommonItems(fieldName = "主修课程"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_MAIN_COURSES] ?: AttributeFieldItem(fieldCode = FIELD_MAIN_COURSES, fieldName = "主修课程")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_MAIN_COURSES, fieldName = "主修课程")
+            }
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm10.setOnSingleClickListener {
-            PublicDescriptionActivity.start(this, isEdit, CommonItems(fieldName = "教育补充描述"))
+            val fieldItem = if (isEdit) {
+                fieldItemsMap[FIELD_DESCRIPTION] ?: AttributeFieldItem(fieldCode = FIELD_DESCRIPTION, fieldName = "教育补充描述")
+            } else {
+                AttributeFieldItem(fieldCode = FIELD_DESCRIPTION, fieldName = "教育补充描述")
+            }
+            PublicDescriptionActivity.start(this, isEdit, fieldItem)
         }
 
         binding.viewActionButtons.setSecondaryVisible(isEdit)
@@ -137,18 +169,21 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         } ?: return
 
         val schoolNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_SCHOOL_NAME)
-        schoolNameItem?.displayValue?.let {
-            binding.vForm1.setData(CommonItems(fieldName = "院校名称", fieldValue = it))
+        schoolNameItem?.let {
+            fieldItemsMap[FIELD_SCHOOL_NAME] = it
+            binding.vForm1.setValueText(it.displayValue)
         }
 
         val degreeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_DEGREE)
-        degreeItem?.displayValue?.let {
-            binding.vForm2.setData(CommonItems(fieldName = "学历", fieldValue = it))
+        degreeItem?.let {
+            fieldItemsMap[FIELD_DEGREE] = it
+            binding.vForm2.setValueText(it.displayValue)
         }
 
         val majorItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_MAJOR)
-        majorItem?.displayValue?.let {
-            binding.vForm3.setData(CommonItems(fieldName = "专业", fieldValue = it))
+        majorItem?.let {
+            fieldItemsMap[FIELD_MAJOR] = it
+            binding.vForm3.setValueText(it.displayValue)
         }
 
         val startDateItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_START_DATE)
@@ -162,40 +197,85 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         }
 
         val fullTimeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_FULL_TIME)
-        fullTimeItem?.displayValue?.let {
-            binding.vForm5.setData(CommonItems(fieldName = "是否全日制", fieldValue = it))
+        fullTimeItem?.let {
+            fieldItemsMap[FIELD_FULL_TIME] = it
+            binding.vForm5.setValueText(it.displayValue)
         }
 
         val schoolTypeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_SCHOOL_TYPE)
-        schoolTypeItem?.displayValue?.let {
-            binding.vForm6.setData(CommonItems(fieldName = "院校性质", fieldValue = it))
+        schoolTypeItem?.let {
+            fieldItemsMap[FIELD_SCHOOL_TYPE] = it
+            binding.vForm6.setValueText(it.displayValue)
         }
 
         val gpaItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_GPA)
-        gpaItem?.displayValue?.let {
-            binding.vForm7.setData(CommonItems(fieldName = "GPA成绩", fieldValue = it))
+        gpaItem?.let {
+            fieldItemsMap[FIELD_GPA] = it
+            binding.vForm7.setValueText(it.displayValue)
         }
 
         val rankingItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_RANKING_OR_HONORS)
-        rankingItem?.displayValue?.let {
-            binding.vForm8.setData(CommonItems(fieldName = "在校排名/荣誉", fieldValue = it))
+        rankingItem?.let {
+            fieldItemsMap[FIELD_RANKING_OR_HONORS] = it
+            binding.vForm8.setValueText(it.displayValue)
         }
 
         val mainCoursesItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_MAIN_COURSES)
-        mainCoursesItem?.displayValue?.let {
-            binding.vForm9.setData(CommonItems(fieldName = "主修课程", fieldValue = it))
+        mainCoursesItem?.let {
+            fieldItemsMap[FIELD_MAIN_COURSES] = it
+            binding.vForm9.setValueText(it.displayValue)
         }
 
         val descriptionItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_DESCRIPTION)
-        descriptionItem?.displayValue?.let {
-            binding.vForm10.setData(CommonItems(fieldName = "教育补充描述", fieldValue = it))
+        descriptionItem?.let {
+            fieldItemsMap[FIELD_DESCRIPTION] = it
+            binding.vForm10.setValueText(it.displayValue)
         }
     }
 
     private fun observeEvents() {
         observeEvents {
-            on<Events.CommonItemsEvent> { event ->
-                binding.vForm1.setData(event.commonItems)
+            on<Events.CommonAttributeFieldItemEvent> { event ->
+                event.attributeFieldItem?.fieldCode?.let { fieldCode ->
+                    attributeData?.fieldTree?.forEach { instance ->
+                        val currentItems = instance.fieldItems?.toMutableList() ?: mutableListOf()
+                        val index = currentItems.indexOfFirst { it.fieldCode == fieldCode }
+                        if (index >= 0) {
+                            currentItems[index] = event.attributeFieldItem
+                        } else {
+                            currentItems.add(event.attributeFieldItem)
+                        }
+                        instance.fieldItems = currentItems
+                        return@forEach
+                    }
+
+                    when (fieldCode) {
+                        FIELD_SCHOOL_NAME -> {
+                            fieldItemsMap[FIELD_SCHOOL_NAME] = event.attributeFieldItem
+                            binding.vForm1.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_MAJOR -> {
+                            fieldItemsMap[FIELD_MAJOR] = event.attributeFieldItem
+                            binding.vForm3.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_GPA -> {
+                            fieldItemsMap[FIELD_GPA] = event.attributeFieldItem
+                            binding.vForm7.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_RANKING_OR_HONORS -> {
+                            fieldItemsMap[FIELD_RANKING_OR_HONORS] = event.attributeFieldItem
+                            binding.vForm8.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_MAIN_COURSES -> {
+                            fieldItemsMap[FIELD_MAIN_COURSES] = event.attributeFieldItem
+                            binding.vForm9.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                        FIELD_DESCRIPTION -> {
+                            fieldItemsMap[FIELD_DESCRIPTION] = event.attributeFieldItem
+                            binding.vForm10.setValueText(event.attributeFieldItem.displayValue)
+                        }
+                    }
+                }
             }
         }
     }
