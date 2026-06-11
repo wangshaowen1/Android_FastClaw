@@ -6,8 +6,10 @@ import com.blankj.utilcode.util.GsonUtils
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
+import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
+import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
@@ -18,6 +20,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
@@ -85,6 +88,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 开启消息通知弹窗 */
     val understandingSummaryDialog = MutableLiveData<ClawAgentMessageInfo?>()
+
+    /** 查询属性数组候选值结果（工作经历/教育经历等表单数据） */
+    val attributeArrayResult = MutableLiveData<AttributeArrayQueryData?>()
 
     /** 当前会话 ID，发送消息/提交动作时回传 */
     private var sessionId: String? = null
@@ -786,6 +792,39 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             result.latestCursor?.let { latestCursor = it }
             actionResult.value = result
             ingestMessages(result.messages)
+        }
+    }
+
+    /**
+     * 查询属性数组候选值（工作经历、教育经历等表单数据）。
+     * @param questionQueueId 问题队列 ID
+     * @param attributeGroupCode 属性组编码
+     * @param onResult 查询结果回调
+     */
+    fun queryAttributeArray(
+        questionQueueId: String?,
+        attributeGroupCode: String?,
+        onResult: (AttributeArrayQueryData?) -> Unit
+    ) {
+        val currentSessionId = sessionId
+        val currentConversationId = conversationId
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
+            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            return
+        }
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.queryAttributeArray(
+                    AttributeArrayQueryBody(
+                        sessionId = currentSessionId,
+                        conversationId = currentConversationId,
+                        questionQueueId = questionQueueId,
+                        attributeGroupCode = attributeGroupCode,
+                    )
+                )
+            }
+        ) {
+            onResult(this.data)
         }
     }
 

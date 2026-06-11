@@ -219,16 +219,27 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                         FlowEventBus.postSticky(Events.ClawAgentEvent(salaryPayloadJson))
                     }
                 } else if (payload?.isWorkExperience() ?: false) { //工作经历
+                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                        // result 即 AttributeArrayQueryData
+                    }
 
                 } else if (payload?.isEducationInfo() ?: false) { //教育经历
-
+                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                        // result 即 AttributeArrayQueryData
+                    }
                 } else if (payload?.isSkills() ?: false) { //技能
+                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                        // result 即 AttributeArrayQueryData
+                    }
 
                 } else if (payload?.isProjectExperience() ?: false) { //项目经历
-
-
+                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                        // result 即 AttributeArrayQueryData
+                    }
                 } else if (payload?.isCertificates() ?: false) { //证书
-
+                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
+                        // result 即 AttributeArrayQueryData
+                    }
                 } else {
                     startMsgAction(item, action, queueId)
                 }
