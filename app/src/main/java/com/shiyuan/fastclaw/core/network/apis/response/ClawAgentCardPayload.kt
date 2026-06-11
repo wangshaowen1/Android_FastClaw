@@ -258,10 +258,6 @@ data class CoreQuestionPayloadBean(
         return inputMode == MODE_DICT_MULTI && attributeGroupCode == "expectedIndustry"
     }
 
-    fun isLanguageSkills(): Boolean {// 语言能力
-        return inputMode == MODE_DICT_MULTI && attributeGroupCode == "languageSkills"
-    }
-
     //``出生年月-birthday`
     fun isBirthday(): Boolean {// 出生年月
         return inputMode == MODE_DATE_MONTH && attributeGroupCode == "birthday"
