@@ -2,6 +2,9 @@ package com.shiyuan.fastclaw.feature.information.viewHolder
 
 import android.content.Context
 import android.graphics.Color
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
@@ -19,11 +22,16 @@ import com.shiyuan.fastclaw.core.network.apis.response.CityLocation
 class LocationSearchAdapter(var selectedLocations: LinkedHashMap<String, CityLocation>, private val onItemClick: (CityLocation) -> Unit) : RecyclerView.Adapter<LocationSearchAdapter.LocationViewHolder>() {
 
     private val items = mutableListOf<CityLocation>()
+    private var keyword: String = ""
 
     fun submitList(list: List<CityLocation>) {
         items.clear()
         items.addAll(list)
         notifyDataSetChanged()
+    }
+
+    fun setKeyWord(keyword: String = "") {
+        this.keyword = keyword
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
@@ -38,7 +46,7 @@ class LocationSearchAdapter(var selectedLocations: LinkedHashMap<String, CityLoc
 
     inner class LocationViewHolder(val itemTextView: SearchResultView) : RecyclerView.ViewHolder(itemTextView) {
         fun bind(item: CityLocation) {
-            itemTextView.bind(item, selectedLocations.containsKey(item.regionCode.orEmpty()))
+            itemTextView.bind(item, selectedLocations.containsKey(item.regionCode.orEmpty()), keyword)
             itemView.setOnSingleClickListener {
                 onItemClick(item)
             }
@@ -46,15 +54,41 @@ class LocationSearchAdapter(var selectedLocations: LinkedHashMap<String, CityLoc
     }
 
     inner class SearchResultView(context: Context) : AppCompatTextView(context) {
-        fun bind(item: CityLocation, selected: Boolean) {
-            text = item.regionName.orEmpty()
-            setTextColor(
-                ContextCompat.getColor(
-                    context,
-                    if (selected) R.color.color_2f6bff else R.color.color_90_000000
-                )
-            )
+        fun bind(item: CityLocation, selected: Boolean, keyword: String) {
+            val cityName = item.regionName.orEmpty()
+            val normalColor = ContextCompat.getColor(context, R.color.color_90_000000)
+            val selectedColor = ContextCompat.getColor(context, R.color.color_2f6bff)
+            text = createHighlightedName(cityName, keyword, selected, normalColor, selectedColor)
+            setTextColor(if (selected) selectedColor else normalColor)
             setBackgroundColor(Color.TRANSPARENT)
+        }
+
+        private fun createHighlightedName(
+            cityName: String,
+            keyword: String,
+            selected: Boolean,
+            normalColor: Int,
+            selectedColor: Int,
+        ): CharSequence {
+            val trimmedKeyword = keyword.trim()
+            if (cityName.isEmpty() || trimmedKeyword.isEmpty()) return cityName
+            val startIndex = cityName.indexOf(trimmedKeyword, ignoreCase = true)
+            if (startIndex < 0) return cityName
+            val endIndex = startIndex + trimmedKeyword.length
+            return SpannableString(cityName).apply {
+                setSpan(
+                    ForegroundColorSpan(if (selected) selectedColor else normalColor),
+                    0,
+                    cityName.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                setSpan(
+                    ForegroundColorSpan(selectedColor),
+                    startIndex,
+                    endIndex,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
         }
 
         init {

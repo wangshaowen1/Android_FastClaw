@@ -1,7 +1,7 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
+import com.shiyuan.fastclaw.core.network.apis.entity.SimpleMsgAgent
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 /**
@@ -28,13 +28,13 @@ data class JobCityData(
             return if (type == JobCityQueryBody.EXPECTED_CITY) {
                 Json.encodeToString(
                     data.values.map { city ->
-                        SimpleLocation(code = city.regionCode, name = city.regionName)
+                        SimpleMsgAgent(code = city.regionCode, name = city.regionName)
                     }
                 )
             } else {
                 val first = data.values.first()
                 Json.encodeToString(
-                    SimpleLocation(code = first.regionCode, name = first.regionName)
+                    SimpleMsgAgent(code = first.regionCode, name = first.regionName)
                 )
             }
         }
@@ -67,16 +67,5 @@ data class CityLocation(
     val fullNamePath: String? = null,
     /** 拼音首字母。 */
     val firstLetter: String? = null,
-)
-
-/**
- * 已选地点的简化序列化结构。
- */
-@Serializable
-data class SimpleLocation(
-    /** 行政区划编码。 */
-    val code: String?,
-    /** 行政区划名称。 */
-    val name: String?
 )
 

@@ -48,7 +48,7 @@
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/color_90_000000"
                 android:textSize="20sp"
-                tools:text="选择意向岗位" />
+                tools:text="选择期望行业" />
 
             <View
                 android:layout_width="0dp"

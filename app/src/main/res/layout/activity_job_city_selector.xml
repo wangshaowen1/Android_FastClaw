@@ -256,6 +256,8 @@
                 android:background="@drawable/bg_city_complete_btn"
                 android:gravity="center"
                 android:text="完成"
+                android:enabled="false"
+                android:alpha="0.3"
                 android:layout_marginBottom="40dp"
                 android:textColor="@color/white"
                 android:textSize="15sp"
