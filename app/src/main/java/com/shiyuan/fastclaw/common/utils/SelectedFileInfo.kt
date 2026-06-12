@@ -25,20 +25,28 @@ data class SelectedFileInfo(
 class FileChooser(
     private val fragment: Fragment,
     private val maxSizeBytes: Long = 10 * 1024 * 1024, // 10MB
+    private val canSelectImage: Boolean = true,
     private val onResult: (SelectedFileInfo?) -> Unit,
     private val onSizeExceeded: (() -> Unit)? = null
 ) {
 
     // 支持的 MIME 类型：PDF、Word（doc/docx）、图片
-    private val supportedMimeTypes = arrayOf(
+    private val supportedMimeTypes = mutableListOf(
         "application/pdf",
         "application/msword",                                                      // .doc
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp"
-    )
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"  // .docx
+    ).apply {
+        if (canSelectImage) {
+            addAll(
+                listOf(
+                    "image/jpeg",
+                    "image/png",
+                    "image/gif",
+                    "image/webp"
+                )
+            )
+        }
+    }.toTypedArray()
 
     // 注册 ActivityResultLauncher
     private val pickFileLauncher = fragment.registerForActivityResult(
