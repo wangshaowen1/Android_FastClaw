@@ -61,6 +61,10 @@ class PublicFreeFillInActivity : BaseViewModelActivity<ActivityPublicFreeFillInB
             val showIcon = !editable.isNullOrEmpty()
             if (showIcon)  binding.ivClear.visibility = View.VISIBLE else binding.ivClear.visibility = View.GONE
             data.displayValue = editable.toString()
+            data.fieldValue =  mapOf(
+                "value" to editable.toString() ,
+                "displayText" to editable.toString()
+            )
         }
         binding.ivClear.setOnSingleClickListener {
             binding.et.text.clear()

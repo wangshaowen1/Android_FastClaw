@@ -87,6 +87,7 @@ class JobSelectionActivity :
                     mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
                 }
             } else {
+                item.fieldCode = "position"
                 FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
                 finish()
             }
@@ -129,6 +130,7 @@ class JobSelectionActivity :
                 binding.rlSc.visibility = View.GONE
                 hideKeyboard(binding.et)
             } else {
+
                 FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
                 finish()
             }

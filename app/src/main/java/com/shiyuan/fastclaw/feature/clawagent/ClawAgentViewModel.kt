@@ -170,13 +170,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 进入或恢复会话：sessionId 为空表示首次进入，由服务端恢复最新会话
      */
     fun enterSession() {
+        currentRequestId =UUID.randomUUID().toString()
         request(
             apiBlock = {
                 mRepo.api.enterSession(
                     SessionEnterBody(
                         sessionId = sessionId,
                         conversationId = conversationId,
-                        clientRequestId = UUID.randomUUID().toString(),
+                        clientRequestId =currentRequestId,
                         latestCursor = latestCursor,
                     )
                 )
@@ -835,6 +836,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 )
             }
         ) {
+            this.data?.clientRequestId = currentRequestId
             onResult(this.data)
         }
     }

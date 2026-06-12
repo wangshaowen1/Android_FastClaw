@@ -37,7 +37,7 @@ class IndustrySelectionActivity :
         private const val SESSIONID = "SESSIONID"
         private const val CONVERSATIONID = "CONVERSATIONID"
 
-        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String = "", conversationId: String = "") {
+        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String? = "", conversationId: String? = "") {
             activity ?: return
             val intent = Intent(activity, IndustrySelectionActivity::class.java).apply {
                 putExtra(EXTRA_IS_MULTIPLE, isMultiple)
@@ -85,6 +85,7 @@ class IndustrySelectionActivity :
                     mRealVM.selectData.value = (selectedList + item).distinctBy { it.code }
                 }
             } else {
+                item.fieldCode = "industry"
                 FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
                 finish()
             }

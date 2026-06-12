@@ -247,6 +247,12 @@ object ApiConstants {
      * 查询城市字典组件提供已选、历史、热门、A-Z 分组和搜索数据。
      */
     const val JOB_AGENT_DICT_REGION_QUERY = "/api/candidate/app/jobAgent/dict/region/query"
+
+
+    /**
+     *
+     */
+    const val JOBAGENT_ATTRIBUTE_ARRAY_SAVE = "/api/candidate/app/jobAgent/attribute/array/save"
     /**
      * 查询小虾行业字典
      */

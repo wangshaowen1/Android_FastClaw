@@ -355,8 +355,8 @@
     <string name="add_skill">添加技能</string>
     <string name="edit_educational">编辑技能</string>
     <string name="add_educational">添加技能</string>
-    <string name="edit_certificate">编辑教育经历</string>
-    <string name="add_certificate">添加教育经历</string>
+    <string name="edit_certificate">编辑证书</string>
+    <string name="add_certificate">添加证书</string>
     <string name="edit_project">编辑项目经历</string>
     <string name="add_project">添加项目经历</string>
     <string name="edit_working">编辑工作经历</string>

@@ -50,6 +50,7 @@ import kotlinx.coroutines.flow.Flow
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
@@ -412,5 +413,9 @@ interface ApiService {
 
     @POST(ApiConstants.JOB_AGENT_DICT_REGION_QUERY)
     suspend fun queryCityList(@Body body: JobCityQueryBody): ApiResponse<JobCityData?>
+
+
+    @POST(ApiConstants.JOBAGENT_ATTRIBUTE_ARRAY_SAVE)
+    suspend fun attributeSave(@Body body: Any): ApiResponse<AttributeSave?>
 
 }

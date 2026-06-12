@@ -70,9 +70,8 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
                         }
 
                         "certificates" -> {
-                            CertificateActivity.start(requireActivity(), true, attr, item.instanceIndex)
+                            CertificateActivity.start(requireActivity(), true, attr, position)
                         }
-
                         else -> {
                             AwardActivity.start(requireActivity(), true, attr, item.instanceIndex)
                         }
@@ -112,17 +111,32 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         }
         binding.ivClose.setOnSingleClickListener { dismiss() }
         binding.clAddExperience.setOnSingleClickListener {
+            attributeData?.fieldTree?.let { treeList ->
+                // 1. 取出第0个元素（如果存在）
+                val original = treeList.getOrNull(0) ?: return@let
+
+                // 2. 深拷贝 original（通过序列化方式最安全，此处展示手动递归拷贝）
+                val copy = original.copy(
+                    fieldItems = original.fieldItems?.map { item ->
+                        item.copy(
+                            fieldValue = null,      // 直接置 null
+                            displayValue = null
+                        )
+                    }?.toMutableList()
+                )
+                // 3. 将副本插入到列表第0个位置
+                treeList.add(0, copy)
+            }
             when (type) {
                 "skills" -> {
-                    SkillActivity.start(requireActivity(), false, attributeData)
+                    SkillActivity.start(requireActivity(), false, attributeData,0)
                 }
-
                 "certificates" -> {
-                    CertificateActivity.start(requireActivity(), false, attributeData)
+                    CertificateActivity.start(requireActivity(), false, attributeData,0)
                 }
 
                 else -> {
-                    AwardActivity.start(requireActivity(), false, attributeData)
+                    AwardActivity.start(requireActivity(), false, attributeData,0)
                 }
             }
         }

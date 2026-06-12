@@ -13,6 +13,7 @@ import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.request.DictIndustryQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.DictPositionQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil
 import com.shiyuan.fastclaw.core.network.apis.response.FieldItems
@@ -39,9 +40,10 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
     var searchData = MutableLiveData<List<CommonEnumItem>>()
     var selectData = MutableLiveData<List<CommonEnumItem>>()
     var lastSelectedPosition = MutableLiveData<Int>(1)
-    fun queryDictIndustryQuery(sessionId: String? = null,conversationId: String? = null) {
+    fun queryDictIndustryQuery(sessionId: String? = null, conversationId: String? = null) {
         launchWithLoading(true, block = {
-            val requestBody = DictIndustryQueryBody(sessionId = sessionId, conversationId = conversationId)
+            val requestBody =
+                DictIndustryQueryBody(sessionId = sessionId, conversationId = conversationId)
             response(ApiFactory.apiService.queryDictIndustryQuery(requestBody), result = {
                 allData.postValue(this.data?.items)
                 if (selectData.value.isNullOrEmpty()) {
@@ -52,7 +54,11 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
 
     }
 
-    fun queryDictIndustryQuery(keyword: String? = null,sessionId: String? = null,conversationId: String? = null) {
+    fun queryDictIndustryQuery(
+        keyword: String? = null,
+        sessionId: String? = null,
+        conversationId: String? = null
+    ) {
         launchWithLoading(false, block = {
             val requestBody = DictIndustryQueryBody(
                 sessionId = sessionId,
@@ -60,12 +66,12 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
                 keyword = keyword
             )
             response(ApiFactory.apiService.queryDictIndustryQuery(requestBody), result = {
-                searchData.postValue(this.data?.items?.flatMap { it.children?:emptyList() } ?: emptyList())
+                searchData.postValue(this.data?.items?.flatMap { it.children ?: emptyList() }
+                    ?: emptyList())
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
 
     }
-
 
 
     var allPositioData = MutableLiveData<List<CommonEnumItem>>()
@@ -73,9 +79,10 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
     var selectPositionData = MutableLiveData<List<CommonEnumItem>>()
     var lastSelectedPosition2 = MutableLiveData<Int>(1)
 
-    fun queryDictPositionQuery(sessionId: String? = null,conversationId: String? = null) {
+    fun queryDictPositionQuery(sessionId: String? = null, conversationId: String? = null) {
         launchWithLoading(true, block = {
-            val requestBody = DictPositionQueryBody(sessionId = sessionId, conversationId = conversationId)
+            val requestBody =
+                DictPositionQueryBody(sessionId = sessionId, conversationId = conversationId)
             response(ApiFactory.apiService.queryDictPositionQuery(requestBody), result = {
                 allPositioData.postValue(this.data?.firstCategories)
                 if (selectData.value.isNullOrEmpty()) {
@@ -86,16 +93,31 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
 
     }
 
-    fun queryDictPositionQuery(keyword: String? = null,sessionId: String? = null,conversationId: String? = null) {
+    fun queryDictPositionQuery(
+        keyword: String? = null,
+        sessionId: String? = null,
+        conversationId: String? = null
+    ) {
         launchWithLoading(false, block = {
-            val requestBody = DictPositionQueryBody(keyword = keyword,sessionId = sessionId, conversationId = conversationId)
+            val requestBody = DictPositionQueryBody(
+                keyword = keyword,
+                sessionId = sessionId,
+                conversationId = conversationId
+            )
             response(ApiFactory.apiService.queryDictPositionQuery(requestBody), result = {
                 searchPositionData.postValue(this.data?.matchedPositions)
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
-
     }
 
+    var attributeSave = MutableLiveData<AttributeSave>()
+    fun attributeSave(data: Any) {
+        launchWithLoading(false, block = {
+            response(ApiFactory.apiService.attributeSave(data), result = {
+                attributeSave.postValue(this.data)
+            }, error = { this?.msg?.showToast() })
+        }, onError = { it.message.toString().showToast() })
+    }
 
 
 }

@@ -16,6 +16,7 @@ data class CommonEnumItem(
     val secondCategoryCode: String? = null,
     val secondCategoryName: String? = null,
     val positionName: String? = null,
+    var fieldCode: String? = null,
     var isSelected: Boolean = false,
     var children:  List<CommonEnumItem>? = null,
     var secondCategories:  List<CommonEnumItem>? = null,

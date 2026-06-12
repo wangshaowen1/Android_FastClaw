@@ -7,14 +7,19 @@ import android.os.Build
 import android.os.Bundle
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeDataHelper
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeDataHelper.updateFieldItemDirect
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeDataHelper.updateFieldItemSimple
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.databinding.ActivityWorkBinding
+import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
 class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewModel>() {
@@ -107,18 +112,35 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         }
 
         binding.vForm2.setOnSingleClickListener {
-            val fieldItem = if (isEdit) {
+           /* val fieldItem = if (isEdit) {
                 fieldItemsMap[FIELD_POSITION] ?: AttributeFieldItem(fieldCode = FIELD_POSITION, fieldName = "职位名称")
             } else {
                 AttributeFieldItem(fieldCode = FIELD_POSITION, fieldName = "职位名称")
-            }
-            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
+            }*/
+          //  PublicFreeFillInActivity.start(this, isEdit, fieldItem)
+
+            JobSelectionActivity.start(this, false)
         }
         binding.tvStart.setOnClickListener {
 
+            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
+                binding.tvStart.text = "$year-$month"
+                updateFieldItemDirect(
+                    attributeData,
+                    instanceIndex =  instanceIndex ?: 0,
+                    newItem = AttributeFieldItem(fieldCode = FIELD_START_DATE, fieldName = "开始时间",displayValue = "$year-$month")
+                )
+            }
         }
         binding.tvEnd.setOnClickListener {
-
+            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
+                binding.tvStart.text = "$year-$month"
+                updateFieldItemDirect(
+                    attributeData,
+                    instanceIndex =  instanceIndex ?: 0,
+                    newItem =  AttributeFieldItem(fieldCode = FIELD_END_DATE, fieldName = "结束时间",displayValue = "$year-$month")
+                )
+            }
         }
         binding.vForm3.setOnSingleClickListener {
             val fieldItem = if (isEdit) {
@@ -129,12 +151,15 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             PublicDescriptionActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm5.setOnSingleClickListener {
+           /* JobSelectionActivity.start(this, false)
+
             val fieldItem = if (isEdit) {
                 fieldItemsMap[FIELD_INDUSTRY] ?: AttributeFieldItem(fieldCode = FIELD_INDUSTRY, fieldName = "所属行业")
             } else {
                 AttributeFieldItem(fieldCode = FIELD_INDUSTRY, fieldName = "所属行业")
             }
-            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
+            PublicFreeFillInActivity.start(this, isEdit, fieldItem)*/
+            IndustrySelectionActivity.start(this, false)
         }
         binding.vForm6.setOnSingleClickListener {
             val fieldItem = if (isEdit) {
@@ -240,8 +265,14 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     }
 
     private fun observeEvents() {
+
         observeEvents {
             on<Events.CommonAttributeFieldItemEvent> { event ->
+               updateFieldItemDirect(
+                    attributeData,
+                    instanceIndex =  instanceIndex ?: 0,
+                    newItem = event.attributeFieldItem
+                )
                 event.attributeFieldItem?.fieldCode?.let { fieldCode ->
                     attributeData?.fieldTree?.forEach { instance ->
                         val currentItems = instance.fieldItems?.toMutableList() ?: mutableListOf()
@@ -290,6 +321,42 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                     }
                 }
             }
+            on<Events.CommonEnumItemEvent>{ event ->
+                when (event.commonEnumItems.fieldCode) {
+                    FIELD_POSITION -> {
+                        binding.vForm2.setValueText(event.commonEnumItems.positionName)
+                        updateFieldItemSimple(
+                            attributeData = attributeData,
+                            instanceIndex = instanceIndex ?: 0,
+                            fieldCode = FIELD_POSITION,
+                            fieldName = "职位名称",
+                            fieldValue = mapOf(
+                                "value" to event.commonEnumItems.positionCode ,
+                                "displayText" to event.commonEnumItems.positionName
+                            ),
+                            displayValue = event.commonEnumItems.positionName ?:""
+                        )
+                    }
+                    FIELD_INDUSTRY -> {
+                    binding.vForm5.setValueText(event.commonEnumItems.name)
+                    updateFieldItemSimple(
+                        attributeData = attributeData,
+                        instanceIndex = instanceIndex ?: 0,
+                        fieldCode = FIELD_INDUSTRY,
+                        fieldName = "所属行业",
+                        fieldValue = mapOf(
+                            "value" to event.commonEnumItems.code ,
+                            "displayText" to event.commonEnumItems.name
+                        ),
+                        displayValue = event.commonEnumItems.name ?:""
+                    )
+                }
+
+                }
+
+
+
+            }
         }
     }
 
@@ -302,3 +369,4 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     }
 
 }
+

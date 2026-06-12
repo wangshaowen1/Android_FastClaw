@@ -20,14 +20,16 @@ import kotlinx.parcelize.RawValue
 @Parcelize
 data class AttributeArrayQueryData(
     val sessionId: String? = null,
+    var clientRequestId: String? = null,
     val conversationId: String? = null,
     val questionQueueId: String? = null,
     val attributeGroupCode: String? = null,
     val attributeGroupName: String? = null,
     val skippable: Boolean? = null,
     val complete: Boolean? = null,
-    val missingMetaCodes: List<String>? = null,
-    val fieldTree: List<AttributeFieldTree>? = null,
+    var draft: Boolean? = false,
+    val missingMetaCodes: MutableList<String>? = null,
+    var fieldTree: MutableList<AttributeFieldTree>? = null,
 ) : Parcelable
 
 /**
@@ -104,6 +106,19 @@ data class AttributeOption(
     val sortOrder: Long? = null,
 ) : Parcelable
 
+
+
+@Parcelize
+data class AttributeSave(
+    val sessionId: String? = null,
+    val conversationId: String? = null,
+    val attributeStatus: String? = null,
+    val draft: String? = null,
+    val nextStepType: String? = null,
+    val requestId: String? = null,
+) : Parcelable
+
+
 /**
  * 子字段项（具体字段）
  *
@@ -129,8 +144,8 @@ data class AttributeOption(
 @Parcelize
 data class AttributeFieldItem(
     val fieldCode: String? = null,
-    val fieldName: String? = null,
-    val fieldValue: @RawValue Any? = null,
+    var fieldName: String? = null,
+    var fieldValue: @RawValue Any? = null,
     var displayValue: String? = null,
     val inputMode: String? = null,
     val dictType: String? = null,
@@ -144,7 +159,7 @@ data class AttributeFieldItem(
     val complete: Boolean? = null,
     val statusCode: String? = null,
     val statusText: String? = null,
-    val missingMetaCodes: List<String>? = null,
+    var missingMetaCodes: List<String>? = null,
     var fieldItems: List<AttributeFieldItem>? = null,
 ) : Parcelable
 
@@ -304,7 +319,6 @@ object AttributeDataHelper {
         targetInstance.fieldItems = currentItems
         return attributeData
     }
-
 
 }
 

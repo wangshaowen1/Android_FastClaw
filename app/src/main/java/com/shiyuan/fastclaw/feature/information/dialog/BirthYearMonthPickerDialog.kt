@@ -23,7 +23,7 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
         private var selectedMonth: Int? = null
         private var minYear: Int = DEFAULT_MIN_YEAR
         private var maxYear: Int = Calendar.getInstance().get(Calendar.YEAR)
-        private var onConfirm: ((year: Int, month: Int) -> Unit)? = null
+        private var onConfirm: ((year: Int, month: String) -> Unit)? = null
 
         fun show(
             manager: FragmentManager,
@@ -31,7 +31,7 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
             selectedMonth: Int? = null,
             minYear: Int = DEFAULT_MIN_YEAR,
             maxYear: Int = Calendar.getInstance().get(Calendar.YEAR),
-            onConfirm: ((year: Int, month: Int) -> Unit)? = null,
+            onConfirm: ((year: Int, month: String) -> Unit)? = null,
         ): BirthYearMonthPickerDialog {
             this.selectedYear = selectedYear
             this.selectedMonth = selectedMonth
@@ -81,7 +81,8 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
         binding.tvConfirm.setOnSingleClickListener {
             val year = minYear + binding.yearPicker.value
             val month = binding.monthPicker.value + 1
-            onConfirm?.invoke(year, month)
+            val monthStr = String.format("%02d", month)   // 补零为两位字符串
+            onConfirm?.invoke(year, monthStr)
             dismissAllowingStateLoss()
         }
     }

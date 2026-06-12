@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
@@ -12,9 +13,12 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeDataHelper.updateFieldItemDirect
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
 import com.shiyuan.fastclaw.databinding.ActivityCertificateBinding
+import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
 class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, InformationViewModel>() {
@@ -27,25 +31,30 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         private const val FIELD_ISSUE_ORG = "issueOrg"
         private const val FIELD_ISSUE_TIME = "issueTime"
 
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, instanceIndex: Long? = null) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null) {
             activity ?: return
             val intent = Intent(activity, CertificateActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
-                instanceIndex?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
+                position?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
             }
             activity.startActivity(intent)
         }
     }
 
     private var attributeData: AttributeArrayQueryData? = null
-    private var instanceIndex: Long? = null
 
-    private val fieldItemsMap = mutableMapOf<String, AttributeFieldItem>()
+    private var position: Int = 0
+
+    private val currentInstance: MutableList<AttributeFieldItem> = mutableListOf()
+
+    private var isEdit = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseIntent()
+        currentInstance.clear()
+        currentInstance.addAll(attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems ?: emptyList())
         initView()
         observeEvents()
         if (isEdit) {
@@ -61,10 +70,10 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         } else {
             intent?.getParcelableExtra(EXTRA_ATTRIBUTE_DATA)
         }
-        instanceIndex = intent?.getLongExtra(EXTRA_INSTANCE_INDEX, -1L)?.takeIf { it != -1L }
+        position = intent?.getIntExtra(EXTRA_INSTANCE_INDEX, 0) ?: 0
     }
 
-    private var isEdit = true
+
 
     private fun initView() {
         if (isEdit) {
@@ -72,64 +81,67 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
             binding.viewActionButtons.setSecondaryText(getString(R.string.del))
             binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
             binding.viewActionButtons.setOnSecondaryClickListener {
-                finish()
+                attributeData?.fieldTree?.removeAt(this.position)
+                attributeData?.draft = true
+                attributeData?.let { mRealVM.attributeSave(it) }
             }
             binding.viewActionButtons.setOnPrimaryClickListener {
-                finish()
+                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems  = currentInstance
+                attributeData?.draft = true
+                attributeData?.let { mRealVM.attributeSave(it) }
             }
         } else {
             binding.tvTitle.text = getString(R.string.add_certificate)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
-                finish()
+                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems  = currentInstance
+                attributeData?.draft = true
+                attributeData?.let { mRealVM.attributeSave(it) }
             }
         }
         binding.vForm1.setOnSingleClickListener {
-            val fieldItem = if (isEdit) {
-                fieldItemsMap[FIELD_CERTIFICATE_NAME] ?: AttributeFieldItem(fieldCode = FIELD_CERTIFICATE_NAME, fieldName = "证书名称")
-            } else {
-                AttributeFieldItem(fieldCode = FIELD_CERTIFICATE_NAME, fieldName = "证书名称")
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_CERTIFICATE_NAME)
+            item?.let {
+                PublicFreeFillInActivity.start(this, isEdit, it)
             }
-            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
 
         binding.vForm2.setOnSingleClickListener {
-            val fieldItem = if (isEdit) {
-                fieldItemsMap[FIELD_ISSUE_ORG] ?: AttributeFieldItem(fieldCode = FIELD_ISSUE_ORG, fieldName = "颁发机构")
-            } else {
-                AttributeFieldItem(fieldCode = FIELD_ISSUE_ORG, fieldName = "颁发机构")
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_ISSUE_ORG)
+            item?.let {
+                PublicFreeFillInActivity.start(this, isEdit, it)
             }
-            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
         binding.vForm3.setOnSingleClickListener {
-
+            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
+                binding.vForm3.setValueText("$year-$month")
+                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_ISSUE_TIME)
+                item?.let {
+                    item.displayValue =  "$year-$month"
+                    item.fieldValue = mapOf(
+                        "value" to "$year-$month" ,
+                        "displayText" to "$year-$month"
+                    )
+                }
+            }
         }
         binding.viewActionButtons.setSecondaryVisible(isEdit)
     }
 
     private fun bindEditData() {
-        val fieldTree = attributeData?.fieldTree ?: return
-        val currentInstance = if (instanceIndex != null) {
-            fieldTree.find { it.instanceIndex == instanceIndex }
-        } else {
-            fieldTree.firstOrNull()
-        } ?: return
-
         val certificateNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_CERTIFICATE_NAME)
+
         certificateNameItem?.let {
-            fieldItemsMap[FIELD_CERTIFICATE_NAME] = it
             binding.vForm1.setValueText(it.displayValue)
         }
 
         val issueOrgItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_ISSUE_ORG)
         issueOrgItem?.let {
-            fieldItemsMap[FIELD_ISSUE_ORG] = it
             binding.vForm2.setValueText(it.displayValue)
         }
 
         val issueTimeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_ISSUE_TIME)
         issueTimeItem?.let {
-            fieldItemsMap[FIELD_ISSUE_TIME] = it
             binding.vForm3.setValueText(it.displayValue)
         }
     }
@@ -138,27 +150,20 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         observeEvents {
             on<Events.CommonAttributeFieldItemEvent> { event ->
                 event.attributeFieldItem?.fieldCode?.let { fieldCode ->
-                    attributeData?.fieldTree?.forEach { instance ->
-                        val currentItems = instance.fieldItems?.toMutableList() ?: mutableListOf()
-                        val index = currentItems.indexOfFirst { it.fieldCode == fieldCode }
+                    val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)
+                    item?.let {
+                        val index = currentInstance.indexOf(item)
                         if (index >= 0) {
-                            currentItems[index] = event.attributeFieldItem
-                        } else {
-                            currentItems.add(event.attributeFieldItem)
+                            currentInstance[index] = event.attributeFieldItem
                         }
-                        instance.fieldItems = currentItems
-                        return@forEach
                     }
                     when (fieldCode) {
                         FIELD_CERTIFICATE_NAME -> {
-                            fieldItemsMap[FIELD_CERTIFICATE_NAME] = event.attributeFieldItem
                             binding.vForm1.setValueText(event.attributeFieldItem.displayValue)
                         }
                         FIELD_ISSUE_ORG -> {
-                            fieldItemsMap[FIELD_ISSUE_ORG] = event.attributeFieldItem
                             binding.vForm2.setValueText(event.attributeFieldItem.displayValue)
                         }
-                        FIELD_ISSUE_TIME -> fieldItemsMap[FIELD_ISSUE_TIME] = event.attributeFieldItem
                     }
                 }
             }
