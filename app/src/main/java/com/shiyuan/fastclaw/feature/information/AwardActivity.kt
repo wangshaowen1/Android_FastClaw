@@ -120,7 +120,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
         val awardLevelItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_AWARD_LEVEL)
         awardLevelItem?.let {
             fieldItemsMap[FIELD_AWARD_LEVEL] = it
-            selectedAwardLevelCode = it.fieldValue?.value
+            selectedAwardLevelCode = it.fieldValue?.toString()
             binding.vForm2.setValueText(it.displayValue)
         }
 

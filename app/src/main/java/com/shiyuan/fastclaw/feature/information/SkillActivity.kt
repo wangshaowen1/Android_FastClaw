@@ -116,7 +116,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         val proficiencyItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_PROFICIENCY)
         proficiencyItem?.let {
             fieldItemsMap[FIELD_PROFICIENCY] = it
-            selectedProficiencyCode = it.fieldValue?.value
+            selectedProficiencyCode = it.fieldValue?.toString()
             binding.vForm2.setValueText(it.displayValue)
         }
     }
