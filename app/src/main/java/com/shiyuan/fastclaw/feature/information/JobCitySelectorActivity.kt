@@ -18,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
@@ -31,7 +32,8 @@ import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.CityLocation
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.databinding.ActivityJobCitySelectorBinding
-import com.shiyuan.fastclaw.feature.information.viewHolder.LocationSearchAdapter
+import com.shiyuan.fastclaw.feature.information.adapter.JobCitySelectedAdapter
+import com.shiyuan.fastclaw.feature.information.adapter.LocationSearchAdapter
 import com.shiyuan.fastclaw.feature.information.viewModel.JobCitySelectorModel
 
 /**
@@ -42,7 +44,13 @@ import com.shiyuan.fastclaw.feature.information.viewModel.JobCitySelectorModel
 class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBinding, JobCitySelectorModel>() {
 
     private val selectedLocations = linkedMapOf<String, CityLocation>()
-    private val searchAdapter = LocationSearchAdapter(selectedLocations) { toggleLocation(it) }
+    private val searchAdapter = LocationSearchAdapter(
+        selectedLocations = selectedLocations,
+        keywordProvider = { binding.etSearch.text?.toString().orEmpty() },
+    ) { toggleLocation(it) }
+    private val selectedAdapter by lazy {
+        JobCitySelectedAdapter { item -> removeSelectedLocation(item) }
+    }
     private val searchHandler = Handler(Looper.getMainLooper())
     private var pendingSearch: Runnable? = null
     private var maxSelectCount = 3
@@ -139,6 +147,15 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         }
         binding.rvSearchResults.layoutManager = LinearLayoutManager(this)
         binding.rvSearchResults.adapter = searchAdapter
+        binding.rvSelectedChips.apply {
+            layoutManager = LinearLayoutManager(
+                this@JobCitySelectorActivity,
+                RecyclerView.HORIZONTAL,
+                false,
+            )
+            itemAnimator = null
+            adapter = selectedAdapter
+        }
         mRealVM.getJobCityList(mCityParams)
     }
 
@@ -174,8 +191,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
             val matchedLocations = mData?.matchedLocations.orEmpty()
             binding.rvSearchResults.visibility = if (matchedLocations.isEmpty()) View.GONE else View.VISIBLE
             binding.tvEmptySearch.visibility = if (matchedLocations.isEmpty()) View.VISIBLE else View.GONE
-            searchAdapter.setKeyWord(binding.etSearch.text?.toString().orEmpty())
-            searchAdapter.submitList(matchedLocations,)
+            searchAdapter.submitList(matchedLocations)
         }
         refreshSelectedState()
     }
@@ -414,36 +430,6 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         updateCompleteButtonState()
         binding.tvCount.text = "${selectedLocations.size}"
         binding.tvMax.text = "/$maxSelectCount"
-        binding.llSelectedChips.removeAllViews()
-        selectedLocations.values.forEach { item ->
-            binding.llSelectedChips.addView(LinearLayout(this).apply {
-                gravity = Gravity.CENTER
-                orientation = LinearLayout.HORIZONTAL
-                background = ContextCompat.getDrawable(context, R.drawable.bg_location_selected_tag)
-                setPadding(8.dp, 0, 6.dp, 0)
-                isClickable = true
-                setOnSingleClickListener { removeSelectedLocation(item) }
-                layoutParams = LinearLayout.LayoutParams(60.dp, 22.dp).apply {
-                    marginEnd = 8.dp
-                }
-                addView(TextView(context).apply {
-                    text = item.regionName.orEmpty()
-                    gravity = Gravity.CENTER
-                    maxLines = 1
-                    ellipsize = android.text.TextUtils.TruncateAt.END
-                    setTextColor(ContextCompat.getColor(context, R.color.color_2f6bff))
-                    textSize = 11f
-                    layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f)
-                })
-                addView(TextView(context).apply {
-                    text = "×"
-                    gravity = Gravity.CENTER
-                    setTextColor(ContextCompat.getColor(context, R.color.color_2f6bff))
-                    textSize = 12f
-                    setOnSingleClickListener { removeSelectedLocation(item) }
-                    layoutParams = LinearLayout.LayoutParams(10.dp, ViewGroup.LayoutParams.MATCH_PARENT)
-                })
-            })
-        }
+        selectedAdapter.submitList(selectedLocations.values.toList())
     }
 }

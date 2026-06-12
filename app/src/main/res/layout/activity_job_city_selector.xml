@@ -239,14 +239,16 @@
                     android:textColor="@color/color_75_3c3c43"
                     android:textSize="12sp" />
 
-                <LinearLayout
-                    android:id="@+id/ll_selected_chips"
-                    android:layout_width="wrap_content"
-                    android:layout_height="22dp"
-                    android:layout_marginStart="10dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal" />
-            </LinearLayout>
+                  <androidx.recyclerview.widget.RecyclerView
+                      android:id="@+id/rv_selected_chips"
+                      android:layout_width="wrap_content"
+                      android:layout_height="22dp"
+                      android:layout_marginStart="10dp"
+                      android:clipToPadding="false"
+                      android:overScrollMode="never"
+                      tools:itemCount="3"
+                      tools:listitem="@layout/item_job_city_selected" />
+              </LinearLayout>
 
             <TextView
                 android:id="@+id/btn_complete"
