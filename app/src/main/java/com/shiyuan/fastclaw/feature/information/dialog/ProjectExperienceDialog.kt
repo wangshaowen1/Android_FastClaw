@@ -55,6 +55,7 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
         private const val END_DATE = "endDate"
         private const val POSITION = "position"
         private const val WORK_CONTENT = "workContent"
+        private const val FIELD_RESPONSIBILITIES = "responsibilities"
     }
 
     private var attributeData: AttributeArrayQueryData? = null
@@ -69,7 +70,7 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
             val  startDate = AttributeFieldItemFinder.findFirst(item.fieldItems,START_DATE)
             val  endDate = AttributeFieldItemFinder.findFirst(item.fieldItems,END_DATE)
             val  position = AttributeFieldItemFinder.findFirst(item.fieldItems,POSITION)
-            val  workContent = AttributeFieldItemFinder.findFirst(item.fieldItems,WORK_CONTENT)
+            val  workContent = AttributeFieldItemFinder.findFirst(item.fieldItems,FIELD_RESPONSIBILITIES)
             binding.tvTime.text = (startDate?.displayValue ?: "") + " - " +  (endDate?.displayValue ?: "")
             binding.tvJob.text = position?.displayValue ?: ""
             workContent?.displayValue?.let {

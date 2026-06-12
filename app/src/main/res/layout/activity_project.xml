@@ -172,13 +172,6 @@
                     app:formPlaceholderText="请输入" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
-                    android:id="@+id/v_form9"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:formLabelText="主修课程"
-                    app:formPlaceholderText="请输入" />
-
-                <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form10"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
