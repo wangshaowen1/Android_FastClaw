@@ -84,12 +84,20 @@ class ShrimpUnderstandsActivity :
                                 alignItems =
                                     AlignItems.STRETCH             // 拉伸以保持行高一致（或改为 FLEX_START）
                             }
-                        addItemDecoration(
-                            SpaceDecoration(
-                                10.dp,
-                                SpaceDecoration.Direction.MIDDLE_HORIZONTAL
+                        if (itemDecorationCount == 0) {
+                            addItemDecoration(
+                                SpaceDecoration(
+                                    10.dp,
+                                    SpaceDecoration.Direction.MIDDLE_HORIZONTAL
+                                )
                             )
-                        )
+                            addItemDecoration(
+                                SpaceDecoration(
+                                    10.dp,
+                                    SpaceDecoration.Direction.BOTTOM
+                                )
+                            )
+                        }
                         this.layoutManager = layoutManager
                         isNestedScrollingEnabled = false
                         adapter = subAdapter

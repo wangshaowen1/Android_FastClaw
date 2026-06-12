@@ -545,7 +545,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     }
 
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
-        UploadResumeDialog.show(manager = this.parentFragmentManager) { fileInfo ->
+        UploadResumeDialog.show(manager = this.parentFragmentManager,false) { fileInfo ->
             if (fileInfo != null) {
                 mRealVM.submitResume(fileInfo.uri) { path ->
                     // 文件上传完成回调里可能 AI 已开始回复，此时拦截避免新开 SSE 打断当前流

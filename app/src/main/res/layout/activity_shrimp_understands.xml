@@ -287,7 +287,6 @@
 
 
                         <include
-
                             android:id="@+id/view_understands"
                             layout="@layout/view_understands1"
                             android:layout_width="match_parent"

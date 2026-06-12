@@ -23,8 +23,13 @@ class UploadResumeDialog : BaseBottomPushVMDialogFragment<DialogUploadResumeBind
         const val TAG = "UploadResumeDialog"
         var onFileSelected: ((SelectedFileInfo?) -> Unit)? = null
 
-        fun show(manager: FragmentManager, fileSelectedListener: ((SelectedFileInfo?) -> Unit)? = null): UploadResumeDialog {
+        fun show(
+            manager: FragmentManager,
+            canSelectImage: Boolean = true,
+            fileSelectedListener: ((SelectedFileInfo?) -> Unit)? = null
+        ): UploadResumeDialog {
             val dialog = UploadResumeDialog()
+            dialog.canSelectImage = canSelectImage
             onFileSelected = fileSelectedListener
             dialog.show(manager)
             return dialog
@@ -32,6 +37,7 @@ class UploadResumeDialog : BaseBottomPushVMDialogFragment<DialogUploadResumeBind
     }
 
     private lateinit var fileChooser: FileChooser
+    private var canSelectImage = true
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
@@ -41,6 +47,11 @@ class UploadResumeDialog : BaseBottomPushVMDialogFragment<DialogUploadResumeBind
     }
 
     private fun initView() {
+        binding.tvUploadTypeTip.text = if (canSelectImage) {
+            R.string.upload_type_tip.getResString()
+        } else {
+            R.string.upload_type_tip_without_image.getResString()
+        }
         binding.ivClose.setOnSingleClickListener { dismiss() }
         binding.llWx.setOnSingleClickListener { performWxUpload() }
         binding.llFolder.setOnSingleClickListener {  fileChooser.openFileChooser()}
@@ -50,6 +61,7 @@ class UploadResumeDialog : BaseBottomPushVMDialogFragment<DialogUploadResumeBind
         fileChooser = FileChooser(
             fragment = this,
             maxSizeBytes = 10 * 1024 * 1024, // 10MB
+            canSelectImage = canSelectImage,
             onResult = { fileInfo ->
                 if (fileInfo != null) {
                     onFileSelected?.invoke(fileInfo)
