@@ -9,6 +9,9 @@ import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ItemJobWelfareChipBinding
 import com.shiyuan.fastclaw.databinding.ItemJobWelfareSelectedBinding
 
+/**
+ * 福利偏好选择
+ */
 class JobWelfareAdapter(
     private val isSelected: (CommonEnumItem) -> Boolean,
     private val onSelected: (CommonEnumItem) -> Unit,

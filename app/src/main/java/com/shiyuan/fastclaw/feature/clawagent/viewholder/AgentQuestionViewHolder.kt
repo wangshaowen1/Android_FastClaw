@@ -140,8 +140,8 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
                 view.setBackgroundResource(R.drawable.bg_option_ripple)
                 view.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_75_3c3c43))
             }
-            //view.isEnabled = payload.isDisabled() != true
-            view.isEnabled = true
+            view.isEnabled = payload.isDisabled() != true
+            //view.isEnabled = true
             view.id = View.generateViewId()
             view.setOnClickListener { onActionClickListener(item, payload.buildAction(), payload.questionQueueId) }
             parent.addView(view)

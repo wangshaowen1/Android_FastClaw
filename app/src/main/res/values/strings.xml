@@ -795,6 +795,7 @@
     <string name="city_selector_at_least">请选择至少一个城市</string>
     <string name="city_selector_add_multiple">添加多个城市，可以获得更多工作机会？</string>
     <string name="city_selector_now_city">你现在在哪座城市？</string>
+    <string name="welfare_selector_at_least">至少选择一个福利偏好</string>
 
 </resources>
 
