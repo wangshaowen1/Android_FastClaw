@@ -159,9 +159,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
      * 内容变化用 data class 全等比较），相比父类 [submitList] 的整表刷新可保留动画、减少重绘。
      */
     override fun submitList(list: List<ClawAgentMessageInfo>?) {
-        var newList = list ?: emptyList()
+        val newList = list ?: emptyList()
         //测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试试测试测试测试
-        //newList = DataTest.getDataList(newList)
+        //newList = ClawDataTest.getDataList(newList)
         val result = DiffUtil.calculateDiff(MessageDiffCallback(items, newList))
         items = newList
         result.dispatchUpdatesTo(this)
