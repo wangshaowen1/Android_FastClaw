@@ -15,6 +15,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.databinding.ActivityProjectBinding
+import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
 class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, InformationViewModel>() {
@@ -64,7 +65,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
             bindEditData()
         }
         mRealVM.attributeSave.observe(this) {
-            FlowEventBus.postSticky(Events.SuccessfulEvent())
+            FlowEventBus.postSticky(Events.AttributeFieldSuccessfulEvent(attributeData))
             finish()
         }
     }
@@ -124,10 +125,30 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
             }
         }
         binding.tvStart.setOnClickListener {
-
+            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
+                binding.tvStart.text = ("$year-$month")
+                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = Companion.FIELD_START_DATE)
+                item?.let {
+                    item.displayValue =  "$year-$month"
+                    item.fieldValue = mapOf(
+                        "value" to "$year-$month" ,
+                        "displayText" to "$year-$month"
+                    )
+                }
+            }
         }
         binding.tvEnd.setOnClickListener {
-
+            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
+                binding.tvEnd.text = ("$year-$month")
+                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = Companion.FIELD_END_DATE)
+                item?.let {
+                    item.displayValue =  "$year-$month"
+                    item.fieldValue = mapOf(
+                        "value" to "$year-$month" ,
+                        "displayText" to "$year-$month"
+                    )
+                }
+            }
         }
         binding.vForm5.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_PROJECT_SCALE)
@@ -152,9 +173,6 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
             item?.let {
                 PublicFreeFillInActivity.start(this, isEdit, it)
             }
-        }
-        binding.vForm9.setOnSingleClickListener {
-
         }
         binding.vForm10.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_COLLABORATORS)

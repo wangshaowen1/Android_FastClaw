@@ -62,7 +62,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
             bindEditData()
         }
         mRealVM.attributeSave.observe(this){
-            FlowEventBus.postSticky(Events.SuccessfulEvent());
+            FlowEventBus.postSticky(Events.AttributeFieldSuccessfulEvent(attributeData))
             finish()
         }
     }

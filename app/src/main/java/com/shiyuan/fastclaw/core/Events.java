@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.core;
 
 
 import com.nhsd.basic.bus.AppEvent;
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData;
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem;
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem;
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems;
@@ -210,11 +211,7 @@ public class Events {
     }
 
 
-    public static class SuccessfulEvent implements AppEvent {
 
-        public SuccessfulEvent() {
-        }
-    }
 
 
     public static class AgreePolicyEvent implements AppEvent {
@@ -253,11 +250,24 @@ public class Events {
         }
     }
 
-
+    /**
+     * 表单输入时确认呢的发送数据
+     */
     public static class CommonAttributeFieldItemEvent implements AppEvent {
         public AttributeFieldItem attributeFieldItem ;
         public CommonAttributeFieldItemEvent(AttributeFieldItem attributeFieldItem) {
             this.attributeFieldItem = attributeFieldItem;
+        }
+    }
+
+    /**
+     * 保存 或者删除返送的数据
+     */
+    public static class AttributeFieldSuccessfulEvent implements AppEvent {
+        public AttributeArrayQueryData attributeData ;
+
+        public AttributeFieldSuccessfulEvent(AttributeArrayQueryData attributeData ) {
+            this.attributeData = attributeData;
         }
     }
 

@@ -14,8 +14,11 @@ import com.shiyuan.fastclaw.databinding.DialogCertificateSkillsAwardsBinding
 import com.shiyuan.fastclaw.databinding.ItemCertificateSkillsAwardsBinding
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.feature.information.AwardActivity
 import com.shiyuan.fastclaw.feature.information.CertificateActivity
 import com.shiyuan.fastclaw.feature.information.SkillActivity
@@ -30,6 +33,9 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         private var onCompleteClick: (() -> Unit)? = null
         private var onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null
         private var type: String = "certificates"
+
+        private const val FIELD_SKILL_NAME = "skillName"
+
 
         fun show(
             manager: FragmentManager,
@@ -52,6 +58,10 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         }
 
         private const val ARG_ATTRIBUTE_DATA = "arg_attribute_data"
+        private const val FIELD_CERTIFICATE_NAME = "certificateName"
+
+        private const val FIELD_AWARD_NAME = "awardName"
+
     }
 
     private var attributeData: AttributeArrayQueryData? = null
@@ -61,7 +71,21 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
             R.layout.item_certificate_skills_awards,
             emptyList()
         ) { binding, position, item ->
-            binding.tvName.text = item.displayValue ?: "暂无"
+            when (type) {
+                "skills" -> {
+                    val  projectName = AttributeFieldItemFinder.findFirst(item.fieldItems,FIELD_SKILL_NAME)
+                    binding.tvName.text = projectName?.displayValue ?:  "暂无"
+                }
+
+                "certificates" -> {
+                    val  projectName = AttributeFieldItemFinder.findFirst(item.fieldItems,FIELD_CERTIFICATE_NAME)
+                    binding.tvName.text = projectName?.displayValue ?:  "暂无"
+                }
+                else -> {
+                    val  projectName = AttributeFieldItemFinder.findFirst(item.fieldItems,FIELD_AWARD_NAME)
+                    binding.tvName.text = projectName?.displayValue ?:  "暂无"
+                }
+            }
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->
                     when (type) {
@@ -143,6 +167,16 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         binding.clWcExperience.setOnSingleClickListener {
             dismiss()
             onCompleteClick?.invoke()
+        }
+        observeEvents {
+            on<Events.AttributeFieldSuccessfulEvent> {
+                try {
+                    attributeData = it.attributeData
+                    bindData()
+                }catch (e: Exception){
+
+                }
+            }
         }
     }
 

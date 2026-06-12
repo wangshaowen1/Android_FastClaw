@@ -14,9 +14,11 @@ import com.shiyuan.fastclaw.databinding.DialogProjectExperienceBinding
 import com.shiyuan.fastclaw.databinding.ItemProjectExperienceBinding
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.feature.information.ProjectActivity
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
@@ -54,7 +56,10 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
         private const val START_DATE = "startDate"
         private const val END_DATE = "endDate"
         private const val POSITION = "position"
+
         private const val WORK_CONTENT = "workContent"
+        private const val FIELD_RESPONSIBILITIES = "responsibilities"
+        private const val FIELD_PROJECT_NAME = "projectName"
     }
 
     private var attributeData: AttributeArrayQueryData? = null
@@ -64,12 +69,13 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
             R.layout.item_project_experience,
             emptyList()
         ) { binding, position2, item ->
-            binding.tvCompany.text = item.displayValue ?:  "暂无"
+            val  projectName = AttributeFieldItemFinder.findFirst(item.fieldItems,FIELD_PROJECT_NAME)
+            binding.tvCompany.text = projectName?.displayValue ?:  "暂无"
             binding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
             val  startDate = AttributeFieldItemFinder.findFirst(item.fieldItems,START_DATE)
             val  endDate = AttributeFieldItemFinder.findFirst(item.fieldItems,END_DATE)
             val  position = AttributeFieldItemFinder.findFirst(item.fieldItems,POSITION)
-            val  workContent = AttributeFieldItemFinder.findFirst(item.fieldItems,WORK_CONTENT)
+            val  workContent = AttributeFieldItemFinder.findFirst(item.fieldItems,FIELD_RESPONSIBILITIES)
             binding.tvTime.text = (startDate?.displayValue ?: "") + " - " +  (endDate?.displayValue ?: "")
             binding.tvJob.text = position?.displayValue ?: ""
             workContent?.displayValue?.let {
@@ -144,6 +150,16 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
         binding.clWcExperience.setOnSingleClickListener {
             dismiss()
             onCompleteClick?.invoke()
+        }
+        observeEvents {
+            on<Events.AttributeFieldSuccessfulEvent> {
+                try {
+                    attributeData = it.attributeData
+                    bindData()
+                }catch (e: Exception){
+
+                }
+            }
         }
     }
 
