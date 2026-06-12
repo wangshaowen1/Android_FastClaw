@@ -103,14 +103,14 @@
                     app:layout_constraintTop_toTopOf="@id/tv_count" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <GridLayout
-                android:id="@+id/grid_welfare"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_welfare"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="18dp"
                 android:layout_marginTop="20dp"
-                android:columnCount="3"
-                android:orientation="horizontal"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
                 tools:itemCount="10" />
         </LinearLayout>
 
@@ -139,21 +139,16 @@
                     android:textColor="@color/color_90_000000"
                     android:textSize="12sp" />
 
-                <HorizontalScrollView
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_selected_welfare"
                     android:layout_width="0dp"
                     android:layout_height="22dp"
                     android:layout_marginStart="10dp"
                     android:layout_weight="1"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
                     android:overScrollMode="never"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/ll_selected_chips"
-                        android:layout_width="wrap_content"
-                        android:layout_height="22dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal" />
-                </HorizontalScrollView>
+                    android:scrollbars="none" />
             </LinearLayout>
 
             <TextView
