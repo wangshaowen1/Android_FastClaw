@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
@@ -14,9 +15,19 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
+import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
+import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil.convertCodeBooleanToString
 import com.shiyuan.fastclaw.databinding.ActivityEducationalBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 
 class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, InformationViewModel>() {
     companion object {
@@ -114,7 +125,18 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         }
 
         binding.vForm2.setOnSingleClickListener {
-
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_DEGREE)
+            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
+            SingleSelectDialog.show(this.supportFragmentManager,"学历",list){  data->
+                binding.vForm2.setValueText(data.name)
+                item?.let {
+                    item.displayValue =  data.name
+                    item.fieldValue = mapOf(
+                        "value" to data.code ,
+                        "displayText" to data.name
+                    )
+                }
+            }
         }
         binding.vForm3.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_MAJOR)
@@ -123,16 +145,59 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
             }
         }
         binding.tvStart.setOnClickListener {
+            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
+                binding.tvStart.text = ("$year-$month")
+                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_START_DATE)
+                item?.let {
+                    item.displayValue =  "$year-$month"
+                    item.fieldValue = mapOf(
+                        "value" to "$year-$month" ,
+                        "displayText" to "$year-$month"
+                    )
+                }
+            }
 
         }
         binding.tvEnd.setOnClickListener {
-
+            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
+                binding.tvEnd.text = ("$year-$month")
+                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_END_DATE)
+                item?.let {
+                    item.displayValue =  "$year-$month"
+                    item.fieldValue = mapOf(
+                        "value" to "$year-$month" ,
+                        "displayText" to "$year-$month"
+                    )
+                }
+            }
         }
         binding.vForm5.setOnSingleClickListener {
-
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_FULL_TIME)
+            val list = Json.decodeFromString<List<CommonEnumItem>>(convertCodeBooleanToString(item?.questionOptionsJson?:"[]"))
+            SingleSelectDialog.show(this.supportFragmentManager,"是否全日制",list){  data->
+                binding.vForm5.setValueText(data.name)
+                item?.let {
+                    item.displayValue =  data.name
+                    item.fieldValue = mapOf(
+                        "value" to data.code ,
+                        "displayText" to data.name
+                    )
+                }
+            }
         }
         binding.vForm6.setOnSingleClickListener {
-
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_SCHOOL_TYPE)
+            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
+            SingleSelectDialog.show(this.supportFragmentManager,"院校性质",list){  data->
+                binding.vForm6.setValueText(data.name)
+                item?.let {
+                    item.displayValue =  data.name
+                    item.fieldValue = mapOf(
+                        "value" to data.code ,
+                        "displayText" to data.name
+                    )
+                }
+            }
         }
         binding.vForm7.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_GPA)
@@ -262,5 +327,6 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
             .transparentStatusBar()
             .init()
     }
+
 
 }
