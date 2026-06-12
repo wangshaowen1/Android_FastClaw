@@ -60,8 +60,8 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
                 binding.btnLayout.setBackgroundResource(R.drawable.bg_upload_resume_btn)
             }
             action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
-            //binding.btnLayout.isEnabled = payload.isDisabled() != true
-            binding.btnLayout.isEnabled = true
+            binding.btnLayout.isEnabled = payload.isDisabled() != true
+            //binding.btnLayout.isEnabled = true
             binding.btnLayout.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
         }
     }
