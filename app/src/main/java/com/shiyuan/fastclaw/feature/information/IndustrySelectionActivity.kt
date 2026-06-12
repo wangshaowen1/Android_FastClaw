@@ -37,7 +37,7 @@ class IndustrySelectionActivity :
         private const val SESSIONID = "SESSIONID"
         private const val CONVERSATIONID = "CONVERSATIONID"
 
-        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String = "", conversationId: String = "") {
+        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String? = "", conversationId: String? = "") {
             activity ?: return
             val intent = Intent(activity, IndustrySelectionActivity::class.java).apply {
                 putExtra(EXTRA_IS_MULTIPLE, isMultiple)
@@ -101,7 +101,7 @@ class IndustrySelectionActivity :
                 parent.children?.firstOrNull { child -> child.code == item.code }?.isSelected = false
             }
             cyIyPnSonAdapter.notifyDataSetChanged()
-        },1)
+        },0)
     }
 
     private val searchAdapter: SearchAdapter by lazy {
@@ -131,7 +131,7 @@ class IndustrySelectionActivity :
 
     private fun initView() {
         if (isMultiple) {
-            binding.tvTitle.text = getString(R.string.choose_desired_position)
+            binding.tvTitle.text = getString(R.string.choose_expected_industry)
             binding.llMultipleTop.visibility = View.VISIBLE
             binding.llMultipleBot.visibility = View.VISIBLE
             binding.rcSelected.apply {
@@ -201,7 +201,8 @@ class IndustrySelectionActivity :
                 "最少选择一个".showToast()
                 return@setOnSingleClickListener
             }
-            FlowEventBus.postSticky(Events.CommonEnumItemEvent(null));
+            val msgGson = CommonEnumTreeUtil.toJson(selectedList)
+            FlowEventBus.postSticky(Events.ClawAgentEvent(msgGson))
             finish()
         }
     }

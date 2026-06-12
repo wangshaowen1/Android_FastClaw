@@ -1,7 +1,9 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
 import android.os.Parcelable
+import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.json.Json
 
 data class CommonEnumItem(
     val code: String? = null,
@@ -51,6 +53,14 @@ data class PositionDict(
 
 
 object CommonEnumTreeUtil {
+
+    fun toJson(data: List<CommonEnumItem>): String? {
+        return Json.encodeToString(
+            data.map { item ->
+                SimpleLocation(code = item.code, name = item.name)
+            }
+        )
+    }
 
     /**
      * 根据 level 筛选
