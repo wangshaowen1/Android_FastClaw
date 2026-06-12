@@ -293,7 +293,7 @@ data class CoreQuestionPayloadBean(
         return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "certificates"
     }
 
-    fun isAwards(): Boolean {//
+    fun isAwards(): Boolean {//奖项
         return inputMode == MODE_ARRAY_FORM && attributeGroupCode == "awards"
     }
 }
