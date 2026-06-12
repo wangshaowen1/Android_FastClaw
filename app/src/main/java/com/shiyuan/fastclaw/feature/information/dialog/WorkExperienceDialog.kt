@@ -14,9 +14,11 @@ import com.shiyuan.fastclaw.databinding.DialogWorkExperienceBinding
 import com.shiyuan.fastclaw.databinding.ItemWorkExperienceBinding
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.feature.information.EducationalActivity
 import com.shiyuan.fastclaw.feature.information.WorkActivity
@@ -55,6 +57,9 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
         private const val POSITION = "position"
         private const val WORK_CONTENT = "workContent"
         private const val ARG_ATTRIBUTE_DATA = "arg_attribute_data"
+
+        private const val FIELD_COMPANY_NAME = "companyName"
+
     }
 
     private var attributeData: AttributeArrayQueryData? = null
@@ -64,7 +69,8 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
             R.layout.item_work_experience,
             emptyList()
         ) { binding, position2, item ->
-            binding.tvCompany.text = item.displayValue ?:  "暂无"
+            val  projectName = AttributeFieldItemFinder.findFirst(item.fieldItems,FIELD_COMPANY_NAME)
+            binding.tvCompany.text = projectName?.displayValue ?:  "暂无"
             binding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
             val  startDate = AttributeFieldItemFinder.findFirst(item.fieldItems,START_DATE)
             val  endDate = AttributeFieldItemFinder.findFirst(item.fieldItems,END_DATE)
@@ -144,6 +150,18 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
             dismiss()
             onCompleteClick?.invoke()
         }
+
+        observeEvents {
+            on<Events.AttributeFieldSuccessfulEvent> {
+                try {
+                    attributeData = it.attributeData
+                    bindData()
+                }catch (e: Exception){
+
+                }
+            }
+        }
+
     }
 
     private fun bindData() {

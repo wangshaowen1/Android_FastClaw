@@ -61,7 +61,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
             bindEditData()
         }
         mRealVM.attributeSave.observe(this) {
-            FlowEventBus.postSticky(Events.SuccessfulEvent())
+            FlowEventBus.postSticky(Events.AttributeFieldSuccessfulEvent(attributeData))
             finish()
         }
     }
