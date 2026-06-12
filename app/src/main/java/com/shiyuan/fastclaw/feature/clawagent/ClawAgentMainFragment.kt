@@ -52,6 +52,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
+import com.shiyuan.fastclaw.feature.information.JobWelfareSelectorActivity
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
 import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
@@ -211,7 +212,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 } else if (payload?.isExpectedIndustry() ?: false) { //期望行业
                     IndustrySelectionActivity.start(activity, true, mRealVM.sessionId,mRealVM.conversationId)
                 }  else if (payload?.isWelfarePreference() ?: false) { //福利偏好
-
+                    JobWelfareSelectorActivity.start(activity, mRealVM.sessionId, mRealVM.conversationId)
                 } else if (payload?.isBirthday() ?: false) { //出生年月
                     BirthYearMonthPickerDialog.show(childFragmentManager){ year,month->
                         FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
