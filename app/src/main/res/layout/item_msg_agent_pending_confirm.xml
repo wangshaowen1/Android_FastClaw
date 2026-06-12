@@ -116,13 +116,16 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
+    <com.shiyuan.fastclaw.widget.super_button.SuperButton
+        app:sSolidColor="@android:color/white"
+        app:sCornersRadius="23dp"
+        app:sStrokeWidth="1dp"
+        app:sStrokeColor="@color/color_2f6bff"
         android:id="@+id/btn_re_upload"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="11dp"
-        android:background="@drawable/bg_ffffff_r23"
         android:gravity="center"
         android:paddingHorizontal="16dp"
         android:paddingVertical="13dp"
