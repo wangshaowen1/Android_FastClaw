@@ -245,7 +245,7 @@ data class CoreQuestionPayloadBean(
         return inputMode == MODE_DICT_SINGLE && attributeGroupCode == "location"
     }
 
-    //意向城市-expectedCity`、`意向岗位-jobIntention`、`期望行业-expectedIndustry`、`语言能力-languageSkills`
+    //`意向城市-expectedCity`、`意向岗位-jobIntention`、`期望行业-expectedIndustry`、`福利偏好-welfarePreference
     fun isExpectedCity(): Boolean {// 意向城市
         return inputMode == MODE_DICT_MULTI && attributeGroupCode == "expectedCity"
     }
@@ -256,6 +256,10 @@ data class CoreQuestionPayloadBean(
 
     fun isExpectedIndustry(): Boolean {// 期望行业
         return inputMode == MODE_DICT_MULTI && attributeGroupCode == "expectedIndustry"
+    }
+
+    fun isWelfarePreference(): Boolean {// 福利偏好
+        return inputMode == MODE_DICT_MULTI && attributeGroupCode == "welfarePreference"
     }
 
     //``出生年月-birthday`
