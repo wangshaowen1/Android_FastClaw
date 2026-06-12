@@ -103,7 +103,7 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
         binding.ivClose.setOnSingleClickListener { finish() }
         binding.btnComplete.setOnSingleClickListener {
             if (selectedWelfare.isEmpty()) {
-                "至少选择一个福利偏好".showToast()
+                getString(R.string.welfare_selector_at_least).showToast()
                 return@setOnSingleClickListener
             }
             val msgGson = CommonEnumTreeUtil.toJson(selectedWelfare)
