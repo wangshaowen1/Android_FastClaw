@@ -174,7 +174,8 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
             val matchedLocations = mData?.matchedLocations.orEmpty()
             binding.rvSearchResults.visibility = if (matchedLocations.isEmpty()) View.GONE else View.VISIBLE
             binding.tvEmptySearch.visibility = if (matchedLocations.isEmpty()) View.VISIBLE else View.GONE
-            searchAdapter.submitList(matchedLocations)
+            searchAdapter.setKeyWord(binding.etSearch.text?.toString().orEmpty())
+            searchAdapter.submitList(matchedLocations,)
         }
         refreshSelectedState()
     }
@@ -398,9 +399,19 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     }
 
     /**
+     * 更新底部完成按钮状态
+     */
+    private fun updateCompleteButtonState() {
+        val hasSelection = selectedLocations.isNotEmpty()
+        binding.btnComplete.isEnabled = hasSelection
+        binding.btnComplete.alpha = if (hasSelection) 1f else 0.3f
+    }
+
+    /**
      * 刷新底部已选城市区域，包括数量、上限和可删除城市标签。
      */
     private fun refreshSelectedState() {
+        updateCompleteButtonState()
         binding.tvCount.text = "${selectedLocations.size}"
         binding.tvMax.text = "/$maxSelectCount"
         binding.llSelectedChips.removeAllViews()
