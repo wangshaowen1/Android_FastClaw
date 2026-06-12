@@ -4,8 +4,17 @@ import android.os.Parcelable
 import com.shiyuan.fastclaw.core.network.apis.entity.SimpleMsgAgent
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.booleanOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlin.collections.plus
 
+@Serializable
 data class CommonEnumItem(
     val code: String? = null,
     val name: String? = null,
@@ -160,5 +169,35 @@ object CommonEnumTreeUtil {
         }
         nodes.forEach { traverse(it) }
         return result
+    }
+
+
+    fun convertCodeBooleanToString(jsonStr: String): String {
+        // 1. 解析 JSON 字符串为 JsonElement
+        val jsonArray = Json.parseToJsonElement(jsonStr).jsonArray
+
+        val newArray = jsonArray.map { element ->
+            val obj = element.jsonObject
+            // 获取原始 code 值
+            val codeValue = obj["code"]
+
+            // 转换逻辑：如果是布尔型 JsonPrimitive，则转为字符串；否则保持不变
+            val newCode = when (codeValue) {
+                is JsonPrimitive -> {
+                    if (codeValue.booleanOrNull != null) {
+                        JsonPrimitive(codeValue.boolean.toString())
+                    } else {
+                        codeValue
+                    }
+                }
+                else -> JsonPrimitive("")
+            }
+
+            // 3. 构建新的 JsonObject
+            JsonObject(obj.toMap() + ("code" to newCode))
+        }
+
+        // 4. 将修改后的 JsonArray 重新编码为 JSON 字符串
+        return Json.encodeToString(newArray)
     }
 }

@@ -1,12 +1,12 @@
 package com.shiyuan.fastclaw.feature.information
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
@@ -14,8 +14,11 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
+import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivitySkillBinding
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import kotlinx.serialization.json.Json
 
 class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationViewModel>() {
     companion object {
@@ -26,30 +29,38 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         private const val FIELD_SKILL_NAME = "skillName"
         private const val FIELD_PROFICIENCY = "proficiency"
 
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, instanceIndex: Long? = null) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null) {
             activity ?: return
             val intent = Intent(activity, SkillActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
-                instanceIndex?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
+                position?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
             }
             activity.startActivity(intent)
         }
     }
 
     private var attributeData: AttributeArrayQueryData? = null
-    private var instanceIndex: Long? = null
-    private var selectedProficiencyCode: String? = null
 
-    private val fieldItemsMap = mutableMapOf<String, AttributeFieldItem>()
+    private var position: Int = 0
+
+    private val currentInstance: MutableList<AttributeFieldItem> = mutableListOf()
+
+    private var isEdit = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         parseIntent()
+        currentInstance.clear()
+        currentInstance.addAll(attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems ?: emptyList())
         initView()
         observeEvents()
         if (isEdit) {
             bindEditData()
+        }
+        mRealVM.attributeSave.observe(this) {
+            FlowEventBus.postSticky(Events.SuccessfulEvent())
+            finish()
         }
     }
 
@@ -61,10 +72,8 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         } else {
             intent?.getParcelableExtra(EXTRA_ATTRIBUTE_DATA)
         }
-        instanceIndex = intent?.getLongExtra(EXTRA_INSTANCE_INDEX, -1L)?.takeIf { it != -1L }
+        position = intent?.getIntExtra(EXTRA_INSTANCE_INDEX, 0) ?: 0
     }
-
-    private var isEdit = true
 
     private fun initView() {
         if (isEdit) {
@@ -72,51 +81,56 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
             binding.viewActionButtons.setSecondaryText(getString(R.string.del))
             binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
             binding.viewActionButtons.setOnSecondaryClickListener {
-                finish()
+                attributeData?.fieldTree?.removeAt(this.position)
+                attributeData?.draft = true
+                attributeData?.let { mRealVM.attributeSave(it) }
             }
             binding.viewActionButtons.setOnPrimaryClickListener {
-                finish()
+                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
+                attributeData?.draft = true
+                attributeData?.let { mRealVM.attributeSave(it) }
             }
         } else {
             binding.tvTitle.text = getString(R.string.add_skill)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
-                finish()
+                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
+                attributeData?.draft = true
+                attributeData?.let { mRealVM.attributeSave(it) }
             }
         }
         binding.vForm1.setOnSingleClickListener {
-            val fieldItem = if (isEdit) {
-                fieldItemsMap[FIELD_SKILL_NAME] ?: AttributeFieldItem(fieldCode = FIELD_SKILL_NAME, fieldName = "技能名称")
-            } else {
-                AttributeFieldItem(fieldCode = FIELD_SKILL_NAME, fieldName = "技能名称")
+            val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_SKILL_NAME)
+            item?.let {
+                PublicFreeFillInActivity.start(this, isEdit, it)
             }
-            PublicFreeFillInActivity.start(this, isEdit, fieldItem)
         }
 
         binding.vForm2.setOnSingleClickListener {
-
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_PROFICIENCY)
+            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
+            SingleSelectDialog.show(this.supportFragmentManager,"熟练度",list){  data->
+                binding.vForm2.setValueText(data.name)
+                item?.let {
+                    item.displayValue =  data.name
+                    item.fieldValue = mapOf(
+                        "value" to data.code ,
+                        "displayText" to data.name
+                    )
+                }
+            }
         }
         binding.viewActionButtons.setSecondaryVisible(isEdit)
     }
 
     private fun bindEditData() {
-        val fieldTree = attributeData?.fieldTree ?: return
-        val currentInstance = if (instanceIndex != null) {
-            fieldTree.find { it.instanceIndex == instanceIndex }
-        } else {
-            fieldTree.firstOrNull()
-        } ?: return
-
         val skillNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_SKILL_NAME)
         skillNameItem?.let {
-            fieldItemsMap[FIELD_SKILL_NAME] = it
             binding.vForm1.setValueText(it.displayValue)
         }
 
         val proficiencyItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_PROFICIENCY)
         proficiencyItem?.let {
-            fieldItemsMap[FIELD_PROFICIENCY] = it
-            selectedProficiencyCode = it.fieldValue?.toString()
             binding.vForm2.setValueText(it.displayValue)
         }
     }
@@ -125,23 +139,20 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         observeEvents {
             on<Events.CommonAttributeFieldItemEvent> { event ->
                 event.attributeFieldItem?.fieldCode?.let { fieldCode ->
-                    attributeData?.fieldTree?.forEach { instance ->
-                        val currentItems = instance.fieldItems?.toMutableList() ?: mutableListOf()
-                        val index = currentItems.indexOfFirst { it.fieldCode == fieldCode }
+                    val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)
+                    item?.let {
+                        val index = currentInstance.indexOf(item)
                         if (index >= 0) {
-                            currentItems[index] = event.attributeFieldItem
-                        } else {
-                            currentItems.add(event.attributeFieldItem)
+                            currentInstance[index] = event.attributeFieldItem
                         }
-                        instance.fieldItems = currentItems
-                        return@forEach
                     }
                     when (fieldCode) {
                         FIELD_SKILL_NAME -> {
-                            fieldItemsMap[FIELD_SKILL_NAME] = event.attributeFieldItem
                             binding.vForm1.setValueText(event.attributeFieldItem.displayValue)
                         }
-                        FIELD_PROFICIENCY -> fieldItemsMap[FIELD_PROFICIENCY] = event.attributeFieldItem
+                        FIELD_PROFICIENCY -> {
+                            binding.vForm2.setValueText(event.attributeFieldItem.displayValue)
+                        }
                     }
                 }
             }

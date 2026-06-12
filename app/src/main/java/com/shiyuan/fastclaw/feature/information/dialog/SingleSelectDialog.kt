@@ -17,6 +17,7 @@ class SingleSelectDialog : BaseBottomPushDialogFragment<DialogSingleSelectBindin
         private const val UNSELECTED_TEXT_SIZE_SP = 14f
         private const val WHEEL_ITEM_COUNT = 5
         const val TAG = "AwardLevelDialog"
+        private const val ARG_TITLE = "title"
 
         private var awardLevels: List<CommonEnumItem> = emptyList()
         private var selectedItem: CommonEnumItem? = null
@@ -24,6 +25,7 @@ class SingleSelectDialog : BaseBottomPushDialogFragment<DialogSingleSelectBindin
 
         fun show(
             manager: FragmentManager,
+            title: String? = null,
             awardLevels: List<CommonEnumItem>,
             selectedItem: CommonEnumItem? = null,
             onConfirm: ((CommonEnumItem) -> Unit)? = null,
@@ -32,7 +34,9 @@ class SingleSelectDialog : BaseBottomPushDialogFragment<DialogSingleSelectBindin
             this.selectedItem = selectedItem
             this.onConfirm = onConfirm
             return SingleSelectDialog().apply {
-                arguments = Bundle()
+                arguments = Bundle().apply {
+                    putString(ARG_TITLE, title)
+                }
                 show(manager)
             }
         }
@@ -40,6 +44,7 @@ class SingleSelectDialog : BaseBottomPushDialogFragment<DialogSingleSelectBindin
 
     override fun onPrepareView() {
         super.onPrepareView()
+        binding.tvTitle.text = arguments?.getString(ARG_TITLE)
         initPicker()
         initClick()
     }
