@@ -27,11 +27,6 @@ import com.shiyuan.fastclaw.feature.information.viewModel.JobWelfareSelectorMode
  */
 class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelectorBinding, JobWelfareSelectorModel>() {
 
-    private val selectedWelfare = linkedMapOf<String, CommonEnumItem>()
-    private var welfareItems = emptyList<CommonEnumItem>()
-    private val maxSelectCount = 10
-    private val sessionId by lazy { intent.getStringExtra(EXTRA_SESSION_ID).orEmpty() }
-    private val conversationId by lazy { intent.getStringExtra(EXTRA_CONVERSATION_ID).orEmpty() }
     private val welfareAdapter by lazy {
         JobWelfareAdapter(
             isSelected = { item -> item.code?.let(selectedWelfare::containsKey) == true },
@@ -41,6 +36,11 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
     private val selectedAdapter by lazy {
         SelectedWelfareAdapter { item -> removeSelectedWelfare(item) }
     }
+    private val selectedWelfare = linkedMapOf<String, CommonEnumItem>()
+    private var welfareItems = emptyList<CommonEnumItem>()
+    private val maxSelectCount = 10
+    private val sessionId by lazy { intent.getStringExtra(EXTRA_SESSION_ID).orEmpty() }
+    private val conversationId by lazy { intent.getStringExtra(EXTRA_CONVERSATION_ID).orEmpty() }
 
     companion object {
         private const val EXTRA_SESSION_ID = "extra_session_id"
