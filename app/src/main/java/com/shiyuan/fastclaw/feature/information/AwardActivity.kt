@@ -111,7 +111,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
         binding.vForm2.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_AWARD_LEVEL)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,list){  data->
+            SingleSelectDialog.show(this.supportFragmentManager,"奖励等级",list){  data->
                 binding.vForm2.setValueText(data.name)
                 item?.let {
                     item.displayValue =  data.name

@@ -69,6 +69,10 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
                 "已达最大输入字数 $MAX_LENGTH 字".showToast()
             }
             data.displayValue= editable.toString()
+            data.fieldValue = mapOf(
+                "value" to editable.toString() ,
+                "displayText" to editable.toString()
+            )
             mapOf(
                 "value" to editable.toString() ,
                 "displayText" to editable.toString()

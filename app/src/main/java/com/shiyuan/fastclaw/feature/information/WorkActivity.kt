@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
@@ -16,9 +17,12 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeDataHelper
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeDataHelper.updateFieldItemSimple
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
+import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivityWorkBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import kotlinx.serialization.json.Json
 
 class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewModel>() {
     companion object {
@@ -139,15 +143,31 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             IndustrySelectionActivity.start(this, false)
         }
         binding.vForm6.setOnSingleClickListener {
-            val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_COMPANY_SCALE)
-            item?.let {
-                PublicFreeFillInActivity.start(this, isEdit, it)
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_COMPANY_SCALE)
+            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
+            SingleSelectDialog.show(this.supportFragmentManager,"公司规模",list){  data->
+                binding.vForm6.setValueText(data.name)
+                item?.let {
+                    item.displayValue =  data.name
+                    item.fieldValue = mapOf(
+                        "value" to data.code ,
+                        "displayText" to data.name
+                    )
+                }
             }
         }
         binding.vForm7.setOnSingleClickListener {
-            val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_COMPANY_TYPE)
-            item?.let {
-                PublicFreeFillInActivity.start(this, isEdit, it)
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_COMPANY_TYPE)
+            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
+            SingleSelectDialog.show(this.supportFragmentManager,"公司类型",list){  data->
+                binding.vForm7.setValueText(data.name)
+                item?.let {
+                    item.displayValue =  data.name
+                    item.fieldValue = mapOf(
+                        "value" to data.code ,
+                        "displayText" to data.name
+                    )
+                }
             }
         }
         binding.vForm8.setOnSingleClickListener {
@@ -157,9 +177,17 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             }
         }
         binding.vForm9.setOnSingleClickListener {
-            val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_LEAVING_REASON)
-            item?.let {
-                PublicFreeFillInActivity.start(this, isEdit, it)
+            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_LEAVING_REASON)
+            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
+            SingleSelectDialog.show(this.supportFragmentManager,"公司类型",list){  data->
+                binding.vForm9.setValueText(data.name)
+                item?.let {
+                    item.displayValue =  data.name
+                    item.fieldValue = mapOf(
+                        "value" to data.code ,
+                        "displayText" to data.name
+                    )
+                }
             }
         }
 
@@ -282,31 +310,25 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         when (event.commonEnumItems.fieldCode) {
             FIELD_POSITION -> {
                 binding.vForm2.setValueText(event.commonEnumItems.positionName)
-                updateFieldItemSimple(
-                    attributeData = attributeData,
-                    instanceIndex = position.toLong(),
-                    fieldCode = FIELD_POSITION,
-                    fieldName = "职位名称",
-                    fieldValue = mapOf(
-                        "value" to event.commonEnumItems.positionCode,
+                val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_POSITION)
+                item?.let {
+                    item.displayValue =  event.commonEnumItems.positionName ?: ""
+                    item.fieldValue = mapOf(
+                        "value" to event.commonEnumItems.positionName,
                         "displayText" to event.commonEnumItems.positionName
-                    ),
-                    displayValue = event.commonEnumItems.positionName ?: ""
-                )
+                    )
+                }
             }
             FIELD_INDUSTRY -> {
                 binding.vForm5.setValueText(event.commonEnumItems.name)
-                updateFieldItemSimple(
-                    attributeData = attributeData,
-                    instanceIndex = position.toLong(),
-                    fieldCode = FIELD_INDUSTRY,
-                    fieldName = "所属行业",
-                    fieldValue = mapOf(
-                        "value" to event.commonEnumItems.code,
+                val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_INDUSTRY)
+                item?.let {
+                    item.displayValue =  event.commonEnumItems.name ?: ""
+                    item.fieldValue = mapOf(
+                        "value" to event.commonEnumItems.name,
                         "displayText" to event.commonEnumItems.name
-                    ),
-                    displayValue = event.commonEnumItems.name ?: ""
-                )
+                    )
+                }
             }
         }
     }
