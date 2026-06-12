@@ -208,6 +208,11 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
+            android:name=".feature.information.JobWelfareSelectorActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.information.EducationalActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 

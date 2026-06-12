@@ -30,4 +30,11 @@ data class DictPositionQueryBody(
 )  {
 }
 
+data class DictWelfareQueryBody(
+    val sessionId: String? = null,
+    val conversationId: String? = null,
+    val keyword: String? = null,
+    val limit: Int? = null,
+)
+
 
