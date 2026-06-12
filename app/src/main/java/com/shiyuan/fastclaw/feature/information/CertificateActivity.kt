@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
@@ -59,6 +60,10 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         observeEvents()
         if (isEdit) {
             bindEditData()
+        }
+        mRealVM.attributeSave.observe(this){
+            FlowEventBus.postSticky(Events.SuccessfulEvent());
+            finish()
         }
     }
 

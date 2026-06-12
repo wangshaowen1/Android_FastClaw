@@ -3,8 +3,9 @@ package com.shiyuan.fastclaw.core.network.apis.response
 import android.os.Parcelable
 import com.shiyuan.fastclaw.core.network.apis.entity.SimpleMsgAgent
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-
+@Serializable
 data class CommonEnumItem(
     val code: String? = null,
     val name: String? = null,

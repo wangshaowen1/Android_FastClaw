@@ -209,6 +209,14 @@ public class Events {
         }
     }
 
+
+    public static class SuccessfulEvent implements AppEvent {
+
+        public SuccessfulEvent() {
+        }
+    }
+
+
     public static class AgreePolicyEvent implements AppEvent {
         /**
          * type 11/21:手机号 12/22:QQ 13/23:微信

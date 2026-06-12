@@ -63,7 +63,7 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
         SingleBindingAdapter<ItemProjectExperienceBinding, AttributeFieldTree>(
             R.layout.item_project_experience,
             emptyList()
-        ) { binding, position, item ->
+        ) { binding, position2, item ->
             binding.tvCompany.text = item.displayValue ?:  "暂无"
             binding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
             val  startDate = AttributeFieldItemFinder.findFirst(item.fieldItems,START_DATE)
@@ -97,7 +97,7 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
             }
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->
-                    ProjectActivity.start(requireActivity(), true, attr, item.instanceIndex)
+                    ProjectActivity.start(requireActivity(), true, attr, position2)
                 }
             }
 
@@ -123,7 +123,23 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
     private fun initView() {
         binding.ivClose.setOnSingleClickListener { dismiss() }
         binding.clAddExperience.setOnSingleClickListener {
-            ProjectActivity.start(requireActivity(), false, attributeData)
+            attributeData?.fieldTree?.let { treeList ->
+                // 1. 取出第0个元素（如果存在）
+                val original = treeList.getOrNull(0) ?: return@let
+
+                // 2. 深拷贝 original（通过序列化方式最安全，此处展示手动递归拷贝）
+                val copy = original.copy(
+                    fieldItems = original.fieldItems?.map { item ->
+                        item.copy(
+                            fieldValue = null,      // 直接置 null
+                            displayValue = null
+                        )
+                    }?.toMutableList()
+                )
+                // 3. 将副本插入到列表第0个位置
+                treeList.add(0, copy)
+            }
+            ProjectActivity.start(requireActivity(), false, attributeData,0)
         }
         binding.clWcExperience.setOnSingleClickListener {
             dismiss()

@@ -63,7 +63,7 @@ class EducationExperienceDialog : BaseBottomPushVMDialogFragment<DialogEducation
         SingleBindingAdapter<ItemEducationExperienceBinding, AttributeFieldTree>(
             R.layout.item_education_experience,
             emptyList()
-        ) { binding, position, item ->
+        ) { binding, position2, item ->
             binding.tvCompany.text = item.displayValue ?: "暂无"
             binding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
             val startDate = AttributeFieldItemFinder.findFirst(item.fieldItems, START_DATE)
@@ -88,7 +88,7 @@ class EducationExperienceDialog : BaseBottomPushVMDialogFragment<DialogEducation
 
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->
-                    EducationalActivity.start(requireActivity(), true, attr, item.instanceIndex)
+                    EducationalActivity.start(requireActivity(), true, attr, position2)
                 }
             }
         }
@@ -113,7 +113,23 @@ class EducationExperienceDialog : BaseBottomPushVMDialogFragment<DialogEducation
     private fun initView() {
         binding.ivClose.setOnSingleClickListener { dismiss() }
         binding.clAddExperience.setOnSingleClickListener {
-            EducationalActivity.start(requireActivity(), false, attributeData)
+            attributeData?.fieldTree?.let { treeList ->
+                // 1. 取出第0个元素（如果存在）
+                val original = treeList.getOrNull(0) ?: return@let
+
+                // 2. 深拷贝 original（通过序列化方式最安全，此处展示手动递归拷贝）
+                val copy = original.copy(
+                    fieldItems = original.fieldItems?.map { item ->
+                        item.copy(
+                            fieldValue = null,      // 直接置 null
+                            displayValue = null
+                        )
+                    }?.toMutableList()
+                )
+                // 3. 将副本插入到列表第0个位置
+                treeList.add(0, copy)
+            }
+            EducationalActivity.start(requireActivity(), false, attributeData,0)
         }
         binding.clWcExperience.setOnSingleClickListener {
             dismiss()
