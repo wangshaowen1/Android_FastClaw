@@ -393,9 +393,13 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            // 防御性兜底：如果系统报告 IME 高度为 0，无论如何都要解除动画锁并恢复原位
+            /*if (imeBottom == 0 && hasRunningImeAnimation) {
+                hasRunningImeAnimation = false
+            }*/
             // 动画期间不再改变margin，防多次分发触发动画
             if (!hasRunningImeAnimation) {
-                val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
                 v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     bottomMargin = resolveBottomMargin(imeBottom)
                 }
