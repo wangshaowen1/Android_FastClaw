@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 
 /**
- * @author:李迪迦
- * @date: 2021/10/28
- * @Type:
+ * @desc：监听软键盘状态
+ * @author：CaoWei
+ * @date：2026/6/14 16:52
  */
 public class SoftKeyBoardListener {
     private final View rootView;  //activity的根视图
