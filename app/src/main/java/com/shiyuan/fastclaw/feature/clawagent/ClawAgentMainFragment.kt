@@ -34,6 +34,7 @@ import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
+import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
@@ -391,6 +392,20 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 binding.ivSend.gone()
             }
         }
+
+        SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
+
+            override fun keyBoardShow(height: Int) {
+            }
+
+            override fun keyBoardHide(height: Int) {
+                // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
+                binding.layoutSend.postDelayed({
+                    hasRunningImeAnimation = false
+                    ViewCompat.requestApplyInsets(binding.layoutSend)
+                }, 250L)
+            }
+        })
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
