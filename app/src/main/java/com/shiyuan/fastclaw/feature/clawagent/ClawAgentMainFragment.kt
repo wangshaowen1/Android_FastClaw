@@ -393,20 +393,6 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             }
         }
 
-        SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
-
-            override fun keyBoardShow(height: Int) {
-            }
-
-            override fun keyBoardHide(height: Int) {
-                // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
-                binding.layoutSend.postDelayed({
-                    hasRunningImeAnimation = false
-                    ViewCompat.requestApplyInsets(binding.layoutSend)
-                }, 250L)
-            }
-        })
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             // 防御性兜底：如果系统报告 IME 高度为 0，无论如何都要解除动画锁并恢复原位
@@ -449,6 +435,19 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 }
             }
         )
+
+        SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
+            override fun keyBoardShow(height: Int) {
+            }
+
+            override fun keyBoardHide(height: Int) {
+                // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
+                binding.layoutSend.postDelayed({
+                    hasRunningImeAnimation = false
+                    ViewCompat.requestApplyInsets(binding.layoutSend)
+                }, 250L)
+            }
+        })
     }
 
     private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null) {
