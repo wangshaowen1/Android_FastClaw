@@ -50,6 +50,13 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         private const val FIELD_LEAVING_REASON = "leavingReason"
         private const val FIELD_START_DATE = "startDate"
         private const val FIELD_END_DATE = "endDate"
+        private val REQUIRED_FIELDS = listOf(
+            FIELD_COMPANY_NAME to R.string.company_name,
+            FIELD_POSITION to R.string.job_title,
+            FIELD_START_DATE to R.string.entry_time,
+            FIELD_END_DATE to R.string.end_time,
+            FIELD_WORK_CONTENT to R.string.job_content
+        )
 
         /**
          * 启动工作经历编辑页。
@@ -125,18 +132,14 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             }
             // 完成编辑：写回字段项并保存
             binding.viewActionButtons.setOnPrimaryClickListener {
-                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
-                attributeData?.draft = true
-                attributeData?.let { mRealVM.attributeSave(it) }
+                saveCurrentInstance()
             }
         } else {
             // 新增模式：仅显示保存按钮
             binding.tvTitle.text = getString(R.string.add_working)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
-                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
-                attributeData?.draft = true
-                attributeData?.let { mRealVM.attributeSave(it) }
+                saveCurrentInstance()
             }
         }
         // 公司名称：跳到自由填写页
@@ -243,6 +246,24 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
 
         // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)
+    }
+
+    private fun saveCurrentInstance() {
+        if (!validateRequiredFields()) return
+        attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
+        attributeData?.draft = true
+        attributeData?.let { mRealVM.attributeSave(it) }
+    }
+
+    private fun validateRequiredFields(): Boolean {
+        val emptyFieldName = REQUIRED_FIELDS.firstOrNull { (fieldCode, _) ->
+            AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)?.displayValue.isNullOrBlank()
+        }?.second?.let { getString(it) }
+        if (emptyFieldName != null) {
+            "请完善必填项：$emptyFieldName".showToast()
+            return false
+        }
+        return true
     }
 
     /**

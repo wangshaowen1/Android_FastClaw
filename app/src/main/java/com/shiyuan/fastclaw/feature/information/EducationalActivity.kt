@@ -9,6 +9,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
@@ -52,6 +53,13 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         private const val FIELD_SCHOOL_TYPE = "schoolType"
         private const val FIELD_START_DATE = "startDate"
         private const val FIELD_END_DATE = "endDate"
+        private val REQUIRED_FIELDS = listOf(
+            FIELD_SCHOOL_NAME to R.string.school_name,
+            FIELD_DEGREE to R.string.education_level,
+            FIELD_MAJOR to R.string.major,
+            FIELD_START_DATE to R.string.enrollment_time,
+            FIELD_END_DATE to R.string.graduation_time
+        )
 
         /**
          * 启动教育经历编辑页。
@@ -127,18 +135,14 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
             }
             // 完成编辑：写回字段项并保存
             binding.viewActionButtons.setOnPrimaryClickListener {
-                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
-                attributeData?.draft = true
-                attributeData?.let { mRealVM.attributeSave(it) }
+                saveCurrentInstance()
             }
         } else {
             // 新增模式：仅显示保存按钮
             binding.tvTitle.text = getString(R.string.add_educational)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
-                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
-                attributeData?.draft = true
-                attributeData?.let { mRealVM.attributeSave(it) }
+                saveCurrentInstance()
             }
         }
         // 学校名称：自由填写
@@ -275,6 +279,24 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
 
         // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)
+    }
+
+    private fun saveCurrentInstance() {
+        if (!validateRequiredFields()) return
+        attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
+        attributeData?.draft = true
+        attributeData?.let { mRealVM.attributeSave(it) }
+    }
+
+    private fun validateRequiredFields(): Boolean {
+        val emptyFieldName = REQUIRED_FIELDS.firstOrNull { (fieldCode, _) ->
+            AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)?.displayValue.isNullOrBlank()
+        }?.second?.let { getString(it) }
+        if (emptyFieldName != null) {
+            "请完善必填项：$emptyFieldName".showToast()
+            return false
+        }
+        return true
     }
 
     /**
