@@ -16,6 +16,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivitySkillBinding
+import com.shiyuan.fastclaw.feature.information.dialog.DeleteConfirmDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
@@ -110,9 +111,14 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
             binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
             // 删除当前实例并保存
             binding.viewActionButtons.setOnSecondaryClickListener {
-                attributeData?.fieldTree?.removeAt(this.position)
-                attributeData?.draft = true
-                attributeData?.let { mRealVM.attributeSave(it) }
+                DeleteConfirmDialog.show(
+                    manager = supportFragmentManager,
+                    onDelete = {
+                        attributeData?.fieldTree?.removeAt(this.position)
+                        attributeData?.draft = true
+                        attributeData?.let { mRealVM.attributeSave(it) }
+                    }
+                )
             }
             // 完成编辑：写回字段项并保存
             binding.viewActionButtons.setOnPrimaryClickListener {

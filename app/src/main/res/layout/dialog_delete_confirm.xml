@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="304dp"
+    android:layout_height="wrap_content"
+    android:padding="20dp"
+    app:background_normalColor="@color/white"
+    app:super_corner="20dp">
+
+    <LinearLayout
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:textColor="@color/color_90_000000"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="删除后无法恢复，确定要删除吗?" />
+
+        <LinearLayout
+            android:id="@+id/layout_action"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+                android:id="@+id/btn_cancel"
+                android:layout_width="124dp"
+                android:layout_height="40dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:background_normalColor="@color/color_E8F1FF"
+                app:super_corner="80dp">
+
+                <TextView
+                    android:id="@+id/tv_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_2f6bff"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="取消" />
+            </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+
+            <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+                android:id="@+id/btn_delete"
+                android:layout_width="124dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:background_normalColor="@color/color_2f6bff"
+                app:super_corner="80dp">
+
+                <TextView
+                    android:id="@+id/tv_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="删除" />
+            </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+        </LinearLayout>
+    </LinearLayout>
+</com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>

@@ -228,7 +228,7 @@
                             android:textColor="@color/white"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:text="@string/text_save" />
+                            android:text="@string/complete" />
 
                     </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
 

@@ -18,6 +18,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
 import com.shiyuan.fastclaw.databinding.ActivityCertificateBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.DeleteConfirmDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 
 /**
@@ -100,9 +101,14 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
             binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
             // 删除当前实例并保存
             binding.viewActionButtons.setOnSecondaryClickListener {
-                attributeData?.fieldTree?.removeAt(this.position)
-                attributeData?.draft = true
-                attributeData?.let { mRealVM.attributeSave(it) }
+                DeleteConfirmDialog.show(
+                    manager = supportFragmentManager,
+                    onDelete = {
+                        attributeData?.fieldTree?.removeAt(this.position)
+                        attributeData?.draft = true
+                        attributeData?.let { mRealVM.attributeSave(it) }
+                    }
+                )
             }
             // 完成编辑：写回字段项并保存
             binding.viewActionButtons.setOnPrimaryClickListener {
