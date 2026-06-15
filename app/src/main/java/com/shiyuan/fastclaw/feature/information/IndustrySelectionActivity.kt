@@ -236,7 +236,7 @@ class IndustrySelectionActivity :
         binding.layoutPrimary.setOnSingleClickListener {
             val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
             if (selectedList.isEmpty()) {
-                "最少选择一个".showToast()
+                "最少选择一个行业".showToast()
                 return@setOnSingleClickListener
             }
             val msgGson = CommonEnumTreeUtil.toJson(selectedList)

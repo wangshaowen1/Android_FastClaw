@@ -252,7 +252,7 @@ class JobSelectionActivity :
         binding.layoutPrimary.setOnSingleClickListener {
             val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
             if (selectedList.isEmpty()) {
-                "最少选择一个".showToast()
+                "最少选择一个岗位".showToast()
                 return@setOnSingleClickListener
             }
             mRealVM.selectPositionData.value?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
