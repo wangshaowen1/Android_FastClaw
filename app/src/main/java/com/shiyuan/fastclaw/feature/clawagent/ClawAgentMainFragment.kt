@@ -276,9 +276,13 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 }  else if (payload?.isWelfarePreference() ?: false) { //福利偏好
                     JobWelfareSelectorActivity.start(activity, mRealVM.sessionId, mRealVM.conversationId)
                 } else if (payload?.isBirthday() ?: false) { //出生年月
-                    BirthYearMonthPickerDialog.show(childFragmentManager){ year,month->
-                        FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
-                    }
+                    BirthYearMonthPickerDialog.show(
+                        manager = childFragmentManager,
+                        title = "出生年月",
+                        onConfirmWithTimestamp = { year, month, _ ->
+                            FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
+                        }
+                    )
                 } else if (payload?.isExpectedSalary() ?: false) { //薪资范围
                     SalaryRangePickerDialog.show(
                         manager = childFragmentManager

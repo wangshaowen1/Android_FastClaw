@@ -11,6 +11,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
@@ -24,6 +25,7 @@ import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialo
 import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
+import java.util.Calendar
 
 /**
  * 工作经验项编辑页：支持新增或编辑一条工作经历。
@@ -145,16 +147,28 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         }
         // 起始时间：年月选择器
         binding.tvStart.setOnClickListener {
+            val selectedDate = getFieldDate(FIELD_START_DATE)
             BirthYearMonthPickerDialog.show(
                 manager = this.supportFragmentManager,
-                onConfirm = { year, month -> onStartDateSelected(year, month) }
+                title = "入职时间",
+                selectedYear = selectedDate?.first,
+                selectedMonth = selectedDate?.second,
+                onConfirmWithTimestamp = { year, month, timestamp ->
+                    onStartDateSelected(year, month, timestamp)
+                }
             )
         }
         // 结束时间：年月选择器
         binding.tvEnd.setOnClickListener {
+            val selectedDate = getFieldDate(FIELD_END_DATE)
             BirthYearMonthPickerDialog.show(
                 manager = this.supportFragmentManager,
-                onConfirm = { year, month -> onEndDateSelected(year, month) }
+                title = "截至时间",
+                selectedYear = selectedDate?.first,
+                selectedMonth = selectedDate?.second,
+                onConfirmWithTimestamp = { year, month, timestamp ->
+                    onEndDateSelected(year, month, timestamp)
+                }
             )
         }
         // 工作内容：跳到长文本填写页
@@ -228,7 +242,12 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     /**
      * 处理起始时间选择结果。
      */
-    private fun onStartDateSelected(year: Int, month: String) {
+    private fun onStartDateSelected(year: Int, month: String, timestamp: Long) {
+        val endTimestamp = getFieldDateTimestamp(FIELD_END_DATE)
+        if (endTimestamp != null && timestamp > endTimestamp) {
+            "起始时间不能大于结束时间".showToast()
+            return
+        }
         binding.tvStart.text = "$year-$month"
         val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_START_DATE)
         item?.let {
@@ -247,7 +266,12 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     /**
      * 处理结束时间选择结果。
      */
-    private fun onEndDateSelected(year: Int, month: String) {
+    private fun onEndDateSelected(year: Int, month: String, timestamp: Long) {
+        val startTimestamp = getFieldDateTimestamp(FIELD_START_DATE)
+        if (startTimestamp != null && timestamp < startTimestamp) {
+            "结束时间不能小于起始时间".showToast()
+            return
+        }
         binding.tvEnd.text = "$year-$month"
         val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_END_DATE)
         item?.let {
@@ -261,6 +285,28 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                 currentInstance[index] = it
             }
         }
+    }
+
+    /**
+     * 从字段中读取已选年月，并转换为该月 1 日 00:00:00 的本地毫秒时间戳。
+     */
+    private fun getFieldDateTimestamp(fieldCode: String): Long? {
+        val (year, month) = getFieldDate(fieldCode) ?: return null
+        return Calendar.getInstance().apply {
+            clear()
+            set(year, month - 1, 1, 0, 0, 0)
+        }.timeInMillis
+    }
+
+    /**
+     * 从字段展示值解析已选择的年月。
+     */
+    private fun getFieldDate(fieldCode: String): Pair<Int, Int>? {
+        val displayValue = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode)?.displayValue
+        val parts = displayValue?.split("-")?.takeIf { it.size == 2 } ?: return null
+        val year = parts[0].toIntOrNull() ?: return null
+        val month = parts[1].toIntOrNull()?.takeIf { it in 1..12 } ?: return null
+        return year to month
     }
 
     /**
