@@ -192,6 +192,51 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 showUploadResumeDialog(data)
             }
         }
+
+        // 历史简历确认卡 确认/否认：actionCode 用端侧动作枚举，回传 resumeId/resumeStructId/resumeTaskId
+        msgAdapter.onResumeConfirmClickAction = { item, confirmed ->
+            if (!interceptIfStreaming()) {
+                // 确认/否认埋点统一收敛到 onTrackingEvent，原有 forceScrollToBottom 判定保留
+                onTrackingEvent(
+                    trackingType = if (forceScrollToBottom) TrackingType.RESUME_CONFIRM else TrackingType.RESUME_DENY
+                )
+                forceScrollToBottom = true
+                val payload = item.metaData?.let {
+                    runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
+                }
+                val payloadMap = buildMap {
+                    payload?.resumeId?.let { put("resumeId", it) }
+                    payload?.resumeStructId?.let { put("resumeStructId", it) }
+                    payload?.resumeTaskId?.let { put("resumeTaskId", it) }
+                }
+                mRealVM.sendAction(
+                    desc = getString(if (confirmed) R.string.confirm_my_resume else R.string.not_my_resume),
+                    actionData = AgentMsgAction(
+                        actionCode = (if (confirmed) CandidateJobAgentClientActionEnum.RESUME_CONFIRM_YES
+                        else CandidateJobAgentClientActionEnum.RESUME_CONFIRM_NO).name,
+                        sourceMessageId = item.id,
+                        actionPayloadJson = payloadMap.takeIf { it.isNotEmpty() }?.let { GsonUtils.toJson(it) },
+                    )
+                )
+            }
+        }
+
+        // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
+        msgAdapter.onQuestionSkipClickAction = { item, action, queueId ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.sendAction(
+                    desc = action.text.orEmpty(),
+                    actionData = AgentMsgAction(
+                        questionQueueId = queueId,
+                        actionCode = action.actionCode,
+                        sourceMessageId = item.id,
+                        actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
+                    )
+                )
+            }
+        }
+
         // 补问卡选项点击：actionCode 取自 payload option（如 QUESTION_OPTION_SUBMIT），actionPayload 原样回传
         msgAdapter.onQuestionOptionClickAction = { item, option, queueId ->
             if (!interceptIfStreaming()) {
@@ -322,48 +367,6 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                     startMsgAction(item, action, queueId)
                 }
                 onTrackingEvent(payload = payload)
-            }
-        }
-        // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
-        msgAdapter.onQuestionSkipClickAction = { item, action, queueId ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.sendAction(
-                    desc = action.text.orEmpty(),
-                    actionData = AgentMsgAction(
-                        questionQueueId = queueId,
-                        actionCode = action.actionCode,
-                        sourceMessageId = item.id,
-                        actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
-                    )
-                )
-            }
-        }
-        // 历史简历确认卡 确认/否认：actionCode 用端侧动作枚举，回传 resumeId/resumeStructId/resumeTaskId
-        msgAdapter.onResumeConfirmClickAction = { item, confirmed ->
-            if (!interceptIfStreaming()) {
-                // 确认/否认埋点统一收敛到 onTrackingEvent，原有 forceScrollToBottom 判定保留
-                onTrackingEvent(
-                    trackingType = if (forceScrollToBottom) TrackingType.RESUME_CONFIRM else TrackingType.RESUME_DENY
-                )
-                forceScrollToBottom = true
-                val payload = item.metaData?.let {
-                    runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
-                }
-                val payloadMap = buildMap {
-                    payload?.resumeId?.let { put("resumeId", it) }
-                    payload?.resumeStructId?.let { put("resumeStructId", it) }
-                    payload?.resumeTaskId?.let { put("resumeTaskId", it) }
-                }
-                mRealVM.sendAction(
-                    desc = getString(if (confirmed) R.string.confirm_my_resume else R.string.not_my_resume),
-                    actionData = AgentMsgAction(
-                        actionCode = (if (confirmed) CandidateJobAgentClientActionEnum.RESUME_CONFIRM_YES
-                        else CandidateJobAgentClientActionEnum.RESUME_CONFIRM_NO).name,
-                        sourceMessageId = item.id,
-                        actionPayloadJson = payloadMap.takeIf { it.isNotEmpty() }?.let { GsonUtils.toJson(it) },
-                    )
-                )
             }
         }
 
