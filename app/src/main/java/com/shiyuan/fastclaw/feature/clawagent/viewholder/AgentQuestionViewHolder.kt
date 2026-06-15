@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
@@ -109,7 +110,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             view.text = option.text ?: option.label.orEmpty()
             view.isEnabled = option.disabled != true
             view.id = View.generateViewId()
-            view.setOnClickListener { onOptionClickListener(item, option, payload.questionQueueId) }
+            view.setOnSingleClickListener { onOptionClickListener(item, option, payload.questionQueueId) }
             parent.addView(view)
             ids.add(view.id)
             optionRows.add(view)
@@ -143,7 +144,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             view.isEnabled = payload.isDisabled() != true
             //view.isEnabled = true
             view.id = View.generateViewId()
-            view.setOnClickListener { onActionClickListener(item, payload.buildAction(), payload.questionQueueId) }
+            view.setOnSingleClickListener { onActionClickListener(item, payload.buildAction(), payload.questionQueueId) }
             parent.addView(view)
             ids.add(view.id)
             optionRows.add(view)
@@ -174,7 +175,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
 
         binding.tvSkip.visible()
         binding.tvSkip.isEnabled = action.disabled != true
-        binding.tvSkip.setOnClickListener { onSkipClickListener(item, action, payload.questionQueueId) }
+        binding.tvSkip.setOnSingleClickListener { onSkipClickListener(item, action, payload.questionQueueId) }
     }
 
     private fun clearOptionRows() {
