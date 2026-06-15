@@ -14,6 +14,29 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlin.collections.plus
 
+/**
+ * 通用枚举项（字典/行业/职位等数据结构）
+ *
+ * @param code              枚举编码
+ * @param name              枚举名称
+ * @param fullNamePath      完整名称路径
+ * @param parentCode        父级编码
+ * @param level             层级深度
+ * @param enabled           是否启用
+ * @param sortOrder         排序序号
+ * @param firstCategoryCode 一级分类编码
+ * @param firstCategoryName 一级分类名称
+ * @param secondCategoryCode 二级分类编码
+ * @param secondCategoryName 二级分类名称
+ * @param positionName      职位名称
+ * @param fieldCode         字段编码
+ * @param isSelected         是否选中
+ * @param children          子项列表
+ * @param secondCategories  二级分类列表
+ * @param positions         职位列表
+ * @param positionCode      职位编码
+ * @param categoryPath      分类路径
+ */
 @Serializable
 data class CommonEnumItem(
     val code: String? = null,
@@ -37,33 +60,77 @@ data class CommonEnumItem(
     var categoryPath: String? = null
 )
 
-
+/**
+ * 通用枚举字段值
+ *
+ * @param fieldCode    字段编码
+ * @param fieldName    字段名称
+ * @param fieldType    字段类型
+ * @param fieldValue   字段值
+ * @param fieldItems   子字段列表
+ */
 @Parcelize
 data class CommonItems(
+    /** 字段编码 */
     var fieldCode: String? = null,
+    /** 字段名称 */
     var fieldName: String? = null,
+    /** 字段类型 */
     var fieldType: String? = null,
+    /** 字段值 */
     var fieldValue: String? = null,
+    /** 子字段列表 */
     var fieldItems: List<CommonItems> = emptyList(),
 ): Parcelable {}
 
-
+/**
+ * 行业字典响应数据
+ *
+ * @param dictType      字典类型
+ * @param items         字典项列表
+ * @param selectedItems 已选字典项列表
+ */
 data class IndustryDict(
+    /** 字典类型 */
     val dictType: String? = null,
+    /** 字典项列表 */
     val items: List<CommonEnumItem> = emptyList(),
+    /** 已选字典项列表 */
     val selectedItems: List<CommonEnumItem> = emptyList(),
 )
 
+/**
+ * 职位字典响应数据
+ *
+ * @param dictType          字典类型
+ * @param selectedItems     已选字典项列表
+ * @param matchedPositions 匹配到的职位列表
+ * @param firstCategories  一级分类列表
+ */
 data class PositionDict(
+    /** 字典类型 */
     val dictType: String? = null,
+    /** 已选字典项列表 */
     val selectedItems: List<CommonEnumItem> = emptyList(),
+    /** 匹配到的职位列表 */
     val matchedPositions: List<CommonEnumItem> = emptyList(),
+    /** 一级分类列表 */
     val firstCategories: List<CommonEnumItem> = emptyList(),
 )
 
+/**
+ * 福利字典响应数据
+ *
+ * @param dictType      字典类型
+ * @param items         字典项列表
+ * @param selectedItems 已选字典项列表
+ */
 data class WelfareDict(
+    /** 字典类型 */
     val dictType: String? = null,
+    /** 字典项列表 */
     val items: List<CommonEnumItem> = emptyList(),
+    /** 已选字典项列表 */
     val selectedItems: List<CommonEnumItem> = emptyList(),
 )
 
