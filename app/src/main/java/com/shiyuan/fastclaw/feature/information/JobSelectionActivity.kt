@@ -248,11 +248,13 @@ class JobSelectionActivity :
         // 返回
         binding.ivBack.setOnSingleClickListener { finish() }
 
-        // 初始化完成按钮为不可用
-        updateCompleteButtonState(emptyList())
-
         // 底部完成按钮：把已选职位以简化结构回传给上游，并关闭页面
         binding.layoutPrimary.setOnSingleClickListener {
+            val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
+            if (selectedList.isEmpty()) {
+                "最少选择一个".showToast()
+                return@setOnSingleClickListener
+            }
             mRealVM.selectPositionData.value?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
             val categoryList = mRealVM.selectPositionData.value?.map {
                 mapOf("code" to it.positionCode, "name" to it.positionName)
@@ -263,15 +265,7 @@ class JobSelectionActivity :
         }
     }
 
-    /**
-     * 根据当前已选职位数量切换底部完成按钮的可用态。
-     */
-    private fun updateCompleteButtonState(selectedList: List<com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem>) {
-        val hasSelection = selectedList.isNotEmpty()
-        binding.layoutPrimary.isEnabled = hasSelection
-        // 未选时半透明灰化
-        binding.layoutPrimary.alpha = if (hasSelection) 1f else 0.3f
-    }
+
 
     private fun observeEvents() {
         // 已选集合变化：刷新已选列表、计数和完成按钮
@@ -279,7 +273,6 @@ class JobSelectionActivity :
             binding.tvWordCount.text = it.size.toString()
             selectCyIyPnAdapter.submitList(it)
             cyIyJobPnSonAdapter.notifyDataSetChanged()
-            updateCompleteButtonState(it)
         }
 
         // 搜索结果变化：空态切换 + 刷新列表

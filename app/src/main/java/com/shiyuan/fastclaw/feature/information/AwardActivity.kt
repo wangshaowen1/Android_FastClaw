@@ -145,17 +145,21 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
         }
         // 获奖时间：年月选择器
         binding.vForm3.setOnSingleClickListener {
-            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
-                binding.vForm3.setValueText("$year-$month")
-                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_AWARD_TIME)
-                item?.let {
-                    item.displayValue =  "$year-$month"
-                    item.fieldValue = mapOf(
-                        "value" to "$year-$month" ,
-                        "displayText" to "$year-$month"
-                    )
+            BirthYearMonthPickerDialog.show(
+                manager = this.supportFragmentManager,
+                title = "获奖时间",
+                onConfirmWithTimestamp = { year, month, _ ->
+                    binding.vForm3.setValueText("$year-$month")
+                    val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_AWARD_TIME)
+                    item?.let {
+                        item.displayValue =  "$year-$month"
+                        item.fieldValue = mapOf(
+                            "value" to "$year-$month" ,
+                            "displayText" to "$year-$month"
+                        )
+                    }
                 }
-            }
+            )
         }
         // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)

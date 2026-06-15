@@ -167,32 +167,46 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         }
         // 起始时间：年月选择器
         binding.tvStart.setOnClickListener {
-            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
-                binding.tvStart.text = ("$year-$month")
-                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_START_DATE)
-                item?.let {
-                    item.displayValue =  "$year-$month"
-                    item.fieldValue = mapOf(
-                        "value" to "$year-$month" ,
-                        "displayText" to "$year-$month"
-                    )
+            val selectedDate = getFieldDate(FIELD_START_DATE)
+            BirthYearMonthPickerDialog.show(
+                manager = this.supportFragmentManager,
+                title = "开始时间",
+                selectedYear = selectedDate?.first,
+                selectedMonth = selectedDate?.second,
+                onConfirmWithTimestamp = { year, month, _ ->
+                    binding.tvStart.text = ("$year-$month")
+                    val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_START_DATE)
+                    item?.let {
+                        item.displayValue =  "$year-$month"
+                        item.fieldValue = mapOf(
+                            "value" to "$year-$month" ,
+                            "displayText" to "$year-$month"
+                        )
+                    }
                 }
-            }
+            )
 
         }
         // 结束时间：年月选择器
         binding.tvEnd.setOnClickListener {
-            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
-                binding.tvEnd.text = ("$year-$month")
-                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_END_DATE)
-                item?.let {
-                    item.displayValue =  "$year-$month"
-                    item.fieldValue = mapOf(
-                        "value" to "$year-$month" ,
-                        "displayText" to "$year-$month"
-                    )
+            val selectedDate = getFieldDate(FIELD_END_DATE)
+            BirthYearMonthPickerDialog.show(
+                manager = this.supportFragmentManager,
+                title = "结束时间",
+                selectedYear = selectedDate?.first,
+                selectedMonth = selectedDate?.second,
+                onConfirmWithTimestamp = { year, month, _ ->
+                    binding.tvEnd.text = ("$year-$month")
+                    val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_END_DATE)
+                    item?.let {
+                        item.displayValue =  "$year-$month"
+                        item.fieldValue = mapOf(
+                            "value" to "$year-$month" ,
+                            "displayText" to "$year-$month"
+                        )
+                    }
                 }
-            }
+            )
         }
         // 是否全日制：单选（先做布尔编码转字符串）
         binding.vForm5.setOnSingleClickListener {
@@ -249,12 +263,23 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         binding.vForm10.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_DESCRIPTION)
             if (item != null) {
-                PublicDescriptionActivity.start(this, isEdit, item)
+                PublicDescriptionActivity.start(this, isEdit, item,getString(R.string.educational_responsibilities))
             }
         }
 
         // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)
+    }
+
+    /**
+     * 从字段展示值解析已选择的年月。
+     */
+    private fun getFieldDate(fieldCode: String): Pair<Int, Int>? {
+        val displayValue = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode)?.displayValue
+        val parts = displayValue?.split("-")?.takeIf { it.size == 2 } ?: return null
+        val year = parts[0].toIntOrNull() ?: return null
+        val month = parts[1].toIntOrNull()?.takeIf { it in 1..12 } ?: return null
+        return year to month
     }
 
     /**

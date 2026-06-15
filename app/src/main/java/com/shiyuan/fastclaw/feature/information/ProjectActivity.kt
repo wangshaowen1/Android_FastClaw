@@ -9,6 +9,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
@@ -17,6 +18,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.databinding.ActivityProjectBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import java.util.Calendar
 
 /**
  * 项目经历项编辑页：支持新增或编辑一条项目记录。
@@ -143,36 +145,34 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         binding.vForm3.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_DESCRIPTION)
             if (item != null) {
-                PublicDescriptionActivity.start(this, isEdit, item)
+                PublicDescriptionActivity.start(this, isEdit, item,getString(R.string.project_responsibilities))
             }
         }
         // 起始时间：年月选择器
         binding.tvStart.setOnClickListener {
-            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
-                binding.tvStart.text = ("$year-$month")
-                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = Companion.FIELD_START_DATE)
-                item?.let {
-                    item.displayValue =  "$year-$month"
-                    item.fieldValue = mapOf(
-                        "value" to "$year-$month" ,
-                        "displayText" to "$year-$month"
-                    )
+            val selectedDate = getFieldDate(FIELD_START_DATE)
+            BirthYearMonthPickerDialog.show(
+                manager = this.supportFragmentManager,
+                title = "开始时间",
+                selectedYear = selectedDate?.first,
+                selectedMonth = selectedDate?.second,
+                onConfirmWithTimestamp = { year, month, timestamp ->
+                    onStartDateSelected(year, month, timestamp)
                 }
-            }
+            )
         }
         // 结束时间：年月选择器
         binding.tvEnd.setOnClickListener {
-            BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
-                binding.tvEnd.text = ("$year-$month")
-                val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = Companion.FIELD_END_DATE)
-                item?.let {
-                    item.displayValue =  "$year-$month"
-                    item.fieldValue = mapOf(
-                        "value" to "$year-$month" ,
-                        "displayText" to "$year-$month"
-                    )
+            val selectedDate = getFieldDate(FIELD_END_DATE)
+            BirthYearMonthPickerDialog.show(
+                manager = this.supportFragmentManager,
+                title = "结束时间",
+                selectedYear = selectedDate?.first,
+                selectedMonth = selectedDate?.second,
+                onConfirmWithTimestamp = { year, month, timestamp ->
+                    onEndDateSelected(year, month, timestamp)
                 }
-            }
+            )
         }
         // 项目规模：自由填写
         binding.vForm5.setOnSingleClickListener {
@@ -212,6 +212,68 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
 
         // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)
+    }
+
+    /**
+     * 处理项目起始时间选择结果。
+     */
+    private fun onStartDateSelected(year: Int, month: String, timestamp: Long) {
+        val endTimestamp = getFieldDateTimestamp(FIELD_END_DATE)
+        if (endTimestamp != null && timestamp > endTimestamp) {
+            "起始时间不能大于结束时间".showToast()
+            return
+        }
+        binding.tvStart.text = "$year-$month"
+        updateDateField(FIELD_START_DATE, "$year-$month")
+    }
+
+    /**
+     * 处理项目结束时间选择结果。
+     */
+    private fun onEndDateSelected(year: Int, month: String, timestamp: Long) {
+        val startTimestamp = getFieldDateTimestamp(FIELD_START_DATE)
+        if (startTimestamp != null && timestamp < startTimestamp) {
+            "结束时间不能小于起始时间".showToast()
+            return
+        }
+        binding.tvEnd.text = "$year-$month"
+        updateDateField(FIELD_END_DATE, "$year-$month")
+    }
+
+    /**
+     * 更新年月字段的展示值和提交值。
+     */
+    private fun updateDateField(fieldCode: String, dateText: String) {
+        val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)
+        item?.let {
+            item.displayValue = dateText
+            item.fieldValue = mapOf(
+                "value" to dateText,
+                "displayText" to dateText
+            )
+        }
+    }
+
+    /**
+     * 从字段中读取已选年月，并转换为该月 1 日 00:00:00 的本地毫秒时间戳。
+     */
+    private fun getFieldDateTimestamp(fieldCode: String): Long? {
+        val (year, month) = getFieldDate(fieldCode) ?: return null
+        return Calendar.getInstance().apply {
+            clear()
+            set(year, month - 1, 1, 0, 0, 0)
+        }.timeInMillis
+    }
+
+    /**
+     * 从字段展示值解析已选择的年月。
+     */
+    private fun getFieldDate(fieldCode: String): Pair<Int, Int>? {
+        val displayValue = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode)?.displayValue
+        val parts = displayValue?.split("-")?.takeIf { it.size == 2 } ?: return null
+        val year = parts[0].toIntOrNull() ?: return null
+        val month = parts[1].toIntOrNull()?.takeIf { it in 1..12 } ?: return null
+        return year to month
     }
 
     /**

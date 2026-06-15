@@ -215,7 +215,7 @@ class IndustrySelectionActivity :
             val showIcon = !editable.isNullOrEmpty()
             if (showIcon) {
                 // 有输入：发起搜索，显示搜索结果面板
-                mRealVM.queryDictIndustryQuery(sessionId,conversationId,editable.toString())
+                mRealVM.queryDictIndustryQuery(editable.toString(),sessionId,conversationId)
                 binding.ivClear.visibility = View.VISIBLE
                 binding.rlSc.visibility = View.VISIBLE
             } else {
@@ -232,9 +232,6 @@ class IndustrySelectionActivity :
         // 返回
         binding.ivBack.setOnSingleClickListener { finish() }
 
-        // 初始化完成按钮为不可用
-        updateCompleteButtonState(emptyList())
-
         // 底部完成按钮：未选时提示，否则回传并关闭
         binding.layoutPrimary.setOnSingleClickListener {
             val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
@@ -248,22 +245,11 @@ class IndustrySelectionActivity :
         }
     }
 
-    /**
-     * 根据当前已选行业数量切换底部完成按钮的可用态。
-     */
-    private fun updateCompleteButtonState(selectedList: List<com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem>) {
-        val hasSelection = selectedList.isNotEmpty()
-        binding.layoutPrimary.isEnabled = hasSelection
-        // 未选时半透明灰化
-        binding.layoutPrimary.alpha = if (hasSelection) 1f else 0.3f
-    }
-
     private fun observeEvents() {
         // 已选集合变化：刷新已选列表、计数和完成按钮
         mRealVM.selectData.observe(this) {
             binding.tvWordCount.text = it.size.toString()
             selectCyIyPnAdapter.submitList(it)
-            updateCompleteButtonState(it)
         }
 
         // 搜索结果变化：空态切换 + 刷新列表

@@ -27,34 +27,42 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
         const val TAG = "BirthYearMonthPickerDialog"
 
         // 外部传入的初值与回调
+        private var dialogTitle: String? = null
         private var selectedYear: Int? = null
         private var selectedMonth: Int? = null
         private var minYear: Int = DEFAULT_MIN_YEAR
         private var maxYear: Int = Calendar.getInstance().get(Calendar.YEAR)
+        private var onConfirmWithTimestamp: ((year: Int, month: String, timestamp: Long) -> Unit)? = null
         private var onConfirm: ((year: Int, month: String) -> Unit)? = null
 
         /**
          * 显示年月选择弹窗。
          *
          * @param manager FragmentManager。
+         * @param title 弹窗标题，传 null 则使用默认标题。
          * @param selectedYear 初始年份。
          * @param selectedMonth 初始月份（1-12）。
          * @param minYear 最小可选年份。
          * @param maxYear 最大可选年份。
+         * @param onConfirmWithTimestamp 确认回调，回传年份、两位月份字符串和该月 1 日 00:00:00 的毫秒时间戳。
          * @param onConfirm 确认回调，回传年份和两位月份字符串。
          */
         fun show(
             manager: FragmentManager,
+            title: String? = null,
             selectedYear: Int? = null,
             selectedMonth: Int? = null,
             minYear: Int = DEFAULT_MIN_YEAR,
             maxYear: Int = Calendar.getInstance().get(Calendar.YEAR),
+            onConfirmWithTimestamp: ((year: Int, month: String, timestamp: Long) -> Unit)? = null,
             onConfirm: ((year: Int, month: String) -> Unit)? = null,
         ): BirthYearMonthPickerDialog {
+            this.dialogTitle = title
             this.selectedYear = selectedYear
             this.selectedMonth = selectedMonth
             this.minYear = minYear
             this.maxYear = maxYear
+            this.onConfirmWithTimestamp = onConfirmWithTimestamp
             this.onConfirm = onConfirm
             return BirthYearMonthPickerDialog().apply {
                 arguments = Bundle()
@@ -70,6 +78,8 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
 
     override fun onPrepareView() {
         super.onPrepareView()
+        // 设置标题
+        dialogTitle?.let { binding.tvTitle.text = it }
         // 初始化年份、月份滚轮 + 点击事件
         initYearPicker()
         initMonthPicker()
@@ -113,9 +123,21 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
             val year = minYear + binding.yearPicker.value
             val month = binding.monthPicker.value + 1
             val monthStr = String.format("%02d", month)   // 补零为两位字符串
+            val timestamp = buildMonthTimestamp(year, month)
+            onConfirmWithTimestamp?.invoke(year, monthStr, timestamp)
             onConfirm?.invoke(year, monthStr)
             dismissAllowingStateLoss()
         }
+    }
+
+    /**
+     * 年月选择没有具体日期，统一取所选月份 1 日 00:00:00 的本地毫秒时间戳。
+     */
+    private fun buildMonthTimestamp(year: Int, month: Int): Long {
+        return Calendar.getInstance().apply {
+            clear()
+            set(year, month - 1, 1, 0, 0, 0)
+        }.timeInMillis
     }
 
     /**
