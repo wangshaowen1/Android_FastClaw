@@ -183,6 +183,9 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         // 补问卡选项点击：actionCode 取自 payload option（如 QUESTION_OPTION_SUBMIT），actionPayload 原样回传
         msgAdapter.onQuestionOptionClickAction = { item, option, queueId ->
             if (!interceptIfStreaming()) {
+                val payload = item.metaData?.let {
+                    runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
+                }
                 forceScrollToBottom = true
                 mRealVM.sendAction(
                     desc = option.text ?: option.label.orEmpty(),
@@ -193,6 +196,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                         actionPayloadJson = option.actionPayload?.let { GsonUtils.toJson(it) },
                     )
                 )
+                onTrackingEvent(payload)
             }
         }
         // 补问卡动作按钮：actionCode 取自 payload action
@@ -305,6 +309,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 }  else {
                     startMsgAction(item, action, queueId)
                 }
+                onTrackingEvent(payload)
             }
         }
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
@@ -730,5 +735,9 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         autoConfirmJob = null
         popup?.dismiss()
         popup = null
+    }
+
+    fun onTrackingEvent(payload: CoreQuestionPayloadBean?) {
+
     }
 }
