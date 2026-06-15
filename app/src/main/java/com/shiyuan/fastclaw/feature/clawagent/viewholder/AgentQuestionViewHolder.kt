@@ -38,7 +38,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 动作按钮（如跳过）点击回调 */
-    var onSkipClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+    var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 上次动态添加的选项/动作行，复用前先移除 */
     private val optionRows = ArrayList<View>()
@@ -175,7 +175,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
 
         binding.tvSkip.visible()
         binding.tvSkip.isEnabled = action.disabled != true
-        binding.tvSkip.setOnSingleClickListener { onSkipClickListener(item, action, payload.questionQueueId) }
+        binding.tvSkip.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }
     }
 
     private fun clearOptionRows() {

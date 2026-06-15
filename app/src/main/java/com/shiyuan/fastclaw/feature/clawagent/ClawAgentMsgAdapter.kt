@@ -6,15 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
-import com.chad.library.adapter.base.BaseMultiItemAdapter.OnMultiItemAdapterListener
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentLeftBinding
-import com.shiyuan.fastclaw.databinding.ItemMsgAgentMatchReportBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentNoJobsFoundBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentPendingConfirmBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentQuestionBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentSearchingJobsBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentThinkBinding
-import com.shiyuan.fastclaw.databinding.ItemMsgAgentTodayProgressBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUnderstandingUpgradeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadFailedBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadSuccessBinding
@@ -25,7 +22,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
-import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMatchReportViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPendingConfirmViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
@@ -33,14 +29,12 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentResumeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentSearchingJobsViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTableFormViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentThinkViewHolder
-import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTodayProgressViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUnderstandingUpgradeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadFailedViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadSuccessViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentWelcomeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
-import com.uyumao.b
 
 /**
  * agent对话消息适配器
@@ -62,7 +56,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     var onQuestionActionClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /**（如跳过）点击 */
-    var onQuestionSkipClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+    var onDefaultActionClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 历史简历确认卡 确认(true)/否认(false) 点击（B 方案：仅暴露，提交后续统一接） */
     var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
@@ -82,14 +76,14 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                 AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
                     onOptionClickListener = { item, option, queueId -> onQuestionOptionClickAction(item, option, queueId) }
                     onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
-                    onSkipClickListener = { item, action, queueId -> onQuestionSkipClickAction(item, action, queueId) }
+                    onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item) }
         register(TYPE_TABLE_FORM,
             { i, p ->
                 AgentTableFormViewHolder(ItemMsgAgentTableFormBinding.inflate(i, p, false)).apply {
                     onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
-                    onSkipClickListener = { item, action, queueId -> onQuestionSkipClickAction(item, action, queueId) }
+                    onSkipClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item) }
         // 历史简历确认卡
@@ -106,9 +100,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_UPLOAD_WAIT,
             { i, p ->
                 AgentResumeViewHolder(ItemMsgAgentResumeBinding.inflate(i, p, false)).apply {
-                    onUploadClickListener = { itemData ->
-                        onUploadClickAction(itemData,false)
-                    }
+                    onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
+                    onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item ->
             h.bind(item)
