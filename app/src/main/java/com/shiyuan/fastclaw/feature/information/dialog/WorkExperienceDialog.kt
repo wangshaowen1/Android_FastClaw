@@ -229,3 +229,4 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
         super.onClick(view, data)
     }
 }
+
