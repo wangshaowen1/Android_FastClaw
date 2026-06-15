@@ -4,6 +4,7 @@ import android.graphics.Typeface
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
@@ -62,7 +63,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
             action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
             binding.btnLayout.isEnabled = payload.isDisabled() != true
             //binding.btnLayout.isEnabled = true
-            binding.btnLayout.setOnClickListener { onActionClickListener(item, action, payload.questionQueueId) }
+            binding.btnLayout.setOnSingleClickListener { onActionClickListener(item, action, payload.questionQueueId) }
         }
     }
 
@@ -72,7 +73,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
         if (action != null && !payload.isAnsweredV2() && !payload.isDisabled()) {
             binding.tvSkip.visible()
             binding.tvSkip.isEnabled = action.disabled != true
-            binding.tvSkip.setOnClickListener { onSkipClickListener(item, action, payload.questionQueueId) }
+            binding.tvSkip.setOnSingleClickListener { onSkipClickListener(item, action, payload.questionQueueId) }
         } else {
             binding.tvSkip.gone()
         }
