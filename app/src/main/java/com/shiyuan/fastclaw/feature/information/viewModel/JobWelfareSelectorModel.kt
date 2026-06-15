@@ -11,10 +11,22 @@ import com.shiyuan.fastclaw.core.network.apis.request.DictWelfareQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.response
 
+/**
+ * 福利偏好选择页的 ViewModel。
+ * 调用福利字典接口，承载候选项与服务端反显的已选项。
+ */
 class JobWelfareSelectorModel : AppRepositoryViewModel<AppRepository>() {
 
+    // 福利字典接口返回的完整数据
     val welfareDict = MutableLiveData<WelfareDict>()
 
+    /**
+     * 请求福利偏好字典数据。
+     *
+     * @param sessionId 会话 ID。
+     * @param conversationId 对话 ID。
+     * @param keyword 搜索关键词（暂未使用，保留参数）。
+     */
     fun queryWelfareDict(
         sessionId: String? = null,
         conversationId: String? = null,
@@ -30,6 +42,7 @@ class JobWelfareSelectorModel : AppRepositoryViewModel<AppRepository>() {
             response(
                 ApiFactory.apiService.queryDictWelfareQuery(requestBody),
                 result = {
+                    // 把响应数据回传 View 层
                     data?.let { welfareDict.postValue(it) }
                 },
                 error = {

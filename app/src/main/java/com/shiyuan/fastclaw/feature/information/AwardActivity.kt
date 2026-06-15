@@ -21,16 +21,24 @@ import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
 
+/**
+ * 奖项项编辑页：支持新增或编辑一条获奖记录（奖项名称、奖励等级、获奖时间）。
+ */
 class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationViewModel>() {
     companion object {
+        // Intent 参数 key
         private const val EXTRA_IS_EDIT = "extra_is_edit"
         private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
         private const val EXTRA_INSTANCE_INDEX = "extra_instance_index"
 
+        // 字段编码
         private const val FIELD_AWARD_NAME = "awardName"
         private const val FIELD_AWARD_LEVEL = "awardLevel"
         private const val FIELD_AWARD_TIME = "awardTime"
 
+        /**
+         * 启动奖项编辑页。
+         */
         fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null) {
             activity ?: return
             val intent = Intent(activity, AwardActivity::class.java).apply {
@@ -42,12 +50,16 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
         }
     }
 
+    // 字段数据
     private var attributeData: AttributeArrayQueryData? = null
 
+    // 当前编辑的字段实例索引
     private var position: Int = 0
 
+    // 当前编辑实例的字段项集合
     private val currentInstance: MutableList<AttributeFieldItem> = mutableListOf()
 
+    // 是否编辑模式
     private var isEdit = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +72,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
         if (isEdit) {
             bindEditData()
         }
+        // 保存成功：通知上游并关闭
         mRealVM.attributeSave.observe(this) {
             FlowEventBus.postSticky(Events.AttributeFieldSuccessfulEvent(attributeData))
             finish()
@@ -69,6 +82,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
     private fun parseIntent() {
         isEdit = intent?.getBooleanExtra(EXTRA_IS_EDIT, true) ?: true
         @Suppress("DEPRECATION")
+        // 兼容不同 Android 版本的 Parcelable 读取
         attributeData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent?.getParcelableExtra(EXTRA_ATTRIBUTE_DATA, AttributeArrayQueryData::class.java)
         } else {
@@ -79,20 +93,24 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
 
     private fun initView() {
         if (isEdit) {
+            // 编辑模式：显示删除/完成按钮
             binding.tvTitle.text = getString(R.string.edit_award)
             binding.viewActionButtons.setSecondaryText(getString(R.string.del))
             binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
+            // 删除当前实例并保存
             binding.viewActionButtons.setOnSecondaryClickListener {
                 attributeData?.fieldTree?.removeAt(this.position)
                 attributeData?.draft = true
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
+            // 完成编辑：写回字段项并保存
             binding.viewActionButtons.setOnPrimaryClickListener {
                 attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
                 attributeData?.draft = true
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
         } else {
+            // 新增模式：仅显示保存按钮
             binding.tvTitle.text = getString(R.string.add_award)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
@@ -101,6 +119,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
         }
+        // 奖项名称：跳到自由填写页
         binding.vForm1.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_AWARD_NAME)
             item?.let {
@@ -108,6 +127,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
             }
         }
 
+        // 奖励等级：弹出单选
         binding.vForm2.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_AWARD_LEVEL)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
@@ -123,6 +143,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
             }
 
         }
+        // 获奖时间：年月选择器
         binding.vForm3.setOnSingleClickListener {
             BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
                 binding.vForm3.setValueText("$year-$month")
@@ -136,9 +157,13 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
                 }
             }
         }
+        // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)
     }
 
+    /**
+     * 把已有数据回填到表单控件。
+     */
     private fun bindEditData() {
         val awardNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_AWARD_NAME)
         awardNameItem?.let {
@@ -157,6 +182,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
     }
 
     private fun observeEvents() {
+        // 监听自由填写 / 单选回传事件，按 fieldCode 同步到 currentInstance
         observeEvents {
             on<Events.CommonAttributeFieldItemEvent> { event ->
                 event.attributeFieldItem?.fieldCode?.let { fieldCode ->
@@ -184,6 +210,7 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
     }
 
     override fun setTranslucentStatus() {
+        // 设置沉浸式状态栏
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .navigationBarColor(R.color.white)

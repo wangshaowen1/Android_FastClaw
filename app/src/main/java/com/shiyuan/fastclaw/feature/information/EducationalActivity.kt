@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
@@ -29,12 +28,18 @@ import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 
+/**
+ * 教育经历项编辑页：支持新增或编辑一条教育经历。
+ * 字段：学校、学历、专业、起止时间、是否全日制、院校性质、GPA、排名荣誉、主修课程、描述。
+ */
 class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, InformationViewModel>() {
     companion object {
+        // Intent 参数 key
         private const val EXTRA_IS_EDIT = "extra_is_edit"
         private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
         private const val EXTRA_INSTANCE_INDEX = "extra_instance_index"
 
+        // 字段编码
         private const val FIELD_SCHOOL_NAME = "schoolName"
         private const val FIELD_MAJOR = "major"
         private const val FIELD_GPA = "gpa"
@@ -47,6 +52,9 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         private const val FIELD_START_DATE = "startDate"
         private const val FIELD_END_DATE = "endDate"
 
+        /**
+         * 启动教育经历编辑页。
+         */
         fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null) {
             activity ?: return
             val intent = Intent(activity, EducationalActivity::class.java).apply {
@@ -58,12 +66,16 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         }
     }
 
+    // 字段数据
     private var attributeData: AttributeArrayQueryData? = null
 
+    // 当前编辑的字段实例索引
     private var position: Int = 0
 
+    // 当前编辑实例的字段项集合
     private val currentInstance: MutableList<AttributeFieldItem> = mutableListOf()
 
+    // 是否编辑模式
     private var isEdit = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +88,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         if (isEdit) {
             bindEditData()
         }
+        // 保存成功：通知上游并关闭
         mRealVM.attributeSave.observe(this) {
             FlowEventBus.postSticky(Events.AttributeFieldSuccessfulEvent(attributeData))
             finish()
@@ -85,6 +98,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
     private fun parseIntent() {
         isEdit = intent?.getBooleanExtra(EXTRA_IS_EDIT, true) ?: true
         @Suppress("DEPRECATION")
+        // 兼容不同 Android 版本的 Parcelable 读取
         attributeData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent?.getParcelableExtra(EXTRA_ATTRIBUTE_DATA, AttributeArrayQueryData::class.java)
         } else {
@@ -95,20 +109,24 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
 
     private fun initView() {
         if (isEdit) {
+            // 编辑模式：显示删除/完成按钮
             binding.tvTitle.text = getString(R.string.edit_educational)
             binding.viewActionButtons.setSecondaryText(getString(R.string.del))
             binding.viewActionButtons.setPrimaryText(getString(R.string.complete))
+            // 删除当前实例并保存
             binding.viewActionButtons.setOnSecondaryClickListener {
                 attributeData?.fieldTree?.removeAt(this.position)
                 attributeData?.draft = true
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
+            // 完成编辑：写回字段项并保存
             binding.viewActionButtons.setOnPrimaryClickListener {
                 attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
                 attributeData?.draft = true
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
         } else {
+            // 新增模式：仅显示保存按钮
             binding.tvTitle.text = getString(R.string.add_educational)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
@@ -117,6 +135,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
         }
+        // 学校名称：自由填写
         binding.vForm1.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_SCHOOL_NAME)
             item?.let {
@@ -124,6 +143,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
             }
         }
 
+        // 学历：单选
         binding.vForm2.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_DEGREE)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
@@ -138,12 +158,14 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                 }
             }
         }
+        // 专业：自由填写
         binding.vForm3.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_MAJOR)
             item?.let {
                 PublicFreeFillInActivity.start(this, isEdit, it)
             }
         }
+        // 起始时间：年月选择器
         binding.tvStart.setOnClickListener {
             BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
                 binding.tvStart.text = ("$year-$month")
@@ -158,6 +180,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
             }
 
         }
+        // 结束时间：年月选择器
         binding.tvEnd.setOnClickListener {
             BirthYearMonthPickerDialog.show(this.supportFragmentManager){ year,month->
                 binding.tvEnd.text = ("$year-$month")
@@ -171,6 +194,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                 }
             }
         }
+        // 是否全日制：单选（先做布尔编码转字符串）
         binding.vForm5.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_FULL_TIME)
             val list = Json.decodeFromString<List<CommonEnumItem>>(convertCodeBooleanToString(item?.questionOptionsJson?:"[]"))
@@ -185,6 +209,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                 }
             }
         }
+        // 院校性质：单选
         binding.vForm6.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_SCHOOL_TYPE)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
@@ -199,24 +224,28 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                 }
             }
         }
+        // GPA：自由填写
         binding.vForm7.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_GPA)
             item?.let {
                 PublicFreeFillInActivity.start(this, isEdit, it)
             }
         }
+        // 排名 / 荣誉：自由填写
         binding.vForm8.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_RANKING_OR_HONORS)
             item?.let {
                 PublicFreeFillInActivity.start(this, isEdit, it)
             }
         }
+        // 主修课程：自由填写
         binding.vForm9.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_MAIN_COURSES)
             item?.let {
                 PublicFreeFillInActivity.start(this, isEdit, it)
             }
         }
+        // 描述：长文本填写
         binding.vForm10.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_DESCRIPTION)
             if (item != null) {
@@ -224,9 +253,13 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
             }
         }
 
+        // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)
     }
 
+    /**
+     * 把已有数据回填到表单控件。
+     */
     private fun bindEditData() {
         val schoolNameItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_SCHOOL_NAME)
         schoolNameItem?.let {
@@ -285,6 +318,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
     }
 
     private fun observeEvents() {
+        // 监听子页面自由填写 / 长文本 / 单选回传事件
         observeEvents {
             on<Events.CommonAttributeFieldItemEvent> { event ->
                 event.attributeFieldItem?.fieldCode?.let { fieldCode ->
@@ -295,6 +329,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                             currentInstance[index] = event.attributeFieldItem
                         }
                     }
+                    // 按字段编码回填到对应控件
                     when (fieldCode) {
                         FIELD_SCHOOL_NAME -> {
                             binding.vForm1.setValueText(event.attributeFieldItem.displayValue)
@@ -321,6 +356,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
     }
 
     override fun setTranslucentStatus() {
+        // 设置沉浸式状态栏
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .navigationBarColor(R.color.white)

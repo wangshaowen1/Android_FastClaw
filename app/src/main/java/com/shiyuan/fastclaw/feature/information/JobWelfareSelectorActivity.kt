@@ -27,22 +27,29 @@ import com.shiyuan.fastclaw.feature.information.viewModel.JobWelfareSelectorMode
  */
 class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelectorBinding, JobWelfareSelectorModel>() {
 
+    // 候选福利网格适配器，传入选中判断和切换回调
     private val welfareAdapter by lazy {
         JobWelfareAdapter(
             isSelected = { item -> item.code?.let(selectedWelfare::containsKey) == true },
             onSelected = { item -> toggleWelfare(item) },
         )
     }
+    // 底部已选福利横滑标签适配器
     private val selectedAdapter by lazy {
         SelectedWelfareAdapter { item -> removeSelectedWelfare(item) }
     }
+    // 已选福利集合，LinkedHashMap 保证按选中顺序展示且方便按键去重
     private val selectedWelfare = linkedMapOf<String, CommonEnumItem>()
+    // 候选福利原始数据
     private var welfareItems = emptyList<CommonEnumItem>()
+    // 福利偏好最大可选数量
     private val maxSelectCount = 10
+    // 会话 ID / 对话 ID
     private val sessionId by lazy { intent.getStringExtra(EXTRA_SESSION_ID).orEmpty() }
     private val conversationId by lazy { intent.getStringExtra(EXTRA_CONVERSATION_ID).orEmpty() }
 
     companion object {
+        // Intent 参数 key
         private const val EXTRA_SESSION_ID = "extra_session_id"
         private const val EXTRA_CONVERSATION_ID = "extra_conversation_id"
 
@@ -65,11 +72,14 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 监听数据变化
         initObserve()
+        // 初始化视图与点击事件
         initView()
     }
 
     override fun setTranslucentStatus() {
+        // 设置沉浸式状态栏
         ImmersionBar.with(this)
             .statusBarDarkFont(true)
             .navigationBarColor(R.color.white)
@@ -81,6 +91,7 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
      * 初始化页面列表、点击事件、完成按钮状态，并请求福利偏好字典数据。
      */
     private fun initView() {
+        // 候选福利网格（三列）
         binding.rvWelfare.apply {
             layoutManager = GridLayoutManager(
                 this@JobWelfareSelectorActivity,
@@ -91,6 +102,7 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
             itemAnimator = null
             adapter = welfareAdapter
         }
+        // 底部已选福利横滑列表
         binding.rvSelectedWelfare.apply {
             layoutManager = LinearLayoutManager(
                 this@JobWelfareSelectorActivity,
@@ -100,7 +112,9 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
             itemAnimator = null
             adapter = selectedAdapter
         }
+        // 关闭按钮
         binding.ivClose.setOnSingleClickListener { finish() }
+        // 完成按钮：未选时提示，否则把已选福利回传给上游
         binding.btnComplete.setOnSingleClickListener {
             if (selectedWelfare.isEmpty()) {
                 getString(R.string.welfare_selector_at_least).showToast()
@@ -110,7 +124,9 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
             FlowEventBus.postSticky(Events.ClawAgentEvent(msgGson))
             finish()
         }
+        // 初始化已选区域
         refreshSelectedState()
+        // 拉取福利字典（含已选反显）
         mRealVM.queryWelfareDict(sessionId, conversationId)
     }
 
@@ -119,6 +135,7 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
      */
     private fun initObserve() {
         mRealVM.welfareDict.observe(this) { data ->
+            // 每次刷新都重置已选集合，按接口返回的 selectedItems 回填
             selectedWelfare.clear()
             data.selectedItems.forEach { item ->
                 item.code?.takeIf { it.isNotBlank() }?.let { selectedWelfare[it] = item }
@@ -143,8 +160,10 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
         val code = item.code
         if (code.isNullOrBlank()) return
         if (selectedWelfare.containsKey(code)) {
+            // 已选 → 取消
             selectedWelfare.remove(code)
         } else {
+            // 未选 → 校验上限
             if (selectedWelfare.size >= maxSelectCount) {
                 "最多选择${maxSelectCount}个".showToast()
                 return
@@ -170,8 +189,10 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
      * 刷新已选数量、完成按钮可用状态，以及底部已选福利标签列表。
      */
     private fun refreshSelectedState() {
+        // 已选数量 / 上限
         binding.tvCount.text = selectedWelfare.size.toString()
         binding.tvMax.text = "/$maxSelectCount"
+        // 未选时禁用完成按钮并半透明灰化
         binding.btnComplete.isEnabled = selectedWelfare.isNotEmpty()
         binding.btnComplete.alpha = if (selectedWelfare.isNotEmpty()) 1f else 0.3f
         selectedAdapter.submitList(selectedWelfare.values.toList())
