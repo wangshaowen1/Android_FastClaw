@@ -249,7 +249,7 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         binding.vForm10.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_DESCRIPTION)
             if (item != null) {
-                PublicDescriptionActivity.start(this, isEdit, item)
+                PublicDescriptionActivity.start(this, isEdit, item,getString(R.string.educational_responsibilities))
             }
         }
 

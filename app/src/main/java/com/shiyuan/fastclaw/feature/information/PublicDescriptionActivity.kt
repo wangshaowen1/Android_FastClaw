@@ -33,6 +33,8 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
         // 字段数据参数 key
         private const val EXTRA_DATA = "extra_data"
 
+        private const val DESCRIPTION_DATA = "description_data"
+
         // 描述文本最大长度
         private val MAX_LENGTH = 3000
 
@@ -43,16 +45,19 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
          * @param isEdit 是否编辑模式。
          * @param data 字段数据。
          */
-        fun start(activity: Activity?, isEdit: Boolean = true, data: AttributeFieldItem) {
+        fun start(activity: Activity?, isEdit: Boolean = true, data: AttributeFieldItem,description: String? = null) {
             activity ?: return
             Intent(activity, PublicDescriptionActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
+                putExtra(DESCRIPTION_DATA, description)
                 data?.let { putExtra(EXTRA_DATA, it) }
             }.let(activity::startActivity)
         }
     }
     // 是否编辑模式
     private val isEdit: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_EDIT, true) }
+
+    private val descriptionData: String by lazy { intent.getStringExtra(DESCRIPTION_DATA) ?: "" }
 
     // 字段数据缓存，提交时回传
     private  var data: AttributeFieldItem = AttributeFieldItem()
@@ -77,7 +82,7 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
         }
         // 标题 / 提示 / 初值
         binding.tvTitle.text = data.fieldName.toString()
-        binding.tvTip.text = data.fieldName.toString()
+        binding.tvTip.text = descriptionData
         binding.et.setText(data.displayValue ?: "")
         binding.tvWordCount.text = if(binding.et.text?.length.isNull()) "0" else  binding.et.text?.length.toString()
         // 文本变化：实时更新计数、达到上限提示、同步到 data

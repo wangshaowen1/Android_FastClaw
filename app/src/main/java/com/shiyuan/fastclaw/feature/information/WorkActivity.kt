@@ -161,7 +161,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         binding.vForm3.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_WORK_CONTENT)
             if (item != null) {
-                PublicDescriptionActivity.start(this, isEdit, item)
+                PublicDescriptionActivity.start(this, isEdit, item,getString(R.string.job_responsibilities))
             }
         }
         // 行业：跳到行业选择页

@@ -143,7 +143,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         binding.vForm3.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_DESCRIPTION)
             if (item != null) {
-                PublicDescriptionActivity.start(this, isEdit, item)
+                PublicDescriptionActivity.start(this, isEdit, item,getString(R.string.project_responsibilities))
             }
         }
         // 起始时间：年月选择器

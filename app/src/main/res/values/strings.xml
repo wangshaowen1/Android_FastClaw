@@ -139,7 +139,7 @@
     <string name="send_sms_code">获取验证码</string>
     <string name="resend_sms_code">重新获取验证码</string>
     <string name="enter_right_phone_num">请输入正确的手机号</string>
-    <string name="get_validate_code_success">获取验证码成功，请留意短信</string>
+    <string name="get_validate_code_success">验证码已发送</string>
     <string name="enter_right_validate_code">请输入正确的验证码</string>
     <string name="mobile_phone_prefix">+86</string>
     <string name="confirm_binding">确认</string>
@@ -885,7 +885,10 @@
     <string name="search_position_name">搜索职位名称</string>
     <string name="no_related_position_found">暂未搜到相关的职业</string>
 
-    <!-- 公共自由填写 -->
+    <string name="job_responsibilities">描述工作背景，负责的内容、克服的困难、取得的成果，便于了解您丰富的经验</string>
+    <string name="educational_responsibilities">描述教育背景，负责的内容、克服的困难、取得的成果，便于了解您丰富的经验</string>
+    <string name="project_responsibilities">描述项目内容，展示您丰富的经验</string>
+
 
 </resources>
 
