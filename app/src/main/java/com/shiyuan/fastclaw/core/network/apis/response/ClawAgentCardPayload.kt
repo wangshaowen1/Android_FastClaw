@@ -178,8 +178,11 @@ data class CoreQuestionPayloadBean(
 ) {
 
     companion object {
-
+        /** 跳过按钮 */
         const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
+        /** 没有简历 */
+        const val ACTION_NO_RESUME_START_QUESTIONING = "NO_RESUME_START_QUESTIONING"
+
         /** 当前卡可操作 */
         const val STATUS_ACTIVE = "ACTIVE"
         /** 当前题已有效提交或已填写 */
@@ -324,7 +327,12 @@ data class UploadResumePayloadBean(
     val resumeTaskId: String? = null,
     val interactionState: CardInteractionState? = null,
     val actions: List<CardAction>? = null,
-)
+) {
+    fun isDisabled(): Boolean {
+        val state = interactionState ?: return true
+        return state.disabled == true
+    }
+}
 
 /** HISTORY_RESUME_CONFIRM 历史简历确认卡（7.5.2） */
 data class HistoryResumeConfirmPayloadBean(

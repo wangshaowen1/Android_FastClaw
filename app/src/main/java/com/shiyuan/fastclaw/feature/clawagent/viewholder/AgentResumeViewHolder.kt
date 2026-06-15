@@ -1,10 +1,18 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.ext.gone
+import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.core.network.apis.response.CardAction
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_NO_RESUME_START_QUESTIONING
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
@@ -19,10 +27,14 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
 
     var onUploadClickListener: (itemData: ClawAgentMessageInfo) -> Unit = {}
 
+    /** 我没有简历 */
+    var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java) }.getOrNull()
         }
+        val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_NO_RESUME_START_QUESTIONING }
         // 标题/说明：payload 非空时覆盖布局默认引导文案
 //        payload?.title?.takeIf { it.isNotBlank() }?.let { binding.tvUploadTitle.text = it }
 //        payload?.description?.takeIf { it.isNotBlank() }?.let { binding.tvUploadSubtitle.text = it }
@@ -40,11 +52,13 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
 //        }
         binding.btnUploadResume.isEnabled = enabled
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
+        binding.tvNotResume.visibility = if (action != null && !payload.isDisabled()) VISIBLE else GONE
+        binding.tvNotResume.setOnSingleClickListener {
+            action?.let { onDefaultClickListener(item, action, null) }
+            showToast(R.string.toast_resume_not_conversation)
+        }
         binding.btnUploadResume.setOnSingleClickListener {
             if (enabled) onUploadClickListener(item)
-        }
-        binding.tvNotResume.setOnSingleClickListener {
-            showToast(R.string.toast_resume_not_conversation)
         }
     }
 

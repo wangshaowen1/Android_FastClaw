@@ -26,6 +26,7 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.core.manager.AppEvent
@@ -50,7 +51,11 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     private val searchAdapter = LocationSearchAdapter(
         selectedLocations = selectedLocations,
         keywordProvider = { binding.etSearch.text?.toString().orEmpty() },
-    ) { toggleLocation(it) }
+    ) {
+        binding.etSearch.setText("")
+        hideKeyboard(binding.etSearch)
+        toggleLocation(it)
+    }
     // 底部已选城市横滑标签适配器
     private val selectedAdapter by lazy {
         JobCitySelectedAdapter { item -> removeSelectedLocation(item) }
