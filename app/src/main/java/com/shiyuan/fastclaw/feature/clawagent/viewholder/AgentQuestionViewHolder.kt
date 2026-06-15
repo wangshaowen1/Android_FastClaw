@@ -110,7 +110,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             view.text = option.text ?: option.label.orEmpty()
             view.isEnabled = option.disabled != true
             view.id = View.generateViewId()
-            view.setOnSingleClickListener { onOptionClickListener(item, option, payload.questionQueueId) }
+            view.setOnSingleClickListener(700L) { onOptionClickListener(item, option, payload.questionQueueId) }
             parent.addView(view)
             ids.add(view.id)
             optionRows.add(view)

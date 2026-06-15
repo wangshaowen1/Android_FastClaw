@@ -50,6 +50,13 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
 //            !uploadActionText.isNullOrBlank() -> uploadActionText
 //            else -> binding.root.context.getString(R.string.home_upload_resume_btn)
 //        }
+        if (action != null) {
+            binding.tvUploadTitle.text = binding.root.context.getString(R.string.home_upload_resume_title)
+            binding.tvUploadSubtitle.text = binding.root.context.getString(R.string.home_upload_resume_subtitle)
+        } else {
+            binding.tvUploadTitle.text = binding.root.context.getString(R.string.home_upload_please_resume)
+            binding.tvUploadSubtitle.text = binding.root.context.getString(R.string.home_upload_please_subtitle)
+        }
         binding.btnUploadResume.isEnabled = enabled
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
         binding.tvNotResume.visibility = if (action != null && !payload.isDisabled()) VISIBLE else GONE

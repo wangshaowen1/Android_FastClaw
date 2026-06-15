@@ -584,6 +584,8 @@
     <string name="home_upload_resume_subtitle">帮你提升求职竞争力</string>
     <string name="home_upload_resume_btn">上传我的简历</string>
     <string name="home_upload_resume_not">我没有简历</string>
+    <string name="home_upload_please_resume">请上传简历</string>
+    <string name="home_upload_please_subtitle">没有简历无法和求职经纪人对话哦</string>
 
     <!-- 工作经历 -->
     <string name="work_experience_lack">识别到你的工作经历不太完整，\n可以告诉我详细信息吗？</string>
