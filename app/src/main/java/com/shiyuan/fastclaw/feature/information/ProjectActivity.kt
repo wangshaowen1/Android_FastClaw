@@ -43,6 +43,11 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         private const val FIELD_COLLABORATORS = "collaborators"
         private const val FIELD_START_DATE = "startDate"
         private const val FIELD_END_DATE = "endDate"
+        private val REQUIRED_FIELDS = listOf(
+            FIELD_PROJECT_NAME to R.string.project_name,
+            FIELD_PROJECT_ROLE to R.string.project_role,
+            FIELD_DESCRIPTION to R.string.project_desc
+        )
 
         /**
          * 启动项目经历编辑页。
@@ -118,18 +123,14 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
             }
             // 完成编辑：写回字段项并保存
             binding.viewActionButtons.setOnPrimaryClickListener {
-                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
-                attributeData?.draft = true
-                attributeData?.let { mRealVM.attributeSave(it) }
+                saveCurrentInstance()
             }
         } else {
             // 新增模式：仅显示保存按钮
             binding.tvTitle.text = getString(R.string.add_project)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
-                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
-                attributeData?.draft = true
-                attributeData?.let { mRealVM.attributeSave(it) }
+                saveCurrentInstance()
             }
         }
         // 项目名称：自由填写
@@ -218,6 +219,24 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
 
         // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)
+    }
+
+    private fun saveCurrentInstance() {
+        if (!validateRequiredFields()) return
+        attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
+        attributeData?.draft = true
+        attributeData?.let { mRealVM.attributeSave(it) }
+    }
+
+    private fun validateRequiredFields(): Boolean {
+        val emptyFieldName = REQUIRED_FIELDS.firstOrNull { (fieldCode, _) ->
+            AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)?.displayValue.isNullOrBlank()
+        }?.second?.let { getString(it) }
+        if (emptyFieldName != null) {
+            "请完善必填项：$emptyFieldName".showToast()
+            return false
+        }
+        return true
     }
 
     /**

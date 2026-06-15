@@ -24,7 +24,7 @@ ext {
             //Debug版本号8位,涵盖重大版本更新(1,2位),大版本更新(3,4位),小版本更新(5,6位),最后两位为对应版本的测试升级号(例:alpha版本,beta版本等)
             versionCodeDebug  : 131000,
             //版本名称
-            versionName       : "1.3.10",
+            versionName       : "1.3.11",
 
             //数据库版本号
             databaseVersion   : 100000
