@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="薪资范围"
+                android:text="@string/salary_range"
                 android:textColor="@color/color_90_000000"
                 android:textSize="14sp"
                 android:textStyle="bold" />

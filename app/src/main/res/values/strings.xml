@@ -349,18 +349,6 @@
     <string name="storyboard_preview">分镜预览</string>
     <string name="refresh">刷新</string>
     <string name="edit">编辑</string>
-    <string name="edit_award">编辑奖项</string>
-    <string name="add_award">添加奖项</string>
-    <string name="edit_skill">编辑技能</string>
-    <string name="add_skill">添加技能</string>
-    <string name="edit_educational">编辑教育经历</string>
-    <string name="add_educational">添加教育经历</string>
-    <string name="edit_certificate">编辑证书</string>
-    <string name="add_certificate">添加证书</string>
-    <string name="edit_project">编辑项目经历</string>
-    <string name="add_project">添加项目经历</string>
-    <string name="edit_working">编辑工作经历</string>
-    <string name="add_working">添加工作经历</string>
     <string name="award_level">奖项等级</string>
     <string name="choose_desired_position">选择意向岗位</string>
     <string name="choose_expected_industry">选择期望行业</string>
@@ -797,6 +785,107 @@
     <string name="city_selector_add_multiple">添加多个城市，可以获得更多工作机会？</string>
     <string name="city_selector_now_city">你现在在哪座城市？</string>
     <string name="welfare_selector_at_least">至少选择一个福利偏好</string>
+
+    <!-- ==================== Information 模块字符串 ==================== -->
+    <!-- 教育经历 -->
+    <string name="edit_educational">编辑教育经历</string>
+    <string name="add_educational">添加教育经历</string>
+    <string name="school_name">院校名称</string>
+    <string name="education_level">学历</string>
+    <string name="major">专业</string>
+    <string name="school_period">在校时间</string>
+    <string name="enrollment_time">入校时间</string>
+    <string name="graduation_time">毕业时间</string>
+    <string name="optional_fields">以下为选填项</string>
+    <string name="full_time_education">是否全日制</string>
+    <string name="school_type">院校性质</string>
+    <string name="gpa_score">GPA 成绩</string>
+    <string name="school_ranking_honor">在校排名/荣誉</string>
+    <string name="main_courses">主修课程</string>
+    <string name="education_supplement_desc">教育补充描述</string>
+
+    <!-- 工作经历 -->
+    <string name="edit_working">编辑工作经历</string>
+    <string name="add_working">添加工作经历</string>
+    <string name="company_name">公司名称</string>
+    <string name="job_title">职位名称</string>
+    <string name="employment_period">在职时间</string>
+    <string name="entry_time">入职时间</string>
+    <string name="end_time">截至时间</string>
+    <string name="job_content">工作内容</string>
+    <string name="industry">所属行业</string>
+    <string name="company_size">公司规模</string>
+    <string name="company_type">公司类型</string>
+    <string name="team_size">团队规模</string>
+    <string name="reason_for_leaving">离职原因</string>
+
+    <!-- 项目经历 -->
+    <string name="edit_project">编辑项目经历</string>
+    <string name="add_project">添加项目经历</string>
+    <string name="project_name">项目名称</string>
+    <string name="project_role">项目角色</string>
+    <string name="project_desc">项目描述</string>
+    <string name="optional_fields_project">以下为选填项</string>
+    <string name="project_period">项目时间</string>
+    <string name="start_time">开始时间</string>
+    <string name="project_end_time">结束时间</string>
+    <string name="project_scale">项目规模</string>
+    <string name="tech_stack">技术栈</string>
+    <string name="project_responsibility">项目职责</string>
+    <string name="project_result">项目成果</string>
+    <string name="collaborating_department">协作部门</string>
+
+    <!-- 奖项 -->
+    <string name="edit_award">编辑奖项</string>
+    <string name="add_award">添加奖项</string>
+    <string name="award_name">奖励名称</string>
+    <string name="award_time">奖励时间</string>
+
+    <!-- 证书 -->
+    <string name="edit_certificate">编辑证书</string>
+    <string name="add_certificate">添加证书</string>
+    <string name="certificate_name">证书名称</string>
+    <string name="issuing_authority">颁发机构</string>
+    <string name="issuing_time">颁发时间</string>
+
+    <!-- 技能 -->
+    <string name="edit_skill">编辑技能</string>
+    <string name="add_skill">添加技能</string>
+    <string name="skill_name">技能名称</string>
+    <string name="proficiency_level">熟练度</string>
+    <string name="skill_description_hint">描述工作背景，负责的内容</string>
+    <string name="skill_desc_placeholder">描述工作背景，负责的内容、克服的困难、取得的成果，便于了解您丰富的经验</string>
+
+    <!-- 公共 -->
+    <string name="please_input">请输入</string>
+    <string name="please_select">请选择</string>
+    <string name="select">选择</string>
+    <string name="delete">删除</string>
+    <string name="selected">已选</string>
+    <string name="add">添加</string>
+    <string name="work_experience">工作经历</string>
+    <string name="education_experience">教育经历</string>
+    <string name="project_experience">项目经历</string>
+    <string name="certificate">证书</string>
+    <string name="birth_date">出生年月</string>
+    <string name="salary_range">薪资范围</string>
+
+    <!-- 城市选择 -->
+    <string name="select_city">选择城市</string>
+    <string name="welfare_preference">选择福利偏好</string>
+    <string name="can_select_multiple">可以选多个</string>
+
+    <!-- 行业选择 -->
+    <string name="select_expected_industry">选择期望行业</string>
+    <string name="search_industry_name">搜索行业名称</string>
+    <string name="no_related_industry_found">暂未搜到相关的行业</string>
+
+    <!-- 职位选择 -->
+    <string name="select_intended_position">选择意向岗位</string>
+    <string name="search_position_name">搜索职位名称</string>
+    <string name="no_related_position_found">暂未搜到相关的职业</string>
+
+    <!-- 公共自由填写 -->
 
 </resources>
 

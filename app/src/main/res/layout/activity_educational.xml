@@ -43,6 +43,7 @@
                     android:layout_marginTop="24dp"
                     android:textColor="@color/color_90_000000"
                     android:textSize="24sp"
+                    android:text="@string/edit_educational"
                     tools:text="编辑教育经历" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
@@ -50,22 +51,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    app:formLabelText="院校名称"
-                    app:formPlaceholderText="请输入" />
+                    app:formLabelText="@string/school_name"
+                    app:formPlaceholderText="@string/please_input" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="学历"
-                    app:formPlaceholderText="请选择" />
+                    app:formLabelText="@string/education_level"
+                    app:formPlaceholderText="@string/please_select" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="专业"
-                    app:formPlaceholderText="请选择" />
+                    app:formLabelText="@string/major"
+                    app:formPlaceholderText="@string/please_select" />
 
 
                 <LinearLayout
@@ -80,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/color_75_3c3c43"
                         android:textSize="12sp"
-                        android:text="在校时间" />
+                        android:text="@string/school_period" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -101,7 +102,7 @@
                             android:textColor="@color/color_90_000000"
                             android:textColorHint="@color/color_25_3c3c43"
                             android:textSize="15sp"
-                            android:hint="入校时间" />
+                            android:hint="@string/enrollment_time" />
 
                         <View
                             android:id="@+id/iv_arrow"
@@ -123,7 +124,7 @@
                             android:textColor="@color/color_90_000000"
                             android:textColorHint="@color/color_25_3c3c43"
                             android:textSize="15sp"
-                            android:hint="毕业时间" />
+                            android:hint="@string/graduation_time" />
                     </LinearLayout>
 
                     <View
@@ -138,7 +139,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="一下为选填项"
+                    android:text="@string/optional_fields"
                     android:textColor="@color/color_55_3c3c43"
                     android:textSize="11sp" />
 
@@ -146,43 +147,43 @@
                     android:id="@+id/v_form5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="是否全日制"
-                    app:formPlaceholderText="请选择" />
+                    app:formLabelText="@string/full_time_education"
+                    app:formPlaceholderText="@string/please_select" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="院校性质"
-                    app:formPlaceholderText="请选择" />
+                    app:formLabelText="@string/school_type"
+                    app:formPlaceholderText="@string/please_select" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form7"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="GPA 成绩"
-                    app:formPlaceholderText="请输入" />
+                    app:formLabelText="@string/gpa_score"
+                    app:formPlaceholderText="@string/please_input" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="在校排名/荣誉"
-                    app:formPlaceholderText="请输入" />
+                    app:formLabelText="@string/school_ranking_honor"
+                    app:formPlaceholderText="@string/please_input" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form9"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="主修课程"
-                    app:formPlaceholderText="请输入" />
+                    app:formLabelText="@string/main_courses"
+                    app:formPlaceholderText="@string/please_input" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form10"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="教育补充描述"
-                    app:formPlaceholderText="请输入" />
+                    app:formLabelText="@string/education_supplement_desc"
+                    app:formPlaceholderText="@string/please_input" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -198,8 +199,8 @@
                 android:id="@+id/view_action_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primaryText="保存"
-                app:secondaryText="删除" />
+                app:primaryText="@string/text_save"
+                app:secondaryText="@string/delete" />
 
         </RelativeLayout>
 

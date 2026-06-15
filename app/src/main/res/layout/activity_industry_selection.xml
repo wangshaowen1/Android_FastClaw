@@ -48,6 +48,7 @@
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/color_90_000000"
                 android:textSize="20sp"
+                android:text="@string/select_expected_industry"
                 tools:text="选择期望行业" />
 
             <View
@@ -111,7 +112,7 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:ellipsize="end"
-                android:hint="搜索行业名称"
+                android:hint="@string/search_industry_name"
                 android:maxLines="1"
                 android:textColor="@color/color_90_000000"
                 android:textColorHint="@color/color_25_3c3c43"
@@ -198,7 +199,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:text="已选"
+                            android:text="@string/selected"
                             android:textColor="@color/color_90_000000"
                             android:textSize="12sp" />
 
@@ -227,7 +228,7 @@
                             android:textColor="@color/white"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:text="保存" />
+                            android:text="@string/text_save" />
 
                     </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
 
@@ -250,7 +251,7 @@
                     android:textSize="13sp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="43dp"
-                    android:text="暂未搜到相关的行业"
+                    android:text="@string/no_related_industry_found"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 

@@ -54,7 +54,7 @@
                     android:layout_width="0dp"
                     android:layout_height="24dp"
                     android:gravity="center_vertical"
-                    android:text="选择福利偏好"
+                    android:text="@string/welfare_preference"
                     android:textColor="@color/color_90_000000"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -70,7 +70,7 @@
                     android:ellipsize="end"
                     android:gravity="center_vertical"
                     android:maxLines="1"
-                    android:text="可以选多个"
+                    android:text="@string/can_select_multiple"
                     android:textColor="@color/color_55_3c3c43"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@id/tv_title"
@@ -135,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:text="已选"
+                        android:text="@string/selected"
                     android:textColor="@color/color_90_000000"
                     android:textSize="12sp" />
 
@@ -161,7 +161,7 @@
                 android:background="@drawable/bg_city_complete_btn"
                 android:enabled="false"
                 android:gravity="center"
-                android:text="完成"
+                android:text="@string/complete"
                 android:textColor="@color/white"
                 android:textSize="15sp"
                 android:textStyle="bold" />

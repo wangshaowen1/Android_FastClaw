@@ -49,6 +49,7 @@
                 android:layout_gravity="center_vertical"
                 android:textColor="@color/color_90_000000"
                 android:textSize="20sp"
+                android:text="@string/select_intended_position"
                 tools:text="选择意向岗位" />
 
             <View
@@ -112,7 +113,7 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:ellipsize="end"
-                android:hint="搜索职位名称"
+                android:hint="@string/search_position_name"
                 android:maxLines="1"
                 android:textColor="@color/color_90_000000"
                 android:textColorHint="@color/color_25_3c3c43"
@@ -203,7 +204,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:text="已选"
+                            android:text="@string/selected"
                             android:textColor="@color/color_90_000000"
                             android:textSize="12sp" />
 
@@ -232,7 +233,7 @@
                             android:textColor="@color/white"
                             android:textSize="15sp"
                             android:textStyle="bold"
-                            android:text="完成" />
+                            android:text="@string/complete" />
 
                     </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
 
@@ -255,7 +256,7 @@
                     android:textSize="13sp"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="43dp"
-                    android:text="暂未搜到相关的职业"
+                    android:text="@string/no_related_position_found"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 

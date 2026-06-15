@@ -61,7 +61,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="24dp"
                         android:gravity="center_vertical"
-                        android:text="选择城市"
+                        android:text="@string/select_city"
                         android:textColor="@color/color_90_000000"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -75,7 +75,7 @@
                         android:ellipsize="end"
                         android:gravity="center_vertical"
                         android:maxLines="1"
-                        android:text="添加多个城市，可以获得更多工作机会？"
+                        android:text="@string/city_selector_add_multiple"
                         android:textColor="@color/color_55_3c3c43"
                         android:textSize="12sp" />
 
@@ -192,7 +192,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="28dp"
                     android:layout_marginTop="40dp"
-                    android:text="暂未搜到相关的城市"
+                    android:text="@string/city_selector_empty"
                     android:gravity="center"
                     android:textColor="@color/color_55_3c3c43"
                     android:textSize="14sp"
@@ -235,7 +235,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:text="已选"
+                        android:text="@string/selected"
                     android:textColor="@color/color_75_3c3c43"
                     android:textSize="12sp" />
 
@@ -257,7 +257,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_city_complete_btn"
                 android:gravity="center"
-                android:text="完成"
+                android:text="@string/complete"
                 android:enabled="false"
                 android:alpha="0.3"
                 android:layout_marginBottom="40dp"
