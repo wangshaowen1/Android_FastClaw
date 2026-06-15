@@ -215,7 +215,7 @@ class IndustrySelectionActivity :
             val showIcon = !editable.isNullOrEmpty()
             if (showIcon) {
                 // 有输入：发起搜索，显示搜索结果面板
-                mRealVM.queryDictIndustryQuery(sessionId,conversationId,editable.toString())
+                mRealVM.queryDictIndustryQuery(editable.toString(),sessionId,conversationId)
                 binding.ivClear.visibility = View.VISIBLE
                 binding.rlSc.visibility = View.VISIBLE
             } else {
