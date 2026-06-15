@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="出生年月"
+                android:text="@string/birth_date"
                 android:textColor="@color/color_90_000000"
                 android:textSize="14sp"
                 android:textStyle="bold" />

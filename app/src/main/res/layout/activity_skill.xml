@@ -39,7 +39,7 @@
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_marginTop="24dp"
-                    tools:text="编辑技能"
+                    tools:text="@string/edit_skill"
                     android:textColor="@color/color_90_000000"
                     android:textSize="24sp"
                     android:layout_width="wrap_content"
@@ -50,15 +50,15 @@
                     android:layout_marginTop="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="技能名称"
-                    app:formPlaceholderText="掌握的技能名称" />
+                    app:formLabelText="@string/skill_name"
+                    app:formPlaceholderText="@string/skill_name" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="熟练度"
-                    app:formPlaceholderText="如：精通" />
+                    app:formLabelText="@string/proficiency_level"
+                    app:formPlaceholderText="@string/proficiency_level" />
 
 
             </LinearLayout>
@@ -74,8 +74,8 @@
                 android:id="@+id/view_action_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:secondaryText="删除"
-                app:primaryText="保存" />
+                app:secondaryText="@string/delete"
+                app:primaryText="@string/text_save" />
 
         </RelativeLayout>
 

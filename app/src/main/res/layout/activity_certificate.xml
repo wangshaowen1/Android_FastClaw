@@ -43,6 +43,7 @@
                     android:layout_marginTop="24dp"
                     android:textColor="@color/color_90_000000"
                     android:textSize="24sp"
+                    android:text="@string/edit_certificate"
                     tools:text="编辑证书" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
@@ -50,22 +51,22 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    app:formLabelText="证书名称"
-                    app:formPlaceholderText="请输入" />
+                    app:formLabelText="@string/certificate_name"
+                    app:formPlaceholderText="@string/please_input" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="颁发机构"
-                    app:formPlaceholderText="请输入" />
+                    app:formLabelText="@string/issuing_authority"
+                    app:formPlaceholderText="@string/please_input" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:formLabelText="颁发时间"
-                    app:formPlaceholderText="选择" />
+                    app:formLabelText="@string/issuing_time"
+                    app:formPlaceholderText="@string/select" />
 
 
             </LinearLayout>
@@ -81,8 +82,8 @@
                 android:id="@+id/view_action_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primaryText="保存"
-                app:secondaryText="删除" />
+                app:primaryText="@string/text_save"
+                app:secondaryText="@string/delete" />
 
         </RelativeLayout>
 

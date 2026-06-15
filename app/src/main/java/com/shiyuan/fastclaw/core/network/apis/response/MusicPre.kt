@@ -3,9 +3,17 @@ package com.shiyuan.fastclaw.core.network.apis.response
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
+/**
+ * 音乐试听预览数据
+ *
+ * @param playUrl 试听音频播放地址
+ * @param title   音频标题
+ */
 @Parcelize
 data class MusicPre(
+    /** 试听音频播放地址 */
     val playUrl: String?,
+    /** 音频标题 */
     val title: String?
 ) : Parcelable {
     fun isAvailable(): Boolean {

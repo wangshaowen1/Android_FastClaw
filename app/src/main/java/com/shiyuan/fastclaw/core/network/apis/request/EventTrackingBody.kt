@@ -1,10 +1,12 @@
 package com.shiyuan.fastclaw.core.network.apis.request
 
 /**
+ * 事件埋点请求体
+ *
  * @param eventCode 事件编码
- * @param bizId 业务id
+ * @param bizId 业务 ID
  * @param pageLinking 页面链路
- * @param customData 任何额外的自定义数据，以JSON格式存储，可根据业务需求添加任意字段
+ * @param customData 自定义数据（JSON 格式）
  */
 data class EventTrackingBody(
     val eventCode: String,
