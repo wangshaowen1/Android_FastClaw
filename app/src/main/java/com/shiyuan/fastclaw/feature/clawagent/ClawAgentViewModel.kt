@@ -123,8 +123,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 本地乐观插入的用户消息 ID，待服务端回显后把服务端字段填充进同一占位（保留 id） */
     private val optimisticUserMessageIds = LinkedHashSet<String>()
 
+    /** 服务端用户消息真实 key -> 本地乐观占位 key，避免 SSE 合并后 pull/page 再按真实 messageId 插入重复项 */
+    private val serverUserMessageKeyToLocalKey = HashMap<String, String>()
+
     /** 记录是否初始化会话id, 用于判断是否拉取增量数据 */
     val hasInitSession = MutableLiveData<Boolean>(false)
+
+    private fun JobAgentMessage.storeKey(): String? = messageId ?: cursor ?: sequenceNo?.toString()
 
     private val sseProcessor by lazy {
         ClawAgentSseProcessor(
@@ -461,22 +466,42 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
 
-            val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString() ?: return@forEach
+            val rawKey = msg.storeKey() ?: return@forEach
+            var key = rawKey
+            if (msg.senderType == SENDER_USER) {
+                // 已合并过的服务端用户消息，继续复用本地占位 key，避免 pull/page 重复插入
+                key = serverUserMessageKeyToLocalKey[rawKey] ?: rawKey
+                if (key != rawKey) {
+                    messageStore.remove(rawKey)
+                    messageStore[key] = msg.copy(messageId = key)
+                    msg.rememberServerKeys(key)
+                    return@forEach
+                }
+            }
             // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
             // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
             if (msg.senderType == SENDER_USER && key !in optimisticUserMessageIds) {
                 val localKey = optimisticUserMessageIds.firstOrNull { messageStore[it]?.content == msg.content }
                 if (localKey != null) {
+                    messageStore.remove(rawKey)
                     messageStore[localKey] = msg.copy(messageId = localKey)
                     optimisticUserMessageIds.remove(localKey)
+                    // 首次把服务端回显合并进本地占位时，记录真实 key 到本地 key 的映射
+                    msg.rememberServerKeys(localKey)
                     // 已填充进占位，不再以服务端 messageId 另存，避免重复
-                    // TODO 若后续 /message/pull 或 /message/page 又以真实 messageId 返回本条，会产生重复，按需再做 id 映射
                     return@forEach
                 }
             }
             messageStore[key] = msg
         }
         refreshMessageList()
+    }
+
+    // 同一条服务端消息可能用 messageId/cursor/sequenceNo 再次返回，都映射到同一个本地占位
+    private fun JobAgentMessage.rememberServerKeys(localKey: String) {
+        listOfNotNull(messageId, cursor, sequenceNo?.toString())
+            .filter { it != localKey }
+            .forEach { serverUserMessageKeyToLocalKey[it] = localKey }
     }
 
     // region 消息列表相关
@@ -486,6 +511,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         messageList.value = messageStore.values
             .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
             .map { it.toMessageInfo() }
+
+        println("tttttttttttttttttt---------------------------------------------------------")
+        messageStore.forEach { (key, msg) ->
+            println("tttttttttttttttttt_key=$key, msg=$msg")
+        }
     }
 
     /** 将服务端消息映射为端侧渲染模型，messageType 取 [ClawAgentMsgAdapter] 的 TYPE_* itemType */

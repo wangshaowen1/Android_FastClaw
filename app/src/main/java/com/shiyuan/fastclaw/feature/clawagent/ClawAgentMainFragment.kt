@@ -539,7 +539,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
             msgAdapter.submitList(list)
             if (scrollToLatest && list.isNotEmpty()) {
                 // 跳转 + 补偿滚动距离，确保刚插入(尚未测量高度)的最后一条完整贴底
-                RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, 0)
+                RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, 100)
             }
         }
         // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭
