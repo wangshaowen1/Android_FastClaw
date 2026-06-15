@@ -284,8 +284,14 @@ public class Events {
      */
     public static class ClawAgentEvent implements AppEvent {
         public String msgGson ;
+        public String type ;
         public ClawAgentEvent(String msgGson) {
             this.msgGson = msgGson;
+        }
+
+        public ClawAgentEvent(String msgGson,String type) {
+            this.msgGson = msgGson;
+            this.type = type;
         }
     }
 

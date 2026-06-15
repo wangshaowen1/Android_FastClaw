@@ -28,6 +28,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.getBundleValue
+import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.CityLocation
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
@@ -112,7 +113,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
                 showToast(R.string.city_selector_at_least)
             } else {
                 val msgGson = JobCityData.toJson(mType, selectedLocations)
-                FlowEventBus.postSync(Events.ClawAgentEvent(msgGson))
+                FlowEventBus.postSync(Events.ClawAgentEvent(msgGson,AppEvent.KLX_C_EXPECTED_CITY_COMPLETED))
                 finish()
             }
         }

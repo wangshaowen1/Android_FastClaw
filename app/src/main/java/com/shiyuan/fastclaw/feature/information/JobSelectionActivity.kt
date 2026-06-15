@@ -19,6 +19,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.databinding.ActivityIndustrySelectionBinding
 import com.shiyuan.fastclaw.databinding.ActivityJobSelectionBinding
 import com.shiyuan.fastclaw.feature.information.adapter.IyPnAdapter
@@ -213,7 +214,7 @@ class JobSelectionActivity :
                 mapOf("code" to it.positionCode, "name" to it.positionName)
             }
             categoryList?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
-            FlowEventBus.postSticky(Events.ClawAgentEvent(categoryList?.toJsonString()))
+            FlowEventBus.postSticky(Events.ClawAgentEvent(categoryList?.toJsonString(), AppEvent.KLX_C_EXPECTED_JOB_COMPLETED))
             finish()
         }
     }

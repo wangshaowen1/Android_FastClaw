@@ -82,6 +82,21 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         /** 距顶部多少条时开始预取更早历史 */
         private const val PREFETCH_THRESHOLD = 5
 
+        /**
+         * 业务侧追踪类型：onTrackingEvent 内部根据该值统一调用 EventManager.onAppTrack，
+         * 避免埋点 code 散落在各处回调中
+         */
+        internal enum class TrackingType {
+            /** 首次点击上传附件简历 */
+            UPLOAD_RESUME,
+            /** 简历解析失败后点击重新上传 */
+            UPLOAD_RESUME_RETRY,
+            /** 确认绑定历史简历 */
+            RESUME_CONFIRM,
+            /** 拒绝绑定历史简历 */
+            RESUME_DENY,
+        }
+
         fun getInstance(): ClawAgentMainFragment {
             val fragment = ClawAgentMainFragment()
 //            fragment.arguments = Bundle().also {
@@ -172,11 +187,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
         msgAdapter.onUploadClickAction = { data,reUpload ->
             if (!AppNavigator.checkLoginIntercepted(false)) {
-                if(reUpload){
-                    EventManager.onAppTrack(AppEvent.KLX_CAPP_UPLOAD_FAILED_RE_RESUME)
-                }else{
-                    EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME,mutableMapOf("klx_pipe_source" to "APP"))
-                }
+                // 上传/重传埋点统一收敛到 onTrackingEvent
+                onTrackingEvent(trackingType = if (reUpload) TrackingType.UPLOAD_RESUME_RETRY else TrackingType.UPLOAD_RESUME)
                 showUploadResumeDialog(data)
             }
         }
@@ -196,7 +208,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                         actionPayloadJson = option.actionPayload?.let { GsonUtils.toJson(it) },
                     )
                 )
-                onTrackingEvent(payload)
+                onTrackingEvent(payload  = payload)
             }
         }
         // 补问卡动作按钮：actionCode 取自 payload action
@@ -227,7 +239,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                         manager = childFragmentManager
                     ) { minSalary, maxSalary ->
                         val salaryPayloadJson = SalaryRangePayload.fromPicker(minSalary, maxSalary).toJson()
-                        FlowEventBus.postSticky(Events.ClawAgentEvent(salaryPayloadJson))
+                        FlowEventBus.postSticky(Events.ClawAgentEvent(salaryPayloadJson,AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED))
                     }
                 } else if (payload?.isWorkExperience() ?: false) { //工作经历
                     mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
@@ -309,7 +321,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 }  else {
                     startMsgAction(item, action, queueId)
                 }
-                onTrackingEvent(payload)
+                onTrackingEvent(payload = payload)
             }
         }
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
@@ -330,7 +342,10 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         // 历史简历确认卡 确认/否认：actionCode 用端侧动作枚举，回传 resumeId/resumeStructId/resumeTaskId
         msgAdapter.onResumeConfirmClickAction = { item, confirmed ->
             if (!interceptIfStreaming()) {
-                EventManager.onAppTrack(if(forceScrollToBottom) AppEvent.KLX_CAPP_CONFIRM_RESUME else AppEvent.KLX_CAPP_DENY_RESUME )
+                // 确认/否认埋点统一收敛到 onTrackingEvent，原有 forceScrollToBottom 判定保留
+                onTrackingEvent(
+                    trackingType = if (forceScrollToBottom) TrackingType.RESUME_CONFIRM else TrackingType.RESUME_DENY
+                )
                 forceScrollToBottom = true
                 val payload = item.metaData?.let {
                     runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
@@ -497,6 +512,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 }
             }
             on<Events.ClawAgentEvent> { event ->
+                onTrackingEvent(clawAgentEvent = event)
                 //聊天对话选择后回传
                 startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, event.msgGson)
             }
@@ -737,7 +753,48 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         popup = null
     }
 
-    fun onTrackingEvent(payload: CoreQuestionPayloadBean?) {
+    /**
+     * 业务埋点统一出口：所有 EventManager.onAppTrack 调用都收拢到本方法中，
+     * 避免在各类点击/事件回调中散落埋点 code。业务回调只需传入对应 TrackingType，
+     * 即可由本方法完成 code → EventManager 调用的映射。
+     *
+     * - [trackingType]：UI 层的离散动作（点击上传/重传/确认简历/否认简历）
+     * - [payload] / [clawAgentEvent]：与原有 CoreQuestionPayloadBean / ClawAgentEvent 联动触发的埋点保持不变
+     */
+    internal fun onTrackingEvent(
+        trackingType: TrackingType? = null,
+        payload: CoreQuestionPayloadBean? = null,
+        clawAgentEvent: Events.ClawAgentEvent? = null,
+    ) {
+        // 1) UI 离散动作埋点（点击/重传/确认/否认等）
+        when (trackingType) {
+            TrackingType.UPLOAD_RESUME ->
+                EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME, mutableMapOf("klx_pipe_source" to "APP"))
+            TrackingType.UPLOAD_RESUME_RETRY ->
+                EventManager.onAppTrack(AppEvent.KLX_CAPP_UPLOAD_FAILED_RE_RESUME)
+            TrackingType.RESUME_CONFIRM ->
+                EventManager.onAppTrack(AppEvent.KLX_CAPP_CONFIRM_RESUME)
+            TrackingType.RESUME_DENY ->
+                EventManager.onAppTrack(AppEvent.KLX_CAPP_DENY_RESUME)
+            null -> Unit
+        }
 
+        // 2) CoreQuestionPayloadBean 触发的埋点（求职状态完成）
+        payload?.let { it ->
+            if (it.attributeGroupCode == "jobStatus") {
+                EventManager.onAppTrack(AppEvent.KLX_C_JOBSEEKING_STATUS_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
+            }
+        }
+
+        // 3) ClawAgentEvent 触发的埋点（意向岗位/城市/薪资完成）
+        clawAgentEvent?.let { it ->
+            if (it.type == AppEvent.KLX_C_EXPECTED_JOB_COMPLETED) {
+                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_JOB_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
+            } else if (it.type == AppEvent.KLX_C_EXPECTED_CITY_COMPLETED) {
+                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_CITY_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
+            } else if (it.type == AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED) {
+                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
+            }
+        }
     }
 }
