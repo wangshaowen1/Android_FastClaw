@@ -260,7 +260,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)?.displayValue.isNullOrBlank()
         }?.second?.let { getString(it) }
         if (emptyFieldName != null) {
-            "请完善必填项：$emptyFieldName".showToast()
+            "请填写：$emptyFieldName".showToast()
             return false
         }
         return true

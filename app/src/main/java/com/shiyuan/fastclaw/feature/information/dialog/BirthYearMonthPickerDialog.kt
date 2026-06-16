@@ -32,6 +32,7 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
         private var selectedMonth: Int? = null
         private var minYear: Int = DEFAULT_MIN_YEAR
         private var maxYear: Int = Calendar.getInstance().get(Calendar.YEAR)
+        private var maxTimestamp: Long? = null
         private var onConfirmWithTimestamp: ((year: Int, month: String, timestamp: Long) -> Unit)? = null
         private var onConfirm: ((year: Int, month: String) -> Unit)? = null
 
@@ -54,6 +55,7 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
             selectedMonth: Int? = null,
             minYear: Int = DEFAULT_MIN_YEAR,
             maxYear: Int = Calendar.getInstance().get(Calendar.YEAR),
+            maxTimestamp: Long? = null,
             onConfirmWithTimestamp: ((year: Int, month: String, timestamp: Long) -> Unit)? = null,
             onConfirm: ((year: Int, month: String) -> Unit)? = null,
         ): BirthYearMonthPickerDialog {
@@ -62,6 +64,7 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
             this.selectedMonth = selectedMonth
             this.minYear = minYear
             this.maxYear = maxYear
+            this.maxTimestamp = maxTimestamp
             this.onConfirmWithTimestamp = onConfirmWithTimestamp
             this.onConfirm = onConfirm
             return BirthYearMonthPickerDialog().apply {
@@ -91,13 +94,16 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
      */
     private fun initYearPicker() {
         // 防御 maxYear < minYear 的情况
-        val safeMaxYear = maxYear.coerceAtLeast(minYear)
+        val safeMaxYear = getEffectiveMaxYear().coerceAtLeast(minYear)
         val years = (minYear..safeMaxYear).map { "${it}年" }.toTypedArray()
         binding.yearPicker.applyPickerStyle()
         binding.yearPicker.minValue = 0
         binding.yearPicker.maxValue = years.lastIndex
         binding.yearPicker.displayedValues = years
         binding.yearPicker.value = resolveSelectedYearIndex(safeMaxYear)
+        binding.yearPicker.setOnValueChangedListener { _, _, newVal ->
+            updateMonthPicker(minYear + newVal, binding.monthPicker.value + 1)
+        }
     }
 
     /**
@@ -105,10 +111,17 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
      */
     private fun initMonthPicker() {
         binding.monthPicker.applyPickerStyle()
+        updateMonthPicker(minYear + binding.yearPicker.value)
+    }
+
+    private fun updateMonthPicker(year: Int, preferredMonth: Int? = null) {
+        val maxMonth = getEffectiveMaxMonth(year)
+        val monthValues = monthDisplayValues.take(maxMonth).toTypedArray()
+        binding.monthPicker.displayedValues = null
         binding.monthPicker.minValue = 0
-        binding.monthPicker.maxValue = monthDisplayValues.lastIndex
-        binding.monthPicker.displayedValues = monthDisplayValues
-        binding.monthPicker.value = resolveSelectedMonthIndex()
+        binding.monthPicker.maxValue = monthValues.lastIndex
+        binding.monthPicker.displayedValues = monthValues
+        binding.monthPicker.value = resolveSelectedMonthIndex(maxMonth, preferredMonth)
     }
 
     /**
@@ -172,9 +185,29 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
     /**
      * 计算月份滚轮默认索引：优先使用外部传入的 selectedMonth，否则用当前系统月。
      */
-    private fun resolveSelectedMonthIndex(): Int {
+    private fun resolveSelectedMonthIndex(maxMonth: Int, preferredMonth: Int? = null): Int {
         val defaultMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
-        val targetMonth = (selectedMonth ?: defaultMonth).coerceIn(1, 12)
+        val targetMonth = (preferredMonth ?: selectedMonth ?: defaultMonth).coerceIn(1, maxMonth)
         return targetMonth - 1
+    }
+
+    private fun getEffectiveMaxYear(): Int {
+        return maxTimestamp?.let { timestamp ->
+            Calendar.getInstance().apply {
+                timeInMillis = timestamp
+            }.get(Calendar.YEAR)
+        } ?: maxYear
+    }
+
+    private fun getEffectiveMaxMonth(year: Int): Int {
+        val timestamp = maxTimestamp ?: return 12
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = timestamp
+        }
+        return if (calendar.get(Calendar.YEAR) == year) {
+            calendar.get(Calendar.MONTH) + 1
+        } else {
+            12
+        }
     }
 }

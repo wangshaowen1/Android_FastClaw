@@ -9,10 +9,14 @@ import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
+import com.shiyuan.fastclaw.core.ext.request
+import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
+import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.DictIndustryQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.DictPositionQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil
@@ -153,4 +157,28 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
 
+    fun queryAttributeArray(
+        questionQueueId: String?,
+        attributeGroupCode: String?,
+        currentSessionId: String?,
+        currentConversationId: String?,
+        clientRequestId: String?,
+        onResult: (AttributeArrayQueryData?) -> Unit
+    ) {
+        request(
+            apiBlock = {
+                mRepo.api.queryAttributeArray(
+                    AttributeArrayQueryBody(
+                        sessionId = currentSessionId,
+                        conversationId = currentConversationId,
+                        questionQueueId = questionQueueId,
+                        attributeGroupCode = attributeGroupCode,
+                    )
+                )
+            }
+        ) {
+            this.data?.clientRequestId = clientRequestId
+            onResult(this.data)
+        }
+    }
 }

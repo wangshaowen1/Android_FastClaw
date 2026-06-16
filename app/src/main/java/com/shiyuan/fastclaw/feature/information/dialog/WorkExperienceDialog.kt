@@ -28,14 +28,19 @@ import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
  * 工作经验列表底部弹窗。
  * 展示已有工作经历，点击条目进入编辑页，可新增或完成提交。
  */
-class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperienceBinding, InformationViewModel>() {
+class WorkExperienceDialog :
+    BaseBottomPushVMDialogFragment<DialogWorkExperienceBinding, InformationViewModel>() {
 
     companion object {
         const val TAG = "WorkExperienceDialog"
+
         // 新增按钮回调（保留字段，目前未直接使用，新增逻辑内联在 initView）
         private var onAddClick: (() -> Unit)? = null
+
         // 条目点击回调
-        private var onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null
+        private var onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? =
+            null
+
         // 完成按钮回调
         private var onCompleteClick: (() -> Unit)? = null
 
@@ -66,13 +71,16 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
                 show(manager)
             }
         }
+
         // 字段编码：未完成标识
         private const val INCOMPLETE = "INCOMPLETE"
+
         // 字段编码：起止时间、职位、工作内容
         private const val START_DATE = "startDate"
         private const val END_DATE = "endDate"
         private const val POSITION = "position"
         private const val WORK_CONTENT = "workContent"
+
         // 透传字段数据的参数 key
         private const val ARG_ATTRIBUTE_DATA = "arg_attribute_data"
 
@@ -91,42 +99,45 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
             emptyList()
         ) { binding, position2, item ->
             // 公司名称
-            val  projectName = AttributeFieldItemFinder.findFirst(item.fieldItems,FIELD_COMPANY_NAME)
-            binding.tvCompany.text = projectName?.displayValue ?:  "暂无"
+            val projectName =
+                AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_COMPANY_NAME)
+            binding.tvCompany.text = projectName?.displayValue ?: "暂无"
             // 未完成态时显示缺失提示
-            binding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
+            binding.layoutMissing.visibility =
+                if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
             // 起止时间
-            val  startDate = AttributeFieldItemFinder.findFirst(item.fieldItems,START_DATE)
-            val  endDate = AttributeFieldItemFinder.findFirst(item.fieldItems,END_DATE)
+            val startDate = AttributeFieldItemFinder.findFirst(item.fieldItems, START_DATE)
+            val endDate = AttributeFieldItemFinder.findFirst(item.fieldItems, END_DATE)
             // 职位、工作内容
-            val  position = AttributeFieldItemFinder.findFirst(item.fieldItems,POSITION)
-            val  workContent = AttributeFieldItemFinder.findFirst(item.fieldItems,WORK_CONTENT)
-            binding.tvTime.text = (startDate?.displayValue ?: "") + " - " +  (endDate?.displayValue ?: "")
+            val position = AttributeFieldItemFinder.findFirst(item.fieldItems, POSITION)
+            val workContent = AttributeFieldItemFinder.findFirst(item.fieldItems, WORK_CONTENT)
+            binding.tvTime.text =
+                (startDate?.displayValue ?: "") + " - " + (endDate?.displayValue ?: "")
             binding.tvJob.text = position?.displayValue ?: ""
             workContent?.displayValue?.let {
-                binding.tvDesc.text = "内容:"+workContent?.displayValue ?: ""
+                binding.tvDesc.text = "内容:" + workContent?.displayValue ?: ""
             }
 
             // 时间为空时整行隐藏
-            if( binding.tvTime.text == " - "){
+            if (binding.tvTime.text == " - ") {
                 binding.tvTime.visibility = View.GONE
                 binding.v.visibility = View.GONE
-            }else{
+            } else {
                 binding.tvTime.visibility = View.VISIBLE
             }
 
             // 职位为空时整行隐藏
-            if( binding.tvJob.text.isNullOrEmpty()){
+            if (binding.tvJob.text.isNullOrEmpty()) {
                 binding.v.visibility = View.GONE
                 binding.tvJob.visibility = View.GONE
-            }else{
+            } else {
                 binding.tvJob.visibility = View.VISIBLE
             }
 
             // 工作内容为空时隐藏
-            if( workContent?.displayValue.isNullOrEmpty()){
+            if (workContent?.displayValue.isNullOrEmpty()) {
                 binding.tvDesc.visibility = View.GONE
-            }else{
+            } else {
                 binding.tvDesc.visibility = View.VISIBLE
             }
             // 点击进入编辑页
@@ -180,7 +191,7 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
                 // 3. 将副本插入到列表第0个位置
                 treeList.add(0, copy)
             }
-            WorkActivity.start(requireActivity(), false, attributeData,0)
+            WorkActivity.start(requireActivity(), false, attributeData, 0)
         }
         // 完成：关闭弹窗并通知调用方
         binding.clWcExperience.setOnSingleClickListener {
@@ -194,7 +205,7 @@ class WorkExperienceDialog : BaseBottomPushVMDialogFragment<DialogWorkExperience
                 try {
                     attributeData = it.attributeData
                     bindData()
-                }catch (e: Exception){
+                } catch (e: Exception) {
 
                 }
             }

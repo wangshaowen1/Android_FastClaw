@@ -278,6 +278,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 } else if (payload?.isBirthday() ?: false) { //出生年月
                     BirthYearMonthPickerDialog.show(
                         manager = childFragmentManager,
+                        maxTimestamp = 1767143497521,
                         title = "出生年月",
                         onConfirmWithTimestamp = { year, month, _ ->
                             FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
