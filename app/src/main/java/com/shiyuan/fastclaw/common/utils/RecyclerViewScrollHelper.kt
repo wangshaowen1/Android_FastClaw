@@ -5,32 +5,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.shiyuan.fastclaw.widget.BottomSmoothScroller
 
 object RecyclerViewScrollHelper {
-    fun scrollToBottom(recyclerView: RecyclerView, delayTIme: Long) {
-        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager?
-        layoutManager?.let {
-            val lastPosition = layoutManager.itemCount - 1
 
-            recyclerView.postDelayed({
-                // 第一步：先跳转到目标位置
-                layoutManager.scrollToPositionWithOffset(lastPosition, 0)
+    fun scrollToBottom(recyclerView: RecyclerView, delayTime: Long = 0) {
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
 
-                // 第二步：补充滚动距离
-                val lastItem = layoutManager.findViewByPosition(lastPosition)
-                if (lastItem != null) {
-                    val targetScroll = lastItem.bottom - recyclerView.height
-                    if (targetScroll > 0) {
-                        recyclerView.scrollBy(0, targetScroll)
-                    }
+        recyclerView.postDelayed({
+            val itemCount = layoutManager.itemCount
+            if (itemCount <= 0) return@postDelayed
+
+            val target = if (layoutManager.reverseLayout) 0 else itemCount - 1
+            layoutManager.scrollToPositionWithOffset(target, 0)
+
+            recyclerView.post {
+                val range = recyclerView.computeVerticalScrollRange()
+                val offset = recyclerView.computeVerticalScrollOffset()
+                val extent = recyclerView.computeVerticalScrollExtent()
+
+                val gap = range - offset - extent
+                if (gap > 0) {
+                    recyclerView.scrollBy(0, gap)
                 }
-
-                // 反向布局特殊处理
-                if (layoutManager.reverseLayout) {
-                    recyclerView.scrollToPosition(0)
-                    recyclerView.scrollBy(0, Int.MAX_VALUE) // 强制到底
-                }
-            }, delayTIme)
-        }
-
+            }
+        }, delayTime)
     }
 
     fun smoothScrollToBottom(recyclerView: RecyclerView, delayTime: Long, speed: Float = 0.1f) {
