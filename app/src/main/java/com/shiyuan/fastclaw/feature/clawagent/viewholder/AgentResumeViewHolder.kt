@@ -13,6 +13,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.C
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.router.AppNavigator
 
 /**
  * 指引上传简历
@@ -58,8 +59,10 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
         binding.tvNotResume.visibility = if (User.get().isVisitor || action != null && !payload.isDisabled()) VISIBLE else GONE
         binding.tvNotResume.setOnSingleClickListener {
-            action?.let { onDefaultClickListener(item, action, null) }
             showToast(R.string.toast_resume_not_conversation)
+            if (!AppNavigator.checkLoginIntercepted(false)) {
+                action?.let { onDefaultClickListener(item, action, null) }
+            }
         }
         binding.btnUploadResume.setOnSingleClickListener {
             if (enabled) onUploadClickListener(item)
