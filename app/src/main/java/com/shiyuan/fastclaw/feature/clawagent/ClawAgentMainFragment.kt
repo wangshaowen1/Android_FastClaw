@@ -292,82 +292,80 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                         FlowEventBus.postSticky(Events.ClawAgentEvent(salaryPayloadJson,AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED))
                     }
                 } else if (payload?.isWorkExperience() ?: false) { //工作经历
-                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        result?.let { attrData ->
-                            WorkExperienceDialog.show(
-                                manager = childFragmentManager,
-                                attributeData = attrData,
-                                onCompleteClick = { ->
-                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                                }
-                            )
+                    WorkExperienceDialog.show(
+                        manager = childFragmentManager,
+                        questionQueueId = queueId,
+                        attributeGroupCode = payload.attributeGroupCode,
+                        clientRequestId = mRealVM.currentRequestId,
+                        sessionId = mRealVM.sessionId,
+                        conversationId = mRealVM.conversationId,
+                        onCompleteClick = { ->
+                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                         }
-                    }
+                    )
                 } else if (payload?.isEducationInfo() ?: false) { //教育经历
-                        // result 即 AttributeArrayQueryData
-                        mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                            result?.let { attrData ->
-                                EducationExperienceDialog.show(
-                                    manager = childFragmentManager,
-                                    attributeData = attrData,
-                                    onCompleteClick = {->
-                                        FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                                    }
-                                )
-                            }
+                    EducationExperienceDialog.show(
+                        manager = childFragmentManager,
+                        questionQueueId = queueId,
+                        attributeGroupCode = payload.attributeGroupCode,
+                        clientRequestId = mRealVM.currentRequestId,
+                        sessionId = mRealVM.sessionId,
+                        conversationId = mRealVM.conversationId,
+                        onCompleteClick = { ->
+                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                         }
+                    )
                 } else if (payload?.isProjectExperience() ?: false) { //项目经历
-                    // result 即 AttributeArrayQueryData
-                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        result?.let { attrData ->
-                            ProjectExperienceDialog.show(
-                                manager = childFragmentManager,
-                                attributeData = attrData,
-                                onCompleteClick = {->
-                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                                }
-                            )
+                    ProjectExperienceDialog.show(
+                        manager = childFragmentManager,
+                        questionQueueId = queueId,
+                        attributeGroupCode = payload.attributeGroupCode,
+                        clientRequestId = mRealVM.currentRequestId,
+                        sessionId = mRealVM.sessionId,
+                        conversationId = mRealVM.conversationId,
+                        onCompleteClick = { ->
+                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                         }
-                    }
+                    )
                 } else if (payload?.isSkills() ?: false) { //技能
-                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        result?.let { attrData ->
-                            CertificateSkillsAwardsDialog.show(
-                                manager = childFragmentManager,
-                                type = payload.attributeGroupCode ?: "",
-                                attributeData = attrData,
-                                onCompleteClick = { ->
-                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                                }
-                            )
+                    CertificateSkillsAwardsDialog.show(
+                        manager = childFragmentManager,
+                        type = payload.attributeGroupCode ?: "",
+                        questionQueueId = queueId,
+                        attributeGroupCode = payload.attributeGroupCode,
+                        clientRequestId = mRealVM.currentRequestId,
+                        sessionId = mRealVM.sessionId,
+                        conversationId = mRealVM.conversationId,
+                        onCompleteClick = { ->
+                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                         }
-                    }
+                    )
                 } else if (payload?.isCertificates() ?: false) { //证书
-                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        result?.let { attrData ->
-                            CertificateSkillsAwardsDialog.show(
-                                manager = childFragmentManager,
-                                type = payload.attributeGroupCode ?: "",
-                                attributeData = attrData,
-                                onCompleteClick = { ->
-                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                                }
-                            )
+                    CertificateSkillsAwardsDialog.show(
+                        manager = childFragmentManager,
+                        type = payload.attributeGroupCode ?: "",
+                        questionQueueId = queueId,
+                        attributeGroupCode = payload.attributeGroupCode,
+                        clientRequestId = mRealVM.currentRequestId,
+                        sessionId = mRealVM.sessionId,
+                        conversationId = mRealVM.conversationId,
+                        onCompleteClick = { ->
+                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                         }
-                    }
-                }else if (payload?.isAwards() ?: false) { //奖项
-                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        result?.let { attrData ->
-                            CertificateSkillsAwardsDialog.show(
-                                manager = childFragmentManager,
-                                type = payload.attributeGroupCode ?: "",
-                                attributeData = attrData,
-                                onCompleteClick = {->
-                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                                }
-                            )
+                    )
+                } else if (payload?.isAwards() ?: false) { //奖项
+                    CertificateSkillsAwardsDialog.show(
+                        manager = childFragmentManager,
+                        type = payload.attributeGroupCode ?: "",
+                        questionQueueId = queueId,
+                        attributeGroupCode = payload.attributeGroupCode,
+                        clientRequestId = mRealVM.currentRequestId,
+                        sessionId = mRealVM.sessionId,
+                        conversationId = mRealVM.conversationId,
+                        onCompleteClick = { ->
+                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                         }
-                    }
+                    )
                 }  else {
                     startMsgAction(item, action, queueId)
                 }

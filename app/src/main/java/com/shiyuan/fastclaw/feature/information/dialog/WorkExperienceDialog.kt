@@ -43,6 +43,11 @@ class WorkExperienceDialog :
 
         // 完成按钮回调
         private var onCompleteClick: (() -> Unit)? = null
+        private var questionQueueId: String? = null
+        private var attributeGroupCode: String? = null
+        private var clientRequestId: String? = null
+        private var sessionId: String? = null
+        private var conversationId: String? = null
 
 
         /**
@@ -58,10 +63,20 @@ class WorkExperienceDialog :
             manager: FragmentManager,
             attributeData: AttributeArrayQueryData? = null,
             onAddClick: (() -> Unit)? = null,
+            questionQueueId: String?,
+            attributeGroupCode: String?,
+            clientRequestId: String?,
+            sessionId : String?,
+            conversationId : String?,
             onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null,
             onCompleteClick: (() -> Unit)? = null,
         ): WorkExperienceDialog {
             this.onAddClick = onAddClick
+            this.questionQueueId = questionQueueId
+            this.attributeGroupCode = attributeGroupCode
+            this.clientRequestId = clientRequestId
+            this.sessionId = sessionId
+            this.conversationId = conversationId
             this.onFieldTreeItemClick = onFieldTreeItemClick
             this.onCompleteClick = onCompleteClick
             return WorkExperienceDialog().apply {
@@ -155,7 +170,7 @@ class WorkExperienceDialog :
         attributeData = getAttributeData()
         initRecyclerView()
         initView()
-        bindData()
+        queryAttributeArray()
     }
 
     /**
@@ -195,22 +210,45 @@ class WorkExperienceDialog :
         }
         // 完成：关闭弹窗并通知调用方
         binding.clWcExperience.setOnSingleClickListener {
-            dismiss()
-            onCompleteClick?.invoke()
+            if(attributeData?.fieldTree?.filter { it.statusCode == INCOMPLETE}.isNullOrEmpty()){
+                dismiss()
+                onCompleteClick?.invoke()
+            }else{
+                SupplementDialog.show(
+                    manager = childFragmentManager,
+                    content = "还有工作经历未补充完整"
+                )
+            }
         }
 
         // 监听子页面保存事件，刷新列表
         observeEvents {
             on<Events.AttributeFieldSuccessfulEvent> {
                 try {
-                    attributeData = it.attributeData
-                    bindData()
+                    queryAttributeArray()
                 } catch (e: Exception) {
 
                 }
             }
         }
 
+    }
+
+    private fun queryAttributeArray() {
+        if (questionQueueId == null && attributeGroupCode == null && sessionId == null && conversationId == null) {
+            bindData()
+            return
+        }
+        mRealVM.queryAttributeArray(
+            questionQueueId,
+            attributeGroupCode,
+            sessionId,
+            conversationId,
+            clientRequestId
+        ) {
+            attributeData = it ?: attributeData
+            bindData()
+        }
     }
 
     /**
