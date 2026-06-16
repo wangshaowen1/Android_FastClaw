@@ -223,7 +223,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
         msgAdapter.onDefaultActionClickAction = { item, action, queueId ->
-            if (!interceptIfStreaming()) {
+            if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.sendAction(
                     desc = action.text.orEmpty(),

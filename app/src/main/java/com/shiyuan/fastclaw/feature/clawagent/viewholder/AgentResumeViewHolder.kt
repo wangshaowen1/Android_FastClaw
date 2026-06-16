@@ -56,7 +56,7 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
         }
         binding.btnUploadResume.isEnabled = enabled
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
-        binding.tvNotResume.visibility = if (action != null && !payload.isDisabled()) VISIBLE else GONE
+        binding.tvNotResume.visibility = if (User.get().isVisitor || action != null && !payload.isDisabled()) VISIBLE else GONE
         binding.tvNotResume.setOnSingleClickListener {
             action?.let { onDefaultClickListener(item, action, null) }
             showToast(R.string.toast_resume_not_conversation)
