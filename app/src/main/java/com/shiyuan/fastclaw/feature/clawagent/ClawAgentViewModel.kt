@@ -467,7 +467,22 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
 
+            // 简历待上传/失败/确认流程卡类型合并只展示最新一张
             val rawKey = msg.storeKey() ?: return@forEach
+            if (msg.isLatestOnlyResumeCard()) {
+                val msgSeq = msg.sequenceNo ?: Long.MIN_VALUE
+                // 筛选出所有关于“简历流程卡”类型的消息列表
+                val resumeCards = messageStore.filterValues { it.isLatestOnlyResumeCard() }
+                // 历史分页可能返回旧卡，不能覆盖当前更新的简历流程状态
+                // 有没有任意一个元素满足条件
+                if (resumeCards.any { it.key != rawKey && msgSeq < (it.value.sequenceNo ?: Long.MIN_VALUE) }) {
+                    return@forEach
+                }
+                // 当前卡将要入库，先移除其它简历流程卡，保证列表只展示最新一张
+                resumeCards.keys
+                    .filter { it != rawKey }
+                    .forEach { messageStore.remove(it) }
+            }
             var key = rawKey
             if (msg.senderType == SENDER_USER) {
                 // 已合并过的服务端用户消息，继续复用本地占位 key，避免 pull/page 重复插入
@@ -498,15 +513,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         refreshMessageList()
     }
 
-    // 同一条服务端消息可能用 messageId/cursor/sequenceNo 再次返回，都映射到同一个本地占位
-    private fun JobAgentMessage.rememberServerKeys(localKey: String) {
-        listOfNotNull(messageId, cursor, sequenceNo?.toString())
-            .filter { it != localKey }
-            .forEach { serverUserMessageKeyToLocalKey[it] = localKey }
-    }
-
     // region 消息列表相关
-
     /** 按 sequenceNo 升序映射并回推渲染列表 */
     private fun refreshMessageList() {
         messageList.value = messageStore.values
@@ -519,6 +526,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 println("test_data=$key, msg=$msg")
             }
         }
+    }
+
+    // 同一条服务端消息可能用 messageId/cursor/sequenceNo 再次返回，都映射到同一个本地占位
+    private fun JobAgentMessage.rememberServerKeys(localKey: String) {
+        listOfNotNull(messageId, cursor, sequenceNo?.toString())
+            .filter { it != localKey }
+            .forEach { serverUserMessageKeyToLocalKey[it] = localKey }
     }
 
     /** 将服务端消息映射为端侧渲染模型，messageType 取 [ClawAgentMsgAdapter] 的 TYPE_* itemType */
@@ -609,6 +623,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否理解升级（UNDERSTANDING_SUMMARY） */
     private fun JobAgentMessage.isUnderstandingSummaryCard(): Boolean =
         messageType == MSG_CARD && cardType == CARD_UNDERSTANDING_SUMMARY
+
+    /** 是否简历流程互斥卡，只保留最新一张 */
+    private fun JobAgentMessage.isLatestOnlyResumeCard(): Boolean =
+        messageType == MSG_CARD && cardType in setOf(CARD_UPLOAD_RESUME, CARD_RESUME_RECEIVED, CARD_HISTORY_RESUME_CONFIRM)
 
     /**
      * 始终第一条插入自我介绍卡片
