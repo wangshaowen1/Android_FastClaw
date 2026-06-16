@@ -20,7 +20,8 @@ data class SelectedFileInfo(
  * 文件选择工具类（基于 Activity Result API）
  * @param fragment 发起选择的 Fragment
  * @param maxSizeBytes 允许的最大文件大小（字节），默认 10MB = 10 * 1024 * 1024
- * @param onResult 选择结果回调，成功返回 SelectedFileInfo，失败返回 null（包括大小超限）
+ * @param onResult 选择结果回调，成功返回 SelectedFileInfo，失败返回 null
+ * @param onSizeExceeded 文件大小超限回调，传入时由调用方处理提示
  */
 class FileChooser(
     private val fragment: Fragment,
@@ -63,11 +64,10 @@ class FileChooser(
                 } else {
                     // 文件不存在、解析失败或超过大小限制
                     if (info != null && info.fileSize > maxSizeBytes) {
-                        val sizeMB = maxSizeBytes / (1024f * 1024f)
-                        // 注意：这里不能直接使用 showToast，需要传入上下文；实际使用时由外部处理提示
-                        // 我们将错误信息通过回调 null 并可选附带错误消息，简化处理：回调 null 并让调用方决定提示
+                        onSizeExceeded?.invoke() ?: onResult(null)
+                    } else {
+                        onResult(null)
                     }
-                    onResult(null)
                 }
             } else {
                 onResult(null)
