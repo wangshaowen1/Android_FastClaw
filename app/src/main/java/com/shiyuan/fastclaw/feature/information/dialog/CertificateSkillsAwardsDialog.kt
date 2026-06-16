@@ -40,6 +40,11 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         private var onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null
         // 弹窗类型变量：certificates / skills / awards
         private var type: String = "certificates"
+        private var questionQueueId: String? = null
+        private var attributeGroupCode: String? = null
+        private var clientRequestId: String? = null
+        private var sessionId: String? = null
+        private var conversationId: String? = null
 
         // 字段编码：技能名称
         private const val FIELD_SKILL_NAME = "skillName"
@@ -59,6 +64,11 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
             manager: FragmentManager,
             attributeData: AttributeArrayQueryData? = null,
             type: String = "certificates",
+            questionQueueId: String? = null,
+            attributeGroupCode: String? = null,
+            clientRequestId: String? = null,
+            sessionId: String? = null,
+            conversationId: String? = null,
             onCompleteClick: (() -> Unit)? = null,
             onAddClick: ((String) -> Unit)? = null,
             onFieldTreeItemClick: ((AttributeFieldTree, AttributeArrayQueryData) -> Unit)? = null,
@@ -67,6 +77,11 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
             this.onFieldTreeItemClick = onFieldTreeItemClick
             this.onCompleteClick = onCompleteClick
             this.type = type
+            this.questionQueueId = questionQueueId
+            this.attributeGroupCode = attributeGroupCode
+            this.clientRequestId = clientRequestId
+            this.sessionId = sessionId
+            this.conversationId = conversationId
             return CertificateSkillsAwardsDialog().apply {
                 arguments = Bundle().apply {
                     attributeData?.let { putParcelable(ARG_ATTRIBUTE_DATA, it) }
@@ -77,6 +92,8 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
 
         // 透传字段数据的参数 key
         private const val ARG_ATTRIBUTE_DATA = "arg_attribute_data"
+        // 字段编码：未完成标识
+        private const val INCOMPLETE = "INCOMPLETE"
         // 字段编码：证书名称
         private const val FIELD_CERTIFICATE_NAME = "certificateName"
         // 字段编码：奖项名称
@@ -93,6 +110,8 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
             R.layout.item_certificate_skills_awards,
             emptyList()
         ) { binding, position, item ->
+            // 未完成态时显示缺失提示
+            binding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
             // 根据 type 选择展示的字段：技能 / 证书 / 奖项
             when (type) {
                 "skills" -> {
@@ -135,7 +154,7 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         attributeData = getAttributeData()
         initRecyclerView()
         initView()
-        bindData()
+        queryAttributeArray()
     }
 
     /**
@@ -198,19 +217,50 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         }
         // 完成：关闭弹窗并通知调用方
         binding.clWcExperience.setOnSingleClickListener {
-            dismiss()
-            onCompleteClick?.invoke()
+            if (attributeData?.fieldTree?.filter { it.statusCode == INCOMPLETE }.isNullOrEmpty()) {
+                dismiss()
+                onCompleteClick?.invoke()
+            } else {
+                SupplementDialog.show(
+                    manager = childFragmentManager,
+                    content = "还有${getSupplementTitle()}未补充完整"
+                )
+            }
         }
         // 监听子页面保存事件，刷新列表
         observeEvents {
             on<Events.AttributeFieldSuccessfulEvent> {
                 try {
-                    attributeData = it.attributeData
-                    bindData()
+                    queryAttributeArray()
                 }catch (e: Exception){
 
                 }
             }
+        }
+    }
+
+    private fun queryAttributeArray() {
+        if (questionQueueId == null && attributeGroupCode == null && sessionId == null && conversationId == null) {
+            bindData()
+            return
+        }
+        mRealVM.queryAttributeArray(
+            questionQueueId,
+            attributeGroupCode,
+            sessionId,
+            conversationId,
+            clientRequestId
+        ) {
+            attributeData = it ?: attributeData
+            bindData()
+        }
+    }
+
+    private fun getSupplementTitle(): String {
+        return when (type) {
+            "skills" -> "技能"
+            "certificates" -> "证书"
+            else -> "奖项"
         }
     }
 

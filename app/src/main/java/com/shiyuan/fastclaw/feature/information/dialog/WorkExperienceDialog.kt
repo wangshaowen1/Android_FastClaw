@@ -61,6 +61,7 @@ class WorkExperienceDialog :
          */
         fun show(
             manager: FragmentManager,
+            attributeData: AttributeArrayQueryData? = null,
             onAddClick: (() -> Unit)? = null,
             questionQueueId: String?,
             attributeGroupCode: String?,
@@ -169,15 +170,7 @@ class WorkExperienceDialog :
         attributeData = getAttributeData()
         initRecyclerView()
         initView()
-        mRealVM.queryAttributeArray(
-            questionQueueId,
-            attributeGroupCode,
-            sessionId,
-            conversationId,
-            clientRequestId){
-            attributeData = it
-            bindData()
-        }
+        queryAttributeArray()
     }
 
     /**
@@ -232,22 +225,30 @@ class WorkExperienceDialog :
         observeEvents {
             on<Events.AttributeFieldSuccessfulEvent> {
                 try {
-                    mRealVM.queryAttributeArray(
-                        questionQueueId,
-                        attributeGroupCode,
-                        sessionId,
-                        conversationId,
-                        clientRequestId
-                      ){
-                        attributeData = it
-                        bindData()
-                    }
+                    queryAttributeArray()
                 } catch (e: Exception) {
 
                 }
             }
         }
 
+    }
+
+    private fun queryAttributeArray() {
+        if (questionQueueId == null && attributeGroupCode == null && sessionId == null && conversationId == null) {
+            bindData()
+            return
+        }
+        mRealVM.queryAttributeArray(
+            questionQueueId,
+            attributeGroupCode,
+            sessionId,
+            conversationId,
+            clientRequestId
+        ) {
+            attributeData = it ?: attributeData
+            bindData()
+        }
     }
 
     /**
