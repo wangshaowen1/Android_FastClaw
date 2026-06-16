@@ -1,6 +1,5 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
@@ -8,11 +7,9 @@ import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.ext.gone
-import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_NO_RESUME_START_QUESTIONING
-import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
@@ -50,7 +47,7 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
 //            !uploadActionText.isNullOrBlank() -> uploadActionText
 //            else -> binding.root.context.getString(R.string.home_upload_resume_btn)
 //        }
-        if (action != null) {
+        if (action != null || User.get().isVisitor) {
             binding.tvUploadTitle.text = binding.root.context.getString(R.string.home_upload_resume_title)
             binding.tvUploadSubtitle.text = binding.root.context.getString(R.string.home_upload_resume_subtitle)
         } else {
