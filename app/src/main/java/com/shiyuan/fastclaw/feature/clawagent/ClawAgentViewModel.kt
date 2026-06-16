@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.clawagent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
@@ -512,9 +513,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
             .map { it.toMessageInfo() }
 
-        println("tttttttttttttttttt---------------------------------------------------------")
-        messageStore.forEach { (key, msg) ->
-            println("tttttttttttttttttt_key=$key, msg=$msg")
+        if (BuildConfig.DEBUG) {
+            println("test_data---------------------------------------------------------")
+            messageStore.forEach { (key, msg) ->
+                println("test_data=$key, msg=$msg")
+            }
         }
     }
 
