@@ -292,17 +292,17 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                         FlowEventBus.postSticky(Events.ClawAgentEvent(salaryPayloadJson,AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED))
                     }
                 } else if (payload?.isWorkExperience() ?: false) { //工作经历
-                    mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->
-                        result?.let { attrData ->
-                            WorkExperienceDialog.show(
-                                manager = childFragmentManager,
-                                attributeData = attrData,
-                                onCompleteClick = { ->
-                                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                                }
-                            )
+                    WorkExperienceDialog.show(
+                        manager = childFragmentManager,
+                        questionQueueId = queueId,
+                        attributeGroupCode =  payload.attributeGroupCode,
+                        clientRequestId = mRealVM.currentRequestId,
+                        sessionId = mRealVM.sessionId,
+                        conversationId = mRealVM.conversationId,
+                        onCompleteClick = { ->
+                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
                         }
-                    }
+                    )
                 } else if (payload?.isEducationInfo() ?: false) { //教育经历
                         // result 即 AttributeArrayQueryData
                         mRealVM.queryAttributeArray(queueId, payload.attributeGroupCode) { result ->

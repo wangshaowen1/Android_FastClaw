@@ -115,7 +115,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     private val messageStore = LinkedHashMap<String, JobAgentMessage>()
 
     /** 当前 SSE 请求 ID（meta 事件下发），用于取消/断线重连 */
-    private var currentRequestId: String? = null
+     var currentRequestId: String? = null
 
     /** 已接收的最后一条 SSE 事件序号，用于断线重连 lastSeq */
     private var lastSeq: Long? = null

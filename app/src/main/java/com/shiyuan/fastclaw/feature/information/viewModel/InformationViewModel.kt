@@ -160,8 +160,8 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
     fun queryAttributeArray(
         questionQueueId: String?,
         attributeGroupCode: String?,
-        currentSessionId: String?,
-        currentConversationId: String?,
+        sessionId: String?,
+        conversationId: String?,
         clientRequestId: String?,
         onResult: (AttributeArrayQueryData?) -> Unit
     ) {
@@ -169,8 +169,8 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
             apiBlock = {
                 mRepo.api.queryAttributeArray(
                     AttributeArrayQueryBody(
-                        sessionId = currentSessionId,
-                        conversationId = currentConversationId,
+                        sessionId = sessionId,
+                        conversationId = conversationId,
                         questionQueueId = questionQueueId,
                         attributeGroupCode = attributeGroupCode,
                     )

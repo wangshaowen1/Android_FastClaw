@@ -233,7 +233,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
             AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)?.displayValue.isNullOrBlank()
         }?.second?.let { getString(it) }
         if (emptyFieldName != null) {
-            "请填写：$emptyFieldName".showToast()
+            "请填写$emptyFieldName".showToast()
             return false
         }
         return true
