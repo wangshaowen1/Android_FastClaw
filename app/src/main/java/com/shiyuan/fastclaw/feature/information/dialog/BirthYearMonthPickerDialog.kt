@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.information.dialog
 
 import android.os.Bundle
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.flqy.datepicker.NumberPicker
@@ -24,6 +25,7 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
         private const val WHEEL_ITEM_COUNT = 5
         // 默认最小年份
         private const val DEFAULT_MIN_YEAR = 1900
+        private const val PRESENT_TEXT = "至今"
         const val TAG = "BirthYearMonthPickerDialog"
 
         // 外部传入的初值与回调
@@ -33,8 +35,11 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
         private var minYear: Int = DEFAULT_MIN_YEAR
         private var maxYear: Int = Calendar.getInstance().get(Calendar.YEAR)
         private var maxTimestamp: Long? = null
+        private var includePresentOption: Boolean = false
+        private var selectedPresent: Boolean = false
         private var onConfirmWithTimestamp: ((year: Int, month: String, timestamp: Long) -> Unit)? = null
         private var onConfirm: ((year: Int, month: String) -> Unit)? = null
+        private var onConfirmPresent: (() -> Unit)? = null
 
         /**
          * 显示年月选择弹窗。
@@ -45,8 +50,11 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
          * @param selectedMonth 初始月份（1-12）。
          * @param minYear 最小可选年份。
          * @param maxYear 最大可选年份。
+         * @param includePresentOption 是否在年份滚轮加入“至今”选项。
+         * @param selectedPresent 初始是否选中“至今”。
          * @param onConfirmWithTimestamp 确认回调，回传年份、两位月份字符串和该月 1 日 00:00:00 的毫秒时间戳。
          * @param onConfirm 确认回调，回传年份和两位月份字符串。
+         * @param onConfirmPresent 选择“至今”时的确认回调。
          */
         fun show(
             manager: FragmentManager,
@@ -56,8 +64,11 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
             minYear: Int = DEFAULT_MIN_YEAR,
             maxYear: Int = Calendar.getInstance().get(Calendar.YEAR),
             maxTimestamp: Long? = null,
+            includePresentOption: Boolean = false,
+            selectedPresent: Boolean = false,
             onConfirmWithTimestamp: ((year: Int, month: String, timestamp: Long) -> Unit)? = null,
             onConfirm: ((year: Int, month: String) -> Unit)? = null,
+            onConfirmPresent: (() -> Unit)? = null,
         ): BirthYearMonthPickerDialog {
             this.dialogTitle = title
             this.selectedYear = selectedYear
@@ -65,8 +76,11 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
             this.minYear = minYear
             this.maxYear = maxYear
             this.maxTimestamp = maxTimestamp
+            this.includePresentOption = includePresentOption
+            this.selectedPresent = selectedPresent
             this.onConfirmWithTimestamp = onConfirmWithTimestamp
             this.onConfirm = onConfirm
+            this.onConfirmPresent = onConfirmPresent
             return BirthYearMonthPickerDialog().apply {
                 arguments = Bundle()
                 show(manager)
@@ -95,14 +109,19 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
     private fun initYearPicker() {
         // 防御 maxYear < minYear 的情况
         val safeMaxYear = getEffectiveMaxYear().coerceAtLeast(minYear)
-        val years = (minYear..safeMaxYear).map { "${it}年" }.toTypedArray()
+        val years = buildYearDisplayValues(safeMaxYear)
         binding.yearPicker.applyPickerStyle()
         binding.yearPicker.minValue = 0
         binding.yearPicker.maxValue = years.lastIndex
         binding.yearPicker.displayedValues = years
         binding.yearPicker.value = resolveSelectedYearIndex(safeMaxYear)
         binding.yearPicker.setOnValueChangedListener { _, _, newVal ->
-            updateMonthPicker(minYear + newVal, binding.monthPicker.value + 1)
+            if (isPresentYearIndex(newVal)) {
+                binding.monthPicker.visibility = View.INVISIBLE
+            } else {
+                binding.monthPicker.visibility = View.VISIBLE
+                updateMonthPicker(getYearByIndex(newVal), binding.monthPicker.value + 1)
+            }
         }
     }
 
@@ -111,7 +130,12 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
      */
     private fun initMonthPicker() {
         binding.monthPicker.applyPickerStyle()
-        updateMonthPicker(minYear + binding.yearPicker.value)
+        if (isPresentYearIndex(binding.yearPicker.value)) {
+            binding.monthPicker.visibility = View.INVISIBLE
+        } else {
+            binding.monthPicker.visibility = View.VISIBLE
+            updateMonthPicker(getYearByIndex(binding.yearPicker.value))
+        }
     }
 
     private fun updateMonthPicker(year: Int, preferredMonth: Int? = null) {
@@ -132,8 +156,13 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
             dismissAllowingStateLoss()
         }
         binding.tvConfirm.setOnSingleClickListener {
-            // 从滚轮索引换算到年份（= minYear + 索引）和月份（= 索引 + 1）
-            val year = minYear + binding.yearPicker.value
+            if (isPresentYearIndex(binding.yearPicker.value)) {
+                onConfirmPresent?.invoke()
+                dismissAllowingStateLoss()
+                return@setOnSingleClickListener
+            }
+            // 从滚轮索引换算到年份和月份
+            val year = getYearByIndex(binding.yearPicker.value)
             val month = binding.monthPicker.value + 1
             val monthStr = String.format("%02d", month)   // 补零为两位字符串
             val timestamp = buildMonthTimestamp(year, month)
@@ -176,6 +205,9 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
      * 计算年份滚轮默认索引：优先使用外部传入的 selectedYear，否则用当前系统年。
      */
     private fun resolveSelectedYearIndex(safeMaxYear: Int): Int {
+        if (includePresentOption && selectedPresent) {
+            return safeMaxYear - minYear + 1
+        }
         val defaultYear = Calendar.getInstance().get(Calendar.YEAR).coerceIn(minYear, safeMaxYear)
         val targetYear = (selectedYear ?: defaultYear)
             .coerceIn(minYear, safeMaxYear)
@@ -209,5 +241,22 @@ class BirthYearMonthPickerDialog : BaseBottomPushDialogFragment<DialogBirthYearM
         } else {
             12
         }
+    }
+
+    private fun buildYearDisplayValues(safeMaxYear: Int): Array<String> {
+        val yearValues = (minYear..safeMaxYear).map { "${it}年" }
+        return if (includePresentOption) {
+            (yearValues + PRESENT_TEXT).toTypedArray()
+        } else {
+            yearValues.toTypedArray()
+        }
+    }
+
+    private fun isPresentYearIndex(index: Int): Boolean {
+        return includePresentOption && index == binding.yearPicker.maxValue
+    }
+
+    private fun getYearByIndex(index: Int): Int {
+        return minYear + index
     }
 }

@@ -50,6 +50,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         private const val FIELD_LEAVING_REASON = "leavingReason"
         private const val FIELD_START_DATE = "startDate"
         private const val FIELD_END_DATE = "endDate"
+        private const val PRESENT_TEXT = "至今"
         private val REQUIRED_FIELDS = listOf(
             FIELD_COMPANY_NAME to R.string.company_name,
             FIELD_POSITION to R.string.job_title,
@@ -175,8 +176,13 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                 title = "截至时间",
                 selectedYear = selectedDate?.first,
                 selectedMonth = selectedDate?.second,
+                includePresentOption = true,
+                selectedPresent = isFieldPresent(FIELD_END_DATE),
                 onConfirmWithTimestamp = { year, month, timestamp ->
                     onEndDateSelected(year, month, timestamp)
+                },
+                onConfirmPresent = {
+                    onEndDatePresentSelected()
                 }
             )
         }
@@ -300,14 +306,29 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             return
         }
         binding.tvEnd.text = "$year-$month"
-        val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_END_DATE)
+        updateDateField(FIELD_END_DATE, "$year-$month")
+    }
+
+    /**
+     * 处理结束时间选择“至今”。
+     */
+    private fun onEndDatePresentSelected() {
+        binding.tvEnd.text = PRESENT_TEXT
+        updateDateField(FIELD_END_DATE, PRESENT_TEXT)
+    }
+
+    /**
+     * 更新年月字段的展示值和提交值。
+     */
+    private fun updateDateField(fieldCode: String, dateText: String) {
+        val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = fieldCode)
         item?.let {
             val index = currentInstance.indexOf(it)
             if (index >= 0) {
-                it.displayValue = "$year-$month"
+                it.displayValue = dateText
                 it.fieldValue = mapOf(
-                    "value" to "$year-$month",
-                    "displayText" to "$year-$month"
+                    "value" to if(dateText == PRESENT_TEXT) "PRESENT"  else  dateText,
+                    "displayText" to dateText
                 )
                 currentInstance[index] = it
             }
@@ -334,6 +355,10 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         val year = parts[0].toIntOrNull() ?: return null
         val month = parts[1].toIntOrNull()?.takeIf { it in 1..12 } ?: return null
         return year to month
+    }
+
+    private fun isFieldPresent(fieldCode: String): Boolean {
+        return AttributeFieldItemFinder.findFirst(currentInstance, fieldCode)?.displayValue == PRESENT_TEXT
     }
 
     /**

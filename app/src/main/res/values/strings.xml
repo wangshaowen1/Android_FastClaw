@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation,ExtraTranslation">
     <string name="app_name">快龙虾</string>
-    <string name="splash_subtitle">抓住每一个好机会</string>
+    <string name="splash_subtitle">你的AI求职经纪人</string>
     <string name="request_failed_tips">网络缓慢，请过一会儿再试~</string>
     <string name="no_network_tips">网络连接失败，请检查你的网络</string>
 

@@ -43,6 +43,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         private const val FIELD_COLLABORATORS = "collaborators"
         private const val FIELD_START_DATE = "startDate"
         private const val FIELD_END_DATE = "endDate"
+        private const val PRESENT_TEXT = "至今"
         private val REQUIRED_FIELDS = listOf(
             FIELD_PROJECT_NAME to R.string.project_name,
             FIELD_PROJECT_ROLE to R.string.project_role,
@@ -176,8 +177,13 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
                 title = "结束时间",
                 selectedYear = selectedDate?.first,
                 selectedMonth = selectedDate?.second,
+                includePresentOption = true,
+                selectedPresent = isFieldPresent(FIELD_END_DATE),
                 onConfirmWithTimestamp = { year, month, timestamp ->
                     onEndDateSelected(year, month, timestamp)
+                },
+                onConfirmPresent = {
+                    onEndDatePresentSelected()
                 }
             )
         }
@@ -266,6 +272,14 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
     }
 
     /**
+     * 处理项目结束时间选择“至今”。
+     */
+    private fun onEndDatePresentSelected() {
+        binding.tvEnd.text = PRESENT_TEXT
+        updateDateField(FIELD_END_DATE, PRESENT_TEXT)
+    }
+
+    /**
      * 更新年月字段的展示值和提交值。
      */
     private fun updateDateField(fieldCode: String, dateText: String) {
@@ -273,7 +287,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         item?.let {
             item.displayValue = dateText
             item.fieldValue = mapOf(
-                "value" to dateText,
+                "value" to if(dateText == PRESENT_TEXT) "PRESENT"  else  dateText,
                 "displayText" to dateText
             )
         }
@@ -299,6 +313,10 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         val year = parts[0].toIntOrNull() ?: return null
         val month = parts[1].toIntOrNull()?.takeIf { it in 1..12 } ?: return null
         return year to month
+    }
+
+    private fun isFieldPresent(fieldCode: String): Boolean {
+        return AttributeFieldItemFinder.findFirst(currentInstance, fieldCode)?.displayValue == PRESENT_TEXT
     }
 
     /**

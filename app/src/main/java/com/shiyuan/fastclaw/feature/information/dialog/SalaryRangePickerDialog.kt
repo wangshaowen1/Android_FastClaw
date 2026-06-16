@@ -12,7 +12,7 @@ import com.shiyuan.fastclaw.databinding.DialogSalaryRangePickerBinding
 
 /**
  * 薪资范围选择底部弹窗。
- * 支持“面议”或最小薪资到最大薪资区间；当最小薪资选择“面议”时隐藏最大薪资滚轮。
+ * 支持“面议”或 0K 到 250K 内的最小薪资与最大薪资区间。
  */
 class SalaryRangePickerDialog : BaseBottomPushDialogFragment<DialogSalaryRangePickerBinding>() {
 
@@ -22,16 +22,12 @@ class SalaryRangePickerDialog : BaseBottomPushDialogFragment<DialogSalaryRangePi
         private const val UNSELECTED_TEXT_SIZE_SP = 14f
         // 滚轮可见条目数
         private const val WHEEL_ITEM_COUNT = 5
+        private const val NEGOTIABLE_TEXT = "面议"
         const val TAG = "SalaryRangePickerDialog"
 
-        // 最小薪资候选项（首位为"面议"）
-        private val minSalaryList = listOf(
-            "面议", "1K", "2K", "3K", "4K", "5K", "6K", "7K", "8K", "9K", "10K", "11K", "12K"
-        )
-        // 最大薪资候选项（不含"面议"）
-        private val allSalaryList = listOf(
-            "1K", "2K", "3K", "4K", "5K", "6K", "7K", "8K", "9K", "10K", "11K", "12K"
-        )
+        // 薪资候选项：0K - 250K
+        private val allSalaryList = (0..250).map { "${it}K" }
+        private val minSalaryList = listOf(NEGOTIABLE_TEXT) + allSalaryList
         // 外部传入的初值与回调
         private var selectedMinSalary: String? = null
         private var selectedMaxSalary: String? = null
@@ -49,7 +45,7 @@ class SalaryRangePickerDialog : BaseBottomPushDialogFragment<DialogSalaryRangePi
          */
         fun show(
             manager: FragmentManager,
-            minSalary: String? = "10K",
+            minSalary: String? = "6K",
             maxSalary: String? = "12K",
             title: String? = null,
             onConfirm: ((minSalary: String, maxSalary: String?) -> Unit)? = null,
@@ -101,7 +97,7 @@ class SalaryRangePickerDialog : BaseBottomPushDialogFragment<DialogSalaryRangePi
         binding.confirm.setOnSingleClickListener {
             // 从最小薪资滚轮读取最小值
             val minSalary = minSalaryList[binding.wheelMinSalary.value]
-            // 最大薪资只有在滚轮可见时才有意义（最小薪资不是"面议"）
+            // 从当前可选范围读取最大值
             val maxSalary = getCurrentMaxSalaryList().getOrNull(binding.wheelMaxSalary.value)
                 ?.takeIf { binding.wheelMaxSalary.visibility == View.VISIBLE }
             onConfirm?.invoke(minSalary, maxSalary)
@@ -124,7 +120,6 @@ class SalaryRangePickerDialog : BaseBottomPushDialogFragment<DialogSalaryRangePi
     private fun updateMaxSalaryPicker(resetSelection: Boolean) {
         val maxSalaryList = getCurrentMaxSalaryList()
         if (maxSalaryList.isEmpty()) {
-            // 最小薪资为"面议"时，隐藏最大薪资滚轮
             binding.wheelMaxSalary.visibility = View.INVISIBLE
             return
         }
@@ -158,11 +153,11 @@ class SalaryRangePickerDialog : BaseBottomPushDialogFragment<DialogSalaryRangePi
 
     /**
      * 根据当前最小薪资计算最大薪资可选列表。
-     * 最小薪资为"面议"时返回空；否则取从最小薪资开始到末尾的子列表。
+     * 最小薪资为“面议”时返回空；否则取从最小薪资开始到 250K 的子列表。
      */
     private fun getCurrentMaxSalaryList(): List<String> {
         val minSalary = minSalaryList.getOrNull(binding.wheelMinSalary.value) ?: return allSalaryList
-        if (minSalary == "面议") {
+        if (minSalary == NEGOTIABLE_TEXT) {
             return emptyList()
         }
         val minSalaryIndex = allSalaryList.indexOf(minSalary)
