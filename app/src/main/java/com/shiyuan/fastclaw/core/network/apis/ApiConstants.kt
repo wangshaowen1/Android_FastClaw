@@ -74,6 +74,7 @@ object ApiConstants {
      * 手机登录接口--验证码方式
      */
     const val LOGIN_BY_PHONE = "/api/candidate/auth/loginByMobile"
+    const val REFRESH_TOKEN = "/api/candidate/auth/refreshToken"
 
     /**
      * 取消注销

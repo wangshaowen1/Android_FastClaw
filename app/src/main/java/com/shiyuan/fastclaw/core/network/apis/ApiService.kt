@@ -63,6 +63,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.RegionDictData
+import com.shiyuan.fastclaw.core.network.apis.response.RefreshTokenData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
@@ -168,6 +169,12 @@ interface ApiService {
      */
     @POST(ApiConstants.LOGIN_BY_PHONE)
     suspend fun loginByPhone(@Body body: LoginByPhoneBody): ApiResponse<UserHomeData?>
+
+    /**
+     * 刷新登录 Token
+     */
+    @POST(ApiConstants.REFRESH_TOKEN)
+    suspend fun refreshToken(@Body body: UserTokenBody): ApiResponse<RefreshTokenData?>
 
     /**
      * 取消注销

@@ -37,6 +37,7 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
 
         // 描述文本最大长度
         private val MAX_LENGTH = 3000
+        private const val MIN_LENGTH = 5
 
         /**
          * 启动通用描述填写页。
@@ -110,8 +111,9 @@ class PublicDescriptionActivity : BaseViewModelActivity<ActivityPublicDescriptio
         }
         // 确认按钮：空内容提示，否则通过事件总线回传
         binding.tvQr.setOnSingleClickListener {
-            if(binding.et.text.isNullOrEmpty()){
-                "请输入".showToast()
+            val inputLength = binding.et.text?.length ?: 0
+            if(inputLength < MIN_LENGTH){
+                "至少输入5个字".showToast()
                 return@setOnSingleClickListener
             }
             FlowEventBus.postSticky(Events.CommonAttributeFieldItemEvent(data));

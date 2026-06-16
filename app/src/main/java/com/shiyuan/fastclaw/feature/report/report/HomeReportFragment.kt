@@ -113,7 +113,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.llJd.visibility = View.VISIBLE
             binding.vLine.visibility = View.VISIBLE
 
-            binding.tvStep.text = resources.getString(R.string.report_home_tip4)
+            binding.tvStep.text = resources.getString(R.string.report_home_tip4_2)
         }else{
             binding.llTab1.background =  null
             binding.tvTargetPosition.setTextColor(resources.getColor(R.color.color_999999))
@@ -156,7 +156,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.llJd.visibility = View.GONE
             binding.vLine.visibility = View.GONE
 
-            binding.tvStep.text = resources.getString(R.string.report_home_tip4_2)
+            binding.tvStep.text = resources.getString(R.string.report_home_tip4)
         }
     }
     private fun initView() {

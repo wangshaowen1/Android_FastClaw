@@ -30,6 +30,7 @@ class PublicFreeFillInActivity : BaseViewModelActivity<ActivityPublicFreeFillInB
         private const val EXTRA_IS_EDIT = "extra_is_edit"
         // 字段数据参数 key
         private const val EXTRA_DATA = "extra_data"
+        private const val MIN_LENGTH = 1
 
         /**
          * 启动自由填写页。
@@ -92,8 +93,9 @@ class PublicFreeFillInActivity : BaseViewModelActivity<ActivityPublicFreeFillInB
         }
         // 确认按钮：空内容提示，否则通过事件总线回传
         binding.tvQr.setOnSingleClickListener {
-            if(binding.et.text.isNullOrEmpty()){
-                "请输入".showToast()
+            val inputLength = binding.et.text?.length ?: 0
+            if(inputLength < MIN_LENGTH){
+                "至少输入1个字".showToast()
              return@setOnSingleClickListener
             }
             FlowEventBus.postSticky(Events.CommonAttributeFieldItemEvent(data));
