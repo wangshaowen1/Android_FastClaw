@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SpanUtils
-import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
@@ -72,7 +71,7 @@ import kotlinx.coroutines.launch
  * @author TooWhiteT
  */
 
-class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
+class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
 
     companion object {
         const val TAG = "ClawAgentMainFragment"
@@ -119,6 +118,8 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     private var mCurrentAction: CardAction? = null
 
     private var mCurrentQuestionId: String? = null
+
+    private var isVoiceInputMode = false
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -404,27 +405,24 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
 //            mRealVM.testPopupMsg()
         }
 
-        binding.etSend.doAfterTextChanged { editable ->
-            editable?.let {
-                if (it.isNotEmpty()) {
-                    binding.ivSend.visible()
-                    binding.ivIcon.gone()
-                } else {
-                    binding.ivIcon.visible()
-                    binding.ivSend.gone()
-                }
-            } ?: run {
-                binding.ivIcon.visible()
-                binding.ivSend.gone()
+        binding.etSend.doAfterTextChanged {
+            updateInputModeView()
+        }
+
+        binding.ivInputMode.setOnClickListener {
+            isVoiceInputMode = !isVoiceInputMode
+            if (isVoiceInputMode) {
+                hideKeyboard(binding.etSend)
             }
+            updateInputModeView()
+        }
+
+        binding.tvVoicePress.setOnTouchListener { _, event ->
+            handleVoicePressTouch(event)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            // 防御性兜底：如果系统报告 IME 高度为 0，无论如何都要解除动画锁并恢复原位
-            /*if (imeBottom == 0 && hasRunningImeAnimation) {
-                hasRunningImeAnimation = false
-            }*/
             // 动画期间不再改变margin，防多次分发触发动画
             if (!hasRunningImeAnimation) {
                 v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -474,6 +472,35 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 }, 250L)
             }
         })
+    }
+
+    private fun updateInputModeView() {
+        val hasText = binding.etSend.text?.isNotBlank() == true
+        if (isVoiceInputMode) {
+            binding.etSend.visibility = View.INVISIBLE
+            binding.tvVoicePress.visible()
+            binding.ivIcon.gone()
+            binding.ivSend.gone()
+            binding.ivInputMode.visible()
+            binding.ivInputMode.setImageResource(R.drawable.ic_agent_keyboard_mode)
+        } else {
+            binding.etSend.visible()
+            binding.tvVoicePress.gone()
+            binding.ivSend.visibility = if (hasText) View.VISIBLE else View.GONE
+            binding.ivInputMode.visibility = if (hasText) View.GONE else View.VISIBLE
+            binding.ivIcon.visibility = if (hasText) View.GONE else View.VISIBLE
+            binding.ivInputMode.setImageResource(R.drawable.ic_agent_voice_mode)
+        }
+    }
+
+    override fun onVoiceTextRecognized(text: String) {
+        if (interceptIfStreaming()) return
+        forceScrollToBottom = true
+        mRealVM.sendMessage(text)
+    }
+
+    override fun onVoiceRecognizingStateReset() {
+        updateInputModeView()
     }
 
     private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null) {

@@ -1,11 +1,12 @@
 package com.shiyuan.fastclaw.core;
 
 
+import android.view.MotionEvent;
+
 import com.nhsd.basic.bus.AppEvent;
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData;
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem;
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem;
-import com.shiyuan.fastclaw.core.network.apis.response.CommonItems;
 
 /**
  * Created by ymh on 2016/7/1 0001.
@@ -292,6 +293,31 @@ public class Events {
         public ClawAgentEvent(String msgGson,String type) {
             this.msgGson = msgGson;
             this.type = type;
+        }
+    }
+
+    /**
+     * 聊天语音输入事件
+     */
+    public static class ClawVoiceEvent implements AppEvent {
+        public static final String MSG_ACTION_DOWN = "msg_action_down";
+        public static final String MSG_ACTION_MOVE = "msg_action_move";
+        public static final String MSG_ACTION_UP = "msg_action_up";
+        public static final String MSG_ACTION_CANCEL = "msg_action_cancel";
+        public static final String MSG_ACTION_VOLUME = "msg_action_volume";
+
+        public String type;
+        public MotionEvent event;
+        public float rmsDb;
+
+        public ClawVoiceEvent(String type, MotionEvent event) {
+            this.type = type;
+            this.event = event;
+        }
+
+        public ClawVoiceEvent(String type, float rmsDb) {
+            this.type = type;
+            this.rmsDb = rmsDb;
         }
     }
 
