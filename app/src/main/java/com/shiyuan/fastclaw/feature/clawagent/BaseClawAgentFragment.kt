@@ -8,6 +8,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.viewmodel.BaseLayoutViewModel
 import com.shiyuan.fastclaw.BuildConfig
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.permissions.PermissionsUtils
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
@@ -114,8 +115,8 @@ open class BaseClawAgentFragment<VM : BaseLayoutViewModel> : BaseViewModelFragme
 
     private fun startVoiceRecognizing(): Boolean {
         if (!PermissionsUtils.checkPermission(requireContext(), Manifest.permission.RECORD_AUDIO)) {
-            requestRxPermissions("请允许麦克风权限后使用语音输入", Manifest.permission.RECORD_AUDIO) { granted ->
-                if (!granted) showMessage("请开启麦克风权限后再使用语音输入")
+            requestRxPermissions(getString(R.string.toast_open_mike_permission), Manifest.permission.RECORD_AUDIO) { granted ->
+                if (!granted) showMessage(getString(R.string.toast_open_mike_permission))
             }
             return false
         }
