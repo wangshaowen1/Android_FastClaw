@@ -23,21 +23,40 @@
             app:layout_constraintTop_toTopOf="parent"
             app:toolbar="@{layout.mToolbarVM}" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_rule_tip"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="5dp"
+            android:text="@string/mine_shrimp_rule_tip"
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
+            tools:text="虾条更新可能延迟 虾条规则" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_ffffff_r12"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_rule_tip"
             app:layout_constraintVertical_bias="0"
-            tools:visibility="visible"
             tools:itemCount="3"
-            tools:listitem="@layout/item_shrimp_chips" />
+            tools:listitem="@layout/item_shrimp_chips"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
