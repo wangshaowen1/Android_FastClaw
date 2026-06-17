@@ -1,11 +1,9 @@
 package com.shiyuan.fastclaw.feature.clawagent
 
 import android.annotation.SuppressLint
-import android.Manifest
 import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
@@ -23,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SpanUtils
-import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
@@ -31,23 +28,14 @@ import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
-import com.shiyuan.fastclaw.common.permissions.PermissionsUtils
-import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
-import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_CANCEL
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_DOWN
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_MOVE
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_UP
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_VOLUME
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
@@ -74,7 +62,6 @@ import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
-import com.shiyuan.fastclaw.widget.VoiceRecordingView.Companion.VOICE_CANCEL_DISTANCE
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -84,7 +71,7 @@ import kotlinx.coroutines.launch
  * @author TooWhiteT
  */
 
-class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
+class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
 
     companion object {
         const val TAG = "ClawAgentMainFragment"
@@ -133,11 +120,6 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
     private var mCurrentQuestionId: String? = null
 
     private var isVoiceInputMode = false
-    private var speechTranscriber: DashFunAsrSpeechTranscriber? = null
-    private var shouldSendVoiceResult = false
-    private var pendingVoiceText: String? = null
-    private var voiceCanceling = false
-    private var voiceDownRawY = 0f
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -153,12 +135,6 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
                 mRealVM.pullMessages(mRealVM.getLastMessageCursor())
             }
         }
-    }
-
-    override fun onDestroyView() {
-        speechTranscriber?.release()
-        speechTranscriber = null
-        super.onDestroyView()
     }
 
     override fun <Data> onClick(view: View, data: Data?) {
@@ -442,38 +418,7 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
 
         binding.tvVoicePress.setOnTouchListener { _, event ->
-            when (event.actionMasked) {
-                MotionEvent.ACTION_DOWN -> {
-                    if (!AppNavigator.checkLoginIntercepted(false) || interceptIfStreaming()) {
-                        return@setOnTouchListener true
-                    }
-                    voiceDownRawY = event.rawY
-                    voiceCanceling = false
-                    if (startVoiceRecognizing()) {
-                        // 按下即开始录音；权限未授予时先拉起权限申请，本次触摸不进入录音态。
-                        FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_DOWN, event))
-                    }
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    voiceCanceling = voiceDownRawY - event.rawY > VOICE_CANCEL_DISTANCE
-                    FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_MOVE, event))
-                    // 以按下点为基准，上滑超过阈值进入取消态；滑回阈值内恢复发送态。
-                    true
-                }
-                MotionEvent.ACTION_UP -> {
-                    FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_UP, event))
-                    val canceled = voiceCanceling
-                    finishVoiceRecognizing(canceled)
-                    true
-                }
-                MotionEvent.ACTION_CANCEL -> {
-                    FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_CANCEL, event))
-                    finishVoiceRecognizing(canceled = true)
-                    true
-                }
-                else -> true
-            }
+            handleVoicePressTouch(event)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
@@ -548,86 +493,14 @@ class ClawAgentMainFragment : BaseViewModelFragment<FragmentClawAgentMainBinding
         }
     }
 
-    private fun finishVoiceRecognizing(canceled: Boolean) {
-        if (canceled) {
-            shouldSendVoiceResult = false
-            pendingVoiceText = null
-            speechTranscriber?.cancel()
-            voiceCanceling = false
-            updateInputModeView()
-            return
-        }
-        // 松开时如果已有 partial 结果先发送；否则等待 onResults/onError 再兜底处理。
-        shouldSendVoiceResult = true
-        if (sendVoiceMessage()) {
-            speechTranscriber?.cancel()
-        } else {
-            speechTranscriber?.stop()
-        }
-        voiceCanceling = false
-        updateInputModeView()
-    }
-
-    private fun startVoiceRecognizing(): Boolean {
-        if (!PermissionsUtils.checkPermission(requireContext(), Manifest.permission.RECORD_AUDIO)) {
-            requestRxPermissions("请允许麦克风权限后使用语音输入", Manifest.permission.RECORD_AUDIO) { granted ->
-                if (!granted) showMessage("请开启麦克风权限后再使用语音输入")
-            }
-            return false
-        }
-        pendingVoiceText = null
-        shouldSendVoiceResult = false
-        return ensureSpeechTranscriber().start()
-    }
-
-    private fun ensureSpeechTranscriber(): DashFunAsrSpeechTranscriber {
-        return speechTranscriber ?: DashFunAsrSpeechTranscriber(
-            context = requireContext().applicationContext,
-            config = DashFunAsrSpeechTranscriber.Config(
-                apiKey = BuildConfig.DASHSCOPE_API_KEY,
-                url = BuildConfig.DASHSCOPE_SPEECH_URL,
-            ),
-            callback = object : DashFunAsrSpeechTranscriber.Callback {
-                override fun onPartialResult(text: String) {
-                    pendingVoiceText = text
-                }
-
-                override fun onFinalResult(text: String) {
-                    pendingVoiceText = text
-                    if (shouldSendVoiceResult) {
-                        sendVoiceMessage()
-                    }
-                }
-
-                override fun onVolumeChanged(rmsDb: Float) {
-                    FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_VOLUME, rmsDb))
-                }
-
-                override fun onError(message: String) {
-                    if (shouldSendVoiceResult && !sendVoiceMessage()) {
-                        showMessage(message)
-                    } else if (!shouldSendVoiceResult) {
-                        showMessage(message)
-                    }
-                    shouldSendVoiceResult = false
-                }
-
-                override fun onStopped() {
-                    if (shouldSendVoiceResult && !sendVoiceMessage()) {
-                        showMessage("未识别到语音内容")
-                    }
-                    shouldSendVoiceResult = false
-                }
-            },
-        ).also { speechTranscriber = it }
-    }
-
-    private fun sendVoiceMessage(): Boolean {
-        val text = pendingVoiceText?.trim()?.takeIf { it.isNotEmpty() } ?: return false
-        pendingVoiceText = null
-        shouldSendVoiceResult = false
+    override fun onVoiceTextRecognized(text: String) {
+        if (interceptIfStreaming()) return
+        forceScrollToBottom = true
         mRealVM.sendMessage(text)
-        return true
+    }
+
+    override fun onVoiceRecognizingStateReset() {
+        updateInputModeView()
     }
 
     private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null) {
