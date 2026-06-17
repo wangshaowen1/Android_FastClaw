@@ -8,6 +8,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.viewmodel.BaseLayoutViewModel
 import com.shiyuan.fastclaw.BuildConfig
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.permissions.PermissionsUtils
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
@@ -17,6 +18,7 @@ import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_DOWN
 import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_MOVE
 import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_UP
 import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_VOLUME
+import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.VoiceRecordingView.Companion.VOICE_CANCEL_DISTANCE
 
@@ -25,7 +27,7 @@ import com.shiyuan.fastclaw.widget.VoiceRecordingView.Companion.VOICE_CANCEL_DIS
  * @author：CaoWei
  * @date：2026/6/17 18:11
  */
-open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel> : BaseViewModelFragment<VB, VM>() {
+open class BaseClawAgentFragment<VM : BaseLayoutViewModel> : BaseViewModelFragment<FragmentClawAgentMainBinding, VM>() {
 
     private var speechTranscriber: DashFunAsrSpeechTranscriber? = null
     private var shouldSendVoiceResult = false
@@ -113,8 +115,8 @@ open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel>
 
     private fun startVoiceRecognizing(): Boolean {
         if (!PermissionsUtils.checkPermission(requireContext(), Manifest.permission.RECORD_AUDIO)) {
-            requestRxPermissions("请允许麦克风权限后使用语音输入", Manifest.permission.RECORD_AUDIO) { granted ->
-                if (!granted) showMessage("请开启麦克风权限后再使用语音输入")
+            requestRxPermissions(getString(R.string.toast_open_mike_permission), Manifest.permission.RECORD_AUDIO) { granted ->
+                if (!granted) showMessage(getString(R.string.toast_open_mike_permission))
             }
             return false
         }
