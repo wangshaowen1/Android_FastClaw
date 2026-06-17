@@ -41,7 +41,7 @@ import com.shiyuan.fastclaw.databinding.ActivityMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentMainFragment
 import com.shiyuan.fastclaw.feature.home.HomeFragment
 import com.shiyuan.fastclaw.feature.mine.MineFragment
-import com.shiyuan.fastclaw.feature.report.report.HomeReportFragment
+import com.shiyuan.fastclaw.feature.report.HomeTreasuryFragment
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.router.AppRouter
 import kotlinx.coroutines.MainScope
@@ -196,7 +196,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 //                    mRealVM.showTab.set(1)
 //                    supportFragmentManager.switchFragment(
 //                        R.id.fragment,
-//                        HomeReportFragment::class.java
+//                        HomeTreasuryFragment::class.java
 //                    )
 //                }
 
@@ -282,7 +282,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 mRealVM.showTab.set(2)
                 supportFragmentManager.switchFragment(
                     R.id.fragment,
-                    HomeReportFragment::class.java
+                    HomeTreasuryFragment::class.java
                 )
             }
         }

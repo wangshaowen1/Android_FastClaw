@@ -891,6 +891,20 @@
     <string name="educational_responsibilities">描述教育背景，负责的内容、克服的困难、取得的成果，便于了解您丰富的经验</string>
     <string name="project_responsibilities">描述项目内容，展示您丰富的经验</string>
 
+    <string name="home_treasury_slogan">专业工具助你求职路上快人一步！</string>
+    <string name="home_treasury_company_desc">帮你摸清公司底细，详解核心业务，面试精准说出对公司的理解，好感度直接拉满。</string>
+    <string name="home_treasury_daily_free">每天三次免费</string>
+    <string name="home_treasury_use_now">立即使用</string>
+    <string name="home_treasury_mock_interview">模拟面试</string>
+    <string name="home_treasury_mock_desc">根据你的简历 + 目标岗位，精准还原真实面试场景，练到你面试不慌、发挥稳定！</string>
+    <string name="home_treasury_shrimp_chip">虾条</string>
+    <string name="home_treasury_more_tools">更多小工具</string>
+    <string name="home_treasury_no_reply">为什么没人回？</string>
+    <string name="home_treasury_resume_check">测简历</string>
+    <string name="home_treasury_free">免费</string>
+    <string name="home_treasury_underestimated">你被低估了吗？</string>
+    <string name="home_treasury_salary_check">测薪资</string>
+    <string name="home_treasury_coming_soon">功能建设中</string>
 
 </resources>
 
