@@ -570,6 +570,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 CARD_RESUME_RECEIVED -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
                 CARD_JOB_SEARCHING -> ClawAgentMsgAdapter.TYPE_SEARCHING_JOBS
                 CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
+                CARD_COMPANY_BACKGROUND_ENTRY -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_ENTRY
                 // todo: v1.2 暂时不做
 //                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
 //                CARD_TODAY_PROGRESS -> ClawAgentMsgAdapter.TYPE_TODAY_PROGRESS
@@ -968,7 +969,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // 自我介绍
         private const val CARD_INTRODUCE_YOURSELF = "CARD_INTRODUCE_YOURSELF"
         // 公司背调卡片
-        private const val CARD_COMPANY_BACKGROUND_ENTRY = "CARD_INTRODUCE_YOURSELF"
+        private const val CARD_COMPANY_BACKGROUND_ENTRY = "COMPANY_BACKGROUND_ENTRY"
         //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
 
         // 寻找岗位中

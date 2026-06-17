@@ -238,5 +238,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 表单相关 - 如工作经历、教育经历、技能、项目经历、证书、奖项 */
         const val TYPE_TABLE_FORM = 14
+
+        /** 背景调查入口卡 */
+        const val TYPE_COMPANY_BACKGROUND_ENTRY = 15
     }
 }
