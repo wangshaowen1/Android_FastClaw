@@ -259,6 +259,9 @@
             android:name=".feature.settings.RecordFilingInformationActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
+            android:name=".feature.mine.InterviewReportActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
             android:name=".feature.report.MyHistoryReportActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 

@@ -207,6 +207,11 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             R.id.ll_setting -> {
                 SettingsActivity.start(requireActivity())
             }
+            R.id.ll_interview_report -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    InterviewReportActivity.start(requireActivity())
+                }
+            }
             R.id.tv_mine_tip_btn -> {
                 User.get().userId?.let {
                     Config.get().recordFirstLogin(it)

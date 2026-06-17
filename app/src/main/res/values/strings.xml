@@ -622,6 +622,7 @@
     <string name="report_empty_tip">还没有生成报告哦</string>
     <string name="report_empty_tip2">暂未收录任何信息</string>
     <string name="report_generating_progress">预计还需2分钟，请耐心等待</string>
+    <string name="report_failed_no_cost">报告生成失败，本次不消耗虾条</string>
     <string name="report_upload_resume_date">上传简历于 %s</string>
     <string name="report_target_position">目标岗位：%s</string>
     <string name="report_post_analysis">正在解析中</string>
