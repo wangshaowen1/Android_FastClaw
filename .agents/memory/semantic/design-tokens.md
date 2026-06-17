@@ -15,3 +15,10 @@ metadata:
 - 已废弃数字命名 `textColor1`、`themeColor1`、`bgColor3` 等不得再使用。
 
 **为什么记在 memory**:这是跨会话需要反复确认的项目事实(两层结构 + 不可硬编码 + 不可臆测色值),便于 Codex/Claude 召回;具体命名和规则由规则层与 attrs.xml 承载,避免三处漂移。
+
+## 2026-06-17 补充
+
+- Figma/XML 还原时，`#F5000000`、`#E6000000` 这类 8 位 ARGB 颜色即使能正确表示透明黑，也不能直接写在布局 `android:textColor` 中；必须优先映射到已有 `@color` / `?attr` 资源。没有等价资源时，先新增清晰命名的颜色资源，再在 XML 中引用。
+- Figma/XML 还原时不要使用 `@style/Text.Medium` 表达字重。中等字重 500 使用 `android:fontFamily="sans-serif-medium"`；加粗 600 及以上使用 `android:textStyle="bold"`。
+- 从 Figma 下载图片资源时默认只下载 2x，不下载 3x 或原始 imageRef 尺寸；需要其他倍率时必须由用户明确指定。
+- TextView 的宽高不要硬编码为固定 dp，默认使用 `wrap_content`；需要跟随父布局约束时使用 `0dp` + 约束，确有视觉下限/上限时使用 `minWidth` / `minHeight` / `maxWidth` 等约束属性。

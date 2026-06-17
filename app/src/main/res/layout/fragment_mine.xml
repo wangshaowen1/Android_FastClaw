@@ -59,7 +59,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="12dp"
-            android:fontFamily="sans-serif-medium"
             android:text="@={layout.userInfo[`nickname`]}"
             android:textColor="@color/color_1a1a1a"
             android:textSize="18sp"
@@ -174,6 +173,85 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/view_mine_resume_banner"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="78dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_mine_resume_banner"
+            app:layout_constraintEnd_toEndOf="@id/layout_mine_point"
+            app:layout_constraintStart_toStartOf="@id/layout_mine_point"
+            app:layout_constraintTop_toBottomOf="@id/layout_mine_point">
+            
+            
+            <ImageView
+                android:layout_marginStart="15dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_mine_xl"
+                android:layout_width="44dp"
+                android:layout_height="44dp"/>
+
+            <TextView
+                android:id="@+id/tv_mine_invite_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="72dp"
+                android:layout_marginEnd="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:text="@string/mine_invite_title"
+                android:textColor="@color/color_90_000000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/tv_mine_invite_subtitle"
+                app:layout_constraintEnd_toStartOf="@id/tv_mine_invite_action"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="邀请好友赚虾条" />
+
+            <TextView
+                android:id="@+id/tv_mine_invite_subtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:text="@string/mine_invite_subtitle"
+                android:textColor="@color/color_75_3c3c43"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/tv_mine_invite_title"
+                app:layout_constraintStart_toStartOf="@id/tv_mine_invite_title"
+                app:layout_constraintTop_toBottomOf="@id/tv_mine_invite_title"
+                tools:text="好友注册成功，你们都能获得奖励" />
+
+            <TextView
+                android:id="@+id/tv_mine_invite_action"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="15dp"
+                android:background="@drawable/bg_336fff_r100"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:minWidth="57dp"
+                android:paddingHorizontal="8dp"
+                android:text="@string/mine_invite_action"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="去邀请" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <LinearLayout
             android:id="@+id/ll_understanding_xt"
             android:layout_width="match_parent"
@@ -182,7 +260,7 @@
             android:layout_marginTop="20dp"
             android:orientation="horizontal"
             app:layout_constraintLeft_toLeftOf="@id/layout_mine_point"
-            app:layout_constraintTop_toBottomOf="@id/layout_mine_point">
+            app:layout_constraintTop_toBottomOf="@id/view_mine_resume_banner">
 
             <LinearLayout
                 android:id="@+id/layout_mine_lj"
