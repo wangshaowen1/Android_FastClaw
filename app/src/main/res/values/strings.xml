@@ -570,6 +570,8 @@
     <string name="home_match_rate">匹配度</string>
     <string name="home_greeting_1">你好～我是你的职业经纪人小虾！\n从此你的求职路上不孤单，我会一直一直与你陪伴</string>
     <string name="home_greeting_2">先把简历交给我，让我们离offer更近一步！加油！</string>
+    <string name="home_background_check">公司背调</string>
+    <string name="home_mock_interview">模拟面试</string>
 
     <!-- 首页欢迎卡片 -->
     <string name="home_welcome_greeting">你好，我是小虾</string>

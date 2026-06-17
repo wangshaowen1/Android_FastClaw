@@ -71,7 +71,7 @@ import kotlinx.coroutines.launch
  * @author TooWhiteT
  */
 
-class ClawAgentMainFragment : BaseClawAgentFragment<ClawAgentViewModel>() {
+class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
 
     companion object {
         const val TAG = "ClawAgentMainFragment"

@@ -27,7 +27,7 @@ import com.shiyuan.fastclaw.widget.VoiceRecordingView.Companion.VOICE_CANCEL_DIS
  * @author：CaoWei
  * @date：2026/6/17 18:11
  */
-open class BaseClawAgentFragment<VM : BaseLayoutViewModel> : BaseViewModelFragment<FragmentClawAgentMainBinding, VM>() {
+open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel> : BaseViewModelFragment<VB, VM>() {
 
     private var speechTranscriber: DashFunAsrSpeechTranscriber? = null
     private var shouldSendVoiceResult = false

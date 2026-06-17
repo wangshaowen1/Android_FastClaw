@@ -967,6 +967,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_UNDERSTANDING_SUMMARY = "UNDERSTANDING_SUMMARY"
         // 自我介绍
         private const val CARD_INTRODUCE_YOURSELF = "CARD_INTRODUCE_YOURSELF"
+        // 公司背调卡片
+        private const val CARD_COMPANY_BACKGROUND_ENTRY = "CARD_INTRODUCE_YOURSELF"
         //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
 
         // 寻找岗位中
