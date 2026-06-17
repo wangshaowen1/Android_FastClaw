@@ -200,7 +200,8 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
             R.id.layout_mine_point -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    MyShrimpChipsActivity.start(requireActivity())
+                   // MyShrimpChipsActivity.start(requireActivity())
+                    MineShrimpRechargeActivity.start(requireActivity())
                 }
             }
             R.id.ll_setting -> {
