@@ -17,6 +17,7 @@ import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_DOWN
 import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_MOVE
 import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_UP
 import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_VOLUME
+import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.VoiceRecordingView.Companion.VOICE_CANCEL_DISTANCE
 
@@ -25,7 +26,7 @@ import com.shiyuan.fastclaw.widget.VoiceRecordingView.Companion.VOICE_CANCEL_DIS
  * @author：CaoWei
  * @date：2026/6/17 18:11
  */
-open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel> : BaseViewModelFragment<VB, VM>() {
+open class BaseClawAgentFragment<VM : BaseLayoutViewModel> : BaseViewModelFragment<FragmentClawAgentMainBinding, VM>() {
 
     private var speechTranscriber: DashFunAsrSpeechTranscriber? = null
     private var shouldSendVoiceResult = false
