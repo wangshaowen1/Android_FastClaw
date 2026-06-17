@@ -595,6 +595,22 @@
     <string name="shrimp_understands">小虾对我的理解</string>
     <string name="mine_current_sticks">可用虾条</string>
     <string name="mine_rule">虾条规则</string>
+    <string name="mine_shrimp_record">虾条记录</string>
+    <string name="mine_select_recharge_package">选择充值套餐</string>
+    <string name="mine_recharge_method">充值方式</string>
+    <string name="mine_recharge_agreement_prefix">充值即代表同意</string>
+    <string name="mine_recharge_agreement">《充值协议》</string>
+    <string name="mine_recharge_pending">充值功能待接入</string>
+    <string name="mine_recharge_package_100">100</string>
+    <string name="mine_recharge_package_300">300</string>
+    <string name="mine_recharge_package_600">600</string>
+    <string name="mine_recharge_package_1000">1000</string>
+    <string name="mine_recharge_price_10">¥10</string>
+    <string name="mine_recharge_price_30">¥30</string>
+    <string name="mine_recharge_price_60">¥60</string>
+    <string name="mine_invite_title">邀请好友赚虾条</string>
+    <string name="mine_invite_subtitle">好友注册成功，你们都能获得奖励</string>
+    <string name="mine_invite_action">去邀请</string>
     <string name="mine_tip">每日打开APP可以获得2根虾条哦～</string>
     <string name="mine_tip2">知道了</string>
 

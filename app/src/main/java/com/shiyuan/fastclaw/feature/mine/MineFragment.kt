@@ -223,6 +223,12 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     ShrimpUnderstandsActivity.start(requireActivity(),mRealVM.underStandingScore.value?.understandingScore ?: 0)
                 }
             }
+            R.id.view_mine_resume_banner,
+            R.id.tv_mine_invite_action -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+
+                }
+            }
    /*         R.id.siv_avatar,
             R.id.tv_login,
             R.id.tv_name -> {

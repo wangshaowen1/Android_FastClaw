@@ -53,6 +53,16 @@ class MineViewModel : AppRepositoryViewModel<AppRepository>() {
         }
     )
 
+    val mToolbarVMShrimpRecharge = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = R.string.mine_sticks.getResString(),
+        menuText = R.string.mine_shrimp_record.getResString(),
+        background = Color.TRANSPARENT,
+        menuAction = { view ->
+            onMenuClick?.invoke()
+        }
+    )
+
     val mToolbarVMUnderstands = ToolbarViewModel(
         navigationAction = { finish() },
         title = R.string.shrimp_understands.getResString(),
