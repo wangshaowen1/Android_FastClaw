@@ -9,7 +9,7 @@ import com.shiyuan.fastclaw.App.Companion.instance
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.FragmentHomeReportBinding
-import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
+import com.shiyuan.fastclaw.feature.mine.InterviewReportActivity
 import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity
@@ -183,7 +183,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
         binding.llViewReport.setOnSingleClickListener {
             if (!AppNavigator.checkLoginIntercepted(true)) {
                 //跳转
-                MyHistoryReportActivity.start(requireActivity())
+                InterviewReportActivity.start(requireActivity())
             }
         }
     }

@@ -257,7 +257,7 @@
             android:layout_width="match_parent"
             android:layout_height="71dp"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal"
             app:layout_constraintLeft_toLeftOf="@id/layout_mine_point"
             app:layout_constraintTop_toBottomOf="@id/view_mine_resume_banner">
@@ -355,18 +355,62 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_interview_report"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:layout_marginHorizontal="16dp"
+            android:paddingHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_ffffff_r18"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="@id/ll_understanding_xt"
+            app:layout_constraintTop_toBottomOf="@id/ll_understanding_xt">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_interview_report" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/report_my_name"
+                android:textColor="@color/color_90_000000"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="@dimen/dp_0"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_item_arrow_right2" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/ll_setting"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="match_parent"
             android:layout_height="76dp"
             android:layout_marginHorizontal="16dp"
             android:paddingHorizontal="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_ffffff_r18"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:layout_constraintLeft_toLeftOf="@id/ll_understanding_xt"
-            app:layout_constraintTop_toBottomOf="@id/ll_understanding_xt">
+            app:layout_constraintLeft_toLeftOf="@id/ll_interview_report"
+            app:layout_constraintTop_toBottomOf="@id/ll_interview_report">
 
             <ImageView
                 android:layout_width="40dp"
