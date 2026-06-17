@@ -208,7 +208,9 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 SettingsActivity.start(requireActivity())
             }
             R.id.ll_interview_report -> {
-                InterviewReportActivity.start(requireActivity())
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    InterviewReportActivity.start(requireActivity())
+                }
             }
             R.id.tv_mine_tip_btn -> {
                 User.get().userId?.let {

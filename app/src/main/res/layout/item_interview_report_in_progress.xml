@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.shiyuan.fastclaw.feature.mine.ItemInterviewReportVM" />
+    </data>
+
+    <LinearLayout
+        singleClick="@{() -> item.onItemClick()}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_white_rectangle_corner_r12"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        tools:layout_marginHorizontal="16dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="48dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{item.reportName}"
+                android:textColor="@color/color_1a1a1a"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="【公司背调】报告生成中" />
+
+            <ProgressBar
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="180dp"
+                android:layout_height="5dp"
+                android:layout_marginTop="8dp"
+                android:max="100"
+                android:progress="@{item.progress}"
+                android:progressDrawable="@drawable/progress_generating"
+                tools:progress="30" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@{item.estimateMessage}"
+                android:textColor="@color/color_999999"
+                android:textSize="11sp"
+                tools:text="预计还需1分钟，请耐心等待" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_spin_circles"
+            app:autoRotate="@{true}" />
+    </LinearLayout>
+</layout>
