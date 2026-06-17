@@ -10,74 +10,76 @@
         <variable
             name="isLastItem"
             type="Boolean" />
+
         <variable
             name="item"
             type="com.shiyuan.fastclaw.feature.mine.viewModel.MineUserPointItemVm" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:paddingHorizontal="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="59dp"
+        android:paddingHorizontal="16dp">
 
         <TextView
-            android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tv_time"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tv_number"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constrainedWidth="true"
-            android:layout_marginTop="16dp"
             android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@{item.data.businessDesc}"
             android:textColor="@color/color_90_000000"
             android:textSize="14sp"
-            tools:text="生成报告"/>
-
-        <TextView
-            app:layout_constraintStart_toStartOf="@id/tv_name"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textStyle="bold"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toTopOf="@id/tv_time"
             app:layout_constraintEnd_toStartOf="@id/tv_number"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constrainedWidth="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="6dp"
-            android:layout_below="@id/tv_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="生成报告" />
+
+        <TextView
             android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@{item.data.createTime}"
             android:textColor="@color/color_55_3c3c43"
             android:textSize="12sp"
-            tools:text="2026.06.06"/>
-
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_number"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="@id/tv_name"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            tools:text="2026.06.06" />
 
         <TextView
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/tv_number"
+            android:layout_width="71dp"
+            android:layout_height="wrap_content"
+            android:gravity="end"
             android:text="@{item.data.showTransaction()}"
-            android:textColor="@color/color_90_000000"
+            android:textColor="@{item.isSubtractTransaction() ? @color/color_F74C30 : @color/color_15D173}"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="+10"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="+10"
+            tools:textColor="@color/color_15D173" />
 
         <View
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
+            android:background="@color/color_10_000000"
             android:visibility="@{isLastItem ? View.GONE : View.VISIBLE}"
-            android:background="@color/color_10_000000"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

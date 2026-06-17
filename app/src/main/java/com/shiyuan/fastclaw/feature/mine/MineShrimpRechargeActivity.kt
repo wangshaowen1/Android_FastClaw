@@ -10,14 +10,15 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
-import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.databinding.ActivityMineShrimpRechargeBinding
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.decoration.GridSpacingItemDecoration
+import com.kuaige.payment.PaymentClient
 
 /**
  * @Introduce: 虾条充值
@@ -70,7 +71,19 @@ class MineShrimpRechargeActivity :
         binding.llAlipay.setOnSingleClickListener { updatePaymentSelected(false) }
 
         binding.btnRecharge.setOnSingleClickListener {
-            getString(R.string.mine_recharge_pending).showToast()
+            if (AppNavigator.checkLoginIntercepted(false)) {
+                return@setOnSingleClickListener
+            }
+            val rechargePackage = packageAdapter.items
+                .getOrNull(selectedPackageIndex)
+                ?.data
+                ?: return@setOnSingleClickListener
+            val payment = if (selectedWechat) {
+                PaymentClient.PaymentMethod.WxPay
+            } else {
+                PaymentClient.PaymentMethod.Alipay
+            }
+            mRealVM.rechargeShrimp(payment, rechargePackage.get()?.priceLi ?:0L)
         }
         binding.tvRechargeAgreement.setOnSingleClickListener {
             SimpleBrowserActivity.launch(this, "https://www.baidu.com")
@@ -90,19 +103,23 @@ class MineShrimpRechargeActivity :
         val packageItems = listOf(
             MineRechargePackage(
                 amount = R.string.mine_recharge_package_100.getResString(),
-                price = R.string.mine_recharge_price_10.getResString()
+                price = R.string.mine_recharge_price_10.getResString(),
+                priceLi = 10_000L
             ),
             MineRechargePackage(
                 amount = R.string.mine_recharge_package_300.getResString(),
-                price = R.string.mine_recharge_price_30.getResString()
+                price = R.string.mine_recharge_price_30.getResString(),
+                priceLi = 30_000L
             ),
             MineRechargePackage(
                 amount = R.string.mine_recharge_package_600.getResString(),
-                price = R.string.mine_recharge_price_60.getResString()
+                price = R.string.mine_recharge_price_60.getResString(),
+                priceLi = 60_000L
             ),
             MineRechargePackage(
                 amount = R.string.mine_recharge_package_1000.getResString(),
-                price = R.string.mine_recharge_price_30.getResString()
+                price = R.string.mine_recharge_price_30.getResString(),
+                priceLi = 30_000L
             )
         ).mapIndexed { index, item ->
             ItemMineRechargePackageVM(item).apply {
@@ -136,7 +153,8 @@ class MineShrimpRechargeActivity :
 
 data class MineRechargePackage(
     val amount: String,
-    val price: String
+    val price: String,
+    val priceLi: Long
 )
 
 class ItemMineRechargePackageVM(data: MineRechargePackage?) :

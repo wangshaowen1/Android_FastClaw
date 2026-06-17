@@ -597,12 +597,14 @@
     <string name="shrimp_understands">小虾对我的理解</string>
     <string name="mine_current_sticks">可用虾条</string>
     <string name="mine_rule">虾条规则</string>
+    <string name="mine_shrimp_rule_tip">虾条更新可能延迟 虾条规则</string>
     <string name="mine_shrimp_record">虾条记录</string>
     <string name="mine_select_recharge_package">选择充值套餐</string>
     <string name="mine_recharge_method">充值方式</string>
     <string name="mine_recharge_agreement_prefix">充值即代表同意</string>
     <string name="mine_recharge_agreement">《充值协议》</string>
     <string name="mine_recharge_pending">充值功能待接入</string>
+    <string name="mine_recharge_pay_failed">支付失败</string>
     <string name="mine_recharge_package_100">100</string>
     <string name="mine_recharge_package_300">300</string>
     <string name="mine_recharge_package_600">600</string>
