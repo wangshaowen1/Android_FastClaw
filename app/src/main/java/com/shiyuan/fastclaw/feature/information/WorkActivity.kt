@@ -244,7 +244,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         binding.vForm9.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_LEAVING_REASON)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,"公司类型",list){  data->
+            SingleSelectDialog.show(this.supportFragmentManager,"离职原因",list){  data->
                 binding.vForm9.setValueText(data.name)
                 item?.let {
                     item.displayValue =  data.name

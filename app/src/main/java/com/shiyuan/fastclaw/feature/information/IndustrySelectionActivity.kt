@@ -151,6 +151,7 @@ class IndustrySelectionActivity :
                 hideKeyboard(binding.et)
             } else {
                 // 单选：回传并关闭
+                item.fieldCode = "industry"
                 FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
                 finish()
             }
