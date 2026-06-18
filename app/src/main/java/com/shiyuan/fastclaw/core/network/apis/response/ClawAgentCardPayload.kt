@@ -212,7 +212,7 @@ data class CoreQuestionPayloadBean(
         const val MODE_ARRAY_FORM = "ARRAY_FORM"
     }
 
-    fun buildAction(): CardAction {
+    fun buildSubmitAction(): CardAction {
         return CardAction(
             actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name,
             actionPayload = CardActionPayloadBean(

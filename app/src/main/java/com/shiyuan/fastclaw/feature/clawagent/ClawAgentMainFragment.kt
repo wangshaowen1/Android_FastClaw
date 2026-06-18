@@ -140,7 +140,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {
-            R.id.iv_send -> {
+            R.id.iv_send -> { //发送消息
                 if (User.get().isVisitor) {
                     showMessage("请先登录")
                     return
@@ -157,12 +157,27 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mRealVM.sendMessage(content.toString().trim())
                 binding.etSend.text = null
             }
-            R.id.iv_agent_memory -> {
+            R.id.iv_agent_memory -> { //对你的理解
                 if(!AppNavigator.checkLoginIntercepted(false)){
                     ShrimpUnderstandsActivity.start(requireActivity())
                 }
             }
+            R.id.layout_back_check -> { //背景调查
+                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    mRealVM.sendAction(
+                        desc = getString(R.string.company_backcheck),
+                        actionData = AgentMsgAction(
+                            actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND_ENTRY.name,
+                            actionPayloadJson = null,
+                        )
+                    )
+                }
+            }
+            R.id.layout_interview -> { //模拟面试
+                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
 
+                }
+            }
         }
     }
 

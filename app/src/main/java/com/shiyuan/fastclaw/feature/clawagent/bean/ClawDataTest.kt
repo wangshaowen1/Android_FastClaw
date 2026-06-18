@@ -18,7 +18,7 @@ object ClawDataTest {
 
     fun getDataList(newList: List<ClawAgentMessageInfo>): List<ClawAgentMessageInfo> {
         var dataList = newList.toMutableList()
-        dataList.add(2, ClawAgentMessageInfo(
+        /*dataList.add(2, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_QUESTION,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -54,117 +54,7 @@ object ClawDataTest {
                     )
                 )
             )
-        ))
-        dataList.add(2, ClawAgentMessageInfo(
-            id = "-1",
-            messageType = ClawAgentMsgAdapter.Companion.TYPE_QUESTION,
-            sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
-            receiveObj = ClawAgentViewModel.Companion.SENDER_USER,
-            metaData = GsonUtils.toJson(
-                CoreQuestionPayloadBean(
-                    questionQueueId = "123",
-                    attributeGroupCode = "expectedCity",
-                    metaCode = "expectedCity",
-                    questionType = "CORE_PROFILE",
-                    questionText = "你的期望薪资是？",
-                    inputMode = "SALARY_RANGE",
-                    answeredText = null,
-                    interactionState = CardInteractionState(
-                        status = "ACTIVE",
-                        disabled = false
-                    ),
-                    options = emptyList(),
-                    actions = listOf(
-                        CardAction(
-                            actionCode = "OPEN_DICT_SELECTOR",
-                            text = "请选择",
-                            primary = true,
-                            disabled = false,
-                            selected = false,
-                            clientBehavior = null,
-                            actionPayload = CardActionPayloadBean(
-                                questionQueueId = "123",
-                                attributeGroupCode = "expectedCity",
-                                metaCode = "expectedCity"
-                            )
-                        )
-                    )
-                )
-            )
-        ))
-        dataList.add(2, ClawAgentMessageInfo(
-            id = "-1",
-            messageType = ClawAgentMsgAdapter.Companion.TYPE_QUESTION,
-            sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
-            receiveObj = ClawAgentViewModel.Companion.SENDER_USER,
-            metaData = GsonUtils.toJson(
-                CoreQuestionPayloadBean(
-                    questionQueueId = "123",
-                    attributeGroupCode = "expectedCity",
-                    metaCode = "expectedCity",
-                    questionType = "CORE_PROFILE",
-                    questionText = "你的出生年月是什么时候？",
-                    inputMode = "DATE_MONTH",
-                    answeredText = null,
-                    interactionState = CardInteractionState(
-                        status = "ACTIVE",
-                        disabled = false
-                    ),
-                    options = emptyList(),
-                    actions = listOf(
-                        CardAction(
-                            actionCode = "OPEN_DICT_SELECTOR",
-                            text = "请选择",
-                            primary = true,
-                            disabled = false,
-                            selected = false,
-                            clientBehavior = null,
-                            actionPayload = CardActionPayloadBean(
-                                questionQueueId = "123",
-                                attributeGroupCode = "expectedCity",
-                                metaCode = "expectedCity"
-                            )
-                        )
-                    )
-                )
-            )
-        ))
-        dataList.add(2, ClawAgentMessageInfo(
-            id = "-1",
-            messageType = ClawAgentMsgAdapter.Companion.TYPE_QUESTION,
-            sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
-            receiveObj = ClawAgentViewModel.Companion.SENDER_USER,
-            metaData = GsonUtils.toJson(
-                CoreQuestionPayloadBean(
-                    questionQueueId = "456",
-                    attributeGroupCode = "workExperience",
-                    metaCode = "workExperience",
-                    questionType = "EXTEND_QUESTION",
-                    questionText = "识别到你的工作经历不太完整，可以补充一下吗？",
-                    inputMode = "ARRAY_FORM",
-                    answeredText = null,
-                    interactionState = CardInteractionState(
-                        status = "ACTIVE",
-                        disabled = false
-                    ),
-                    options = emptyList(),
-                    actions = listOf(
-                        CardAction(
-                            actionCode = "OPEN_ARRAY_FORM",
-                            text = "好的，我来填写",
-                            primary = true,
-                            disabled = false,
-                            selected = false,
-                            clientBehavior = null,
-                            actionPayload = CardActionPayloadBean(
-                                questionQueueId = "456",
-                                attributeGroupCode = "workExperience"
-                            )
-                        )
-                    )
-                )
-            )
-        ))
+        ))*/
         dataList.add(2, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_QUESTION,
@@ -216,6 +106,43 @@ object ClawDataTest {
                         ),
                     ),
                     actions = emptyList()
+                )
+            )
+        ))
+        dataList.add(2, ClawAgentMessageInfo(
+            id = "-1",
+            messageType = ClawAgentMsgAdapter.Companion.TYPE_COMPANY_BACKGROUND_ENTRY,
+            sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
+            receiveObj = ClawAgentViewModel.Companion.SENDER_USER,
+            metaData = GsonUtils.toJson(
+                CoreQuestionPayloadBean(
+                    questionQueueId = "123",
+                    attributeGroupCode = "expectedCity",
+                    metaCode = "expectedCity",
+                    questionType = "CORE_PROFILE",
+                    questionText = "你的期望薪资是？",
+                    inputMode = "SALARY_RANGE",
+                    answeredText = null,
+                    interactionState = CardInteractionState(
+                        status = "ACTIVE",
+                        disabled = false
+                    ),
+                    options = emptyList(),
+                    actions = listOf(
+                        CardAction(
+                            actionCode = "OPEN_DICT_SELECTOR",
+                            text = "请选择",
+                            primary = true,
+                            disabled = false,
+                            selected = false,
+                            clientBehavior = null,
+                            actionPayload = CardActionPayloadBean(
+                                questionQueueId = "123",
+                                attributeGroupCode = "expectedCity",
+                                metaCode = "expectedCity"
+                            )
+                        )
+                    )
                 )
             )
         ))

@@ -98,7 +98,7 @@
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="12dp"
             app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toTopOf="@id/layout_send"
+            app:layout_constraintBottom_toTopOf="@id/layout_bottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_agent_avatar"
@@ -122,149 +122,163 @@
             app:sGradientEndColor="#00E9F0FE"
             app:sGradientStartColor="#FFE9F0FE" />
 
-        <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-            android:id="@+id/layout_back_check"
-            android:layout_width="97dp"
-            android:layout_height="34dp"
-            android:layout_marginStart="16dp"
-            android:gravity="center"
-            app:background_normalColor="@color/color_ffffff"
-            app:layout_constraintBottom_toBottomOf="@id/srl_msg"
-            app:layout_constraintStart_toStartOf="parent"
-            app:super_corner="17dp">
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:src="@drawable/icon_anent_back_check" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:drawablePadding="3dp"
-                android:gravity="center"
-                android:text="@string/home_background_check"
-                android:textColor="@color/color_90_000000"
-                android:textSize="13sp" />
-
-        </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
-
-        <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-            android:id="@+id/layout_interview"
-            android:layout_width="97dp"
-            android:layout_height="34dp"
-            android:layout_marginStart="16dp"
-            android:gravity="center"
-            app:background_normalColor="@color/color_ffffff"
-            app:layout_constraintBottom_toBottomOf="@id/srl_msg"
-            app:layout_constraintStart_toEndOf="@id/layout_back_check"
-            app:super_corner="17dp">
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:src="@drawable/icon_anent_interview" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:drawablePadding="3dp"
-                android:gravity="center"
-                android:text="@string/home_mock_interview"
-                android:textColor="@color/color_90_000000"
-                android:textSize="13sp" />
-
-        </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
-
-        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
-            android:id="@+id/layout_send"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="0dp"
-            app:background_normalColor="@color/color_ffffff"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_bottom"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:super_corner="27dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/iv_icon"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_agent_send_logo"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/et_send"
+            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                singleClick="@{layout.clickHandler::onClick}"
+                android:id="@+id/layout_back_check"
+                android:layout_width="97dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"
+                app:background_normalColor="@color/color_ffffff"
+                app:layout_constraintBottom_toTopOf="@id/layout_send"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/et_send"
-                tools:visibility="visible" />
+                app:super_corner="17dp">
 
-            <EditText
-                android:id="@+id/et_send"
-                android:layout_width="0dp"
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/icon_anent_back_check" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:drawablePadding="3dp"
+                    android:gravity="center"
+                    android:text="@string/company_backcheck"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="13sp" />
+
+            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
+            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                singleClick="@{layout.clickHandler::onClick}"
+                android:id="@+id/layout_interview"
+                android:layout_width="97dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"
+                app:background_normalColor="@color/color_ffffff"
+                app:layout_constraintBottom_toTopOf="@id/layout_send"
+                app:layout_constraintStart_toEndOf="@id/layout_back_check"
+                app:super_corner="17dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/icon_anent_interview" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:drawablePadding="3dp"
+                    android:gravity="center"
+                    android:text="@string/mock_interview"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="13sp" />
+
+            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
+            <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+                android:id="@+id/layout_send"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="@string/str_agent_send_hint"
-                android:maxLines="4"
+                android:layout_marginHorizontal="16dp"
                 android:paddingStart="8dp"
-                android:paddingTop="12dp"
-                android:paddingEnd="60dp"
-                android:paddingBottom="12dp"
-                android:textColor="@color/color_90_000000"
-                android:textColorHighlight="@color/color_20_0099FF"
-                android:textColorHint="@color/color_56_3c3c43"
-                android:textCursorDrawable="@drawable/cursor_genner_edit"
-                android:textSize="15sp"
+                android:paddingEnd="0dp"
+                app:background_normalColor="@color/color_ffffff"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/iv_icon"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="有什么求职问题，随时问小虾" />
-
-            <TextView
-                android:id="@+id/tv_voice_press"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="按住说话"
-                android:textColor="@color/color_90_000000"
-                android:textSize="15sp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/iv_input_mode"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:super_corner="27dp">
 
-            <ImageView
-                android:id="@+id/iv_send"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_agent_send"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@id/et_send"
-                app:layout_constraintEnd_toEndOf="@id/et_send"
-                app:layout_constraintTop_toTopOf="@id/et_send"
-                tools:visibility="visible" />
+                <ImageView
+                    android:id="@+id/iv_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_agent_send_logo"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/et_send"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/et_send"
+                    tools:visibility="visible" />
 
-            <ImageView
-                android:id="@+id/iv_input_mode"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_agent_voice_mode"
-                app:layout_constraintBottom_toBottomOf="@id/et_send"
-                app:layout_constraintEnd_toEndOf="@id/et_send"
-                app:layout_constraintTop_toTopOf="@id/et_send"
-                tools:visibility="gone" />
+                <EditText
+                    android:id="@+id/et_send"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="@string/str_agent_send_hint"
+                    android:maxLines="4"
+                    android:paddingStart="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="60dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/color_90_000000"
+                    android:textColorHighlight="@color/color_20_0099FF"
+                    android:textColorHint="@color/color_56_3c3c43"
+                    android:textCursorDrawable="@drawable/cursor_genner_edit"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/iv_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="有什么求职问题，随时问小虾" />
 
-        </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+                <TextView
+                    android:id="@+id/tv_voice_press"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="按住说话"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="15sp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iv_input_mode"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/iv_send"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_agent_send"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/et_send"
+                    app:layout_constraintEnd_toEndOf="@id/et_send"
+                    app:layout_constraintTop_toTopOf="@id/et_send"
+                    tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/iv_input_mode"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_agent_voice_mode"
+                    app:layout_constraintBottom_toBottomOf="@id/et_send"
+                    app:layout_constraintEnd_toEndOf="@id/et_send"
+                    app:layout_constraintTop_toTopOf="@id/et_send"
+                    tools:visibility="gone" />
+
+            </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

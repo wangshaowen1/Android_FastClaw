@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_company_background_entry_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:background_normalColor="@color/color_25_c3d4ef"
+    app:border_color="@color/color_ffffff"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:super_corner="20dp"
+    app:view_border_width="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_company_background_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_company_background_icon"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_company_background_building"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_company_background_title"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="1dp"
+            android:gravity="center_vertical"
+            android:text="@string/str_agent_company_background_title"
+            android:textColor="@color/color_96_000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_company_background_icon"
+            app:layout_constraintTop_toTopOf="@id/iv_company_background_icon"
+            tools:text="公司背调" />
+
+        <TextView
+            android:id="@+id/tv_company_background_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="17dp"
+            android:layout_marginTop="3dp"
+            android:gravity="center_vertical"
+            android:text="@string/str_agent_company_background_subtitle"
+            android:textColor="@color/color_90_000000"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_company_background_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_company_background_title"
+            tools:text="公司在筛选你，你也该调查公司" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_company_background_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/bg_company_background_content"
+        android:padding="13dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_company_background_header">
+
+        <TextView
+            android:id="@+id/tv_company_background_slogan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/str_agent_company_background_slogan"
+            android:textColor="@color/color_96_000000"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="30秒判断：这家公司值不值得面" />
+
+        <ImageView
+            android:id="@+id/iv_company_background_arrow_left"
+            android:layout_width="15dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="8dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_company_background_arrow_left"
+            app:layout_constraintBottom_toBottomOf="@id/tv_company_background_slogan"
+            app:layout_constraintEnd_toStartOf="@id/tv_company_background_slogan"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_company_background_slogan" />
+
+        <ImageView
+            android:id="@+id/iv_company_background_arrow_right"
+            android:layout_width="15dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_company_background_arrow_right"
+            app:layout_constraintBottom_toBottomOf="@id/tv_company_background_slogan"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/tv_company_background_slogan"
+            app:layout_constraintTop_toTopOf="@id/tv_company_background_slogan" />
+
+        <LinearLayout
+            android:id="@+id/ll_company_background_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_company_background_slogan">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_company_background_num1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_company_background_number"
+                    android:gravity="center"
+                    android:minWidth="13dp"
+                    android:text="1"
+                    android:textColor="@color/color_60_336fff"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_item1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/str_agent_company_background_item_company"
+                    android:textColor="@color/color_96_000000"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_company_background_num1"
+                    app:layout_constraintStart_toEndOf="@id/tv_company_background_num1"
+                    app:layout_constraintTop_toTopOf="@id/tv_company_background_num1" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_num2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_company_background_number"
+                    android:gravity="center"
+                    android:minWidth="13dp"
+                    android:text="2"
+                    android:textColor="@color/color_60_336fff"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/tv_company_background_num1"
+                    app:layout_constraintTop_toBottomOf="@id/tv_company_background_num1" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_item2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/str_agent_company_background_item_boss"
+                    android:textColor="@color/color_96_000000"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_company_background_num2"
+                    app:layout_constraintStart_toEndOf="@id/tv_company_background_num2"
+                    app:layout_constraintStart_toStartOf="@id/tv_company_background_item1"
+                    app:layout_constraintTop_toTopOf="@id/tv_company_background_num2" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_num3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_company_background_number"
+                    android:gravity="center"
+                    android:minWidth="13dp"
+                    android:text="3"
+                    android:textColor="@color/color_60_336fff"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/tv_company_background_num1"
+                    app:layout_constraintTop_toBottomOf="@id/tv_company_background_num2" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_item3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/str_agent_company_background_item_risk"
+                    android:textColor="@color/color_96_000000"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_company_background_num3"
+                    app:layout_constraintStart_toEndOf="@id/tv_company_background_num3"
+                    app:layout_constraintStart_toStartOf="@id/tv_company_background_item1"
+                    app:layout_constraintTop_toTopOf="@id/tv_company_background_num3" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_company_background_num4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_company_background_number"
+                    android:gravity="center"
+                    android:minWidth="13dp"
+                    android:text="4"
+                    android:textColor="@color/color_60_336fff"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_item4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/str_agent_company_background_item_position"
+                    android:textColor="@color/color_96_000000"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_company_background_num4"
+                    app:layout_constraintStart_toEndOf="@id/tv_company_background_num4"
+                    app:layout_constraintTop_toTopOf="@id/tv_company_background_num4" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_num5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_company_background_number"
+                    android:gravity="center"
+                    android:minWidth="13dp"
+                    android:text="5"
+                    android:textColor="@color/color_60_336fff"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/tv_company_background_num4"
+                    app:layout_constraintTop_toBottomOf="@id/tv_company_background_num4" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_item5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/str_agent_company_background_item_growth"
+                    android:textColor="@color/color_96_000000"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_company_background_num5"
+                    app:layout_constraintStart_toEndOf="@id/tv_company_background_num5"
+                    app:layout_constraintStart_toStartOf="@id/tv_company_background_item4"
+                    app:layout_constraintTop_toTopOf="@id/tv_company_background_num5" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_num6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_company_background_number"
+                    android:gravity="center"
+                    android:minWidth="13dp"
+                    android:text="6"
+                    android:textColor="@color/color_60_336fff"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/tv_company_background_num4"
+                    app:layout_constraintTop_toBottomOf="@id/tv_company_background_num5" />
+
+                <TextView
+                    android:id="@+id/tv_company_background_item6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/str_agent_company_background_item_prepare"
+                    android:textColor="@color/color_96_000000"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_company_background_num6"
+                    app:layout_constraintStart_toEndOf="@id/tv_company_background_num6"
+                    app:layout_constraintStart_toStartOf="@id/tv_company_background_item4"
+                    app:layout_constraintTop_toTopOf="@id/tv_company_background_num6" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ImageView
+                android:id="@+id/iv_company_background_report"
+                android:layout_width="84dp"
+                android:layout_height="74dp"
+                android:src="@drawable/img_company_background_report" />
+
+        </LinearLayout>
+
+        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+            android:id="@+id/ll_company_background_input"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="18dp"
+            app:background_normalColor="@color/color_ffffff"
+            app:border_color="@color/color_2f6bff"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_company_background_content"
+            app:super_corner="10dp"
+            app:view_border_width="1dp">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:gravity="center"
+                android:paddingStart="14dp"
+                android:paddingEnd="50dp"
+                android:lines="1"
+                android:maxLines="1"
+                android:hint="@string/str_agent_company_background_input_hint"
+                android:textColor="@color/color_75_3c3c43"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ll_company_background_content"
+                tools:text="输入你想了解的公司" />
+
+            <ImageView
+                android:id="@+id/iv_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_backcheck_search_close"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="20dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
+
+        </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+
+        <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+            android:id="@+id/ll_company_background_action"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="13dp"
+            android:gravity="center"
+            app:background_normalColor="@color/color_2f6bff"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ll_company_background_input"
+            app:super_corner="24dp">
+
+            <TextView
+                android:id="@+id/tv_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/str_agent_company_background_action"
+                android:textColor="@color/color_ffffff"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_free"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:text="@string/str_agent_company_background_action_free"
+                android:textColor="@color/color_ffffff"
+                android:textSize="12sp" />
+
+        </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
+        <View
+            android:id="@+id/tv_company_background_line"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginTop="16dp"
+            android:background="@color/color_10_000000"
+            app:layout_constraintTop_toBottomOf="@id/ll_company_background_action" />
+
+        <TextView
+            android:id="@+id/tv_company_background_traceable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/str_agent_company_background_traceable"
+            android:textColor="@color/color_55_3c3c43"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_company_background_line"
+            tools:text="信息全部可追述,工商·司法·融资交叉验证" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>

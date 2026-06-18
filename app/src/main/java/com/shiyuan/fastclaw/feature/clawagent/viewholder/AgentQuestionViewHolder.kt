@@ -144,7 +144,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             view.isEnabled = payload.isDisabled() != true
             //view.isEnabled = true
             view.id = View.generateViewId()
-            view.setOnSingleClickListener { onActionClickListener(item, payload.buildAction(), payload.questionQueueId) }
+            view.setOnSingleClickListener { onActionClickListener(item, payload.buildSubmitAction(), payload.questionQueueId) }
             parent.addView(view)
             ids.add(view.id)
             optionRows.add(view)

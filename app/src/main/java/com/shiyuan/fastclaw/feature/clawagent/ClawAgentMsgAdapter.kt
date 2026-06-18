@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentLeftBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentNoJobsFoundBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentPendingConfirmBinding
@@ -22,6 +23,8 @@ import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.clawagent.bean.ClawDataTest
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundEntryViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPendingConfirmViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
@@ -70,6 +73,13 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_AGENT_THINK, { i, p -> AgentThinkViewHolder(ItemMsgAgentThinkBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 欢迎引导卡
         register(TYPE_WELCOME, { i, p -> AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 公司背调入口卡
+        register(TYPE_COMPANY_BACKGROUND_ENTRY,
+            { i, p ->
+                AgentCompanyBackgroundEntryViewHolder(ItemMsgAgentCompanyBackgroundEntryBinding.inflate(i, p, false)).apply {
+                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                }
+            }) { h, item -> h.bind(item) }
         // 核心补问卡
         register(TYPE_QUESTION,
             { i, p ->
@@ -152,9 +162,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
      * 内容变化用 data class 全等比较），相比父类 [submitList] 的整表刷新可保留动画、减少重绘。
      */
     override fun submitList(list: List<ClawAgentMessageInfo>?) {
-        val newList = list ?: emptyList()
+        var newList = list ?: emptyList()
         //测试数据
-        //newList = ClawDataTest.getDataList(newList)
+        newList = ClawDataTest.getDataList(newList)
         val result = DiffUtil.calculateDiff(MessageDiffCallback(items, newList))
         items = newList
         result.dispatchUpdatesTo(this)
