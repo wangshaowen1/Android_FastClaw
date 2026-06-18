@@ -175,7 +175,7 @@ class IndustrySelectionActivity :
             }
         } else {
             // 单选模式：隐藏多选相关 UI
-            binding.tvTitle.text = getString(R.string.choose_desired_position)
+            binding.tvTitle.text = getString(R.string.industry)
             binding.llMultipleTop.visibility = View.GONE
             binding.llMultipleBot.visibility = View.GONE
         }
