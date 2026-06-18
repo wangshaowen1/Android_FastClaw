@@ -26,7 +26,7 @@
     <string name="upload_success_title">小虾收到了你的简历！</string>
     <string name="understanding_upgraded_title">小虾对你的理解升级啦</string>
     <string name="alignment_progress">对齐度飙升！从%1$s到%2$s</string>
-    <string name="upload_success_helping_text">现在，小虾可以为你辅导面试，优化简历了~</string>
+    <string name="upload_success_helping_text">现在，小虾可以为你做面试准备了</string>
     <string name="pending_confirmation">待确认</string>
     <string name="resume_recognized_confirm">识别到你有简历上传，请确认</string>
     <string name="resume_recognized_desc">这会非常重要，我会根据简历来了解你。</string>
@@ -553,7 +553,7 @@
     <string name="login_user_agreement">《快龙虾用户协议》</string>
     <string name="login_privacy_policy">《隐私政策》</string>
     <string name="login_agreement_suffix">和</string>
-    <string name="login_page_title">你的专属求职经纪人</string>
+    <string name="login_page_title">你的AI求职经纪人</string>
 
     <!-- 首页招聘相关字符串 -->
     <string name="home_name">小虾</string>
@@ -573,7 +573,7 @@
 
     <!-- 首页欢迎卡片 -->
     <string name="home_welcome_greeting">你好，我是小虾</string>
-    <string name="home_welcome_intro">你的职业经纪人，我能帮你：</string>
+    <string name="home_welcome_intro">你的求职经纪人，我能帮你：</string>
     <string name="home_service_find_job_title">求职准备</string>
     <string name="home_service_find_job_desc">理清求职目标，背调公司信息</string>
     <string name="home_service_interview_title">面试押题</string>
@@ -784,7 +784,7 @@
     <string name="city_selector_search_result">搜索结果</string>
     <string name="city_selector_max_select_tip">最多选择%1$d个城市</string>
     <string name="city_selector_at_least">请选择至少一个城市</string>
-    <string name="city_selector_add_multiple">添加多个城市，可以获得更多工作机会？</string>
+    <string name="city_selector_add_multiple">添加多个城市，可以获得更多工作机会</string>
     <string name="city_selector_now_city">你现在在哪座城市？</string>
     <string name="welfare_selector_at_least">至少选择一个福利偏好</string>
 
