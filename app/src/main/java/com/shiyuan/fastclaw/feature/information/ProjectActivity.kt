@@ -31,6 +31,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         private const val EXTRA_IS_EDIT = "extra_is_edit"
         private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
         private const val EXTRA_INSTANCE_INDEX = "extra_instance_index"
+        private const val CLIENTREQUESTID = "clientrequestid"
 
         // 字段编码
         private const val FIELD_PROJECT_NAME = "projectName"
@@ -53,12 +54,13 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         /**
          * 启动项目经历编辑页。
          */
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null, clientRequestId: String? = null) {
             activity ?: return
             val intent = Intent(activity, ProjectActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
                 position?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
+                clientRequestId?.let { putExtra(CLIENTREQUESTID, it) }
             }
             activity.startActivity(intent)
         }
@@ -69,6 +71,8 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
 
     // 当前编辑的字段实例索引
     private var position: Int = 0
+
+    private var clientRequestId: String? = null
 
     // 当前编辑实例的字段项集合
     private val currentInstance: MutableList<AttributeFieldItem> = mutableListOf()
@@ -103,6 +107,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
             intent?.getParcelableExtra(EXTRA_ATTRIBUTE_DATA)
         }
         position = intent?.getIntExtra(EXTRA_INSTANCE_INDEX, 0) ?: 0
+        clientRequestId = intent?.getStringExtra(CLIENTREQUESTID) ?: ""
     }
 
     private fun initView() {
@@ -118,6 +123,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
                     onDelete = {
                         attributeData?.fieldTree?.removeAt(this.position)
                         attributeData?.draft = true
+                        attributeData?.clientRequestId = this.clientRequestId
                         attributeData?.let { mRealVM.attributeSave(it) }
                     }
                 )
@@ -231,6 +237,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         if (!validateRequiredFields()) return
         attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
         attributeData?.draft = true
+        attributeData?.clientRequestId = this.clientRequestId
         attributeData?.let { mRealVM.attributeSave(it) }
     }
 

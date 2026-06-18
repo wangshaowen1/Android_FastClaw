@@ -746,7 +746,7 @@
     <string name="str_agent_match_rate_label">匹配率</string>
     <string name="str_agent_match_generate_btn">去生成面试作战报告</string>
     <string name="str_agent_searching_jobs_title">小虾正在陪伴你的求职</string>
-    <string name="str_agent_searching_jobs_desc">我能帮你完善画像、优化简历、准备面试。对你了解越多，越能帮你更多~</string>
+    <string name="str_agent_searching_jobs_desc">我能帮你完善画像、准备面试。对你了解越多，越能帮你更多~</string>
     <string name="str_agent_no_jobs_found_title">小虾正在陪伴你的求职</string>
     <string name="str_agent_no_jobs_found_desc">我能帮你完善画像、优化简历、准备面试~你的求职，我全程支持。</string>
     <string name="str_agent_memory_title">小虾记住了</string>

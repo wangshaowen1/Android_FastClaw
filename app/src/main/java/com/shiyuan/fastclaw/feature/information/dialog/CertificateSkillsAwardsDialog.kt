@@ -62,7 +62,6 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
          */
         fun show(
             manager: FragmentManager,
-            attributeData: AttributeArrayQueryData? = null,
             type: String = "certificates",
             questionQueueId: String? = null,
             attributeGroupCode: String? = null,
@@ -83,9 +82,6 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
             this.sessionId = sessionId
             this.conversationId = conversationId
             return CertificateSkillsAwardsDialog().apply {
-                arguments = Bundle().apply {
-                    attributeData?.let { putParcelable(ARG_ATTRIBUTE_DATA, it) }
-                }
                 show(manager)
             }
         }
@@ -133,14 +129,13 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
                 attributeData?.let { attr ->
                     when (type) {
                         "skills" -> {
-                            SkillActivity.start(requireActivity(), true, attr, position)
+                            SkillActivity.start(requireActivity(), true, attr, position,clientRequestId)
                         }
-
                         "certificates" -> {
-                            CertificateActivity.start(requireActivity(), true, attr, position)
+                            CertificateActivity.start(requireActivity(), true, attr, position,clientRequestId)
                         }
                         else -> {
-                            AwardActivity.start(requireActivity(), true, attr, position)
+                            AwardActivity.start(requireActivity(), true, attr, position,clientRequestId)
                         }
                     }
                 }
@@ -150,8 +145,6 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
-        // 解析参数 → 初始化列表 → 初始化视图 → 绑定数据
-        attributeData = getAttributeData()
         initRecyclerView()
         initView()
         queryAttributeArray()
@@ -204,14 +197,14 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
             }
             when (type) {
                 "skills" -> {
-                    SkillActivity.start(requireActivity(), false, attributeData,0)
+                    SkillActivity.start(requireActivity(), false, attributeData,0,clientRequestId)
                 }
                 "certificates" -> {
-                    CertificateActivity.start(requireActivity(), false, attributeData,0)
+                    CertificateActivity.start(requireActivity(), false, attributeData,0,clientRequestId)
                 }
 
                 else -> {
-                    AwardActivity.start(requireActivity(), false, attributeData,0)
+                    AwardActivity.start(requireActivity(), false, attributeData,0,clientRequestId)
                 }
             }
         }
@@ -274,18 +267,6 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         fieldTreeAdapter.submitList(fieldTree)
     }
 
-    /**
-     * 兼容不同 Android 版本的 Parcelable 读取方式。
-     */
-    @Suppress("DEPRECATION")
-    private fun getAttributeData(): AttributeArrayQueryData? {
-        val bundle = arguments ?: return null
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            bundle.getParcelable(ARG_ATTRIBUTE_DATA, AttributeArrayQueryData::class.java)
-        } else {
-            bundle.getParcelable(ARG_ATTRIBUTE_DATA)
-        }
-    }
 
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)

@@ -30,6 +30,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         private const val EXTRA_IS_EDIT = "extra_is_edit"
         private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
         private const val EXTRA_INSTANCE_INDEX = "extra_instance_index"
+        private const val CLIENTREQUESTID = "clientrequestid"
 
         // 字段编码
         private const val FIELD_CERTIFICATE_NAME = "certificateName"
@@ -39,12 +40,13 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         /**
          * 启动证书编辑页。
          */
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null, clientRequestId: String? = null) {
             activity ?: return
             val intent = Intent(activity, CertificateActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
                 position?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
+                clientRequestId?.let { putExtra(CLIENTREQUESTID, it) }
             }
             activity.startActivity(intent)
         }
@@ -55,6 +57,8 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
 
     // 当前编辑的字段实例索引
     private var position: Int = 0
+
+    private var clientRequestId: String? = null
 
     // 当前编辑实例的字段项集合
     private val currentInstance: MutableList<AttributeFieldItem> = mutableListOf()
@@ -89,6 +93,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
             intent?.getParcelableExtra(EXTRA_ATTRIBUTE_DATA)
         }
         position = intent?.getIntExtra(EXTRA_INSTANCE_INDEX, 0) ?: 0
+        clientRequestId = intent?.getStringExtra(CLIENTREQUESTID) ?: ""
     }
 
 
@@ -106,6 +111,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
                     onDelete = {
                         attributeData?.fieldTree?.removeAt(this.position)
                         attributeData?.draft = true
+                        attributeData?.clientRequestId = this.clientRequestId
                         attributeData?.let { mRealVM.attributeSave(it) }
                     }
                 )
@@ -114,6 +120,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
             binding.viewActionButtons.setOnPrimaryClickListener {
                 attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems  = currentInstance
                 attributeData?.draft = true
+                attributeData?.clientRequestId = this.clientRequestId
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
         } else {
@@ -123,6 +130,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
             binding.viewActionButtons.setOnPrimaryClickListener {
                 attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems  = currentInstance
                 attributeData?.draft = true
+                attributeData?.clientRequestId = this.clientRequestId
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
         }
