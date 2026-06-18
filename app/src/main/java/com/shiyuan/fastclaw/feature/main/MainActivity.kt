@@ -14,10 +14,6 @@ import androidx.core.util.getOrDefault
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.fm.openinstall.OpenInstall
-import com.fm.openinstall.listener.AppWakeUpAdapter
-import com.fm.openinstall.model.AppData
-import com.google.gson.Gson
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
@@ -36,7 +32,6 @@ import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.UpgradeManager
-import com.shiyuan.fastclaw.core.model.WakeUpEntity
 import com.shiyuan.fastclaw.databinding.ActivityMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentMainFragment
 import com.shiyuan.fastclaw.feature.home.HomeFragment
@@ -87,21 +82,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     //当前打开的时间，用与跟注册时间对比来判断这一次登录的是否是刚注册的账号
     private var registerTime: Long = 0
-
-    //OpenInstall获取到的值
-    private var wakeUpAdapter: AppWakeUpAdapter? = object : AppWakeUpAdapter() {
-        override fun onWakeUp(appData: AppData) {
-            //获取渠道数据
-            //val channelCode = appData.getChannel()
-            //获取绑定数据
-            val bindData = appData.getData()
-            val wakeUpEntity: WakeUpEntity? = Gson().fromJson(bindData, WakeUpEntity::class.java)
-            if (wakeUpEntity?.page != null) {
-                AppRouter.jump(wakeUpEntity.page)
-            }
-        }
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -165,10 +145,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         checkUpgrade()
         //添加虾分等等
         mRealVM.commonInit()
-        wakeUpAdapter?.let {
-            // 此处要调用，否则App在后台运行时，会无法截获
-            OpenInstall.getWakeUp(intent, it)
-        }
         handleIntent(intent)
     }
 
@@ -231,10 +207,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (App.instance.hasAgree()) {
-            wakeUpAdapter?.let {
-                // 此处要调用，否则App在后台运行时，会无法截获
-                OpenInstall.getWakeUp(intent, it)
-            }
             handleIntent(intent)
         }
     }

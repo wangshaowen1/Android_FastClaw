@@ -15,7 +15,6 @@ import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.ext.getInstall
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.loginToast
@@ -141,35 +140,33 @@ class PhoneLoginViewModel : AppRepositoryViewModel<PhoneLoginRepository>() {
         }
         KeyboardUtils.hideSoftInput(ActivityUtils.getTopActivity())
         setLoading(true)
-        getInstall {
-            launchWithLoading(false, block = {
-                if (isBind.get()) {
-                    response(mRepo.bindPhone(mobile, code), {
-                        showToast(R.string.bind_success)
-                        User.get().apply {
-                            storePhoneNum(mobile)
-                        }
-                        onLogin?.invoke(null)
-                    }, error = {
-                        this?.msg?.showToast()
-                        setLoading(false)
-                    })
-                } else {
-                    response(mRepo.loginByPhone(mobile, code), {
-                        User.get().updateFrom(data)
-                        SignUtils.signIn()
-                        data.loginToast()
-                        onLogin?.invoke(data)
-                    }, error = {
-                        this?.msg?.showToast()
-                        setLoading(false)
-                    })
-                }
-            }, onError = {
-                setLoading(false)
-                parseMessage(it)?.showToast()
-            })
-        }
+        launchWithLoading(false, block = {
+            if (isBind.get()) {
+                response(mRepo.bindPhone(mobile, code), {
+                    showToast(R.string.bind_success)
+                    User.get().apply {
+                        storePhoneNum(mobile)
+                    }
+                    onLogin?.invoke(null)
+                }, error = {
+                    this?.msg?.showToast()
+                    setLoading(false)
+                })
+            } else {
+                response(mRepo.loginByPhone(mobile, code), {
+                    User.get().updateFrom(data)
+                    SignUtils.signIn()
+                    data.loginToast()
+                    onLogin?.invoke(data)
+                }, error = {
+                    this?.msg?.showToast()
+                    setLoading(false)
+                })
+            }
+        }, onError = {
+            setLoading(false)
+            parseMessage(it)?.showToast()
+        })
     }
 
     /**
