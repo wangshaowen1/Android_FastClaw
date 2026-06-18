@@ -355,3 +355,12 @@ data class HistoryResumeConfirmPayloadBean(
     val interactionState: CardInteractionState? = null,
     val actions: List<CardAction>? = null,
 )
+
+data class CompanyBackgroundEntryPayloadBean(
+    val interactionState: CardInteractionState? = null,
+    val actions: List<CardAction>? = null,
+)
+
+data class CompanyBean(
+    val companyName: String? = null,
+)
