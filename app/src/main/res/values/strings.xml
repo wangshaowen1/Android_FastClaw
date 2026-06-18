@@ -574,12 +574,12 @@
     <!-- 首页欢迎卡片 -->
     <string name="home_welcome_greeting">你好，我是小虾</string>
     <string name="home_welcome_intro">你的职业经纪人，我能帮你：</string>
-    <string name="home_service_find_job_title">求职咨询</string>
-    <string name="home_service_find_job_desc">解答求职疑问，梳理岗位方向</string>
-    <string name="home_service_interview_title">面试辅导</string>
-    <string name="home_service_interview_desc">模拟面试场景，提升表达能力</string>
-    <string name="home_service_resume_title">简历优化</string>
-    <string name="home_service_resume_desc">分析简历问题，提升投递竞争力</string>
+    <string name="home_service_find_job_title">求职准备</string>
+    <string name="home_service_find_job_desc">理清求职目标，背调公司信息</string>
+    <string name="home_service_interview_title">面试押题</string>
+    <string name="home_service_interview_desc">七大维度定制，预测高频问题</string>
+    <string name="home_service_resume_title">薪资预测</string>
+    <string name="home_service_resume_desc">测算薪资区间，教你谈薪策略</string>
     <string name="home_upload_resume_title">上传简历，小虾开始替你工作</string>
     <string name="home_upload_resume_subtitle">帮你提升求职竞争力</string>
     <string name="home_upload_resume_btn">上传我的简历</string>
@@ -633,12 +633,12 @@
     <string name="add_position_info">添加目标岗位信息</string>
     <string name="screenshot_up">截图上传</string>
     <string name="paste_string">粘贴文本</string>
-    <string name="jd_tip1">上传JD截图（如 BOSS直聘 / 官网 / 公众号截图）</string>
+    <string name="jd_tip1">上传JD截图（如 BOSS/ 官网 / 公众号截图）</string>
     <string name="jd_tip2">可上传3张截图，每次仅支持分析1个目标岗位</string>
     <string name="jd_tip3">上传JD截图</string>
     <string name="et_hit1">粘贴公司名称与岗位职责信息，每次仅支持分析1个目标岗位</string>
     <string name="get_jd">如何获取JD截图</string>
-    <string name="get_jd_one">打开BOSS直聘/招聘网站后进入\n目标职位详情页</string>
+    <string name="get_jd_one">打开BOSS/招聘网站后进入\n目标职位详情页</string>
     <string name="get_jd_two">截图岗位职责和任职要求且需要\n包含公司名称</string>
     <string name="generate_precise_matching_report">生成精准匹配报告</string>
     <string name="skip_precise_matching">跳过，直接用简历生成报告</string>
@@ -677,7 +677,7 @@
     <string name="report_home_tip4">仅需一步，30秒生成报告</string>
     <string name="report_home_tip4_2">仅需两步，30秒生成报告</string>
     <string name="up_resume_file">上传简历文件</string>
-    <string name="report_home_tip5">PDF文件、Word文件、图片均可</string>
+    <string name="report_home_tip5">PDF文件、Word文件均可</string>
     <string name="report_home_tip6">需包含公司详细信息和岗位描述</string>
     <string name="up_bos_file">上传BOSS/官网招聘信息截图</string>
     <string name="Customer_reviews">真实用户评价(1200+)</string>
@@ -766,7 +766,7 @@
     <string name="alignment_degree">对齐度</string>
     <string name="resume_information">简历信息</string>
     <string name="job_preference">求职偏好</string>
-    <string name="inaccurate">不准确？告诉小虾修改</string>
+    <string name="inaccurate">让小虾理解你</string>
     <string name="str_agent_question_skip">跳过</string>
     <string name="str_agent_intercept_hint">AI正在回复中，请稍后</string>
     <string name="record_name">粤ICP备2026052853号-6A</string>
