@@ -28,10 +28,11 @@
     <string name="alignment_progress">对齐度飙升！从%1$s到%2$s</string>
     <string name="upload_success_helping_text">现在，小虾可以为你做面试准备了</string>
     <string name="pending_confirmation">待确认</string>
-    <string name="resume_recognized_confirm">识别到你有简历上传，请确认</string>
+    <string name="resume_recognized_confirm">识别到简历文件，请确认这是你的简历吗</string>
     <string name="resume_recognized_desc">这会非常重要，我会根据简历来了解你。</string>
     <string name="not_my_resume">不是，重新上传</string>
-    <string name="confirm_my_resume">我的简历</string>
+    <string name="confirm_my_resume">是我的简历</string>
+    <string name="confirm_my_resume2">我的简历</string>
     <string name="confirm_delete">确认删除</string>
     <string name="copy_success">复制成功</string>
     <string name="mp3">MP3</string>
