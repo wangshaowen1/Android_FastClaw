@@ -20,8 +20,9 @@ import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.parseMessage
 import com.shiyuan.fastclaw.core.ext.toPaymentParams
-import com.shiyuan.fastclaw.core.model.H5PayInfo
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
+import com.shiyuan.fastclaw.core.network.apis.entity.PointConfigInfo
+import com.shiyuan.fastclaw.core.network.apis.request.TradePayCreateBody
 import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
@@ -96,7 +97,7 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
      */
     val userPoints = MutableLiveData<String>("0")
 
-
+    val rechargePackages = MutableLiveData<List<PointConfigInfo>>()
 
     var underStandingScore = MutableLiveData<UnderstandingScore>()
 
@@ -189,19 +190,30 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
         }
     }
 
-    fun rechargeShrimp(payment: PaymentClient.PaymentMethod, amountLi: Long) {
-        val payInfo = H5PayInfo(
-            payWay = if (payment == PaymentClient.PaymentMethod.Alipay) "zfb" else "wx",
-            amount = amountLi
-        )
+    fun getRechargePackages() {
+        val user = User.Companion.get()
+        user.token?.let {
+            launch {
+                response(
+                    bean = mRepo.api.queryPointConfigList(),
+                    result = {
+                        rechargePackages.postValue(data?.pointConfigList.orEmpty())
+                    }
+                )
+            }
+        }
+    }
+
+    fun rechargeShrimp(payment: PaymentClient.PaymentMethod, goodsCode: Long) {
+        val payBody = TradePayCreateBody(goodsCode = goodsCode)
         pay(
             payment = payment,
             dataSource = { _, _, responseSender ->
                 launchWithLoading(true, {
                     val response = if (payment == PaymentClient.PaymentMethod.Alipay) {
-                        mRepo.api.h5PayAlipay(payInfo)
+                        mRepo.api.createAppAlipayOrder(payBody)
                     } else {
-                        mRepo.api.h5PayWx(payInfo)
+                        mRepo.api.createAppWechatPayOrder(payBody)
                     }
                     response.data?.takeIf { response.isSuccess }?.let { data ->
                         setupBaoFuData(data)
@@ -211,7 +223,7 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
                     responseSender?.sendError(it)
                 })
             },
-            requestBody = payInfo,
+            requestBody = payBody,
             onPaid = {
                 if (isBaoFu.get()) {
                     checkBaoFuResult(

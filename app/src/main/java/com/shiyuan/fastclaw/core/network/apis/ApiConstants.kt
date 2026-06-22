@@ -89,7 +89,7 @@ object ApiConstants {
     /**
      * 获取订单状态
      */
-    const val GET_ORDER_STATUS = "order/getOrderStatus"
+    const val GET_ORDER_STATUS = "/api/candidate/app/trade/pay/order/status/query"
 
     const val APP_BANNERS = "app/home/banner/list"
 
@@ -140,6 +140,16 @@ object ApiConstants {
     const val H5_PAY_ALIPAY = "app/forward/h5/createAppAliPay"
 
     /**
+     * 创建app微信支付订单
+     */
+    const val CREATE_APP_WECHAT_PAY_ORDER = "/api/candidate/app/trade/pay/wechat/create"
+
+    /**
+     * 创建app支付宝支付订单
+     */
+    const val CREATE_APP_ALIPAY_ORDER = "/api/candidate/app/trade/pay/alipay/create"
+
+    /**
      * 敏感词校验
      */
     const val SENSITIVE_WORD_CHECK = "ai/content-security/text/check"
@@ -168,6 +178,11 @@ object ApiConstants {
      * 分页查询积分交易明细
      */
     const val QUERY_USER_POINTS_PAGE = "api/candidate/points/transaction/page"
+
+    /**
+     * 查询积分充值配置列表
+     */
+    const val QUERY_POINT_CONFIG_LIST = "/api/candidate/app/trade/point/config/list"
 
     const val COMMON_INIT = "/api/app/common/init"
     const val SIGN_OUT = "/candidate/auth/sign-out"
