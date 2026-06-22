@@ -49,6 +49,7 @@
                 android:textColor="@color/color_90_000000"
                 android:textSize="13sp" />
         </LinearLayout>
+
     </FrameLayout>
 
     <LinearLayout

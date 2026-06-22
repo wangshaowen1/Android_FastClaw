@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="58dp"
+    android:background="@drawable/bg_invite_copy_success"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp">
+
+    <ImageView
+        android:layout_width="19dp"
+        android:layout_height="19dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_invite_copy_success" />
+
+    <TextView
+        android:id="@+id/tv_success_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="@string/invite_copy_success"
+        android:textColor="@color/color_75_3c3c43"
+        android:textSize="14sp" />
+</LinearLayout>

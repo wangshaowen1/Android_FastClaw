@@ -8,9 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.AppBarLayout
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
-import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
@@ -59,10 +57,7 @@ class InviteFriendsActivity :
     }
 
     private fun showInviteShareDialog() {
-        val dialog = InviteShareDialog.show(supportFragmentManager)
-        dialog.onShareActionClick = {
-            R.string.invite_share_coming_soon.getResString().showToast()
-        }
+        InviteShareDialog.show(supportFragmentManager)
     }
 
     private fun setupToolbarBackgroundAnimation() {
