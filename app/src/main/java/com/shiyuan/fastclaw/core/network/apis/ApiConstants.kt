@@ -180,6 +180,11 @@ object ApiConstants {
     const val QUERY_USER_POINTS_PAGE = "api/candidate/points/transaction/page"
 
     /**
+     * 分页查询邀请记录
+     */
+    const val QUERY_INVITE_RECORD_PAGE = "api/candidate/h5/invite/record/page"
+
+    /**
      * 查询积分充值配置列表
      */
     const val QUERY_POINT_CONFIG_LIST = "/api/candidate/app/trade/point/config/list"

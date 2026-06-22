@@ -76,27 +76,27 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_xs"
-                        android:text="@string/invite_status_registered"
+                        android:text="@{item.data.registerStatusText}"
                         android:textColor="@color/color_80_121D27"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        tools:text="已注册" />
 
-                    <TextView
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
                         android:layout_marginStart="@dimen/spacing_s"
-                        android:background="@drawable/bg_15d173_r50"
-                        android:gravity="center"
-                        android:text="@string/invite_status_checked"
-                        android:textColor="@color/white"
-                        android:textSize="8sp" />
+                        android:contentDescription="@null"
+                        android:src="@{item.data.experienceStatusIconRes}"
+                        tools:src="@drawable/ic_invite_status_unexperienced" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/spacing_xs"
-                        android:text="@string/invite_status_experienced"
+                        android:text="@{item.data.experienceStatusText}"
                         android:textColor="@color/color_75_3c3c43"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        tools:text="已体验" />
                 </LinearLayout>
             </LinearLayout>
 

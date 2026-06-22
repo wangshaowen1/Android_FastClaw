@@ -58,6 +58,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
+import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
@@ -304,6 +305,12 @@ interface ApiService {
      */
     @POST(ApiConstants.QUERY_USER_POINTS_PAGE)
     suspend fun queryUserPointsPage(@Body body: PagedBody): ApiResponse<PagedList<UserPointItemData>?>
+
+    /**
+     * 分页查询邀请记录
+     */
+    @POST(ApiConstants.QUERY_INVITE_RECORD_PAGE)
+    suspend fun queryInviteRecordPage(@Body body: PagedBody): ApiResponse<InviteRecordPageData?>
 
     /**
      * 查询虾条充值配置列表

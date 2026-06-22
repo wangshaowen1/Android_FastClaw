@@ -46,7 +46,10 @@ class InviteFriendsActivity :
             isNestedScrollingEnabled = false
             adapter = recordAdapter
         }
-        recordAdapter.submitList(mRealVM.inviteRecordItems)
+        mRealVM.inviteRecordItems.observe(this) { items ->
+            recordAdapter.submitList(items)
+        }
+        mRealVM.loadInviteRecords()
         binding.tvInviteNow.setOnSingleClickListener {
             showInviteShareDialog()
         }
