@@ -30,6 +30,11 @@ import com.shiyuan.fastclaw.core.network.apis.request.LoginByPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePageBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePullBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewAudioTokenBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgressBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportRetryBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.PlayEventBody
@@ -59,6 +64,9 @@ import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewAudioTokenData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportProgressData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewSessionStartData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
@@ -317,6 +325,22 @@ interface ApiService {
     @Streaming
     @POST(ApiConstants.JOB_AGENT_STREAM)
     fun sendMsgToAgent(@Body body: JobAgentStreamBody): Flow<SSEvent>
+
+    @POST(ApiConstants.MOCK_INTERVIEW_SESSION_START)
+    suspend fun startMockInterviewSession(@Body body: MockInterviewStartBody): ApiResponse<MockInterviewSessionStartData?>
+
+    @Streaming
+    @POST(ApiConstants.MOCK_INTERVIEW_STREAM)
+    fun mockInterviewStream(@Body body: MockInterviewStreamBody): Flow<SSEvent>
+
+    @POST(ApiConstants.MOCK_INTERVIEW_AUDIO_TOKEN_QUERY)
+    suspend fun queryMockInterviewAudioToken(@Body body: MockInterviewAudioTokenBody): ApiResponse<MockInterviewAudioTokenData?>
+
+    @POST(ApiConstants.MOCK_INTERVIEW_REPORT_PROGRESS_QUERY)
+    suspend fun queryMockInterviewReportProgress(@Body body: MockInterviewReportProgressBody): ApiResponse<MockInterviewReportProgressData?>
+
+    @POST(ApiConstants.MOCK_INTERVIEW_REPORT_RETRY)
+    suspend fun retryMockInterviewReport(@Body body: MockInterviewReportRetryBody): ApiResponse<MockInterviewReportProgressData?>
 
     /**
      * 取消流式生成（求职 Agent）

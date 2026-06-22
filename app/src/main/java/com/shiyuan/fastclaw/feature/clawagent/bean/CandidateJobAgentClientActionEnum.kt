@@ -48,13 +48,18 @@ enum class CandidateJobAgentClientActionEnum {
     QUESTION_OPTION_SUBMIT,
 
     /**
-     * 打开公司背调
+     * 打开公司背调卡片
      */
     OPEN_COMPANY_BACKGROUND_ENTRY,
 
     /**
      * 开始生成公司背调报告
      */
-    GENERATE_COMPANY_BACKGROUND_REPORT
+    GENERATE_COMPANY_BACKGROUND_REPORT,
+
+    /**
+     * 打开模拟面试卡片
+     */
+    MOCK_INTERVIEW_QUICK_ENTRY,
 
 }

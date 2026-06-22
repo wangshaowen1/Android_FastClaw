@@ -1,5 +1,7 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
+import com.google.gson.JsonObject
+
 /**
  * 进入或恢复会话响应数据
  *
@@ -118,6 +120,14 @@ data class JobAgentMessage(
 
     /** 已有对话 ID；为空表示服务端恢复或创建 */
     val conversationId: String? = null,
+)
+
+data class InterviewAgentMessage(
+    val messageId: String? = null,
+    val interviewId: String? = null,
+    val messageSeq: Long? = null,
+    val messageType: String? = null,
+    val payload: JsonObject? = null,
 )
 
 data class PayLoadBean(
