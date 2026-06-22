@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="13dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="15dp"
+    app:background_normalColor="@color/color_70_ffffff"
+    app:super_corner="16dp">
+
+    <ImageView
+        android:id="@+id/iv_report_icon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@drawable/ic_company_background_report_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_report_title"
+        android:layout_width="0dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="10dp"
+        android:gravity="center_vertical"
+        android:text="@string/str_agent_company_background_report_title"
+        android:textColor="@color/color_000000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv_report_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_report_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_report_icon" />
+
+    <View
+        android:id="@+id/v_report_divider"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_marginTop="12dp"
+        android:background="@color/color_10_000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_report_icon" />
+
+    <ImageView
+        android:id="@+id/iv_generating"
+        android:layout_width="85dp"
+        android:layout_height="87dp"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/img_company_background_generating"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_report_divider" />
+
+    <ImageView
+        android:id="@+id/tv_step1_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="17dp"
+        android:src="@drawable/ic_company_background_report_check"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_report_divider" />
+
+    <TextView
+        android:id="@+id/tv_step1"
+        style="@style/CompanyBackgroundReportStepText"
+        android:layout_marginStart="10dp"
+        android:text="@string/str_agent_company_background_report_step1"
+        app:layout_constraintBottom_toBottomOf="@id/tv_step1_icon"
+        app:layout_constraintStart_toEndOf="@id/tv_step1_icon"
+        app:layout_constraintTop_toTopOf="@id/tv_step1_icon" />
+
+    <ImageView
+        android:id="@+id/tv_step2_icon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="14dp"
+        android:src="@drawable/ic_company_background_report_check_2"
+        app:layout_constraintStart_toStartOf="@id/tv_step1_icon"
+        app:layout_constraintTop_toBottomOf="@id/tv_step1_icon" />
+
+    <TextView
+        android:id="@+id/tv_step2"
+        style="@style/CompanyBackgroundReportStepText"
+        android:text="@string/str_agent_company_background_report_step2"
+        app:layout_constraintBottom_toBottomOf="@id/tv_step2_icon"
+        app:layout_constraintStart_toStartOf="@id/tv_step1"
+        app:layout_constraintTop_toTopOf="@id/tv_step2_icon" />
+
+    <ImageView
+        android:id="@+id/pb_step3"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="14dp"
+        android:src="@drawable/ic_company_background_report_loading"
+        app:layout_constraintStart_toStartOf="@id/tv_step1_icon"
+        app:layout_constraintTop_toBottomOf="@id/tv_step2_icon" />
+
+    <TextView
+        android:id="@+id/tv_step3"
+        style="@style/CompanyBackgroundReportStepText"
+        android:text="@string/str_agent_company_background_report_step3"
+        android:textColor="@color/color_55_3c3c43"
+        app:layout_constraintBottom_toBottomOf="@id/pb_step3"
+        app:layout_constraintStart_toStartOf="@id/tv_step1"
+        app:layout_constraintTop_toTopOf="@id/pb_step3" />
+</com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>

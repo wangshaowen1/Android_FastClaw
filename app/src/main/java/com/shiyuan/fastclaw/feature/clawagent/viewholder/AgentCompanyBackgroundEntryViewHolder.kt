@@ -9,6 +9,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.afterTextChanged
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundEntryPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyStartBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -17,9 +18,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCompanyBackgroundEntryBinding, ) : RecyclerView.ViewHolder(binding.root) {
 
-    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
-
-    var onCompanyStartClickListener: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
+    var onCompanyStartClickListener: (item: ClawAgentMessageInfo, action: CardAction, data: CompanyStartBean) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -32,7 +31,7 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
 
         binding.tvAction.setOnSingleClickListener {
             action?.let {
-                onCompanyStartClickListener(item, action)
+                onCompanyStartClickListener(item, action, CompanyStartBean(binding.etSearch.text.toString()))
             }
         }
 

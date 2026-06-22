@@ -39,4 +39,12 @@ data class ClawAgentMessageInfo(
      * 消息元数据
      */
     val metaData: String? = null,
+
+    val messagePhase: String? = null,
+
+    val groupStatus: String? = null,
+
+    val displayPolicy: String? = null,
+
+    val replaceTargetMessageId: String? = null,
 ): Parcelable

@@ -769,6 +769,17 @@
     <string name="str_agent_company_background_action">开始背调</string>
     <string name="str_agent_company_background_action_free">(免费3次)</string>
     <string name="str_agent_company_background_traceable">信息全部可追述,工商·司法·融资交叉验证</string>
+    <string name="str_agent_company_background_report_title">公司背调报告</string>
+    <string name="str_agent_company_background_report_failed_title">生成失败</string>
+    <string name="str_agent_company_background_report_failed_desc">生成加载超时，请点击重试</string>
+    <string name="str_agent_company_background_report_regenerate">重新生成</string>
+    <string name="str_agent_company_background_report_view">查看报告</string>
+    <string name="str_agent_company_background_report_step1">公司基础信息整理中</string>
+    <string name="str_agent_company_background_report_step2">核心产品&amp;业务调研中</string>
+    <string name="str_agent_company_background_report_step3">法律诉讼和风险扫描</string>
+    <string name="str_agent_company_background_report_company_default">北京字节跳动有限公司</string>
+    <string name="str_agent_company_background_report_time_default">2026/05/16 13:30:12</string>
+    <string name="str_agent_company_background_report_time">报告生成时间  %1$s</string>
     <string name="str_agent_today_progress_title">今日进展</string>
     <string name="str_agent_today_progress_align_title">我们的关系又近了一步</string>
     <string name="str_agent_today_progress_align_delta">对齐度+%1$s</string>

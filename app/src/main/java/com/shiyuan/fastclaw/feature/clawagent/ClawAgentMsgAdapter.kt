@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportDoneBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportFailedBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportGeneratingBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentLeftBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentNoJobsFoundBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentPendingConfirmBinding
@@ -20,11 +23,15 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyStartBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawDataTest
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundEntryViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportDoneViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportFailedViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportGeneratingViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPendingConfirmViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
@@ -64,6 +71,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     /** 历史简历确认卡 确认(true)/否认(false) 点击（B 方案：仅暴露，提交后续统一接） */
     var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
 
+    /** 公司背调 - 开始背调 */
+    var onCompanyStartClickListener: (item: ClawAgentMessageInfo, action: CardAction, data: CompanyStartBean) -> Unit = { _, _ , _ -> }
+
     init {
         // 用户消息（靠右气泡）
         register(TYPE_USER_TEXT, { i, p -> SendViewHolder(ItemMsgUserRightBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
@@ -77,6 +87,23 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_COMPANY_BACKGROUND_ENTRY,
             { i, p ->
                 AgentCompanyBackgroundEntryViewHolder(ItemMsgAgentCompanyBackgroundEntryBinding.inflate(i, p, false)).apply {
+                    onCompanyStartClickListener = { item, action, data -> onCompanyStartClickListener(item, action, data) }
+                }
+            }) { h, item -> h.bind(item) }
+        // 公司背调报告卡：生成中
+        register(TYPE_COMPANY_BACKGROUND_REPORT_GENERATING,
+            { i, p -> AgentCompanyBackgroundReportGeneratingViewHolder(ItemMsgAgentCompanyBackgroundReportGeneratingBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        //公司背调报告卡：失败
+        register(TYPE_COMPANY_BACKGROUND_REPORT_FAILED,
+            { i, p ->
+                AgentCompanyBackgroundReportFailedViewHolder(ItemMsgAgentCompanyBackgroundReportFailedBinding.inflate(i, p, false)).apply {
+                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                }
+            }) { h, item -> h.bind(item) }
+        //公司背调报告卡：成功
+        register(TYPE_COMPANY_BACKGROUND_REPORT_DONE,
+            { i, p ->
+                AgentCompanyBackgroundReportDoneViewHolder(ItemMsgAgentCompanyBackgroundReportDoneBinding.inflate(i, p, false)).apply {
                     onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item) }
@@ -251,5 +278,15 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 背景调查入口卡 */
         const val TYPE_COMPANY_BACKGROUND_ENTRY = 15
+
+        /** 公司背调报告 - 生成中 */
+        const val TYPE_COMPANY_BACKGROUND_REPORT_GENERATING = 16
+
+        /** 公司背调报告 - 生成失败 */
+        const val TYPE_COMPANY_BACKGROUND_REPORT_FAILED = 17
+
+        /** 公司背调报告 - 生成成功 */
+        const val TYPE_COMPANY_BACKGROUND_REPORT_DONE = 18
     }
+
 }

@@ -467,6 +467,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
 
+            if (msg.displayPolicy == POLICY_REPLACE_TARGET) {
+                msg.replaceTargetMessageId?.takeIf { it.isNotBlank() }?.let { targetId ->
+                    messageStore.remove(targetId)
+                    serverUserMessageKeyToLocalKey[targetId]?.let { localKey ->
+                        messageStore.remove(localKey)
+                    }
+                }
+            }
+
             // 简历待上传/失败/确认流程卡类型合并只展示最新一张
             val rawKey = msg.storeKey() ?: return@forEach
             if (msg.isLatestOnlyResumeCard()) {
@@ -545,6 +554,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             receiveObj = if (sender == SENDER_USER) SENDER_AGENT else SENDER_USER,
             content = content,
             metaData = payloadJson,
+            messagePhase = messagePhase,
+            groupStatus = groupStatus,
+            displayPolicy = displayPolicy,
+            replaceTargetMessageId = replaceTargetMessageId,
         )
     }
 
@@ -571,6 +584,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 CARD_JOB_SEARCHING -> ClawAgentMsgAdapter.TYPE_SEARCHING_JOBS
                 CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
                 CARD_COMPANY_BACKGROUND_ENTRY -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_ENTRY
+                CARD_COMPANY_BACKGROUND_REPORT -> resolveCompanyBackgroundReportItemType(msg)
                 // todo: v1.2 暂时不做
 //                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
 //                CARD_TODAY_PROGRESS -> ClawAgentMsgAdapter.TYPE_TODAY_PROGRESS
@@ -600,6 +614,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         return when (inputMode) {
             CoreQuestionPayloadBean.MODE_ARRAY_FORM -> ClawAgentMsgAdapter.TYPE_TABLE_FORM
             else -> ClawAgentMsgAdapter.TYPE_QUESTION
+        }
+    }
+
+    private fun resolveCompanyBackgroundReportItemType(msg: JobAgentMessage): Int {
+        return when {
+            msg.messagePhase == PHASE_ERROR -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_FAILED
+            msg.messagePhase == PHASE_RESULT -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_DONE
+            else -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
         }
     }
 
@@ -941,11 +963,17 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
         // messagePhase / messageStatus（思考态判定）
         private const val PHASE_PROCESSING = "PROCESSING"
+        private const val PHASE_ERROR = "ERROR"
+        private const val PHASE_RESULT = "RESULT"
         private const val STATUS_STREAMING = "STREAMING"
+
+        private const val GROUP_STATUS_FAILED = "FAILED"
+        private const val GROUP_STATUS_COMPLETED = "COMPLETED"
 
         // displayPolicy（端侧展示策略）：think 等中间态消息在结果消息到达后的收口方式
         private const val POLICY_REPLACE_ON_TERMINAL = "REPLACE_ON_TERMINAL"
         private const val POLICY_DISMISS_ON_TERMINAL = "DISMISS_ON_TERMINAL"
+        private const val POLICY_REPLACE_TARGET = "REPLACE_TARGET"
 
         // resumeUploadStatus：上传简历卡状态机（PARSE_SUCCESS / PARSE_FAILED 路由到独立卡）
         private const val UPLOAD_STATUS_PARSE_SUCCESS = "PARSE_SUCCESS"
@@ -970,6 +998,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_INTRODUCE_YOURSELF = "CARD_INTRODUCE_YOURSELF"
         // 公司背调卡片
         private const val CARD_COMPANY_BACKGROUND_ENTRY = "COMPANY_BACKGROUND_ENTRY"
+        // 公司背调报告卡片
+        private const val CARD_COMPANY_BACKGROUND_REPORT = "COMPANY_BACKGROUND_REPORT"
         //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
 
         // 寻找岗位中
