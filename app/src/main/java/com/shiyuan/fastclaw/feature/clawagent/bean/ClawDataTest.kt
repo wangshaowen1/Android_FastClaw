@@ -18,7 +18,7 @@ object ClawDataTest {
 
     fun getDataList(newList: List<ClawAgentMessageInfo>): List<ClawAgentMessageInfo> {
         var dataList = newList.toMutableList()
-        /*dataList.add(2, ClawAgentMessageInfo(
+        /*dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_QUESTION,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -55,7 +55,7 @@ object ClawDataTest {
                 )
             )
         ))*/
-       /* dataList.add(2, ClawAgentMessageInfo(
+       /* dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_QUESTION,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -109,7 +109,7 @@ object ClawDataTest {
                 )
             )
         ))*/
-        dataList.add(2, ClawAgentMessageInfo(
+        dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_COMPANY_BACKGROUND_ENTRY,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -146,7 +146,7 @@ object ClawDataTest {
                 )
             )
         ))
-        dataList.add(2, ClawAgentMessageInfo(
+        dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -183,7 +183,7 @@ object ClawDataTest {
                 )
             )
         ))
-        dataList.add(2, ClawAgentMessageInfo(
+        dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_COMPANY_BACKGROUND_REPORT_FAILED,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -220,7 +220,7 @@ object ClawDataTest {
                 )
             )
         ))
-        dataList.add(2, ClawAgentMessageInfo(
+        dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_COMPANY_BACKGROUND_REPORT_DONE,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -257,7 +257,7 @@ object ClawDataTest {
                 )
             )
         ))
-        dataList.add(2, ClawAgentMessageInfo(
+        dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_ENTRY,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -294,7 +294,7 @@ object ClawDataTest {
                 )
             )
         ))
-        dataList.add(2, ClawAgentMessageInfo(
+        dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_REPORT_GENERATING,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -331,7 +331,7 @@ object ClawDataTest {
                 )
             )
         ))
-        dataList.add(2, ClawAgentMessageInfo(
+        dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_REPORT_FAILED,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -368,7 +368,7 @@ object ClawDataTest {
                 )
             )
         ))
-        dataList.add(2, ClawAgentMessageInfo(
+        dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_REPORT_DONE,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
