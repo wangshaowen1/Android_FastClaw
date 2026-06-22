@@ -238,7 +238,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 公司背调 - 开始背调
-        msgAdapter.onCompanyStartClickListener = { item, action, data ->
+        msgAdapter.onCompanyStartClickListener = { item, action, companyData ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.sendAction(
@@ -246,7 +246,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     actionData = AgentMsgAction(
                         actionCode = CandidateJobAgentClientActionEnum.GENERATE_COMPANY_BACKGROUND_REPORT.name,
                         sourceMessageId = item.id,
-                        actionPayloadJson = GsonUtils.toJson(data)
+                        actionPayloadJson = GsonUtils.toJson(companyData)
                     )
                 )
             }
