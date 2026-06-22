@@ -65,6 +65,7 @@ import com.shiyuan.fastclaw.router.AppNavigator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /** 
  * @createtime 2026年05月20日 10:25
@@ -308,6 +309,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         FlowEventBus.postSticky(Events.ClawAgentEvent(salaryPayloadJson,AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED))
                     }
                 } else if (payload?.isWorkExperience() ?: false) { //工作经历
+                    if(mRealVM.currentRequestId.isNullOrEmpty()){
+                        mRealVM.currentRequestId = UUID.randomUUID().toString()
+                    }
                     WorkExperienceDialog.show(
                         manager = childFragmentManager,
                         questionQueueId = queueId,
@@ -320,6 +324,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         }
                     )
                 } else if (payload?.isEducationInfo() ?: false) { //教育经历
+                    if(mRealVM.currentRequestId.isNullOrEmpty()){
+                        mRealVM.currentRequestId = UUID.randomUUID().toString()
+                    }
                     EducationExperienceDialog.show(
                         manager = childFragmentManager,
                         questionQueueId = queueId,
@@ -332,6 +339,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         }
                     )
                 } else if (payload?.isProjectExperience() ?: false) { //项目经历
+                    if(mRealVM.currentRequestId.isNullOrEmpty()){
+                        mRealVM.currentRequestId = UUID.randomUUID().toString()
+                    }
                     ProjectExperienceDialog.show(
                         manager = childFragmentManager,
                         questionQueueId = queueId,
@@ -344,6 +354,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         }
                     )
                 } else if (payload?.isSkills() ?: false) { //技能
+                    if(mRealVM.currentRequestId.isNullOrEmpty()){
+                        mRealVM.currentRequestId = UUID.randomUUID().toString()
+                    }
                     CertificateSkillsAwardsDialog.show(
                         manager = childFragmentManager,
                         type = payload.attributeGroupCode ?: "",
@@ -357,6 +370,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         }
                     )
                 } else if (payload?.isCertificates() ?: false) { //证书
+                    if(mRealVM.currentRequestId.isNullOrEmpty()){
+                        mRealVM.currentRequestId = UUID.randomUUID().toString()
+                    }
                     CertificateSkillsAwardsDialog.show(
                         manager = childFragmentManager,
                         type = payload.attributeGroupCode ?: "",
@@ -370,6 +386,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         }
                     )
                 } else if (payload?.isAwards() ?: false) { //奖项
+                    if(mRealVM.currentRequestId.isNullOrEmpty()){
+                        mRealVM.currentRequestId = UUID.randomUUID().toString()
+                    }
                     CertificateSkillsAwardsDialog.show(
                         manager = childFragmentManager,
                         type = payload.attributeGroupCode ?: "",

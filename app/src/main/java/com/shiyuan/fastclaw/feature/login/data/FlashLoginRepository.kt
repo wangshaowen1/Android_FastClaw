@@ -1,6 +1,5 @@
 package com.shiyuan.fastclaw.feature.login.data
 
-import com.fm.openinstall.OpenInstall
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
@@ -25,9 +24,6 @@ class FlashLoginRepository : ThirdLoginRepository() {
         api.loginByFlashMobile(LoginByFlashMobileBody(flashValidateToken, Config.get().installData))
             .apply {
                 val isNewRegister = data?.isNewRegistration() == true
-                if (isNewRegister && Config.get().installFromOpenInstall()) {
-                    OpenInstall.reportRegister()
-                }
 //                EventManager.onAppTrack(
 //                    AppEvent.JG_ACTION_USER_LOGIN,
 //                    mapOf(GrowingIO.KEY_ALL_IS_NEW_USER to if (isNewRegister) "yes" else "no", GrowingIO.KEY_ALL_LOGIN_TYPE to "phone")
@@ -58,9 +54,6 @@ class FlashLoginRepository : ThirdLoginRepository() {
                 )
             ).apply {
                 val isNewRegister = data?.isNewRegistration() == true
-                if (isNewRegister && Config.get().installFromOpenInstall()) {
-                    OpenInstall.reportRegister()
-                }
 //                EventManager.onAppTrack(
 //                    AppEvent.JG_ACTION_USER_LOGIN,
 //                    mapOf(

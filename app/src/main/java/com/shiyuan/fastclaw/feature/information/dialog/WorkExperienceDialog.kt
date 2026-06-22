@@ -61,7 +61,6 @@ class WorkExperienceDialog :
          */
         fun show(
             manager: FragmentManager,
-            attributeData: AttributeArrayQueryData? = null,
             onAddClick: (() -> Unit)? = null,
             questionQueueId: String?,
             attributeGroupCode: String?,
@@ -80,9 +79,6 @@ class WorkExperienceDialog :
             this.onFieldTreeItemClick = onFieldTreeItemClick
             this.onCompleteClick = onCompleteClick
             return WorkExperienceDialog().apply {
-                arguments = Bundle().apply {
-                    attributeData?.let { putParcelable(ARG_ATTRIBUTE_DATA, it) }
-                }
                 show(manager)
             }
         }
@@ -158,7 +154,7 @@ class WorkExperienceDialog :
             // 点击进入编辑页
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->
-                    WorkActivity.start(requireActivity(), true, attr, position2)
+                    WorkActivity.start(requireActivity(), true, attr, position2, clientRequestId)
                 }
             }
         }
@@ -166,8 +162,6 @@ class WorkExperienceDialog :
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
-        // 解析参数 → 初始化列表 → 初始化视图 → 绑定数据
-        attributeData = getAttributeData()
         initRecyclerView()
         initView()
         queryAttributeArray()
@@ -206,7 +200,7 @@ class WorkExperienceDialog :
                 // 3. 将副本插入到列表第0个位置
                 treeList.add(0, copy)
             }
-            WorkActivity.start(requireActivity(), false, attributeData, 0)
+            WorkActivity.start(requireActivity(), false, attributeData, 0, clientRequestId)
         }
         // 完成：关闭弹窗并通知调用方
         binding.clWcExperience.setOnSingleClickListener {
@@ -261,18 +255,7 @@ class WorkExperienceDialog :
         fieldTreeAdapter.submitList(fieldTree)
     }
 
-    /**
-     * 兼容不同 Android 版本的 Parcelable 读取方式。
-     */
-    @Suppress("DEPRECATION")
-    private fun getAttributeData(): AttributeArrayQueryData? {
-        val bundle = arguments ?: return null
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            bundle.getParcelable(ARG_ATTRIBUTE_DATA, AttributeArrayQueryData::class.java)
-        } else {
-            bundle.getParcelable(ARG_ATTRIBUTE_DATA)
-        }
-    }
+
 
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)

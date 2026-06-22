@@ -92,7 +92,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
 
     fun  uploadResume(){
         //上传简历
-        UploadResumeDialog.show(manager = this.supportFragmentManager) { fileInfo ->
+        UploadResumeDialog.show(manager = this.supportFragmentManager,false) { fileInfo ->
             if (fileInfo != null) {
                 mRealVM.submitResume(fileInfo.uri) { resumeFileUrl ->
                     mRealVM.submitResumeUpload(resumeFileUrl,fileInfo.fileName,mRealVM.resumeListData.value?.resumeTaskId)

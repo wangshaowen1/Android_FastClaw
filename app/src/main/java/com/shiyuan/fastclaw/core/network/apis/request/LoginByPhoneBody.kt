@@ -7,7 +7,7 @@ import com.shiyuan.fastclaw.common.utils.CheckSumBuilder
  * @author xiaoowuu
  * @param telNum 手机号码
  * @param smsValidateCode 验证码
- * @param inviteData 邀请数据--openinstall参数  encodeData
+ * @param inviteData 邀请数据  encodeData
  */
 data class LoginByPhoneBody(
     val telNum: String?,

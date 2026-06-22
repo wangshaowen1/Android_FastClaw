@@ -342,7 +342,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="6.5dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="@string/confirm_my_resume"
+                    android:text="@string/confirm_my_resume2"
                     android:textColor="@color/color_90_000000"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="@id/iv_jl"

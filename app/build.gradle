@@ -139,8 +139,6 @@ android {
 
             manifestPlaceholders = [
                     UMENG_APP_KEY      : "6a1ec4919a7f376488ee7a59",
-                    OPENINSTALL_APP_KEY: "YOUR_OPENINSTALL_KEY",
-                    OPENINSTALL_SCHEME : "YOUR_OPENINSTALL_KEY",
                     qqappid            : "YOUR_QQ_APP_ID",
             ]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -179,8 +177,6 @@ android {
             signingConfig signingConfigs.debug
             manifestPlaceholders = [
                     UMENG_APP_KEY      : "6a1ec4919a7f376488ee7a59",
-                    OPENINSTALL_APP_KEY: "YOUR_OPENINSTALL_KEY",//gjn2wu
-                    OPENINSTALL_SCHEME : "YOUR_OPENINSTALL_KEY",
                     qqappid            : "YOUR_QQ_APP_ID",
             ]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

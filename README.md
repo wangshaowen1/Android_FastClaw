@@ -191,7 +191,6 @@ signingConfigs {
 | `YOUR_DY_CLIENT_KEY` | 抖音 | defaultConfig |
 | `YOUR_GROWING_SCHEME` | GrowingIO | defaultConfig + manifestPlaceholders |
 | `YOUR_KWAI_APP_ID` | 快手 | manifestPlaceholders |
-| `YOUR_OPENINSTALL_KEY` | OpenInstall | manifestPlaceholders |
 
 ### 3. 更新服务器地址
 

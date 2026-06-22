@@ -49,7 +49,6 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
          */
         fun show(
             manager: FragmentManager,
-            attributeData: AttributeArrayQueryData? = null,
             questionQueueId: String? = null,
             attributeGroupCode: String? = null,
             clientRequestId: String? = null,
@@ -68,9 +67,6 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
             this.onFieldTreeItemClick = onFieldTreeItemClick
             this.onCompleteClick = onCompleteClick
             return ProjectExperienceDialog().apply {
-                arguments = Bundle().apply {
-                    attributeData?.let { putParcelable(ARG_ATTRIBUTE_DATA, it) }
-                }
                 show(manager)
             }
         }
@@ -141,7 +137,7 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
             // 点击进入编辑页
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->
-                    ProjectActivity.start(requireActivity(), true, attr, position2)
+                    ProjectActivity.start(requireActivity(), true, attr, position2, clientRequestId)
                 }
             }
 
@@ -150,8 +146,6 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
 
     override fun onViewModelCreated() {
         super.onViewModelCreated()
-        // 解析参数 → 初始化列表 → 初始化视图 → 绑定数据
-        attributeData = getAttributeData()
         initRecyclerView()
         initView()
         queryAttributeArray()
@@ -190,7 +184,7 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
                 // 3. 将副本插入到列表第0个位置
                 treeList.add(0, copy)
             }
-            ProjectActivity.start(requireActivity(), false, attributeData,0)
+            ProjectActivity.start(requireActivity(), false, attributeData,0, clientRequestId)
         }
         // 完成：关闭弹窗并通知调用方
         binding.clWcExperience.setOnSingleClickListener {
@@ -243,18 +237,7 @@ class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExpe
         fieldTreeAdapter.submitList(fieldTree)
     }
 
-    /**
-     * 兼容不同 Android 版本的 Parcelable 读取方式。
-     */
-    @Suppress("DEPRECATION")
-    private fun getAttributeData(): AttributeArrayQueryData? {
-        val bundle = arguments ?: return null
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            bundle.getParcelable(ARG_ATTRIBUTE_DATA, AttributeArrayQueryData::class.java)
-        } else {
-            bundle.getParcelable(ARG_ATTRIBUTE_DATA)
-        }
-    }
+
 
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)

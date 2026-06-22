@@ -36,6 +36,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         // 字段编码
         private const val FIELD_SKILL_NAME = "skillName"
         private const val FIELD_PROFICIENCY = "proficiency"
+        private const val CLIENTREQUESTID = "clientrequestid"
 
         /**
          * 启动技能编辑页。
@@ -45,12 +46,13 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
          * @param attributeData 字段数据。
          * @param position 当前编辑的实例索引。
          */
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null, clientRequestId: String? = null) {
             activity ?: return
             val intent = Intent(activity, SkillActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
                 position?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
+                clientRequestId?.let { putExtra(CLIENTREQUESTID, it) }
             }
             activity.startActivity(intent)
         }
@@ -61,6 +63,8 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
 
     // 当前编辑的字段实例索引
     private var position: Int = 0
+
+    private var clientRequestId: String? = null
 
     // 当前编辑实例的字段项集合
     private val currentInstance: MutableList<AttributeFieldItem> = mutableListOf()
@@ -101,6 +105,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
             intent?.getParcelableExtra(EXTRA_ATTRIBUTE_DATA)
         }
         position = intent?.getIntExtra(EXTRA_INSTANCE_INDEX, 0) ?: 0
+        clientRequestId = intent?.getStringExtra(CLIENTREQUESTID) ?:""
     }
 
     private fun initView() {
@@ -116,6 +121,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
                     onDelete = {
                         attributeData?.fieldTree?.removeAt(this.position)
                         attributeData?.draft = true
+                        attributeData?.clientRequestId =this.clientRequestId
                         attributeData?.let { mRealVM.attributeSave(it) }
                     }
                 )
@@ -124,6 +130,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
             binding.viewActionButtons.setOnPrimaryClickListener {
                 attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
                 attributeData?.draft = true
+                attributeData?.clientRequestId =this.clientRequestId
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
         } else {
@@ -133,6 +140,7 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
             binding.viewActionButtons.setOnPrimaryClickListener {
                 attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
                 attributeData?.draft = true
+                attributeData?.clientRequestId =this.clientRequestId
                 attributeData?.let { mRealVM.attributeSave(it) }
             }
         }

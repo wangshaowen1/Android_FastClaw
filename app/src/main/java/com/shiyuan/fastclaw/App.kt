@@ -11,8 +11,6 @@ import cn.android.security.APISecurity
 import com.alibaba.android.alpha.Task
 import com.blankj.utilcode.util.ProcessUtils
 import com.blankj.utilcode.util.Utils
-import com.fm.openinstall.Configuration
-import com.fm.openinstall.OpenInstall
 import com.github.gzuliyujiang.oaid.DeviceID
 import com.growingio.android.sdk.autotrack.AutotrackConfiguration
 import com.growingio.android.sdk.autotrack.GrowingAutotracker
@@ -23,7 +21,6 @@ import com.shiyuan.fastclaw.common.SP
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.UmInitConfig
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.ext.getInstall
 import com.shiyuan.fastclaw.core.manager.AdStrategyManager
 import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.core.manager.OssManager
@@ -180,9 +177,6 @@ class App : BaseApp() {
         ran = "100000"
 
         umInitConfig = UmInitConfig(applicationContext)
-        OpenInstall.setDebug(BuildConfig.DEBUG)
-        OpenInstall.preInit(this)
-
         Logger.i("App_", "starttime use:" + (System.currentTimeMillis() - start))
 
         builder.add(sdkConfigTask)
@@ -311,15 +305,6 @@ class App : BaseApp() {
             // Tencent.setIsPermissionGranted(true);
 
             if (ProcessUtils.isMainProcess()) {
-                /**
-                 * adEnabled 为 true 表示 SDK 需要获取广告追踪相关参数
-                 * f32a09dc-3312-d43e-6583-62fac13f33ae 是通过移动安全联盟获取到的 oaid
-                 */
-                val configuration = Configuration.Builder()
-                    .imei(DeviceID.getUniqueID(this))
-                    .build()
-                OpenInstall.init(this, configuration)
-                getInstall(5000, null)
             }
 
             CrashReport.setIsDevelopmentDevice(instance, BuildConfig.DEBUG)

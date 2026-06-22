@@ -218,8 +218,6 @@ ReplaceInFile $buildGradle '69005d13644c9e2c20677a21' 'YOUR_UMENG_APP_KEY'
 # Shanyan
 ReplaceInFile $buildGradle 'KfNYHDRd' 'YOUR_SHANYAN_APPID'
 ReplaceInFile $buildGradle 'VDE8Q8TY' 'YOUR_SHANYAN_APP_KEY'
-# OpenInstall
-ReplaceInFile $buildGradle 'dacw8u' 'YOUR_OPENINSTALL_KEY'
 # Server URLs
 ReplaceInFile $buildGradle 'https://kcp-test.kwaige.cn' 'https://your-dev-server.com'
 ReplaceInFile $buildGradle 'http://120.24.240.28:9010' 'https://your-preview-server.com'
