@@ -5,10 +5,12 @@ import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.afterTextChanged
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundEntryPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyStartBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -17,9 +19,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCompanyBackgroundEntryBinding, ) : RecyclerView.ViewHolder(binding.root) {
 
-    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
-
-    var onCompanyStartClickListener: (item: ClawAgentMessageInfo, action: CardAction) -> Unit = { _, _ -> }
+    var onCompanyClickListener: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyStartBean) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -30,10 +30,13 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
         /*binding.tvAction.isEnabled = enabled
         binding.tvAction.alpha = if (enabled) 1f else 0.5f*/
 
-        binding.tvAction.setOnSingleClickListener {
-            action?.let {
-                onCompanyStartClickListener(item, action)
+        binding.layoutAction.setOnSingleClickListener {
+            val companyName = binding.etSearch.text?.toString().orEmpty().trim()
+            if (companyName.isEmpty()) {
+                showToast(R.string.str_agent_company_background_input_empty)
+                return@setOnSingleClickListener
             }
+            onCompanyClickListener(item, action, CompanyStartBean(companyName))
         }
 
         binding.ivDelete.setOnSingleClickListener {

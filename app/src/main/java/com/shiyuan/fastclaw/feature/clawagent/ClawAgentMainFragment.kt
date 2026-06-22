@@ -237,6 +237,20 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 )
             }
         }
+        // 公司背调 - 开始背调
+        msgAdapter.onCompanyStartClickListener = { item, action, companyData ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.sendAction(
+                    desc = getString(R.string.str_agent_company_background_action),
+                    actionData = AgentMsgAction(
+                        actionCode = CandidateJobAgentClientActionEnum.GENERATE_COMPANY_BACKGROUND_REPORT.name,
+                        sourceMessageId = item.id,
+                        actionPayloadJson = GsonUtils.toJson(companyData)
+                    )
+                )
+            }
+        }
 
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
         msgAdapter.onDefaultActionClickAction = { item, action, queueId ->

@@ -28,6 +28,11 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_CANCEL
+import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_DOWN
+import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_MOVE
+import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_UP
+import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_VOLUME
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
@@ -40,6 +45,7 @@ import com.shiyuan.fastclaw.feature.report.HomeTreasuryFragment
 import com.shiyuan.fastclaw.feature.report.report.HomeReportFragment
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.router.AppRouter
+import com.shiyuan.fastclaw.widget.VoiceRecordingView.Companion.VOICE_CANCEL_DISTANCE
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -83,6 +89,8 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     //当前打开的时间，用与跟注册时间对比来判断这一次登录的是否是刚注册的账号
     private var registerTime: Long = 0
+
+    private var voiceDownRawY = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -374,6 +382,29 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                                 toHome()
                             }
                         }
+                    }
+                }
+            }
+            on<Events.ClawVoiceEvent> { events ->
+                when(events.type) {
+                    MSG_ACTION_DOWN -> {
+                        voiceDownRawY = events.event.rawY
+                        // 按下即开始录音；权限未授予时先拉起权限申请，本次触摸不进入录音态。
+                        binding.layoutVoiceRecording.showRecording(canceling = false)
+                    }
+                    MSG_ACTION_MOVE-> {
+                        // 以按下点为基准，上滑超过阈值进入取消态；滑回阈值内恢复发送态。
+                        val voiceCanceling = voiceDownRawY - events.event.rawY > VOICE_CANCEL_DISTANCE
+                        binding.layoutVoiceRecording.updateCanceling(voiceCanceling)
+                    }
+                    MSG_ACTION_UP -> {
+                        binding.layoutVoiceRecording.hideRecording()
+                    }
+                    MSG_ACTION_CANCEL -> {
+                        binding.layoutVoiceRecording.hideRecording()
+                    }
+                    MSG_ACTION_VOLUME -> {
+                        binding.layoutVoiceRecording.updateVolume(events.rmsDb)
                     }
                 }
             }

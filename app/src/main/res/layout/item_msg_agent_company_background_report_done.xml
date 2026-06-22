@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingHorizontal="13dp"
+    android:paddingTop="11dp"
+    android:paddingBottom="16dp"
+    app:background_normalColor="@color/color_70_ffffff"
+    app:super_corner="16dp">
+
+    <ImageView
+        android:id="@+id/iv_report_icon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@drawable/ic_company_background_report_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_report_title"
+        android:layout_width="0dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="10dp"
+        android:gravity="center_vertical"
+        android:text="@string/str_agent_company_background_report_title"
+        android:textColor="@color/color_000000"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv_report_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_report_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_report_icon" />
+
+    <View
+        android:id="@+id/v_report_divider"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_marginTop="12dp"
+        android:background="@color/color_10_000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_report_icon" />
+
+    <TextView
+        android:id="@+id/tv_company_name"
+        android:layout_width="0dp"
+        android:layout_height="21dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/color_000000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        tools:text="北京字节跳动有限公司"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_report_divider" />
+
+    <TextView
+        android:id="@+id/tv_report_time"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="14dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/color_55_3c3c43"
+        android:textSize="12sp"
+        tools:text="报告生成时间  2026/05/16 13:30:12"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_company_name" />
+
+    <TextView
+        android:id="@+id/tv_action"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_company_background_action"
+        android:gravity="center"
+        android:text="@string/str_agent_company_background_report_view"
+        android:textColor="@color/color_ffffff"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_report_time" />
+</com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>

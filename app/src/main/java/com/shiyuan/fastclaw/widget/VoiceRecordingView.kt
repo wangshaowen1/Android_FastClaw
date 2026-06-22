@@ -22,6 +22,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import androidx.core.view.isNotEmpty
 
+/**
+ * 语音录制底部浮层：负责展示录音/取消状态，以及根据音量驱动波形动画。
+ */
 class VoiceRecordingView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -46,6 +49,7 @@ class VoiceRecordingView @JvmOverloads constructor(
     private var canceling = false
 
     init {
+        // 将语音浮层布局整体收口到自定义 View 内部，外部只负责显示状态切换。
         LayoutInflater.from(context).inflate(R.layout.view_voice_recording, this)
         contentView = findViewById(R.id.layout_voice_recording_content)
         tipView = findViewById(R.id.tv_voice_record_tip)
@@ -55,6 +59,9 @@ class VoiceRecordingView @JvmOverloads constructor(
         setupWaveBars()
     }
 
+    /**
+     * 展示录音浮层，并按当前手势状态切换“录音中/松开取消”样式。
+     */
     fun showRecording(canceling: Boolean = false) {
         updateCanceling(canceling)
         updateVolume(0f)
@@ -62,6 +69,9 @@ class VoiceRecordingView @JvmOverloads constructor(
         visible()
     }
 
+    /**
+     * 隐藏录音浮层，同时停止波形动画并复位状态。
+     */
     fun hideRecording() {
         stopWaveAnimation()
         updateVolume(0f)
@@ -69,6 +79,9 @@ class VoiceRecordingView @JvmOverloads constructor(
         gone()
     }
 
+    /**
+     * 更新是否处于上滑取消状态。
+     */
     fun updateCanceling(canceling: Boolean) {
         this.canceling = canceling
         contentView.setBackgroundResource(if (canceling) R.drawable.bg_agent_voice_cancel else R.drawable.bg_agent_voice_recording)
@@ -81,10 +94,16 @@ class VoiceRecordingView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 接收外部录音音量，换算成 0.15~1 的波形振幅系数。
+     */
     fun updateVolume(rmsDb: Float) {
         waveVolume = ((rmsDb + 2f) / 12f).coerceIn(0.15f, 1f)
     }
 
+    /**
+     * 初始化中间的音频条纹，后续动画只更新高度和透明度。
+     */
     private fun setupWaveBars() {
         if (waveLayout.isNotEmpty()) return
         repeat(WAVE_BAR_COUNT) {
@@ -100,6 +119,9 @@ class VoiceRecordingView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 启动波形循环动画，绑定到当前 ViewTree 的 Lifecycle，避免页面销毁后继续刷新。
+     */
     private fun startWaveAnimation() {
         waveJob?.cancel()
         waveJob = (findViewTreeLifecycleOwner()?.lifecycleScope ?: return).launch {
@@ -112,11 +134,17 @@ class VoiceRecordingView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 停止波形动画。
+     */
     private fun stopWaveAnimation() {
         waveJob?.cancel()
         waveJob = null
     }
 
+    /**
+     * 根据相位和实时音量刷新每根波形条的高度，形成持续跳动效果。
+     */
     private fun renderWave(phase: Float) {
         val center = (waveLayout.childCount - 1) / 2f
         for (index in 0 until waveLayout.childCount) {
@@ -133,6 +161,9 @@ class VoiceRecordingView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * View 脱离窗口时释放动画任务，避免协程持有旧页面引用。
+     */
     override fun onDetachedFromWindow() {
         stopWaveAnimation()
         super.onDetachedFromWindow()
