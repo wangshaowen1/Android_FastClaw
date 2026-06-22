@@ -61,8 +61,8 @@ android {
             doNotStrip "armeabi.so"
         }
         buildConfigField "String", "DY_CLIENT_KEY", '"YOUR_DY_CLIENT_KEY"'
-        buildConfigField "String", "WX_APP_ID", '"YOUR_WX_APP_ID"' //微信AppKey
-        buildConfigField "String", "WX_APP_SECRET", '"YOUR_WX_APP_SECRET"'//微信Secret
+        buildConfigField "String", "WX_APP_ID", '"wx061b7b7333f2e4e7"' //微信AppKey
+        buildConfigField "String", "WX_APP_SECRET", '"ef303720908c2565a7c0ebd3008c9c7e"'//微信Secret
         def growingScheme = "2537e0c6ff0ab48e"
         buildConfigField "String", "GROWING_ACCOUNT_ID", '"2f313003f3995a31"'
         buildConfigField "String", "GROWING_DATA_SOURCE_ID", '"944875fb77487c3d"'

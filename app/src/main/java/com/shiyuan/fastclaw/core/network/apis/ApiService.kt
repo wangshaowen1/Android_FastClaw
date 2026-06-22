@@ -4,6 +4,7 @@ import com.shiyuan.fastclaw.core.model.H5PayInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.BannerInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.OrderStatusInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.PaymentData
+import com.shiyuan.fastclaw.core.network.apis.entity.PointConfigListData
 import com.shiyuan.fastclaw.core.network.apis.entity.ReportData
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
@@ -46,6 +47,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.request.TipOffBody
+import com.shiyuan.fastclaw.core.network.apis.request.TradePayCreateBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.SSEvent
 import com.shiyuan.fastclaw.core.network.apis.request.DictIndustryQueryBody
@@ -61,6 +63,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
+import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
@@ -239,6 +242,18 @@ interface ApiService {
     suspend fun h5PayAlipay(@Body body: H5PayInfo): ApiResponse<PaymentData?>
 
     /**
+     * 创建app微信支付订单
+     */
+    @POST(ApiConstants.CREATE_APP_WECHAT_PAY_ORDER)
+    suspend fun createAppWechatPayOrder(@Body body: TradePayCreateBody): ApiResponse<PaymentData?>
+
+    /**
+     * 创建app支付宝支付订单
+     */
+    @POST(ApiConstants.CREATE_APP_ALIPAY_ORDER)
+    suspend fun createAppAlipayOrder(@Body body: TradePayCreateBody): ApiResponse<PaymentData?>
+
+    /**
      * 内容安全-图片校验
      */
     @POST(ApiConstants.SENSITIVE_IMAGE_CHECK)
@@ -299,7 +314,17 @@ interface ApiService {
     @POST(ApiConstants.QUERY_USER_POINTS_PAGE)
     suspend fun queryUserPointsPage(@Body body: PagedBody): ApiResponse<PagedList<UserPointItemData>?>
 
+    /**
+     * 分页查询邀请记录
+     */
+    @POST(ApiConstants.QUERY_INVITE_RECORD_PAGE)
+    suspend fun queryInviteRecordPage(@Body body: PagedBody): ApiResponse<InviteRecordPageData?>
 
+    /**
+     * 查询虾条充值配置列表
+     */
+    @POST(ApiConstants.QUERY_POINT_CONFIG_LIST)
+    suspend fun queryPointConfigList(): ApiResponse<PointConfigListData?>
 
     @POST(ApiConstants.COMMON_INIT)
     suspend fun commonInit(): ApiResponse<Any>

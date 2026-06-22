@@ -4,48 +4,55 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 /**
- * {
- *     "pointConfigId": "算力信息配置ID",
- *     "pointConfigCode": "算力信息配置编码下单时要提交的商品编号",
- *     "pointName": "算力名称",
- *     "pointPrice": "实际支付价格（单位：元）",
- *     "pointNum": "算力数量",
- *     "isDefault": "是否默认选中（0-非默认、1-默认）"
- * }
+ * 虾条充值套餐列表
+ */
+data class PointConfigListData(
+    val pointConfigList: List<PointConfigInfo>?
+)
+
+/**
+ * 虾条充值套餐
  */
 @Parcelize
 data class PointConfigInfo(
-    val pointConfigId: String?,
-    val pointConfigCode: String?,
+    /**
+     * 商品编号，前端下单时传入 goodsCode。
+     */
+    val goodsCode: Long?,
+    /**
+     * 商品类型：1-虾条充值。
+     */
+    val goodsType: Int?,
+    /**
+     * 商品名称，和下单链路 GoodsVO 保持一致。
+     */
+    val goodsName: String?,
+    /**
+     * 商品支付价格，单位：元，仅用于前端展示，不作为下单金额校验依据。
+     */
+    val goodsPrice: String?,
+    /**
+     * 到账虾条数量。
+     */
+    val pointNum: Long?,
+    /**
+     * Apple IAP 商品 ID，iOS 内购使用。
+     */
+    val appleProductId: String?,
+    /**
+     * 商品描述，和下单链路 GoodsVO 保持一致。
+     */
+    val goodsDesc: String?,
+    /**
+     * 虾条套餐名称，用于页面展示。
+     */
     val pointName: String?,
-    val pointPrice: String?,
-    val pointNum: String?,
+    /**
+     * 支付价格展示文案，例如 ¥30。
+     */
+    val priceText: String?,
     /**
      * 是否默认选中（0-非默认、1-默认）
      */
-    val isDefault: Int?,
-    val pointMarketingTime: Long?,//算力营销倒计时截止时间.空则代表不需要受限制
-    val pointMarketingText: String?,//算力营销倒计时文本
-    val pointMarketingTag: String?,//算力营销倒计时文本
-) : Parcelable {
-
-    fun isDiscountValid(): Boolean {
-        return pointMarketingTime != null && pointMarketingTime > System.currentTimeMillis()
-    }
-
-    fun getCountDownText(): String {
-        if (pointMarketingTime == null) {
-            return ""
-        }
-        val time = pointMarketingTime - System.currentTimeMillis()
-        if (time <= 0) {
-            return ""
-        }
-        val hour = time / 1000 / 60 / 60
-        val minute = time / 1000 / 60 % 60
-        val second = time / 1000 % 60
-
-        // 将 tag 作为第一个参数传入，这样它包含什么特殊字符都不会报错
-        return String.format("%s %02d:%02d:%02d", pointMarketingTag ?: "", hour, minute, second)
-    }
-}
+    val isDefault: Int?
+) : Parcelable

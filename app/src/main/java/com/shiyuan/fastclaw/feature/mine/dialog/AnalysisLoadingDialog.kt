@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.mine
+package com.shiyuan.fastclaw.feature.mine.dialog
 
 import android.app.Dialog
 import android.os.Bundle

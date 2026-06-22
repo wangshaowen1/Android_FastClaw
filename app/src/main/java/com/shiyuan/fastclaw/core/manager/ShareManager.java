@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.blankj.utilcode.util.NetworkUtils;
+import com.nhsd.basic.utils.T;
 import com.shiyuan.fastclaw.App;
 import com.shiyuan.fastclaw.R;
 import com.nhsd.basic.ext.ToastExtKt;
@@ -238,33 +239,33 @@ public class ShareManager {
             return;
         }
 
-//        //判断应用是否安装
-//        switch (platform) {
-//            case WEIXIN:
-//            case WEIXIN_CIRCLE:
-//                if (!Utils.isPackageInstalled(mContext, "com.tencent.mm")) {
-//                    T.showShort("请安装微信客户端");
-//                    umShareListener.onCancel(platform);
-//                    return;
-//                }
-//                break;
-//
-//            case QQ:
-//            case QZONE:
-//                if (!Utils.isPackageInstalled(mContext, "com.tencent.mobileqq")) {
-//                    umShareListener.onCancel(platform);
-//                    T.showShort("请安装QQ客户端");
-//                    return;
-//                }
-//                break;
-//            case SINA:
-//                if (!Utils.isPackageInstalled(mContext, "com.sina.weibo")) {
-//                    umShareListener.onCancel(platform);
-//                    T.showShort("请安装新浪微博客户端");
-//                    return;
-//                }
-//                break;
-//        }
+        //判断应用是否安装
+        switch (platform) {
+            case WEIXIN:
+            case WEIXIN_CIRCLE:
+                if (!UMShareAPI.get(mContext).isInstall(mContext, SHARE_MEDIA.WEIXIN)) {
+                    T.showShort("请安装微信客户端");
+                    umShareListener.onCancel(platform);
+                    return;
+                }
+                break;
+/*
+            case QQ:
+            case QZONE:
+                if (!Utils.isPackageInstalled(mContext, "com.tencent.mobileqq")) {
+                    umShareListener.onCancel(platform);
+                    T.showShort("请安装QQ客户端");
+                    return;
+                }
+                break;
+            case SINA:
+                if (!Utils.isPackageInstalled(mContext, "com.sina.weibo")) {
+                    umShareListener.onCancel(platform);
+                    T.showShort("请安装新浪微博客户端");
+                    return;
+                }
+                break;*/
+        }
         UMImage image = new UMImage(mContext, imageFile);
         image.setThumb(image);
         final ShareAction shareAction = new ShareAction(mContext);

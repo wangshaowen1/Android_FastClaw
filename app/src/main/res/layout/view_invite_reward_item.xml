@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="iconRes"
+            type="android.graphics.drawable.Drawable" />
+
+        <variable
+            name="titleText"
+            type="String" />
+
+        <variable
+            name="descText"
+            type="String" />
+
+        <variable
+            name="amountText"
+            type="String" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_ffffff_stroke_66cbe9ff_r12"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_m">
+
+        <ImageView
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@{iconRes}"
+            tools:src="@drawable/img_invite_reward_register" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{titleText}"
+                android:textColor="@color/color_121D27"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="邀请好友" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{descText}"
+                android:textColor="@color/color_60_121D27"
+                android:textSize="12sp"
+                tools:text="通过你的链接首次注册" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_m"
+            android:text="@{amountText}"
+            android:textColor="@color/color_FF5842"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="+20" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_FF5842"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:text="虾条" />
+
+    </LinearLayout>
+</layout>

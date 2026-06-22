@@ -2,13 +2,18 @@ package com.shiyuan.fastclaw.feature.report
 
 import android.view.View
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.Constants
+import com.shiyuan.fastclaw.core.Config
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.FragmentHomeTreasuryBinding
 import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 
 class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, HomeReportViewModel>() {
@@ -24,24 +29,26 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
             R.id.card_company,
             R.id.ll_company_action -> {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
-
+                    FlowEventBus.postSync(Events.CompanyInterviewEvent(0))
+                    FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
                 }
             }
 
             R.id.card_interview,
             R.id.ll_interview_action  -> {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
-
+                    FlowEventBus.postSync(Events.CompanyInterviewEvent(1))
+                    FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
                 }
             }
             R.id.ll_resume_check_tool-> {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
-
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL)
                 }
             }
             R.id.ll_salary_tool ->  {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
-
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL)
                 }
             }
         }

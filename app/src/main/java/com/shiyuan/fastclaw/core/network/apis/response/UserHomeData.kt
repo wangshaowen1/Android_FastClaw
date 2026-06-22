@@ -15,6 +15,11 @@ data class UserHomeData(
      * 账号ID
      */
     val accountId: String? = null,
+
+    /**
+     * 候选人邀请码
+     */
+    val inviteCode: String? = null,
     /**
      * 候选人ID
      */

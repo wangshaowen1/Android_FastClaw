@@ -6,19 +6,19 @@ import android.os.Bundle
 import androidx.databinding.ObservableField
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gyf.immersionbar.ImmersionBar
+import com.kuaige.payment.PaymentClient
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
+import com.shiyuan.fastclaw.core.network.apis.entity.PointConfigInfo
 import com.shiyuan.fastclaw.databinding.ActivityMineShrimpRechargeBinding
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.decoration.GridSpacingItemDecoration
-import com.kuaige.payment.PaymentClient
 
 /**
  * @Introduce: 虾条充值
@@ -78,50 +78,37 @@ class MineShrimpRechargeActivity :
                 .getOrNull(selectedPackageIndex)
                 ?.data
                 ?: return@setOnSingleClickListener
+            val goodsCode = rechargePackage.get()?.goodsCode ?: return@setOnSingleClickListener
             val payment = if (selectedWechat) {
                 PaymentClient.PaymentMethod.WxPay
             } else {
                 PaymentClient.PaymentMethod.Alipay
             }
-            mRealVM.rechargeShrimp(payment, rechargePackage.get()?.priceLi ?:0L)
+            mRealVM.rechargeShrimp(payment, goodsCode)
         }
         binding.tvRechargeAgreement.setOnSingleClickListener {
             SimpleBrowserActivity.launch(this, "https://www.baidu.com")
         }
 
-        submitRechargePackages()
         updatePaymentSelected(selectedWechat)
+        mRealVM.getRechargePackages()
     }
 
     private fun initObservers() {
         mRealVM.userPoints.observe(this) { points ->
             binding.tvAvailableSticks.text = points?.takeIf { it.isNotBlank() } ?: "0"
         }
+        mRealVM.rechargePackages.observe(this) { packages ->
+            submitRechargePackages(packages.orEmpty())
+        }
     }
 
-    private fun submitRechargePackages() {
-        val packageItems = listOf(
-            MineRechargePackage(
-                amount = R.string.mine_recharge_package_100.getResString(),
-                price = R.string.mine_recharge_price_10.getResString(),
-                priceLi = 10_000L
-            ),
-            MineRechargePackage(
-                amount = R.string.mine_recharge_package_300.getResString(),
-                price = R.string.mine_recharge_price_30.getResString(),
-                priceLi = 30_000L
-            ),
-            MineRechargePackage(
-                amount = R.string.mine_recharge_package_600.getResString(),
-                price = R.string.mine_recharge_price_60.getResString(),
-                priceLi = 60_000L
-            ),
-            MineRechargePackage(
-                amount = R.string.mine_recharge_package_1000.getResString(),
-                price = R.string.mine_recharge_price_30.getResString(),
-                priceLi = 30_000L
-            )
-        ).mapIndexed { index, item ->
+    private fun submitRechargePackages(packages: List<PointConfigInfo>) {
+        val packageData = packages.mapNotNull { it.toRechargePackage() }
+        selectedPackageIndex = packageData.indexOfFirst { it.isDefault }.takeIf { it >= 0 }
+            ?: packageData.indices.firstOrNull()
+            ?: -1
+        val packageItems = packageData.mapIndexed { index, item ->
             ItemMineRechargePackageVM(item).apply {
                 select.set(index == selectedPackageIndex)
                 onItemClick.value = {
@@ -151,10 +138,28 @@ class MineShrimpRechargeActivity :
     }
 }
 
+private fun PointConfigInfo.toRechargePackage(): MineRechargePackage? {
+    val amount = pointNum?.toString()?.takeIf { it.isNotBlank() }
+        ?: pointName?.takeIf { it.isNotBlank() }
+        ?: goodsName?.takeIf { it.isNotBlank() }
+        ?: return null
+    val price = priceText?.takeIf { it.isNotBlank() }
+        ?: goodsPrice?.takeIf { it.isNotBlank() }?.let {
+            if (it.startsWith("¥")) it else "¥${it.removeSuffix("元")}"
+        }.orEmpty()
+    return MineRechargePackage(
+        amount = amount,
+        price = price,
+        goodsCode = goodsCode,
+        isDefault = isDefault == 1
+    )
+}
+
 data class MineRechargePackage(
     val amount: String,
     val price: String,
-    val priceLi: Long
+    val goodsCode: Long?,
+    val isDefault: Boolean = false
 )
 
 class ItemMineRechargePackageVM(data: MineRechargePackage?) :

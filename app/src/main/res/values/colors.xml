@@ -66,6 +66,12 @@
     <color name="color_70_121212">#B3121212</color>
     <color name="color_80_121212">#CC121212</color>
     <color name="color_90_121212">#E6121212</color>
+    <color name="color_121D27">#121D27</color>
+    <color name="color_60_121D27">#B3121D27</color>
+    <color name="color_80_121D27">#CC121D27</color>
+    <color name="color_95_121D27">#F2121D27</color>
+    <color name="color_E9F1FF">#E9F1FF</color>
+    <color name="color_FF5842">#FF5842</color>
     <color name="color_ffa029">#FFA029</color>
     <color name="color_ff4332">#FF4332</color>
     <color name="color_90_14141e">#E614141E</color>

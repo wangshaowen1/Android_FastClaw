@@ -267,6 +267,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.invite.InviteFriendsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.mine.MineShrimpRechargeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
