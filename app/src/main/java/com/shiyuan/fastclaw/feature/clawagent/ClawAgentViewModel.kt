@@ -585,6 +585,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
                 CARD_COMPANY_BACKGROUND_ENTRY -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_ENTRY
                 CARD_COMPANY_BACKGROUND_REPORT -> resolveCompanyBackgroundReportItemType(msg)
+                CARD_MOCK_INTERVIEW_ENTRY -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY
+                CARD_MOCK_INTERVIEW_REPORT -> resolveMockInterviewReportItemType(msg)
                 // todo: v1.2 暂时不做
 //                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
 //                CARD_TODAY_PROGRESS -> ClawAgentMsgAdapter.TYPE_TODAY_PROGRESS
@@ -622,6 +624,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             msg.messagePhase == PHASE_ERROR -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_FAILED
             msg.messagePhase == PHASE_RESULT -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_DONE
             else -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
+        }
+    }
+
+    private fun resolveMockInterviewReportItemType(msg: JobAgentMessage): Int {
+        return when {
+            msg.messagePhase == PHASE_ERROR -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
+            msg.messagePhase == PHASE_RESULT -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_DONE
+            else -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
         }
     }
 
@@ -1000,6 +1010,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_COMPANY_BACKGROUND_ENTRY = "COMPANY_BACKGROUND_ENTRY"
         // 公司背调报告卡片
         private const val CARD_COMPANY_BACKGROUND_REPORT = "COMPANY_BACKGROUND_REPORT"
+        // 模拟面试卡片
+        private const val CARD_MOCK_INTERVIEW_ENTRY = "MOCK_INTERVIEW_ENTRY"
+        // 面试复盘报告卡片
+        private const val CARD_MOCK_INTERVIEW_REPORT = "MOCK_INTERVIEW_REPORT"
         //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
 
         // 寻找岗位中

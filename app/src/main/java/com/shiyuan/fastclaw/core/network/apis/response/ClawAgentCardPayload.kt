@@ -369,3 +369,20 @@ data class CompanyBackgroundReportPayloadBean(
     val errorMessage: String? = null,
     val actions: List<CardAction>? = null,
 )
+
+data class MockInterviewEntryPayloadBean(
+    val interactionState: CardInteractionState? = null,
+    val actions: List<CardAction>? = null,
+)
+
+data class MockInterviewReportPayloadBean(
+    val score: Int? = null,
+    val interviewScore: Int? = null,
+    val reportScore: Int? = null,
+    val interviewTime: String? = null,
+    val reportGenerateTime: String? = null,
+    val generatedAt: String? = null,
+    val generateTime: String? = null,
+    val errorMessage: String? = null,
+    val actions: List<CardAction>? = null,
+)

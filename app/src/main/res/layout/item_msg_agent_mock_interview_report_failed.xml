@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="13dp"
+    android:paddingTop="11dp"
+    android:paddingBottom="17dp"
+    app:background_normalColor="@color/color_70_ffffff"
+    app:super_corner="16dp">
+
+    <ImageView
+        android:id="@+id/iv_report_icon"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/ic_mock_interview_report_failed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_report_title"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical"
+        android:text="@string/str_agent_mock_interview_report_failed_title"
+        android:textColor="@color/color_90_000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv_report_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_report_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_report_icon" />
+
+    <View
+        android:id="@+id/v_report_divider"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_marginTop="12dp"
+        android:background="@color/color_10_000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_report_icon" />
+
+    <TextView
+        android:id="@+id/tv_failed_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="@string/str_agent_mock_interview_report_failed_desc"
+        android:textColor="@color/color_96_000000"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_report_divider" />
+
+    <TextView
+        android:id="@+id/tv_action"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_company_background_action"
+        android:gravity="center"
+        android:text="@string/str_agent_mock_interview_report_regenerate"
+        android:textColor="@color/color_ffffff"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_failed_desc" />
+</com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>

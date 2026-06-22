@@ -11,6 +11,10 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportDoneB
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportFailedBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportGeneratingBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentLeftBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewEntryBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportDoneBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportFailedBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportGeneratingBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentNoJobsFoundBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentPendingConfirmBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentQuestionBinding
@@ -32,6 +36,10 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundE
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportDoneViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportFailedViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportGeneratingViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewEntryViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportDoneViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportFailedViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportGeneratingViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPendingConfirmViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
@@ -107,6 +115,30 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                     onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item) }
+        // 模拟面试入口卡
+        register(TYPE_MOCK_INTERVIEW_ENTRY,
+            { i, p ->
+                AgentMockInterviewEntryViewHolder(ItemMsgAgentMockInterviewEntryBinding.inflate(i, p, false)).apply {
+                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                }
+            }) { h, item -> h.bind(item) }
+        // 面试复盘报告卡：生成中
+        register(TYPE_MOCK_INTERVIEW_REPORT_GENERATING,
+            { i, p -> AgentMockInterviewReportGeneratingViewHolder(ItemMsgAgentMockInterviewReportGeneratingBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 面试复盘报告卡：失败
+        register(TYPE_MOCK_INTERVIEW_REPORT_FAILED,
+            { i, p ->
+                AgentMockInterviewReportFailedViewHolder(ItemMsgAgentMockInterviewReportFailedBinding.inflate(i, p, false)).apply {
+                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                }
+            }) { h, item -> h.bind(item) }
+        // 面试复盘报告卡：成功
+        register(TYPE_MOCK_INTERVIEW_REPORT_DONE,
+            { i, p ->
+                AgentMockInterviewReportDoneViewHolder(ItemMsgAgentMockInterviewReportDoneBinding.inflate(i, p, false)).apply {
+                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                }
+            }) { h, item -> h.bind(item) }
         // 核心补问卡
         register(TYPE_QUESTION,
             { i, p ->
@@ -172,15 +204,18 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)
         if (holder is AgentThinkViewHolder) holder.startRotate()
+        if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.startRotate()
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
         if (holder is AgentThinkViewHolder) holder.stopRotate()
+        if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is AgentThinkViewHolder) holder.stopRotate()
+        if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         super.onViewRecycled(holder)
     }
 
@@ -287,6 +322,18 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 公司背调报告 - 生成成功 */
         const val TYPE_COMPANY_BACKGROUND_REPORT_DONE = 18
+
+        /** 模拟面试入口卡 */
+        const val TYPE_MOCK_INTERVIEW_ENTRY = 19
+
+        /** 面试复盘报告 - 生成中 */
+        const val TYPE_MOCK_INTERVIEW_REPORT_GENERATING = 20
+
+        /** 面试复盘报告 - 生成失败 */
+        const val TYPE_MOCK_INTERVIEW_REPORT_FAILED = 21
+
+        /** 面试复盘报告 - 生成成功 */
+        const val TYPE_MOCK_INTERVIEW_REPORT_DONE = 22
     }
 
 }

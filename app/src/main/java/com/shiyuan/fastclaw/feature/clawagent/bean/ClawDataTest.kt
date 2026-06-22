@@ -257,6 +257,154 @@ object ClawDataTest {
                 )
             )
         ))
+        dataList.add(2, ClawAgentMessageInfo(
+            id = "-1",
+            messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_ENTRY,
+            sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
+            receiveObj = ClawAgentViewModel.Companion.SENDER_USER,
+            metaData = GsonUtils.toJson(
+                CoreQuestionPayloadBean(
+                    questionQueueId = "123",
+                    attributeGroupCode = "expectedCity",
+                    metaCode = "expectedCity",
+                    questionType = "CORE_PROFILE",
+                    questionText = "背调生成成功",
+                    inputMode = "SALARY_RANGE",
+                    answeredText = null,
+                    interactionState = CardInteractionState(
+                        status = "ACTIVE",
+                        disabled = false
+                    ),
+                    options = emptyList(),
+                    actions = listOf(
+                        CardAction(
+                            actionCode = "OPEN_DICT_SELECTOR",
+                            text = "请选择",
+                            primary = true,
+                            disabled = false,
+                            selected = false,
+                            clientBehavior = null,
+                            actionPayload = CardActionPayloadBean(
+                                questionQueueId = "123",
+                                attributeGroupCode = "expectedCity",
+                                metaCode = "expectedCity"
+                            )
+                        )
+                    )
+                )
+            )
+        ))
+        dataList.add(2, ClawAgentMessageInfo(
+            id = "-1",
+            messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_REPORT_GENERATING,
+            sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
+            receiveObj = ClawAgentViewModel.Companion.SENDER_USER,
+            metaData = GsonUtils.toJson(
+                CoreQuestionPayloadBean(
+                    questionQueueId = "123",
+                    attributeGroupCode = "expectedCity",
+                    metaCode = "expectedCity",
+                    questionType = "CORE_PROFILE",
+                    questionText = "背调生成成功",
+                    inputMode = "SALARY_RANGE",
+                    answeredText = null,
+                    interactionState = CardInteractionState(
+                        status = "ACTIVE",
+                        disabled = false
+                    ),
+                    options = emptyList(),
+                    actions = listOf(
+                        CardAction(
+                            actionCode = "OPEN_DICT_SELECTOR",
+                            text = "请选择",
+                            primary = true,
+                            disabled = false,
+                            selected = false,
+                            clientBehavior = null,
+                            actionPayload = CardActionPayloadBean(
+                                questionQueueId = "123",
+                                attributeGroupCode = "expectedCity",
+                                metaCode = "expectedCity"
+                            )
+                        )
+                    )
+                )
+            )
+        ))
+        dataList.add(2, ClawAgentMessageInfo(
+            id = "-1",
+            messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_REPORT_FAILED,
+            sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
+            receiveObj = ClawAgentViewModel.Companion.SENDER_USER,
+            metaData = GsonUtils.toJson(
+                CoreQuestionPayloadBean(
+                    questionQueueId = "123",
+                    attributeGroupCode = "expectedCity",
+                    metaCode = "expectedCity",
+                    questionType = "CORE_PROFILE",
+                    questionText = "背调生成成功",
+                    inputMode = "SALARY_RANGE",
+                    answeredText = null,
+                    interactionState = CardInteractionState(
+                        status = "ACTIVE",
+                        disabled = false
+                    ),
+                    options = emptyList(),
+                    actions = listOf(
+                        CardAction(
+                            actionCode = "OPEN_DICT_SELECTOR",
+                            text = "请选择",
+                            primary = true,
+                            disabled = false,
+                            selected = false,
+                            clientBehavior = null,
+                            actionPayload = CardActionPayloadBean(
+                                questionQueueId = "123",
+                                attributeGroupCode = "expectedCity",
+                                metaCode = "expectedCity"
+                            )
+                        )
+                    )
+                )
+            )
+        ))
+        dataList.add(2, ClawAgentMessageInfo(
+            id = "-1",
+            messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_REPORT_DONE,
+            sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
+            receiveObj = ClawAgentViewModel.Companion.SENDER_USER,
+            metaData = GsonUtils.toJson(
+                CoreQuestionPayloadBean(
+                    questionQueueId = "123",
+                    attributeGroupCode = "expectedCity",
+                    metaCode = "expectedCity",
+                    questionType = "CORE_PROFILE",
+                    questionText = "背调生成成功",
+                    inputMode = "SALARY_RANGE",
+                    answeredText = null,
+                    interactionState = CardInteractionState(
+                        status = "ACTIVE",
+                        disabled = false
+                    ),
+                    options = emptyList(),
+                    actions = listOf(
+                        CardAction(
+                            actionCode = "OPEN_DICT_SELECTOR",
+                            text = "请选择",
+                            primary = true,
+                            disabled = false,
+                            selected = false,
+                            clientBehavior = null,
+                            actionPayload = CardActionPayloadBean(
+                                questionQueueId = "123",
+                                attributeGroupCode = "expectedCity",
+                                metaCode = "expectedCity"
+                            )
+                        )
+                    )
+                )
+            )
+        ))
         return dataList
     }
 }
