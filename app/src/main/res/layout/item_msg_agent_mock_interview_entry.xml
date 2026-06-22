@@ -37,8 +37,6 @@
         android:id="@+id/cl_mock_interview_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
         android:layout_marginBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -73,7 +71,7 @@
             android:layout_width="0dp"
             android:layout_height="198dp"
             android:background="@drawable/bg_mock_interview_content"
-            android:paddingHorizontal="24dp"
+            android:paddingHorizontal="16dp"
             android:paddingTop="20dp"
             android:paddingBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -83,7 +81,7 @@
             <LinearLayout
                 android:id="@+id/ll_mock_interview_steps"
                 android:layout_width="0dp"
-                android:layout_height="17dp"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -97,13 +95,12 @@
                     android:textColor="@color/color_2f6bff"
                     android:textSize="11sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:text="»"
-                    android:textColor="@color/color_75_3c3c43"
-                    android:textSize="13sp" />
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="6dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_mock_interview_step_arrow" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -112,13 +109,12 @@
                     android:textColor="@color/color_90_000000"
                     android:textSize="11sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:text="»"
-                    android:textColor="@color/color_75_3c3c43"
-                    android:textSize="13sp" />
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="6dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_mock_interview_step_arrow" />
 
                 <TextView
                     android:layout_width="0dp"
