@@ -42,9 +42,6 @@ public class AppHeader {
     private String mobileDeviceId;
     //bd_did
     private String bdDid;
-    /**
-     * openinstall 广告追踪用到的参数
-     */
     private String opid;
     /**
      * 马甲包类型

@@ -137,8 +137,6 @@ sedi "s|69005d13644c9e2c20677a21|YOUR_UMENG_APP_KEY|g" "$BG"
 # Shanyan
 sedi "s|KfNYHDRd|YOUR_SHANYAN_APPID|g" "$BG"
 sedi "s|VDE8Q8TY|YOUR_SHANYAN_APP_KEY|g" "$BG"
-# OpenInstall
-sedi "s|dacw8u|YOUR_OPENINSTALL_KEY|g" "$BG"
 # Server URLs
 sedi "s|https://kcp-test.kwaige.cn|https://your-dev-server.com|g" "$BG"
 sedi "s|http://120.24.240.28:9010|https://your-preview-server.com|g" "$BG"

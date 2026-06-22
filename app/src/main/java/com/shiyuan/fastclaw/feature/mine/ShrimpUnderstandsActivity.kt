@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -73,7 +74,18 @@ class ShrimpUnderstandsActivity :
                     val subAdapter = SingleBindingAdapter<ItemJobPreference1SonBinding, FieldItems>(
                         R.layout.item_job_preference1_son,
                         item.fieldItems,
-                        onBind = { b, _, sub -> b.tvTag.text = sub.fieldValue.toString() ?: "" })
+                        onBind = { b, _, sub ->
+                            b.tvTag.text = sub.fieldValue?.toString() ?: ""
+                            val maxTagWidth = binding.rcConnect.measuredWidth
+                                .takeIf { it > 0 }
+                                ?: (resources.displayMetrics.widthPixels - 64.dp)
+                            b.tvTag.maxWidth = maxTagWidth.coerceAtLeast(0)
+                            (b.root.layoutParams as? ViewGroup.MarginLayoutParams)?.let {
+                                it.marginEnd = 10.dp
+                                it.bottomMargin = 10.dp
+                                b.root.layoutParams = it
+                            }
+                        })
                     binding.rcConnect.apply {
                         val layoutManager =
                             FlexboxLayoutManager(this@ShrimpUnderstandsActivity).apply {
@@ -84,23 +96,11 @@ class ShrimpUnderstandsActivity :
                                 alignItems =
                                     AlignItems.STRETCH             // 拉伸以保持行高一致（或改为 FLEX_START）
                             }
-                        if (itemDecorationCount == 0) {
-                            addItemDecoration(
-                                SpaceDecoration(
-                                    10.dp,
-                                    SpaceDecoration.Direction.MIDDLE_HORIZONTAL
-                                )
-                            )
-                            addItemDecoration(
-                                SpaceDecoration(
-                                    10.dp,
-                                    SpaceDecoration.Direction.BOTTOM
-                                )
-                            )
-                        }
+                        layoutManager.alignItems = AlignItems.FLEX_START
                         this.layoutManager = layoutManager
                         isNestedScrollingEnabled = false
                         adapter = subAdapter
+                        post { requestLayout() }
                     }
                 } else if (!item.fieldItems.isNullOrEmpty() && item.fieldItems.size == 1) {
                     binding.rcConnect.visibility = View.GONE

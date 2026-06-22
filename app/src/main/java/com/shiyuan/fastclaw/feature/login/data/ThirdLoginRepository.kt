@@ -1,8 +1,6 @@
 package com.shiyuan.fastclaw.feature.login.data
 
-import com.fm.openinstall.OpenInstall
 import com.shiyuan.fastclaw.core.AppRepository
-import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.GrowingIO
@@ -20,9 +18,6 @@ open class ThirdLoginRepository : AppRepository() {
     suspend fun loginByThird(body: LoginByThirdBody) = withContext(Dispatchers.IO) {
         api.loginByThird(body).apply {
             val isNewRegister = data?.isNewRegistration() == true
-            if (isNewRegister && Config.get().installFromOpenInstall()) {
-                OpenInstall.reportRegister()
-            }
 
 //            EventManager.onAppTrack(
 //                AppEvent.JG_ACTION_USER_LOGIN,

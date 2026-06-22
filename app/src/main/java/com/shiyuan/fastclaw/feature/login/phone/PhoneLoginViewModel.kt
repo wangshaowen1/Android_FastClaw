@@ -14,7 +14,6 @@ import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.ext.getInstall
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.loginToast
@@ -210,26 +209,24 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      * @param flashValidateToken 闪验token
      */
     fun loginByFlashMobile(flashValidateToken: String?) {
-        getInstall {
-            launch(block = {
-                response(
-                    mRepo.loginByFlashMobile(flashValidateToken),
-                    result = {
-                        promptGenerating.value = false to ""
-                        User.get().updateFrom(data)
-                        SignUtils.signIn()
-                        data.loginToast()
-                        loginResult.value = true
-                    },
-                    error = {
-                        promptGenerating.value = false to ""
-                        this?.msg?.showToast()
-                    })
-            }, onError = {
-                promptGenerating.value = false to ""
-                showToast(R.string.toast_sign_in_fail)
-            })
-        }
+        launch(block = {
+            response(
+                mRepo.loginByFlashMobile(flashValidateToken),
+                result = {
+                    promptGenerating.value = false to ""
+                    User.get().updateFrom(data)
+                    SignUtils.signIn()
+                    data.loginToast()
+                    loginResult.value = true
+                },
+                error = {
+                    promptGenerating.value = false to ""
+                    this?.msg?.showToast()
+                })
+        }, onError = {
+            promptGenerating.value = false to ""
+            showToast(R.string.toast_sign_in_fail)
+        })
     }
 
     /**
@@ -243,23 +240,21 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
         onLogin: ((UserHomeData?) -> Unit)?
     ) {
         setLoading(true)
-        getInstall {
-            launchWithLoading(false, block = {
-                val body = LoginByThirdBody(
-                    loginType = loginType,
-                    thirdPartyUnionId = map?.get("unionid"),
-                    thirdPartyOpenId = map?.get("openid"),
-                    thirdPartyNickName = map?.get("name"),
-                    thirdPartyAvatar = map?.get("iconurl"),
-                    inviteData = Config.get().installData
-                )
-                response(mRepo.loginByThird(body), result = {
-                    User.get().updateFrom(data)
-                    SignUtils.signIn()
-                    onLogin?.invoke(data)
-                }, error = { this?.msg?.showToast() })
-            }, onError = { showToast(R.string.toast_sign_in_fail) })
-        }
+        launchWithLoading(false, block = {
+            val body = LoginByThirdBody(
+                loginType = loginType,
+                thirdPartyUnionId = map?.get("unionid"),
+                thirdPartyOpenId = map?.get("openid"),
+                thirdPartyNickName = map?.get("name"),
+                thirdPartyAvatar = map?.get("iconurl"),
+                inviteData = Config.get().installData
+            )
+            response(mRepo.loginByThird(body), result = {
+                User.get().updateFrom(data)
+                SignUtils.signIn()
+                onLogin?.invoke(data)
+            }, error = { this?.msg?.showToast() })
+        }, onError = { showToast(R.string.toast_sign_in_fail) })
     }
 
 
@@ -394,35 +389,6 @@ class PhoneLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
             setLoading(false)
             parseMessage(it)?.showToast()
         })
-   /*     getInstall {
-            launchWithLoading(false, block = {
-                if (isBind.get()) {
-                    response(mRepo.bindPhone(mobile, code), {
-                        showToast(R.string.bind_success)
-                        User.get().apply {
-                            storePhoneNum(mobile)
-                        }
-                        onLogin?.invoke(null)
-                    }, error = {
-                        this?.msg?.showToast()
-                        setLoading(false)
-                    })
-                } else {
-                    response(mRepo.loginByPhone(mobile, code), {
-                        User.get().updateFrom(data)
-                        SignUtils.signIn()
-                        data.loginToast()
-                        onLogin?.invoke(data)
-                    }, error = {
-                        this?.msg?.showToast()
-                        setLoading(false)
-                    })
-                }
-            }, onError = {
-                setLoading(false)
-                parseMessage(it)?.showToast()
-            })
-        }*/
     }
 
 }

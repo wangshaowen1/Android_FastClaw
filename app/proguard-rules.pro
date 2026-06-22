@@ -241,12 +241,6 @@
 -keep class com.sh.sdk.shareinstall.**
 -keep class com.sh.sdk.shareinstall.**{*;}
 
-#openInstall
--dontwarn com.fm.openinstall.**
--dontwarn io.openinstall.**
--keep public class com.fm.openinstall.** {*; }
--keep public interface com.fm.openinstall.** {*; }
-
 #支付相关
 -keep public class com.alipay.**
 -keep public class com.alipay.**{*;}

@@ -2,7 +2,6 @@ package com.shiyuan.fastclaw.core
 
 import android.text.TextUtils
 import com.blankj.utilcode.util.NetworkUtils
-import com.fm.openinstall.model.AppData
 import com.google.gson.Gson
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.BuildConfig
@@ -20,7 +19,6 @@ import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.launchNoCrash
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 
 /**
@@ -266,14 +264,6 @@ class Config : NetworkChangedListener {
         sp.remove(EYE_PROTECTION_ENABLE)
     }
 
-    fun storeInstallData(data: AppData?) {
-        if (data == null || data.isEmpty) {
-            return
-        }
-        installData = gson.toJson(data)
-        sp.putString(INSTALL_DATA, installData)
-    }
-
     fun storeOpid(opid: String?) {
         this.opid = opid
         sp.putString(OPID, opid)
@@ -309,21 +299,6 @@ class Config : NetworkChangedListener {
             this.eyeProtectionEnabled = eyeProtectionEnabled
             sp.putBoolean(EYE_PROTECTION_ENABLE, eyeProtectionEnabled)
         }
-    }
-
-    /**
-     * 通过OpenInstall安装
-     * {"channel":"","data":"{\"i\":\"zRTWqE9g\",\"p\":\"3\"}"}
-     */
-    fun installFromOpenInstall(): Boolean {
-        try {
-            val json = JSONObject(installData)
-            val data = JSONObject(json.getString("data"))
-            return data.has("op_cc") || data.has("ad_account_id")
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
-        return false
     }
 
     fun activityPopupShowCount(id: String?): Int {
