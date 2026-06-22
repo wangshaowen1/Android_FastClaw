@@ -90,7 +90,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            InviteFriendsActivity.start(requireActivity())
+
         }
 
     }
@@ -169,7 +169,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             R.id.view_mine_resume_banner,
             R.id.tv_mine_invite_action -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-
+                    InviteFriendsActivity.start(requireActivity())
                 }
             }
    /*         R.id.siv_avatar,

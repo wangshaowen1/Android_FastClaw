@@ -296,6 +296,17 @@ public class Events {
         }
     }
 
+
+    /**
+     *公司背调和模拟面试背调
+     */
+    public static class CompanyInterviewEvent implements AppEvent {
+        public Integer type ;  //0公司背调  1模拟面试
+        public CompanyInterviewEvent(Integer type) {
+            this.type = type;
+        }
+    }
+
     /**
      * 聊天语音输入事件
      */
