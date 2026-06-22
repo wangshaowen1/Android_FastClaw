@@ -34,6 +34,7 @@ import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDi
 import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
+import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /**
@@ -89,71 +90,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-           /* WorkExperienceDialog.show(
-                manager = childFragmentManager,
-                attributeData = MOCK_WORK_EXPERIENCE,
-                onCompleteClick = { ->
-                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                }
-            )*/
-         /*   CertificateSkillsAwardsDialog.show(
-                manager = childFragmentManager,
-                type = "skills",
-                attributeData = MOCK_WORK_EXPERIENCE,
-                onCompleteClick = {->
-                    FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                }
-            )*/
-         /*   SalaryRangePickerDialog.show(
-                manager = childFragmentManager,
-                minSalary = "10K",
-                maxSalary = "12K",
-            ) { minSalary, maxSalary ->
-                // 处理结果
-            }*/
-            //JobSelectionActivity.start(requireActivity(),true)
-     /*       CertificateSkillsAwardsDialog.show(
-                childFragmentManager,
-                type="Certificate",
-                arrayListOf(
-                    ResumeData(
-                        resumeFileUrl = "https://example.com/resume/tencent-ui.pdf",
-                        isJd = false,
-                        resumeFileName = "UI设计师-张三.pdf",
-                        resumeFileType = "pdf",
-                        submitTime = "2021.09 - 2024.05",
-                        fileName = "高级UI设计师",
-                        resumeName = "腾讯科技（深圳）有限公司",
-                        blockingMessage = "内容：负责设计系统搭建、核心业务改版及跨端体验统一，推动多个版本迭代上线。"
-                    ),
-                    ResumeData(
-                        resumeFileUrl = "https://example.com/resume/bytedance-product.pdf",
-                        isJd = false,
-                        resumeFileName = "产品经理-李四.pdf",
-                        resumeFileType = "pdf",
-                        submitTime = "2019.03 - 2021.08",
-                        fileName = "高级产品经理",
-                        resumeName = "北京字节跳动科技有限公司",
-                        blockingMessage = "内容：主导增长产品策略、需求拆解与数据复盘，协同研发与设计推进项目落地。"
-                    ),
-                    ResumeData(
-                        resumeFileUrl = "https://example.com/resume/alibaba-operation.pdf",
-                        isJd = false,
-                        resumeFileName = "运营主管-王五.pdf",
-                        resumeFileType = "pdf",
-                        submitTime = "2017.06 - 2019.02",
-                        fileName = "运营主管",
-                        resumeName = "阿里巴巴（中国）网络技术有限公司",
-                        blockingMessage = "内容：负责活动运营、用户增长和渠道合作，搭建标准化运营流程并提升转化效率。"
-                    )
-                ),
-                onAddClick = { _ ->
-
-                },
-                onItemClick = { _ , _->
-
-                }
-            )*/
+            InviteFriendsActivity.start(requireActivity())
         }
 
     }

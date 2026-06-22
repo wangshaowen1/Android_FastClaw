@@ -40,7 +40,7 @@ import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.ActivityGennerReportBinding
-import com.shiyuan.fastclaw.feature.mine.AnalysisLoadingDialog
+import com.shiyuan.fastclaw.feature.mine.dialog.AnalysisLoadingDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.widget.PhotoGridView

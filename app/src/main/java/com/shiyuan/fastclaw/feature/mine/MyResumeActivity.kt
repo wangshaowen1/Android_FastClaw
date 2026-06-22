@@ -30,6 +30,7 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.ActivityMyResumeBinding
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
+import com.shiyuan.fastclaw.feature.mine.dialog.UploadCancelDialog
 import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity

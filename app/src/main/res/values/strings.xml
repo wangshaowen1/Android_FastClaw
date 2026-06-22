@@ -941,5 +941,45 @@
     <string name="toast_resume_not_conversation">没有简历不能对话</string>
     <string name="toast_open_mike_permission">请打开麦克风权限</string>
 
+    <!-- 邀请好友 -->
+    <string name="invite_friends_title">邀请好友</string>
+    <string name="invite_rule">规则</string>
+    <string name="invite_reward_prefix">每邀</string>
+    <string name="invite_reward_one">1</string>
+    <string name="invite_reward_middle">人得</string>
+    <string name="invite_reward_point">100</string>
+    <string name="invite_reward_suffix">虾条 = 10元</string>
+    <string name="invite_reward_register_title">邀请好友</string>
+    <string name="invite_reward_register_desc">通过你的链接首次注册</string>
+    <string name="invite_reward_register_amount">+20</string>
+    <string name="invite_reward_experience_title">好友体验任一指定工具</string>
+    <string name="invite_reward_experience_desc">公司背调、模拟面试</string>
+    <string name="invite_reward_experience_amount">+80</string>
+    <string name="invite_now">立即邀请</string>
+    <string name="invite_share_wechat_friend">微信好友</string>
+    <string name="invite_share_save_image">保存图片</string>
+    <string name="invite_share_coming_soon">功能建设中</string>
+    <string name="invite_share_qr_hint">长按免费领取</string>
+    <string name="invite_record_decor">Invite Friends</string>
+    <string name="invite_record_title">邀请记录</string>
+    <string name="invite_success_count">累计成功邀请</string>
+    <string name="invite_success_count_value">1</string>
+    <string name="invite_person_unit">  人</string>
+    <string name="invite_total_reward">累计获得奖励</string>
+    <string name="invite_total_reward_value">300</string>
+    <string name="invite_total_reward_unit">  虾条=30元</string>
+    <string name="invite_record_name_one">奔跑的快乐小龙虾</string>
+    <string name="invite_record_name_two">努力上岸的龙虾</string>
+    <string name="invite_record_name_three">面试加油小龙虾</string>
+    <string name="invite_record_date_one">05-20</string>
+    <string name="invite_record_date_two">05-18</string>
+    <string name="invite_record_date_three">05-16</string>
+    <string name="invite_record_reward_full">+100虾条</string>
+    <string name="invite_record_reward_register">+20</string>
+    <string name="invite_record_reward_experience">+80</string>
+    <string name="invite_status_checked">✓</string>
+    <string name="invite_status_registered">已注册</string>
+    <string name="invite_status_experienced">已体验</string>
+
 </resources>
 

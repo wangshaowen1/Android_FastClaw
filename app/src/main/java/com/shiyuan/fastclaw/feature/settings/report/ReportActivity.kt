@@ -26,7 +26,7 @@ import com.nhsd.mattise.Matisse
 import com.nhsd.mattise.MimeType
 import com.nhsd.mattise.engine.impl.GlideEngine
 import com.nhsd.mattise.internal.entity.CaptureStrategy
-import com.shiyuan.fastclaw.feature.mine.AnalysisLoadingDialog
+import com.shiyuan.fastclaw.feature.mine.dialog.AnalysisLoadingDialog
 
 
 class ReportActivity :
