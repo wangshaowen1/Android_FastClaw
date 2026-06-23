@@ -998,7 +998,7 @@
     <string name="invite_share_wechat_friend">微信好友</string>
     <string name="invite_share_save_image">保存图片</string>
     <string name="invite_share_qr_hint">长按免费领取</string>
-    <string name="invite_share_copy_text">注册即得免费虾条，领取你的专属 AI 求职经纪人！😊\nhttps://kuailongxia.com，👉点击链接进入活动</string>
+    <string name="invite_share_copy_text">注册即得免费虾条，领取你的专属 AI 求职经纪人！😊\n%1$s，👉点击链接进入活动</string>
     <string name="invite_copy_success">已复制链接</string>
     <string name="invite_save_image_success">已保存图片</string>
     <string name="invite_record_decor">Invite Friends</string>

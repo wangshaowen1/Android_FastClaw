@@ -1,7 +1,25 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+
+/**
+ * 邀请统计数据
+ */
+@Parcelize
+data class InviteStatsData(
+    /**
+     * 统计人数
+     */
+    val inviteCount: Int? = null,
+
+    /**
+     * 总虾条
+     */
+    @SerializedName(value = "inviteScore", alternate = ["totalInviteScore"])
+    val totalInviteScore: Int? = null
+) : Parcelable
 
 /**
  * 邀请记录分页数据
@@ -34,6 +52,11 @@ data class InviteRecordInfo(
      * 邀请日期，格式 yyyy-MM-dd HH:mm:ss
      */
     val inviteDate: String? = null,
+
+    /**
+     * 邀请积分，记录邀请人通过当前被邀请人累计获得的积分
+     */
+    val inviteScore: Int? = null,
 
     /**
      * 注册状态，固定为 1

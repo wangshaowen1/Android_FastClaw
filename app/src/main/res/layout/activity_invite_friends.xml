@@ -242,10 +242,11 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/invite_success_count_value"
+                                        android:text="@{layout.inviteSuccessCountText}"
                                         android:textColor="@color/color_FF5842"
                                         android:textSize="24sp"
-                                        android:textStyle="bold" />
+                                        android:textStyle="bold"
+                                        tools:text="@string/invite_success_count_value" />
 
                                     <TextView
                                         android:layout_marginLeft="3dp"
@@ -286,18 +287,20 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/invite_total_reward_value"
+                                        android:text="@{layout.inviteTotalRewardText}"
                                         android:textColor="@color/color_FF5842"
                                         android:textSize="24sp"
-                                        android:textStyle="bold" />
+                                        android:textStyle="bold"
+                                        tools:text="@string/invite_total_reward_value" />
 
                                     <TextView
                                         android:layout_marginLeft="3dp"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="@string/invite_total_reward_unit"
+                                        android:text="@{layout.inviteTotalRewardUnitText}"
                                         android:textColor="@color/color_FF5842"
-                                        android:textSize="15sp" />
+                                        android:textSize="15sp"
+                                        tools:text="@string/invite_total_reward_unit" />
                                 </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>

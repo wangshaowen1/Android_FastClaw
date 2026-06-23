@@ -184,6 +184,7 @@ object ApiConstants {
      * 分页查询邀请记录
      */
     const val QUERY_INVITE_RECORD_PAGE = "api/candidate/h5/invite/record/page"
+    const val QUERY_INVITE_STATS = "/api/candidate/app/invite/stats/query"
 
     /**
      * 查询邀请分享信息
