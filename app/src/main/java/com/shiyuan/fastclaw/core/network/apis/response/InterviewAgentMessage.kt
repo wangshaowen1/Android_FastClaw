@@ -99,9 +99,6 @@ data class InterviewAgentPayload(
     /** 回答结束原因：USER_SUBMIT / TIMEOUT_AUTO_SUBMIT / NO_ANSWER_SKIP / TECHNICAL_INTERRUPTED */
     val answerEndReason: String? = null,
 
-    /** 下一步提示，例如 WAIT_USER_START_ANSWER */
-    val nextActionHint: String? = null,
-
     /** 错误提示文案 */
     val errorMessage: String? = null,
 )
