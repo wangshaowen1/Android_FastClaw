@@ -172,7 +172,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     mRealVM.sendAction(
                         desc = getString(R.string.company_backcheck),
                         actionData = AgentMsgAction(
-                            actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND_ENTRY.name,
+                            actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND.name,
                             actionPayloadJson = null,
                         )
                     )
@@ -248,7 +248,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 公司背调 - 开始背调
-        msgAdapter.onCompanyStartClickAction = { item, action, companyData ->
+        msgAdapter.onCompanyStartClickAction = { item, action, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.sendAction(
@@ -256,7 +256,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     actionData = AgentMsgAction(
                         actionCode = CandidateJobAgentClientActionEnum.GENERATE_COMPANY_BACKGROUND_REPORT.name,
                         sourceMessageId = item.id,
-                        actionPayloadJson = GsonUtils.toJson(companyData)
+                        actionPayloadJson = GsonUtils.toJson(data)
                     )
                 )
             }
