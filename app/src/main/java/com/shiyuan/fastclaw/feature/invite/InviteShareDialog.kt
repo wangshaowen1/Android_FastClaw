@@ -152,7 +152,7 @@ class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
     }
 
     private fun copyInviteText() {
-        ClipboardUtils.copyText(inviteLandingUrl(INVITE_SCENE_LINK))
+        ClipboardUtils.copyText(getString(R.string.invite_share_copy_text, inviteLandingUrl(INVITE_SCENE_LINK)))
         val manager = parentFragmentManager
         dismissAllowingStateLoss()
         InviteCopySuccessDialog.show(manager)

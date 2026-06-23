@@ -50,6 +50,7 @@ class InviteFriendsActivity :
         mRealVM.inviteRecordItems.observe(this) { items ->
             recordAdapter.submitList(items)
         }
+        mRealVM.loadInviteStats()
         mRealVM.loadInviteRecords()
         binding.tvInviteNow.setOnSingleClickListener {
             showInviteShareDialog()

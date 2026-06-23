@@ -30,6 +30,21 @@ class InviteFriendsViewModel : AppRepositoryViewModel<AppRepository>() {
     )
 
     val inviteRecordItems = MutableLiveData<List<ItemInviteRecordVM>>(emptyList())
+    val inviteSuccessCountText = MutableLiveData("0")
+    val inviteTotalRewardText = MutableLiveData("0")
+    val inviteTotalRewardUnitText = MutableLiveData("  虾条=0元")
+
+    fun loadInviteStats() {
+        request(
+            apiBlock = { mRepo.api.queryInviteStats() },
+            onSuccess = {
+                val totalScore = data?.totalInviteScore ?: 0
+                inviteSuccessCountText.value = (data?.inviteCount ?: 0).toString()
+                inviteTotalRewardText.value = totalScore.toString()
+                inviteTotalRewardUnitText.value = "  虾条=${totalScore.toInviteAmountText()}元"
+            }
+        )
+    }
 
     fun loadInviteRecords() {
         request(
@@ -58,7 +73,8 @@ class InviteFriendsViewModel : AppRepositoryViewModel<AppRepository>() {
         return InviteRecordItem(
             name = inviteeNickName.orEmpty(),
             date = inviteDate.toInviteRecordDate(),
-            reward = if (experienced) INVITE_REWARD_FULL else INVITE_REWARD_REGISTER,
+            reward = inviteScore?.toString()
+                ?: INVITE_REWARD,
             registerStatusText = registerStatusText.orEmpty(),
             experienceStatusText = experienceStatusText.orEmpty(),
             experienceStatusIconRes = if (experienced) {
@@ -74,12 +90,18 @@ class InviteFriendsViewModel : AppRepositoryViewModel<AppRepository>() {
         return if (value.length >= 10) value.substring(5, 10) else value
     }
 
+    private fun Int.toInviteAmountText(): String {
+        val amount = this / INVITE_SCORE_AMOUNT_RATE
+        val decimal = this % INVITE_SCORE_AMOUNT_RATE
+        return if (decimal == 0) amount.toString() else "$amount.$decimal"
+    }
+
     companion object {
         private const val INVITE_RECORD_FIRST_PAGE = 1
         private const val INVITE_RECORD_PAGE_SIZE = 20
         private const val EXPERIENCE_STATUS_DONE = 1
-        private const val INVITE_REWARD_REGISTER = "20"
-        private const val INVITE_REWARD_FULL = "100"
+        private const val INVITE_REWARD = "0"
+        private const val INVITE_SCORE_AMOUNT_RATE = 10
     }
 }
 

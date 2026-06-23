@@ -66,6 +66,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
+import com.shiyuan.fastclaw.core.network.apis.response.InviteStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
@@ -327,6 +328,9 @@ interface ApiService {
      */
     @POST(ApiConstants.QUERY_INVITE_RECORD_PAGE)
     suspend fun queryInviteRecordPage(@Body body: PagedBody): ApiResponse<InviteRecordPageData?>
+
+    @POST(ApiConstants.QUERY_INVITE_STATS)
+    suspend fun queryInviteStats(): ApiResponse<InviteStatsData?>
 
     /**
      * 查询邀请分享信息
