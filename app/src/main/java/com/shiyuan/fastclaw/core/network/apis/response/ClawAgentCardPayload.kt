@@ -371,11 +371,28 @@ data class CompanyBackgroundReportPayloadBean(
 )
 
 data class MockInterviewEntryPayloadBean(
+    val cardBizType: String? = null,
+    val entryMessageId: String? = null,
+    val entrySource: String? = null,
+    val resumeId: String? = null,
+    val resumeStatus: String? = null,
+    val buttonStatus: String? = null,
+    val chargeAmount: Int? = null,
+    val chargeUnit: String? = null,
+    val title: String? = null,
+    val subtitle: String? = null,
+    val primaryAction: CardAction? = null,
     val interactionState: CardInteractionState? = null,
     val actions: List<CardAction>? = null,
 )
 
 data class MockInterviewReportPayloadBean(
+    val cardBizType: String? = null,
+    val interviewId: String? = null,
+    val mockReportId: String? = null,
+    val reportStatus: String? = null,
+    val progressPercent: Int? = null,
+    val progressText: String? = null,
     val score: Int? = null,
     val interviewScore: Int? = null,
     val reportScore: Int? = null,

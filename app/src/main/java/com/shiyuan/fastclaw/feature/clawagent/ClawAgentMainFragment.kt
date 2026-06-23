@@ -41,6 +41,7 @@ import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
@@ -59,6 +60,7 @@ import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
+import com.shiyuan.fastclaw.feature.interview.InterviewActivity
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -176,7 +178,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             R.id.layout_interview -> { //模拟面试
                 if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-
+                    mRealVM.sendAction(
+                        desc = getString(R.string.mock_interview),
+                        actionData = AgentMsgAction(
+                            actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
+                            actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = "QUICK_ENTRY"))
+                        )
+                    )
                 }
             }
         }
@@ -238,7 +246,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 公司背调 - 开始背调
-        msgAdapter.onCompanyStartClickListener = { item, action, companyData ->
+        msgAdapter.onCompanyStartClickAction = { item, action, companyData ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.sendAction(
@@ -249,6 +257,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         actionPayloadJson = GsonUtils.toJson(companyData)
                     )
                 )
+            }
+        }
+        // 模拟面试 - 开始面试
+        msgAdapter.onInterviewStartClickAction = { item, action, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                InterviewActivity.start(
+                    activity = requireActivity(),
+                    entryMessageId = data?.entryMessageId,
+                    entrySource = data?.entrySource,
+                    resumeId = data?.resumeId)
             }
         }
 

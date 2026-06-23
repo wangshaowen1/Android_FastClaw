@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackStartBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportDoneBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportFailedBinding
@@ -27,7 +29,7 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
-import com.shiyuan.fastclaw.core.network.apis.response.CompanyStartBean
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
@@ -80,7 +82,10 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
 
     /** 公司背调 - 开始背调 */
-    var onCompanyStartClickListener: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyStartBean) -> Unit = { _, _ , _ -> }
+    var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyBackStartBody) -> Unit = { _, _, _ -> }
+
+    /** 公司面试 - 开始面试 */
+    var onInterviewStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
 
     init {
         // 用户消息（靠右气泡）
@@ -95,7 +100,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_COMPANY_BACKGROUND_ENTRY,
             { i, p ->
                 AgentCompanyBackgroundEntryViewHolder(ItemMsgAgentCompanyBackgroundEntryBinding.inflate(i, p, false)).apply {
-                    onCompanyClickListener = { item, action, companyData -> onCompanyStartClickListener(item, action, companyData) }
+                    onCompanyClickListener = { item, action, companyData -> onCompanyStartClickAction(item, action, companyData) }
                 }
             }) { h, item -> h.bind(item) }
         // 公司背调报告卡：生成中
@@ -119,7 +124,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_MOCK_INTERVIEW_ENTRY,
             { i, p ->
                 AgentMockInterviewEntryViewHolder(ItemMsgAgentMockInterviewEntryBinding.inflate(i, p, false)).apply {
-                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                    onInterviewClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 面试复盘报告卡：生成中
