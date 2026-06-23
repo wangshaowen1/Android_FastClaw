@@ -28,9 +28,15 @@ import com.shiyuan.fastclaw.common.speech.DashCosyVoiceStreamTtsPlayer
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.ext.getBundleValue
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentMessage
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentPayload
 import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_UPLOAD
+import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.MSG_TEXT_DONE
+import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SENDER_AGENT
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
+import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
+import com.shiyuan.fastclaw.feature.interview.dialog.InterviewJobDialog
 import com.shiyuan.fastclaw.feature.settings.report.ReportActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.router.AppNavigator
 import java.util.UUID
@@ -68,8 +74,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.rvMessage.layoutManager = LinearLayoutManager(this) //.apply { stackFromEnd = true }
         binding.rvMessage.adapter = msgAdapter
         binding.ivBack.setOnSingleClickListener {
-            mRealVM.exitInterview()
-            finish()
+            showFinishDialog()
         }
         binding.btnTargetJob.setOnSingleClickListener {
             requestAlbumPermission()
@@ -80,7 +85,29 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.tvVoicePress.setOnSingleClickListener {
             toggleAnswerRecording()
         }
+        binding.btnFinishInterview.setOnSingleClickListener {
+            showFinishDialog()
+        }
+        binding.tvJobHelp.setOnSingleClickListener {
+            showTargetJobDialog()
+        }
         mRealVM.enterInterview(mInterviewId)
+        //测试数据
+        mRealVM.roomState.value = InterviewRoomState.PREPARING
+        mRealVM.sseInsertMessages(
+            InterviewAgentMessage(
+                messageId = "mock-text-done-${UUID.randomUUID()}",
+                interviewId = mInterviewId,
+                messageSeq = 666,
+                messageType = MSG_TEXT_DONE,
+                senderType = SENDER_AGENT,
+                content = "你好，面试即将开始。首先和你确认，你有没有明确想要面试的目标岗位？上传指定的公司名和岗位要求，我能为你针对性押题",
+                payload = InterviewAgentPayload(
+                    questionType = "MAIN",
+                    questionId = "mock-question-001",
+                    questionIndex = 1,
+                ),
+        ))
     }
 
     private fun observeData() {
@@ -90,7 +117,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             val scrollToLatest = forceScrollToBottom || !binding.rvMessage.canScrollVertically(1)
             forceScrollToBottom = false
             msgAdapter.submitList(list)
-            if (scrollToLatest && list.isNotEmpty()) {
+            if (list.isNotEmpty()) {
                 // 跳转 + 补偿滚动距离，确保刚插入(尚未测量高度)的最后一条完整贴底
                 RecyclerViewScrollHelper.scrollToBottom(binding.rvMessage, 100)
             }
@@ -104,6 +131,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                     "imageOssKeys" to it,
                 )
             )
+            //测试数据
+            mRealVM.roomState.value = InterviewRoomState.INTERVIEWING
         }
         mRealVM.roomState.observe(this) {
             updateRoomState(it)
@@ -122,7 +151,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             ensureTtsPlayer().speak(it)
         }
         mRealVM.finishRoomEvent.observe(this) {
-            finish()
+            //finish()
         }
     }
 
@@ -133,7 +162,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.tvTitle.text = when (state) {
             InterviewRoomState.STARTING -> "面试准备中"
             InterviewRoomState.PREPARING -> "面试准备中"
-            InterviewRoomState.WAITING_TARGET_JOB -> "面试准备中"
+            InterviewRoomState.TARGET_JOB_FAILED -> "面试准备中"
             InterviewRoomState.TARGET_JOB_PARSING -> "面试准备中"
             InterviewRoomState.INTERVIEWING -> "面试中"
             InterviewRoomState.ANSWERING -> "面试中"
@@ -146,9 +175,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             }
             InterviewRoomState.INTERVIEWING, InterviewRoomState.ANSWERING -> {
                 binding.layoutAnswer.visible()
-                binding.tvVoicePress.visible()
             }
-            InterviewRoomState.WAITING_TARGET_JOB -> {
+            InterviewRoomState.TARGET_JOB_FAILED -> {
                 binding.layoutPrepare.visible()
                 binding.tvTargetJobTitle.text = "重新上传"
             }
@@ -159,7 +187,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 binding.layoutFinish.visible()
             }
             else -> {
-                binding.tvVoicePress.gone()
+                binding.layoutPrepare.visible()
             }
         }
     }
@@ -231,6 +259,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 }
 
                 override fun onFinalResult(text: String) {
+                    if (isDestroyed) return
                     pendingVoiceText = text
                     if (shouldSendVoiceResult) {
                         sendVoiceMessage()
@@ -238,6 +267,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 }
 
                 override fun onError(message: String) {
+                    if (isDestroyed) return
                     if (shouldSendVoiceResult && !sendVoiceMessage()) {
                         showMessage(message)
                     } else if (!shouldSendVoiceResult) {
@@ -248,6 +278,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 }
 
                 override fun onStopped() {
+                    if (isDestroyed) return
                     if (shouldSendVoiceResult && !sendVoiceMessage()) {
                         showMessage("未识别到语音内容")
                     }
@@ -302,6 +333,15 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    fun showFinishDialog() {
+        val dialog = InterviewFinishDialog(this).showDialog()
+        dialog.listener = { finish() }
+    }
+
+    fun showTargetJobDialog() {
+        InterviewJobDialog(this).showDialog()
+    }
+
     private fun requestAlbumPermission() {
         requestImages2VideosPermissions {
             if (it) openAlbum()
@@ -327,7 +367,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
-            mRealVM.uploadTargetJob(Matisse.obtainResult(data).orEmpty())
+            mRealVM.uploadTarget(Matisse.obtainResult(data).orEmpty())
         }
     }
 

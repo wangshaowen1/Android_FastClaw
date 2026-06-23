@@ -33,8 +33,8 @@
                 android:id="@+id/iv_back"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:padding="8dp"
                 android:layout_marginStart="8dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_interview_back"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="面试准备中"
+                android:text="@string/interview_room_title_prepare"
                 android:textColor="@color/color_90_000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -60,11 +60,11 @@
             android:id="@+id/rv_message"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="12dp"
             android:clipToPadding="false"
             android:paddingHorizontal="24dp"
             android:paddingBottom="16dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="12dp"
             app:layout_constraintBottom_toTopOf="@id/layout_bottom"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -86,27 +86,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
                     android:id="@+id/btn_target_job"
                     android:layout_width="0dp"
                     android:layout_height="84dp"
                     android:background="@drawable/bg_ffffff_r20"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    app:background_colorOrientation="top_bottom"
+                    app:border_color="@color/color_ffffff"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shadow_endColor="@color/color_ffffff"
+                    app:shadow_startColor="#80E9F3FF"
+                    app:super_corner="20dp"
+                    app:view_border_width="1dp">
 
                     <TextView
                         android:id="@+id/tv_target_job_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:text="我有明确岗位"
+                        android:text="@string/interview_room_target_job_title"
                         android:textColor="@color/color_90_000000"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -122,16 +129,16 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:gravity="center_vertical"
-                        android:text="上传公司名+JD截图，针对性押题"
+                        android:text="@string/interview_room_target_job_desc"
                         android:textColor="@color/color_55_3c3c43"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_target_job_title" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
                     android:id="@+id/btn_no_target_job"
                     android:layout_width="0dp"
                     android:layout_height="84dp"
@@ -139,16 +146,22 @@
                     android:background="@drawable/bg_ffffff_r20"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
+                    app:background_colorOrientation="top_bottom"
+                    app:border_color="@color/color_ffffff"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/btn_target_job">
+                    app:layout_constraintTop_toBottomOf="@id/btn_target_job"
+                    app:shadow_endColor="@color/color_ffffff"
+                    app:shadow_startColor="#80E9F3FF"
+                    app:super_corner="20dp"
+                    app:view_border_width="1dp">
 
                     <TextView
                         android:id="@+id/tv_no_target_job_title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:text="没有明确岗位"
+                        android:text="@string/interview_room_no_target_job_title"
                         android:textColor="@color/color_90_000000"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -164,21 +177,21 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:gravity="center_vertical"
-                        android:text="选择意向岗位，结合简历提问"
+                        android:text="@string/interview_room_no_target_job_desc"
                         android:textColor="@color/color_55_3c3c43"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_no_target_job_title" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 
                 <TextView
                     android:id="@+id/tv_job_help"
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
                     android:gravity="center"
-                    android:text="如何获得岗位截图>"
+                    android:text="@string/interview_room_job_help"
                     android:textColor="@color/color_2f6bff"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@id/btn_no_target_job" />
@@ -191,6 +204,7 @@
                 android:layout_marginBottom="62dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -220,24 +234,24 @@
                     android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:includeFontPadding="false"
-                    android:text="开始作答"
+                    android:text="@string/interview_room_answer_start"
                     android:textColor="@color/color_90_000000"
                     android:textSize="14sp"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_voice_icon" />
 
                 <TextView
                     android:id="@+id/tv_voice_duration"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
+                    android:layout_marginTop="6dp"
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:textColor="@color/color_90_000000"
                     android:textSize="14sp"
-                    android:layout_marginTop="6dp"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_voice_press"
                     tools:text="02:26" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -246,38 +260,46 @@
                 android:id="@+id/layout_finish"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="62dp"
-                android:paddingHorizontal="16dp"
+                android:layout_marginBottom="42dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <TextView
+                <com.shiyuan.fastclaw.widget.super_button.SuperButton
                     android:id="@+id/btn_finish_interview"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@drawable/bg_ffffff_r20"
                     android:gravity="center"
-                    android:text="结束面试"
+                    android:text="@string/interview_room_finish_interview"
                     android:textColor="@color/color_90_000000"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:sCornersRadius="20dp"
+                    app:sGradientAngle="270"
+                    app:sGradientEndColor="@color/color_ffffff"
+                    app:sGradientStartColor="#80E9F3FF"
+                    app:sStrokeColor="@color/color_ffffff"
+                    app:sStrokeWidth="1dp" />
 
                 <TextView
                     android:id="@+id/tv_auto_exit_hint"
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:gravity="center"
-                    android:text="语音结束后自动退出"
-                    android:textColor="@color/color_55_3c3c43"
+                    android:text="@string/interview_room_auto_exit_hint"
+                    android:textColor="@color/color_90_000000"
                     android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@id/btn_finish_interview" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

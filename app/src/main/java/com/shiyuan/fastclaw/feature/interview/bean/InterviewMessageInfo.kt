@@ -19,7 +19,7 @@ enum class InterviewRoomState {
     PREPARING,
 
     /** 等待用户上传或选择目标岗位 */
-    WAITING_TARGET_JOB,
+    TARGET_JOB_FAILED,
 
     /** 目标岗位截图解析中 */
     TARGET_JOB_PARSING,

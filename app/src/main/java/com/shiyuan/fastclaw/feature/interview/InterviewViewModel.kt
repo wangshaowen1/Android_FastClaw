@@ -45,6 +45,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private var answerTimerJob: Job? = null
     private var answerStartTime = 0L
 
+    private var count = 0
     private val sseProcessor by lazy {
         InterviewSseProcessor(
             onStart = {
@@ -67,24 +68,45 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 //streaming.value = false
                 //roomState.value = InterviewRoomState.ERROR
 
-                // 接口未联通时，临时模拟一条服务端 TEXT_DONE 消息，验证页面展示链路。
+                // 接口未联通时，临时模拟服务端消息，验证完整面试链路。
                 streaming.value = false
-                sseInsertMessages(
-                    InterviewAgentMessage(
-                        messageId = "mock-text-done-${UUID.randomUUID()}",
-                        interviewId = mInterviewId,
-                        messageSeq = lastMessageSeq + 1,
-                        messageType = MSG_TEXT_DONE,
-                        senderType = SENDER_AGENT,
-                        content = "请你先介绍一个最近负责的项目，重点说明你的职责和最终结果。",
-                        payload = InterviewAgentPayload(
-                            questionType = "MAIN",
-                            questionId = "mock-question-001",
-                            questionIndex = 1,
-                            nextActionHint = NEXT_WAIT_USER_START_ANSWER,
-                        ),
+                count++
+                if (count== 1) {
+
+                }
+                else if (count > 10) {
+                    sseInsertMessages(
+                        InterviewAgentMessage(
+                            messageId = "mock-interview-finished-${UUID.randomUUID()}",
+                            interviewId = mInterviewId,
+                            messageSeq = lastMessageSeq + 1,
+                            messageType = MSG_INTERVIEW_FINISHED,
+                            senderType = SENDER_AGENT,
+                            payload = InterviewAgentPayload(
+                                sessionStatus = "COMPLETED",
+                                roomState = "COMPLETED",
+                                interviewId = mInterviewId,
+                                conversationId = mConversationId,
+                            ),
+                        )
                     )
-                )
+                } else {
+                    sseInsertMessages(
+                        InterviewAgentMessage(
+                            messageId = "mock-text-done-${UUID.randomUUID()}",
+                            interviewId = mInterviewId,
+                            messageSeq = lastMessageSeq + 1,
+                            messageType = MSG_TEXT_DONE,
+                            senderType = SENDER_AGENT,
+                            content = "请你先介绍一个最近负责的项目，重点说明你的职责和最终结果。",
+                            payload = InterviewAgentPayload(
+                                questionType = "MAIN",
+                                questionId = "mock-question-001",
+                                questionIndex = 1,
+                            ),
+                        )
+                    )
+                }
             }
         )
     }
@@ -97,7 +119,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         sendAction(ACTION_ENTER_ROOM, emptyMap())
     }
 
-    fun uploadTargetJob(uris: List<Uri>) {
+    fun uploadTarget(uris: List<Uri>) {
         if (uris.isEmpty()) return
         roomState.value = InterviewRoomState.TARGET_JOB_PARSING
         setLoading(true)
@@ -105,7 +127,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             setLoading(false)
             if (successUrls.isEmpty()) {
                 showToast(TEXT_JOB_UPLOAD_FAILED)
-                roomState.value = InterviewRoomState.WAITING_TARGET_JOB
+                roomState.value = InterviewRoomState.TARGET_JOB_FAILED
                 return@submitMultipleFiles
             }
             uploadList.value = successUrls
@@ -148,7 +170,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         val text = answerText.trim()
         if (text.isEmpty()) return
         stopTiming()
-        appendUserMessage(text)
+        appendMessage(SENDER_USER, text)
         sendAction(
             actionType = ACTION_ANSWER_SUBMIT,
             payload = mapOf(
@@ -157,16 +179,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 "answerText" to text,
                 "asrFinalText" to text,
                 "answerEndReason" to endReason,
-            )
-        )
-    }
-
-    fun exitInterview() {
-        sendAction(
-            actionType = ACTION_SESSION_EXIT,
-            payload = mapOf(
-                "exitRequestId" to UUID.randomUUID().toString(),
-                "cancelReason" to "USER_EXIT",
             )
         )
     }
@@ -210,7 +222,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         )
     }
 
-    private fun sseInsertMessages(event: InterviewAgentMessage) {
+    fun sseInsertMessages(event: InterviewAgentMessage) {
         event.messageSeq?.let {
             if (it <= lastMessageSeq) return
             lastMessageSeq = it
@@ -235,7 +247,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun handleRoomState(event: InterviewAgentMessage) {
         when (event.roomState ?: event.payload?.roomState) {
             "TARGET_JOB_PARSING" -> roomState.value = InterviewRoomState.TARGET_JOB_PARSING
-            "TARGET_JOB_PARSE_FAILED" -> roomState.value = InterviewRoomState.WAITING_TARGET_JOB
+            "TARGET_JOB_PARSE_FAILED" -> roomState.value = InterviewRoomState.TARGET_JOB_FAILED
             "PLAN_GENERATING", "PLAN_READY" -> roomState.value = InterviewRoomState.PREPARING
             "WAITING_USER_ANSWER" -> roomState.value = InterviewRoomState.INTERVIEWING
             "CANCELED" -> finishRoomEvent.value = mConversationId
@@ -250,14 +262,11 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                     replaceCurrentAiMessage(it)
                     ttsSpeakEvent.value = it
                 }
-                roomState.value = InterviewRoomState.INTERVIEWING
+                // roomState.value = InterviewRoomState.INTERVIEWING
             }
             SENDER_USER -> {
                 // User answer has already been inserted locally.
             }
-        }
-        if (event.payload?.nextActionHint == NEXT_WAIT_USER_START_ANSWER) {
-            roomState.value = InterviewRoomState.INTERVIEWING
         }
         currentAiMessageId = null
     }
@@ -295,7 +304,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-    private fun appendUserMessage(text: String) = appendMessage(SENDER_USER, text)
 
     private fun showToast(text: String) {
         if (text.isNotEmpty()) {
@@ -328,7 +336,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         const val ACTION_TARGET_JOB_UPLOAD = "TARGET_JOB_UPLOAD"
         const val ACTION_ANSWER_START = "ANSWER_START"
         const val ACTION_ANSWER_SUBMIT = "ANSWER_SUBMIT"
-        const val ACTION_SESSION_EXIT = "SESSION_EXIT"
         const val ANSWER_END_USER_SUBMIT = "USER_SUBMIT"
         const val ANSWER_START_TEXT = "开始作答"
         const val ANSWER_END_TEXT = "点击结束回答"
@@ -336,14 +343,13 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val TEXT_INTERVIEW_CREATE_FAILED = "模拟面试创建失败"
         private const val TEXT_JOB_UPLOAD_FAILED = "岗位截图上传失败，请重新上传"
         private const val TEXT_INTERVIEW_ERROR = "模拟面试异常，请稍后重试"
-        private const val MSG_ROOM_STATE_CHANGED = "ROOM_STATE_CHANGED"
-        private const val MSG_TEXT_DELTA = "TEXT_DELTA"
-        private const val MSG_TEXT_DONE = "TEXT_DONE"
-        private const val MSG_TEXT_BLOCKED = "TEXT_BLOCKED"
-        private const val MSG_INTERVIEW_FINISHED = "INTERVIEW_FINISHED"
-        private const val MSG_ERROR = "ERROR"
+        const val MSG_ROOM_STATE_CHANGED = "ROOM_STATE_CHANGED"
+        const val MSG_TEXT_DELTA = "TEXT_DELTA"
+        const val MSG_TEXT_DONE = "TEXT_DONE"
+        const val MSG_TEXT_BLOCKED = "TEXT_BLOCKED"
+        const val MSG_INTERVIEW_FINISHED = "INTERVIEW_FINISHED"
+        const val MSG_ERROR = "ERROR"
         const val SENDER_AGENT = "AGENT"
         const val SENDER_USER = "USER"
-        private const val NEXT_WAIT_USER_START_ANSWER = "WAIT_USER_START_ANSWER"
     }
 }

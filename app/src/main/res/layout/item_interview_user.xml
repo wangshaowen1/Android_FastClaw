@@ -8,7 +8,7 @@
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
+        android:paddingVertical="6dp"
         android:textColor="@color/color_40_000000"
         android:textSize="16sp"
         tools:text="我要换赛道我要换赛道我要换赛道我要换赛道我要换赛道我要换赛道" />

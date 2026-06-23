@@ -1017,5 +1017,27 @@
     <string name="invite_status_registered">已注册</string>
     <string name="invite_status_experienced">已体验</string>
 
+    <!-- 模拟面试 -->
+    <string name="interview_finish_dialog_title">是否立即结束当前面试？</string>
+    <string name="interview_finish_dialog_message">已消耗虾条不会退回</string>
+    <string name="interview_finish_dialog_back">回到面试</string>
+    <string name="interview_finish_dialog_finish_now">立即结束</string>
+    <string name="interview_room_title_prepare">面试准备中</string>
+    <string name="interview_room_target_job_title">我有明确岗位</string>
+    <string name="interview_room_target_job_desc">上传公司名+JD截图，针对性押题</string>
+    <string name="interview_room_no_target_job_title">没有明确岗位</string>
+    <string name="interview_room_no_target_job_desc">选择意向岗位，结合简历提问</string>
+    <string name="interview_room_job_help">如何获得岗位截图&gt;</string>
+    <string name="interview_room_answer_start">开始作答</string>
+    <string name="interview_room_finish_interview">结束面试</string>
+    <string name="interview_room_auto_exit_hint">语音结束后自动退出</string>
+    <string name="interview_target_job_screenshot_guide_title">如何获得目标岗位截图</string>
+    <string name="interview_target_job_screenshot_step_1_no">1</string>
+    <string name="interview_target_job_screenshot_step_1">打开Boss/招聘网站，查看目标岗位详情页</string>
+    <string name="interview_target_job_screenshot_step_2_no">2</string>
+    <string name="interview_target_job_screenshot_step_2">直接截图，或点击右上角分享按钮</string>
+    <string name="interview_target_job_screenshot_step_3_no">3</string>
+    <string name="interview_target_job_screenshot_step_3">保存图片</string>
+
 </resources>
 
