@@ -12,13 +12,12 @@ data class InviteStatsData(
     /**
      * 统计人数
      */
-    val inviteCount: Int? = null,
+    val successInviteCount: Int? = null,
 
     /**
      * 总虾条
      */
-    @SerializedName(value = "inviteScore", alternate = ["totalInviteScore"])
-    val totalInviteScore: Int? = null
+    val totalRewardScore: Int? = null
 ) : Parcelable
 
 /**

@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.invite
 
 import android.app.Dialog
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -161,7 +162,27 @@ class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
     private fun renderInviteQr(inviteScene: String) {
         val qrSize = (72 * resources.displayMetrics.density).toInt()
         val qrBitmap = Utils.createQRCode(inviteLandingUrl(inviteScene), qrSize, qrSize, null)
+            ?.trimWhiteBorder()
         binding.ivInviteQr.setImageBitmap(qrBitmap)
+    }
+
+    private fun Bitmap.trimWhiteBorder(): Bitmap {
+        var left = width
+        var top = height
+        var right = -1
+        var bottom = -1
+        for (y in 0 until height) {
+            for (x in 0 until width) {
+                if (getPixel(x, y) != Color.WHITE) {
+                    if (x < left) left = x
+                    if (x > right) right = x
+                    if (y < top) top = y
+                    if (y > bottom) bottom = y
+                }
+            }
+        }
+        if (right < left || bottom < top) return this
+        return Bitmap.createBitmap(this, left, top, right - left + 1, bottom - top + 1)
     }
 
     private fun inviteLandingUrl(inviteScene: String): String {
