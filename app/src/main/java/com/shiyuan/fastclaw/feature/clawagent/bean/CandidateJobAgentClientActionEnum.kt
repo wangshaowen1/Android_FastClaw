@@ -50,7 +50,7 @@ enum class CandidateJobAgentClientActionEnum {
     /**
      * 打开公司背调卡片
      */
-    OPEN_COMPANY_BACKGROUND_ENTRY,
+    OPEN_COMPANY_BACKGROUND,
 
     /**
      * 开始生成公司背调报告

@@ -82,7 +82,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
 
     /** 公司背调 - 开始背调 */
-    var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyBackStartBody) -> Unit = { _, _, _ -> }
+    var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackStartBody) -> Unit = { _, _, _ -> }
 
     /** 公司面试 - 开始面试 */
     var onInterviewStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
@@ -100,7 +100,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_COMPANY_BACKGROUND_ENTRY,
             { i, p ->
                 AgentCompanyBackgroundEntryViewHolder(ItemMsgAgentCompanyBackgroundEntryBinding.inflate(i, p, false)).apply {
-                    onCompanyClickListener = { item, action, companyData -> onCompanyStartClickAction(item, action, companyData) }
+                    onCompanyClickListener = { item, action, data -> onCompanyStartClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 公司背调报告卡：生成中

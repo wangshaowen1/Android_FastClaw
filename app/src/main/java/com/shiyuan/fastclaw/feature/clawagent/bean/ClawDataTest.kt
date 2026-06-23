@@ -109,7 +109,7 @@ object ClawDataTest {
                 )
             )
         ))*/
-        dataList.add(1, ClawAgentMessageInfo(
+        /*dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_COMPANY_BACKGROUND_ENTRY,
             sendObj = ClawAgentViewModel.Companion.SENDER_AGENT,
@@ -145,7 +145,7 @@ object ClawDataTest {
                     )
                 )
             )
-        ))
+        ))*/
         dataList.add(1, ClawAgentMessageInfo(
             id = "-1",
             messageType = ClawAgentMsgAdapter.Companion.TYPE_MOCK_INTERVIEW_ENTRY,

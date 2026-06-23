@@ -364,6 +364,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="13dp"
             android:gravity="center"
+            android:orientation="vertical"
             app:background_normalColor="@color/color_2f6bff"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -384,11 +385,10 @@
                 android:id="@+id/tv_free"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
                 android:gravity="center"
                 android:text="@string/str_agent_company_background_action_free"
                 android:textColor="@color/color_ffffff"
-                android:textSize="12sp" />
+                android:textSize="11sp" />
 
         </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
 
