@@ -8,8 +8,11 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.ext.request
+import com.shiyuan.fastclaw.core.ext.requestWithLoading
+import com.shiyuan.fastclaw.core.network.apis.request.InviteShareInfoBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordInfo
 
@@ -34,6 +37,18 @@ class InviteFriendsViewModel : AppRepositoryViewModel<AppRepository>() {
             onSuccess = {
                 val records = data?.items.orEmpty()
                 inviteRecordItems.value = records.map { item -> ItemInviteRecordVM(item.toInviteRecordItem()) }
+            }
+        )
+    }
+
+    fun queryInviteShareInfo(onSuccess: (String) -> Unit) {
+        requestWithLoading(
+            apiBlock = { mRepo.api.queryInviteShareInfo(InviteShareInfoBody()) },
+            onSuccess = {
+                data?.inviteCode?.let { inviteCode ->
+                    User.get().storeInviteCode(inviteCode)
+                    onSuccess(inviteCode)
+                }
             }
         )
     }

@@ -804,6 +804,11 @@
     <string name="str_agent_mock_interview_score_default">31</string>
     <string name="str_agent_mock_interview_time_default">2026/05/16 13:30:12</string>
     <string name="str_agent_mock_interview_time">面试时间：%1$s</string>
+    <string name="str_agent_insufficient_shrimp_title">虾条不足%1$s</string>
+    <string name="str_agent_insufficient_shrimp_remaining">（剩余:%1$d）</string>
+    <string name="str_agent_insufficient_shrimp_invite">邀请好友免费赚\n邀请1人送100虾条</string>
+    <string name="str_agent_insufficient_shrimp_recharge">充值虾条</string>
+    <string name="str_agent_insufficient_shrimp_close">关闭虾条不足弹窗</string>
     <string name="str_agent_today_progress_title">今日进展</string>
     <string name="str_agent_today_progress_align_title">我们的关系又近了一步</string>
     <string name="str_agent_today_progress_align_delta">对齐度+%1$s</string>

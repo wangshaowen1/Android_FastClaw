@@ -21,7 +21,6 @@ import com.shiyuan.fastclaw.common.ext.toAlbum
 import com.shiyuan.fastclaw.common.ext.toCache
 import com.shiyuan.fastclaw.common.permissions.requestRead2WritePermissions
 import com.shiyuan.fastclaw.common.utils.Utils
-import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.databinding.DialogInviteShareBinding
 import com.umeng.socialize.UMShareListener
@@ -32,32 +31,21 @@ import kotlinx.coroutines.withContext
 
 class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
 
+    private val inviteCode: String
+        get() = arguments?.getString(ARG_INVITE_CODE).orEmpty()
+
     companion object {
         private const val INVITE_SCENE_WECHAT = "WECHAT"
         private const val INVITE_SCENE_MOMENTS = "MOMENTS"
         private const val INVITE_SCENE_POSTER = "POSTER"
         private const val INVITE_SCENE_LINK = "LINK"
+        private const val ARG_INVITE_CODE = "inviteCode"
 
-        val WX_DOWNLOADLANDING_URL: String
-            get() = inviteLandingUrl(INVITE_SCENE_WECHAT)
-        val PYQ_DOWNLOADLANDING_URL: String
-            get() = inviteLandingUrl(INVITE_SCENE_MOMENTS)
-        val IM_DOWNLOADLANDING_URL: String
-            get() = inviteLandingUrl(INVITE_SCENE_POSTER)
-        val TXT_DOWNLOADLANDING_URL: String
-            get() = inviteLandingUrl(INVITE_SCENE_LINK)
-
-        private fun inviteLandingUrl(inviteScene: String): String {
-            return Uri.parse(DOWNLOADLANDING_URL)
-                .buildUpon()
-                .appendQueryParameter("inviteCode", User.get().inviteCode.orEmpty())
-                .appendQueryParameter("inviteScene", inviteScene)
-                .build()
-                .toString()
-        }
-
-        fun show(manager: FragmentManager): InviteShareDialog {
+        fun show(manager: FragmentManager, inviteCode: String): InviteShareDialog {
             return InviteShareDialog().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_INVITE_CODE, inviteCode)
+                }
                 show(manager)
             }
         }
@@ -164,7 +152,7 @@ class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
     }
 
     private fun copyInviteText() {
-        ClipboardUtils.copyText(TXT_DOWNLOADLANDING_URL)
+        ClipboardUtils.copyText(inviteLandingUrl(INVITE_SCENE_LINK))
         val manager = parentFragmentManager
         dismissAllowingStateLoss()
         InviteCopySuccessDialog.show(manager)
@@ -174,5 +162,14 @@ class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
         val qrSize = (72 * resources.displayMetrics.density).toInt()
         val qrBitmap = Utils.createQRCode(inviteLandingUrl(inviteScene), qrSize, qrSize, null)
         binding.ivInviteQr.setImageBitmap(qrBitmap)
+    }
+
+    private fun inviteLandingUrl(inviteScene: String): String {
+        return Uri.parse(DOWNLOADLANDING_URL)
+            .buildUpon()
+            .appendQueryParameter("inviteCode", inviteCode)
+            .appendQueryParameter("inviteScene", inviteScene)
+            .build()
+            .toString()
     }
 }

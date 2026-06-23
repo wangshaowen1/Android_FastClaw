@@ -61,6 +61,8 @@ import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
 import com.shiyuan.fastclaw.feature.interview.InterviewActivity
+import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
+import com.shiyuan.fastclaw.feature.mine.MineShrimpRechargeActivity
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -656,8 +658,21 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         mRealVM.interviewStartResult.observe(this) {
             if (it?.isDeductSuccess() == true) {
                 InterviewActivity.start(requireActivity(), it.interviewId)
-            } else {
+            } else if(it?.isDeductFailed() == true){
+                showInsufficientShrimpDialog()
+            } else{
                 showMessage(it?.message ?: "模拟面试创建失败")
+            }
+        }
+    }
+
+    private fun showInsufficientShrimpDialog() {
+        ClawAgentInsufficientShrimpDialog.show(childFragmentManager).apply {
+            onInviteClick = {
+                InviteFriendsActivity.start(requireActivity())
+            }
+            onRechargeClick = {
+                MineShrimpRechargeActivity.start(requireActivity())
             }
         }
     }

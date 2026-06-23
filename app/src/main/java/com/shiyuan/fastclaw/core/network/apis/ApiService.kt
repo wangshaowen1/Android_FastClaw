@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImgUrlBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
+import com.shiyuan.fastclaw.core.network.apis.request.InviteShareInfoBody
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
@@ -63,6 +64,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
@@ -266,6 +268,12 @@ interface ApiService {
     suspend fun getMyReportList(@Body body: PagedBody): ApiResponse<PagedList<ReportListItem>?>
 
     /**
+     * 获取面试报告列表
+     */
+    @POST(ApiConstants.INTERVIEW_REPORT_LIST_QUERY)
+    suspend fun getInterviewReportList(@Body body: PagedBody): ApiResponse<PagedList<InterviewReportListItem>?>
+
+    /**
      * 上传简历
      */
     @Multipart
@@ -319,6 +327,12 @@ interface ApiService {
      */
     @POST(ApiConstants.QUERY_INVITE_RECORD_PAGE)
     suspend fun queryInviteRecordPage(@Body body: PagedBody): ApiResponse<InviteRecordPageData?>
+
+    /**
+     * 查询邀请分享信息
+     */
+    @POST(ApiConstants.QUERY_INVITE_SHARE_INFO)
+    suspend fun queryInviteShareInfo(@Body body: InviteShareInfoBody): ApiResponse<UserHomeData?>
 
     /**
      * 查询虾条充值配置列表

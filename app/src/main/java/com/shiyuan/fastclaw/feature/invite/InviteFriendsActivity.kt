@@ -12,6 +12,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.databinding.ActivityInviteFriendsBinding
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 
@@ -60,7 +61,14 @@ class InviteFriendsActivity :
     }
 
     private fun showInviteShareDialog() {
-        InviteShareDialog.show(supportFragmentManager)
+        val inviteCode = User.get().inviteCode
+        if (inviteCode != null) {
+            InviteShareDialog.show(supportFragmentManager, inviteCode)
+            return
+        }
+        mRealVM.queryInviteShareInfo { code ->
+            InviteShareDialog.show(supportFragmentManager, code)
+        }
     }
 
     private fun setupToolbarBackgroundAnimation() {

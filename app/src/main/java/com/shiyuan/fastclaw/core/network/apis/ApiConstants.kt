@@ -114,6 +114,7 @@ object ApiConstants {
 
     const val JD_RESUME_MATERIAL_QUALITY = "/api/candidate/app/interviewReport/jdMaterialQuality/check"
     const val JD_RESUME_MATERIAL_QUALITY_RESULT = "/api/candidate/app/interviewReport/jdMaterialQuality/result/query"
+    const val INTERVIEW_REPORT_LIST_QUERY = "/api/candidate/app/myReport/report/list/query"
     const val INTERVIEW_REPORT = "/api/candidate/app/interviewReport/report/submit"
     const val INTERVIEW_REPORT_RESULT = "/api/candidate/app/interviewReport/report/status/query"
     const val GET_SCHEME = "/api/candidate/miniProgram/scheme"
@@ -183,6 +184,11 @@ object ApiConstants {
      * 分页查询邀请记录
      */
     const val QUERY_INVITE_RECORD_PAGE = "api/candidate/h5/invite/record/page"
+
+    /**
+     * 查询邀请分享信息
+     */
+    const val QUERY_INVITE_SHARE_INFO = "/api/candidate/app/invite/share/info/query"
 
     /**
      * 查询积分充值配置列表

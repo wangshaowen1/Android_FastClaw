@@ -12,6 +12,8 @@ data class MockInterviewStartData(
     val message: String? = null,
 ) {
     fun isDeductSuccess() = chargeStatus == "DEDUCT_SUCCESS"
+
+    fun isDeductFailed() = chargeStatus == "DEDUCT_FAILED"
 }
 
 data class MockInterviewAudioTokenData(
