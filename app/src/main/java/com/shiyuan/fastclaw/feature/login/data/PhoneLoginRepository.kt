@@ -35,7 +35,7 @@ class PhoneLoginRepository : AppRepository() {
                     telNum=phoneNumber,
                     smsValidateCode=validationCode,
                     bizType = LoginByPhoneBody.BIZ_TYPE_LOGIN,
-                    Config.get().installData,
+                    inviteAttribution = Config.get().inviteAttribution,
                 )
             ).apply {
                 val isNewRegister = data?.isNewRegistration() == true

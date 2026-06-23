@@ -6,6 +6,7 @@ import android.content.Context;
 import com.shiyuan.fastclaw.BuildConfig;
 import com.shiyuan.fastclaw.core.manager.IRouter;
 import com.shiyuan.fastclaw.core.manager.PushManager;
+import com.shiyuan.fastclaw.core.manager.ULinkManager;
 import com.nhsd.basic.Session;
 import com.nhsd.share.KS;
 import com.nhsd.share.XHS;
@@ -54,6 +55,7 @@ public class UmInitConfig {
 
         //PushSDK初始化(如使用推送SDK，必须调用此方法)
         initUpush(context, router);
+        ULinkManager.init(context);
 
         //统计SDK是否支持采集在子进程中打点的自定义事件，默认不支持
         UMConfigure.setProcessEvent(true);//支持多进程打点

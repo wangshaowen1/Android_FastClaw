@@ -17,6 +17,7 @@ import com.nhsd.basic.Session
 import com.nhsd.basic.Session.NetworkChangedListener
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.launchNoCrash
+import com.shiyuan.fastclaw.core.network.apis.request.InviteAttribution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -64,7 +65,7 @@ class Config : NetworkChangedListener {
 
     private var deviceToken: String? = null
 
-    var installData: String?
+    var inviteAttribution: InviteAttribution? = null
         private set
 
     var opid: String?
@@ -98,7 +99,10 @@ class Config : NetworkChangedListener {
         this.isShowJumpPop = sp.getBoolean(SHOW_JUMP_POP, true)
         baseUrlCustom = sp.getString(Constants.BASE_URL_CUSTOM, BuildConfig.SERVER_URL)
         deviceToken = sp.getString(DEVICE_TOKEN, deviceToken)
-        installData = sp.getString(INSTALL_DATA, null)
+        inviteAttribution = InviteAttribution(
+            inviteCode = sp.getString(INVITE_CODE, null),
+            inviteScene = sp.getString(INVITE_SCENE, null)
+        ).takeIf { !it.inviteCode.isNullOrBlank() || !it.inviteScene.isNullOrBlank() }
         opid = sp.getString(OPID, null)
         eyeProtectionEnabled = sp.getBoolean(EYE_PROTECTION_ENABLE, false)
         gson = Gson()
@@ -244,6 +248,20 @@ class Config : NetworkChangedListener {
         sp.putString(DEVICE_TOKEN, deviceToken)
     }
 
+    fun storeInviteAttribution(inviteCode: String?, inviteScene: String?) {
+        val validInviteCode = inviteCode?.takeIf { it.isNotBlank() }
+        val validInviteScene = inviteScene?.takeIf { it.isNotBlank() }
+        if (validInviteCode == null && validInviteScene == null) {
+            return
+        }
+        inviteAttribution = InviteAttribution(
+            inviteCode = validInviteCode,
+            inviteScene = validInviteScene
+        )
+        sp.putString(INVITE_CODE, validInviteCode)
+        sp.putString(INVITE_SCENE, validInviteScene)
+    }
+
     fun clear() {
         this.isFirstOpenApp = true
         sp.remove(FIRST_OPEN_APP)
@@ -256,7 +274,9 @@ class Config : NetworkChangedListener {
         sp.remove(ENVIRONMENT)
         this.isDevelopmentMode = false
         sp.remove(DEVELOPMENT_MODE)
-        sp.remove(INSTALL_DATA)
+        inviteAttribution = null
+        sp.remove(INVITE_CODE)
+        sp.remove(INVITE_SCENE)
         sp.remove(OPID)
         this.isShowJumpPop = true
         sp.remove(SHOW_JUMP_POP)
@@ -407,7 +427,8 @@ class Config : NetworkChangedListener {
         private const val ENVIRONMENT: String = "environment"
         private const val APP_CONFIG = "app_config"
         private const val COMPOSE_CONFIG: String = "COMPOSE_CONFIG"
-        private const val INSTALL_DATA = "install_data"
+        private const val INVITE_CODE = "invite_code"
+        private const val INVITE_SCENE = "invite_scene"
         private const val OPID = "opid"
         private val DEFAULT_APP_CONFIG: AppConfigData = AppConfigData()
         private const val NOTIFICATION_ENABLE = "NOTIFICATION_ENABLE"
