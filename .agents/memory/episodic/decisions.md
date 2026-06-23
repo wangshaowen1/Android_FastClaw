@@ -38,3 +38,14 @@ metadata:
 
 ### 验证结论
 静态检查：`rg -n "installData|INSTALL_DATA|inviteData" app\src\main\java app\build.gradle` 无残留；按项目规则未运行 Gradle。
+
+## v本轮 面试报告列表接口独立接入
+
+### 变更了什么
+面试报告列表 → 新增独立接口链路：`InterviewReportActivity` 使用独立 `InterviewReportViewModel`、`InterviewReportPagingSource`、`InterviewReportListItem` 和 `INTERVIEW_REPORT_LIST_QUERY`，不复用或改写旧历史报告列表链路。
+
+### 为什么
+Apikit 路径 `/api/candidate/app/myReport/report/list/query` 虽然包含 `myReport`，但本次页面语义是面试报告；直接把旧 `GET_MY_REPORT_LIST` / `getMyReportList` / `ReportPagingSource` 改成新接口会污染旧历史报告逻辑。决策是保留旧链路，新增面试报告专属链路。
+
+### 验证结论
+静态检查：`rg -n "GET_MY_REPORT_LIST|getMyReportList|INTERVIEW_REPORT_LIST_QUERY|getInterviewReportList|InterviewReportPagingSource"` 确认旧链路仍走旧接口，新页面走新接口；按项目规则未运行 Gradle。

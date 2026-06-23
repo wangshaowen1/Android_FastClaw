@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImgUrlBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
+import com.shiyuan.fastclaw.core.network.apis.request.InviteShareInfoBody
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
@@ -326,6 +327,12 @@ interface ApiService {
      */
     @POST(ApiConstants.QUERY_INVITE_RECORD_PAGE)
     suspend fun queryInviteRecordPage(@Body body: PagedBody): ApiResponse<InviteRecordPageData?>
+
+    /**
+     * 查询邀请分享信息
+     */
+    @POST(ApiConstants.QUERY_INVITE_SHARE_INFO)
+    suspend fun queryInviteShareInfo(@Body body: InviteShareInfoBody): ApiResponse<UserHomeData?>
 
     /**
      * 查询虾条充值配置列表

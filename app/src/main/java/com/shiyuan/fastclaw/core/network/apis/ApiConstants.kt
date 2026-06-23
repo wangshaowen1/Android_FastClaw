@@ -186,6 +186,11 @@ object ApiConstants {
     const val QUERY_INVITE_RECORD_PAGE = "api/candidate/h5/invite/record/page"
 
     /**
+     * 查询邀请分享信息
+     */
+    const val QUERY_INVITE_SHARE_INFO = "/api/candidate/app/invite/share/info/query"
+
+    /**
      * 查询积分充值配置列表
      */
     const val QUERY_POINT_CONFIG_LIST = "/api/candidate/app/trade/point/config/list"
