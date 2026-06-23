@@ -240,6 +240,21 @@ object ApiConstants {
     const val JOB_AGENT_MESSAGE_PULL = "/api/candidate/app/jobAgent/message/pull"
 
     /**
+     * 提交公司背调报告生成前置校验
+     */
+    const val JOB_AGENT_COMPANY_BACKGROUND_PRE_CHECK_SUBMIT = "/api/candidate/app/jobAgent/companyBackground/report/preCheck/submit"
+
+    /**
+     * 查询公司背调报告生成前置校验结果
+     */
+    const val JOB_AGENT_COMPANY_BACKGROUND_PRE_CHECK_RESULT_QUERY = "/api/candidate/app/jobAgent/companyBackground/report/preCheck/result/query"
+
+    /**
+     * 查询公司背调报告生成结果
+     */
+    const val JOB_AGENT_COMPANY_BACKGROUND_GENERATE_RESULT_QUERY = "/api/candidate/app/jobAgent/companyBackground/report/generate/result/query"
+
+    /**
      * 查询当前可确认简历（求职 Agent）
      */
     const val JOB_AGENT_RESUME_CURRENT_QUERY = "/api/candidate/app/jobAgent/resume/current/query"

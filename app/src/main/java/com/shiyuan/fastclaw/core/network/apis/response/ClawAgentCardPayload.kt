@@ -362,6 +362,9 @@ data class CompanyBackgroundEntryPayloadBean(
 )
 
 data class CompanyBackgroundReportPayloadBean(
+    val reportStatus: String? = null,
+    val reportId: String? = null,
+    val reportName: String? = null,
     val companyName: String? = null,
     val reportGenerateTime: String? = null,
     val generatedAt: String? = null,

@@ -3,14 +3,22 @@ package com.shiyuan.fastclaw.feature.clawagent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
+import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
+import com.shiyuan.fastclaw.core.ext.PollingState
+import com.shiyuan.fastclaw.core.ext.launchPolling
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
@@ -23,6 +31,8 @@ import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
@@ -38,6 +48,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.ClawAgentSseProcessor
+import kotlinx.coroutines.Job
 import java.util.UUID
 
 /**
@@ -131,6 +142,12 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 记录是否初始化会话id, 用于判断是否拉取增量数据 */
     val hasInitSession = MutableLiveData<Boolean>(false)
+
+    /** 公司背调前置校验轮询任务 */
+    private var companyBackgroundPreCheckPollingJob: Job? = null
+
+    /** 公司背调报告生成结果轮询任务 */
+    private var companyBackgroundGeneratePollingJob: Job? = null
 
     private fun JobAgentMessage.storeKey(): String? = messageId ?: cursor ?: sequenceNo?.toString()
 
@@ -469,15 +486,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
 
-            if (msg.displayPolicy == POLICY_REPLACE_TARGET) {
-                msg.replaceTargetMessageId?.takeIf { it.isNotBlank() }?.let { targetId ->
-                    messageStore.remove(targetId)
-                    serverUserMessageKeyToLocalKey[targetId]?.let { localKey ->
-                        messageStore.remove(localKey)
-                    }
-                }
-            }
-
             // 简历待上传/失败/确认流程卡类型合并只展示最新一张
             val rawKey = msg.storeKey() ?: return@forEach
             if (msg.isLatestOnlyResumeCard()) {
@@ -622,9 +630,12 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     private fun resolveCompanyBackgroundReportItemType(msg: JobAgentMessage): Int {
-        return when {
-            msg.messagePhase == PHASE_ERROR -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_FAILED
-            msg.messagePhase == PHASE_RESULT -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_DONE
+        val reportStatus = msg.payloadJson?.let {
+            runCatching { GsonUtils.fromJson(it, CompanyBackgroundReportPayloadBean::class.java)?.reportStatus }.getOrNull()
+        }
+        return when (reportStatus) {
+            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_FAILED
+            REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_DONE
             else -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
         }
     }
@@ -894,6 +905,119 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * 公司背调 - 提交报告生成前置校验。
+     * 后端返回 preCheckId 后立即进入前置校验轮询，失败按文档 errorMessage/errorCode 提示。
+     */
+    fun submitCompanyBackgroundPreCheck(companyName: String) {
+        val currentSessionId = sessionId
+        val currentConversationId = conversationId
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
+            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            return
+        }
+        val clientRequestId = "company-bg-precheck-${System.currentTimeMillis()}-${UUID.randomUUID()}"
+        companyBackgroundPreCheckPollingJob?.cancel()
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.submitCompanyBackgroundPreCheck(
+                    CompanyBackgroundPreCheckSubmitBody(
+                        sessionId = currentSessionId,
+                        conversationId = currentConversationId,
+                        clientRequestId = clientRequestId,
+                        companyName = companyName,
+                    )
+                )
+            }
+        ) {
+            val preCheckId = data?.preCheckId
+            if (preCheckId.isNullOrBlank()) {
+                R.string.str_agent_company_background_precheck_failed.getResString().showToast()
+                return@requestWithLoading
+            }
+            // 权益可用时后端会写入“正在识别公司名称”，提交成功后先拉取一次增量消息展示处理中状态。
+            pullMessages(getLastMessageCursor())
+            pollCompanyBackgroundPreCheck(preCheckId)
+        }
+    }
+
+    /**
+     * 轮询公司背调前置校验结果。
+     * finished=false 继续等待；finished=true 且 passed=false 按文档提示失败；passed=true 后进入报告生成轮询。
+     */
+    private fun pollCompanyBackgroundPreCheck(preCheckId: String) {
+        companyBackgroundPreCheckPollingJob?.cancel()
+        companyBackgroundPreCheckPollingJob = launchPolling(
+            intervalMs = 2000L,
+            retryOnNetworkError = true,
+            apiBlock = {
+                mRepo.api.queryCompanyBackgroundPreCheckResult(
+                    CompanyBackgroundPreCheckResultQueryBody(preCheckId = preCheckId)
+                )
+            },
+            checkState = { response ->
+                val result = response?.data
+                when {
+                    result?.finished == true && result.passed == true -> PollingState.SUCCESS
+                    result?.finished == true -> PollingState.FAIL
+                    else -> PollingState.CONTINUE
+                }
+            },
+            onSuccess = { response ->
+                val reportId = response?.data?.reportId
+                if (reportId.isNullOrBlank()) {
+                    R.string.str_agent_company_background_precheck_failed.getResString().showToast()
+                } else {
+                    // 前置校验通过后，拉取后端写入的“生成中”卡，再轮询报告生成终态。
+                    pullMessages(getLastMessageCursor())
+                    pollCompanyBackgroundGenerateResult(reportId)
+                }
+            },
+            onFail = { response, _ ->
+                showCompanyBackgroundPreCheckError(response?.data)
+                // 前置失败时后端可能写入同组失败终态消息，拉取一次用于移除处理中提示。
+                pullMessages(getLastMessageCursor())
+            },
+        )
+    }
+
+    /**
+     * 轮询公司背调报告生成结果。
+     * 该接口只返回 finished，终态成功/失败卡仍通过消息拉取展示。
+     */
+    private fun pollCompanyBackgroundGenerateResult(reportId: String) {
+        companyBackgroundGeneratePollingJob?.cancel()
+        companyBackgroundGeneratePollingJob = launchPolling(
+            intervalMs = 5000L,
+            retryOnNetworkError = true,
+            apiBlock = {
+                mRepo.api.queryCompanyBackgroundGenerateResult(
+                    CompanyBackgroundGenerateResultQueryBody(reportId = reportId)
+                )
+            },
+            checkState = { response ->
+                if (response?.data?.finished == true) PollingState.SUCCESS else PollingState.CONTINUE
+            },
+            onSuccess = {
+                // 报告到终态后再拉取同 responseGroupId 下的成功或失败卡。
+                pullMessages(getLastMessageCursor())
+            },
+        )
+    }
+
+    /**
+     * 前置校验失败提示：优先展示后端 errorMessage，兜底使用文档约定 errorCode 对应文案。
+     */
+    private fun showCompanyBackgroundPreCheckError(result: CompanyBackgroundPreCheckResultData?) {
+        val fallback = when (result?.errorCode) {
+            ERROR_CODE_NOT_COMPANY -> R.string.str_agent_company_background_error_not_company.getResString()
+            ERROR_CODE_POINTS_INSUFFICIENT -> R.string.str_agent_company_background_error_points_insufficient.getResString()
+            ERROR_CODE_MODEL_FAILED -> R.string.str_agent_company_background_error_model_failed.getResString()
+            else -> R.string.str_agent_company_background_precheck_failed.getResString()
+        }
+        result?.errorMessage?.takeIf { it.isNotBlank() }?.showToast() ?: fallback.showToast()
+    }
+
+    /**
      * 查询属性数组候选值（工作经历、教育经历等表单数据）。
      * @param questionQueueId 问题队列 ID
      * @param attributeGroupCode 属性组编码
@@ -977,6 +1101,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     companion object {
         /** 历史消息分页每页条数 */
         private const val HISTORY_PAGE_SIZE = 20
+        /** 公司背调前置校验/报告生成轮询间隔 */
+        private const val COMPANY_BACKGROUND_POLL_INTERVAL_MS = 3000L
         // actionType
         private const val INTERACTION_TYPE_TEXT = "TEXT"
         private const val INTERACTION_TYPE_ACTION = "ACTION"
@@ -1000,6 +1126,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
         private const val GROUP_STATUS_FAILED = "FAILED"
         private const val GROUP_STATUS_COMPLETED = "COMPLETED"
+
+        private const val ERROR_CODE_NOT_COMPANY = "NOT_COMPANY"
+        private const val ERROR_CODE_POINTS_INSUFFICIENT = "POINTS_INSUFFICIENT"
+        private const val ERROR_CODE_MODEL_FAILED = "MODEL_FAILED"
+
+        private const val REPORT_STATUS_GENERATING = "GENERATING"
+        private const val REPORT_STATUS_SUCCESS = "SUCCESS"
+        private const val REPORT_STATUS_FAILED = "FAILED"
 
         // displayPolicy（端侧展示策略）：think 等中间态消息在结果消息到达后的收口方式
         private const val POLICY_REPLACE_ON_TERMINAL = "REPLACE_ON_TERMINAL"

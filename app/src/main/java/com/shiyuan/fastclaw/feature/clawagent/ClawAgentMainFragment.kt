@@ -248,17 +248,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 公司背调 - 开始背调
-        msgAdapter.onCompanyStartClickAction = { item, action, data ->
+        msgAdapter.onCompanyStartClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
-                mRealVM.sendAction(
-                    desc = getString(R.string.str_agent_company_background_action),
-                    actionData = AgentMsgAction(
-                        actionCode = CandidateJobAgentClientActionEnum.GENERATE_COMPANY_BACKGROUND_REPORT.name,
-                        sourceMessageId = item.id,
-                        actionPayloadJson = GsonUtils.toJson(data)
-                    )
-                )
+                mRealVM.submitCompanyBackgroundPreCheck(data.companyName.orEmpty())
             }
         }
         // 模拟面试 - 开始面试

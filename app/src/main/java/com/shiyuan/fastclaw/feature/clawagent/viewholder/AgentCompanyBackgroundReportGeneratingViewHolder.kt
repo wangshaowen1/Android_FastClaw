@@ -9,5 +9,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentCompanyBackgroundReportGeneratingViewHolder(private val binding: ItemMsgAgentCompanyBackgroundReportGeneratingBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: ClawAgentMessageInfo) = Unit
+    fun bind(item: ClawAgentMessageInfo) {
+        var data = item.metaData
+    }
 }

@@ -17,6 +17,9 @@ import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeRejectBody
 import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.FeedbackBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
@@ -62,6 +65,9 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundGenerateResultData
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
@@ -419,6 +425,24 @@ interface ApiService {
      */
     @POST(ApiConstants.JOB_AGENT_MESSAGE_PULL)
     suspend fun pullMessages(@Body body: MessagePullBody): ApiResponse<MessagePullData?>
+
+    /**
+     * 提交公司背调报告生成前置校验
+     */
+    @POST(ApiConstants.JOB_AGENT_COMPANY_BACKGROUND_PRE_CHECK_SUBMIT)
+    suspend fun submitCompanyBackgroundPreCheck(@Body body: CompanyBackgroundPreCheckSubmitBody): ApiResponse<CompanyBackgroundPreCheckSubmitData?>
+
+    /**
+     * 查询公司背调报告生成前置校验结果
+     */
+    @POST(ApiConstants.JOB_AGENT_COMPANY_BACKGROUND_PRE_CHECK_RESULT_QUERY)
+    suspend fun queryCompanyBackgroundPreCheckResult(@Body body: CompanyBackgroundPreCheckResultQueryBody): ApiResponse<CompanyBackgroundPreCheckResultData?>
+
+    /**
+     * 查询公司背调报告生成结果
+     */
+    @POST(ApiConstants.JOB_AGENT_COMPANY_BACKGROUND_GENERATE_RESULT_QUERY)
+    suspend fun queryCompanyBackgroundGenerateResult(@Body body: CompanyBackgroundGenerateResultQueryBody): ApiResponse<CompanyBackgroundGenerateResultData?>
 
     /**
      * 查询当前可确认简历（求职 Agent）

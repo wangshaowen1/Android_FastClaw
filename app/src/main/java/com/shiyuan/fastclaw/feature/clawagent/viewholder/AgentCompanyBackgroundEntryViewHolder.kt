@@ -36,6 +36,7 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
                 showToast(R.string.str_agent_company_background_input_empty)
                 return@setOnSingleClickListener
             }
+            binding.etSearch.setText("")
             onCompanyClickListener(item, action, CompanyBackStartBody(companyName))
         }
 
