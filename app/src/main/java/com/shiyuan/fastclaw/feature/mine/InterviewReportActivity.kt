@@ -14,10 +14,10 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.startRefreshWithAdapter
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
-import com.shiyuan.fastclaw.databinding.ActivityMyHistoryReportBinding
-import com.shiyuan.fastclaw.feature.report.ReportViewModel
+import com.shiyuan.fastclaw.databinding.ActivityInterviewReportBinding
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
 import com.shiyuan.fastclaw.feature.report.data.ReportStatus
+import com.shiyuan.fastclaw.feature.mine.viewModel.InterviewReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
  * @Introduce: 历史报告列表页面
  */
 class InterviewReportActivity :
-    BaseViewModelActivity<ActivityMyHistoryReportBinding, ReportViewModel>() {
+    BaseViewModelActivity<ActivityInterviewReportBinding, InterviewReportViewModel>() {
 
     companion object {
         private const val REPORT_LIST_REFRESH_INTERVAL = 5000L
@@ -72,8 +72,8 @@ class InterviewReportActivity :
 
     private fun initView() {
         binding.recyclerView.apply {
-            layoutManager = ReportViewModel.buildLayoutManager(context)
-            addItemDecoration(ReportViewModel.buildItemDecoration(context))
+            layoutManager = InterviewReportViewModel.buildLayoutManager(context)
+            addItemDecoration(InterviewReportViewModel.buildItemDecoration(context))
             adapter = mListAdapter
         }
         binding.srl.startRefreshWithAdapter(
@@ -87,11 +87,12 @@ class InterviewReportActivity :
     }
 
     private fun onReportItemClick(info: ReportInfo) {
-        if (info.status != ReportStatus.OTHER) return
+        val detailUrl = info.detailUrl?.takeIf { it.isNotBlank() } ?: return
+        if (info.status != ReportStatus.OTHER || !info.canViewReport) return
         EventManager.onAppTrack(AppEvent.KLX_CAPP_INTERVIEWREPORT_REPORT_PAGE)
         SimpleBrowserActivity.launch(
             this,
-            info.detailUrl,
+            detailUrl,
         )
     }
 

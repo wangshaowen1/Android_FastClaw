@@ -63,6 +63,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
@@ -264,6 +265,12 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_MY_REPORT_LIST)
     suspend fun getMyReportList(@Body body: PagedBody): ApiResponse<PagedList<ReportListItem>?>
+
+    /**
+     * 获取面试报告列表
+     */
+    @POST(ApiConstants.INTERVIEW_REPORT_LIST_QUERY)
+    suspend fun getInterviewReportList(@Body body: PagedBody): ApiResponse<PagedList<InterviewReportListItem>?>
 
     /**
      * 上传简历
