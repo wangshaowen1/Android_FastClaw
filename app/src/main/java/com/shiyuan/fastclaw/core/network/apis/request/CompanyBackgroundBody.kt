@@ -6,7 +6,7 @@ package com.shiyuan.fastclaw.core.network.apis.request
  * @date：2026/6/22 10:16
  */
 
-data class CompanyBackStartBody(
+data class CompanyBackgroundStartBody(
     val companyName: String? = null,
 )
 

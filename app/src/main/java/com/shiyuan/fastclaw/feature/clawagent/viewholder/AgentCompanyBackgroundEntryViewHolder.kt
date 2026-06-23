@@ -8,7 +8,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.afterTextChanged
-import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackStartBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundStartBody
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundEntryPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
@@ -19,7 +19,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCompanyBackgroundEntryBinding, ) : RecyclerView.ViewHolder(binding.root) {
 
-    var onCompanyClickListener: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyBackStartBody) -> Unit = { _, _, _ -> }
+    var onCompanyClickListener: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -37,7 +37,7 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
                 return@setOnSingleClickListener
             }
             binding.etSearch.setText("")
-            onCompanyClickListener(item, action, CompanyBackStartBody(companyName))
+            onCompanyClickListener(item, action, CompanyBackgroundStartBody(companyName))
         }
 
         binding.ivDelete.setOnSingleClickListener {

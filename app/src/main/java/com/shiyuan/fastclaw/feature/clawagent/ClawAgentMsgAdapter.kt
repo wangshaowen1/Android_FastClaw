@@ -6,8 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
-import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackStartBody
-import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundStartBody
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportDoneBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportFailedBinding
@@ -33,7 +32,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayload
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
-import com.shiyuan.fastclaw.feature.clawagent.bean.ClawDataTest
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundEntryViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportDoneViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportFailedViewHolder
@@ -82,7 +80,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     var onResumeConfirmClickAction: (item: ClawAgentMessageInfo, confirmed: Boolean) -> Unit = { _, _ -> }
 
     /** 公司背调 - 开始背调 */
-    var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackStartBody) -> Unit = { _, _, _ -> }
+    var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
 
     /** 公司面试 - 开始面试 */
     var onInterviewStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }

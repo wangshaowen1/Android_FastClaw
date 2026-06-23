@@ -4,8 +4,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackStartBody
-import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewEntryBinding
