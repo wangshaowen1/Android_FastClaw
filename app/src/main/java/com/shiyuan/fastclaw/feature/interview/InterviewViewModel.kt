@@ -222,20 +222,20 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         )
     }
 
-    fun sseInsertMessages(event: InterviewAgentMessage) {
-        event.messageSeq?.let {
+    fun sseInsertMessages(message: InterviewAgentMessage) {
+        message.messageSeq?.let {
             if (it <= lastMessageSeq) return
             lastMessageSeq = it
         }
-        when (event.messageType) {
-            MSG_ROOM_STATE_CHANGED -> handleRoomState(event)
-            MSG_TEXT_DELTA -> appendAiDelta(event.content.orEmpty())
-            MSG_TEXT_DONE -> handleTextDone(event)
-            MSG_TEXT_BLOCKED -> handleTextBlocked(event)
-            MSG_INTERVIEW_FINISHED -> handleInterviewFinished(event)
+        when (message.messageType) {
+            MSG_ROOM_STATE_CHANGED -> handleRoomState(message)
+            MSG_TEXT_DELTA -> appendAiDelta(message.content.orEmpty())
+            MSG_TEXT_DONE -> handleTextDone(message)
+            MSG_TEXT_BLOCKED -> handleTextBlocked(message)
+            MSG_INTERVIEW_FINISHED -> handleInterviewFinished(message)
             MSG_ERROR -> {
                 roomState.value = InterviewRoomState.ERROR
-                showToast(event.payload?.errorMessage.orEmpty().ifEmpty { TEXT_INTERVIEW_ERROR })
+                showToast(message.payload?.errorMessage.orEmpty().ifEmpty { TEXT_INTERVIEW_ERROR })
             }
         }
     }
@@ -254,11 +254,11 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-    private fun handleTextDone(event: InterviewAgentMessage) {
-        currentQuestionId = event.payload?.questionId?.takeIf { it.isNotEmpty() } ?: currentQuestionId
-        when (event.senderType) {
+    private fun handleTextDone(message: InterviewAgentMessage) {
+        currentQuestionId = message.payload?.questionId?.takeIf { it.isNotEmpty() } ?: currentQuestionId
+        when (message.senderType) {
             SENDER_AGENT -> {
-                event.content?.takeIf { it.isNotEmpty() }?.let {
+                message.content?.takeIf { it.isNotEmpty() }?.let {
                     replaceCurrentAiMessage(it)
                     ttsSpeakEvent.value = it
                 }
@@ -271,14 +271,14 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         currentAiMessageId = null
     }
 
-    private fun handleTextBlocked(event: InterviewAgentMessage) {
-        event.content?.takeIf { it.isNotEmpty() }?.let { appendMessage(SENDER_AGENT, it) }
+    private fun handleTextBlocked(message: InterviewAgentMessage) {
+        message.content?.takeIf { it.isNotEmpty() }?.let { appendMessage(SENDER_AGENT, it) }
         roomState.value = InterviewRoomState.INTERVIEWING
     }
 
-    private fun handleInterviewFinished(event: InterviewAgentMessage) {
+    private fun handleInterviewFinished(message: InterviewAgentMessage) {
         roomState.value = InterviewRoomState.FINISHED
-        finishRoomEvent.value = event.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+        finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
     }
 
     private fun appendAiDelta(text: String) {

@@ -36,9 +36,9 @@ data class ClawAgentMessageInfo(
     val content: String? = null,
 
     /**
-     * 消息元数据
+     * 消息元数据，是原始消息[JobAgentMessage]的[payloadJson]赋值
      */
-    val metaData: String? = null,
+    val metaData: String? = null,//等于payloadJson
 
     val messagePhase: String? = null,
 
