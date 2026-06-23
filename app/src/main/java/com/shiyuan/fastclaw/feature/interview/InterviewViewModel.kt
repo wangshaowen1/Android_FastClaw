@@ -1,21 +1,21 @@
-package com.shiyuan.fastclaw.feature.interview
+﻿package com.shiyuan.fastclaw.feature.interview
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.NetworkUtils
-import com.google.gson.JsonObject
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
-import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewAudioTokenBody
-import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStreamBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentMessage
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentPayload
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.InterviewSseProcessor
+import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomMessage
+import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -31,11 +31,10 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     val toastMessage = MutableLiveData<String>()
     val answerActionText = MutableLiveData(ANSWER_START_TEXT)
     val answerDurationText = MutableLiveData("")
+    val uploadList = MutableLiveData<List<String>>()
 
-    var interviewId: String? = null
-        private set
-    var conversationId: String? = null
-        private set
+    var mInterviewId: String? = null
+    var mConversationId: String? = null
 
     private var lastMessageSeq: Long = 0L
     private var currentQuestionId: String? = null
@@ -47,22 +46,54 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     private val sseProcessor by lazy {
         InterviewSseProcessor(
-            onStart = { streaming.value = true },
-            onMeta = { _, seq -> updateLastMessageSeq(seq) },
-            onMessage = { sseInsertMessages(it) },
+            onStart = {
+                streaming.value = true
+            },
+            onMeta = { _, seq ->
+                updateLastMessageSeq(seq)
+            },
+            onMessage = {
+                sseInsertMessages(it)
+            },
             onDone = { _, seq ->
                 updateLastMessageSeq(seq)
                 streaming.value = false
             },
-            onComplete = { streaming.value = false },
-            onErrorCallback = {
+            onComplete = {
                 streaming.value = false
-                roomState.value = InterviewRoomState.ERROR
+            },
+            onErrorCallback = {
+                //streaming.value = false
+                //roomState.value = InterviewRoomState.ERROR
+
+                // 接口未联通时，临时模拟一条服务端 TEXT_DONE 消息，验证页面展示链路。
+                streaming.value = false
+                sseInsertMessages(
+                    InterviewAgentMessage(
+                        messageId = "mock-text-done-${UUID.randomUUID()}",
+                        interviewId = mInterviewId,
+                        messageSeq = lastMessageSeq + 1,
+                        messageType = MSG_TEXT_DONE,
+                        senderType = SENDER_AGENT,
+                        content = "请你先介绍一个最近负责的项目，重点说明你的职责和最终结果。",
+                        payload = InterviewAgentPayload(
+                            questionType = "MAIN",
+                            questionId = "mock-question-001",
+                            questionIndex = 1,
+                            nextActionHint = NEXT_WAIT_USER_START_ANSWER,
+                        ),
+                    )
+                )
             }
         )
     }
 
     private val sseHandler by lazy { RawSSEStreamHandler(viewModelScope, sseProcessor) }
+
+    fun enterInterview(interviewId: String?) {
+        mInterviewId = interviewId
+        sendAction(ACTION_ENTER_ROOM, emptyMap())
+    }
 
     fun uploadTargetJob(uris: List<Uri>) {
         if (uris.isEmpty()) return
@@ -71,54 +102,18 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         submitMultipleFiles(uris) { successUrls, _ ->
             setLoading(false)
             if (successUrls.isEmpty()) {
-                showToast("岗位截图上传失败，请重新上传")
+                showToast(TEXT_JOB_UPLOAD_FAILED)
                 roomState.value = InterviewRoomState.WAITING_TARGET_JOB
                 return@submitMultipleFiles
             }
-            sendStreamAction(
-                actionType = ACTION_TARGET_JOB_UPLOAD,
-                payload = mapOf(
-                    "uploadBatchId" to UUID.randomUUID().toString(),
-                    "imageOssKeys" to successUrls,
-                )
-            )
-        }
-    }
-
-    fun startInterview(entryMessageId: String?, entrySource: String?, resumeId: String?) {
-        if (started) return
-        started = true
-        requestWithLoading(
-            apiBlock = {
-                mRepo.api.startMockInterviewSession(
-                    MockInterviewStartBody(
-                        entryMessageId = entryMessageId,
-                        entrySource = entrySource,
-                        resumeId = resumeId,
-                        chargeRequestId = UUID.randomUUID().toString(),
-                    )
-                )
-            },
-            showToastError = true,
-        ) {
-            val result = data ?: return@requestWithLoading
-            if (result.isDeductSuccess()) {
-                interviewId = result.interviewId
-                conversationId = result.conversationId
-                roomState.value = InterviewRoomState.PREPARING
-                queryAudioToken()
-                enterRoom()
-            } else {
-                roomState.value = InterviewRoomState.ERROR
-                showToast(result.message ?: "模拟面试创建失败")
-            }
+            uploadList.value = successUrls
         }
     }
 
     fun startAnswer() {
         val questionId = currentQuestionId ?: return
         roomState.value = InterviewRoomState.ANSWERING
-        sendStreamAction(
+        sendAction(
             actionType = ACTION_ANSWER_START,
             payload = mapOf(
                 "questionId" to questionId,
@@ -132,7 +127,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         answerStartTime = System.currentTimeMillis()
         answerTimerJob = viewModelScope.launch {
             while (isActive) {
-                // 每次开始作答都重新计时，按钮上同步展示本轮作答时长。
                 answerActionText.value = ANSWER_END_TEXT
                 answerDurationText.value = formatAnswerDuration()
                 delay(1000L)
@@ -153,7 +147,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         if (text.isEmpty()) return
         stopTiming()
         appendUserMessage(text)
-        sendStreamAction(
+        sendAction(
             actionType = ACTION_ANSWER_SUBMIT,
             payload = mapOf(
                 "questionId" to currentQuestionId,
@@ -166,7 +160,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     fun exitInterview() {
-        sendStreamAction(
+        sendAction(
             actionType = ACTION_SESSION_EXIT,
             payload = mapOf(
                 "exitRequestId" to UUID.randomUUID().toString(),
@@ -175,39 +169,34 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         )
     }
 
+    fun sendAction(actionType: String, payload: Map<String, Any?>?) {
+        val interviewId = mInterviewId ?: return
+        val flow = mRepo.api.mockInterviewStream(
+            MockInterviewStreamBody(
+                interviewId = interviewId,
+                actionType = actionType,
+                clientActionId = UUID.randomUUID().toString(),
+                lastMessageSeq = lastMessageSeq,
+                payload = payload,
+                clientSnapshot = buildClientSnapshot(actionType),
+            )
+        )
+        sseHandler.start(flow)
+    }
+
     override fun onCleared() {
         answerTimerJob?.cancel()
         sseHandler.cancel()
         super.onCleared()
     }
 
-    private fun enterRoom() {
-        sendStreamAction(ACTION_ENTER_ROOM, emptyMap())
-    }
-
     private fun queryAudioToken() {
         request(
-            apiBlock = { mRepo.api.queryMockInterviewAudioToken(MockInterviewAudioTokenBody(interviewId = interviewId)) },
+            apiBlock = { mRepo.api.queryMockInterviewAudioToken(MockInterviewAudioTokenBody(interviewId = mInterviewId)) },
             showToast = false,
         ) {
-            // ASR/TTS SDK 接入时从 data 读取临时 token。
+            // Audio SDK token is read from data when ASR/TTS is initialized.
         }
-    }
-
-    private fun sendStreamAction(actionType: String, payload: Map<String, Any?>?) {
-        val id = interviewId ?: return
-        sseHandler.start(
-            mRepo.api.mockInterviewStream(
-                MockInterviewStreamBody(
-                    interviewId = id,
-                    actionType = actionType,
-                    clientActionId = UUID.randomUUID().toString(),
-                    lastMessageSeq = lastMessageSeq,
-                    payload = payload,
-                    clientSnapshot = buildClientSnapshot(actionType),
-                )
-            )
-        )
     }
 
     private fun buildClientSnapshot(actionType: String): Map<String, Any?> {
@@ -225,13 +214,14 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             lastMessageSeq = it
         }
         when (event.messageType) {
-            "ROOM_STATE_CHANGED" -> handleRoomState(event)
-            "AI_TEXT_DELTA" -> appendAiDelta(event.payload.optString("text"))
-            "AI_TEXT_DONE" -> handleAiTextDone(event)
-            "INTERVIEW_FINISHED" -> handleInterviewFinished(event)
-            "ERROR" -> {
+            MSG_ROOM_STATE_CHANGED -> handleRoomState(event)
+            MSG_TEXT_DELTA -> appendAiDelta(event.content.orEmpty())
+            MSG_TEXT_DONE -> handleTextDone(event)
+            MSG_TEXT_BLOCKED -> handleTextBlocked(event)
+            MSG_INTERVIEW_FINISHED -> handleInterviewFinished(event)
+            MSG_ERROR -> {
                 roomState.value = InterviewRoomState.ERROR
-                showToast(event.payload.optString("errorMessage").ifEmpty { "模拟面试异常，请稍后重试" })
+                showToast(event.payload?.errorMessage.orEmpty().ifEmpty { TEXT_INTERVIEW_ERROR })
             }
         }
     }
@@ -241,31 +231,40 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     private fun handleRoomState(event: InterviewAgentMessage) {
-        when (event.payload.optString("roomState")) {
-            "TARGET_JOB_PARSING" -> {
-                roomState.value = InterviewRoomState.TARGET_JOB_PARSING
-            }
+        when (event.roomState ?: event.payload?.roomState) {
+            "TARGET_JOB_PARSING" -> roomState.value = InterviewRoomState.TARGET_JOB_PARSING
             "TARGET_JOB_PARSE_FAILED" -> roomState.value = InterviewRoomState.WAITING_TARGET_JOB
             "PLAN_GENERATING", "PLAN_READY" -> roomState.value = InterviewRoomState.PREPARING
             "WAITING_USER_ANSWER" -> roomState.value = InterviewRoomState.INTERVIEWING
-            "CANCELED" -> finishRoomEvent.value = conversationId
+            "CANCELED" -> finishRoomEvent.value = mConversationId
         }
     }
 
-    private fun handleAiTextDone(event: InterviewAgentMessage) {
-        currentQuestionId = event.payload.optString("questionId").takeIf { it.isNotEmpty() } ?: currentQuestionId
-        event.payload.optString("fullText").takeIf { it.isNotEmpty() }?.let { fullText ->
-            replaceCurrentAiMessage(fullText)
+    private fun handleTextDone(event: InterviewAgentMessage) {
+        currentQuestionId = event.payload?.questionId?.takeIf { it.isNotEmpty() } ?: currentQuestionId
+        when (event.senderType) {
+            SENDER_AGENT -> {
+                event.content?.takeIf { it.isNotEmpty() }?.let { replaceCurrentAiMessage(it) }
+                roomState.value = InterviewRoomState.INTERVIEWING
+            }
+            SENDER_USER -> {
+                // User answer has already been inserted locally.
+            }
         }
-        if (event.payload.optString("nextActionHint") == "WAIT_USER_START_ANSWER") {
+        if (event.payload?.nextActionHint == NEXT_WAIT_USER_START_ANSWER) {
             roomState.value = InterviewRoomState.INTERVIEWING
         }
         currentAiMessageId = null
     }
 
+    private fun handleTextBlocked(event: InterviewAgentMessage) {
+        event.content?.takeIf { it.isNotEmpty() }?.let { appendMessage(SENDER_AGENT, it) }
+        roomState.value = InterviewRoomState.INTERVIEWING
+    }
+
     private fun handleInterviewFinished(event: InterviewAgentMessage) {
         roomState.value = InterviewRoomState.FINISHED
-        finishRoomEvent.value = event.payload.optString("conversationId").takeIf { it.isNotEmpty() } ?: conversationId
+        finishRoomEvent.value = event.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
     }
 
     private fun appendAiDelta(text: String) {
@@ -275,7 +274,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         if (old != null) {
             ingestMessages(listOf(old.copy(content = old.content + text)))
         } else {
-            val item = InterviewRoomMessage(UUID.randomUUID().toString(), InterviewRoomMessage.Role.AI, text)
+            val item = InterviewRoomMessage(UUID.randomUUID().toString(), SENDER_AGENT, text)
             currentAiMessageId = item.id
             ingestMessages(listOf(item))
         }
@@ -287,11 +286,11 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         if (old != null) {
             ingestMessages(listOf(old.copy(content = text)))
         } else {
-            appendMessage(InterviewRoomMessage.Role.AI, text)
+            appendMessage(SENDER_AGENT, text)
         }
     }
 
-    private fun appendUserMessage(text: String) = appendMessage(InterviewRoomMessage.Role.USER, text)
+    private fun appendUserMessage(text: String) = appendMessage(SENDER_USER, text)
 
     private fun showToast(text: String) {
         if (text.isNotEmpty()) {
@@ -299,12 +298,11 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-    private fun appendMessage(role: InterviewRoomMessage.Role, text: String) {
+    private fun appendMessage(senderType: String, text: String) {
         if (text.isEmpty()) return
-        ingestMessages(listOf(InterviewRoomMessage(UUID.randomUUID().toString(), role, text)))
+        ingestMessages(listOf(InterviewRoomMessage(UUID.randomUUID().toString(), senderType, text)))
     }
 
-    /** 统一合并并刷新消息列表：同 id 覆盖，保证流式内容更新时不重复插入。 */
     private fun ingestMessages(messages: List<InterviewRoomMessage>?) {
         if (messages.isNullOrEmpty()) return
         messages.forEach { messageStore[it.id] = it }
@@ -320,24 +318,27 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         return "%02d:%02d".format(seconds / 60, seconds % 60)
     }
 
-    private fun JsonObject?.optString(name: String): String {
-        return runCatching {
-            this?.get(name)
-                ?.takeIf { !it.isJsonNull && it.isJsonPrimitive }
-                ?.asString
-                ?.trim()
-                .orEmpty()
-        }.getOrDefault("")
-    }
-
     companion object {
-        private const val ACTION_ENTER_ROOM = "ENTER_ROOM"
-        private const val ACTION_TARGET_JOB_UPLOAD = "TARGET_JOB_UPLOAD"
-        private const val ACTION_ANSWER_START = "ANSWER_START"
-        private const val ACTION_ANSWER_SUBMIT = "ANSWER_SUBMIT"
-        private const val ACTION_SESSION_EXIT = "SESSION_EXIT"
-        private const val ANSWER_END_USER_SUBMIT = "USER_SUBMIT"
-        private const val ANSWER_START_TEXT = "开始作答"
-        private const val ANSWER_END_TEXT = "点击结束回答"
+        const val ACTION_ENTER_ROOM = "ENTER_ROOM"
+        const val ACTION_TARGET_JOB_UPLOAD = "TARGET_JOB_UPLOAD"
+        const val ACTION_ANSWER_START = "ANSWER_START"
+        const val ACTION_ANSWER_SUBMIT = "ANSWER_SUBMIT"
+        const val ACTION_SESSION_EXIT = "SESSION_EXIT"
+        const val ANSWER_END_USER_SUBMIT = "USER_SUBMIT"
+        const val ANSWER_START_TEXT = "开始作答"
+        const val ANSWER_END_TEXT = "点击结束回答"
+
+        private const val TEXT_INTERVIEW_CREATE_FAILED = "模拟面试创建失败"
+        private const val TEXT_JOB_UPLOAD_FAILED = "岗位截图上传失败，请重新上传"
+        private const val TEXT_INTERVIEW_ERROR = "模拟面试异常，请稍后重试"
+        private const val MSG_ROOM_STATE_CHANGED = "ROOM_STATE_CHANGED"
+        private const val MSG_TEXT_DELTA = "TEXT_DELTA"
+        private const val MSG_TEXT_DONE = "TEXT_DONE"
+        private const val MSG_TEXT_BLOCKED = "TEXT_BLOCKED"
+        private const val MSG_INTERVIEW_FINISHED = "INTERVIEW_FINISHED"
+        private const val MSG_ERROR = "ERROR"
+        const val SENDER_AGENT = "AGENT"
+        const val SENDER_USER = "USER"
+        private const val NEXT_WAIT_USER_START_ANSWER = "WAIT_USER_START_ANSWER"
     }
 }

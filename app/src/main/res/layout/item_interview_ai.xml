@@ -8,7 +8,7 @@
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="11dp"
+        android:paddingVertical="10dp"
         android:textColor="@color/color_90_000000"
         android:textSize="16sp"
         tools:text="我看到你在上家公司做的是社交产品，本次面试岗位是 Ai 产品，为什么想要换赛道呢？" />

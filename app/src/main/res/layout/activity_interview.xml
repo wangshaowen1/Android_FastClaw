@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_e9f0fe">
+        android:background="@drawable/img_interview_answer">
 
         <com.shiyuan.fastclaw.widget.StatusBarView
             android:id="@+id/statusBar"
@@ -63,26 +63,29 @@
             android:clipToPadding="false"
             android:paddingHorizontal="24dp"
             android:paddingBottom="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="12dp"
             app:layout_constraintBottom_toTopOf="@id/layout_bottom"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_title"
+            app:layout_constraintVertical_bias="1.0"
+            tools:itemCount="3"
             tools:listitem="@layout/item_interview_ai" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layout_prepare"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="42dp"
-                android:background="@color/color_e9f0fe"
-                android:paddingHorizontal="16dp"
-                android:visibility="visible"
+                android:layout_marginBottom="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -101,7 +104,7 @@
                     <TextView
                         android:id="@+id/tv_target_job_title"
                         android:layout_width="0dp"
-                        android:layout_height="24dp"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:text="我有明确岗位"
                         android:textColor="@color/color_90_000000"
@@ -116,7 +119,7 @@
                     <TextView
                         android:id="@+id/tv_target_job_desc"
                         android:layout_width="0dp"
-                        android:layout_height="21dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:gravity="center_vertical"
                         android:text="上传公司名+JD截图，针对性押题"
@@ -143,7 +146,7 @@
                     <TextView
                         android:id="@+id/tv_no_target_job_title"
                         android:layout_width="0dp"
-                        android:layout_height="24dp"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:text="没有明确岗位"
                         android:textColor="@color/color_90_000000"
@@ -158,7 +161,7 @@
                     <TextView
                         android:id="@+id/tv_no_target_job_desc"
                         android:layout_width="0dp"
-                        android:layout_height="21dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:gravity="center_vertical"
                         android:text="选择意向岗位，结合简历提问"
@@ -169,20 +172,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/tv_no_target_job_title" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <TextView
-                    android:id="@+id/btn_retry_upload"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:background="@drawable/bg_ffffff_r100"
-                    android:gravity="center"
-                    android:text="重新上传"
-                    android:textColor="@color/color_2f6bff"
-                    android:textSize="14sp"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/btn_no_target_job" />
 
                 <TextView
                     android:id="@+id/tv_job_help"
@@ -199,19 +188,17 @@
                 android:id="@+id/layout_answer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="73dp"
+                android:layout_marginBottom="62dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <ImageView
+                <com.shiyuan.fastclaw.widget.InterviewVoiceBadgeView
                     android:id="@+id/iv_voice_badge"
                     android:layout_width="45dp"
                     android:layout_height="18dp"
-                    android:src="@drawable/img_interview_voice_badge_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -229,7 +216,7 @@
                 <TextView
                     android:id="@+id/tv_voice_press"
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:includeFontPadding="false"
@@ -259,7 +246,7 @@
                 android:id="@+id/layout_finish"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:layout_marginBottom="62dp"
                 android:paddingHorizontal="16dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"

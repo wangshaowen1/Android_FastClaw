@@ -1,6 +1,6 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
-data class MockInterviewSessionStartData(
+data class MockInterviewStartData(
     val interviewId: String? = null,
     val conversationId: String? = null,
     val entryMessageId: String? = null,

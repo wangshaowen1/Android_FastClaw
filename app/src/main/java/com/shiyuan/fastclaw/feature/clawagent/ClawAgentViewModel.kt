@@ -30,10 +30,10 @@ import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPaylo
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
-import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingSummaryPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
@@ -93,6 +93,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 查询属性数组候选值结果（工作经历/教育经历等表单数据） */
     val attributeArrayResult = MutableLiveData<AttributeArrayQueryData?>()
+
+    val interviewStartResult = MutableLiveData<MockInterviewStartData?>()
 
     /** 当前会话 ID，发送消息/提交动作时回传 */
     public var sessionId: String? = null
@@ -923,6 +925,25 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             this.data?.clientRequestId = currentRequestId
             onResult(this.data)
         }
+    }
+
+    fun startInterview(entryMessageId: String?, entrySource: String?, resumeId: String?) {
+        /*request(
+            apiBlock = {
+                mRepo.api.startMockInterviewSession(
+                    MockInterviewStartBody(
+                        entryMessageId = entryMessageId,
+                        entrySource = entrySource,
+                        resumeId = resumeId,
+                        chargeRequestId = UUID.randomUUID().toString(),
+                    )
+                )
+            },
+            showToast = true,
+        ) {
+            interviewStartResult.value = data
+        }*/
+        interviewStartResult.value = MockInterviewStartData(interviewId = "id666666666", chargeStatus = "DEDUCT_SUCCESS")
     }
 
     /**

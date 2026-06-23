@@ -70,7 +70,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewAudioTokenData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportProgressData
-import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewSessionStartData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
@@ -359,7 +359,7 @@ interface ApiService {
     fun sendMsgToAgent(@Body body: JobAgentStreamBody): Flow<SSEvent>
 
     @POST(ApiConstants.MOCK_INTERVIEW_SESSION_START)
-    suspend fun startMockInterviewSession(@Body body: MockInterviewStartBody): ApiResponse<MockInterviewSessionStartData?>
+    suspend fun startMockInterviewSession(@Body body: MockInterviewStartBody): ApiResponse<MockInterviewStartData?>
 
     @Streaming
     @POST(ApiConstants.MOCK_INTERVIEW_STREAM)

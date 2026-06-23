@@ -263,11 +263,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         msgAdapter.onInterviewStartClickAction = { item, action, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
-                InterviewActivity.start(
-                    activity = requireActivity(),
-                    entryMessageId = data?.entryMessageId,
-                    entrySource = data?.entrySource,
-                    resumeId = data?.resumeId)
+                mRealVM.startInterview(data?.entryMessageId, data?.entrySource, data?.resumeId)
             }
         }
 
@@ -656,6 +652,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             info ?: return@observe
             showNotificationSwitchDialog()
             mRealVM.understandingSummaryDialog.value = null
+        }
+        mRealVM.interviewStartResult.observe(this) {
+            if (it?.isDeductSuccess() == true) {
+                InterviewActivity.start(requireActivity(), it.interviewId)
+            } else {
+                showMessage(it?.message ?: "模拟面试创建失败")
+            }
         }
     }
 

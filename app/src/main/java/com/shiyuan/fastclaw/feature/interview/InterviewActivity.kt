@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -26,14 +28,15 @@ import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
+import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_UPLOAD
+import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import com.shiyuan.fastclaw.feature.settings.report.ReportActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.router.AppNavigator
+import java.util.UUID
 
 class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, InterviewViewModel>() {
 
-    private val entryMessageId by lazy { intent.getBundleValue(KEY_ENTRY_MESSAGE_ID, "") }
-    private val entrySource by lazy { intent.getBundleValue(KEY_ENTRY_SOURCE, "") }
-    private val resumeId by lazy { intent.getBundleValue(KEY_RESUME_ID, "") }
+    private val mInterviewId by lazy { intent.getBundleValue(INTERVIEW_ID, "") }
     private val msgAdapter by lazy { InterviewRoomMessageAdapter() }
     private var speechTranscriber: DashFunAsrSpeechTranscriber? = null
     private var shouldSendVoiceResult = false
@@ -44,20 +47,12 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
     companion object {
         private const val TAG = "InterviewActivity"
-        private const val REQUEST_CODE_TARGET_JOB = 0x6101
-        private const val KEY_ENTRY_MESSAGE_ID = "KEY_ENTRY_MESSAGE_ID"
-        private const val KEY_ENTRY_SOURCE = "KEY_ENTRY_SOURCE"
-        private const val KEY_RESUME_ID = "KEY_RESUME_ID"
+        private const val INTERVIEW_ID = "interview_id"
 
-        fun start(activity: Activity?, entryMessageId: String?, entrySource: String?, resumeId: String?) {
-            activity ?: return
-            activity.startActivity(
-                Intent(activity, InterviewActivity::class.java).apply {
-                    putExtra(KEY_ENTRY_MESSAGE_ID, entryMessageId)
-                    putExtra(KEY_ENTRY_SOURCE, entrySource)
-                    putExtra(KEY_RESUME_ID, resumeId)
-                }
-            )
+        fun start(activity: Activity?, interviewId: String?) {
+            val intent = Intent(activity, InterviewActivity::class.java)
+            intent.putExtra(INTERVIEW_ID, interviewId)
+            activity?.startActivity(intent)
         }
     }
 
@@ -65,17 +60,25 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         super.onCreate(savedInstanceState)
         initView()
         observeData()
-        mRealVM.startInterview(entryMessageId, entrySource, resumeId)
     }
 
     private fun initView() {
-        binding.rvMessage.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
+        binding.rvMessage.layoutManager = LinearLayoutManager(this) //.apply { stackFromEnd = true }
         binding.rvMessage.adapter = msgAdapter
-        binding.ivBack.setOnSingleClickListener { mRealVM.exitInterview() }
-        binding.btnTargetJob.setOnSingleClickListener { requestAlbumPermission() }
-        binding.btnRetryUpload.setOnSingleClickListener { requestAlbumPermission() }
-        binding.layoutAnswer.setOnSingleClickListener { toggleAnswerRecording() }
-        binding.tvVoicePress.setOnSingleClickListener { toggleAnswerRecording() }
+        binding.ivBack.setOnSingleClickListener {
+            mRealVM.exitInterview()
+            finish()
+        }
+        binding.btnTargetJob.setOnSingleClickListener {
+            requestAlbumPermission()
+        }
+        binding.layoutAnswer.setOnSingleClickListener {
+            toggleAnswerRecording()
+        }
+        binding.tvVoicePress.setOnSingleClickListener {
+            toggleAnswerRecording()
+        }
+        mRealVM.enterInterview(mInterviewId)
     }
 
     private fun observeData() {
@@ -90,17 +93,25 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 RecyclerViewScrollHelper.scrollToBottom(binding.rvMessage, 100)
             }
         }
-        mRealVM.roomState.observe(this) { updateRoomState(it) }
+        mRealVM.uploadList.observe(this) {
+            //目标岗位上传成功
+            mRealVM.sendAction(
+                actionType = ACTION_TARGET_JOB_UPLOAD,
+                payload = mapOf(
+                    "uploadBatchId" to UUID.randomUUID().toString(),
+                    "imageOssKeys" to it,
+                )
+            )
+        }
+        mRealVM.roomState.observe(this) {
+            updateRoomState(it)
+        }
         mRealVM.answerActionText.observe(this) {
             binding.tvVoicePress.text = it
         }
         mRealVM.answerDurationText.observe(this) {
             binding.tvVoiceDuration.text = it
-            if (it.isNotEmpty()) {
-                binding.tvVoiceDuration.visible()
-            } else {
-                binding.tvVoiceDuration.gone()
-            }
+            binding.tvVoiceDuration.visibility = if (it.isNotEmpty()) VISIBLE else INVISIBLE
         }
         mRealVM.toastMessage.observe(this) {
             showMessage(it)
@@ -114,7 +125,6 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.layoutPrepare.gone()
         binding.layoutAnswer.gone()
         binding.layoutFinish.gone()
-        binding.tvTargetJobTitle.text = "我有明确岗位"
         binding.tvTitle.text = when (state) {
             InterviewRoomState.STARTING -> "面试准备中"
             InterviewRoomState.PREPARING -> "面试准备中"
@@ -126,6 +136,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             InterviewRoomState.ERROR -> "异常"
         }
         when (state) {
+            InterviewRoomState.STARTING, InterviewRoomState.PREPARING -> {
+                binding.layoutPrepare.visible()
+            }
             InterviewRoomState.INTERVIEWING, InterviewRoomState.ANSWERING -> {
                 binding.layoutAnswer.visible()
                 binding.tvVoicePress.visible()
@@ -137,15 +150,11 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             InterviewRoomState.TARGET_JOB_PARSING -> {
                 binding.layoutPrepare.visible()
             }
-            InterviewRoomState.STARTING, InterviewRoomState.PREPARING -> {
-                binding.layoutPrepare.visible()
-            }
             InterviewRoomState.FINISHED -> {
                 binding.layoutFinish.visible()
             }
             else -> {
                 binding.tvVoicePress.gone()
-                binding.btnRetryUpload.gone()
             }
         }
     }
@@ -258,14 +267,15 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     }
 
     private fun updateVoiceActionRecording(recording: Boolean) {
-        binding.ivVoiceBadge.setImageResource(
-            if (recording) R.drawable.img_interview_voice_badge_recording
-            else R.drawable.img_interview_voice_badge_start
-        )
         binding.ivVoiceIcon.setImageResource(
             if (recording) R.drawable.img_interview_voice_icon_recording
             else R.drawable.img_interview_voice_icon_start
         )
+        if (recording) {
+            binding.ivVoiceBadge.startWaveAnimation()
+        } else {
+            binding.ivVoiceBadge.stopWaveAnimation()
+        }
     }
 
     private fun requestAlbumPermission() {
@@ -298,6 +308,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     }
 
     override fun onDestroy() {
+        binding.ivVoiceBadge.stopWaveAnimation()
         speechTranscriber?.release()
         speechTranscriber = null
         super.onDestroy()
