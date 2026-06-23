@@ -32,6 +32,8 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     val answerActionText = MutableLiveData(ANSWER_START_TEXT)
     val answerDurationText = MutableLiveData("")
     val uploadList = MutableLiveData<List<String>>()
+    val ttsToken = MutableLiveData<String>()
+    val ttsSpeakEvent = MutableLiveData<String>()
 
     var mInterviewId: String? = null
     var mConversationId: String? = null
@@ -40,7 +42,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private var currentQuestionId: String? = null
     private var currentAiMessageId: String? = null
     private val messageStore = LinkedHashMap<String, InterviewRoomMessage>()
-    private var started = false
     private var answerTimerJob: Job? = null
     private var answerStartTime = 0L
 
@@ -92,6 +93,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     fun enterInterview(interviewId: String?) {
         mInterviewId = interviewId
+        queryAudioToken()
         sendAction(ACTION_ENTER_ROOM, emptyMap())
     }
 
@@ -195,7 +197,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             apiBlock = { mRepo.api.queryMockInterviewAudioToken(MockInterviewAudioTokenBody(interviewId = mInterviewId)) },
             showToast = false,
         ) {
-            // Audio SDK token is read from data when ASR/TTS is initialized.
+            this.data?.ttsToken?.takeIf { it.isNotBlank() }?.let { ttsToken.value = it }
         }
     }
 
@@ -244,7 +246,10 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         currentQuestionId = event.payload?.questionId?.takeIf { it.isNotEmpty() } ?: currentQuestionId
         when (event.senderType) {
             SENDER_AGENT -> {
-                event.content?.takeIf { it.isNotEmpty() }?.let { replaceCurrentAiMessage(it) }
+                event.content?.takeIf { it.isNotEmpty() }?.let {
+                    replaceCurrentAiMessage(it)
+                    ttsSpeakEvent.value = it
+                }
                 roomState.value = InterviewRoomState.INTERVIEWING
             }
             SENDER_USER -> {

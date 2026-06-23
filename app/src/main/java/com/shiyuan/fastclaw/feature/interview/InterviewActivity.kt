@@ -24,6 +24,7 @@ import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.permissions.PermissionsUtils
 import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
+import com.shiyuan.fastclaw.common.speech.DashCosyVoiceStreamTtsPlayer
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.ext.getBundleValue
@@ -39,6 +40,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     private val mInterviewId by lazy { intent.getBundleValue(INTERVIEW_ID, "") }
     private val msgAdapter by lazy { InterviewRoomMessageAdapter() }
     private var speechTranscriber: DashFunAsrSpeechTranscriber? = null
+    private var ttsPlayer: DashCosyVoiceStreamTtsPlayer? = null
     private var shouldSendVoiceResult = false
     private var pendingVoiceText: String? = null
     private var answerRecording = false
@@ -116,6 +118,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         mRealVM.toastMessage.observe(this) {
             showMessage(it)
         }
+        mRealVM.ttsSpeakEvent.observe(this) {
+            ensureTtsPlayer().speak(it)
+        }
         mRealVM.finishRoomEvent.observe(this) {
             finish()
         }
@@ -184,6 +189,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             }
             return false
         }
+        ttsPlayer?.stop()
         pendingVoiceText = null
         shouldSendVoiceResult = false
         return runCatching {
@@ -252,6 +258,24 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         ).also { speechTranscriber = it }
     }
 
+    private fun ensureTtsPlayer(): DashCosyVoiceStreamTtsPlayer {
+        return ttsPlayer ?: DashCosyVoiceStreamTtsPlayer(
+            context = applicationContext,
+            configProvider = {
+                DashCosyVoiceStreamTtsPlayer.Config(
+                    apiKey = mRealVM.ttsToken.value?.takeIf { it.isNotBlank() } ?: BuildConfig.DASHSCOPE_API_KEY,
+                    url = BuildConfig.DASHSCOPE_SPEECH_URL,
+                )
+            },
+            callback = object : DashCosyVoiceStreamTtsPlayer.Callback {
+                override fun onError(message: String) {
+                    Log.d(TAG, "tts play failed: $message")
+                    showMessage(message)
+                }
+            },
+        ).also { ttsPlayer = it }
+    }
+
     private fun sendVoiceMessage(): Boolean {
         val text = pendingVoiceText?.trim()?.takeIf { it.isNotEmpty() } ?: return false
         pendingVoiceText = null
@@ -311,6 +335,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.ivVoiceBadge.stopWaveAnimation()
         speechTranscriber?.release()
         speechTranscriber = null
+        ttsPlayer?.release()
+        ttsPlayer = null
         super.onDestroy()
     }
 }
