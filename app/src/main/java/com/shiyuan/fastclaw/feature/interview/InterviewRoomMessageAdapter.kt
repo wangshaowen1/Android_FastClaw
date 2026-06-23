@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.shiyuan.fastclaw.databinding.ItemInterviewAiBinding
 import com.shiyuan.fastclaw.databinding.ItemInterviewUserBinding
+import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomMessage
 
 class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewRoomMessage>() {
 
     init {
-        register(VIEW_TYPE_AI, { i, p -> AiViewHolder(ItemInterviewAiBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
-        register(VIEW_TYPE_USER, { i, p -> UserViewHolder(ItemInterviewUserBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_AGENT, { i, p -> AiViewHolder(ItemInterviewAiBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_USER, { i, p -> UserViewHolder(ItemInterviewUserBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         onItemViewType { position, list -> list[position].itemType() }
     }
 
@@ -49,9 +50,9 @@ class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewRoomMessage>()
     }
 
     private fun InterviewRoomMessage.itemType(): Int {
-        return when (role) {
-            InterviewRoomMessage.Role.USER -> VIEW_TYPE_USER
-            InterviewRoomMessage.Role.AI -> VIEW_TYPE_AI
+        return when (senderType) {
+            InterviewViewModel.SENDER_USER -> TYPE_USER
+            else -> TYPE_AGENT
         }
     }
 
@@ -71,7 +72,7 @@ class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewRoomMessage>()
     }
 
     companion object {
-        private const val VIEW_TYPE_AI = 1
-        private const val VIEW_TYPE_USER = 2
+        private const val TYPE_AGENT = 1
+        private const val TYPE_USER = 2
     }
 }

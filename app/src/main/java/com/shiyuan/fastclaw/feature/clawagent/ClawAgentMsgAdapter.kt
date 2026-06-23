@@ -231,7 +231,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     override fun submitList(list: List<ClawAgentMessageInfo>?) {
         var newList = list ?: emptyList()
         //测试数据
-        //newList = ClawDataTest.getDataList(newList)
+        newList = ClawDataTest.getDataList(newList)
         val result = DiffUtil.calculateDiff(MessageDiffCallback(items, newList))
         items = newList
         result.dispatchUpdatesTo(this)

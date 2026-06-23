@@ -122,14 +122,6 @@ data class JobAgentMessage(
     val conversationId: String? = null,
 )
 
-data class InterviewAgentMessage(
-    val messageId: String? = null,
-    val interviewId: String? = null,
-    val messageSeq: Long? = null,
-    val messageType: String? = null,
-    val payload: JsonObject? = null,
-)
-
 data class PayLoadBean(
     val interactionState: InteractionStateBean? = null,
     val questionQueueId: Long? = null,
