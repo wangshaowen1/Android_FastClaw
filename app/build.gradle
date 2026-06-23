@@ -68,6 +68,7 @@ android {
         buildConfigField "String", "GROWING_DATA_SOURCE_ID", '"944875fb77487c3d"'
         buildConfigField "String", "GROWING_SERVER_HOST", '"https://napi.growingio.com"'
         buildConfigField "String", "GROWING_URL_SCHEME", '\"' + growingScheme + '\"' //埋点库GROWINGIO的Urlscheme
+        buildConfigField "boolean", "ENABLE_CHANNEL_PUSH", "false"
         manifestPlaceholders = [
                 "GROWING_URL_SCHEME": growingScheme, // 埋点库GROWINGIO的Urlscheme
                 "KWAI_APP_ID": "YOUR_KWAI_APP_ID", // 快手申请分配的appId
@@ -295,7 +296,7 @@ dependencies {
     implementation rootProject.ext.modules.ucrop.gav
     implementation rootProject.ext.modules.mvchelper.gav
     implementation rootProject.ext.modules.umeng.gav
-    implementation rootProject.ext.modules.imsdk.gav
+   /* implementation rootProject.ext.modules.imsdk.gav*/
     implementation 'com.tencent.bugly:crashreport:latest.release'
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
     implementation 'com.github.gzu-liyujiang:Android_CN_OAID:4.2.4'
