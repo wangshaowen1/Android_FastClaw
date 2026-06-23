@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.invite
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
@@ -15,9 +16,12 @@ import com.nhsd.basic.BaseDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.Constants.DOWNLOADLANDING_URL
 import com.shiyuan.fastclaw.common.ext.toAlbum
 import com.shiyuan.fastclaw.common.ext.toCache
 import com.shiyuan.fastclaw.common.permissions.requestRead2WritePermissions
+import com.shiyuan.fastclaw.common.utils.Utils
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.databinding.DialogInviteShareBinding
 import com.umeng.socialize.UMShareListener
@@ -29,6 +33,29 @@ import kotlinx.coroutines.withContext
 class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
 
     companion object {
+        private const val INVITE_SCENE_WECHAT = "WECHAT"
+        private const val INVITE_SCENE_MOMENTS = "MOMENTS"
+        private const val INVITE_SCENE_POSTER = "POSTER"
+        private const val INVITE_SCENE_LINK = "LINK"
+
+        val WX_DOWNLOADLANDING_URL: String
+            get() = inviteLandingUrl(INVITE_SCENE_WECHAT)
+        val PYQ_DOWNLOADLANDING_URL: String
+            get() = inviteLandingUrl(INVITE_SCENE_MOMENTS)
+        val IM_DOWNLOADLANDING_URL: String
+            get() = inviteLandingUrl(INVITE_SCENE_POSTER)
+        val TXT_DOWNLOADLANDING_URL: String
+            get() = inviteLandingUrl(INVITE_SCENE_LINK)
+
+        private fun inviteLandingUrl(inviteScene: String): String {
+            return Uri.parse(DOWNLOADLANDING_URL)
+                .buildUpon()
+                .appendQueryParameter("inviteCode", User.get().inviteCode.orEmpty())
+                .appendQueryParameter("inviteScene", inviteScene)
+                .build()
+                .toString()
+        }
+
         fun show(manager: FragmentManager): InviteShareDialog {
             return InviteShareDialog().apply {
                 show(manager)
@@ -77,10 +104,10 @@ class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
             dismissAllowingStateLoss()
         }
         binding.llWechatFriend.setOnSingleClickListener {
-            sharePoster(SHARE_MEDIA.WEIXIN)
+            sharePoster(SHARE_MEDIA.WEIXIN, INVITE_SCENE_WECHAT)
         }
         binding.llWechatMoments.setOnSingleClickListener {
-            sharePoster(SHARE_MEDIA.WEIXIN_CIRCLE)
+            sharePoster(SHARE_MEDIA.WEIXIN_CIRCLE, INVITE_SCENE_MOMENTS)
         }
         binding.llSaveImage.setOnSingleClickListener {
             savePosterToAlbum()
@@ -88,10 +115,12 @@ class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
         binding.llCopyLink.setOnSingleClickListener {
             copyInviteText()
         }
+        renderInviteQr(INVITE_SCENE_POSTER)
     }
 
-    private fun sharePoster(platform: SHARE_MEDIA) {
+    private fun sharePoster(platform: SHARE_MEDIA, inviteScene: String) {
         val activity = activity ?: return
+        renderInviteQr(inviteScene)
         val posterFile = binding.sharePosterContainer.toCache()
         if (posterFile?.exists() != true) {
             showToast(R.string.toast_save_fail)
@@ -119,6 +148,7 @@ class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
 
     private fun savePosterToAlbumWithPermission() {
         lifecycleScope.launch {
+            renderInviteQr(INVITE_SCENE_POSTER)
             val file = withContext(Dispatchers.IO) {
                 binding.sharePosterContainer.toAlbum()
             }
@@ -134,9 +164,15 @@ class InviteShareDialog : BaseDialogFragment<DialogInviteShareBinding>() {
     }
 
     private fun copyInviteText() {
-        ClipboardUtils.copyText(getString(R.string.invite_share_copy_text))
+        ClipboardUtils.copyText(TXT_DOWNLOADLANDING_URL)
         val manager = parentFragmentManager
         dismissAllowingStateLoss()
         InviteCopySuccessDialog.show(manager)
+    }
+
+    private fun renderInviteQr(inviteScene: String) {
+        val qrSize = (72 * resources.displayMetrics.density).toInt()
+        val qrBitmap = Utils.createQRCode(inviteLandingUrl(inviteScene), qrSize, qrSize, null)
+        binding.ivInviteQr.setImageBitmap(qrBitmap)
     }
 }
