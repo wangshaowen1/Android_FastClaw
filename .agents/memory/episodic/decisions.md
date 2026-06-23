@@ -27,3 +27,14 @@ metadata:
 
 ---
 <!-- 模板初始无历史条目。新项目的第一条决策从这里开始追加。 -->
+
+## v本轮 U-Link 邀请归因字段收口
+
+### 变更了什么
+登录请求链路 → 删除旧 `installData` / `inviteData`：手机号登录、闪验登录、第三方登录统一只传 `inviteAttribution(inviteCode, inviteScene)`。
+
+### 为什么
+友盟 U-Link/H5 落地页归因只需要 `inviteCode` 和 `inviteScene` 两个业务字段；继续保留旧 `installData` 会造成请求体字段并存、后端归因口径不清晰。
+
+### 验证结论
+静态检查：`rg -n "installData|INSTALL_DATA|inviteData" app\src\main\java app\build.gradle` 无残留；按项目规则未运行 Gradle。

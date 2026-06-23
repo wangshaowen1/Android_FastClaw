@@ -49,7 +49,7 @@ class UnifiedLoginViewModel : AppRepositoryViewModel<ThirdLoginRepository>() {
                 thirdPartyOpenId = map?.get("openid"),
                 thirdPartyNickName = map?.get("name"),
                 thirdPartyAvatar = map?.get("iconurl"),
-                inviteData = Config.get().installData
+                inviteAttribution = Config.get().inviteAttribution,
             )
             response(mRepo.loginByThird(body), result = {
                 User.get().updateFrom(data)

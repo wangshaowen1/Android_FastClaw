@@ -7,14 +7,14 @@ import com.shiyuan.fastclaw.common.utils.CheckSumBuilder
  * @author xiaoowuu
  * @param telNum 手机号码
  * @param smsValidateCode 验证码
- * @param inviteData 邀请数据  encodeData
+ * @param inviteAttribution U-Link 邀请归因
  */
 data class LoginByPhoneBody(
     val telNum: String?,
     val smsValidateCode: String?,
     //业务类型 1=手机号登录 2=换绑手机号
     val bizType: Int?,
-    val inviteData: String?
+    val inviteAttribution: InviteAttribution? = null,
 ){
     companion object{
         //手机号登录
@@ -28,3 +28,9 @@ data class LoginByPhoneBody(
      */
     val encodeData = CheckSumBuilder.getCheckSum(telNum)
 }
+
+
+data class InviteAttribution(
+    val inviteCode: String?,
+    val inviteScene: String?,
+)

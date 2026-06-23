@@ -8,7 +8,7 @@ package com.shiyuan.fastclaw.core.network.apis.request
  * @param thirdPartyOpenId 第三方登陆openId（其他第三方登陆用到）
  * @param thirdPartyNickName 第三方昵称
  * @param thirdPartyAvatar 第三方头像
- * @param inviteData 扩展数据
+ * @param inviteAttribution U-Link 邀请归因
  * @param uniqueId 设备/客户端唯一标识（用于风控或绑定设备）
  */
 data class LoginByThirdBody(
@@ -17,7 +17,7 @@ data class LoginByThirdBody(
     val thirdPartyOpenId: String?,
     val thirdPartyNickName: String?,
     val thirdPartyAvatar: String?,
-    val inviteData: String?,
+    val inviteAttribution: InviteAttribution? = null,
     val uniqueId: String? = null,
 ) {
     companion object {

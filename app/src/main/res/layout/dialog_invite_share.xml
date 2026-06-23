@@ -34,11 +34,15 @@
             android:layout_marginTop="326dp"
             android:orientation="vertical">
 
-            <View
+            <ImageView
+                android:id="@+id/iv_invite_qr"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:layout_marginStart="5dp"
-                android:background="#D9D9D9" />
+                android:background="#FFFFFF"
+                android:contentDescription="@null"
+                android:scaleType="fitXY"
+                tools:ignore="ImageContrastCheck" />
 
             <TextView
                 android:layout_width="78dp"

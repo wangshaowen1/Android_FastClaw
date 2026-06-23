@@ -132,13 +132,13 @@ android {
             //隐私政策
             buildConfigField "String", "OFFICIAL_URL", '"https://example.com"' //官方网站
             //友盟SECRET
-            buildConfigField "String", "UMENG_SECRET", '"YOUR_UMENG_SECRET"'//填写Umeng Message Secret对应信息
-            buildConfigField "String", "UMENG_APP_KEY", '"6a1ec4919a7f376488ee7a59"'
+            buildConfigField "String", "UMENG_SECRET", '"909431f07f43700ef0a147f5e33fef4f"'//填写Umeng Message Secret对应信息
+            buildConfigField "String", "UMENG_APP_KEY", '"6a39fd806f259537c7bd163e"'
             buildConfigField "String", "SHANYAN_APPID", '"YOUR_SHANYAN_APPID"' //闪验APPID
             buildConfigField "String", "SHANYAN_APP_KEY", '"YOUR_SHANYAN_APP_KEY"' //闪验APPKEY
 
             manifestPlaceholders = [
-                    UMENG_APP_KEY      : "6a1ec4919a7f376488ee7a59",
+                    UMENG_APP_KEY      : "6a39fd806f259537c7bd163e",
                     qqappid            : "YOUR_QQ_APP_ID",
             ]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -167,8 +167,8 @@ android {
             buildConfigField "String", "PRIVACY_URL", '"https://example.com/privacy"'
             //隐私政策
             buildConfigField "String", "OFFICIAL_URL", '"https://example.com"' //官方网站
-            buildConfigField "String", "UMENG_SECRET", '"YOUR_UMENG_SECRET"'//填写Umeng Message Secret对应信息
-            buildConfigField "String", "UMENG_APP_KEY", '"6a1ec4919a7f376488ee7a59"'
+            buildConfigField "String", "UMENG_SECRET", '"909431f07f43700ef0a147f5e33fef4f"'//填写Umeng Message Secret对应信息
+            buildConfigField "String", "UMENG_APP_KEY", '"6a39fd806f259537c7bd163e"'
             //友盟SECRET
             buildConfigField "String", "SHANYAN_APPID", '"YOUR_SHANYAN_APPID"' //闪验APPID
             buildConfigField "String", "SHANYAN_APP_KEY", '"YOUR_SHANYAN_APP_KEY"' //闪验APPKEY
@@ -176,7 +176,7 @@ android {
             versionNameSuffix ""
             signingConfig signingConfigs.debug
             manifestPlaceholders = [
-                    UMENG_APP_KEY      : "6a1ec4919a7f376488ee7a59",
+                    UMENG_APP_KEY      : "6a39fd806f259537c7bd163e",
                     qqappid            : "YOUR_QQ_APP_ID",
             ]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -386,4 +386,6 @@ dependencies {
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     // 经典的字符探测库，体积小，零外部依赖
     implementation("com.googlecode.juniversalchardet:juniversalchardet:1.0.3")
+
+    implementation 'com.umeng.umsdk:link:2.0.0'//集成U-Link，可选，如要统计分享回流次数和分享新增用户指标则必选
 }

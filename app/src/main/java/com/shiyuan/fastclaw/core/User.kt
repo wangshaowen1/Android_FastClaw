@@ -28,6 +28,8 @@ class User : IUser {
     //uid
     var userUid: String?
 
+    var inviteCode: String?
+
     //用户昵称
     var nickName: String?
 
@@ -93,6 +95,7 @@ class User : IUser {
         userId = sp.getString(USER_ID, null)
         phoneNum = sp.getString(PHONE_NUM, null)
         userUid = sp.getString(U_ID, null)
+        inviteCode = sp.getString(INVITE_CODE, null)
         nickName = sp.getString(NICK_NAME, null)
         gender = sp.getInt(GENDER, 0)
         avatarUrl = sp.getString(AVATAR_URL, null)
@@ -110,6 +113,7 @@ class User : IUser {
     fun updateFrom(userData: UserHomeData?) {
         if (userData == null) return
         storeUid(userData.candidateId)
+        storeInviteCode(userData.inviteCode)
         storePhoneNum(userData.phoneNum)
         storeUserId(userData.accountId)
         storeNickname(userData.nickName)
@@ -161,6 +165,8 @@ class User : IUser {
     private fun clear() {
         userId = null
         sp.remove(USER_ID)
+        inviteCode = null
+        sp.remove(INVITE_CODE)
         phoneNum = null
         sp.remove(PHONE_NUM)
         nickName = null
@@ -236,6 +242,11 @@ class User : IUser {
     fun storeUid(uid: String?) {
         this.userUid = uid
         sp.putString(U_ID, uid)
+    }
+
+    fun storeInviteCode(inviteCode: String?) {
+        this.inviteCode = inviteCode
+        sp.putString(INVITE_CODE, inviteCode)
     }
 
 
@@ -364,6 +375,7 @@ class User : IUser {
 
         //用户名
         const val U_ID = "uid"
+        const val INVITE_CODE = "inviteCode"
 
         //用户昵称
         const val NICK_NAME = "nickName"

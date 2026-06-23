@@ -21,7 +21,12 @@ class FlashLoginRepository : ThirdLoginRepository() {
      * @param flashValidateToken 闪验token
      */
     suspend fun loginByFlashMobile(flashValidateToken: String?) = withContext(Dispatchers.IO) {
-        api.loginByFlashMobile(LoginByFlashMobileBody(flashValidateToken, Config.get().installData))
+        api.loginByFlashMobile(
+            LoginByFlashMobileBody(
+                flashValidateToken = flashValidateToken,
+                inviteAttribution = Config.get().inviteAttribution,
+            )
+        )
             .apply {
                 val isNewRegister = data?.isNewRegistration() == true
 //                EventManager.onAppTrack(
@@ -50,7 +55,7 @@ class FlashLoginRepository : ThirdLoginRepository() {
                     telNum=phoneNumber,
                     smsValidateCode=validationCode,
                     bizType = LoginByPhoneBody.BIZ_TYPE_LOGIN,
-                    Config.get().installData,
+                    inviteAttribution = Config.get().inviteAttribution,
                 )
             ).apply {
                 val isNewRegister = data?.isNewRegistration() == true
