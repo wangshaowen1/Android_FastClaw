@@ -38,8 +38,8 @@ class InviteFriendsViewModel : AppRepositoryViewModel<AppRepository>() {
         request(
             apiBlock = { mRepo.api.queryInviteStats() },
             onSuccess = {
-                val totalScore = data?.totalInviteScore ?: 0
-                inviteSuccessCountText.value = (data?.inviteCount ?: 0).toString()
+                val totalScore = data?.totalRewardScore ?: 0
+                inviteSuccessCountText.value = (data?.successInviteCount ?: 0).toString()
                 inviteTotalRewardText.value = totalScore.toString()
                 inviteTotalRewardUnitText.value = "  虾条=${totalScore.toInviteAmountText()}元"
             }
