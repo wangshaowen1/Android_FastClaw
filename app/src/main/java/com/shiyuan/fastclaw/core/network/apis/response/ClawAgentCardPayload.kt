@@ -357,52 +357,93 @@ data class HistoryResumeConfirmPayloadBean(
 )
 
 data class CompanyBackgroundEntryPayloadBean(
+    /** 卡片交互状态，用于控制入口卡是否禁用 */
     val interactionState: CardInteractionState? = null,
+    /** 入口卡可执行动作列表，点击开始背调时取首个动作回传 */
     val actions: List<CardAction>? = null,
 )
 
 data class CompanyBackgroundReportPayloadBean(
+    /** 报告生成状态，具体枚举值以服务端约定为准 */
     val reportStatus: String? = null,
+    /** 公司背调报告 ID，用于后续查看报告详情 */
     val reportId: String? = null,
+    /** 报告名称，优先用于已生成卡片主标题展示 */
     val reportName: String? = null,
+    /** 被背调的公司名称，报告名称为空时作为展示兜底 */
     val companyName: String? = null,
+    /** 报告生成时间，优先用于已生成卡片时间展示 */
     val reportGenerateTime: String? = null,
+    /** 报告生成完成时间兼容字段 */
     val generatedAt: String? = null,
+    /** 报告生成时间兼容字段 */
     val generateTime: String? = null,
+    /** 生成失败原因或错误提示 */
     val errorMessage: String? = null,
+    /** 报告卡动作列表，如重新生成、查看报告 */
     val actions: List<CardAction>? = null,
 )
 
 data class MockInterviewEntryPayloadBean(
+    /** 报告生成状态，具体枚举值以服务端约定为准 */
+    val reportStatus: String? = null,
+    /** 卡片业务类型，用于区分模拟面试入口等业务卡 */
     val cardBizType: String? = null,
+    /** 入口消息 ID，开始模拟面试时回传给服务端 */
     val entryMessageId: String? = null,
+    /** 入口来源，开始模拟面试时回传给服务端 */
     val entrySource: String? = null,
+    /** 当前使用的简历 ID */
     val resumeId: String? = null,
+    /** 简历状态，用于服务端或端侧判断是否可发起面试 */
     val resumeStatus: String? = null,
+    /** 按钮状态，DISABLED 时端侧置灰并禁止点击 */
     val buttonStatus: String? = null,
+    /** 本次模拟面试消耗数量 */
     val chargeAmount: Int? = null,
+    /** 消耗单位，如虾条、积分等 */
     val chargeUnit: String? = null,
+    /** 入口卡标题 */
     val title: String? = null,
+    /** 入口卡副标题 */
     val subtitle: String? = null,
+    /** 主按钮动作，优先于 actions 首项使用 */
     val primaryAction: CardAction? = null,
+    /** 卡片交互状态，用于控制入口卡是否禁用 */
     val interactionState: CardInteractionState? = null,
+    /** 入口卡备用动作列表 */
     val actions: List<CardAction>? = null,
 )
 
 data class MockInterviewReportPayloadBean(
+    /** 卡片业务类型，用于区分模拟面试报告等业务卡 */
     val cardBizType: String? = null,
+    /** 模拟面试会话 ID */
     val interviewId: String? = null,
+    /** 模拟面试报告 ID，用于查看报告详情或查询进度 */
     val mockReportId: String? = null,
+    /** 报告生成状态，具体枚举值以服务端约定为准 */
     val reportStatus: String? = null,
+    /** 报告生成进度百分比 */
     val progressPercent: Int? = null,
+    /** 报告生成进度文案 */
     val progressText: String? = null,
+    /** 面试评分，优先用于已生成报告卡展示 */
     val score: Int? = null,
+    /** 面试评分兼容字段 */
     val interviewScore: Int? = null,
+    /** 报告评分兼容字段 */
     val reportScore: Int? = null,
+    /** 面试时间，优先用于报告卡时间展示 */
     val interviewTime: String? = null,
+    /** 报告生成时间 */
     val reportGenerateTime: String? = null,
+    /** 报告生成完成时间兼容字段 */
     val generatedAt: String? = null,
+    /** 报告生成时间兼容字段 */
     val generateTime: String? = null,
+    /** 生成失败原因或错误提示 */
     val errorMessage: String? = null,
+    /** 报告卡动作列表，如重新生成、查看报告 */
     val actions: List<CardAction>? = null,
 )

@@ -260,6 +260,11 @@ object ApiConstants {
     const val JOB_AGENT_COMPANY_BACKGROUND_GENERATE_RESULT_QUERY = "/api/candidate/app/jobAgent/companyBackground/report/generate/result/query"
 
     /**
+     * 重新生成公司背调失败报告
+     */
+    const val JOB_AGENT_COMPANY_BACKGROUND_REGENERATE_SUBMIT = "/api/candidate/app/jobAgent/companyBackground/report/regenerate/submit"
+
+    /**
      * 查询当前可确认简历（求职 Agent）
      */
     const val JOB_AGENT_RESUME_CURRENT_QUERY = "/api/candidate/app/jobAgent/resume/current/query"

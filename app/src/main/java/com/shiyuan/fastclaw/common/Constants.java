@@ -42,6 +42,7 @@ public class Constants {
     public static final String SALARY_URL = BuildConfig.H5_SERVER_URL+"/pages/salary/index?nav=1";  //薪资被低估
     public static final String DOWNLOADLANDING_URL = BuildConfig.H5_SERVER_URL+"/pages/share/downloadLanding?nav=1";  //下载落地页
     public static final String RULES_URL = BuildConfig.H5_SERVER_URL+"/pages/share/downloadLanding?nav=1";  //邀请活动规则
+    public static final String COMPANY_BACKGROUND_RESULT_URL = BuildConfig.H5_SERVER_URL+"/pages/reports/companyBackgroundReport?nav=1&company_bd_checkId=";  //公司背调结果页
 
 
     public static final String KEY_UNLIMITED = "不限";

@@ -27,7 +27,9 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
@@ -48,6 +50,9 @@ import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_MODEL_FAILED
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_NOT_COMPANY
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_POINTS_INSUFFICIENT
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentStatusPopup
@@ -66,6 +71,7 @@ import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
 import com.shiyuan.fastclaw.feature.mine.MineShrimpRechargeActivity
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.shape.internal.RECT
 import kotlinx.coroutines.Job
@@ -263,6 +269,20 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.submitCompanyBackgroundPreCheck(data.companyName.orEmpty())
+            }
+        }
+        // 公司背调 - 查看报告
+        msgAdapter.onCompanyResultClickAction = { _, _, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                SimpleBrowserActivity.launch(requireActivity(), COMPANY_BACKGROUND_RESULT_URL + data?.reportId)
+            }
+        }
+        // 公司背调 - 重新生成
+        msgAdapter.onCompanyRetryClickAction = { _, _, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.retryGenerateCompanyBackgroundReport(data?.reportId)
             }
         }
         // 模拟面试 - 开始面试
@@ -666,6 +686,18 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 showInsufficientShrimpDialog()
             } else{
                 showMessage(it?.message ?: "模拟面试创建失败")
+            }
+        }
+        mRealVM.companyBackgroundResult.observe(this) {
+            //公司背调 - 前置校验失败提示：优先展示后端 errorMessage，兜底使用文档约定 errorCode 对应文案。
+            when (it?.errorCode) {
+                ERROR_CODE_NOT_COMPANY -> showToast(R.string.str_agent_company_background_error_not_company)
+                ERROR_CODE_POINTS_INSUFFICIENT -> showToast(R.string.str_agent_company_background_error_points_insufficient)
+                ERROR_CODE_MODEL_FAILED -> showToast(R.string.str_agent_company_background_error_model_failed)
+                else -> showToast( R.string.str_agent_company_background_precheck_failed)
+            }
+            if (it?.errorCode == ERROR_CODE_POINTS_INSUFFICIENT) {
+                showInsufficientShrimpDialog()
             }
         }
         // 监听会话返回的求职状态，已选中时同步顶部状态展示

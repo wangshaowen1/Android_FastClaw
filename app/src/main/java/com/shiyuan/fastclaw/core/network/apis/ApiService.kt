@@ -20,6 +20,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundRegenerateSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.FeedbackBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
@@ -69,6 +70,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundGenerateResultData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckSubmitData
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundRegenerateSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
@@ -451,6 +453,12 @@ interface ApiService {
      */
     @POST(ApiConstants.JOB_AGENT_COMPANY_BACKGROUND_GENERATE_RESULT_QUERY)
     suspend fun queryCompanyBackgroundGenerateResult(@Body body: CompanyBackgroundGenerateResultQueryBody): ApiResponse<CompanyBackgroundGenerateResultData?>
+
+    /**
+     * 重新生成公司背调失败报告
+     */
+    @POST(ApiConstants.JOB_AGENT_COMPANY_BACKGROUND_REGENERATE_SUBMIT)
+    suspend fun regenerateCompanyBackgroundReport(@Body body: CompanyBackgroundRegenerateSubmitBody): ApiResponse<CompanyBackgroundRegenerateSubmitData?>
 
     /**
      * 查询当前可确认简历（求职 Agent）

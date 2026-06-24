@@ -34,7 +34,7 @@ class VoiceRecordingView @JvmOverloads constructor(
     companion object {
         private const val WAVE_BAR_COUNT = 25
 
-        val VOICE_CANCEL_DISTANCE = 60.dp
+        val VOICE_CANCEL_DISTANCE = 40.dp
         private val WAVE_BASE_HEIGHTS = intArrayOf(
             6, 14, 12, 12, 16, 16, 20, 16, 16, 17, 17, 22, 33,
             22, 17, 17, 16, 16, 20, 16, 16, 12, 12, 14, 6
@@ -86,7 +86,7 @@ class VoiceRecordingView @JvmOverloads constructor(
         this.canceling = canceling
         contentView.setBackgroundResource(if (canceling) R.drawable.bg_agent_voice_cancel else R.drawable.bg_agent_voice_recording)
         tipView.text = if (canceling) "松开取消" else "松开发送，上滑取消"
-        tipView.setTextColor(if (canceling) R.color.color_ff5a5f.getResColor() else R.color.color_ffffff.getResColor())
+        tipView.setTextColor(if (canceling) R.color.color_ff0000.getResColor() else R.color.color_ffffff.getResColor())
         tipView.alpha = if (canceling) 0.6f else 1f
         val barBg = if (canceling) R.drawable.bg_agent_voice_bar_cancel else R.drawable.bg_agent_voice_bar
         for (index in 0 until waveLayout.childCount) {
