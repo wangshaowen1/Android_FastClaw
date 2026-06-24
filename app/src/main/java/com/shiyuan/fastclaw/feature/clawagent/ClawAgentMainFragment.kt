@@ -28,6 +28,7 @@ import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
@@ -259,7 +260,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         msgAdapter.onCompanyReportClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
-                //SimpleBrowserActivity.launch(requireActivity(), data?.reportId)
+                SimpleBrowserActivity.launch(requireActivity(), COMPANY_BACKGROUND_RESULT_URL + data?.reportId)
             }
         }
         // 模拟面试 - 开始面试
