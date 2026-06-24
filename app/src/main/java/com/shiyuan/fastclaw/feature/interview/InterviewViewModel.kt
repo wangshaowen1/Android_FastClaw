@@ -25,6 +25,7 @@ import java.util.UUID
 class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     val roomState = MutableLiveData(InterviewRoomState.STARTING)
+    val sessionStatus = MutableLiveData(SESSION_STATUS_PREPARING)
     val messageList = MutableLiveData<List<InterviewRoomMessage>>(emptyList())
     val streaming = MutableLiveData(false)
     val finishRoomEvent = MutableLiveData<String?>()
@@ -84,7 +85,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                             senderType = SENDER_AGENT,
                             payload = InterviewAgentPayload(
                                 sessionStatus = "COMPLETED",
-                                roomState = "COMPLETED",
+                                roomState = ROOM_STATE_FINISHED,
                                 interviewId = mInterviewId,
                                 conversationId = mConversationId,
                             ),
@@ -127,7 +128,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             setLoading(false)
             if (successUrls.isEmpty()) {
                 showToast(TEXT_JOB_UPLOAD_FAILED)
-                roomState.value = InterviewRoomState.TARGET_JOB_FAILED
+                roomState.value = InterviewRoomState.TARGET_JOB_PARSE_FAILED
                 return@submitMultipleFiles
             }
             uploadList.value = successUrls
@@ -245,16 +246,35 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     private fun handleRoomState(event: InterviewAgentMessage) {
-        when (event.roomState ?: event.payload?.roomState) {
-            "TARGET_JOB_PARSING" -> roomState.value = InterviewRoomState.TARGET_JOB_PARSING
-            "TARGET_JOB_PARSE_FAILED" -> roomState.value = InterviewRoomState.TARGET_JOB_FAILED
-            "PLAN_GENERATING", "PLAN_READY" -> roomState.value = InterviewRoomState.PREPARING
-            "WAITING_USER_ANSWER" -> roomState.value = InterviewRoomState.INTERVIEWING
-            "CANCELED" -> finishRoomEvent.value = mConversationId
+        event.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
+        when (event.payload?.roomState ?: event.roomState) {
+            ROOM_STATE_WAITING_TARGET_JOB -> roomState.value = InterviewRoomState.WAITING_TARGET_JOB
+            ROOM_STATE_TARGET_JOB_PARSING -> roomState.value = InterviewRoomState.TARGET_JOB_PARSING
+            ROOM_STATE_TARGET_JOB_PARSE_SUCCESS -> roomState.value = InterviewRoomState.TARGET_JOB_PARSE_SUCCESS
+            ROOM_STATE_TARGET_JOB_PARSE_FAILED -> roomState.value = InterviewRoomState.TARGET_JOB_PARSE_FAILED
+            ROOM_STATE_PLAN_GENERATING -> roomState.value = InterviewRoomState.PLAN_GENERATING
+            ROOM_STATE_PLAN_READY -> roomState.value = InterviewRoomState.PLAN_READY
+            ROOM_STATE_WAITING_USER_ANSWER -> roomState.value = InterviewRoomState.WAITING_USER_ANSWER
+            ROOM_STATE_ANSWER_SUBMITTED -> roomState.value = InterviewRoomState.ANSWER_SUBMITTED
+            ROOM_STATE_WAITING_FOLLOW_UP_DECISION -> roomState.value = InterviewRoomState.WAITING_FOLLOW_UP_DECISION
+            ROOM_STATE_REPORT_GENERATING -> {
+                roomState.value = InterviewRoomState.REPORT_GENERATING
+                finishRoomEvent.value = event.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+            }
+            ROOM_STATE_FINISHED -> {
+                roomState.value = InterviewRoomState.FINISHED
+                finishRoomEvent.value = event.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+            }
+            ROOM_STATE_CANCELED -> {
+                roomState.value = InterviewRoomState.CANCELED
+                finishRoomEvent.value = event.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+            }
         }
     }
 
     private fun handleTextDone(message: InterviewAgentMessage) {
+        message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
+        applyPayloadRoomState(message.payload?.roomState)
         currentQuestionId = message.payload?.questionId?.takeIf { it.isNotEmpty() } ?: currentQuestionId
         when (message.senderType) {
             SENDER_AGENT -> {
@@ -262,7 +282,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                     replaceCurrentAiMessage(it)
                     ttsSpeakEvent.value = it
                 }
-                // roomState.value = InterviewRoomState.INTERVIEWING
+                if (message.payload?.roomState.isNullOrBlank()) {
+                    roomState.value = InterviewRoomState.WAITING_USER_ANSWER
+                }
             }
             SENDER_USER -> {
                 // User answer has already been inserted locally.
@@ -273,12 +295,23 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     private fun handleTextBlocked(message: InterviewAgentMessage) {
         message.content?.takeIf { it.isNotEmpty() }?.let { appendMessage(SENDER_AGENT, it) }
-        roomState.value = InterviewRoomState.INTERVIEWING
+        message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
+        applyPayloadRoomState(message.payload?.roomState)
+        if (message.payload?.roomState.isNullOrBlank()) {
+            roomState.value = InterviewRoomState.WAITING_USER_ANSWER
+        }
     }
 
     private fun handleInterviewFinished(message: InterviewAgentMessage) {
+        message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         roomState.value = InterviewRoomState.FINISHED
         finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+    }
+
+    private fun applyPayloadRoomState(roomStateValue: String?) {
+        roomStateValue?.takeIf { it.isNotBlank() }?.let {
+            handleRoomState(InterviewAgentMessage(roomState = it))
+        }
     }
 
     private fun appendAiDelta(text: String) {
@@ -351,5 +384,20 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         const val MSG_ERROR = "ERROR"
         const val SENDER_AGENT = "AGENT"
         const val SENDER_USER = "USER"
+
+        const val ROOM_STATE_WAITING_TARGET_JOB = "WAITING_TARGET_JOB"
+        const val ROOM_STATE_TARGET_JOB_PARSING = "TARGET_JOB_PARSING"
+        const val ROOM_STATE_TARGET_JOB_PARSE_SUCCESS = "TARGET_JOB_PARSE_SUCCESS"
+        const val ROOM_STATE_TARGET_JOB_PARSE_FAILED = "TARGET_JOB_PARSE_FAILED"
+        const val ROOM_STATE_PLAN_GENERATING = "PLAN_GENERATING"
+        const val ROOM_STATE_PLAN_READY = "PLAN_READY"
+        const val ROOM_STATE_WAITING_USER_ANSWER = "WAITING_USER_ANSWER"
+        const val ROOM_STATE_ANSWER_SUBMITTED = "ANSWER_SUBMITTED"
+        const val ROOM_STATE_WAITING_FOLLOW_UP_DECISION = "WAITING_FOLLOW_UP_DECISION"
+        const val ROOM_STATE_REPORT_GENERATING = "REPORT_GENERATING"
+        const val ROOM_STATE_FINISHED = "FINISHED"
+        const val ROOM_STATE_CANCELED = "CANCELED"
+
+        const val SESSION_STATUS_PREPARING = "PREPARING"
     }
 }

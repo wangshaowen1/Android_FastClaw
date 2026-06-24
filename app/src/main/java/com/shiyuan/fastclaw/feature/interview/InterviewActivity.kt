@@ -33,6 +33,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentPayload
 import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_UPLOAD
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.MSG_TEXT_DONE
+import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SESSION_STATUS_PREPARING
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SENDER_AGENT
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
@@ -93,7 +94,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
         mRealVM.enterInterview(mInterviewId)
         //测试数据
-        mRealVM.roomState.value = InterviewRoomState.PREPARING
+        mRealVM.roomState.value = InterviewRoomState.WAITING_TARGET_JOB
         mRealVM.sseInsertMessages(
             InterviewAgentMessage(
                 messageId = "mock-text-done-${UUID.randomUUID()}",
@@ -132,10 +133,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 )
             )
             //测试数据
-            mRealVM.roomState.value = InterviewRoomState.INTERVIEWING
+            mRealVM.roomState.value = InterviewRoomState.WAITING_USER_ANSWER
         }
         mRealVM.roomState.observe(this) {
             updateRoomState(it)
+        }
+        mRealVM.sessionStatus.observe(this) {
+            updateTitleBySessionStatus(it)
         }
         mRealVM.answerActionText.observe(this) {
             binding.tvVoicePress.text = it
@@ -159,36 +163,43 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.layoutPrepare.gone()
         binding.layoutAnswer.gone()
         binding.layoutFinish.gone()
-        binding.tvTitle.text = when (state) {
-            InterviewRoomState.STARTING -> "面试准备中"
-            InterviewRoomState.PREPARING -> "面试准备中"
-            InterviewRoomState.TARGET_JOB_FAILED -> "面试准备中"
-            InterviewRoomState.TARGET_JOB_PARSING -> "面试准备中"
-            InterviewRoomState.INTERVIEWING -> "面试中"
-            InterviewRoomState.ANSWERING -> "面试中"
-            InterviewRoomState.FINISHED -> "面试中"
-            InterviewRoomState.ERROR -> "异常"
-        }
         when (state) {
-            InterviewRoomState.STARTING, InterviewRoomState.PREPARING -> {
+            InterviewRoomState.STARTING,
+            InterviewRoomState.WAITING_TARGET_JOB,
+            InterviewRoomState.TARGET_JOB_PARSE_SUCCESS,
+            InterviewRoomState.PLAN_GENERATING,
+            InterviewRoomState.PLAN_READY -> {
                 binding.layoutPrepare.visible()
             }
-            InterviewRoomState.INTERVIEWING, InterviewRoomState.ANSWERING -> {
+            InterviewRoomState.WAITING_USER_ANSWER,
+            InterviewRoomState.ANSWER_SUBMITTED,
+            InterviewRoomState.WAITING_FOLLOW_UP_DECISION,
+            InterviewRoomState.ANSWERING -> {
                 binding.layoutAnswer.visible()
             }
-            InterviewRoomState.TARGET_JOB_FAILED -> {
+            InterviewRoomState.TARGET_JOB_PARSE_FAILED -> {
                 binding.layoutPrepare.visible()
                 binding.tvTargetJobTitle.text = "重新上传"
             }
             InterviewRoomState.TARGET_JOB_PARSING -> {
                 binding.layoutPrepare.visible()
             }
-            InterviewRoomState.FINISHED -> {
+            InterviewRoomState.REPORT_GENERATING,
+            InterviewRoomState.FINISHED,
+            InterviewRoomState.CANCELED -> {
                 binding.layoutFinish.visible()
             }
             else -> {
                 binding.layoutPrepare.visible()
             }
+        }
+    }
+
+    private fun updateTitleBySessionStatus(sessionStatus: String?) {
+        binding.tvTitle.text = if (sessionStatus == SESSION_STATUS_PREPARING) {
+            "面试准备中"
+        } else {
+            "面试中"
         }
     }
 

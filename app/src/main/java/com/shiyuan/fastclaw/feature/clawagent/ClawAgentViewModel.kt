@@ -26,6 +26,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePageBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePullBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
@@ -654,10 +655,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     private fun resolveMockInterviewReportItemType(msg: JobAgentMessage): Int {
-        val reportStatus = msg.payloadJson?.let {
-            runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java)?.reportStatus }.getOrNull()
+        val payload = msg.payloadJson?.let {
+            runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java) }.getOrNull()
         }
-        return when (reportStatus) {
+        //理解升级面试卡
+        if (payload?.entrySource == RESUME_UNDERSTANDING_UPGRADE) {
+                return ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
+        }
+        //普通面试卡
+        return when (payload?.reportStatus) {
             REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
             REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_DONE
             REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
@@ -1082,7 +1088,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     fun startInterview(entryMessageId: String?, entrySource: String?, resumeId: String?) {
-        /*request(
+        request(
             apiBlock = {
                 mRepo.api.startMockInterviewSession(
                     MockInterviewStartBody(
@@ -1096,8 +1102,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             showToast = true,
         ) {
             interviewStartResult.value = data
-        }*/
-        interviewStartResult.value = MockInterviewStartData(interviewId = "id666666666", chargeStatus = "DEDUCT_SUCCESS")
+        }
+        //interviewStartResult.value = MockInterviewStartData(interviewId = "id666666666", chargeStatus = "DEDUCT_SUCCESS")
     }
 
     /**
@@ -1162,6 +1168,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val GROUP_STATUS_FAILED = "FAILED"
         /** 响应组处理完成 */
         private const val GROUP_STATUS_COMPLETED = "COMPLETED"
+
+        /** APP点击快捷入口后推送 */
+        const val QUICK_ENTRY = "QUICK_ENTRY"
+        /** 小虾对话里理解度升级后推送 */
+        const val RESUME_UNDERSTANDING_UPGRADE = "RESUME_UNDERSTANDING_UPGRADE"
 
         /** 错误码：输入内容不是公司 */
         const val ERROR_CODE_NOT_COMPANY = "NOT_COMPANY"

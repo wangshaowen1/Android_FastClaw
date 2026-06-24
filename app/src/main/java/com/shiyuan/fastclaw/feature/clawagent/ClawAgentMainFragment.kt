@@ -53,6 +53,7 @@ import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_MODEL_FAILED
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_NOT_COMPANY
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_POINTS_INSUFFICIENT
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.QUICK_ENTRY
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
@@ -190,7 +191,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         desc = getString(R.string.mock_interview),
                         actionData = AgentMsgAction(
                             actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
-                            actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = "QUICK_ENTRY"))
+                            actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = QUICK_ENTRY))
                         )
                     )
                 }
@@ -668,6 +669,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             showNotificationSwitchDialog()
             mRealVM.understandingSummaryDialog.value = null
         }
+        // 模拟面试
         mRealVM.interviewStartResult.observe(this) {
             if (it?.isDeductSuccess() == true) {
                 InterviewActivity.start(requireActivity(), it.interviewId)
@@ -677,8 +679,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 showMessage(it?.message ?: "模拟面试创建失败")
             }
         }
+        //公司背调 - 前置校验失败提示：优先展示后端 errorMessage，兜底使用文档约定 errorCode 对应文案。
         mRealVM.companyBackgroundResult.observe(this) {
-            //公司背调 - 前置校验失败提示：优先展示后端 errorMessage，兜底使用文档约定 errorCode 对应文案。
             when (it?.errorCode) {
                 ERROR_CODE_NOT_COMPANY -> showToast(R.string.str_agent_company_background_error_not_company)
                 ERROR_CODE_POINTS_INSUFFICIENT -> showToast(R.string.str_agent_company_background_error_points_insufficient)

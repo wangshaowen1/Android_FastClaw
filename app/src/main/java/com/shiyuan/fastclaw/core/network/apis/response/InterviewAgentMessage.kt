@@ -19,10 +19,10 @@ data class InterviewAgentMessage(
     /** 发送方类型：AGENT / USER */
     val senderType: String? = null,
 
-    /** 消息文本内容，TEXT_DELTA/TEXT_DONE/TEXT_BLOCKED 等文本消息使用 */
+    /** 消息文本内容，TEXT_DELTA / TEXT_DONE / TEXT_BLOCKED 等文本消息使用 */
     val content: String? = null,
 
-    /** 顶层房间状态，部分 ROOM_STATE_CHANGED 会直接返回 */
+    /** 顶层房间状态，和 payload.roomState 含义一致；页面状态判断优先使用 payload.roomState */
     val roomState: String? = null,
 
     /** 不同消息类型的扩展数据 */
@@ -42,7 +42,7 @@ data class InterviewAgentPayload(
     /** 面试会话状态：PREPARING / INTERVIEWING / REPORTING / COMPLETED / CANCELED / FAILED */
     val sessionStatus: String? = null,
 
-    /** 房间状态，用于驱动面试间 UI */
+    /** 房间状态：WAITING_TARGET_JOB / TARGET_JOB_PARSING / TARGET_JOB_PARSE_SUCCESS / TARGET_JOB_PARSE_FAILED / PLAN_GENERATING / PLAN_READY / WAITING_USER_ANSWER / ANSWER_SUBMITTED / WAITING_FOLLOW_UP_DECISION / REPORT_GENERATING / FINISHED / CANCELED */
     val roomState: String? = null,
 
     /** 模拟面试会话 ID */

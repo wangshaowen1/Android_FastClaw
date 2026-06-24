@@ -11,28 +11,46 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgAgentMockInterviewReportGeneratingBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    private var rotateAnimator: ObjectAnimator? = null
+    private var rotateStepAnimator: ObjectAnimator? = null
+    private var rotateGenerateAnimator: ObjectAnimator? = null
 
     fun bind(item: ClawAgentMessageInfo) = Unit
 
     fun startRotate() {
-        if (rotateAnimator?.isStarted == true) return
-        rotateAnimator = ObjectAnimator.ofFloat(binding.tvStep3Icon, "rotation", 0f, 360f).apply {
-            duration = 1000L
-            interpolator = LinearInterpolator()
-            repeatCount = ObjectAnimator.INFINITE
-            repeatMode = ObjectAnimator.RESTART
-            start()
+        if (null == rotateStepAnimator || rotateStepAnimator?.isStarted == false) {
+            rotateStepAnimator = ObjectAnimator.ofFloat(binding.tvStep3Icon, "rotation", 0f, 360f).apply {
+                duration = 1000L
+                interpolator = LinearInterpolator()
+                repeatCount = ObjectAnimator.INFINITE
+                repeatMode = ObjectAnimator.RESTART
+                start()
+            }
+        }
+        if (null == rotateGenerateAnimator || rotateGenerateAnimator?.isStarted == false) {
+            rotateGenerateAnimator = ObjectAnimator.ofFloat(binding.ivGenerating, "rotation", 0f, 360f).apply {
+                duration = 1000L
+                interpolator = LinearInterpolator()
+                repeatCount = ObjectAnimator.INFINITE
+                repeatMode = ObjectAnimator.RESTART
+                start()
+            }
         }
     }
 
     fun stopRotate() {
-        rotateAnimator?.apply {
+        rotateStepAnimator?.apply {
             cancel()
             removeAllListeners()
             removeAllUpdateListeners()
         }
-        rotateAnimator = null
+        rotateGenerateAnimator?.apply {
+            cancel()
+            removeAllListeners()
+            removeAllUpdateListeners()
+        }
+        rotateStepAnimator = null
+        rotateGenerateAnimator = null
         binding.tvStep3Icon.rotation = 0f
+        binding.ivGenerating.rotation = 0f
     }
 }

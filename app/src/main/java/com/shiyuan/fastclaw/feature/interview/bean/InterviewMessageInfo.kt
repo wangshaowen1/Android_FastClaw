@@ -12,26 +12,47 @@ data class InterviewRoomMessage(
 )
 
 enum class InterviewRoomState {
-    /** 初始进入页面，尚未完成面试会话准备 */
+    /** 端侧初始态，尚未收到服务端 roomState */
     STARTING,
 
-    /** 面试问题或房间信息准备中 */
-    PREPARING,
+    /** 等待选择目标岗位 */
+    WAITING_TARGET_JOB,
 
-    /** 等待用户上传或选择目标岗位 */
-    TARGET_JOB_FAILED,
-
-    /** 目标岗位截图解析中 */
+    /** 目标岗位解析中 */
     TARGET_JOB_PARSING,
 
-    /** 面试中，等待用户点击开始作答 */
-    INTERVIEWING,
+    /** 目标岗位解析成功 */
+    TARGET_JOB_PARSE_SUCCESS,
 
-    /** 用户正在作答中 */
+    /** 目标岗位解析失败 */
+    TARGET_JOB_PARSE_FAILED,
+
+    /** 面试计划生成中 */
+    PLAN_GENERATING,
+
+    /** 面试计划已生成 */
+    PLAN_READY,
+
+    /** 等待用户作答 */
+    WAITING_USER_ANSWER,
+
+    /** 回答已提交 */
+    ANSWER_SUBMITTED,
+
+    /** 等待追问判断 */
+    WAITING_FOLLOW_UP_DECISION,
+
+    /** 报告生成中 */
+    REPORT_GENERATING,
+
+    /** 端侧本地作答中状态 */
     ANSWERING,
 
     /** 面试已结束 */
     FINISHED,
+
+    /** 面试已取消 */
+    CANCELED,
 
     /** 面试流程异常 */
     ERROR,
