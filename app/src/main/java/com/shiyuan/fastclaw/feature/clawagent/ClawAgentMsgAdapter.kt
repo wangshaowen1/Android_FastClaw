@@ -83,7 +83,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     /** 公司背调 - 开始背调 */
     var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
     /** 公司背调 - 查看报告 */
-    var onCompanyReportClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
+    var onCompanyResultClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
+    /** 公司背调 - 重新生成 */
+    var onCompanyRetryClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
 
     /** 公司面试 - 开始面试 */
     var onInterviewStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
@@ -111,14 +113,14 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_COMPANY_BACKGROUND_REPORT_FAILED,
             { i, p ->
                 AgentCompanyBackgroundReportFailedViewHolder(ItemMsgAgentCompanyBackgroundReportFailedBinding.inflate(i, p, false)).apply {
-                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                    onCompanyClickListener = { item, action, data -> onCompanyRetryClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         //公司背调报告卡：成功
         register(TYPE_COMPANY_BACKGROUND_REPORT_DONE,
             { i, p ->
                 AgentCompanyBackgroundReportDoneViewHolder(ItemMsgAgentCompanyBackgroundReportDoneBinding.inflate(i, p, false)).apply {
-                    onCompanyClickListener = { item, action, data -> onCompanyReportClickAction(item, action, data) }
+                    onCompanyClickListener = { item, action, data -> onCompanyResultClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 模拟面试入口卡

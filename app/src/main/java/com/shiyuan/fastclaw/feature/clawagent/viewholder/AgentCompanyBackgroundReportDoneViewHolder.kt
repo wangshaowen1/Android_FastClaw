@@ -20,7 +20,7 @@ class AgentCompanyBackgroundReportDoneViewHolder(private val binding: ItemMsgAge
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, CompanyBackgroundReportPayloadBean::class.java) }.getOrNull()
         }
-        binding.tvCompanyName.text = payload?.companyName
+        binding.tvCompanyName.text = payload?.reportName
         binding.tvReportTime.text = binding.root.context.getString(R.string.str_agent_company_background_report_time, payload?.generateTime)
 
         val action = payload?.actions?.firstOrNull()

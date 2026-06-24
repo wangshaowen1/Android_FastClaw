@@ -257,10 +257,16 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 公司背调 - 查看报告
-        msgAdapter.onCompanyReportClickAction = { _, _, data ->
+        msgAdapter.onCompanyResultClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 SimpleBrowserActivity.launch(requireActivity(), COMPANY_BACKGROUND_RESULT_URL + data?.reportId)
+            }
+        }
+        // 公司背调 - 重新生成
+        msgAdapter.onCompanyRetryClickAction = { _, _, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
             }
         }
         // 模拟面试 - 开始面试
