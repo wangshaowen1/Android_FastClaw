@@ -107,6 +107,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     val interviewStartResult = MutableLiveData<MockInterviewStartData?>()
 
+    /** 公司背调报告生成前置校验轮询结果 */
+    val companyBackgroundResult = MutableLiveData<CompanyBackgroundPreCheckResultData?>()
+
     /** 当前会话 ID，发送消息/提交动作时回传 */
     public var sessionId: String? = null
 
@@ -1126,20 +1129,32 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val MSG_CARD = "CARD"
 
         // messagePhase / messageStatus（思考态判定）
+        /** 消息处于处理中 */
         private const val PHASE_PROCESSING = "PROCESSING"
+        /** 消息处理失败 */
         private const val PHASE_ERROR = "ERROR"
+        /** 消息处理完成并返回结果 */
         private const val PHASE_RESULT = "RESULT"
+        /** 消息流式输出中 */
         private const val STATUS_STREAMING = "STREAMING"
 
+        /** 响应组处理失败 */
         private const val GROUP_STATUS_FAILED = "FAILED"
+        /** 响应组处理完成 */
         private const val GROUP_STATUS_COMPLETED = "COMPLETED"
 
-        private const val ERROR_CODE_NOT_COMPANY = "NOT_COMPANY"
-        private const val ERROR_CODE_POINTS_INSUFFICIENT = "POINTS_INSUFFICIENT"
-        private const val ERROR_CODE_MODEL_FAILED = "MODEL_FAILED"
+        /** 错误码：输入内容不是公司 */
+        const val ERROR_CODE_NOT_COMPANY = "NOT_COMPANY"
+        /** 错误码：权益点数不足 */
+        const val ERROR_CODE_POINTS_INSUFFICIENT = "POINTS_INSUFFICIENT"
+        /** 错误码：模型生成失败 */
+        const val ERROR_CODE_MODEL_FAILED = "MODEL_FAILED"
 
+        /** 报告生成中 */
         private const val REPORT_STATUS_GENERATING = "GENERATING"
+        /** 报告生成成功 */
         private const val REPORT_STATUS_SUCCESS = "SUCCESS"
+        /** 报告生成失败 */
         private const val REPORT_STATUS_FAILED = "FAILED"
 
         // displayPolicy（端侧展示策略）：think 等中间态消息在结果消息到达后的收口方式

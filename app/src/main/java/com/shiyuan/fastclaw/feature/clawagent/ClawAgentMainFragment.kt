@@ -27,6 +27,7 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
@@ -49,6 +50,9 @@ import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_MODEL_FAILED
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_NOT_COMPANY
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_POINTS_INSUFFICIENT
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
@@ -670,6 +674,20 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 showInsufficientShrimpDialog()
             } else{
                 showMessage(it?.message ?: "模拟面试创建失败")
+            }
+        }
+        mRealVM.companyBackgroundResult.observe(this) {
+            when (it?.errorCode) {
+                ERROR_CODE_NOT_COMPANY ->
+                    showToast(R.string.str_agent_company_background_error_not_company)
+                ERROR_CODE_POINTS_INSUFFICIENT -> {
+                    showToast(R.string.str_agent_company_background_error_points_insufficient)
+                    showInsufficientShrimpDialog()
+                }
+                ERROR_CODE_MODEL_FAILED ->
+                    showToast(R.string.str_agent_company_background_error_model_failed)
+                else ->
+                    showToast( R.string.str_agent_company_background_precheck_failed)
             }
         }
     }
