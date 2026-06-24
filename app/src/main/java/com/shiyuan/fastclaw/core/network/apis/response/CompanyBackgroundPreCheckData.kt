@@ -34,3 +34,12 @@ data class CompanyBackgroundPreCheckResultData(
 data class CompanyBackgroundGenerateResultData(
     val finished: Boolean? = null,
 )
+
+/**
+ * 重新生成公司背调失败报告提交结果
+ *
+ * @param reportId 新报告 ID，用于后续生成结果轮询
+ */
+data class CompanyBackgroundRegenerateSubmitData(
+    val reportId: String? = null,
+)

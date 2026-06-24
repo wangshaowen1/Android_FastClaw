@@ -271,6 +271,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         msgAdapter.onCompanyRetryClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
+                mRealVM.retryGenerateCompanyBackgroundReport(data?.reportId)
             }
         }
         // 模拟面试 - 开始面试
@@ -677,17 +678,15 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         mRealVM.companyBackgroundResult.observe(this) {
+            //公司背调 - 前置校验失败提示：优先展示后端 errorMessage，兜底使用文档约定 errorCode 对应文案。
             when (it?.errorCode) {
-                ERROR_CODE_NOT_COMPANY ->
-                    showToast(R.string.str_agent_company_background_error_not_company)
-                ERROR_CODE_POINTS_INSUFFICIENT -> {
-                    showToast(R.string.str_agent_company_background_error_points_insufficient)
-                    showInsufficientShrimpDialog()
-                }
-                ERROR_CODE_MODEL_FAILED ->
-                    showToast(R.string.str_agent_company_background_error_model_failed)
-                else ->
-                    showToast( R.string.str_agent_company_background_precheck_failed)
+                ERROR_CODE_NOT_COMPANY -> showToast(R.string.str_agent_company_background_error_not_company)
+                ERROR_CODE_POINTS_INSUFFICIENT -> showToast(R.string.str_agent_company_background_error_points_insufficient)
+                ERROR_CODE_MODEL_FAILED -> showToast(R.string.str_agent_company_background_error_model_failed)
+                else -> showToast( R.string.str_agent_company_background_precheck_failed)
+            }
+            if (it?.errorCode == ERROR_CODE_POINTS_INSUFFICIENT) {
+                showInsufficientShrimpDialog()
             }
         }
     }

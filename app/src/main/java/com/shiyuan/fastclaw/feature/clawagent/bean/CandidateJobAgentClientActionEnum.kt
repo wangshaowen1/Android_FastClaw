@@ -53,11 +53,6 @@ enum class CandidateJobAgentClientActionEnum {
     OPEN_COMPANY_BACKGROUND,
 
     /**
-     * 开始生成公司背调报告
-     */
-    GENERATE_COMPANY_BACKGROUND_REPORT,
-
-    /**
      * 打开模拟面试卡片
      */
     MOCK_INTERVIEW_QUICK_ENTRY,

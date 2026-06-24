@@ -42,3 +42,14 @@ data class CompanyBackgroundPreCheckResultQueryBody(
 data class CompanyBackgroundGenerateResultQueryBody(
     val reportId: String?,
 )
+
+/**
+ * 重新生成公司背调失败报告
+ *
+ * @param failedReportId 原生成失败报告 ID
+ * @param clientRequestId APP 本次点击的幂等 ID，同一次点击重试保持不变
+ */
+data class CompanyBackgroundRegenerateSubmitBody(
+    val failedReportId: String?,
+    val clientRequestId: String?,
+)

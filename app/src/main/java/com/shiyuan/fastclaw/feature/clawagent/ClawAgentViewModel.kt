@@ -19,6 +19,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundRegenerateSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
@@ -40,6 +41,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPaylo
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
@@ -198,7 +200,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 进入或恢复会话：sessionId 为空表示首次进入，由服务端恢复最新会话
      */
     fun enterSession() {
-        currentRequestId =UUID.randomUUID().toString()
+        currentRequestId = UUID.randomUUID().toString()
         request(
             apiBlock = {
                 mRepo.api.enterSession(
@@ -646,14 +648,19 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         return when (reportStatus) {
             REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_FAILED
             REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_DONE
+            REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
             else -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
         }
     }
 
     private fun resolveMockInterviewReportItemType(msg: JobAgentMessage): Int {
-        return when {
-            msg.messagePhase == PHASE_ERROR -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
-            msg.messagePhase == PHASE_RESULT -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_DONE
+        val reportStatus = msg.payloadJson?.let {
+            runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java)?.reportStatus }.getOrNull()
+        }
+        return when (reportStatus) {
+            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
+            REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_DONE
+            REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
             else -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
         }
     }
@@ -983,7 +990,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             },
             onFail = { response, _ ->
-                showCompanyBackgroundPreCheckError(response?.data)
+                companyBackgroundResult.value = response?.data
                 // 前置失败时后端可能写入同组失败终态消息，拉取一次用于移除处理中提示。
                 pullMessages(getLastMessageCursor())
             },
@@ -1015,16 +1022,29 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 前置校验失败提示：优先展示后端 errorMessage，兜底使用文档约定 errorCode 对应文案。
+     * 公司背调 - 重新生成失败报告。
+     * 接口成功后使用新 reportId 继续轮询，生成中/终态卡片仍通过 message/pull 展示。
      */
-    private fun showCompanyBackgroundPreCheckError(result: CompanyBackgroundPreCheckResultData?) {
-        val fallback = when (result?.errorCode) {
-            ERROR_CODE_NOT_COMPANY -> R.string.str_agent_company_background_error_not_company.getResString()
-            ERROR_CODE_POINTS_INSUFFICIENT -> R.string.str_agent_company_background_error_points_insufficient.getResString()
-            ERROR_CODE_MODEL_FAILED -> R.string.str_agent_company_background_error_model_failed.getResString()
-            else -> R.string.str_agent_company_background_precheck_failed.getResString()
+    fun retryGenerateCompanyBackgroundReport(failedReportId: String?) {
+        companyBackgroundGeneratePollingJob?.cancel()
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.regenerateCompanyBackgroundReport(
+                    CompanyBackgroundRegenerateSubmitBody(
+                        failedReportId = failedReportId,
+                        clientRequestId = "company-bg-regenerate-${System.currentTimeMillis()}-${UUID.randomUUID()}",
+                    )
+                )
+            }
+        ) {
+            val reportId = data?.reportId
+            if (reportId.isNullOrBlank()) {
+                R.string.str_agent_company_background_precheck_failed.getResString().showToast()
+                return@requestWithLoading
+            }
+            pullMessages(getLastMessageCursor())
+            pollCompanyBackgroundGenerateResult(reportId)
         }
-        result?.errorMessage?.takeIf { it.isNotBlank() }?.showToast() ?: fallback.showToast()
     }
 
     /**

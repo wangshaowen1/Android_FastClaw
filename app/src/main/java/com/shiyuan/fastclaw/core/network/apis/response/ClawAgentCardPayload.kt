@@ -385,6 +385,8 @@ data class CompanyBackgroundReportPayloadBean(
 )
 
 data class MockInterviewEntryPayloadBean(
+    /** 报告生成状态，具体枚举值以服务端约定为准 */
+    val reportStatus: String? = null,
     /** 卡片业务类型，用于区分模拟面试入口等业务卡 */
     val cardBizType: String? = null,
     /** 入口消息 ID，开始模拟面试时回传给服务端 */
