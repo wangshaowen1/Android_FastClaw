@@ -13,6 +13,7 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportFaile
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportGeneratingBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentLeftBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewEntryBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewEntryUpgradeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportDoneBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportFailedBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportGeneratingBinding
@@ -38,6 +39,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundR
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportFailedViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportGeneratingViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewEntryViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewEntryUpgradeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportDoneViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportFailedViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportGeneratingViewHolder
@@ -127,6 +129,13 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_MOCK_INTERVIEW_ENTRY,
             { i, p ->
                 AgentMockInterviewEntryViewHolder(ItemMsgAgentMockInterviewEntryBinding.inflate(i, p, false)).apply {
+                    onInterviewClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
+                }
+            }) { h, item -> h.bind(item) }
+        // 模拟面试理解升级入口卡
+        register(TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE,
+            { i, p ->
+                AgentMockInterviewEntryUpgradeViewHolder(ItemMsgAgentMockInterviewEntryUpgradeBinding.inflate(i, p, false)).apply {
                     onInterviewClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
@@ -345,6 +354,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 面试复盘报告 - 生成成功 */
         const val TYPE_MOCK_INTERVIEW_REPORT_DONE = 22
+
+        /** 模拟面试升级卡 */
+        const val TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE = 23
     }
 
 }

@@ -649,6 +649,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             runCatching { GsonUtils.fromJson(it, CompanyBackgroundReportPayloadBean::class.java)?.reportStatus }.getOrNull()
         }
         return when (reportStatus) {
+            // 公司背调卡
             REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_FAILED
             REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_DONE
             REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
@@ -660,11 +661,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val payload = msg.payloadJson?.let {
             runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java) }.getOrNull()
         }
-        //理解升级面试卡
+        // 理解升级面试卡
         if (payload?.entrySource == RESUME_UNDERSTANDING_UPGRADE) {
-                return ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
+            return ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
         }
-        //普通面试卡
+        // 普通面试卡
         return when (payload?.reportStatus) {
             REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
             REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_DONE
