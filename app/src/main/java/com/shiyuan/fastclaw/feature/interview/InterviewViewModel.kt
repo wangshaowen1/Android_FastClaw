@@ -162,21 +162,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         sseHandler.start(flow)
     }
 
-    override fun onCleared() {
-        answerTimerJob?.cancel()
-        sseHandler.cancel()
-        super.onCleared()
-    }
-
-    private fun queryAudioToken() {
-        request(
-            apiBlock = { mRepo.api.queryMockInterviewAudioToken(MockInterviewAudioTokenBody(interviewId = mInterviewId)) },
-            showToast = false,
-        ) {
-            this.data?.ttsToken?.takeIf { it.isNotBlank() }?.let { ttsToken.value = it }
-        }
-    }
-
     private fun buildClientSnapshot(actionType: String): Map<String, Any?> {
         return mapOf(
             "page" to "MOCK_INTERVIEW_ROOM",
@@ -200,10 +185,14 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 appendAiDelta(message.content.orEmpty())
             MSG_TEXT_DONE ->
                 handleTextDone(message)
-            MSG_TEXT_BLOCKED ->
+            MSG_TEXT_BLOCKED -> {
                 handleTextBlocked(message)
-            MSG_INTERVIEW_FINISHED ->
+                handleTextDone(message)
+            }
+            MSG_INTERVIEW_FINISHED -> {
                 handleInterviewFinished(message)
+                handleTextDone(message)
+            }
             MSG_ERROR -> {
                 roomState.value = InterviewRoomState.ERROR
                 val errorMessage = message.errorMessage
@@ -247,7 +236,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     private fun handleTextDone(message: InterviewAgentMessage) {
         message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
-        applyPayloadRoomState(message.payload?.roomState)
         currentQuestionId = message.payload?.questionId?.takeIf { it.isNotEmpty() } ?: currentQuestionId
         when (message.senderType) {
             SENDER_AGENT -> {
@@ -269,7 +257,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun handleTextBlocked(message: InterviewAgentMessage) {
         message.content?.takeIf { it.isNotEmpty() }?.let { appendMessage(SENDER_AGENT, it) }
         message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
-        applyPayloadRoomState(message.payload?.roomState)
         if (message.payload?.roomState.isNullOrBlank()) {
             roomState.value = InterviewRoomState.WAITING_USER_ANSWER
         }
@@ -279,12 +266,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         roomState.value = InterviewRoomState.FINISHED
         finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
-    }
-
-    private fun applyPayloadRoomState(roomStateValue: String?) {
-        roomStateValue?.takeIf { it.isNotBlank() }?.let {
-            handleRoomState(InterviewAgentMessage(roomState = it))
-        }
     }
 
     private fun appendAiDelta(text: String) {
@@ -310,13 +291,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-
-    private fun showToast(text: String) {
-        if (text.isNotEmpty()) {
-            toastMessage.value = text
-        }
-    }
-
     private fun appendMessage(senderType: String, text: String) {
         if (text.isEmpty()) return
         ingestMessages(listOf(InterviewRoomMessage(UUID.randomUUID().toString(), senderType, text)))
@@ -335,6 +309,27 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun formatAnswerDuration(): String {
         val seconds = ((System.currentTimeMillis() - answerStartTime).coerceAtLeast(0L) / 1000L).toInt()
         return "%02d:%02d".format(seconds / 60, seconds % 60)
+    }
+
+    private fun queryAudioToken() {
+        request(
+                apiBlock = { mRepo.api.queryMockInterviewAudioToken(MockInterviewAudioTokenBody(interviewId = mInterviewId)) },
+                showToast = false,
+        ) {
+            this.data?.ttsToken?.takeIf { it.isNotBlank() }?.let { ttsToken.value = it }
+        }
+    }
+
+    private fun showToast(text: String) {
+        if (text.isNotEmpty()) {
+            toastMessage.value = text
+        }
+    }
+
+    override fun onCleared() {
+        answerTimerJob?.cancel()
+        sseHandler.cancel()
+        super.onCleared()
     }
 
     companion object {
