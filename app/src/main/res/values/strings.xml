@@ -621,6 +621,7 @@
 
     <string name="report_my_name">我的报告</string>
     <string name="report_empty_tip">还没有生成报告哦</string>
+    <string name="report_empty_tip3">完成企业背调 / 模拟面试后，\n生成的报告将自动保存在此</string>
     <string name="report_empty_tip2">暂未收录任何信息</string>
     <string name="report_generating_progress">预计还需2分钟，请耐心等待</string>
     <string name="report_failed_no_cost">报告生成失败，本次不消耗虾条</string>
@@ -973,6 +974,7 @@
     <string name="home_treasury_slogan">专业工具助你求职路上快人一步！</string>
     <string name="home_treasury_company_desc">帮你摸清公司底细，详解核心业务，面试精准说出对公司的理解，好感度直接拉满。</string>
     <string name="home_treasury_daily_free">每天三次免费</string>
+    <string name="home_treasury_daily_free2">免费3次/日，超出10虾条/次</string>
     <string name="home_treasury_use_now">立即使用</string>
     <string name="home_treasury_mock_interview">模拟面试</string>
     <string name="home_treasury_mock_desc">根据你的简历 + 目标岗位，精准还原真实面试场景，练到你面试不慌、发挥稳定！</string>

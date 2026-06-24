@@ -182,7 +182,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="1.5dp"
                     android:layout_marginVertical="10dp"
                     android:background="@drawable/bg_home_treasury_divider_dash" />
 
@@ -193,10 +193,11 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_daily"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/home_treasury_daily_free"
+                        android:text="@string/home_treasury_daily_free2"
                         android:textColor="@color/color_8C3C3C43"
                         android:textSize="12sp" />
 
@@ -289,7 +290,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="1.5dp"
                     android:layout_marginVertical="10dp"
                     android:background="@drawable/bg_home_treasury_divider_dash" />
 
@@ -311,8 +312,7 @@
                             android:layout_height="wrap_content"
                             android:text="40"
                             android:textColor="@color/color_2f6bff"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"

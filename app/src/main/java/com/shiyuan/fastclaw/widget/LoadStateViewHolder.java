@@ -302,6 +302,12 @@ public class LoadStateViewHolder extends ViewAnimator {
         }
     }
 
+
+    public void setNoDataTipPrompt(CharSequence noDataTipPrompt) {
+        binding.noDataTip.setText(noDataTipPrompt);
+        binding.noDataTip.setVisibility(View.VISIBLE);
+    }
+
     public TextView getNoDataTextView() {
         return binding.noData;
     }
