@@ -230,6 +230,11 @@ object ApiConstants {
     const val JOB_AGENT_ACTION_SUBMIT = "/api/candidate/app/jobAgent/action/submit"
 
     /**
+     * 更新顶部求职状态
+     */
+    const val JOB_AGENT_JOB_STATUS_UPDATE = "/api/candidate/app/jobAgent/jobStatus/update"
+
+    /**
      * 查询历史消息分页（求职 Agent）
      */
     const val JOB_AGENT_MESSAGE_PAGE = "/api/candidate/app/jobAgent/message/page"

@@ -64,21 +64,32 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:gravity="center"
-            android:text="@string/str_agent_desc"
+            android:text="@string/str_agent_desc2"
             android:textColor="@color/color_C23C3C43"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@id/iv_agent_avatar"
             app:layout_constraintStart_toEndOf="@id/tv_agent_status"
             app:layout_constraintTop_toBottomOf="@id/tv_agent_name" />
 
-        <View
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
             android:id="@+id/tv_agent_status"
             android:layout_width="6dp"
             android:layout_height="6dp"
-            android:background="@drawable/bg_agent_status"
+            app:sSolidColor ="@color/color_ff8D28"
+            app:sCornersRadius ="45dp"
             app:layout_constraintBottom_toBottomOf="@id/tv_agent_desc"
             app:layout_constraintStart_toStartOf="@id/tv_agent_name"
             app:layout_constraintTop_toTopOf="@id/tv_agent_desc" />
+
+
+        <View
+            app:layout_constraintLeft_toRightOf="@id/tv_agent_desc"
+            app:layout_constraintBottom_toBottomOf="@id/tv_agent_desc"
+            app:layout_constraintTop_toTopOf="@id/tv_agent_desc"
+            android:id="@+id/tv_agent_index"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/ic_arrow_right_gray_12"/>
 
         <ImageView
             android:id="@+id/iv_agent_memory"

@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
+import com.shiyuan.fastclaw.core.network.apis.request.JobStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePageBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePullBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
@@ -38,6 +39,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
+import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
@@ -901,6 +903,35 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             result.latestCursor?.let { latestCursor = it }
             actionResult.value = result
             ingestMessages(result.messages)
+        }
+    }
+
+    /**
+     * 更新顶部求职状态
+     */
+    fun updateJobStatus(statusCode: String?) {
+        val currentSessionId = sessionId
+        val currentConversationId = conversationId
+        if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty() || statusCode.isNullOrEmpty()) {
+            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            return
+        }
+        request(
+            apiBlock = {
+                mRepo.api.updateJobStatus(
+                    JobStatusUpdateBody(
+                        sessionId = currentSessionId,
+                        conversationId = currentConversationId,
+                        statusCode = statusCode,
+                        clientRequestId = UUID.randomUUID().toString(),
+                    )
+                )
+            },
+            showToast = true,
+        ) {
+            val result = this.data ?: return@request
+            sessionData.value = sessionData.value?.copy(jobSearchStatus = result)
+            //onResult(result)
         }
     }
 

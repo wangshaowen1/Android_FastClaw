@@ -29,6 +29,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.core.network.apis.request.InviteShareInfoBody
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
+import com.shiyuan.fastclaw.core.network.apis.request.JobStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByFlashMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByPhoneBody
@@ -74,6 +75,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
 import com.shiyuan.fastclaw.core.network.apis.response.InviteStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
+import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewAudioTokenData
@@ -411,6 +413,12 @@ interface ApiService {
      */
     @POST(ApiConstants.JOB_AGENT_ACTION_SUBMIT)
     suspend fun submitAction(@Body body: ActionSubmitBody): ApiResponse<ActionSubmitData?>
+
+    /**
+     * 更新顶部求职状态
+     */
+    @POST(ApiConstants.JOB_AGENT_JOB_STATUS_UPDATE)
+    suspend fun updateJobStatus(@Body body: JobStatusUpdateBody): ApiResponse<JobSearchStatus?>
 
     /**
      * 查询历史消息分页（求职 Agent）
