@@ -83,6 +83,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewAudioTokenData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportProgressData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
@@ -381,6 +382,9 @@ interface ApiService {
 
     @POST(ApiConstants.MOCK_INTERVIEW_SESSION_START)
     suspend fun startMockInterviewSession(@Body body: MockInterviewStartBody): ApiResponse<MockInterviewStartData?>
+
+    @POST(ApiConstants.MOCK_INTERVIEW_UNFINISHED_QUERY)
+    suspend fun queryMockInterviewUnfinished(): ApiResponse<MockInterviewUnfinishedData?>
 
     @Streaming
     @POST(ApiConstants.MOCK_INTERVIEW_STREAM)

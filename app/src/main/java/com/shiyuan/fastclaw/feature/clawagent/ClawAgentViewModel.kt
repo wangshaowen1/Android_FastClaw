@@ -46,6 +46,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
@@ -111,6 +112,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     val attributeArrayResult = MutableLiveData<AttributeArrayQueryData?>()
 
     val interviewStartResult = MutableLiveData<MockInterviewStartData?>()
+
+    /** 查询可恢复未结束模拟面试结果 */
+    val interviewUnfinishedResult = MutableLiveData<MockInterviewUnfinishedData?>()
 
     /** 公司背调报告生成前置校验轮询结果 */
     val companyBackgroundResult = MutableLiveData<CompanyBackgroundPreCheckResultData?>()
@@ -1142,6 +1146,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             interviewStartResult.value = data
         }
         //interviewStartResult.value = MockInterviewStartData(interviewId = "id666666666", chargeStatus = "DEDUCT_SUCCESS")
+    }
+
+    fun queryUnfinishedInterview() {
+        request(
+            apiBlock = { mRepo.api.queryMockInterviewUnfinished() },
+            showToast = false,
+        ) {
+            interviewUnfinishedResult.value = data
+        }
     }
 
     /**

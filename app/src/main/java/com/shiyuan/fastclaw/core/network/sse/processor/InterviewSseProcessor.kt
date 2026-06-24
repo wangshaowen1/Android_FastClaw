@@ -8,8 +8,8 @@ import com.shiyuan.fastclaw.core.network.sse.SseChunkProcessor
 /**
  * 模拟面试 SSE 解析器：按后端返回的 SSE event 名称分发。
  *
- * 协议保持和求职 Agent 一致：meta / message / snapshot / done / ping。
- * message 和 snapshot 承载完整业务消息，直接回调 [InterviewAgentMessage]。
+ * 模拟面试文档 7.2 起使用 ROOM_STATE_CHANGED / TEXT_DELTA / TEXT_DONE 等业务事件名，
+ * data 承载完整业务消息，直接回调 [InterviewAgentMessage]。
  */
 class InterviewSseProcessor(
     private val onStart: () -> Unit = {},
@@ -28,12 +28,15 @@ class InterviewSseProcessor(
     override fun onSSEEvent(type: String?, id: String?, data: String) {
         when (type?.trim()?.lowercase()) {
             EVENT_META -> parse(data, SseMeta::class.java) { onMeta(it.requestId, it.seq) }
-            EVENT_MESSAGE, EVENT_SNAPSHOT, null -> parse(data, InterviewAgentMessage::class.java) { onMessage(it) }
+            EVENT_ROOM_STATE_CHANGED,
+            EVENT_TEXT_DELTA,
+            EVENT_TEXT_DONE,
+            EVENT_TEXT_BLOCKED,
+            EVENT_INTERVIEW_FINISHED,
+            EVENT_ERROR,
+            null -> parse(data, InterviewAgentMessage::class.java) { onMessage(it) }
             EVENT_DONE -> parse(data, SseDone::class.java) { onDone(it.status, it.seq) }
             EVENT_PING, EVENT_HEARTBEAT -> Unit
-            EVENT_ERROR -> parse(data, SseError::class.java) {
-                onErrorCallback(IllegalStateException(it.errorMessage ?: it.message ?: data))
-            }
             else -> Log.d(TAG, "ignore reserved sse event: type=$type, data=$data")
         }
     }
@@ -62,12 +65,6 @@ class InterviewSseProcessor(
         val messageId: String? = null,
     )
 
-    /** error 事件 data */
-    data class SseError(
-        val message: String? = null,
-        val errorMessage: String? = null,
-    )
-
     companion object {
         private const val TAG = "[SSE-Interview]"
         private const val EVENT_META = "meta"
@@ -76,6 +73,11 @@ class InterviewSseProcessor(
         private const val EVENT_DONE = "done"
         private const val EVENT_PING = "ping"
         private const val EVENT_HEARTBEAT = "heartbeat"
+        private const val EVENT_ROOM_STATE_CHANGED = "room_state_changed"
+        private const val EVENT_TEXT_DELTA = "text_delta"
+        private const val EVENT_TEXT_DONE = "text_done"
+        private const val EVENT_TEXT_BLOCKED = "text_blocked"
+        private const val EVENT_INTERVIEW_FINISHED = "interview_finished"
         private const val EVENT_ERROR = "error"
         private val gson = Gson()
     }

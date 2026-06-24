@@ -16,6 +16,17 @@ data class MockInterviewStartData(
     fun isDeductFailed() = chargeStatus == "DEDUCT_FAILED"
 }
 
+data class MockInterviewUnfinishedData(
+    /** 是否存在可恢复的未结束面试 */
+    val hasUnfinished: Boolean? = null,
+    /** 可恢复的模拟面试会话 ID */
+    val interviewId: String? = null,
+    /** 会话状态，如 INTERVIEWING */
+    val sessionStatus: String? = null,
+    /** 房间状态，如 WAITING_USER_ANSWER */
+    val roomState: String? = null,
+)
+
 data class MockInterviewAudioTokenData(
     val asrToken: String? = null,
     val ttsToken: String? = null,

@@ -208,6 +208,7 @@ object ApiConstants {
      * 流式发送用户消息（求职 Agent SSE，text/event-stream）
      */
     const val JOB_AGENT_STREAM = "/api/candidate/app/jobAgent/stream"
+    const val MOCK_INTERVIEW_UNFINISHED_QUERY = "/api/candidate/app/interviewReport/mockInterview/unfinished/query"
     const val MOCK_INTERVIEW_SESSION_START = "/api/candidate/app/interviewReport/mockInterview/session/start"
     const val MOCK_INTERVIEW_STREAM = "/api/candidate/app/interviewReport/mockInterview/stream"
     const val MOCK_INTERVIEW_AUDIO_TOKEN_QUERY = "/api/candidate/app/interviewReport/mockInterview/audioToken/query"

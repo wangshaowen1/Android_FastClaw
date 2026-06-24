@@ -68,6 +68,7 @@ import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
 import com.shiyuan.fastclaw.feature.interview.InterviewActivity
+import com.shiyuan.fastclaw.feature.interview.dialog.InterviewRecoverDialog
 import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
 import com.shiyuan.fastclaw.feature.mine.MineShrimpRechargeActivity
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
@@ -562,6 +563,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }, 250L)
             }
         })
+        if (!User.get().isVisitor) {
+            mRealVM.queryUnfinishedInterview()
+        }
     }
 
     private fun updateInputModeView() {
@@ -680,7 +684,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             showNotificationSwitchDialog()
             mRealVM.understandingSummaryDialog.value = null
         }
-        // 模拟面试
+        // 模拟面试查询未
+        mRealVM.interviewUnfinishedResult.observe(this) {
+            val data = it ?: return@observe
+            mRealVM.interviewUnfinishedResult.value = null
+            if (data.hasUnfinished == true) {
+                showInterviewRecoverDialog(data.interviewId)
+            }
+        }
         mRealVM.interviewStartResult.observe(this) {
             if (it?.isDeductSuccess() == true) {
                 InterviewActivity.start(requireActivity(), it.interviewId)
@@ -715,6 +726,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         else -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff383c)).setUseShape()
                     }
                 }
+            }
+        }
+    }
+
+    private fun showInterviewRecoverDialog(interviewId: String?) {
+        InterviewRecoverDialog(requireContext()).showDialog().apply {
+            onContinueClickListener = {
+                InterviewActivity.start(requireActivity(), interviewId, true)
+            }
+            onFinishClickListener = {
+                // TODO 接入 forceCancel 后在这里结束未完成面试。
             }
         }
     }

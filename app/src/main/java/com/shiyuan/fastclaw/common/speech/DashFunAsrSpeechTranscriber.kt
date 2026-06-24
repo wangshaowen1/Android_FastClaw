@@ -74,6 +74,7 @@ class DashFunAsrSpeechTranscriber(
     private var audioRecord: AudioRecord? = null
     private var initialized = false
     private var recognizing = false
+    private var terminalEventDispatched = false
 
     init {
         workerThread.start()
@@ -87,6 +88,7 @@ class DashFunAsrSpeechTranscriber(
      */
     fun start(): Boolean {
         if (recognizing) return true
+        terminalEventDispatched = false
         if (!config.isValid()) {
             notifyMain { callback.onError("请先配置百炼 DashScope API Key") }
             return false
@@ -106,6 +108,7 @@ class DashFunAsrSpeechTranscriber(
                 recognizing = true
                 notifyMain { callback.onStarted() }
             } else {
+                terminalEventDispatched = true
                 releaseAudioRecord()
                 notifyMain { callback.onError("语音识别启动失败：$ret") }
             }
@@ -138,6 +141,7 @@ class DashFunAsrSpeechTranscriber(
     fun cancel() {
         if (recognizing) {
             workerHandler.post {
+                terminalEventDispatched = true
                 nui.stopDialog()
                 recognizing = false
                 releaseAudioRecord()
@@ -288,13 +292,18 @@ class DashFunAsrSpeechTranscriber(
                 notifyMain { callback.onFinalResult(text) }
             }
             Constants.NuiEvent.EVENT_TRANSCRIBER_COMPLETE -> {
+                if (terminalEventDispatched) return
+                terminalEventDispatched = true
                 recognizing = false
                 releaseAudioRecord()
                 notifyMain { callback.onStopped() }
             }
             Constants.NuiEvent.EVENT_ASR_ERROR,
             Constants.NuiEvent.EVENT_MIC_ERROR -> {
+                if (terminalEventDispatched) return
+                terminalEventDispatched = true
                 recognizing = false
+                runCatching { nui.stopDialog() }
                 releaseAudioRecord()
                 notifyMain {
                     callback.onError(asrResult?.asrResult?.takeIf { it.isNotBlank() } ?: "语音识别失败：$resultCode")

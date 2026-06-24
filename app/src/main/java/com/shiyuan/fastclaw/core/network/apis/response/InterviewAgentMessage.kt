@@ -25,6 +25,15 @@ data class InterviewAgentMessage(
     /** 顶层房间状态，和 payload.roomState 含义一致；页面状态判断优先使用 payload.roomState */
     val roomState: String? = null,
 
+    /** 错误码，ERROR 消息使用 */
+    val errorCode: String? = null,
+
+    /** 错误提示文案，ERROR 消息使用 */
+    val errorMessage: String? = null,
+
+    /** 错误是否可恢复，ERROR 消息使用 */
+    val recoverable: Boolean? = null,
+
     /** 不同消息类型的扩展数据 */
     val payload: InterviewAgentPayload? = null,
 )

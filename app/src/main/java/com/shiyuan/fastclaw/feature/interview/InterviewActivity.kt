@@ -28,13 +28,10 @@ import com.shiyuan.fastclaw.common.speech.DashCosyVoiceStreamTtsPlayer
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.ext.getBundleValue
-import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentMessage
-import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentPayload
 import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
-import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_UPLOAD
-import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.MSG_TEXT_DONE
+import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_SUBMIT
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SESSION_STATUS_PREPARING
-import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SENDER_AGENT
+import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_UPLOAD_IMAGE
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewJobDialog
@@ -45,6 +42,7 @@ import java.util.UUID
 class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, InterviewViewModel>() {
 
     private val mInterviewId by lazy { intent.getBundleValue(INTERVIEW_ID, "") }
+    private val mIsRecover by lazy { intent.getBundleValue(IS_RECOVER, false) }
     private val msgAdapter by lazy { InterviewRoomMessageAdapter() }
     private var speechTranscriber: DashFunAsrSpeechTranscriber? = null
     private var ttsPlayer: DashCosyVoiceStreamTtsPlayer? = null
@@ -56,11 +54,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
     companion object {
         private const val TAG = "InterviewActivity"
-        private const val INTERVIEW_ID = "interview_id"
+        private const val INTERVIEW_ID = "interviewId"
+        private const val IS_RECOVER = "isRecover"
 
-        fun start(activity: Activity?, interviewId: String?) {
+        fun start(activity: Activity?, interviewId: String?, isRecover: Boolean? = false) {
             val intent = Intent(activity, InterviewActivity::class.java)
             intent.putExtra(INTERVIEW_ID, interviewId)
+            intent.putExtra(IS_RECOVER, isRecover)
             activity?.startActivity(intent)
         }
     }
@@ -92,23 +92,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.tvJobHelp.setOnSingleClickListener {
             showTargetJobDialog()
         }
-        mRealVM.enterInterview(mInterviewId)
-        //测试数据
-        mRealVM.roomState.value = InterviewRoomState.WAITING_TARGET_JOB
-        mRealVM.sseInsertMessages(
-            InterviewAgentMessage(
-                messageId = "mock-text-done-${UUID.randomUUID()}",
-                interviewId = mInterviewId,
-                messageSeq = 666,
-                messageType = MSG_TEXT_DONE,
-                senderType = SENDER_AGENT,
-                content = "你好，面试即将开始。首先和你确认，你有没有明确想要面试的目标岗位？上传指定的公司名和岗位要求，我能为你针对性押题",
-                payload = InterviewAgentPayload(
-                    questionType = "MAIN",
-                    questionId = "mock-question-001",
-                    questionIndex = 1,
-                ),
-        ))
+        mRealVM.enterOrRecover(mInterviewId, mIsRecover)
     }
 
     private fun observeData() {
@@ -126,14 +110,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         mRealVM.uploadList.observe(this) {
             //目标岗位上传成功
             mRealVM.sendAction(
-                actionType = ACTION_TARGET_JOB_UPLOAD,
+                actionType = ACTION_TARGET_JOB_SUBMIT,
                 payload = mapOf(
+                    "targetJobInputType" to TARGET_JOB_INPUT_UPLOAD_IMAGE,
                     "uploadBatchId" to UUID.randomUUID().toString(),
                     "imageOssKeys" to it,
                 )
             )
-            //测试数据
-            mRealVM.roomState.value = InterviewRoomState.WAITING_USER_ANSWER
         }
         mRealVM.roomState.observe(this) {
             updateRoomState(it)
@@ -152,7 +135,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             showMessage(it)
         }
         mRealVM.ttsSpeakEvent.observe(this) {
-            ensureTtsPlayer().speak(it)
+            //ensureTtsPlayer().speak(it)
         }
         mRealVM.finishRoomEvent.observe(this) {
             //finish()
@@ -166,11 +149,12 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         when (state) {
             InterviewRoomState.STARTING,
             InterviewRoomState.WAITING_TARGET_JOB,
-            InterviewRoomState.TARGET_JOB_PARSE_SUCCESS,
-            InterviewRoomState.PLAN_GENERATING,
-            InterviewRoomState.PLAN_READY -> {
+            InterviewRoomState.TARGET_JOB_PARSE_SUCCESS -> {
                 binding.layoutPrepare.visible()
             }
+            InterviewRoomState.TARGET_JOB_PARSING,
+            InterviewRoomState.PLAN_GENERATING,
+            InterviewRoomState.PLAN_READY,
             InterviewRoomState.WAITING_USER_ANSWER,
             InterviewRoomState.ANSWER_SUBMITTED,
             InterviewRoomState.WAITING_FOLLOW_UP_DECISION,
@@ -180,9 +164,6 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             InterviewRoomState.TARGET_JOB_PARSE_FAILED -> {
                 binding.layoutPrepare.visible()
                 binding.tvTargetJobTitle.text = "重新上传"
-            }
-            InterviewRoomState.TARGET_JOB_PARSING -> {
-                binding.layoutPrepare.visible()
             }
             InterviewRoomState.REPORT_GENERATING,
             InterviewRoomState.FINISHED,
@@ -212,10 +193,10 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             return
         }
         if (startVoiceRecognizing()) {
+            mRealVM.startAnswer()
             answerRecording = true
             // 面试作答是点击开始，不走聊天页的按住录音浮层。
             updateVoiceActionRecording(true)
-            mRealVM.startAnswer()
             mRealVM.startTiming()
         }
     }
