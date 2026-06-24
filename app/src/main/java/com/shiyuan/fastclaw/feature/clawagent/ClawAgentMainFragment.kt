@@ -65,6 +65,7 @@ import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
 import com.shiyuan.fastclaw.feature.mine.MineShrimpRechargeActivity
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -252,6 +253,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.submitCompanyBackgroundPreCheck(data.companyName.orEmpty())
+            }
+        }
+        // 公司背调 - 查看报告
+        msgAdapter.onCompanyReportClickAction = { _, _, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                //SimpleBrowserActivity.launch(requireActivity(), data?.reportId)
             }
         }
         // 模拟面试 - 开始面试

@@ -42,14 +42,45 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_report_icon" />
 
-    <ImageView
-        android:id="@+id/iv_generating"
-        android:layout_width="85dp"
-        android:layout_height="87dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:src="@drawable/img_company_background_generating"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/v_report_divider" />
+        app:layout_constraintTop_toBottomOf="@id/v_report_divider">
+
+        <ImageView
+            android:id="@+id/iv_generating"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:src="@drawable/img_company_background_generating"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:src="@drawable/img_company_background_circle"
+            app:layout_constraintBottom_toBottomOf="@id/iv_generating"
+            app:layout_constraintEnd_toEndOf="@id/iv_generating"
+            app:layout_constraintStart_toStartOf="@id/iv_generating"
+            app:layout_constraintTop_toTopOf="@id/iv_generating"
+            />
+
+        <TextView
+            android:id="@+id/tv_generating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_agent_company_background_generating"
+            android:textColor="@color/color_96_000000"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_generating"
+            app:layout_constraintEnd_toEndOf="@id/iv_generating"
+            app:layout_constraintStart_toStartOf="@id/iv_generating"
+            app:layout_constraintTop_toTopOf="@id/iv_generating" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/tv_step1_icon"
@@ -88,7 +119,7 @@
         app:layout_constraintTop_toTopOf="@id/tv_step2_icon" />
 
     <ImageView
-        android:id="@+id/pb_step3"
+        android:id="@+id/tv_step3_icon"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginTop="14dp"
@@ -101,7 +132,7 @@
         style="@style/CompanyBackgroundReportStepText"
         android:text="@string/str_agent_company_background_report_step3"
         android:textColor="@color/color_55_3c3c43"
-        app:layout_constraintBottom_toBottomOf="@id/pb_step3"
+        app:layout_constraintBottom_toBottomOf="@id/tv_step3_icon"
         app:layout_constraintStart_toStartOf="@id/tv_step1"
-        app:layout_constraintTop_toTopOf="@id/pb_step3" />
+        app:layout_constraintTop_toTopOf="@id/tv_step3_icon" />
 </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>

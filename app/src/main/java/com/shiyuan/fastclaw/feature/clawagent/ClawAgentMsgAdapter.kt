@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
@@ -81,6 +82,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     /** 公司背调 - 开始背调 */
     var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
+    /** 公司背调 - 查看报告 */
+    var onCompanyReportClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
 
     /** 公司面试 - 开始面试 */
     var onInterviewStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
@@ -115,7 +118,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_COMPANY_BACKGROUND_REPORT_DONE,
             { i, p ->
                 AgentCompanyBackgroundReportDoneViewHolder(ItemMsgAgentCompanyBackgroundReportDoneBinding.inflate(i, p, false)).apply {
-                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                    onCompanyClickListener = { item, action, data -> onCompanyReportClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 模拟面试入口卡
@@ -208,17 +211,20 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         super.onViewAttachedToWindow(holder)
         if (holder is AgentThinkViewHolder) holder.startRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.startRotate()
+        if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.startRotate()
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
         if (holder is AgentThinkViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
+        if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is AgentThinkViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
+        if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
         super.onViewRecycled(holder)
     }
 

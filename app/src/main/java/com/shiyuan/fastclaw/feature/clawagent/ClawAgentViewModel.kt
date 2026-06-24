@@ -527,6 +527,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                     return@forEach
                 }
             }
+            // 同一响应组内，REPLACE_ON_TERMINAL 的中间态消息由后续终态/结果消息替换。
+            msg.responseGroupId?.takeIf { it.isNotBlank() }?.let { groupId ->
+                    messageStore.filterValues { it.responseGroupId == groupId && it.displayPolicy == POLICY_REPLACE_ON_TERMINAL }
+                        .keys
+                        .filter { it != key }
+                        .forEach { messageStore.remove(it) }
+                }
             messageStore[key] = msg
         }
         refreshMessageList()
