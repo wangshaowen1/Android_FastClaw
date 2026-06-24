@@ -748,6 +748,7 @@
     <string name="logout_dialog_confirm">确定退出</string>
     <string name="str_agent_name">小虾</string>
     <string name="str_agent_desc">求职经纪人 · 我在听</string>
+    <string name="str_agent_desc2">选择求职状态</string>
     <string name="str_agent_memory">我对你的理解</string>
     <string name="str_agent_send_hint">有什么求职问题，随时问小虾</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>

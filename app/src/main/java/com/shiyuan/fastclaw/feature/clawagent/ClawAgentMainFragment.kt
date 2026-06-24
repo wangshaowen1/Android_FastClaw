@@ -56,6 +56,7 @@ import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.QUICK_ENTRY
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentStatusPopup
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
@@ -73,6 +74,7 @@ import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
+import com.shiyuan.fastclaw.widget.shape.internal.RECT
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -132,6 +134,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private var mCurrentQuestionId: String? = null
 
     private var isVoiceInputMode = false
+
+    private var agentStatusPopup: ClawAgentStatusPopup? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -218,6 +222,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         })
         binding.rvMsg.adapter = msgAdapter
+
+        binding.tvAgentDesc.setOnSingleClickListener {
+            showAgentStatusPopup()
+        }
+        binding.tvAgentIndex.setOnSingleClickListener {
+            showAgentStatusPopup()
+        }
 
         msgAdapter.onUploadClickAction = { data,reUpload ->
             if (!AppNavigator.checkLoginIntercepted(false)) {
@@ -691,6 +702,21 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 showInsufficientShrimpDialog()
             }
         }
+        // 监听会话返回的求职状态，已选中时同步顶部状态展示
+        mRealVM.sessionData.observe(this){
+            it?.jobSearchStatus.let { data ->
+                if(data?.selected ?: false){
+                   // 从 options 中取当前选中的状态项，用于展示文案和颜色
+                   val  JobSearchStatusOption = data.options?.find { it.selected == true }
+                    binding.tvAgentDesc.text = JobSearchStatusOption?.statusText
+                    // setShapeSolidColor 只更新配置，需要 setUseShape 重新应用背景
+                    when(JobSearchStatusOption?.statusCode){
+                        "AVAILABLE_IMMEDIATELY" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_15D173)).setUseShape()
+                        else -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff383c)).setUseShape()
+                    }
+                }
+            }
+        }
     }
 
     private fun showInsufficientShrimpDialog() {
@@ -896,6 +922,35 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         autoConfirmJob = null
         popup?.dismiss()
         popup = null
+    }
+
+    /**
+     * 展示顶部求职状态弹窗：使用 enterSession 返回的 options 渲染列表，
+     * 选中后调用更新状态接口，并在成功回调里同步顶部状态展示。
+     */
+    private fun showAgentStatusPopup() {
+        agentStatusPopup?.takeIf { it.isShow() }?.let {
+            it.dismiss()
+            return
+        }
+        val agentIndexView = binding.tvAgentIndex
+        agentIndexView.setBackgroundResource(R.drawable.ic_arrow_down_gray_12)
+        val options = mRealVM.sessionData.value?.jobSearchStatus?.options.orEmpty()
+        agentStatusPopup = ClawAgentStatusPopup(requireContext(), options).apply {
+            onDismissListener = {
+                agentStatusPopup = null
+                agentIndexView.setBackgroundResource(R.drawable.ic_arrow_right_gray_12)
+            }
+            onItemClickListener = { item ->
+                mRealVM.updateJobStatus(item.statusCode)
+            }
+        }.showDialog(binding.tvAgentDesc)
+    }
+
+    override fun onDestroyView() {
+        agentStatusPopup?.dismiss()
+        agentStatusPopup = null
+        super.onDestroyView()
     }
 
     /**

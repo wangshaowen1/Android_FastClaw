@@ -41,6 +41,50 @@ data class SessionEnterData(
 
     /** 当前账号是否存在可确认简历 */
     val hasCurrentResume: Boolean? = null,
+
+    /** 候选人求职状态 */
+    val jobSearchStatus: JobSearchStatus? = null,
+
+)
+
+/**
+ * 候选人求职状态
+ */
+data class JobSearchStatus(
+    /** 状态码 */
+    val statusCode: String? = null,
+
+    /** 状态文案 */
+    val statusText: String? = null,
+
+    /** 状态点颜色 */
+    val dotColor: String? = null,
+
+    /** 是否选中 */
+    val selected: Boolean? = null,
+
+    /** 可选求职状态列表 */
+    val options: List<JobSearchStatusOption>? = null,
+)
+
+/**
+ * 候选人求职状态选项
+ */
+data class JobSearchStatusOption(
+    /** 状态码 */
+    val statusCode: String? = null,
+
+    /** 状态文案 */
+    val statusText: String? = null,
+
+    /** 状态点颜色 */
+    val dotColor: String? = null,
+
+    /** 是否选中 */
+    val selected: Boolean? = null,
+
+    /** 排序 */
+    val sortOrder: Int? = null,
 )
 
 /**
