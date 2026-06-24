@@ -135,7 +135,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             showMessage(it)
         }
         mRealVM.ttsSpeakEvent.observe(this) {
-            //ensureTtsPlayer().speak(it)
+            ensureTtsPlayer().speak(it)
         }
         mRealVM.finishRoomEvent.observe(this) {
             //finish()
