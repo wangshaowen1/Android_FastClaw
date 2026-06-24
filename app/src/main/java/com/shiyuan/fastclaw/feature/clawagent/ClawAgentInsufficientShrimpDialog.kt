@@ -6,17 +6,19 @@ import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
 import androidx.fragment.app.FragmentManager
 import com.nhsd.basic.BaseBottomPushDialogFragment
+import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.DialogClawAgentInsufficientShrimpBinding
+import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /** 虾条不足底部浮层 */
 class ClawAgentInsufficientShrimpDialog :
-    BaseBottomPushDialogFragment<DialogClawAgentInsufficientShrimpBinding>() {
+    BaseBottomPushVMDialogFragment<DialogClawAgentInsufficientShrimpBinding, MineViewModel>() {
 
     companion object {
         private const val KEY_REMAINING_COUNT = "remainingCount"
-        private const val DEFAULT_REMAINING_COUNT = 2
+        private const val DEFAULT_REMAINING_COUNT = 0
 
         fun show(
             manager: FragmentManager,
@@ -36,17 +38,19 @@ class ClawAgentInsufficientShrimpDialog :
 
     override fun onPrepareView() {
         super.onPrepareView()
-        binding.tvTitle.text = buildTitleText(arguments?.getInt(KEY_REMAINING_COUNT) ?: DEFAULT_REMAINING_COUNT)
         binding.ivClose.setOnSingleClickListener {
             dismissAllowingStateLoss()
         }
-        binding.tvInvite.setOnSingleClickListener {
+        binding.cnInvite.setOnSingleClickListener {
             dismissAllowingStateLoss()
             onInviteClick?.invoke()
         }
         binding.tvRecharge.setOnSingleClickListener {
             dismissAllowingStateLoss()
             onRechargeClick?.invoke()
+        }
+        mRealVM.userPoints.observe(this) { points ->
+            binding.tvTitle.text =buildTitleText(points?.toIntOrNull() ?: 0)
         }
     }
 
