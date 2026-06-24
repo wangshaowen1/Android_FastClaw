@@ -139,7 +139,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             updateRoomState(it)
         }
         mRealVM.sessionStatus.observe(this) {
-            updateTitleBySessionStatus(it)
+            updateSessionStatus(it)
         }
         mRealVM.answerActionText.observe(this) {
             binding.tvVoicePress.text = it
@@ -195,7 +195,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
-    private fun updateTitleBySessionStatus(sessionStatus: String?) {
+    private fun updateSessionStatus(sessionStatus: String?) {
         binding.tvTitle.text = if (sessionStatus == SESSION_STATUS_PREPARING) {
             "面试准备中"
         } else {

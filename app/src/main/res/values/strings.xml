@@ -789,13 +789,17 @@
     <string name="str_agent_company_background_error_points_insufficient">剩余虾条不足</string>
     <string name="str_agent_company_background_error_model_failed">公司名称校验失败，请稍后重试</string>
     <string name="str_agent_mock_interview_title">模拟面试间</string>
+    <string name="str_agent_mock_interview_upgrade_title">模拟面试</string>
     <string name="str_agent_mock_interview_step1">01 定制解析</string>
     <string name="str_agent_mock_interview_step2">02 预测押题</string>
     <string name="str_agent_mock_interview_step3">03 复盘报告与回答模版</string>
     <string name="str_agent_mock_interview_desc">欢迎来到面试间，我将根据你的简历，帮你提前押题，提高面试通过率。</string>
+    <string name="str_agent_mock_interview_upgrade_desc">小虾可以根据你的简历，帮你定制押题，提高面试通过率。是否现在立即试试呢？</string>
     <string name="str_agent_mock_interview_action">开始面试(40虾条)</string>
+    <string name="str_agent_mock_interview_upgrade_action">好的，开始面试</string>
     <string name="str_agent_mock_interview_action_main">开始面试</string>
     <string name="str_agent_mock_interview_action_cost">(40虾条)</string>
+    <string name="str_agent_mock_interview_skip">暂不需要</string>
     <string name="str_agent_mock_interview_report_title">面试复盘报告</string>
     <string name="str_agent_mock_interview_report_failed_title">生成失败</string>
     <string name="str_agent_mock_interview_report_failed_desc">生成加载超时，请点击重试</string>
