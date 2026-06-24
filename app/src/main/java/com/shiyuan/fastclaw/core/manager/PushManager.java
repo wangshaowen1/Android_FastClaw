@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 import com.shiyuan.fastclaw.App;
+import com.shiyuan.fastclaw.BuildConfig;
 import com.shiyuan.fastclaw.R;
 import com.shiyuan.fastclaw.common.Constants;
 import com.shiyuan.fastclaw.common.jsbridge.BridgeDataUtils;
@@ -99,11 +100,13 @@ public class PushManager {
         mPushAgent.setNotificationOnForeground(false);
         mPushAgent.setThirdTokenCallback((type, token) -> Logger.e(TAG, "厂商token：-------->  " + ",token:" + token));
         UPushNotificationChannel.getDefaultMode(mContext);
-        MiPushRegistar.register(mContext, "2882303761520335315", "5282033524315", false);
-        HuaWeiRegister.register(mContext);
-        OppoRegister.register(mContext, "63c2404b8ef9487aa86c6a6d196635c0", "4e2460ea3a574abcb122f81c88289f7a");
-        VivoRegister.register(mContext);
-        HonorRegister.register(mContext);
+        if (BuildConfig.ENABLE_CHANNEL_PUSH) {
+            MiPushRegistar.register(mContext, "2882303761520335315", "5282033524315", false);
+            HuaWeiRegister.register(mContext);
+            OppoRegister.register(mContext, "63c2404b8ef9487aa86c6a6d196635c0", "4e2460ea3a574abcb122f81c88289f7a");
+            VivoRegister.register(mContext);
+            HonorRegister.register(mContext);
+        }
     }
 
 
