@@ -293,8 +293,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             val result = this.data ?: return@request
             result.latestCursor?.let { latestCursor = it }
             pulledMessages.value = result
-            // 插入数据
-            ingestMessages(result.messages?.filterNot { it.isThinkMessage() })
+            // 列表中所有 isThinkMessage 都去除
+            // 如果原列表最后一条是 isThinkMessage，只保留最后这一条
+            // 其它位置的 isThinkMessage 全部过滤
+            val messages = result.messages?.filterIndexed { index, msg ->
+                !msg.isThinkMessage() || index == result.messages.lastIndex
+            }
+            ingestMessages(messages)
             // 递归拉取
             if (result.hasMore == true) {
                 pullMessages(latestCursor, limit)
@@ -537,7 +542,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             }
             // 同一响应组内，REPLACE_ON_TERMINAL 的中间态消息由后续终态/结果消息替换。
             msg.responseGroupId?.takeIf { it.isNotBlank() }?.let { groupId ->
-                    messageStore.filterValues { it.responseGroupId == groupId && it.displayPolicy == POLICY_REPLACE_ON_TERMINAL }
+                    messageStore.filterValues { it.responseGroupId == groupId && (it.displayPolicy == POLICY_REPLACE_ON_TERMINAL
+                            || it.displayPolicy == POLICY_DISMISS_ON_TERMINAL) }
                         .keys
                         .filter { it != key }
                         .forEach { messageStore.remove(it) }
@@ -1185,6 +1191,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // messageType
         private const val MSG_TEXT = "TEXT"
         private const val MSG_CARD = "CARD"
+        private const val MSG_TOAST = "TOAST"
 
         // messagePhase / messageStatus（思考态判定）
         /** 消息处于处理中 */

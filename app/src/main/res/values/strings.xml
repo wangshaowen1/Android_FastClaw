@@ -1039,6 +1039,10 @@
     <string name="interview_finish_dialog_message">已消耗虾条不会退回</string>
     <string name="interview_finish_dialog_back">回到面试</string>
     <string name="interview_finish_dialog_finish_now">立即结束</string>
+    <string name="interview_recover_dialog_title">你有一场未完成的面试</string>
+    <string name="interview_recover_dialog_message">是否继续？</string>
+    <string name="interview_recover_dialog_continue">继续面试</string>
+    <string name="interview_recover_dialog_finish">结束面试</string>
     <string name="interview_room_title_prepare">面试准备中</string>
     <string name="interview_room_target_job_title">我有明确岗位</string>
     <string name="interview_room_target_job_desc">上传公司名+JD截图，针对性押题</string>
