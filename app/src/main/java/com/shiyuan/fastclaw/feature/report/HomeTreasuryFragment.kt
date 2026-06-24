@@ -1,5 +1,8 @@
 package com.shiyuan.fastclaw.feature.report
 
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
@@ -20,6 +23,25 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
 
     override fun onPrepareView() {
         super.onPrepareView()
+        setDailyText()
+    }
+
+    private fun setDailyText() {
+        val text = getString(R.string.home_treasury_daily_free2)
+        val color = resources.getColor(R.color.color_2f6bff)
+        binding.tvDaily.text = SpannableString(text).apply {
+            listOf("3", "10").forEach { target ->
+                val start = text.indexOf(target)
+                if (start >= 0) {
+                    setSpan(
+                        ForegroundColorSpan(color),
+                        start,
+                        start + target.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+            }
+        }
     }
 
 

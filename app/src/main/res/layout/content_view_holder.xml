@@ -117,7 +117,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_not_song" />
+            android:src="@drawable/ic_empty" />
 
         <TextView
             android:id="@+id/no_data"
@@ -126,9 +126,24 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold"
             android:lineSpacingExtra="@dimen/lineSpacingExtra"
             android:text="@string/page_empty"
-            android:textColor="@color/color_999999" />
+            android:textColor="@color/color_90_000000" />
+
+        <TextView
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:id="@+id/no_data_tip"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:lineSpacingExtra="@dimen/lineSpacingExtra"
+            android:text="@string/page_empty"
+            android:textColor="@color/color_55_3c3c43" />
 
         <TextView
             android:id="@+id/no_data_btn"

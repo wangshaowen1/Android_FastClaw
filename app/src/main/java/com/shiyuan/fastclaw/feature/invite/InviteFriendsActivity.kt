@@ -80,7 +80,7 @@ class InviteFriendsActivity :
                 val progress = (-verticalOffset / totalRange.toFloat()).coerceIn(0f, 1f)
                 val alpha = (progress * 255).toInt().coerceIn(0, 255)
                // window.statusBarColor = Color.argb(alpha, 255, 255, 255)
-                mRealVM.mToolbarVM.mBackground.set(Color.argb(alpha, 255, 255, 255))
+              //  mRealVM.mToolbarVM.mBackground.set(Color.argb(alpha, 255, 255, 255))
             }
         )
     }

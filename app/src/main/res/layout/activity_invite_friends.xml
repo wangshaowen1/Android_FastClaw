@@ -39,6 +39,12 @@
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="0.7" />
 
+                <include
+                    android:id="@+id/toolbar"
+                    layout="@layout/view_model_toolbar"
+                    android:layout_gravity="top"
+                    app:toolbar="@{layout.mToolbarVM}" />
+
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -336,11 +342,6 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
-        <include
-            android:id="@+id/toolbar"
-            layout="@layout/view_model_toolbar"
-            app:toolbar="@{layout.mToolbarVM}" />
 
         <TextView
             android:id="@+id/tv_invite_rule"

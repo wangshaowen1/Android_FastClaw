@@ -84,6 +84,7 @@ class InterviewReportActivity :
         )
         binding.lsv.setDefaultEmptyImage(R.drawable.ic_empty)
         binding.lsv.setNoDataPrompt(R.string.report_empty_tip.getResString())
+        binding.lsv.setNoDataTipPrompt(R.string.report_empty_tip3.getResString())
     }
 
     private fun onReportItemClick(info: ReportInfo) {
