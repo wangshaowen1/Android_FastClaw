@@ -27,6 +27,8 @@ import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePageBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePullBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgressBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportRetryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
@@ -45,6 +47,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
@@ -160,6 +163,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 公司背调报告生成结果轮询任务 */
     private var companyBackgroundGeneratePollingJob: Job? = null
+
+    /** 模拟面试报告生成结果轮询任务，只保留最后一个轮询 */
+    private var mockInterviewReportPollingJob: Job? = null
 
     private fun JobAgentMessage.storeKey(): String? = messageId ?: cursor ?: sequenceNo?.toString()
 
@@ -502,6 +508,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                     return@forEach
                 }
             }
+            // 是否模拟面试报告生成中，启动面试报告轮询接口
+            if (msg.isMockInterviewReportCard()) {
+                val payload = msg.payloadJson?.let {
+                    runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
+                }
+                if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
+                    pollMockInterviewReportProgress(payload.mockReportId, payload.interviewId)
+                }
+            }
 
             // 简历待上传/失败/确认流程卡类型合并只展示最新一张
             val rawKey = msg.storeKey() ?: return@forEach
@@ -606,6 +621,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         ) {
             return ClawAgentMsgAdapter.TYPE_AGENT_THINK
         }
+        if (msg.messageType == MSG_TEXT_TIP) {
+            return ClawAgentMsgAdapter.TYPE_TEXT_TIP
+        }
         // 卡片消息按 cardType 分发
         if (msg.messageType == MSG_CARD) {
             return when (msg.cardType) {
@@ -655,11 +673,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     private fun resolveCompanyBackgroundReportItemType(msg: JobAgentMessage): Int {
+        // 公司背调卡
         val reportStatus = msg.payloadJson?.let {
             runCatching { GsonUtils.fromJson(it, CompanyBackgroundReportPayloadBean::class.java)?.reportStatus }.getOrNull()
         }
         return when (reportStatus) {
-            // 公司背调卡
             REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_FAILED
             REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_DONE
             REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
@@ -668,16 +686,21 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     private fun resolveMockInterviewReportItemType(msg: JobAgentMessage): Int {
-        val payload = msg.payloadJson?.let {
+        // 理解升级面试卡
+        val entryPayload = msg.payloadJson?.let {
             runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java) }.getOrNull()
         }
-        // 理解升级面试卡
-        if (payload?.entrySource == RESUME_UNDERSTANDING_UPGRADE) {
+        if (entryPayload?.entrySource == RESUME_UNDERSTANDING_UPGRADE) {
             return ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
         }
         // 普通面试卡
-        return when (payload?.reportStatus) {
-            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
+        val defaultPayload = msg.payloadJson?.let {
+            runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
+        }
+        return when (defaultPayload?.reportStatus) {
+            REPORT_STATUS_FAILED,
+            REPORT_STATUS_FAILED_RETRYABLE,
+            REPORT_STATUS_FAILED_FINAL -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
             REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_DONE
             REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
             else -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
@@ -709,6 +732,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否简历流程互斥卡，只保留最新一张 */
     private fun JobAgentMessage.isLatestOnlyResumeCard(): Boolean =
         messageType == MSG_CARD && cardType in setOf(CARD_UPLOAD_RESUME, CARD_RESUME_RECEIVED, CARD_HISTORY_RESUME_CONFIRM)
+
+    /** 是否模拟面试报告生成中（CARD_MOCK_INTERVIEW_REPORT） */
+    private fun JobAgentMessage.isMockInterviewReportCard(): Boolean =
+        messageType == MSG_CARD && cardType == CARD_MOCK_INTERVIEW_REPORT
 
     /**
      * 始终第一条插入自我介绍卡片
@@ -1096,6 +1123,68 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * 模拟面试报告 - 查询报告生成进度。
+     * 对应文档 9.1：GENERATING 继续轮询，SUCCESS/FAILED_* 到终态后拉取增量消息刷新报告卡。
+     */
+    private fun pollMockInterviewReportProgress(mockReportId: String?, interviewId: String?) {
+        if (mockReportId.isNullOrBlank() || interviewId.isNullOrBlank()) return
+        mockInterviewReportPollingJob?.cancel()
+        mockInterviewReportPollingJob = launchPolling(
+            intervalMs = 3000L,
+            retryOnNetworkError = true,
+            apiBlock = {
+                mRepo.api.queryMockInterviewReportProgress(
+                    MockInterviewReportProgressBody(
+                        mockReportId = mockReportId,
+                        interviewId = interviewId,
+                    )
+                )
+            },
+            checkState = { response ->
+                when (response?.data?.reportStatus) {
+                    REPORT_STATUS_SUCCESS -> PollingState.SUCCESS
+                    REPORT_STATUS_FAILED,
+                    REPORT_STATUS_FAILED_RETRYABLE,
+                    REPORT_STATUS_FAILED_FINAL -> PollingState.FAIL
+                    else -> PollingState.CONTINUE
+                }
+            },
+            onSuccess = { response ->
+                mockInterviewReportPollingJob = null
+                pullMessages(getLastMessageCursor())
+            },
+            onFail = { response, _ ->
+                mockInterviewReportPollingJob = null
+                pullMessages(getLastMessageCursor())
+            },
+        )
+    }
+
+    /**
+     * 模拟面试报告 - 重新生成失败报告。
+     * 对应文档 9.2：重试成功后不重新进入面试间，只重新启动最后一个报告进度轮询。
+     */
+    fun retryGenerateMockInterviewReport(mockReportId: String?, interviewId: String?) {
+        if (mockReportId.isNullOrBlank() || interviewId.isNullOrBlank()) return
+        mockInterviewReportPollingJob?.cancel()
+        mockInterviewReportPollingJob = null
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.retryMockInterviewReport(
+                    MockInterviewReportRetryBody(
+                        mockReportId = mockReportId,
+                        interviewId = interviewId,
+                        reportRetryId = "mock-report-retry-${System.currentTimeMillis()}-${UUID.randomUUID()}",
+                    )
+                )
+            }
+        ) {
+            pollMockInterviewReportProgress(mockReportId, interviewId)
+            pullMessages(getLastMessageCursor())
+        }
+    }
+
+    /**
      * 查询属性数组候选值（工作经历、教育经历等表单数据）。
      * @param questionQueueId 问题队列 ID
      * @param attributeGroupCode 属性组编码
@@ -1174,6 +1263,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         historyBeforeCursor = null
         hasMoreHistory = true
         loadingHistory = false
+        mockInterviewReportPollingJob?.cancel()
+        mockInterviewReportPollingJob = null
     }
 
     fun hardPreMsgListCard(list: List<ClawAgentMessageInfo>) {
@@ -1182,6 +1273,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     override fun onCleared() {
         sseHandler.cancel()
+        companyBackgroundPreCheckPollingJob?.cancel()
+        companyBackgroundGeneratePollingJob?.cancel()
+        mockInterviewReportPollingJob?.cancel()
+        mockInterviewReportPollingJob = null
         super.onCleared()
     }
 
@@ -1205,6 +1300,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val MSG_TEXT = "TEXT"
         private const val MSG_CARD = "CARD"
         private const val MSG_TOAST = "TOAST"
+        private const val MSG_TEXT_TIP = "TEXT_TIP"
 
         // messagePhase / messageStatus（思考态判定）
         /** 消息处于处理中 */
@@ -1239,6 +1335,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val REPORT_STATUS_SUCCESS = "SUCCESS"
         /** 报告生成失败 */
         private const val REPORT_STATUS_FAILED = "FAILED"
+        private const val REPORT_STATUS_FAILED_RETRYABLE = "FAILED_RETRYABLE"
+        private const val REPORT_STATUS_FAILED_FINAL = "FAILED_FINAL"
 
         // displayPolicy（端侧展示策略）：think 等中间态消息在结果消息到达后的收口方式
         private const val POLICY_REPLACE_ON_TERMINAL = "REPLACE_ON_TERMINAL"

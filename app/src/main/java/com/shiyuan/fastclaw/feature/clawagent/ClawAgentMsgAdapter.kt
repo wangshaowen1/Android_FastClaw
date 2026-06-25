@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.GsonUtils
 import com.chad.library.adapter.base.BaseMultiItemAdapter
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundStartBody
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
@@ -31,8 +32,10 @@ import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentTextTipBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundEntryViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportDoneViewHolder
@@ -49,6 +52,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentResumeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentSearchingJobsViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTableFormViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTextTipViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentThinkViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUnderstandingUpgradeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadFailedViewHolder
@@ -91,6 +95,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     /** 公司面试 - 开始面试 */
     var onInterviewStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
+    /** 模拟面试报告 - 重新生成 */
+    var onInterviewRetryClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
 
     init {
         // 用户消息（靠右气泡）
@@ -101,6 +107,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_AGENT_THINK, { i, p -> AgentThinkViewHolder(ItemMsgAgentThinkBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 欢迎引导卡
         register(TYPE_WELCOME, { i, p -> AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 文本居中卡
+        register(TYPE_TEXT_TIP, { i, p -> AgentTextTipViewHolder(ItemMsgAgentTextTipBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 公司背调入口卡
         register(TYPE_COMPANY_BACKGROUND_ENTRY,
             { i, p ->
@@ -146,7 +154,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_MOCK_INTERVIEW_REPORT_FAILED,
             { i, p ->
                 AgentMockInterviewReportFailedViewHolder(ItemMsgAgentMockInterviewReportFailedBinding.inflate(i, p, false)).apply {
-                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                    onInterviewClickListener = { item, action, data -> onInterviewRetryClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 面试复盘报告卡：成功
@@ -357,6 +365,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 模拟面试升级卡 */
         const val TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE = 23
+
+        /** 展示文本居中显示 */
+        const val TYPE_TEXT_TIP = 24
     }
 
 }
