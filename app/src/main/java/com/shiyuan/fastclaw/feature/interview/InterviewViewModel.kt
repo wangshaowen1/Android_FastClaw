@@ -1,6 +1,7 @@
 ﻿package com.shiyuan.fastclaw.feature.interview
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.AppUtils
@@ -8,9 +9,12 @@ import com.blankj.utilcode.util.NetworkUtils
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
+import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewAudioTokenBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewForceCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStreamBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentMessage
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewForceCancelData
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.InterviewSseProcessor
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewMessageInfo
@@ -218,13 +222,13 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             }
             RECOVER_ACTION_RETURN_TO_CHAT -> {
                 handleRoomState(message)
-                finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+                finishRoomEvent.value = message.payload.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
                 Unit
             }
             RECOVER_ACTION_SESSION_CLOSED -> {
                 handleRoomState(message)
                 showToast(TEXT_INTERVIEW_CLOSED)
-                finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+                finishRoomEvent.value = message.payload.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
                 Unit
             }
             else -> null
@@ -233,6 +237,13 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     private fun restoreRoom(message: InterviewAgentMessage) {
         val payload = message.payload
+        payload?.messages.orEmpty().forEachIndexed { index, item ->
+            Log.d(
+                TAG,
+                "restoreRoom message[$index]: messageId=${item.messageId}, messageSeq=${item.messageSeq}, messageType=${item.messageType}, senderType=${item.senderType}, roomState=${item.roomState ?: item.payload?.roomState}, questionId=${item.payload?.questionId}, content=${item.content.orEmpty()}"
+            )
+        }
+        Log.d(TAG, "restoreRoom---------------------------------------")
         payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         payload?.latestMessageSeq?.let { updateLastMessageSeq(it) }
         currentQuestionId = payload?.messages?.lastQuestionId()
@@ -398,6 +409,26 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    fun forceFinish(onSuccess: (data: MockInterviewForceCancelData?) -> Unit) {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.forceCancelMockInterview(
+                    MockInterviewForceCancelBody(
+                        interviewId = mInterviewId,
+                        forceCancelRequestId = UUID.randomUUID().toString(),
+                        cancelReason = FORCE_CANCEL_REASON_USER,
+                    )
+                )
+            },
+            showToastError = true,
+        ) {
+            roomState.value = InterviewRoomState.CANCELED
+            sseHandler.cancel()
+            stopTiming()
+            onSuccess(this.data)
+        }
+    }
+
     private fun showToast(text: String) {
         if (text.isNotEmpty()) {
             toastMessage.value = text
@@ -411,6 +442,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     companion object {
+        private const val TAG = "InterviewViewModel"
         const val ACTION_ENTER_ROOM = "ENTER_ROOM"
         const val ACTION_TARGET_JOB_SUBMIT = "TARGET_JOB_SUBMIT"
         const val TARGET_JOB_INPUT_UPLOAD_IMAGE = "UPLOAD_IMAGE"
@@ -430,6 +462,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val RECOVER_ACTION_RESTORE_ROOM = "RESTORE_ROOM"
         private const val RECOVER_ACTION_RETURN_TO_CHAT = "RETURN_TO_CHAT"
         private const val RECOVER_ACTION_SESSION_CLOSED = "SESSION_CLOSED"
+        private const val FORCE_CANCEL_REASON_USER = "USER_FORCE_CANCEL"
         const val MSG_ROOM_STATE_CHANGED = "ROOM_STATE_CHANGED"
         const val MSG_TEXT_DELTA = "TEXT_DELTA"
         const val MSG_TEXT_DONE = "TEXT_DONE"
