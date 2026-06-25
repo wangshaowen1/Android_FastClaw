@@ -2,13 +2,13 @@ package com.shiyuan.fastclaw.feature.interview.bean
 
 data class InterviewMessageInfo(
     /** 本地消息 ID，用于 RecyclerView diff 和流式消息覆盖更新 */
-    val id: String,
+    val id: String? = null,
 
     /** 发送方类型，取值复用 InterviewViewModel.SENDER_AGENT / SENDER_USER */
-    val senderType: String,
+    val senderType: String ?= null,
 
     /** 消息展示文本 */
-    val content: String,
+    val content: String ?= null,
 )
 
 enum class InterviewRoomState {
