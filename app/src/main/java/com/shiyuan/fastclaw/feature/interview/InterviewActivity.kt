@@ -148,10 +148,10 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.layoutFinish.gone()
         when (state) {
             InterviewRoomState.STARTING,
-            InterviewRoomState.WAITING_TARGET_JOB,
-            InterviewRoomState.TARGET_JOB_PARSE_SUCCESS -> {
+            InterviewRoomState.WAITING_TARGET_JOB -> {
                 binding.layoutPrepare.visible()
             }
+            InterviewRoomState.TARGET_JOB_PARSE_SUCCESS,
             InterviewRoomState.TARGET_JOB_PARSING,
             InterviewRoomState.PLAN_GENERATING,
             InterviewRoomState.PLAN_READY,
