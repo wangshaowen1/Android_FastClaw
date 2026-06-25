@@ -14,7 +14,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentMockInterviewReportFailedViewHolder(private val binding: ItemMsgAgentMockInterviewReportFailedBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+    var onInterviewClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -23,13 +23,11 @@ class AgentMockInterviewReportFailedViewHolder(private val binding: ItemMsgAgent
         binding.tvFailedDesc.text = binding.root.context.getString(R.string.str_agent_mock_interview_report_failed_desc)
         val action = payload?.actions?.firstOrNull()
         binding.tvAction.text = binding.root.context.getString(R.string.str_agent_mock_interview_report_regenerate)
-        val enabled = action?.disabled != true
+        /*val enabled = action?.disabled != true
         binding.tvAction.isEnabled = enabled
-        binding.tvAction.alpha = if (enabled) 1f else 0.5f
+        binding.tvAction.alpha = if (enabled) 1f else 0.5f*/
         binding.tvAction.setOnSingleClickListener {
-            if (action != null && enabled) {
-                onActionClickListener(item, action, action.actionPayload?.questionQueueId)
-            }
+            onInterviewClickListener(item, action, payload)
         }
     }
 }

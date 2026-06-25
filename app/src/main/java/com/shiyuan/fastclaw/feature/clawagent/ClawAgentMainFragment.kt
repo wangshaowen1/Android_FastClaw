@@ -2,7 +2,6 @@ package com.shiyuan.fastclaw.feature.clawagent
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -76,7 +75,6 @@ import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
-import com.shiyuan.fastclaw.widget.shape.internal.RECT
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -293,6 +291,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.startInterview(data?.entryMessageId, data?.entrySource, data?.resumeId)
+            }
+        }
+        // 模拟面试报告 - 重新生成
+        msgAdapter.onInterviewRetryClickAction = { _, _, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.retryGenerateMockInterviewReport(data?.mockReportId, data?.interviewId)
             }
         }
 
