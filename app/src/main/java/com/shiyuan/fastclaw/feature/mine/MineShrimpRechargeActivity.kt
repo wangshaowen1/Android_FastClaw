@@ -5,17 +5,23 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.ObservableField
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.gyf.immersionbar.ImmersionBar
 import com.kuaige.payment.PaymentClient
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.core.network.apis.entity.PointConfigInfo
+import com.shiyuan.fastclaw.core.network.apis.entity.TradePayWayInfo
 import com.shiyuan.fastclaw.databinding.ActivityMineShrimpRechargeBinding
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
+import com.shiyuan.fastclaw.feature.payment.ItemPaymentMethodVm
+import com.shiyuan.fastclaw.feature.payment.PaymentMethod
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.decoration.GridSpacingItemDecoration
@@ -34,9 +40,13 @@ class MineShrimpRechargeActivity :
     }
 
     private var selectedPackageIndex = 1
-    private var selectedWechat = true
+    private var selectedPaymentIndex = -1
+    private var payWayList: List<TradePayWayInfo> = emptyList()
     private val packageAdapter by lazy {
         QuickAdapter<ItemMineRechargePackageVM>(R.layout.item_mine_recharge_package, emptyList())
+    }
+    private val paymentAdapter by lazy {
+        QuickAdapter<ItemPaymentMethodVm>(R.layout.item_payment_method_points_recharge, emptyList())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,9 +76,11 @@ class MineShrimpRechargeActivity :
             isNestedScrollingEnabled = false
             adapter = packageAdapter
         }
-
-        binding.llWechatPay.setOnSingleClickListener { updatePaymentSelected(true) }
-        binding.llAlipay.setOnSingleClickListener { updatePaymentSelected(false) }
+        binding.rvPaymentMethod.apply {
+            layoutManager = LinearLayoutManager(this@MineShrimpRechargeActivity)
+            isNestedScrollingEnabled = false
+            adapter = paymentAdapter
+        }
 
         binding.btnRecharge.setOnSingleClickListener {
             if (AppNavigator.checkLoginIntercepted(false)) {
@@ -79,10 +91,10 @@ class MineShrimpRechargeActivity :
                 ?.data
                 ?: return@setOnSingleClickListener
             val goodsCode = rechargePackage.get()?.goodsCode ?: return@setOnSingleClickListener
-            val payment = if (selectedWechat) {
-                PaymentClient.PaymentMethod.WxPay
-            } else {
-                PaymentClient.PaymentMethod.Alipay
+            val payment = selectedPayWay()?.toPaymentMethod()
+            if (payment == null) {
+                R.string.select_the_payment_method.getResString().showToast()
+                return@setOnSingleClickListener
             }
             mRealVM.rechargeShrimp(payment, goodsCode)
         }
@@ -90,8 +102,8 @@ class MineShrimpRechargeActivity :
             SimpleBrowserActivity.launch(this, "https://www.baidu.com")
         }
 
-        updatePaymentSelected(selectedWechat)
         mRealVM.getRechargePackages()
+        mRealVM.getPayWays()
     }
 
     private fun initObservers() {
@@ -100,6 +112,9 @@ class MineShrimpRechargeActivity :
         }
         mRealVM.rechargePackages.observe(this) { packages ->
             submitRechargePackages(packages.orEmpty())
+        }
+        mRealVM.payWays.observe(this) { payWays ->
+            submitPayWays(payWays.orEmpty())
         }
     }
 
@@ -126,16 +141,66 @@ class MineShrimpRechargeActivity :
         }
     }
 
-    private fun updatePaymentSelected(wechat: Boolean) {
-        selectedWechat = wechat
-        val normalIcon = R.drawable.ic_choose_normal_dark
-        binding.ivWechatSelected.setImageResource(
-            if (wechat) R.drawable.icon_choose_checked else normalIcon
-        )
-        binding.ivAlipaySelected.setImageResource(
-            if (wechat) normalIcon else R.drawable.icon_choose_checked
-        )
+    private fun updatePaymentSelected(index: Int) {
+        selectedPaymentIndex = index
+        paymentAdapter.items.forEachIndexed { itemIndex, item ->
+            item.select.set(itemIndex == index)
+        }
     }
+
+    private fun submitPayWays(payWays: List<TradePayWayInfo>) {
+        payWayList = payWays.filter { it.toPaymentMethod() != null }.sortedWith(
+            compareByDescending<TradePayWayInfo> { it.isDefault == 1 }
+                .thenByDescending { it.sortNo ?: Int.MIN_VALUE }
+        )
+        selectedPaymentIndex = payWayList.indexOfFirst { it.isDefault == 1 }.takeIf { it >= 0 }
+            ?: payWayList.indices.firstOrNull()
+            ?: -1
+        val paymentItems = payWayList.mapIndexed { index, item ->
+            ItemPaymentMethodVm(item.toPaymentMethodItem()).apply {
+                select.set(index == selectedPaymentIndex)
+                onItemClick.value = {
+                    updatePaymentSelected(index)
+                }
+            }
+        }
+        paymentAdapter.submitList(paymentItems)
+    }
+
+    private fun selectedPayWay(): TradePayWayInfo? {
+        return payWayList.getOrNull(selectedPaymentIndex)
+    }
+}
+
+private fun TradePayWayInfo.toPaymentMethodItem(): PaymentMethod {
+    val method = toPaymentMethod() ?: PaymentClient.PaymentMethod.WxPay
+    return PaymentMethod(
+        name = displayName(),
+        icon = if (method == PaymentClient.PaymentMethod.Alipay) {
+            R.drawable.ic_pm_alipay
+        } else {
+            R.drawable.ic_pm_wechat
+        },
+        type = method
+    )
+}
+
+private fun TradePayWayInfo.toPaymentMethod(): PaymentClient.PaymentMethod? {
+    return when (payWay) {
+        TradePayWayInfo.PAY_WAY_ALIPAY -> PaymentClient.PaymentMethod.Alipay
+        TradePayWayInfo.PAY_WAY_WECHAT,
+        TradePayWayInfo.PAY_WAY_BAOFU -> PaymentClient.PaymentMethod.WxPay
+        else -> null
+    }
+}
+
+private fun TradePayWayInfo.displayName(): String {
+    val defaultNameRes = if (payWay == TradePayWayInfo.PAY_WAY_ALIPAY) {
+        R.string.alipay_payment
+    } else {
+        R.string.wechat_pay
+    }
+    return payWayName?.takeIf { it.isNotBlank() } ?: defaultNameRes.getResString()
 }
 
 private fun PointConfigInfo.toRechargePackage(): MineRechargePackage? {

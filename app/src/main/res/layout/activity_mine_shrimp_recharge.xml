@@ -157,77 +157,17 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <LinearLayout
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvPaymentMethod"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:background="@drawable/bg_ffffff_r16"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:id="@+id/llWechatPay"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="16dp">
-
-                            <ImageView
-                                android:layout_width="26dp"
-                                android:layout_height="26dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_pm_wechat" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="1"
-                                android:text="@string/wechat_pay"
-                                android:textColor="@color/color_75_3c3c43"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-
-                            <ImageView
-                                android:id="@+id/ivWechatSelected"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:importantForAccessibility="no"
-                                tools:src="@drawable/icon_choose_checked" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/llAlipay"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="16dp">
-
-                            <ImageView
-                                android:layout_width="26dp"
-                                android:layout_height="26dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_pm_alipay" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="1"
-                                android:text="@string/alipay_payment"
-                                android:textColor="@color/color_75_3c3c43"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-
-                            <ImageView
-                                android:id="@+id/ivAlipaySelected"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:importantForAccessibility="no"
-                                tools:src="@drawable/ic_choose_normal_dark" />
-                        </LinearLayout>
-                    </LinearLayout>
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="2"
+                        tools:listitem="@layout/item_payment_method_points_recharge" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

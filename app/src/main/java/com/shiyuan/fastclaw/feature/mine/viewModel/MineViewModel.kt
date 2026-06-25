@@ -24,6 +24,7 @@ import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.PointConfigInfo
 import com.shiyuan.fastclaw.core.network.apis.request.TradePayCreateBody
 import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
+import com.shiyuan.fastclaw.core.network.apis.entity.TradePayWayInfo
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.SimpleBannerInfo
 import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingScore
@@ -98,6 +99,8 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
     val userPoints = MutableLiveData<String>("0")
 
     val rechargePackages = MutableLiveData<List<PointConfigInfo>>()
+
+    val payWays = MutableLiveData<List<TradePayWayInfo>>()
 
     var underStandingScore = MutableLiveData<UnderstandingScore>()
 
@@ -198,6 +201,20 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
                     bean = mRepo.api.queryPointConfigList(),
                     result = {
                         rechargePackages.postValue(data?.pointConfigList.orEmpty())
+                    }
+                )
+            }
+        }
+    }
+
+    fun getPayWays() {
+        val user = User.Companion.get()
+        user.token?.let {
+            launch {
+                response(
+                    bean = mRepo.api.queryTradePayWayList(),
+                    result = {
+                        payWays.postValue(data?.itemList.orEmpty())
                     }
                 )
             }
