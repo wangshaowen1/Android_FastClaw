@@ -95,6 +95,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     /** 公司面试 - 开始面试 */
     var onInterviewStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
+    /** 公司面试 - 暂不需要 */
+    var onInterviewNotNeedClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
     /** 模拟面试报告 - 重新生成 */
     var onInterviewRetryClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
 
@@ -145,6 +147,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             { i, p ->
                 AgentMockInterviewEntryUpgradeViewHolder(ItemMsgAgentMockInterviewEntryUpgradeBinding.inflate(i, p, false)).apply {
                     onInterviewClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
+                    onNotNeedClickListener = { item, action, data -> onInterviewNotNeedClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 面试复盘报告卡：生成中

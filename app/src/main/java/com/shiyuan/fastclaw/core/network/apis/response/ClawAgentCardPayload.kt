@@ -182,6 +182,8 @@ data class CoreQuestionPayloadBean(
         const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
         /** 没有简历 */
         const val ACTION_NO_RESUME_START_QUESTIONING = "NO_RESUME_START_QUESTIONING"
+        /** 暂时不需要面试 */
+        const val ACTION_MOCK_INTERVIEW_NOT_NEEDED = "MOCK_INTERVIEW_NOT_NEEDED"
 
         /** 当前卡可操作 */
         const val STATUS_ACTIVE = "ACTIVE"

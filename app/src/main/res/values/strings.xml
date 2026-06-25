@@ -800,7 +800,7 @@
     <string name="str_agent_mock_interview_action">开始面试(40虾条)</string>
     <string name="str_agent_mock_interview_upgrade_action">好的，开始面试</string>
     <string name="str_agent_mock_interview_action_main">开始面试</string>
-    <string name="str_agent_mock_interview_action_cost">(40虾条)</string>
+    <string name="str_agent_mock_interview_action_cost">(%1$d虾条)</string>
     <string name="str_agent_mock_interview_skip">暂不需要</string>
     <string name="str_agent_mock_interview_report_title">面试复盘报告</string>
     <string name="str_agent_mock_interview_report_failed_title">生成失败</string>

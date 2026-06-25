@@ -293,6 +293,20 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mRealVM.startInterview(data?.entryMessageId, data?.entrySource, data?.resumeId)
             }
         }
+        // 模拟面试 - 暂不需要
+        msgAdapter.onInterviewNotNeedClickAction = { item, action, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.sendAction(
+                    desc = action?.text.orEmpty(),
+                    actionData = AgentMsgAction(
+                        actionCode = action?.actionCode,
+                        sourceMessageId = item.id,
+                        actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
+                    )
+                )
+            }
+        }
         // 模拟面试报告 - 重新生成
         msgAdapter.onInterviewRetryClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
