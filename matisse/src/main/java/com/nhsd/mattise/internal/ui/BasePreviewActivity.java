@@ -18,6 +18,7 @@ package com.nhsd.mattise.internal.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -114,6 +115,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         mCheckView.setCountable(mSpec.countable);
         mBottomToolbar = findViewById(R.id.bottom_toolbar);
         mTopToolbar = findViewById(R.id.top_toolbar);
+        applyBottomToolbarInsets();
 
         mCheckView.setOnClickListener(new View.OnClickListener() {
 
@@ -176,6 +178,26 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         });
 
         updateApplyButton();
+    }
+
+    private void applyBottomToolbarInsets() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH) {
+            return;
+        }
+        final int paddingLeft = mBottomToolbar.getPaddingLeft();
+        final int paddingTop = mBottomToolbar.getPaddingTop();
+        final int paddingRight = mBottomToolbar.getPaddingRight();
+        final int paddingBottom = mBottomToolbar.getPaddingBottom();
+        mBottomToolbar.setOnApplyWindowInsetsListener((view, insets) -> {
+            view.setPadding(
+                    paddingLeft,
+                    paddingTop,
+                    paddingRight,
+                    paddingBottom + insets.getSystemWindowInsetBottom()
+            );
+            return insets;
+        });
+        mBottomToolbar.requestApplyInsets();
     }
 
     @Override
