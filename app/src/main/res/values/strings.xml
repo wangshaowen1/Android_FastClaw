@@ -1047,6 +1047,8 @@
     <string name="interview_recover_dialog_continue">继续面试</string>
     <string name="interview_recover_dialog_finish">结束面试</string>
     <string name="interview_room_title_prepare">面试准备中</string>
+    <string name="interview_room_title_interviewing">面试中</string>
+    <string name="interview_select_mock_job_title">选择你想要模拟面试的岗位</string>
     <string name="interview_room_target_job_title">我有明确岗位</string>
     <string name="interview_room_target_job_desc">上传公司名+JD截图，针对性押题</string>
     <string name="interview_room_no_target_job_title">没有明确岗位</string>
@@ -1056,6 +1058,8 @@
     <string name="interview_room_finish_interview">结束面试</string>
     <string name="interview_room_answer_wait">请稍等…</string>
     <string name="interview_room_auto_exit_hint">语音结束后自动退出</string>
+    <string name="interview_voice_start_failed">语音输入启动失败</string>
+    <string name="interview_voice_no_content">未识别到语音内容</string>
     <string name="interview_target_job_screenshot_guide_title">如何获得目标岗位截图</string>
     <string name="interview_target_job_screenshot_step_1_no">1</string>
     <string name="interview_target_job_screenshot_step_1">打开Boss/招聘网站，查看目标岗位详情页</string>

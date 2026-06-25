@@ -134,7 +134,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             showTargetJobDialog()
         }
         binding.btnNoTargetJob.setOnSingleClickListener {
-            JobSelectionActivity.start(this, true,title ="选择你想要模拟面试的岗位", multipleNum = 1, type = "Interview")
+            JobSelectionActivity.start(
+                this,
+                true,
+                title = getString(R.string.interview_select_mock_job_title),
+                multipleNum = 1,
+                type = "Interview"
+            )
         }
         mRealVM.enterOrRecover(mInterviewId, mIsRecover)
     }
@@ -236,7 +242,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             }
             InterviewRoomState.TARGET_JOB_PARSE_FAILED -> {
                 binding.layoutUpload.visible()
-                binding.tvTargetJobTitle.text = "重新上传"
+                binding.tvTargetJobTitle.text = getString(R.string.reupload)
             }
             InterviewRoomState.REPORT_GENERATING,
             InterviewRoomState.FINISHED,
@@ -254,11 +260,11 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun updateSessionStatus(sessionStatus: String?) {
         if (sessionStatus == SESSION_STATUS_PREPARING) {
-            binding.tvTitle.text = "面试准备中"
+            binding.tvTitle.text = getString(R.string.interview_room_title_prepare)
             binding.tvStatus.setShapeSolidColor(ContextCompat.getColor(this, R.color.color_f5aa5e))
             binding.tvStatus.setUseShape()
         } else {
-            binding.tvTitle.text = "面试中"
+            binding.tvTitle.text = getString(R.string.interview_room_title_interviewing)
             binding.tvStatus.setShapeSolidColor(ContextCompat.getColor(this, R.color.color_57c57e))
             binding.tvStatus.setUseShape()
         }
@@ -303,7 +309,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             ensureSpeechTranscriber().start()
         }.getOrElse { throwable ->
             Log.d(TAG, "start voice recognizing failed", throwable)
-            showMessage("语音输入启动失败")
+            showMessage(getString(R.string.interview_voice_start_failed))
             false
         }
     }
@@ -365,7 +371,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 override fun onStopped() {
                     if (isDestroyed) return
                     if (shouldSendVoiceResult && !sendVoiceMessage()) {
-                        showMessage("未识别到语音内容")
+                        showMessage(getString(R.string.interview_voice_no_content))
                     }
                     shouldSendVoiceResult = false
                     resetVoiceRecognizingState()
