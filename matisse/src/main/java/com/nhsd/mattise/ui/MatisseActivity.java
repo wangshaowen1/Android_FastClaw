@@ -183,6 +183,7 @@ public class MatisseActivity extends AppCompatActivity implements
         mButtonApply = (TextView) findViewById(R.id.button_apply);
         mButtonPreview.setOnClickListener(this);
         mButtonApply.setOnClickListener(this);
+        applyBottomToolbarInsets();
         mAlbumTitleLayout.setOnClickListener(this);
         mAlbumListLayout.setOnClickListener(this);
         mContainer = findViewById(R.id.container);
@@ -217,6 +218,26 @@ public class MatisseActivity extends AppCompatActivity implements
 
         ImmersionBar.with(this).statusBarDarkFont(false).init();
         ViewUtils.paddingToStatusBar(this,findViewById(R.id.root));
+    }
+
+    private void applyBottomToolbarInsets() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT_WATCH) {
+            return;
+        }
+        final int paddingLeft = mBottomToolbar.getPaddingLeft();
+        final int paddingTop = mBottomToolbar.getPaddingTop();
+        final int paddingRight = mBottomToolbar.getPaddingRight();
+        final int paddingBottom = mBottomToolbar.getPaddingBottom();
+        mBottomToolbar.setOnApplyWindowInsetsListener((view, insets) -> {
+            view.setPadding(
+                    paddingLeft,
+                    paddingTop,
+                    paddingRight,
+                    paddingBottom + insets.getSystemWindowInsetBottom()
+            );
+            return insets;
+        });
+        mBottomToolbar.requestApplyInsets();
     }
 
     private void updateSettingUI() {
