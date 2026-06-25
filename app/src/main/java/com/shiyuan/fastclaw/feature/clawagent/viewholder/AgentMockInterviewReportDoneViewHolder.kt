@@ -20,13 +20,9 @@ class AgentMockInterviewReportDoneViewHolder(private val binding: ItemMsgAgentMo
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
         }
-        binding.tvScore.text = payload?.totalScore?.toString()
         val time = payload?.interviewTime
-            ?: payload?.reportGenerateTime
-            ?: payload?.generatedAt
-            ?: payload?.generateTime
-            ?: binding.root.context.getString(R.string.str_agent_mock_interview_time_default)
         binding.tvReportTime.text = binding.root.context.getString(R.string.str_agent_mock_interview_time, time)
+        binding.tvScore.text = payload?.totalScore?.toString()
 
         val action = payload?.actions?.firstOrNull()
         binding.tvAction.text = binding.root.context.getString(R.string.str_agent_mock_interview_report_view)
