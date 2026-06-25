@@ -82,7 +82,7 @@
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_prepare"
+                android:id="@+id/layout_upload"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
@@ -198,13 +198,73 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layout_answer"
+                android:id="@+id/layout_wait"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="62dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <com.shiyuan.fastclaw.widget.InterviewVoiceBadgeView
+                    android:id="@+id/iv_wait_badge"
+                    android:layout_width="45dp"
+                    android:layout_height="18dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/iv_wait_icon"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="34dp"
+                    android:src="@drawable/img_interview_voice_icon_waiting"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_wait_press"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:text="@string/interview_room_answer_wait"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_wait_icon" />
+
+                <TextView
+                    android:id="@+id/tv_wait_duration"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="14sp"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_wait_press"
+                    tools:text="02:26" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_answer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="62dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -222,7 +282,7 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginTop="34dp"
-                    android:src="@drawable/img_interview_voice_icon_waiting"
+                    android:src="@drawable/img_interview_voice_icon_start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -234,7 +294,7 @@
                     android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:includeFontPadding="false"
-                    android:text="@string/interview_room_answer_wait"
+                    android:text="@string/interview_room_answer_start"
                     android:textColor="@color/color_90_000000"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"

@@ -29,6 +29,7 @@ import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.speech.DashCosyVoiceStreamTtsPlayer
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
+import com.shiyuan.fastclaw.common.utils.JsonUtil
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.getBundleValue
@@ -36,7 +37,9 @@ import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_SUBMIT
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SESSION_STATUS_PREPARING
+import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_POSITION_SELECTED
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_UPLOAD_IMAGE
+import com.shiyuan.fastclaw.feature.interview.bean.InterviewJobBean
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewJobDialog
@@ -74,6 +77,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         super.onCreate(savedInstanceState)
         initView()
         observeData()
+        observeEvents()
     }
 
     @SuppressLint("MissingSuperCall")
@@ -109,28 +113,6 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     }
 
     private fun observeData() {
-        mRealVM.messageList.observe(this) { list ->
-            // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
-            // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
-            val scrollToLatest = forceScrollToBottom || !binding.rvMessage.canScrollVertically(1)
-            forceScrollToBottom = false
-            msgAdapter.submitList(list)
-            if (list.isNotEmpty()) {
-                // 跳转 + 补偿滚动距离，确保刚插入(尚未测量高度)的最后一条完整贴底
-                RecyclerViewScrollHelper.scrollToBottom(binding.rvMessage, 100)
-            }
-        }
-        mRealVM.uploadList.observe(this) {
-            //目标岗位上传成功
-            mRealVM.sendAction(
-                actionType = ACTION_TARGET_JOB_SUBMIT,
-                payload = mapOf(
-                    "targetJobInputType" to TARGET_JOB_INPUT_UPLOAD_IMAGE,
-                    "uploadBatchId" to UUID.randomUUID().toString(),
-                    "imageOssKeys" to it,
-                )
-            )
-        }
         mRealVM.roomState.observe(this) {
             updateRoomState(it)
         }
@@ -153,28 +135,60 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         mRealVM.finishRoomEvent.observe(this) {
             //finish()
         }
+        mRealVM.messageList.observe(this) { list ->
+            // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
+            // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
+            val scrollToLatest = forceScrollToBottom || !binding.rvMessage.canScrollVertically(1)
+            forceScrollToBottom = false
+            msgAdapter.submitList(list)
+            if (list.isNotEmpty()) {
+                // 跳转 + 补偿滚动距离，确保刚插入(尚未测量高度)的最后一条完整贴底
+                RecyclerViewScrollHelper.scrollToBottom(binding.rvMessage, 100)
+            }
+        }
+        mRealVM.uploadList.observe(this) {
+            //目标岗位上传成功
+            mRealVM.sendAction(
+                actionType = ACTION_TARGET_JOB_SUBMIT,
+                payload = mapOf(
+                    "targetJobInputType" to TARGET_JOB_INPUT_UPLOAD_IMAGE,
+                    "uploadBatchId" to UUID.randomUUID().toString(),
+                    "imageOssKeys" to it,
+                )
+            )
+        }
+    }
+
+    private fun observeEvents() {
         observeEvents {
             on<Events.InterviewEvent> { event ->
-                Log.d("ClawAgentEvent2",event.msgGson)
+                val dataList = JsonUtil.parseList(event.msgGson, InterviewJobBean::class.java)
+                val dataItem = dataList?.firstOrNull() ?: return@on
+                mRealVM.sendAction(
+                    actionType = ACTION_TARGET_JOB_SUBMIT,
+                    payload = mapOf(
+                        "targetJobInputType" to TARGET_JOB_INPUT_POSITION_SELECTED,
+                        "jobPositionCode" to dataItem.code,
+                        "jobPositionName" to dataItem.name,
+                    )
+                )
             }
         }
     }
 
     private fun updateRoomState(state: InterviewRoomState) {
-        binding.layoutPrepare.gone()
+        binding.layoutWait.gone()
+        binding.layoutUpload.gone()
         binding.layoutAnswer.gone()
         binding.layoutFinish.gone()
         when (state) {
             InterviewRoomState.STARTING,
             InterviewRoomState.WAITING_TARGET_JOB -> {
-                binding.layoutPrepare.visible()
+                binding.layoutUpload.visible()
             }
             InterviewRoomState.TARGET_JOB_PARSING,
             InterviewRoomState.PLAN_GENERATING -> {
-                binding.layoutAnswer.visible()
-                binding.ivVoiceIcon.setImageResource(R.drawable.img_interview_voice_icon_waiting)
-                binding.ivVoiceIcon.isEnabled = false
-                binding.tvVoicePress.text = getString(R.string.interview_room_answer_wait)
+                binding.layoutWait.visible()
             }
             InterviewRoomState.TARGET_JOB_PARSE_SUCCESS,
             InterviewRoomState.PLAN_READY,
@@ -183,12 +197,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             InterviewRoomState.WAITING_FOLLOW_UP_DECISION,
             InterviewRoomState.ANSWERING -> {
                 binding.layoutAnswer.visible()
-                binding.ivVoiceIcon.setImageResource(R.drawable.img_interview_voice_icon_start)
-                binding.ivVoiceIcon.isEnabled = true
-                binding.tvVoicePress.text = getString(R.string.interview_room_answer_start)
             }
             InterviewRoomState.TARGET_JOB_PARSE_FAILED -> {
-                binding.layoutPrepare.visible()
+                binding.layoutUpload.visible()
                 binding.tvTargetJobTitle.text = "重新上传"
             }
             InterviewRoomState.REPORT_GENERATING,
@@ -197,7 +208,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 binding.layoutFinish.visible()
             }
             else -> {
-                binding.layoutPrepare.visible()
+                binding.layoutUpload.visible()
             }
         }
     }

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.NetworkUtils
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
@@ -59,6 +60,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             },
             onMessage = {
                 sseInsertMessages(it)
+                LogUtils.d("sseProcessor_$it")
             },
             onDone = { _, seq ->
                 updateLastMessageSeq(seq)
@@ -194,21 +196,22 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             }
             MSG_TEXT_DELTA ->
                 appendAiDelta(message.content.orEmpty())
-            MSG_TEXT_DONE ->
-                handleTextDone(message)
-            MSG_TEXT_BLOCKED -> {
-                handleTextBlocked(message)
+            MSG_TEXT_DONE -> {
+                handleRoomState(message)
                 handleTextDone(message)
             }
+            MSG_TEXT_BLOCKED -> {
+                handleRoomState(message)
+                handleTextBlocked(message)
+            }
             MSG_INTERVIEW_FINISHED -> {
+                handleRoomState(message)
                 handleInterviewFinished(message)
                 handleTextDone(message)
             }
             MSG_ERROR -> {
                 roomState.value = InterviewRoomState.ERROR
-                val errorMessage = message.errorMessage
-                    ?: message.payload?.errorMessage
-                    ?: TEXT_INTERVIEW_ERROR
+                val errorMessage = message.errorMessage ?: message.payload?.errorMessage ?: TEXT_INTERVIEW_ERROR
                 showToast(errorMessage)
             }
         }
@@ -240,10 +243,10 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         payload?.messages.orEmpty().forEachIndexed { index, item ->
             Log.d(
                 TAG,
-                "restoreRoom message[$index]: messageId=${item.messageId}, messageSeq=${item.messageSeq}, messageType=${item.messageType}, senderType=${item.senderType}, roomState=${item.roomState ?: item.payload?.roomState}, questionId=${item.payload?.questionId}, content=${item.content.orEmpty()}"
+                "restoreRoom_message[$index]: messageId=${item.messageId}, messageSeq=${item.messageSeq}, messageType=${item.messageType}, senderType=${item.senderType}, roomState=${item.roomState ?: item.payload?.roomState}, questionId=${item.payload?.questionId}, content=${item.content.orEmpty()}"
             )
         }
-        Log.d(TAG, "restoreRoom---------------------------------------")
+        Log.d(TAG, "restoreRoom_---------------------------------------")
         payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         payload?.latestMessageSeq?.let { updateLastMessageSeq(it) }
         currentQuestionId = payload?.messages?.lastQuestionId()
@@ -328,15 +331,15 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     private fun handleTextBlocked(message: InterviewAgentMessage) {
         message.content?.takeIf { it.isNotEmpty() }?.let { appendMessage(SENDER_AGENT, it) }
-        message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
+        /*message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         if (message.payload?.roomState.isNullOrBlank()) {
             roomState.value = InterviewRoomState.WAITING_USER_ANSWER
-        }
+        }*/
     }
 
     private fun handleInterviewFinished(message: InterviewAgentMessage) {
-        message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
-        roomState.value = InterviewRoomState.FINISHED
+        /*message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
+        roomState.value = InterviewRoomState.FINISHED*/
         finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
     }
 
@@ -446,6 +449,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         const val ACTION_ENTER_ROOM = "ENTER_ROOM"
         const val ACTION_TARGET_JOB_SUBMIT = "TARGET_JOB_SUBMIT"
         const val TARGET_JOB_INPUT_UPLOAD_IMAGE = "UPLOAD_IMAGE"
+        const val TARGET_JOB_INPUT_POSITION_SELECTED = "POSITION_SELECTED"
         const val ACTION_ANSWER_START = "ANSWER_START"
         const val ACTION_ANSWER_SUBMIT = "ANSWER_SUBMIT"
         const val ACTION_SESSION_RECOVER = "SESSION_RECOVER"

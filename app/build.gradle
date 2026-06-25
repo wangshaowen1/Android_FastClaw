@@ -390,5 +390,6 @@ dependencies {
 
     implementation 'com.umeng.umsdk:link:2.0.0'//集成U-Link，可选，如要统计分享回流次数和分享新增用户指标则必选
     implementation "com.github.li-xiaojun:XPopup:2.9.16"
+    implementation 'com.alibaba:fastjson:1.2.83'
 
 }
