@@ -48,16 +48,38 @@ import com.shiyuan.fastclaw.feature.settings.report.ReportActivity.Companion.REQ
 import com.shiyuan.fastclaw.router.AppNavigator
 import java.util.UUID
 
+/**
+ * 模拟面试房间页面，
+ * 负责展示面试消息流、目标岗位上传/选择、语音作答、TTS 播放以及结束面试确认。
+ * @author：CaoWei
+ * @date：2026/6/23 15:49
+ */
 class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, InterviewViewModel>() {
 
+    /** 模拟面试会话 ID，进入或恢复房间时使用。 */
     private val mInterviewId by lazy { intent.getBundleValue(INTERVIEW_ID, "") }
+
+    /** 是否从可恢复面试入口进入。 */
     private val mIsRecover by lazy { intent.getBundleValue(IS_RECOVER, false) }
+
+    /** 面试房间消息列表适配器。 */
     private val msgAdapter by lazy { InterviewRoomMessageAdapter() }
+
+    /** 百炼语音识别器，按需初始化并在页面销毁时释放。 */
     private var speechTranscriber: DashFunAsrSpeechTranscriber? = null
+
+    /** TTS 播放器，用于播放面试官问题。 */
     private var ttsPlayer: DashCosyVoiceStreamTtsPlayer? = null
+
+    /** 结束录音后是否需要把最终识别文本提交为答案。 */
     private var shouldSendVoiceResult = false
+
+    /** 当前语音识别得到的临时文本。 */
     private var pendingVoiceText: String? = null
+
+    /** 本地作答录音状态。 */
     private var answerRecording = false
+
     /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
     private var forceScrollToBottom = false
 
@@ -66,6 +88,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         private const val INTERVIEW_ID = "interviewId"
         private const val IS_RECOVER = "isRecover"
 
+        /**
+         * 打开模拟面试房间。
+         */
         fun start(activity: Activity?, interviewId: String?, isRecover: Boolean? = false) {
             val intent = Intent(activity, InterviewActivity::class.java)
             intent.putExtra(INTERVIEW_ID, interviewId)
@@ -74,6 +99,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 初始化页面、数据观察和跨页面事件监听。
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
@@ -81,6 +109,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         observeEvents()
     }
 
+    /**
+     * 初始化消息列表、底部操作区点击事件，并进入或恢复面试房间。
+     */
     private fun initView() {
         binding.rvMessage.layoutManager = LinearLayoutManager(this) //.apply { stackFromEnd = true }
         binding.rvMessage.adapter = msgAdapter
@@ -108,6 +139,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         mRealVM.enterOrRecover(mInterviewId, mIsRecover)
     }
 
+    /**
+     * 观察面试房间 ViewModel 数据，刷新消息、状态、语音播放和上传结果。
+     */
     private fun observeData() {
         mRealVM.roomState.observe(this) {
             updateRoomState(it)
@@ -155,6 +189,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 监听岗位选择页回传事件，并把选中的目标岗位提交给面试房间。
+     */
     private fun observeEvents() {
         observeEvents {
             on<Events.InterviewEvent> { event ->
@@ -172,6 +209,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 根据面试房间状态切换底部上传、等待、作答和结束区域。
+     */
     private fun updateRoomState(state: InterviewRoomState) {
         binding.layoutWait.gone()
         binding.layoutUpload.gone()
@@ -209,6 +249,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 根据会话状态刷新标题和状态标签颜色。
+     */
     private fun updateSessionStatus(sessionStatus: String?) {
         if (sessionStatus == SESSION_STATUS_PREPARING) {
             binding.tvTitle.text = "面试准备中"
@@ -221,6 +264,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 切换作答录音状态：未录音时开始识别，录音中时结束并提交识别文本。
+     */
     private fun toggleAnswerRecording() {
         if (mRealVM.roomState.value == InterviewRoomState.PLAN_GENERATING) return
         if (answerRecording) {
@@ -239,6 +285,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 检查录音权限并启动语音识别。
+     */
     private fun startVoiceRecognizing(): Boolean {
         if (AppNavigator.checkLoginIntercepted(false)) return false
         if (!PermissionsUtils.checkPermission(this, Manifest.permission.RECORD_AUDIO)) {
@@ -259,6 +308,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 结束或取消语音识别；正常结束时等待最终识别结果并提交。
+     */
     private fun finishVoiceRecognizing(canceled: Boolean) {
         if (canceled) {
             shouldSendVoiceResult = false
@@ -276,6 +328,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         resetVoiceRecognizingState()
     }
 
+    /**
+     * 懒加载面试语音识别器，并处理识别回调。
+     */
     private fun ensureSpeechTranscriber(): DashFunAsrSpeechTranscriber {
         return speechTranscriber ?: DashFunAsrSpeechTranscriber(
             context = applicationContext,
@@ -319,6 +374,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         ).also { speechTranscriber = it }
     }
 
+    /**
+     * 懒加载 TTS 播放器，用于播放面试官问题。
+     */
     private fun ensureTtsPlayer(): DashCosyVoiceStreamTtsPlayer {
         return ttsPlayer ?: DashCosyVoiceStreamTtsPlayer(
             context = applicationContext,
@@ -337,6 +395,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         ).also { ttsPlayer = it }
     }
 
+    /**
+     * 提交当前已识别到的语音文本。
+     */
     private fun sendVoiceMessage(): Boolean {
         val text = pendingVoiceText?.trim()?.takeIf { it.isNotEmpty() } ?: return false
         pendingVoiceText = null
@@ -345,12 +406,18 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         return true
     }
 
+    /**
+     * 重置本地语音识别和作答计时状态。
+     */
     private fun resetVoiceRecognizingState() {
         answerRecording = false
         updateVoiceActionRecording(false)
         mRealVM.stopTiming()
     }
 
+    /**
+     * 刷新底部作答按钮图标和声波动画。
+     */
     private fun updateVoiceActionRecording(recording: Boolean) {
         binding.ivVoiceIcon.setImageResource(if (recording) R.drawable.img_interview_voice_icon_recording
             else R.drawable.img_interview_voice_icon_start
@@ -362,6 +429,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 展示结束面试确认弹窗，确认后强制结束面试。
+     */
     fun showFinishDialog() {
         val dialog = InterviewFinishDialog(this).showDialog()
         dialog.listener = {
@@ -373,16 +443,25 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 展示目标岗位截图帮助弹窗。
+     */
     fun showTargetJobDialog() {
         InterviewJobDialog(this).showDialog()
     }
 
+    /**
+     * 请求相册/图片权限，授权后打开图片选择器。
+     */
     private fun requestAlbumPermission() {
         requestImages2VideosPermissions {
             if (it) openAlbum()
         }
     }
 
+    /**
+     * 打开图片选择器，选择目标岗位截图。
+     */
     private fun openAlbum() {
         Matisse.from(this)
             .choose(MimeType.ofImage(), false)
@@ -399,6 +478,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             .forResult(REQUEST_CODE_CHOOSE)
     }
 
+    /**
+     * 接收图片选择结果，并上传目标岗位截图。
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
@@ -406,11 +488,17 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    /**
+     * 系统返回键统一走结束面试确认弹窗。
+     */
     @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         showFinishDialog()
     }
 
+    /**
+     * 释放语音识别、TTS 和声波动画资源。
+     */
     override fun onDestroy() {
         binding.ivVoiceBadge.stopWaveAnimation()
         speechTranscriber?.release()

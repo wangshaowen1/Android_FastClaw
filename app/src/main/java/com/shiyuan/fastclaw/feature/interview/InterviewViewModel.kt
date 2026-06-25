@@ -26,28 +26,71 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+/**
+ * 模拟面试房间 ViewModel。
+ *
+ * 负责面试间 SSE 交互、房间状态流转、消息列表合并、目标岗位提交、语音作答提交和强制结束面试。
+ */
 class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
+    /** 当前房间状态，用于驱动底部操作区展示。 */
     val roomState = MutableLiveData(InterviewRoomState.STARTING)
+
+    /** 当前会话状态，用于驱动页面标题和状态标签。 */
     val sessionStatus = MutableLiveData(SESSION_STATUS_PREPARING)
+
+    /** 面试房间消息列表。 */
     val messageList = MutableLiveData<List<InterviewMessageInfo>>(emptyList())
+
+    /** SSE 是否正在处理。 */
     val streaming = MutableLiveData(false)
+
+    /** 面试结束后通知页面关闭并回到对应小虾对话。 */
     val finishRoomEvent = MutableLiveData<String?>()
+
+    /** 页面 Toast 文案。 */
     val toastMessage = MutableLiveData<String>()
+
+    /** 底部语音按钮文案。 */
     val answerActionText = MutableLiveData(ANSWER_START_TEXT)
+
+    /** 当前作答计时文本。 */
     val answerDurationText = MutableLiveData("")
+
+    /** 目标岗位截图上传成功后的 OSS key 列表。 */
     val uploadList = MutableLiveData<List<String>>()
+
+    /** TTS 临时 token。 */
     val ttsToken = MutableLiveData<String>()
+
+    /** 需要播放的 TTS 文本事件。 */
     val ttsSpeakEvent = MutableLiveData<String>()
+
+    /** 当前模拟面试会话 ID。 */
     var mInterviewId: String? = null
+
+    /** 面试结束后回到的小虾对话 ID。 */
     var mConversationId: String? = null
+
+    /** 端侧已处理的最后一条面试消息序号。 */
     private var lastMessageSeq: Long = 0L
+
+    /** 当前正在回答或等待回答的问题 ID。 */
     private var currentQuestionId: String? = null
+
+    /** 当前流式 AI 消息本地 ID，用于 TEXT_DELTA 追加更新。 */
     private var currentAiMessageId: String? = null
+
+    /** 按消息 ID 保存的端侧消息缓存。 */
     private val messageStore = LinkedHashMap<String, InterviewMessageInfo>()
+
+    /** 作答计时任务。 */
     private var answerTimerJob: Job? = null
+
+    /** 本轮作答开始时间戳。 */
     private var answerStartTime = 0L
 
+    /** 模拟面试 SSE 事件处理器。 */
     private val sseProcessor by lazy {
         InterviewSseProcessor(
             onStart = {
@@ -74,8 +117,12 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         )
     }
 
+    /** 模拟面试 SSE 流处理器。 */
     private val sseHandler by lazy { RawSSEStreamHandler(viewModelScope, sseProcessor) }
 
+    /**
+     * 进入或恢复模拟面试房间。
+     */
     fun enterOrRecover(interviewId: String?, isRecover: Boolean) {
         mInterviewId = interviewId
         queryAudioToken()
@@ -91,6 +138,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 上传目标岗位截图，成功后由页面观察 uploadList 提交目标岗位动作。
+     */
     fun uploadTarget(uris: List<Uri>) {
         if (uris.isEmpty()) return
         roomState.value = InterviewRoomState.TARGET_JOB_PARSING
@@ -106,6 +156,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 开始当前题作答，并向服务端发送 ANSWER_START。
+     */
     fun startAnswer(): Boolean {
         val questionId = currentQuestionId?.takeIf { it.isNotBlank() } ?: UUID.randomUUID().toString()
         currentQuestionId = questionId
@@ -120,16 +173,27 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         return true
     }
 
+    /**
+     * 提交用户作答文本，并用同一个 answerSubmitId 关联本地消息与服务端请求。
+     */
     fun submitAnswer(answerText: String, endReason: String = ANSWER_END_USER_SUBMIT) {
         val text = answerText.trim()
         if (text.isEmpty()) return
         stopTiming()
-        appendMessage(SENDER_USER, text)
+        val answerSubmitId = UUID.randomUUID().toString()
+        appendMessage(
+            InterviewMessageInfo(
+                id = UUID.randomUUID().toString(),
+                senderType = SENDER_USER,
+                content = text,
+                answerSubmitId = answerSubmitId,
+            )
+        )
         sendAction(
             actionType = ACTION_ANSWER_SUBMIT,
             payload = mapOf(
                 "questionId" to currentQuestionId,
-                "answerSubmitId" to UUID.randomUUID().toString(),
+                "answerSubmitId" to answerSubmitId,
                 "answerText" to text,
                 "asrFinalText" to text,
                 "answerEndReason" to endReason,
@@ -137,6 +201,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         )
     }
 
+    /**
+     * 开始作答计时。
+     */
     fun startTiming() {
         answerTimerJob?.cancel()
         answerStartTime = System.currentTimeMillis()
@@ -149,6 +216,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 停止作答计时并恢复按钮文案。
+     */
     fun stopTiming() {
         answerTimerJob?.cancel()
         answerTimerJob = null
@@ -157,6 +227,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         answerDurationText.value = ""
     }
 
+    /**
+     * 发送面试间动作 SSE 请求。
+     */
     fun sendAction(actionType: String, payload: Map<String, Any?>?) {
         val flow = mRepo.api.mockInterviewStream(
             MockInterviewStreamBody(
@@ -171,6 +244,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         sseHandler.start(flow)
     }
 
+    /**
+     * 构建服务端动作请求所需的端侧快照。
+     */
     private fun buildClientSnapshot(actionType: String): Map<String, Any?> {
         return mapOf(
             "page" to "MOCK_INTERVIEW_ROOM",
@@ -180,6 +256,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         )
     }
 
+    /**
+     * 处理单条模拟面试 SSE 消息，并分发到对应业务处理逻辑。
+     */
     fun sseInsertMessages(message: InterviewAgentMessage) {
         message.messageSeq?.let {
             if (it <= lastMessageSeq) return
@@ -215,6 +294,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 处理恢复房间相关 payload，命中恢复动作时拦截后续普通消息处理。
+     */
     private fun handleRecoverPayload(message: InterviewAgentMessage): Unit? {
         return when (message.payload?.recoverAction) {
             RECOVER_ACTION_RESTORE_ROOM -> {
@@ -236,6 +318,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 恢复面试房间现场：还原历史消息、最新题目、消息序号和房间状态。
+     */
     private fun restoreRoom(message: InterviewAgentMessage) {
         val payload = message.payload
         payload?.messages.orEmpty().forEachIndexed { index, item ->
@@ -269,16 +354,28 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 it.senderType == SENDER_AGENT && it.content == question.content
             }
         }?.content?.let {
-            appendMessage(SENDER_AGENT, it)
+            appendMessage(
+                InterviewMessageInfo(
+                    id = UUID.randomUUID().toString(),
+                    senderType = SENDER_AGENT,
+                    content = it,
+                )
+            )
         }
 
         handleRoomState(message)
     }
 
+    /**
+     * 更新端侧已处理的最后消息序号。
+     */
     private fun updateLastMessageSeq(seq: Long?) {
         seq?.takeIf { it > lastMessageSeq }?.let { lastMessageSeq = it }
     }
 
+    /**
+     * 根据服务端 roomState/sessionStatus 更新端侧房间状态。
+     */
     private fun handleRoomState(event: InterviewAgentMessage) {
         event.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         when (event.payload?.roomState ?: event.roomState) {
@@ -306,6 +403,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 处理完整文本消息，Agent 文本用于展示和 TTS，User 文本由本地提交时已插入。
+     */
     private fun handleTextDone(message: InterviewAgentMessage) {
         message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         currentQuestionId = message.payload?.questionId?.takeIf { it.isNotEmpty() } ?: currentQuestionId
@@ -326,20 +426,38 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         currentAiMessageId = null
     }
 
+    /**
+     * 处理内容安全拦截文本；优先按 answerSubmitId 替换本地用户回答。
+     */
     private fun handleTextBlocked(message: InterviewAgentMessage) {
-        message.content?.takeIf { it.isNotEmpty() }?.let { appendMessage(SENDER_AGENT, it) }
+        if (replaceBlockedAnswerMessage(message)) return
+        message.content?.takeIf { it.isNotEmpty() }?.let {
+            appendMessage(
+                InterviewMessageInfo(
+                    id = UUID.randomUUID().toString(),
+                    senderType = SENDER_AGENT,
+                    content = it,
+                )
+            )
+        }
         /*message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         if (message.payload?.roomState.isNullOrBlank()) {
             roomState.value = InterviewRoomState.WAITING_USER_ANSWER
         }*/
     }
 
+    /**
+     * 处理面试结束事件，通知页面退出面试房间。
+     */
     private fun handleInterviewFinished(message: InterviewAgentMessage) {
+        finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
         /*message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         roomState.value = InterviewRoomState.FINISHED*/
-        finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
     }
 
+    /**
+     * 追加 Agent 流式文本片段。
+     */
     private fun appendAiDelta(text: String) {
         if (text.isEmpty()) return
         val targetId = currentAiMessageId
@@ -353,30 +471,66 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 用完整文本替换当前流式 AI 消息。
+     */
     private fun replaceCurrentAiMessage(text: String) {
         val targetId = currentAiMessageId
         val old = targetId?.let { messageStore[it] }
         if (old != null) {
             ingestMessages(listOf(old.copy(content = text)))
         } else {
-            appendMessage(SENDER_AGENT, text)
+            appendMessage(
+                InterviewMessageInfo(
+                    id = UUID.randomUUID().toString(),
+                    senderType = SENDER_AGENT,
+                    content = text,
+                )
+            )
         }
     }
 
-    private fun appendMessage(senderType: String, text: String) {
-        if (text.isEmpty()) return
-        ingestMessages(listOf(InterviewMessageInfo(UUID.randomUUID().toString(), senderType, text)))
+    /**
+     * 追加单条端侧消息。
+     */
+    private fun appendMessage(message: InterviewMessageInfo) {
+        message.content?.let { ingestMessages(listOf(message)) }
     }
 
+    /**
+     * 服务端返回 TEXT_BLOCKED 时，按 answerSubmitId 替换对应的本地用户回答内容。
+     */
+    private fun replaceBlockedAnswerMessage(message: InterviewAgentMessage): Boolean {
+        val blockedText = message.content?.takeIf { it.isNotBlank() } ?: return false
+        val answerSubmitId = message.payload?.answerSubmitId?.takeIf { it.isNotBlank() } ?: return false
+        val blockedRoomState = message.payload.roomState ?: message.roomState
+        if (blockedRoomState != ROOM_STATE_WAITING_USER_ANSWER) return false
+        val target = messageStore.entries.firstOrNull { it.value.answerSubmitId == answerSubmitId } ?: return false
+        target.setValue(target.value.copy(content = blockedText))
+        refreshMessageList()
+        return true
+    }
+
+    /**
+     * 将服务端面试消息转换为端侧列表消息。
+     */
     private fun InterviewAgentMessage.toRoomMessage(): InterviewMessageInfo? {
         val text = content?.takeIf { it.isNotBlank() } ?: return null
         val sender = senderType?.takeIf { it.isNotBlank() } ?: SENDER_AGENT
         val localId = messageId
             ?: messageSeq?.toString()
             ?: UUID.randomUUID().toString()
-        return InterviewMessageInfo(localId, sender, text)
+        return InterviewMessageInfo(
+            id = localId,
+            senderType = sender,
+            content = text,
+            answerSubmitId = payload?.answerSubmitId,
+        )
     }
 
+    /**
+     * 从历史消息中查找最后一条带 questionId 的题目 ID。
+     */
     private fun List<InterviewAgentMessage>.lastQuestionId(): String? {
         return sortedWith(
             compareBy<InterviewAgentMessage> { it.messageSeq ?: Long.MIN_VALUE }
@@ -385,21 +539,33 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             .firstNotNullOfOrNull { it.payload?.questionId?.takeIf { questionId -> questionId.isNotBlank() } }
     }
 
+    /**
+     * 合并消息缓存并刷新列表。
+     */
     private fun ingestMessages(messages: List<InterviewMessageInfo>?) {
         if (messages.isNullOrEmpty()) return
         messages.forEach { messageStore[it.id?:""] = it }
         refreshMessageList()
     }
 
+    /**
+     * 将消息缓存回推给页面列表。
+     */
     private fun refreshMessageList() {
         messageList.value = messageStore.values.toList()
     }
 
+    /**
+     * 格式化当前作答时长。
+     */
     private fun formatAnswerDuration(): String {
         val seconds = ((System.currentTimeMillis() - answerStartTime).coerceAtLeast(0L) / 1000L).toInt()
         return "%02d:%02d".format(seconds / 60, seconds % 60)
     }
 
+    /**
+     * 查询模拟面试音频 token，用于 TTS 初始化。
+     */
     private fun queryAudioToken() {
         request(
                 apiBlock = { mRepo.api.queryMockInterviewAudioToken(MockInterviewAudioTokenBody(interviewId = mInterviewId)) },
@@ -409,6 +575,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 强制结束当前模拟面试。
+     */
     fun forceFinish(onSuccess: (data: MockInterviewForceCancelData?) -> Unit) {
         requestWithLoading(
             apiBlock = {
@@ -429,12 +598,18 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 发送 Toast 文案到页面。
+     */
     private fun showToast(text: String) {
         if (text.isNotEmpty()) {
             toastMessage.value = text
         }
     }
 
+    /**
+     * 清理计时任务和 SSE 连接。
+     */
     override fun onCleared() {
         answerTimerJob?.cancel()
         sseHandler.cancel()
@@ -442,50 +617,89 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     companion object {
+        /** 日志标签。 */
         private const val TAG = "InterviewViewModel"
+        /** 动作：进入面试房间。 */
         const val ACTION_ENTER_ROOM = "ENTER_ROOM"
+        /** 动作：提交目标岗位。 */
         const val ACTION_TARGET_JOB_SUBMIT = "TARGET_JOB_SUBMIT"
+        /** 目标岗位输入方式：上传岗位截图。 */
         const val TARGET_JOB_INPUT_UPLOAD_IMAGE = "UPLOAD_IMAGE"
+        /** 目标岗位输入方式：选择岗位。 */
         const val TARGET_JOB_INPUT_POSITION_SELECTED = "POSITION_SELECTED"
+        /** 动作：开始作答。 */
         const val ACTION_ANSWER_START = "ANSWER_START"
+        /** 动作：提交作答。 */
         const val ACTION_ANSWER_SUBMIT = "ANSWER_SUBMIT"
+        /** 动作：恢复面试会话。 */
         const val ACTION_SESSION_RECOVER = "SESSION_RECOVER"
+        /** 作答结束原因：用户主动提交。 */
         const val ANSWER_END_USER_SUBMIT = "USER_SUBMIT"
+        /** 底部按钮文案：开始作答。 */
         const val ANSWER_START_TEXT = "开始作答"
+        /** 底部按钮文案：结束当前回答。 */
         const val ANSWER_END_TEXT = "点击结束回答"
-
+        /** 创建面试失败提示。 */
         private const val TEXT_INTERVIEW_CREATE_FAILED = "模拟面试创建失败"
+        /** 岗位截图上传失败提示。 */
         private const val TEXT_JOB_UPLOAD_FAILED = "岗位截图上传失败，请重新上传"
+        /** 面试通用异常提示。 */
         private const val TEXT_INTERVIEW_ERROR = "模拟面试异常，请稍后重试"
+        /** 面试已关闭提示。 */
         private const val TEXT_INTERVIEW_CLOSED = "当前面试已关闭"
+        /** 当前题目未准备好提示。 */
         private const val TEXT_QUESTION_NOT_READY = "当前题目未就绪，请稍后再试"
+        /** 恢复场景：点击入口进入。 */
         private const val RECOVER_SCENE_ENTRY_CLICK = "ENTRY_CLICK"
+        /** 恢复动作：恢复面试房间现场。 */
         private const val RECOVER_ACTION_RESTORE_ROOM = "RESTORE_ROOM"
+        /** 恢复动作：返回小虾对话。 */
         private const val RECOVER_ACTION_RETURN_TO_CHAT = "RETURN_TO_CHAT"
+        /** 恢复动作：会话已关闭。 */
         private const val RECOVER_ACTION_SESSION_CLOSED = "SESSION_CLOSED"
+        /** 强制结束原因：用户主动结束。 */
         private const val FORCE_CANCEL_REASON_USER = "USER_FORCE_CANCEL"
+        /** SSE 消息类型：房间状态变化。 */
         const val MSG_ROOM_STATE_CHANGED = "ROOM_STATE_CHANGED"
+        /** SSE 消息类型：文本流式片段。 */
         const val MSG_TEXT_DELTA = "TEXT_DELTA"
+        /** SSE 消息类型：文本完整输出。 */
         const val MSG_TEXT_DONE = "TEXT_DONE"
+        /** SSE 消息类型：内容安全拦截文本。 */
         const val MSG_TEXT_BLOCKED = "TEXT_BLOCKED"
+        /** SSE 消息类型：面试结束。 */
         const val MSG_INTERVIEW_FINISHED = "INTERVIEW_FINISHED"
+        /** SSE 消息类型：错误。 */
         const val MSG_ERROR = "ERROR"
+        /** 消息发送方：面试官/Agent。 */
         const val SENDER_AGENT = "AGENT"
+        /** 消息发送方：用户。 */
         const val SENDER_USER = "USER"
-
+        /** 房间状态：等待目标岗位。 */
         const val ROOM_STATE_WAITING_TARGET_JOB = "WAITING_TARGET_JOB"
+        /** 房间状态：目标岗位解析中。 */
         const val ROOM_STATE_TARGET_JOB_PARSING = "TARGET_JOB_PARSING"
+        /** 房间状态：目标岗位解析成功。 */
         const val ROOM_STATE_TARGET_JOB_PARSE_SUCCESS = "TARGET_JOB_PARSE_SUCCESS"
+        /** 房间状态：目标岗位解析失败。 */
         const val ROOM_STATE_TARGET_JOB_PARSE_FAILED = "TARGET_JOB_PARSE_FAILED"
+        /** 房间状态：面试计划生成中。 */
         const val ROOM_STATE_PLAN_GENERATING = "PLAN_GENERATING"
+        /** 房间状态：面试计划已生成。 */
         const val ROOM_STATE_PLAN_READY = "PLAN_READY"
+        /** 房间状态：等待用户作答。 */
         const val ROOM_STATE_WAITING_USER_ANSWER = "WAITING_USER_ANSWER"
+        /** 房间状态：回答已提交。 */
         const val ROOM_STATE_ANSWER_SUBMITTED = "ANSWER_SUBMITTED"
+        /** 房间状态：等待追问判断。 */
         const val ROOM_STATE_WAITING_FOLLOW_UP_DECISION = "WAITING_FOLLOW_UP_DECISION"
+        /** 房间状态：报告生成中。 */
         const val ROOM_STATE_REPORT_GENERATING = "REPORT_GENERATING"
+        /** 房间状态：面试已完成。 */
         const val ROOM_STATE_FINISHED = "FINISHED"
+        /** 房间状态：面试已取消。 */
         const val ROOM_STATE_CANCELED = "CANCELED"
-
+        /** 会话状态：准备中。 */
         const val SESSION_STATUS_PREPARING = "PREPARING"
     }
 }
