@@ -77,8 +77,17 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /** 当前语音识别得到的临时文本。 */
     private var pendingVoiceText: String? = null
 
+    /** 当前等待提交的作答结束原因。 */
+    private var pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
+
     /** 本地作答录音状态。 */
     private var answerRecording = false
+
+    /** 是否等待结束语音播报完成后自动关闭页面。 */
+    private var finishAfterTts = false
+
+    /** 当前是否正在播放 TTS。 */
+    private var ttsPlaying = false
 
     /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
     private var forceScrollToBottom = false
@@ -161,14 +170,29 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             binding.tvVoiceDuration.text = it
             binding.tvVoiceDuration.visibility = if (it.isNotEmpty()) VISIBLE else INVISIBLE
         }
+        mRealVM.answerTimeoutEvent.observe(this) {
+            if (answerRecording) {
+                answerRecording = false
+                finishVoiceRecognizing(
+                    canceled = false,
+                    endReason = InterviewViewModel.ANSWER_END_TIMEOUT_AUTO_SUBMIT,
+                )
+            }
+        }
         mRealVM.toastMessage.observe(this) {
             showMessage(it)
         }
         mRealVM.ttsSpeakEvent.observe(this) {
-            ensureTtsPlayer().speak(it)
+            ttsPlaying = ensureTtsPlayer().speak(it)
         }
         mRealVM.finishRoomEvent.observe(this) {
             //finish()
+        }
+        mRealVM.finishAfterTtsEvent.observe(this) {
+            finishAfterTts = true
+            if (!ttsPlaying) {
+                finish()
+            }
         }
         mRealVM.messageList.observe(this) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
@@ -218,18 +242,20 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      * 根据面试房间状态切换底部上传、等待、作答和结束区域。
      */
     private fun updateRoomState(state: InterviewRoomState) {
-        binding.layoutWait.gone()
-        binding.layoutUpload.gone()
-        binding.layoutAnswer.gone()
-        binding.layoutFinish.gone()
         when (state) {
             InterviewRoomState.STARTING,
             InterviewRoomState.WAITING_TARGET_JOB -> {
                 binding.layoutUpload.visible()
+                binding.layoutWait.gone()
+                binding.layoutAnswer.gone()
+                binding.layoutFinish.gone()
             }
             InterviewRoomState.TARGET_JOB_PARSING,
             InterviewRoomState.PLAN_GENERATING -> {
                 binding.layoutWait.visible()
+                binding.layoutUpload.gone()
+                binding.layoutAnswer.gone()
+                binding.layoutFinish.gone()
             }
             InterviewRoomState.TARGET_JOB_PARSE_SUCCESS,
             InterviewRoomState.PLAN_READY,
@@ -238,19 +264,26 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             InterviewRoomState.WAITING_FOLLOW_UP_DECISION,
             InterviewRoomState.ANSWERING -> {
                 binding.layoutAnswer.visible()
+                binding.layoutWait.gone()
+                binding.layoutUpload.gone()
+                binding.layoutFinish.gone()
             }
             InterviewRoomState.TARGET_JOB_PARSE_FAILED -> {
                 binding.layoutUpload.visible()
+                binding.layoutWait.gone()
+                binding.layoutAnswer.gone()
+                binding.layoutFinish.gone()
                 binding.tvTargetJobTitle.text = getString(R.string.reupload)
             }
             InterviewRoomState.REPORT_GENERATING,
             InterviewRoomState.FINISHED,
             InterviewRoomState.CANCELED -> {
                 binding.layoutFinish.visible()
+                binding.layoutWait.gone()
+                binding.layoutUpload.gone()
+                binding.layoutAnswer.gone()
             }
-            else -> {
-                binding.layoutUpload.visible()
-            }
+            InterviewRoomState.ERROR -> {}
         }
     }
 
@@ -304,6 +337,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         ttsPlayer?.stop()
         pendingVoiceText = null
         shouldSendVoiceResult = false
+        pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
         return runCatching {
             ensureSpeechTranscriber().start()
         }.getOrElse { throwable ->
@@ -316,16 +350,21 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /**
      * 结束或取消语音识别；正常结束时等待最终识别结果并提交。
      */
-    private fun finishVoiceRecognizing(canceled: Boolean) {
+    private fun finishVoiceRecognizing(
+        canceled: Boolean,
+        endReason: String = InterviewViewModel.ANSWER_END_USER_SUBMIT,
+    ) {
         if (canceled) {
             shouldSendVoiceResult = false
             pendingVoiceText = null
+            pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
             speechTranscriber?.cancel()
             resetVoiceRecognizingState()
             return
         }
         shouldSendVoiceResult = true
-        if (sendVoiceMessage()) {
+        pendingAnswerEndReason = endReason
+        if (sendVoiceMessage(endReason)) {
             speechTranscriber?.cancel()
         } else {
             speechTranscriber?.stop()
@@ -352,27 +391,29 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                     if (isDestroyed) return
                     pendingVoiceText = text
                     if (shouldSendVoiceResult) {
-                        sendVoiceMessage()
+                        sendVoiceMessage(pendingAnswerEndReason)
                     }
                 }
 
                 override fun onError(message: String) {
                     if (isDestroyed) return
-                    if (shouldSendVoiceResult && !sendVoiceMessage()) {
+                    if (shouldSendVoiceResult && !sendVoiceMessage(pendingAnswerEndReason)) {
                         showMessage(message)
                     } else if (!shouldSendVoiceResult) {
                         showMessage(message)
                     }
                     shouldSendVoiceResult = false
+                    pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
                     resetVoiceRecognizingState()
                 }
 
                 override fun onStopped() {
                     if (isDestroyed) return
-                    if (shouldSendVoiceResult && !sendVoiceMessage()) {
+                    if (shouldSendVoiceResult && !sendVoiceMessage(pendingAnswerEndReason)) {
                         showMessage(getString(R.string.interview_voice_no_content))
                     }
                     shouldSendVoiceResult = false
+                    pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
                     resetVoiceRecognizingState()
                 }
             },
@@ -392,9 +433,21 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 )
             },
             callback = object : DashCosyVoiceStreamTtsPlayer.Callback {
+                override fun onCompleted() {
+                    ttsPlaying = false
+                    if (finishAfterTts) {
+                        finish()
+                    }
+                }
+
                 override fun onError(message: String) {
+                    ttsPlaying = false
                     Log.d(TAG, "tts play failed: $message")
-                    showMessage(message)
+                    if (finishAfterTts) {
+                        finish()
+                    } else {
+                        showMessage(message)
+                    }
                 }
             },
         ).also { ttsPlayer = it }
@@ -403,11 +456,12 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /**
      * 提交当前已识别到的语音文本。
      */
-    private fun sendVoiceMessage(): Boolean {
+    private fun sendVoiceMessage(endReason: String = pendingAnswerEndReason): Boolean {
         val text = pendingVoiceText?.trim()?.takeIf { it.isNotEmpty() } ?: return false
         pendingVoiceText = null
         shouldSendVoiceResult = false
-        mRealVM.submitAnswer(text)
+        pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
+        mRealVM.submitAnswer(text, endReason)
         return true
     }
 

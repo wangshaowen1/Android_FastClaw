@@ -16,7 +16,7 @@ data class InterviewMessageInfo(
     val content: String ?= null,
 
     /** 用户提交回答时生成的幂等 ID，用于服务端拦截消息回填匹配本地历史消息 */
-    val answerSubmitId: String? = null,
+    val answerSubmitId: String? = null
 )
 
 /**

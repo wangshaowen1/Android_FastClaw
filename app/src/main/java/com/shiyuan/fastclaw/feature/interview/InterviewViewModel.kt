@@ -48,6 +48,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 面试结束后通知页面关闭并回到对应小虾对话。 */
     val finishRoomEvent = MutableLiveData<String?>()
 
+    /** 收到 INTERVIEW_FINISHED 后，等待结束语音播报完成再关闭页面。 */
+    val finishAfterTtsEvent = MutableLiveData<String?>()
+
     /** 页面 Toast 文案。 */
     val toastMessage = MutableLiveData<String>()
 
@@ -56,6 +59,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 当前作答计时文本。 */
     val answerDurationText = MutableLiveData("")
+
+    /** 当前作答倒计时结束事件。 */
+    val answerTimeoutEvent = MutableLiveData<Unit>()
 
     /** 目标岗位截图上传成功后的 OSS key 列表。 */
     val uploadList = MutableLiveData<List<String>>()
@@ -84,11 +90,8 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 按消息 ID 保存的端侧消息缓存。 */
     private val messageStore = LinkedHashMap<String, InterviewMessageInfo>()
 
-    /** 作答计时任务。 */
+    /** 作答倒计时任务。 */
     private var answerTimerJob: Job? = null
-
-    /** 本轮作答开始时间戳。 */
-    private var answerStartTime = 0L
 
     /** 模拟面试 SSE 事件处理器。 */
     private val sseProcessor by lazy {
@@ -101,7 +104,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             },
             onMessage = {
                 sseInsertMessages(it)
-                LogUtils.d("sseProcessor_$it")
+                LogUtils.d("sseProcessor_onMessage$it")
             },
             onDone = { _, seq ->
                 updateLastMessageSeq(seq)
@@ -202,27 +205,31 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 开始作答计时。
+     * 开始作答倒计时。
      */
     fun startTiming() {
         answerTimerJob?.cancel()
-        answerStartTime = System.currentTimeMillis()
         answerTimerJob = viewModelScope.launch {
-            while (isActive) {
+            var remainingSeconds = ANSWER_COUNTDOWN_SECONDS
+            while (isActive && remainingSeconds >= 0) {
                 answerActionText.value = ANSWER_END_TEXT
-                answerDurationText.value = formatAnswerDuration()
+                answerDurationText.value = formatAnswerDuration(remainingSeconds)
+                if (remainingSeconds == 0) {
+                    answerTimeoutEvent.value = Unit
+                    break
+                }
                 delay(1000L)
+                remainingSeconds--
             }
         }
     }
 
     /**
-     * 停止作答计时并恢复按钮文案。
+     * 停止作答倒计时并恢复按钮文案。
      */
     fun stopTiming() {
         answerTimerJob?.cancel()
         answerTimerJob = null
-        answerStartTime = 0L
         answerActionText.value = ANSWER_START_TEXT
         answerDurationText.value = ""
     }
@@ -282,9 +289,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 handleTextBlocked(message)
             }
             MSG_INTERVIEW_FINISHED -> {
+                handleTextDone(message)
                 handleRoomState(message)
                 handleInterviewFinished(message)
-                handleTextDone(message)
             }
             MSG_ERROR -> {
                 roomState.value = InterviewRoomState.ERROR
@@ -432,27 +439,15 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun handleTextBlocked(message: InterviewAgentMessage) {
         if (replaceBlockedAnswerMessage(message)) return
         message.content?.takeIf { it.isNotEmpty() }?.let {
-            appendMessage(
-                InterviewMessageInfo(
-                    id = UUID.randomUUID().toString(),
-                    senderType = SENDER_AGENT,
-                    content = it,
-                )
-            )
+            appendMessage(InterviewMessageInfo(id = UUID.randomUUID().toString(), senderType = SENDER_AGENT, content = it))
         }
-        /*message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
-        if (message.payload?.roomState.isNullOrBlank()) {
-            roomState.value = InterviewRoomState.WAITING_USER_ANSWER
-        }*/
     }
 
     /**
-     * 处理面试结束事件，通知页面退出面试房间。
+     * 处理面试结束事件，通知页面等待结束语音播报完成后退出面试房间。
      */
     private fun handleInterviewFinished(message: InterviewAgentMessage) {
-        finishRoomEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
-        /*message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
-        roomState.value = InterviewRoomState.FINISHED*/
+        finishAfterTtsEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
     }
 
     /**
@@ -556,10 +551,10 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 格式化当前作答时长。
+     * 格式化当前作答剩余时长。
      */
-    private fun formatAnswerDuration(): String {
-        val seconds = ((System.currentTimeMillis() - answerStartTime).coerceAtLeast(0L) / 1000L).toInt()
+    private fun formatAnswerDuration(remainingSeconds: Int): String {
+        val seconds = remainingSeconds.coerceAtLeast(0)
         return "%02d:%02d".format(seconds / 60, seconds % 60)
     }
 
@@ -635,6 +630,10 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         const val ACTION_SESSION_RECOVER = "SESSION_RECOVER"
         /** 作答结束原因：用户主动提交。 */
         const val ANSWER_END_USER_SUBMIT = "USER_SUBMIT"
+        /** 作答结束原因：倒计时结束自动提交。 */
+        const val ANSWER_END_TIMEOUT_AUTO_SUBMIT = "TIMEOUT_AUTO_SUBMIT"
+        /** 单题作答倒计时秒数。 */
+        private const val ANSWER_COUNTDOWN_SECONDS = 180
         /** 底部按钮文案：开始作答。 */
         const val ANSWER_START_TEXT = "开始作答"
         /** 底部按钮文案：结束当前回答。 */
