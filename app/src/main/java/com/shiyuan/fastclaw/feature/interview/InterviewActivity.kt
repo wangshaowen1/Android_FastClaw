@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.interview
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.manager.FileManager
 import com.nhsd.mattise.Matisse
 import com.nhsd.mattise.MimeType
@@ -74,6 +76,11 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         observeData()
     }
 
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        showFinishDialog()
+    }
+
     private fun initView() {
         binding.rvMessage.layoutManager = LinearLayoutManager(this) //.apply { stackFromEnd = true }
         binding.rvMessage.adapter = msgAdapter
@@ -83,7 +90,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.btnTargetJob.setOnSingleClickListener {
             requestAlbumPermission()
         }
-        binding.layoutAnswer.setOnSingleClickListener {
+        binding.ivVoiceIcon.setOnSingleClickListener {
             toggleAnswerRecording()
         }
         binding.tvVoicePress.setOnSingleClickListener {
@@ -162,15 +169,23 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             InterviewRoomState.WAITING_TARGET_JOB -> {
                 binding.layoutPrepare.visible()
             }
-            InterviewRoomState.TARGET_JOB_PARSE_SUCCESS,
             InterviewRoomState.TARGET_JOB_PARSING,
-            InterviewRoomState.PLAN_GENERATING,
+            InterviewRoomState.PLAN_GENERATING -> {
+                binding.layoutAnswer.visible()
+                binding.ivVoiceIcon.setImageResource(R.drawable.img_interview_voice_icon_waiting)
+                binding.ivVoiceIcon.isEnabled = false
+                binding.tvVoicePress.text = getString(R.string.interview_room_answer_wait)
+            }
+            InterviewRoomState.TARGET_JOB_PARSE_SUCCESS,
             InterviewRoomState.PLAN_READY,
             InterviewRoomState.WAITING_USER_ANSWER,
             InterviewRoomState.ANSWER_SUBMITTED,
             InterviewRoomState.WAITING_FOLLOW_UP_DECISION,
             InterviewRoomState.ANSWERING -> {
                 binding.layoutAnswer.visible()
+                binding.ivVoiceIcon.setImageResource(R.drawable.img_interview_voice_icon_start)
+                binding.ivVoiceIcon.isEnabled = true
+                binding.tvVoicePress.text = getString(R.string.interview_room_answer_start)
             }
             InterviewRoomState.TARGET_JOB_PARSE_FAILED -> {
                 binding.layoutPrepare.visible()
@@ -196,6 +211,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     }
 
     private fun toggleAnswerRecording() {
+        if (mRealVM.roomState.value == InterviewRoomState.PLAN_GENERATING) return
         if (answerRecording) {
             answerRecording = false
             // 点击结束回答后等待 ASR 返回最终文本，计时先停，文本由回调发送。
@@ -325,8 +341,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     }
 
     private fun updateVoiceActionRecording(recording: Boolean) {
-        binding.ivVoiceIcon.setImageResource(
-            if (recording) R.drawable.img_interview_voice_icon_recording
+        binding.ivVoiceIcon.setImageResource(if (recording) R.drawable.img_interview_voice_icon_recording
             else R.drawable.img_interview_voice_icon_start
         )
         if (recording) {
@@ -338,7 +353,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
     fun showFinishDialog() {
         val dialog = InterviewFinishDialog(this).showDialog()
-        dialog.listener = { finish() }
+        dialog.listener = {
+            finishVoiceRecognizing(canceled = true)
+            mRealVM.forceFinish {
+                it?.message?.showToast()
+                finish()
+            }
+        }
     }
 
     fun showTargetJobDialog() {

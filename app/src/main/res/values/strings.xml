@@ -1054,6 +1054,7 @@
     <string name="interview_room_job_help">如何获得岗位截图&gt;</string>
     <string name="interview_room_answer_start">开始作答</string>
     <string name="interview_room_finish_interview">结束面试</string>
+    <string name="interview_room_answer_wait">请稍等…</string>
     <string name="interview_room_auto_exit_hint">语音结束后自动退出</string>
     <string name="interview_target_job_screenshot_guide_title">如何获得目标岗位截图</string>
     <string name="interview_target_job_screenshot_step_1_no">1</string>

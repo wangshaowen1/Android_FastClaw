@@ -1,6 +1,6 @@
 package com.shiyuan.fastclaw.feature.interview.bean
 
-data class InterviewRoomMessage(
+data class InterviewMessageInfo(
     /** 本地消息 ID，用于 RecyclerView diff 和流式消息覆盖更新 */
     val id: String,
 

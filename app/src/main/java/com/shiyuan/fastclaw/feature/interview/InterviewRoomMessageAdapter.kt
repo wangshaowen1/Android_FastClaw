@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.shiyuan.fastclaw.databinding.ItemInterviewAiBinding
 import com.shiyuan.fastclaw.databinding.ItemInterviewUserBinding
-import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomMessage
+import com.shiyuan.fastclaw.feature.interview.bean.InterviewMessageInfo
 
-class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewRoomMessage>() {
+class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewMessageInfo>() {
 
     init {
         register(TYPE_AGENT, { i, p -> AiViewHolder(ItemInterviewAiBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
@@ -19,37 +19,37 @@ class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewRoomMessage>()
     }
 
     private class AiViewHolder(private val binding: ItemInterviewAiBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: InterviewRoomMessage) {
+        fun bind(item: InterviewMessageInfo) {
             binding.tvContent.text = item.content
         }
     }
 
     private class UserViewHolder(private val binding: ItemInterviewUserBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: InterviewRoomMessage) {
+        fun bind(item: InterviewMessageInfo) {
             binding.tvContent.text = item.content
         }
     }
 
-    override fun submitList(list: List<InterviewRoomMessage>?) {
+    override fun submitList(list: List<InterviewMessageInfo>?) {
         val newList = list ?: emptyList()
         val result = DiffUtil.calculateDiff(MessageDiffCallback(items, newList))
         items = newList
         result.dispatchUpdatesTo(this)
     }
 
-    private inline fun <VH : RecyclerView.ViewHolder> register(itemType: Int, crossinline create: (inflater: LayoutInflater, parent: ViewGroup) -> VH, crossinline bind: (holder: VH, item: InterviewRoomMessage) -> Unit,
+    private inline fun <VH : RecyclerView.ViewHolder> register(itemType: Int, crossinline create: (inflater: LayoutInflater, parent: ViewGroup) -> VH, crossinline bind: (holder: VH, item: InterviewMessageInfo) -> Unit,
     ) {
-        addItemType(itemType, object : OnMultiItemAdapterListener<InterviewRoomMessage, VH> {
+        addItemType(itemType, object : OnMultiItemAdapterListener<InterviewMessageInfo, VH> {
             override fun onCreate(context: Context, parent: ViewGroup, viewType: Int): VH =
                 create(LayoutInflater.from(context), parent)
 
-            override fun onBind(holder: VH, position: Int, item: InterviewRoomMessage?) {
+            override fun onBind(holder: VH, position: Int, item: InterviewMessageInfo?) {
                 item?.let { bind(holder, it) }
             }
         })
     }
 
-    private fun InterviewRoomMessage.itemType(): Int {
+    private fun InterviewMessageInfo.itemType(): Int {
         return when (senderType) {
             InterviewViewModel.SENDER_USER -> TYPE_USER
             else -> TYPE_AGENT
@@ -57,8 +57,8 @@ class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewRoomMessage>()
     }
 
     private class MessageDiffCallback(
-        private val oldList: List<InterviewRoomMessage>,
-        private val newList: List<InterviewRoomMessage>,
+        private val oldList: List<InterviewMessageInfo>,
+        private val newList: List<InterviewMessageInfo>,
     ) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = oldList.size
 

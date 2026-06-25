@@ -34,6 +34,14 @@ data class MockInterviewAudioTokenData(
     val refreshBeforeSeconds: Int? = null,
 )
 
+data class MockInterviewForceCancelData(
+    val interviewId: String? = null,
+    val sessionStatus: String? = null,
+    val roomState: String? = null,
+    val cancelReason: String? = null,
+    val message: String? = null,
+)
+
 data class MockInterviewReportProgressData(
     val mockReportId: String? = null,
     val interviewId: String? = null,

@@ -35,6 +35,15 @@ data class MockInterviewAudioTokenBody(
     val serviceTypes: List<String> = listOf("ASR", "TTS"),
 )
 
+data class MockInterviewForceCancelBody(
+    /** 模拟面试会话 ID */
+    val interviewId: String? = null,
+    /** 强制结束请求幂等 ID */
+    val forceCancelRequestId: String? = null,
+    /** 取消原因，如 USER_FORCE_CANCEL */
+    val cancelReason: String? = null,
+)
+
 data class MockInterviewReportProgressBody(
     /** 模拟面试报告 ID */
     val mockReportId: String? = null,

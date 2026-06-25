@@ -38,6 +38,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePageBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePullBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewAudioTokenBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewForceCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgressBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportRetryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
@@ -81,6 +82,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewAudioTokenData
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewForceCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportProgressData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
@@ -389,6 +391,9 @@ interface ApiService {
     @Streaming
     @POST(ApiConstants.MOCK_INTERVIEW_STREAM)
     fun mockInterviewStream(@Body body: MockInterviewStreamBody): Flow<SSEvent>
+
+    @POST(ApiConstants.MOCK_INTERVIEW_FORCE_CANCEL)
+    suspend fun forceCancelMockInterview(@Body body: MockInterviewForceCancelBody): ApiResponse<MockInterviewForceCancelData?>
 
     @POST(ApiConstants.MOCK_INTERVIEW_AUDIO_TOKEN_QUERY)
     suspend fun queryMockInterviewAudioToken(@Body body: MockInterviewAudioTokenBody): ApiResponse<MockInterviewAudioTokenData?>
