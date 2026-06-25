@@ -29,7 +29,12 @@ public class Constants {
 
     public static final String SERVICE_URL = "https://res.aishiyuan.cn/agreement/userAgreement.html";
     public static final String PRIVACY_URL = "https://res.aishiyuan.cn/agreement/privacyPolicy.html";
-    public static final String SHRIMPSTICKS_URL = BuildConfig.H5_SERVER_URL+"/pages/resume/shrimpSticks/rules?nav=1";
+
+    public static final String INVITEFRIEND_RULES_URL = "https://res.aishiyuan.cn/agreement/inviteFriendRules.html";
+
+    //public static final String SHRIMPSTICKS_URL = BuildConfig.H5_SERVER_URL+"/pages/resume/shrimpSticks/rules?nav=1";
+    public static final String SHRIMPSTICKS_URL = "https://res.aishiyuan.cn/agreement/shrimpRules.html";
+    public static final String SHRIMPRECHARGEAGREEMENT_URL = "https://res.aishiyuan.cn/agreement/shrimpRechargeAgreement.html";
     public static final String DEFAULT_USER_VIP_PROTOCOL_URL = "https://file.jinguomanju.com/data/protocol/hyxy.html";
 
     public static final String DEFAULT_ALGORITHM_ANNOUNCEMENT = "https://file.jinguomanju.com/data/protocol/tgLLM-algorithm.html";

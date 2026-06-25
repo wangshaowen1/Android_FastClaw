@@ -671,6 +671,15 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 //聊天对话选择后回传
                 startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, event.msgGson)
             }
+            /**
+             * 接受消息，点击公司背调和模拟面试按钮
+             */
+            on<Events.CompanyInterviewEvent> { event ->
+                when (event.type){
+                    0 ->  binding.layoutBackCheck.performClick()
+                    else ->  binding.layoutInterview.performClick()
+                }
+            }
         }
 
         if (!User.get().isVisitor) {

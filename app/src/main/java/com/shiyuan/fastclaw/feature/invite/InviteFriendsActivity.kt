@@ -56,7 +56,7 @@ class InviteFriendsActivity :
             showInviteShareDialog()
         }
         binding.tvInviteRule.setOnSingleClickListener {
-            SimpleBrowserActivity.launch(this, Constants.RULES_URL)
+            SimpleBrowserActivity.launch(this, Constants.INVITEFRIEND_RULES_URL)
         }
         setupToolbarBackgroundAnimation()
     }

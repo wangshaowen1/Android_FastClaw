@@ -15,6 +15,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
+import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.core.network.apis.entity.PointConfigInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.TradePayWayInfo
@@ -99,7 +100,7 @@ class MineShrimpRechargeActivity :
             mRealVM.rechargeShrimp(payment, goodsCode)
         }
         binding.tvRechargeAgreement.setOnSingleClickListener {
-            SimpleBrowserActivity.launch(this, "https://www.baidu.com")
+            SimpleBrowserActivity.launch(this, Constants.SHRIMPSTICKS_URL)
         }
 
         mRealVM.getRechargePackages()
