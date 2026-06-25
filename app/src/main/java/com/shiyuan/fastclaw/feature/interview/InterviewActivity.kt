@@ -10,6 +10,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.manager.FileManager
 import com.nhsd.mattise.Matisse
@@ -27,8 +28,10 @@ import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.speech.DashCosyVoiceStreamTtsPlayer
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
+import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_SUBMIT
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SESSION_STATUS_PREPARING
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_UPLOAD_IMAGE
@@ -92,6 +95,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.tvJobHelp.setOnSingleClickListener {
             showTargetJobDialog()
         }
+        binding.btnNoTargetJob.setOnSingleClickListener {
+            JobSelectionActivity.start(this, true,title ="选择你想要模拟面试的岗位", multipleNum = 1, type = "Interview")
+        }
         mRealVM.enterOrRecover(mInterviewId, mIsRecover)
     }
 
@@ -139,6 +145,11 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
         mRealVM.finishRoomEvent.observe(this) {
             //finish()
+        }
+        observeEvents {
+            on<Events.InterviewEvent> { event ->
+                Log.d("ClawAgentEvent2",event.msgGson)
+            }
         }
     }
 

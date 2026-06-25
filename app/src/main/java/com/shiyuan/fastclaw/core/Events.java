@@ -296,6 +296,16 @@ public class Events {
         }
     }
 
+    /**
+     * 面试页面xuanz
+     */
+    public static class InterviewEvent implements AppEvent {
+        public String msgGson ;
+        public InterviewEvent(String msgGson) {
+            this.msgGson = msgGson;
+        }
+
+    }
 
     /**
      *公司背调和模拟面试背调

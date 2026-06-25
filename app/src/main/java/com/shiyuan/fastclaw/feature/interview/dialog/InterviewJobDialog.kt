@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.interview.dialog
 
 import android.content.Context
+import com.kuaige.imageloader.GlideApp
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -24,6 +25,10 @@ class InterviewJobDialog(context: Context) : BottomPopupView(context) {
         mBinding.ivClose.setOnSingleClickListener {
             dismiss()
         }
+        GlideApp.with(this)
+            .asGif()
+            .load(R.drawable.img_jc_gif)
+            .into( mBinding.ivScreenshotPreview)
     }
 
     fun showDialog(): InterviewJobDialog {

@@ -29,6 +29,7 @@ import com.shiyuan.fastclaw.feature.information.adapter.SearchAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.SelectedIyPnAdapter
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlin.getValue
+import kotlin.reflect.typeOf
 
 /**
  * 职位选择页：左侧一级职位分类、右侧二级职位和三级职位列表，
@@ -43,6 +44,10 @@ class JobSelectionActivity :
         // 会话 ID / 对话 ID 参数 key，用于服务端反显
         private const val SESSIONID = "SESSIONID"
         private const val CONVERSATIONID = "CONVERSATIONID"
+        private const val TITLE = "title"
+
+        private const val MULTIPLENUM = "multipleNum"
+        private const val TYPE = "type"
 
         /**
          * 启动职位选择页。
@@ -52,12 +57,15 @@ class JobSelectionActivity :
          * @param sessionId 会话 ID。
          * @param conversationId 对话 ID。
          */
-        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String? = "", conversationId: String? = "") {
+        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String? = "", conversationId: String? = "", title: String? = null,multipleNum: Int = 3,type:String = "ClawAgent") {
             activity ?: return
             val intent = Intent(activity, JobSelectionActivity::class.java).apply {
                 putExtra(EXTRA_IS_MULTIPLE, isMultiple)
                 putExtra(JobSelectionActivity.Companion.SESSIONID, sessionId)
                 putExtra(JobSelectionActivity.Companion.CONVERSATIONID, conversationId)
+                putExtra(TITLE, title)
+                putExtra(MULTIPLENUM, multipleNum)
+                putExtra(TYPE, type)
             }
             activity.startActivity(intent)
         }
@@ -74,6 +82,11 @@ class JobSelectionActivity :
         mRealVM.queryDictPositionQuery(sessionId,conversationId)
     }
 
+    private val title: String by lazy { intent.getStringExtra(Companion.TITLE)  ?: ""}
+
+    private val type: String by lazy { intent.getStringExtra(Companion.TYPE)  ?: "ClawAgent"}
+
+    private val multipleNum: Int by lazy { intent.getIntExtra(Companion.MULTIPLENUM,3) }
 
     // 是否多选模式
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
@@ -104,8 +117,9 @@ class JobSelectionActivity :
                     item.isSelected = false
                     mRealVM.selectPositionData.value = selectedList.filterNot { it.positionCode == item.positionCode }
                 } else {
-                    if (selectedList.size >= 3) {
-                        "最多选择三个".showToast()
+                    if (selectedList.size >= this.multipleNum) {
+                        val showToastMes = "最多选择"+this.multipleNum+"个"
+                        showToastMes .showToast()
                         return@IyPnJobSonAdapter
                     }
                     item.isSelected = true
@@ -144,8 +158,9 @@ class JobSelectionActivity :
             if (isMultiple) {
                 // 多选：直接追加到已选集合（最多 3 个）
                 val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
-                if (selectedList.size >= 3) {
-                    "最多选择三个".showToast()
+                if (selectedList.size >= this.multipleNum) {
+                    val showToastMes = "最多选择"+this.multipleNum+"个"
+                    showToastMes .showToast()
                     return@SearchAdapter
                 }
                 item.isSelected = true
@@ -178,6 +193,7 @@ class JobSelectionActivity :
             binding.tvTitle.text = getString(R.string.choose_desired_position)
             binding.llMultipleTop.visibility = View.VISIBLE
             binding.llMultipleBot.visibility = View.VISIBLE
+            binding.tvAllCount.text = "/"+ this.multipleNum
             binding.rcSelected.apply {
                 layoutManager = LinearLayoutManager(
                     this@JobSelectionActivity,
@@ -192,6 +208,10 @@ class JobSelectionActivity :
             binding.tvTitle.text = getString(R.string.select_job_title)
             binding.llMultipleTop.visibility = View.GONE
             binding.llMultipleBot.visibility = View.GONE
+        }
+
+        if(!this.title.isNullOrEmpty()){
+            binding.tvTitle.text = this.title
         }
 
         // 左侧一级分类列表
@@ -261,7 +281,11 @@ class JobSelectionActivity :
                 mapOf("code" to it.positionCode, "name" to it.positionName)
             }
             categoryList?.toJsonString()?.let { msg -> Log.d("layoutPrimary", msg) }
-            FlowEventBus.postSticky(Events.ClawAgentEvent(categoryList?.toJsonString(), AppEvent.KLX_C_EXPECTED_JOB_COMPLETED))
+            if(this.type == "Interview"){
+                FlowEventBus.postSticky(Events.InterviewEvent(categoryList?.toJsonString()))
+            }else{
+                FlowEventBus.postSticky(Events.ClawAgentEvent(categoryList?.toJsonString(), AppEvent.KLX_C_EXPECTED_JOB_COMPLETED))
+            }
             finish()
         }
     }
