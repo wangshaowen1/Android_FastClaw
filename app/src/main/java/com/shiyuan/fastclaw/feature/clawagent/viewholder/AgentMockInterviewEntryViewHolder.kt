@@ -20,9 +20,10 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java) }.getOrNull()
         }
+        val context = binding.root.context
         val action = payload?.primaryAction ?: payload?.actions?.firstOrNull()
         binding.tvAction.text = binding.root.context.getString(R.string.str_agent_mock_interview_action_main)
-        binding.tvCost.text = binding.root.context.getString(R.string.str_agent_mock_interview_action_cost)
+        binding.tvCost.text = context.getString(R.string.str_agent_mock_interview_action_cost, payload?.chargeAmount?:0)
         /*val enabled = action?.disabled != true &&
             payload?.interactionState?.disabled != true &&
             payload?.buttonStatus != "DISABLED"

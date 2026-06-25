@@ -264,14 +264,13 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             ingestMessages(restoredMessages)
         }
 
-        payload?.currentQuestion
-            ?.takeIf { question ->
-                question.questionId == currentQuestionId &&
-                    question.content?.isNotBlank() == true &&
-                    restoredMessages.none { it.senderType == SENDER_AGENT && it.content == question.content }
+        payload?.currentQuestion?.takeIf { question ->
+            question.questionId == currentQuestionId && question.content?.isNotBlank() == true && restoredMessages.none {
+                it.senderType == SENDER_AGENT && it.content == question.content
             }
-            ?.content
-            ?.let { appendMessage(SENDER_AGENT, it) }
+        }?.content?.let {
+            appendMessage(SENDER_AGENT, it)
+        }
 
         handleRoomState(message)
     }
