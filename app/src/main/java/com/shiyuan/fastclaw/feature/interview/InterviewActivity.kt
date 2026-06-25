@@ -134,8 +134,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             showTargetJobDialog()
         }
         binding.btnNoTargetJob.setOnSingleClickListener {
-            JobSelectionActivity.start(
-                this,
+            JobSelectionActivity.start(this,
                 true,
                 title = getString(R.string.interview_select_mock_job_title),
                 multipleNum = 1,
