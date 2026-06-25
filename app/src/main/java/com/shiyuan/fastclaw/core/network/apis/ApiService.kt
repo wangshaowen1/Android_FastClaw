@@ -9,6 +9,7 @@ import com.shiyuan.fastclaw.core.network.apis.entity.ReportData
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
 import com.shiyuan.fastclaw.core.network.apis.entity.SensitiveWordCheckData
+import com.shiyuan.fastclaw.core.network.apis.entity.TradePayWayListData
 import com.shiyuan.fastclaw.core.network.apis.entity.WalletInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.WorkInfo
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
@@ -268,6 +269,12 @@ interface ApiService {
      */
     @POST(ApiConstants.CREATE_APP_ALIPAY_ORDER)
     suspend fun createAppAlipayOrder(@Body body: TradePayCreateBody): ApiResponse<PaymentData?>
+
+    /**
+     * 查询安卓充值页支付方式展示列表
+     */
+    @POST(ApiConstants.QUERY_TRADE_PAY_WAY_LIST)
+    suspend fun queryTradePayWayList(): ApiResponse<TradePayWayListData?>
 
     /**
      * 内容安全-图片校验

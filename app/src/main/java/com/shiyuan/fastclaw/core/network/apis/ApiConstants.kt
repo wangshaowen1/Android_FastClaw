@@ -151,6 +151,11 @@ object ApiConstants {
     const val CREATE_APP_ALIPAY_ORDER = "/api/candidate/app/trade/pay/alipay/create"
 
     /**
+     * 查询安卓充值页支付方式展示列表
+     */
+    const val QUERY_TRADE_PAY_WAY_LIST = "/api/candidate/app/trade/pay/way/list"
+
+    /**
      * 敏感词校验
      */
     const val SENSITIVE_WORD_CHECK = "ai/content-security/text/check"
