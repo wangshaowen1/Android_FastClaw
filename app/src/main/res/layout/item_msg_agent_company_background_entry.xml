@@ -312,11 +312,12 @@
 
         </LinearLayout>
 
-        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+        <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
             android:id="@+id/ll_company_background_input"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="18dp"
+            android:orientation="horizontal"
             app:background_normalColor="@color/color_ffffff"
             app:border_color="@color/color_2f6bff"
             app:layout_constraintEnd_toEndOf="parent"
@@ -326,16 +327,20 @@
             app:view_border_width="1dp">
 
             <EditText
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="5dp"
                 android:id="@+id/et_search"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:background="@null"
                 android:gravity="center"
-                android:paddingStart="14dp"
-                android:paddingEnd="50dp"
+                android:hint="@string/str_agent_company_background_input_hint"
+                android:inputType="text"
                 android:lines="1"
                 android:maxLines="1"
-                android:hint="@string/str_agent_company_background_input_hint"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
                 android:textColor="@color/color_75_3c3c43"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -347,16 +352,16 @@
                 android:id="@+id/iv_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="20dp"
                 android:src="@drawable/icon_backcheck_search_close"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="20dp"
-                android:visibility="gone"
-                tools:visibility="visible"
-                />
+                tools:visibility="visible" />
 
-        </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+        </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
 
         <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
             android:id="@+id/layout_action"
