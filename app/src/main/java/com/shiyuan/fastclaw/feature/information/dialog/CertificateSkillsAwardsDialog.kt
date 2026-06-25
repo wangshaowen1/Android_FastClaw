@@ -210,15 +210,16 @@ class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCerti
         }
         // 完成：关闭弹窗并通知调用方
         binding.clWcExperience.setOnSingleClickListener {
-            if (attributeData?.fieldTree?.filter { it.statusCode == INCOMPLETE }.isNullOrEmpty()) {
-                dismiss()
-                onCompleteClick?.invoke()
+            dismiss()
+            onCompleteClick?.invoke()
+            
+          /*  if (attributeData?.fieldTree?.filter { it.statusCode == INCOMPLETE }.isNullOrEmpty()) {
             } else {
                 SupplementDialog.show(
                     manager = childFragmentManager,
                     content = "还有${getSupplementTitle()}未补充完整"
                 )
-            }
+            }*/
         }
         // 监听子页面保存事件，刷新列表
         observeEvents {
