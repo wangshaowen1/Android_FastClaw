@@ -30,6 +30,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
+import com.shiyuan.fastclaw.common.Constants.MOCK_INTERVIEW_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
@@ -273,7 +274,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 公司背调 - 查看报告
-        msgAdapter.onCompanyResultClickAction = { _, _, data ->
+        msgAdapter.onCompanyDoneClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 SimpleBrowserActivity.launch(requireActivity(), COMPANY_BACKGROUND_RESULT_URL + data?.reportId)
@@ -293,6 +294,20 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mRealVM.startInterview(data?.entryMessageId, data?.entrySource, data?.resumeId)
             }
         }
+        // 模拟面试 - 面试报告
+        msgAdapter.onInterviewDoneClickAction = { item, action, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                SimpleBrowserActivity.launch(requireActivity(), MOCK_INTERVIEW_RESULT_URL + data?.mockReportId)
+            }
+        }
+        // 模拟面试报告 - 重新生成
+        msgAdapter.onInterviewRetryClickAction = { _, _, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.retryGenerateMockInterviewReport(data?.mockReportId, data?.interviewId)
+            }
+        }
         // 模拟面试 - 暂不需要
         msgAdapter.onInterviewNotNeedClickAction = { item, action, data ->
             if (!interceptIfStreaming()) {
@@ -305,13 +320,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
                     )
                 )
-            }
-        }
-        // 模拟面试报告 - 重新生成
-        msgAdapter.onInterviewRetryClickAction = { _, _, data ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.retryGenerateMockInterviewReport(data?.mockReportId, data?.interviewId)
             }
         }
 

@@ -14,7 +14,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentCompanyBackgroundReportFailedViewHolder(private val binding: ItemMsgAgentCompanyBackgroundReportFailedBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    var onCompanyClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
+    var onCompanyRetryClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -27,7 +27,7 @@ class AgentCompanyBackgroundReportFailedViewHolder(private val binding: ItemMsgA
         binding.tvAction.isEnabled = enabled
         binding.tvAction.alpha = if (enabled) 1f else 0.5f
         binding.tvAction.setOnSingleClickListener {
-            onCompanyClickListener(item, action, payload)
+            onCompanyRetryClickListener(item, action, payload)
         }
     }
 }

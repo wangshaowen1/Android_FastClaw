@@ -19,8 +19,8 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgentMockInterviewEntryUpgradeBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    var onInterviewClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
-    var onNotNeedClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
+    var onInterviewStartClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
+    var onInterviewNotNeedClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -46,7 +46,7 @@ class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgent
         binding.tvSkip.visibility = if (enabled) View.VISIBLE else View.GONE
         binding.layoutAction.isEnabled = enabled
         binding.layoutAction.setOnSingleClickListener {
-            onInterviewClickListener(item, action, payload)
+            onInterviewStartClickListener(item, action, payload)
         }
         bindSkipAction(item, payload)
     }
@@ -56,7 +56,7 @@ class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgent
         if (action != null && payload.buttonStatus != BUTTON_STATUS_DISABLED) {
             binding.tvSkip.visible()
             binding.tvSkip.isEnabled = action.disabled != true
-            binding.tvSkip.setOnSingleClickListener { onNotNeedClickListener(item, action, payload) }
+            binding.tvSkip.setOnSingleClickListener { onInterviewNotNeedClickListener(item, action, payload) }
         } else {
             binding.tvSkip.gone()
         }

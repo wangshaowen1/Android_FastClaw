@@ -431,7 +431,7 @@ data class MockInterviewReportPayloadBean(
     /** 报告生成进度文案 */
     val progressText: String? = null,
     /** 面试评分，优先用于已生成报告卡展示 */
-    val score: Int? = null,
+    val totalScore: Int? = null,
     /** 面试评分兼容字段 */
     val interviewScore: Int? = null,
     /** 报告评分兼容字段 */

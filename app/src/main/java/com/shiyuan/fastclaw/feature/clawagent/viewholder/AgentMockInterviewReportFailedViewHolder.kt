@@ -14,7 +14,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentMockInterviewReportFailedViewHolder(private val binding: ItemMsgAgentMockInterviewReportFailedBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    var onInterviewClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
+    var onInterviewRetryClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -27,7 +27,7 @@ class AgentMockInterviewReportFailedViewHolder(private val binding: ItemMsgAgent
         binding.tvAction.isEnabled = enabled
         binding.tvAction.alpha = if (enabled) 1f else 0.5f*/
         binding.tvAction.setOnSingleClickListener {
-            onInterviewClickListener(item, action, payload)
+            onInterviewRetryClickListener(item, action, payload)
         }
     }
 }

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.blankj.utilcode.util.GsonUtils
 import com.chad.library.adapter.base.BaseMultiItemAdapter
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundStartBody
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
@@ -89,13 +88,15 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     /** 公司背调 - 开始背调 */
     var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
     /** 公司背调 - 查看报告 */
-    var onCompanyResultClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
+    var onCompanyDoneClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
     /** 公司背调 - 重新生成 */
     var onCompanyRetryClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
 
-    /** 公司面试 - 开始面试 */
+    /** 模拟面试 - 开始面试 */
     var onInterviewStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
-    /** 公司面试 - 暂不需要 */
+    /** 模拟面试 - 查看报告 */
+    var onInterviewDoneClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
+    /** 模拟面试 - 暂不需要 */
     var onInterviewNotNeedClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
     /** 模拟面试报告 - 重新生成 */
     var onInterviewRetryClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
@@ -115,7 +116,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_COMPANY_BACKGROUND_ENTRY,
             { i, p ->
                 AgentCompanyBackgroundEntryViewHolder(ItemMsgAgentCompanyBackgroundEntryBinding.inflate(i, p, false)).apply {
-                    onCompanyClickListener = { item, action, data -> onCompanyStartClickAction(item, action, data) }
+                    onCompanyStartClickListener = { item, action, data -> onCompanyStartClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 公司背调报告卡：生成中
@@ -125,29 +126,29 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_COMPANY_BACKGROUND_REPORT_FAILED,
             { i, p ->
                 AgentCompanyBackgroundReportFailedViewHolder(ItemMsgAgentCompanyBackgroundReportFailedBinding.inflate(i, p, false)).apply {
-                    onCompanyClickListener = { item, action, data -> onCompanyRetryClickAction(item, action, data) }
+                    onCompanyRetryClickListener = { item, action, data -> onCompanyRetryClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         //公司背调报告卡：成功
         register(TYPE_COMPANY_BACKGROUND_REPORT_DONE,
             { i, p ->
                 AgentCompanyBackgroundReportDoneViewHolder(ItemMsgAgentCompanyBackgroundReportDoneBinding.inflate(i, p, false)).apply {
-                    onCompanyClickListener = { item, action, data -> onCompanyResultClickAction(item, action, data) }
+                    onCompanyDoneClickListener = { item, action, data -> onCompanyDoneClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 模拟面试入口卡
         register(TYPE_MOCK_INTERVIEW_ENTRY,
             { i, p ->
                 AgentMockInterviewEntryViewHolder(ItemMsgAgentMockInterviewEntryBinding.inflate(i, p, false)).apply {
-                    onInterviewClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
+                    onInterviewStartClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 模拟面试理解升级入口卡
         register(TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE,
             { i, p ->
                 AgentMockInterviewEntryUpgradeViewHolder(ItemMsgAgentMockInterviewEntryUpgradeBinding.inflate(i, p, false)).apply {
-                    onInterviewClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
-                    onNotNeedClickListener = { item, action, data -> onInterviewNotNeedClickAction(item, action, data) }
+                    onInterviewStartClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
+                    onInterviewNotNeedClickListener = { item, action, data -> onInterviewNotNeedClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 面试复盘报告卡：生成中
@@ -157,14 +158,14 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_MOCK_INTERVIEW_REPORT_FAILED,
             { i, p ->
                 AgentMockInterviewReportFailedViewHolder(ItemMsgAgentMockInterviewReportFailedBinding.inflate(i, p, false)).apply {
-                    onInterviewClickListener = { item, action, data -> onInterviewRetryClickAction(item, action, data) }
+                    onInterviewRetryClickListener = { item, action, data -> onInterviewRetryClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 面试复盘报告卡：成功
         register(TYPE_MOCK_INTERVIEW_REPORT_DONE,
             { i, p ->
                 AgentMockInterviewReportDoneViewHolder(ItemMsgAgentMockInterviewReportDoneBinding.inflate(i, p, false)).apply {
-                    onActionClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                    onInterviewDoneClickListener = { item, action, data -> onInterviewDoneClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 核心补问卡

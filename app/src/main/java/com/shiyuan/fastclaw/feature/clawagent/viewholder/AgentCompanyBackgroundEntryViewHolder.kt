@@ -19,7 +19,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCompanyBackgroundEntryBinding, ) : RecyclerView.ViewHolder(binding.root) {
 
-    var onCompanyClickListener: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
+    var onCompanyStartClickListener: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -37,7 +37,7 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
                 return@setOnSingleClickListener
             }
             binding.etSearch.setText("")
-            onCompanyClickListener(item, action, CompanyBackgroundStartBody(companyName))
+            onCompanyStartClickListener(item, action, CompanyBackgroundStartBody(companyName))
         }
 
         binding.ivDelete.setOnSingleClickListener {
