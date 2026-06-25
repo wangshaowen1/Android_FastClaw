@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
@@ -78,11 +79,6 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         initView()
         observeData()
         observeEvents()
-    }
-
-    @SuppressLint("MissingSuperCall")
-    override fun onBackPressed() {
-        showFinishDialog()
     }
 
     private fun initView() {
@@ -214,10 +210,14 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     }
 
     private fun updateSessionStatus(sessionStatus: String?) {
-        binding.tvTitle.text = if (sessionStatus == SESSION_STATUS_PREPARING) {
-            "面试准备中"
+        if (sessionStatus == SESSION_STATUS_PREPARING) {
+            binding.tvTitle.text = "面试准备中"
+            binding.tvStatus.setShapeSolidColor(ContextCompat.getColor(this, R.color.color_f5aa5e))
+            binding.tvStatus.setUseShape()
         } else {
-            "面试中"
+            binding.tvTitle.text = "面试中"
+            binding.tvStatus.setShapeSolidColor(ContextCompat.getColor(this, R.color.color_57c57e))
+            binding.tvStatus.setUseShape()
         }
     }
 
@@ -404,6 +404,11 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == Activity.RESULT_OK) {
             mRealVM.uploadTarget(Matisse.obtainResult(data).orEmpty())
         }
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        showFinishDialog()
     }
 
     override fun onDestroy() {
