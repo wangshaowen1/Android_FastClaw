@@ -10,7 +10,8 @@
             type="com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_f5f6fa">
@@ -25,7 +26,7 @@
 
         <TextView
             android:id="@+id/tv_rule_tip"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="5dp"
@@ -39,16 +40,14 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="24dp"
             android:background="@drawable/bg_ffffff_r12"
             android:clipToPadding="false"
             android:overScrollMode="never"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
+            android:paddingTop="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,5 +57,5 @@
             tools:listitem="@layout/item_shrimp_chips"
             tools:visibility="visible" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>
