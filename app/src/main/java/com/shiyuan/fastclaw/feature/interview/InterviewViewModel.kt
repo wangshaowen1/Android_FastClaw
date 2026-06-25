@@ -387,7 +387,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     private fun ingestMessages(messages: List<InterviewMessageInfo>?) {
         if (messages.isNullOrEmpty()) return
-        messages.forEach { messageStore[it.id] = it }
+        messages.forEach { messageStore[it.id?:""] = it }
         refreshMessageList()
     }
 
