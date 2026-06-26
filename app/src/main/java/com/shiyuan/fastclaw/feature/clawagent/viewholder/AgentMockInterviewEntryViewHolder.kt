@@ -24,11 +24,11 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
         val action = payload?.primaryAction ?: payload?.actions?.firstOrNull()
         binding.tvAction.text = binding.root.context.getString(R.string.str_agent_mock_interview_action_main)
         binding.tvCost.text = context.getString(R.string.str_agent_mock_interview_action_cost, payload?.chargeAmount?:0)
-        /*val enabled = action?.disabled != true &&
+        val enabled = action?.disabled != true &&
             payload?.interactionState?.disabled != true &&
             payload?.buttonStatus != "DISABLED"
         binding.layoutAction.isEnabled = enabled
-        binding.layoutAction.alpha = if (enabled) 1f else 0.5f*/
+        binding.layoutAction.alpha = if (enabled) 1f else 0.5f
         binding.layoutAction.setOnSingleClickListener {
             onInterviewStartClickListener(item, action, payload)
         }
