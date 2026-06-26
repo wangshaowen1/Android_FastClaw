@@ -856,7 +856,7 @@
     <string name="job_preference">求职偏好</string>
     <string name="inaccurate">让小虾理解你</string>
     <string name="str_agent_question_skip">跳过</string>
-    <string name="str_agent_intercept_hint">AI正在回复中，请稍后</string>
+    <string name="str_agent_intercept_hint">小虾回复中，请稍后</string>
     <string name="record_name">粤ICP备2026052853号-6A</string>
     <string name="record_tip">快龙虾备案号</string>
 
