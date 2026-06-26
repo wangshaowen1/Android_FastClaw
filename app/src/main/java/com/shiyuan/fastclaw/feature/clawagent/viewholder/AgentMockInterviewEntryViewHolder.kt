@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -28,9 +29,11 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
             payload?.interactionState?.disabled != true &&
             payload?.buttonStatus != "DISABLED"
         binding.layoutAction.isEnabled = enabled
-        binding.layoutAction.alpha = if (enabled) 1f else 0.5f
+        binding.layoutAction.setBackgroundResource(if (enabled) R.drawable.bg_mock_interview_entry_action else R.drawable.bg_mock_interview_entry_action_disabled)
+        binding.tvAction.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
+        binding.tvCost.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
         binding.layoutAction.setOnSingleClickListener {
-            onInterviewStartClickListener(item, action, payload)
+            if (enabled) onInterviewStartClickListener(item, action, payload)
         }
     }
 }
