@@ -84,6 +84,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 当前正在回答或等待回答的问题 ID。 */
     private var currentQuestionId: String? = null
 
+    /** 已提交答案后等待服务端返回下一题的题目 ID。 */
+    private var submittedQuestionId: String? = null
+
     /** 当前流式 AI 消息本地 ID，用于 TEXT_DELTA 追加更新。 */
     private var currentAiMessageId: String? = null
 
@@ -163,6 +166,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 开始当前题作答，并向服务端发送 ANSWER_START。
      */
     fun startAnswer(): Boolean {
+        if (submittedQuestionId != null) return false
         val questionId = currentQuestionId?.takeIf { it.isNotBlank() } ?: UUID.randomUUID().toString()
         currentQuestionId = questionId
         roomState.value = InterviewRoomState.ANSWERING
@@ -183,6 +187,8 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         val text = answerText.trim()
         if (text.isEmpty()) return
         stopTiming()
+        submittedQuestionId = currentQuestionId
+        roomState.value = InterviewRoomState.ANSWER_SUBMITTED
         val answerSubmitId = UUID.randomUUID().toString()
         appendMessage(
             InterviewMessageInfo(
@@ -374,13 +380,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 更新端侧已处理的最后消息序号。
-     */
-    private fun updateLastMessageSeq(seq: Long?) {
-        seq?.takeIf { it > lastMessageSeq }?.let { lastMessageSeq = it }
-    }
-
-    /**
      * 根据服务端 roomState/sessionStatus 更新端侧房间状态。
      */
     private fun handleRoomState(event: InterviewAgentMessage) {
@@ -392,7 +391,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             ROOM_STATE_TARGET_JOB_PARSE_FAILED -> roomState.value = InterviewRoomState.TARGET_JOB_PARSE_FAILED
             ROOM_STATE_PLAN_GENERATING -> roomState.value = InterviewRoomState.PLAN_GENERATING
             ROOM_STATE_PLAN_READY -> roomState.value = InterviewRoomState.PLAN_READY
-            ROOM_STATE_WAITING_USER_ANSWER -> roomState.value = InterviewRoomState.WAITING_USER_ANSWER
+            ROOM_STATE_WAITING_USER_ANSWER -> updateWaitingUserAnswerState(event.payload?.questionId)
             ROOM_STATE_ANSWER_SUBMITTED -> roomState.value = InterviewRoomState.ANSWER_SUBMITTED
             ROOM_STATE_WAITING_FOLLOW_UP_DECISION -> roomState.value = InterviewRoomState.WAITING_FOLLOW_UP_DECISION
             ROOM_STATE_REPORT_GENERATING -> {
@@ -415,7 +414,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     private fun handleTextDone(message: InterviewAgentMessage) {
         message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
-        currentQuestionId = message.payload?.questionId?.takeIf { it.isNotEmpty() } ?: currentQuestionId
+        message.payload?.questionId?.takeIf { it.isNotEmpty() }?.let {
+            updateQuestionId(it)
+        }
         when (message.senderType) {
             SENDER_AGENT -> {
                 message.content?.takeIf { it.isNotEmpty() }?.let {
@@ -423,7 +424,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                     ttsSpeakEvent.value = it
                 }
                 if (message.payload?.roomState.isNullOrBlank()) {
-                    roomState.value = InterviewRoomState.WAITING_USER_ANSWER
+                    updateWaitingUserAnswerState(message.payload?.questionId)
                 }
             }
             SENDER_USER -> {
@@ -463,6 +464,35 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             val item = InterviewMessageInfo(UUID.randomUUID().toString(), SENDER_AGENT, text)
             currentAiMessageId = item.id
             ingestMessages(listOf(item))
+        }
+    }
+
+    /**
+     * 更新端侧已处理的最后消息序号。
+     */
+    private fun updateLastMessageSeq(seq: Long?) {
+        seq?.takeIf { it > lastMessageSeq }?.let { lastMessageSeq = it }
+    }
+
+    /**
+     * 更新当前题目 ID；如果服务端返回的是新题，解除上一题已提交后的等待态。
+     */
+    private fun updateQuestionId(questionId: String) {
+        if (submittedQuestionId != null && questionId != submittedQuestionId) {
+            submittedQuestionId = null
+        }
+        currentQuestionId = questionId
+    }
+
+    /**
+     * 进入等待用户作答前先校验是否已经回答过当前题；未拿到新题时继续展示等待态。
+     */
+    private fun updateWaitingUserAnswerState(questionId: String?) {
+        questionId?.takeIf { it.isNotBlank() }?.let { updateQuestionId(it) }
+        roomState.value = if (submittedQuestionId == null) {
+            InterviewRoomState.WAITING_USER_ANSWER
+        } else {
+            InterviewRoomState.ANSWER_SUBMITTED
         }
     }
 

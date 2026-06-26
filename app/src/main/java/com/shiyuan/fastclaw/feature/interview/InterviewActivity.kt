@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.interview
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import android.view.animation.LinearInterpolator
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelActivity
@@ -88,6 +90,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
     /** 当前是否正在播放 TTS。 */
     private var ttsPlaying = false
+
+    /** 等待下一题时按钮图片旋转动画。 */
+    private var waitLoadingAnimator: ObjectAnimator? = null
 
     /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
     private var forceScrollToBottom = false
@@ -249,30 +254,34 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 binding.layoutWait.gone()
                 binding.layoutAnswer.gone()
                 binding.layoutFinish.gone()
+                stopWaitAnimation()
             }
             InterviewRoomState.TARGET_JOB_PARSING,
-            InterviewRoomState.PLAN_GENERATING -> {
+            InterviewRoomState.PLAN_GENERATING,
+            InterviewRoomState.ANSWER_SUBMITTED -> {
                 binding.layoutWait.visible()
                 binding.layoutUpload.gone()
                 binding.layoutAnswer.gone()
                 binding.layoutFinish.gone()
+                startWaitAnimation()
             }
             InterviewRoomState.TARGET_JOB_PARSE_SUCCESS,
             InterviewRoomState.PLAN_READY,
             InterviewRoomState.WAITING_USER_ANSWER,
-            InterviewRoomState.ANSWER_SUBMITTED,
             InterviewRoomState.WAITING_FOLLOW_UP_DECISION,
             InterviewRoomState.ANSWERING -> {
                 binding.layoutAnswer.visible()
                 binding.layoutWait.gone()
                 binding.layoutUpload.gone()
                 binding.layoutFinish.gone()
+                stopWaitAnimation()
             }
             InterviewRoomState.TARGET_JOB_PARSE_FAILED -> {
                 binding.layoutUpload.visible()
                 binding.layoutWait.gone()
                 binding.layoutAnswer.gone()
                 binding.layoutFinish.gone()
+                stopWaitAnimation()
                 binding.tvTargetJobTitle.text = getString(R.string.reupload)
             }
             InterviewRoomState.REPORT_GENERATING,
@@ -282,8 +291,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 binding.layoutWait.gone()
                 binding.layoutUpload.gone()
                 binding.layoutAnswer.gone()
+                stopWaitAnimation()
             }
-            InterviewRoomState.ERROR -> {}
+            InterviewRoomState.ERROR -> stopWaitAnimation()
         }
     }
 
@@ -302,11 +312,33 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
+    private fun startWaitAnimation() {
+        if (waitLoadingAnimator?.isStarted == true) return
+        waitLoadingAnimator = ObjectAnimator.ofFloat(binding.ivWaitLoading, "rotation", 0f, 360f).apply {
+            duration = 1000L
+            interpolator = LinearInterpolator()
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.RESTART
+            start()
+        }
+    }
+
+    private fun stopWaitAnimation() {
+        waitLoadingAnimator?.apply {
+            cancel()
+            removeAllListeners()
+            removeAllUpdateListeners()
+        }
+        waitLoadingAnimator = null
+        binding.ivWaitLoading.rotation = 0f
+    }
+
     /**
      * 切换作答录音状态：未录音时开始识别，录音中时结束并提交识别文本。
      */
     private fun toggleAnswerRecording() {
-        if (mRealVM.roomState.value == InterviewRoomState.PLAN_GENERATING) return
+        if (mRealVM.roomState.value == InterviewRoomState.PLAN_GENERATING ||
+            mRealVM.roomState.value == InterviewRoomState.ANSWER_SUBMITTED) return
         if (answerRecording) {
             answerRecording = false
             // 点击结束回答后等待 ASR 返回最终文本，计时先停，文本由回调发送。
@@ -315,7 +347,10 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             return
         }
         if (startVoiceRecognizing()) {
-            mRealVM.startAnswer()
+            if (!mRealVM.startAnswer()) {
+                speechTranscriber?.cancel()
+                return
+            }
             answerRecording = true
             // 面试作答是点击开始，不走聊天页的按住录音浮层。
             updateVoiceActionRecording(true)
@@ -559,6 +594,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      * 释放语音识别、TTS 和声波动画资源。
      */
     override fun onDestroy() {
+        stopWaitAnimation()
         binding.ivVoiceBadge.stopWaveAnimation()
         speechTranscriber?.release()
         speechTranscriber = null
