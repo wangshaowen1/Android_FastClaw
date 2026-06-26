@@ -59,11 +59,11 @@
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_marginEnd="6dp"
-                app:sSolidColor="@color/color_f5aa5e"
-                app:sCornersRadius="4dp"
                 app:layout_constraintBottom_toBottomOf="@id/tv_title"
                 app:layout_constraintEnd_toStartOf="@id/tv_title"
-                app:layout_constraintTop_toTopOf="@id/tv_title" />
+                app:layout_constraintTop_toTopOf="@id/tv_title"
+                app:sCornersRadius="4dp"
+                app:sSolidColor="@color/color_f5aa5e" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -225,7 +225,6 @@
                 android:layout_marginBottom="62dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -247,6 +246,17 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/iv_wait_loading"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_marginBottom="6dp"
+                    android:src="@drawable/img_interview_voice_icon_loading"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_wait_icon"
+                    app:layout_constraintEnd_toEndOf="@id/iv_wait_icon"
+                    app:layout_constraintStart_toStartOf="@id/iv_wait_icon"
+                    app:layout_constraintTop_toTopOf="@id/iv_wait_icon" />
 
                 <TextView
                     android:id="@+id/tv_wait_press"
