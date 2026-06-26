@@ -48,6 +48,7 @@ import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewJobDialog
 import com.shiyuan.fastclaw.feature.settings.report.ReportActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.router.AppNavigator
+import java.util.ArrayDeque
 import java.util.UUID
 
 /**
@@ -79,6 +80,12 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /** 当前语音识别得到的临时文本。 */
     private var pendingVoiceText: String? = null
 
+    /** ASR 已确认的最终文本片段。 */
+    private var voiceFinalText = ""
+
+    /** ASR 当前正在变化的临时文本片段。 */
+    private var voicePartialText = ""
+
     /** 当前等待提交的作答结束原因。 */
     private var pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
 
@@ -90,6 +97,15 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
     /** 当前是否正在播放 TTS。 */
     private var ttsPlaying = false
+
+    /** 当前是否正在进行流式 TTS 输入。 */
+    private var ttsStreaming = false
+
+    /** 当前音频未播完时，后续服务端文本先进入待播队列，避免打断上一段。 */
+    private val pendingTtsStreamTexts = ArrayDeque<String>()
+
+    /** 待播队列是否已经收到本轮流式结束事件。 */
+    private var pendingTtsStreamFinish = false
 
     /** 等待下一题时按钮图片旋转动画。 */
     private var waitLoadingAnimator: ObjectAnimator? = null
@@ -128,6 +144,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun initView() {
         binding.rvMessage.layoutManager = LinearLayoutManager(this) //.apply { stackFromEnd = true }
+        binding.rvMessage.itemAnimator = null
         binding.rvMessage.adapter = msgAdapter
         binding.ivBack.setOnSingleClickListener {
             showFinishDialog()
@@ -188,14 +205,23 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             showMessage(it)
         }
         mRealVM.ttsSpeakEvent.observe(this) {
+            pendingTtsStreamTexts.clear()
+            pendingTtsStreamFinish = false
             ttsPlaying = ensureTtsPlayer().speak(it)
+            ttsStreaming = false
+        }
+        mRealVM.ttsStreamDeltaEvent.observe(this) {
+            handleTtsStreamDelta(it)
+        }
+        mRealVM.ttsStreamFinishEvent.observe(this) {
+            handleTtsStreamFinish()
         }
         mRealVM.finishRoomEvent.observe(this) {
             //finish()
         }
         mRealVM.finishAfterTtsEvent.observe(this) {
             finishAfterTts = true
-            if (!ttsPlaying) {
+            if (!ttsPlaying && pendingTtsStreamTexts.isEmpty()) {
                 finish()
             }
         }
@@ -205,7 +231,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             val scrollToLatest = forceScrollToBottom || !binding.rvMessage.canScrollVertically(1)
             forceScrollToBottom = false
             msgAdapter.submitList(list)
-            if (list.isNotEmpty()) {
+            if (list.isNotEmpty() && scrollToLatest) {
                 // 跳转 + 补偿滚动距离，确保刚插入(尚未测量高度)的最后一条完整贴底
                 RecyclerViewScrollHelper.scrollToBottom(binding.rvMessage, 100)
             }
@@ -370,7 +396,12 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             return false
         }
         ttsPlayer?.stop()
+        ttsStreaming = false
+        pendingTtsStreamTexts.clear()
+        pendingTtsStreamFinish = false
         pendingVoiceText = null
+        resetVoiceTextBuffer()
+        mRealVM.clearUserAnswerDraft()
         shouldSendVoiceResult = false
         pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
         return runCatching {
@@ -392,6 +423,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         if (canceled) {
             shouldSendVoiceResult = false
             pendingVoiceText = null
+            resetVoiceTextBuffer()
+            mRealVM.clearUserAnswerDraft()
             pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
             speechTranscriber?.cancel()
             resetVoiceRecognizingState()
@@ -419,12 +452,12 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             ),
             callback = object : DashFunAsrSpeechTranscriber.Callback {
                 override fun onPartialResult(text: String) {
-                    pendingVoiceText = text
+                    updateVoicePartialText(text)
                 }
 
                 override fun onFinalResult(text: String) {
                     if (isDestroyed) return
-                    pendingVoiceText = text
+                    commitVoiceFinalText(text)
                     if (shouldSendVoiceResult) {
                         sendVoiceMessage(pendingAnswerEndReason)
                     }
@@ -470,6 +503,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             callback = object : DashCosyVoiceStreamTtsPlayer.Callback {
                 override fun onCompleted() {
                     ttsPlaying = false
+                    ttsStreaming = false
+                    if (playPendingTtsStreamIfNeeded()) return
                     if (finishAfterTts) {
                         finish()
                     }
@@ -477,6 +512,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
                 override fun onError(message: String) {
                     ttsPlaying = false
+                    ttsStreaming = false
+                    pendingTtsStreamTexts.clear()
+                    pendingTtsStreamFinish = false
                     Log.d(TAG, "tts play failed: $message")
                     if (finishAfterTts) {
                         finish()
@@ -489,15 +527,132 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     }
 
     /**
+     * 处理服务端流式 TTS 文本；当前音频还在播放时先缓存，等待播放完成后续播。
+     */
+    private fun handleTtsStreamDelta(text: String) {
+        val speakText = text.trim()
+        if (speakText.isEmpty()) return
+        if (ttsPlaying && !ttsStreaming) {
+            pendingTtsStreamTexts.offer(speakText)
+            return
+        }
+        val player = ensureTtsPlayer()
+        if (!ttsStreaming) {
+            ttsPlaying = player.startStreaming()
+            ttsStreaming = ttsPlaying
+        }
+        if (ttsStreaming) {
+            player.appendStreamingText(speakText)
+        } else {
+            pendingTtsStreamTexts.offer(speakText)
+        }
+    }
+
+    /**
+     * 结束当前流式 TTS 输入；如果当前音频仍在播放，后续文本等播放完成再开启新流。
+     */
+    private fun handleTtsStreamFinish() {
+        if (ttsStreaming) {
+            ensureTtsPlayer().finishStreaming()
+            ttsStreaming = false
+            return
+        }
+        if (ttsPlaying || pendingTtsStreamTexts.isNotEmpty()) {
+            pendingTtsStreamFinish = true
+        }
+    }
+
+    /**
+     * 当前 TTS 播放完成后，继续播放等待中的服务端文本。
+     */
+    private fun playPendingTtsStreamIfNeeded(): Boolean {
+        if (pendingTtsStreamTexts.isEmpty()) return false
+        val player = ensureTtsPlayer()
+        ttsPlaying = player.startStreaming()
+        ttsStreaming = ttsPlaying
+        if (!ttsStreaming) {
+            pendingTtsStreamTexts.clear()
+            pendingTtsStreamFinish = false
+            return false
+        }
+        while (pendingTtsStreamTexts.isNotEmpty()) {
+            player.appendStreamingText(pendingTtsStreamTexts.poll())
+        }
+        if (pendingTtsStreamFinish) {
+            player.finishStreaming()
+            ttsStreaming = false
+            pendingTtsStreamFinish = false
+        }
+        return true
+    }
+
+    /**
      * 提交当前已识别到的语音文本。
      */
     private fun sendVoiceMessage(endReason: String = pendingAnswerEndReason): Boolean {
-        val text = pendingVoiceText?.trim()?.takeIf { it.isNotEmpty() } ?: return false
+        val text = buildVoiceText().ifBlank { pendingVoiceText.orEmpty() }.trim().takeIf { it.isNotEmpty() } ?: return false
         pendingVoiceText = null
+        resetVoiceTextBuffer()
         shouldSendVoiceResult = false
         pendingAnswerEndReason = InterviewViewModel.ANSWER_END_USER_SUBMIT
         mRealVM.submitAnswer(text, endReason)
         return true
+    }
+
+    /**
+     * 更新 ASR 临时结果，并立即刷新用户作答草稿。
+     */
+    private fun updateVoicePartialText(text: String) {
+        if (!answerRecording && !shouldSendVoiceResult) return
+        voicePartialText = text.trim()
+        updatePendingVoiceDraft()
+    }
+
+    /**
+     * 合并 ASR 最终片段，避免 partial 和 final 重复显示。
+     */
+    private fun commitVoiceFinalText(text: String) {
+        if (!answerRecording && !shouldSendVoiceResult) return
+        val finalText = text.trim()
+        if (finalText.isEmpty()) return
+        voiceFinalText = when {
+            voiceFinalText.isEmpty() -> finalText
+            finalText == voiceFinalText -> voiceFinalText
+            finalText.startsWith(voiceFinalText) -> finalText
+            voiceFinalText.endsWith(finalText) -> voiceFinalText
+            else -> voiceFinalText + finalText
+        }
+        voicePartialText = ""
+        updatePendingVoiceDraft()
+    }
+
+    /**
+     * 生成当前需要展示和提交的完整语音文本。
+     */
+    private fun buildVoiceText(): String {
+        if (voiceFinalText.isEmpty()) return voicePartialText
+        if (voicePartialText.isEmpty()) return voiceFinalText
+        return when {
+            voicePartialText.startsWith(voiceFinalText) -> voicePartialText
+            voiceFinalText.endsWith(voicePartialText) -> voiceFinalText
+            else -> voiceFinalText + voicePartialText
+        }
+    }
+
+    /**
+     * 将当前 ASR 文本同步到本地消息列表，点击结束前不提交后台。
+     */
+    private fun updatePendingVoiceDraft() {
+        pendingVoiceText = buildVoiceText().takeIf { it.isNotBlank() }
+        pendingVoiceText?.let { mRealVM.updateUserAnswerDraft(it) } ?: mRealVM.clearUserAnswerDraft()
+    }
+
+    /**
+     * 清空本轮 ASR 文本缓存。
+     */
+    private fun resetVoiceTextBuffer() {
+        voiceFinalText = ""
+        voicePartialText = ""
     }
 
     /**

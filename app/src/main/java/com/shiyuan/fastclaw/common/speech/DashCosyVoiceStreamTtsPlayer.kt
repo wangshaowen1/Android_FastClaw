@@ -77,6 +77,7 @@ class DashCosyVoiceStreamTtsPlayer(
     private val nui = NativeNui(Constants.ModeType.MODE_STREAM_INPUT_TTS)
     private var audioPlayer: PcmStreamPlayer? = null
     @Volatile private var speaking = false
+    @Volatile private var streamInputOpened = false
 
     init {
         workerThread.start()
@@ -104,6 +105,48 @@ class DashCosyVoiceStreamTtsPlayer(
     }
 
     /**
+     * 启动一段可持续追加文本的流式 TTS 会话。
+     */
+    fun startStreaming(): Boolean {
+        val config = configProvider()
+        if (!config.isValid()) {
+            notifyMain { callback.onError("请先配置百炼 CosyVoice API Key") }
+            return false
+        }
+        workerHandler.post {
+            stopInternal(releasePlayer = true)
+            startStreamTtsSession(config)
+        }
+        return true
+    }
+
+    /**
+     * 向当前流式 TTS 会话追加增量文本。
+     */
+    fun appendStreamingText(text: String) {
+        val speakText = text.trim()
+        if (speakText.isEmpty()) return
+        workerHandler.post {
+            if (!speaking || !streamInputOpened) return@post
+            splitSentences(speakText).forEach { sentence ->
+                if (!speaking) return@forEach
+                nui.sendStreamInputTts(sentence)
+            }
+        }
+    }
+
+    /**
+     * 结束当前流式 TTS 文本输入，等待已生成音频播放完成。
+     */
+    fun finishStreaming() {
+        workerHandler.post {
+            if (!streamInputOpened) return@post
+            streamInputOpened = false
+            nui.asyncStopStreamInputTts()
+        }
+    }
+
+    /**
      * 停止当前播报。
      */
     fun stop() {
@@ -122,6 +165,15 @@ class DashCosyVoiceStreamTtsPlayer(
     }
 
     private fun startStreamTts(text: String, config: Config) {
+        if (!startStreamTtsSession(config)) return
+        splitSentences(text).forEach { sentence ->
+            if (!speaking) return@forEach
+            nui.sendStreamInputTts(sentence)
+        }
+        finishStreaming()
+    }
+
+    private fun startStreamTtsSession(config: Config): Boolean {
         val taskId = UUID.randomUUID().toString()
         audioPlayer = PcmStreamPlayer(config.sampleRate, object : PcmStreamPlayer.Callback {
             override fun onPlayOver() {
@@ -138,21 +190,20 @@ class DashCosyVoiceStreamTtsPlayer(
         )
         if (ret != Constants.NuiResultCode.SUCCESS) {
             speaking = false
+            streamInputOpened = false
             audioPlayer?.release()
             audioPlayer = null
             notifyMain { callback.onError("语音播报启动失败：$ret") }
-            return
+            return false
         }
         speaking = true
-        splitSentences(text).forEach { sentence ->
-            if (!speaking) return@forEach
-            nui.sendStreamInputTts(sentence)
-        }
-        nui.asyncStopStreamInputTts()
+        streamInputOpened = true
+        return true
     }
 
     private fun stopInternal(releasePlayer: Boolean) {
         speaking = false
+        streamInputOpened = false
         runCatching { nui.cancelStreamInputTts() }
         audioPlayer?.stop()
         if (releasePlayer) {
@@ -181,10 +232,12 @@ class DashCosyVoiceStreamTtsPlayer(
                     }
                     INativeStreamInputTtsCallback.StreamInputTtsEvent.STREAM_INPUT_TTS_EVENT_SYNTHESIS_COMPLETE -> {
                         speaking = false
+                        streamInputOpened = false
                         audioPlayer?.finishSend()
                     }
                     INativeStreamInputTtsCallback.StreamInputTtsEvent.STREAM_INPUT_TTS_EVENT_TASK_FAILED -> {
                         speaking = false
+                        streamInputOpened = false
                         audioPlayer?.stop()
                         Log.e(TAG, "tts task failed retCode=$retCode errorMsg=$errorMsg response=$allResponse")
                         notifyMain { callback.onError(errorMsg?.takeIf { it.isNotBlank() } ?: "语音播报失败：$retCode") }

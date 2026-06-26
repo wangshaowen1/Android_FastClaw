@@ -24,6 +24,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.ArrayDeque
 import java.util.UUID
 
 /**
@@ -72,6 +73,12 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 需要播放的 TTS 文本事件。 */
     val ttsSpeakEvent = MutableLiveData<String>()
 
+    /** 需要流式播报的 TTS 增量文本事件。 */
+    val ttsStreamDeltaEvent = MutableLiveData<String>()
+
+    /** TTS 流式文本结束事件。 */
+    val ttsStreamFinishEvent = MutableLiveData<Unit>()
+
     /** 当前模拟面试会话 ID。 */
     var mInterviewId: String? = null
 
@@ -89,6 +96,18 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 当前流式 AI 消息本地 ID，用于 TEXT_DELTA 追加更新。 */
     private var currentAiMessageId: String? = null
+
+    /** 当前流式 AI 消息是否已经发送过 TTS 文本。 */
+    private var currentAiTtsEnabled = false
+
+    /** 当前用户语音作答草稿消息 ID，用于 ASR partial 流式更新。 */
+    private var currentUserDraftMessageId: String? = null
+
+    /** 端侧兜底流式展示完整 Agent 文本的任务。 */
+    private var localAiStreamJob: Job? = null
+
+    /** 端侧兜底流式展示完整 Agent 文本的待播队列。 */
+    private val localAiStreamQueue = ArrayDeque<LocalAiStreamMessage>()
 
     /** 按消息 ID 保存的端侧消息缓存。 */
     private val messageStore = LinkedHashMap<String, InterviewMessageInfo>()
@@ -190,14 +209,22 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         submittedQuestionId = currentQuestionId
         roomState.value = InterviewRoomState.ANSWER_SUBMITTED
         val answerSubmitId = UUID.randomUUID().toString()
-        appendMessage(
-            InterviewMessageInfo(
-                id = UUID.randomUUID().toString(),
-                senderType = SENDER_USER,
-                content = text,
-                answerSubmitId = answerSubmitId,
+        val draftId = currentUserDraftMessageId
+        val draft = draftId?.let { messageStore[it] }
+        if (draft != null) {
+            messageStore[draft.id.orEmpty()] = draft.copy(content = text, answerSubmitId = answerSubmitId)
+            currentUserDraftMessageId = null
+            refreshMessageList()
+        } else {
+            appendMessage(
+                InterviewMessageInfo(
+                    id = UUID.randomUUID().toString(),
+                    senderType = SENDER_USER,
+                    content = text,
+                    answerSubmitId = answerSubmitId,
+                )
             )
-        )
+        }
         sendAction(
             actionType = ACTION_ANSWER_SUBMIT,
             payload = mapOf(
@@ -228,6 +255,39 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 remainingSeconds--
             }
         }
+    }
+
+    /**
+     * 流式更新用户语音作答草稿；点击结束回答后再由 submitAnswer 真正提交后台。
+     */
+    fun updateUserAnswerDraft(text: String) {
+        val content = text.trim()
+        if (content.isEmpty()) {
+            clearUserAnswerDraft()
+            return
+        }
+        val draftId = currentUserDraftMessageId
+        val draft = draftId?.let { messageStore[it] }
+        if (draft != null) {
+            ingestMessages(listOf(draft.copy(content = content)))
+        } else {
+            val item = InterviewMessageInfo(
+                id = UUID.randomUUID().toString(),
+                senderType = SENDER_USER,
+                content = content,
+            )
+            currentUserDraftMessageId = item.id
+            ingestMessages(listOf(item))
+        }
+    }
+
+    /**
+     * 清理未提交的用户语音作答草稿。
+     */
+    fun clearUserAnswerDraft() {
+        currentUserDraftMessageId?.let { messageStore.remove(it) }
+        currentUserDraftMessageId = null
+        refreshMessageList()
     }
 
     /**
@@ -285,7 +345,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 handleTextDone(message)
             }
             MSG_TEXT_DELTA ->
-                appendAiDelta(message.content.orEmpty())
+                appendAiDelta(message.content.orEmpty(), message.isTtsEnabled())
             MSG_TEXT_DONE -> {
                 handleRoomState(message)
                 handleTextDone(message)
@@ -419,9 +479,16 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
         when (message.senderType) {
             SENDER_AGENT -> {
+                val hasStreamingMessage = currentAiMessageId != null
                 message.content?.takeIf { it.isNotEmpty() }?.let {
-                    replaceCurrentAiMessage(it)
-                    ttsSpeakEvent.value = it
+                    if (hasStreamingMessage) {
+                        replaceCurrentAiMessage(it)
+                    } else {
+                        streamFullAiMessage(it, message.isTtsEnabled())
+                    }
+                }
+                if (hasStreamingMessage && currentAiTtsEnabled) {
+                    ttsStreamFinishEvent.value = Unit
                 }
                 if (message.payload?.roomState.isNullOrBlank()) {
                     updateWaitingUserAnswerState(message.payload?.questionId)
@@ -432,15 +499,28 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             }
         }
         currentAiMessageId = null
+        currentAiTtsEnabled = false
     }
 
     /**
      * 处理内容安全拦截文本；优先按 answerSubmitId 替换本地用户回答。
      */
     private fun handleTextBlocked(message: InterviewAgentMessage) {
-        if (replaceBlockedAnswerMessage(message)) return
-        message.content?.takeIf { it.isNotEmpty() }?.let {
-            appendMessage(InterviewMessageInfo(id = UUID.randomUUID().toString(), senderType = SENDER_AGENT, content = it))
+        val blockedText = message.content?.takeIf { it.isNotEmpty() }
+        val replaced = replaceBlockedAnswerMessage(message)
+        if (!replaced) {
+            blockedText?.let {
+                appendMessage(InterviewMessageInfo(id = UUID.randomUUID().toString(), senderType = SENDER_AGENT, content = it))
+            }
+        }
+        blockedText?.let {
+            if (message.isTtsEnabled()) {
+                ttsSpeakEvent.value = it
+            }
+        }
+        if (replaced || (message.payload?.roomState ?: message.roomState) == ROOM_STATE_WAITING_USER_ANSWER) {
+            submittedQuestionId = null
+            updateWaitingUserAnswerState(message.payload?.questionId ?: currentQuestionId)
         }
     }
 
@@ -454,17 +534,104 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /**
      * 追加 Agent 流式文本片段。
      */
-    private fun appendAiDelta(text: String) {
+    private fun appendAiDelta(text: String, ttsEnabled: Boolean) {
         if (text.isEmpty()) return
+        localAiStreamJob?.cancel()
+        localAiStreamJob = null
+        localAiStreamQueue.clear()
+        if (ttsEnabled) {
+            currentAiTtsEnabled = true
+            ttsStreamDeltaEvent.value = text
+        }
         val targetId = currentAiMessageId
         val old = targetId?.let { messageStore[it] }
         if (old != null) {
-            ingestMessages(listOf(old.copy(content = old.content + text)))
+            ingestMessages(listOf(old.copy(content = old.content.orEmpty() + text)))
         } else {
             val item = InterviewMessageInfo(UUID.randomUUID().toString(), SENDER_AGENT, text)
             currentAiMessageId = item.id
             ingestMessages(listOf(item))
         }
+    }
+
+    /**
+     * 后端直接返回完整 Agent 文本时，端侧拆成小块模拟流式展示和流式播报。
+     */
+    private fun streamFullAiMessage(text: String, ttsEnabled: Boolean) {
+        val chunks = text.chunked(LOCAL_AI_STREAM_CHUNK_SIZE)
+        if (chunks.isEmpty()) return
+        localAiStreamQueue.offer(LocalAiStreamMessage(UUID.randomUUID().toString(), chunks, ttsEnabled))
+        if (localAiStreamJob?.isActive == true) return
+        startLocalAiStreamQueue()
+    }
+
+    /**
+     * 顺序消费完整 Agent 文本队列，避免连续多条服务端消息互相打断。
+     */
+    private fun startLocalAiStreamQueue() {
+        localAiStreamJob = viewModelScope.launch {
+            while (isActive && localAiStreamQueue.isNotEmpty()) {
+                val streamMessage = localAiStreamQueue.poll() ?: continue
+                val ttsBuilder = StringBuilder()
+                streamMessage.chunks.forEachIndexed { index, chunk ->
+                    if (index == 0) {
+                        val item = InterviewMessageInfo(streamMessage.id, SENDER_AGENT, chunk)
+                        ingestMessages(listOf(item))
+                    } else {
+                        delay(LOCAL_AI_STREAM_DELAY_MS)
+                        appendLocalAiStreamChunk(streamMessage.id, chunk)
+                    }
+                    if (streamMessage.ttsEnabled) {
+                        ttsBuilder.append(chunk)
+                        if (shouldFlushTtsChunk(ttsBuilder)) {
+                            flushTtsChunk(ttsBuilder)
+                        }
+                    }
+                }
+                if (streamMessage.ttsEnabled) {
+                    flushTtsChunk(ttsBuilder)
+                }
+            }
+            ttsStreamFinishEvent.value = Unit
+            localAiStreamJob = null
+            if (localAiStreamQueue.isNotEmpty()) {
+                startLocalAiStreamQueue()
+            }
+        }
+    }
+
+    /**
+     * 追加端侧兜底流式文本片段到当前 Agent 消息。
+     */
+    private fun appendLocalAiStreamChunk(messageId: String, text: String) {
+        val old = messageStore[messageId] ?: return
+        ingestMessages(listOf(old.copy(content = old.content.orEmpty() + text)))
+    }
+
+    /**
+     * TTS 输入不能按单字过碎发送，积累到短句或标点后再交给播放器。
+     */
+    private fun shouldFlushTtsChunk(builder: StringBuilder): Boolean {
+        if (builder.length >= LOCAL_AI_TTS_CHUNK_SIZE) return true
+        return builder.lastOrNull() in LOCAL_AI_TTS_FLUSH_CHARS
+    }
+
+    /**
+     * 发送并清空端侧流式 TTS 缓冲。
+     */
+    private fun flushTtsChunk(builder: StringBuilder) {
+        val text = builder.toString()
+        if (text.isNotEmpty()) {
+            ttsStreamDeltaEvent.value = text
+            builder.clear()
+        }
+    }
+
+    /**
+     * payload.ttsEnabled 为空时保持旧逻辑默认播报，只有明确 false 才不播报。
+     */
+    private fun InterviewAgentMessage.isTtsEnabled(): Boolean {
+        return payload?.ttsEnabled != false
     }
 
     /**
@@ -614,6 +781,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                     )
                 )
             },
+            onError = {
+                onSuccess(null)
+            },
             showToastError = true,
         ) {
             roomState.value = InterviewRoomState.CANCELED
@@ -637,9 +807,19 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     override fun onCleared() {
         answerTimerJob?.cancel()
+        localAiStreamJob?.cancel()
         sseHandler.cancel()
         super.onCleared()
     }
+
+    /**
+     * 完整服务端文本的端侧流式展示任务。
+     */
+    private data class LocalAiStreamMessage(
+        val id: String,
+        val chunks: List<String>,
+        val ttsEnabled: Boolean,
+    )
 
     companion object {
         /** 日志标签。 */
@@ -664,6 +844,14 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         const val ANSWER_END_TIMEOUT_AUTO_SUBMIT = "TIMEOUT_AUTO_SUBMIT"
         /** 单题作答倒计时秒数。 */
         private const val ANSWER_COUNTDOWN_SECONDS = 180
+        /** 完整服务端文本兜底流式展示的单块长度。 */
+        private const val LOCAL_AI_STREAM_CHUNK_SIZE = 1
+        /** 完整服务端文本兜底流式展示的间隔。 */
+        private const val LOCAL_AI_STREAM_DELAY_MS = 52L
+        /** 完整服务端文本兜底流式播报的最小发送长度。 */
+        private const val LOCAL_AI_TTS_CHUNK_SIZE = 8
+        /** 完整服务端文本兜底流式播报遇到这些符号时立即发送。 */
+        private val LOCAL_AI_TTS_FLUSH_CHARS = setOf('，', '。', '？', '！', '；', ',', '.', '?', '!', ';', '\n')
         /** 底部按钮文案：开始作答。 */
         const val ANSWER_START_TEXT = "开始作答"
         /** 底部按钮文案：结束当前回答。 */

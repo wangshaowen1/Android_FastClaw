@@ -96,6 +96,9 @@ data class InterviewAgentPayload(
     /** 当前追问轮次 */
     val questionRound: Int? = null,
 
+    /** 当前文本是否需要语音播报；为空时默认播报。 */
+    val ttsEnabled: Boolean? = true,
+
     /** 流式片段序号，TEXT_DELTA 使用 */
     val segmentIndex: Int? = null,
 
