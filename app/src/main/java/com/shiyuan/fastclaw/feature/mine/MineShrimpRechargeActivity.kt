@@ -100,7 +100,7 @@ class MineShrimpRechargeActivity :
             mRealVM.rechargeShrimp(payment, goodsCode)
         }
         binding.tvRechargeAgreement.setOnSingleClickListener {
-            SimpleBrowserActivity.launch(this, Constants.SHRIMPSTICKS_URL)
+            SimpleBrowserActivity.launch(this, Constants.SHRIMPRECHARGEAGREEMENT_URL)
         }
 
         mRealVM.getRechargePackages()

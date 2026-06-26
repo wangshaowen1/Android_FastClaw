@@ -73,7 +73,7 @@ class InviteFriendsActivity :
     }
 
     private fun setupToolbarBackgroundAnimation() {
-        binding.appbarLayout.addOnOffsetChangedListener(
+      /*  binding.appbarLayout.addOnOffsetChangedListener(
             AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
                 val totalRange = appBarLayout.totalScrollRange.takeIf { it > 0 }
                     ?: return@OnOffsetChangedListener
@@ -82,7 +82,7 @@ class InviteFriendsActivity :
                // window.statusBarColor = Color.argb(alpha, 255, 255, 255)
               //  mRealVM.mToolbarVM.mBackground.set(Color.argb(alpha, 255, 255, 255))
             }
-        )
+        )*/
     }
 
     override fun setTranslucentStatus() {
