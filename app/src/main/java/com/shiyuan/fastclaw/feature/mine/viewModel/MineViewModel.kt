@@ -244,15 +244,17 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
             onPaid = {
                 if (isBaoFu.get()) {
                     checkBaoFuResult(
-                        failure = { R.string.mine_recharge_pay_failed.getResString().showToast() },
+                        failure = {
+                            it?.toString()?.let { it.showToast() } ?: R.string.mine_recharge_pay_failed.getResString().showToast()
+                          },
                         success = { onRechargePaid() }
                     )
                 } else {
                     onRechargePaid()
                 }
             },
-            onFailed = { _, _ ->
-                R.string.mine_recharge_pay_failed.getResString().showToast()
+            onFailed = { error, _ ->
+                error?.message?.let { it.showToast() } ?: R.string.mine_recharge_pay_failed.getResString().showToast()
             }
         )
     }
