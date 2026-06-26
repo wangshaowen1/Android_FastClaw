@@ -65,12 +65,12 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
             }
             R.id.ll_resume_check_tool-> {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
-                    SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL)
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL, title = getString(R.string.home_treasury_resume_check))
                 }
             }
             R.id.ll_salary_tool ->  {
                 if (!AppNavigator.checkLoginIntercepted(true)) {
-                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL)
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
                 }
             }
         }

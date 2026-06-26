@@ -43,6 +43,7 @@ import com.shiyuan.fastclaw.common.permissions.requestRead2WritePermissions
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.utils.ImageSaveHelper
 import com.shiyuan.fastclaw.common.utils.IntentUtils
+import com.shiyuan.fastclaw.common.utils.WebFileChooserUtils
 import com.shiyuan.fastclaw.common.utils.WXUtils
 import com.shiyuan.fastclaw.core.CookieUtils
 import com.shiyuan.fastclaw.core.User
@@ -308,8 +309,17 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
         }
 
         override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri?>?>?, fileChooserParams: FileChooserParams?): Boolean {
+            mUploadCallbackAboveL?.onReceiveValue(null)
             mUploadCallbackAboveL = filePathCallback
-            choosePic()
+            try {
+                startActivityForResult(
+                    WebFileChooserUtils.buildFileChooserIntent(fileChooserParams),
+                    REQUEST_CODE_PHOTO_PICKER
+                )
+            } catch (e: ActivityNotFoundException) {
+                mUploadCallbackAboveL?.onReceiveValue(null)
+                mUploadCallbackAboveL = null
+            }
             return true
         }
 
@@ -746,8 +756,8 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
             mUploadCallbackBelow?.onReceiveValue(result?.getOrNull(0))
             mUploadCallbackBelow = null
         } else if (mUploadCallbackAboveL != null) {
-            val result = if (resultCode != RESULT_OK) null else Matisse.obtainResult(data)
-            mUploadCallbackAboveL?.onReceiveValue(result?.toTypedArray())
+            val result = WebFileChooserUtils.parseFileChooserResult(resultCode, data)
+            mUploadCallbackAboveL?.onReceiveValue(result)
             mUploadCallbackAboveL = null
         }
     }
