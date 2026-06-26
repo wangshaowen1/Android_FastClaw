@@ -640,7 +640,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
                 CARD_COMPANY_BACKGROUND_ENTRY -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_ENTRY
                 CARD_COMPANY_BACKGROUND_REPORT -> resolveCompanyBackgroundReportItemType(msg)
-                CARD_MOCK_INTERVIEW_ENTRY -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY
+                CARD_MOCK_INTERVIEW_ENTRY -> resolveMockInterviewEntryItemType(msg)
                 CARD_MOCK_INTERVIEW_REPORT -> resolveMockInterviewReportItemType(msg)
                 // todo: v1.2 暂时不做
 //                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
@@ -687,22 +687,25 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-    private fun resolveMockInterviewReportItemType(msg: JobAgentMessage): Int {
-        // 理解升级面试卡
+    private fun resolveMockInterviewEntryItemType(msg: JobAgentMessage): Int {
+        // 模拟面试卡
         val entryPayload = msg.payloadJson?.let {
             runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java) }.getOrNull()
         }
-        if (entryPayload?.entrySource == RESUME_UNDERSTANDING_UPGRADE) {
-            return ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
+        return if (entryPayload?.entrySource == RESUME_UNDERSTANDING_UPGRADE) {
+            ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
+        } else {
+            ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY
         }
-        // 普通面试卡
+    }
+
+    private fun resolveMockInterviewReportItemType(msg: JobAgentMessage): Int {
+        // 模拟面试报告卡
         val defaultPayload = msg.payloadJson?.let {
             runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
         }
         return when (defaultPayload?.reportStatus) {
-            REPORT_STATUS_FAILED,
-            REPORT_STATUS_FAILED_RETRYABLE,
-            REPORT_STATUS_FAILED_FINAL -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
+            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
             REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_DONE
             REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
             else -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
