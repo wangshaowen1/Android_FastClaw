@@ -3,6 +3,8 @@ package com.shiyuan.fastclaw.feature.clawagent.viewholder
 import android.animation.ObjectAnimator
 import android.view.animation.LinearInterpolator
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.GsonUtils
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportGeneratingBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -14,7 +16,11 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
     private var rotateStepAnimator: ObjectAnimator? = null
     private var rotateGenerateAnimator: ObjectAnimator? = null
 
-    fun bind(item: ClawAgentMessageInfo) = Unit
+    fun bind(item: ClawAgentMessageInfo) {
+        val payload = item.metaData?.let {
+            runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
+        }
+    }
 
     fun startRotate() {
         if (null == rotateStepAnimator || rotateStepAnimator?.isStarted == false) {

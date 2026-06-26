@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.clawagent
 
 import android.Manifest
+import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import androidx.databinding.ViewDataBinding
@@ -35,6 +36,7 @@ open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel>
     private var voiceCanceling = false
     private var voiceDownRawY = 0f
     private var voiceTouchRecording = false
+    private var voiceStartElapsedMs = 0L
 
     /**
      * 语音识别出文本后由子类发送到对应业务通道。
@@ -99,11 +101,21 @@ open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel>
         if (canceled) {
             shouldSendVoiceResult = false
             pendingVoiceText = null
+            voiceStartElapsedMs = 0L
+            speechTranscriber?.cancel()
+            resetVoiceTouchState()
+            return
+        }
+        if (SystemClock.elapsedRealtime() - voiceStartElapsedMs < MIN_VOICE_INPUT_DURATION_MS) {
+            shouldSendVoiceResult = false
+            pendingVoiceText = null
+            voiceStartElapsedMs = 0L
             speechTranscriber?.cancel()
             resetVoiceTouchState()
             return
         }
         // 松开时如果已有 partial 结果先发送；否则等待最终结果或 stopped 回调再兜底处理。
+        shouldSendVoiceResult = true
         shouldSendVoiceResult = true
         if (sendVoiceMessage()) {
             speechTranscriber?.cancel()
@@ -123,8 +135,11 @@ open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel>
         pendingVoiceText = null
         shouldSendVoiceResult = false
         return runCatching {
-            ensureSpeechTranscriber().start()
+            val started = ensureSpeechTranscriber().start()
+            voiceStartElapsedMs = if (started) SystemClock.elapsedRealtime() else 0L
+            started
         }.getOrElse { throwable ->
+            voiceStartElapsedMs = 0L
             Log.d("startVoiceRecognizing", "start voice recognizing failed", throwable)
             showMessage("语音输入启动失败")
             false
@@ -161,6 +176,7 @@ open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel>
                         showMessage(message)
                     }
                     shouldSendVoiceResult = false
+                    voiceStartElapsedMs = 0L
                 }
 
                 override fun onStopped() {
@@ -168,6 +184,7 @@ open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel>
                         showMessage("未识别到语音内容")
                     }
                     shouldSendVoiceResult = false
+                    voiceStartElapsedMs = 0L
                 }
             },
         ).also { speechTranscriber = it }
@@ -177,6 +194,7 @@ open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel>
         val text = pendingVoiceText?.trim()?.takeIf { it.isNotEmpty() } ?: return false
         pendingVoiceText = null
         shouldSendVoiceResult = false
+        voiceStartElapsedMs = 0L
         onVoiceTextRecognized(text)
         return true
     }
@@ -186,6 +204,10 @@ open class BaseClawAgentFragment<VB : ViewDataBinding, VM : BaseLayoutViewModel>
         voiceCanceling = false
         voiceDownRawY = 0f
         onVoiceRecognizingStateReset()
+    }
+
+    companion object {
+        private const val MIN_VOICE_INPUT_DURATION_MS = 1000L
     }
 
     override fun onDestroyView() {
