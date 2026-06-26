@@ -249,9 +249,6 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
-    /**
-     * 监听岗位选择页回传事件，并把选中的目标岗位提交给面试房间。
-     */
     private fun observeEvents() {
         observeEvents {
             on<Events.InterviewEvent> { event ->
@@ -320,6 +317,15 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 stopWaitAnimation()
             }
             InterviewRoomState.ERROR -> stopWaitAnimation()
+        }
+        when (state) {
+            InterviewRoomState.TARGET_JOB_PARSING -> {
+                getString(R.string.parsing_analysis).showToast()
+            }
+            InterviewRoomState.TARGET_JOB_PARSE_FAILED -> {
+                getString(R.string.parsing_failed).showToast()
+            }
+            else -> {}
         }
     }
 

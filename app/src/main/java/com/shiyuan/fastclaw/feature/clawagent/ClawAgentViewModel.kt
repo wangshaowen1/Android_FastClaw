@@ -1117,7 +1117,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         ) {
             val reportId = data?.reportId
             if (reportId.isNullOrBlank()) {
-                R.string.str_agent_company_background_precheck_failed.getResString().showToast()
+                companyBackgroundResult.value = data
                 return@requestWithLoading
             }
             pullMessages(getLastMessageCursor())
