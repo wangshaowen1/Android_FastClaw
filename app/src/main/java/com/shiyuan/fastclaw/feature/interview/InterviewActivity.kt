@@ -536,21 +536,25 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      * 处理服务端流式 TTS 文本；当前音频还在播放时先缓存，等待播放完成后续播。
      */
     private fun handleTtsStreamDelta(text: String) {
-        val speakText = text.trim()
-        if (speakText.isEmpty()) return
-        if (ttsPlaying && !ttsStreaming) {
-            pendingTtsStreamTexts.offer(speakText)
-            return
-        }
+        if (text.isBlank()) return
+        pendingTtsStreamTexts.offer(text)
+        flushPendingTtsStreamTexts()
+    }
+
+    /**
+     * 将等待中的流式文本写入当前 TTS 会话；没有会话时先启动。
+     */
+    private fun flushPendingTtsStreamTexts() {
+        if (pendingTtsStreamTexts.isEmpty()) return
         val player = ensureTtsPlayer()
         if (!ttsStreaming) {
             ttsPlaying = player.startStreaming()
             ttsStreaming = ttsPlaying
         }
         if (ttsStreaming) {
-            player.appendStreamingText(speakText)
-        } else {
-            pendingTtsStreamTexts.offer(speakText)
+            while (pendingTtsStreamTexts.isNotEmpty()) {
+                player.appendStreamingText(pendingTtsStreamTexts.poll())
+            }
         }
     }
 
@@ -573,19 +577,14 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun playPendingTtsStreamIfNeeded(): Boolean {
         if (pendingTtsStreamTexts.isEmpty()) return false
-        val player = ensureTtsPlayer()
-        ttsPlaying = player.startStreaming()
-        ttsStreaming = ttsPlaying
+        flushPendingTtsStreamTexts()
         if (!ttsStreaming) {
             pendingTtsStreamTexts.clear()
             pendingTtsStreamFinish = false
             return false
         }
-        while (pendingTtsStreamTexts.isNotEmpty()) {
-            player.appendStreamingText(pendingTtsStreamTexts.poll())
-        }
         if (pendingTtsStreamFinish) {
-            player.finishStreaming()
+            ensureTtsPlayer().finishStreaming()
             ttsStreaming = false
             pendingTtsStreamFinish = false
         }
