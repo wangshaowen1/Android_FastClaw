@@ -317,7 +317,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/home_treasury_shrimp_chip"
+                            android:text="@string/home_treasury_shrimp_chip2"
                             android:textColor="@color/color_8C3C3C43"
                             android:textSize="12sp" />
                     </LinearLayout>

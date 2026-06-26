@@ -759,8 +759,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     binding.tvAgentDesc.text = JobSearchStatusOption?.statusText
                     // setShapeSolidColor 只更新配置，需要 setUseShape 重新应用背景
                     when(JobSearchStatusOption?.statusCode){
-                        "AVAILABLE_IMMEDIATELY" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_15D173)).setUseShape()
-                        else -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff383c)).setUseShape()
+                        "NOT_LOOKING" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff383c)).setUseShape()
+                        else ->  binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_15D173)).setUseShape()
                     }
                 }
             }
