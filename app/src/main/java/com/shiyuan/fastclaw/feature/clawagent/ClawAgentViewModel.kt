@@ -27,6 +27,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePageBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePullBody
+import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewForceCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgressBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportRetryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
@@ -47,6 +48,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewForceCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
@@ -1234,10 +1236,33 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 )
             },
             showToast = true,
+            {
+               it?.message?.showToast()
+            }
         ) {
             interviewStartResult.value = data
         }
         //interviewStartResult.value = MockInterviewStartData(interviewId = "id666666666", chargeStatus = "DEDUCT_SUCCESS")
+    }
+
+    /**
+     * 强制结束当前模拟面试。
+     */
+    fun forceFinish(interviewId: String,onSuccess: (data: MockInterviewForceCancelData?) -> Unit) {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.forceCancelMockInterview(
+                    MockInterviewForceCancelBody(
+                        interviewId = interviewId,
+                        forceCancelRequestId = UUID.randomUUID().toString(),
+                        cancelReason = FORCE_CANCEL_REASON_USER,
+                    )
+                )
+            },
+            showToastError = true,
+        ) {
+            onSuccess(this.data)
+        }
     }
 
     fun queryUnfinishedInterview() {
@@ -1385,5 +1410,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_JOB_MATCH_REPORT = "JOB_MATCH_REPORT"
         // 今日进展卡片 TODO: 后端未给出type
         private const val CARD_TODAY_PROGRESS = "TODAY_PROGRESS"
+
+        /** 强制结束原因：用户主动结束。 */
+        private const val FORCE_CANCEL_REASON_USER = "USER_FORCE_CANCEL"
     }
 }

@@ -776,7 +776,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 InterviewActivity.start(requireActivity(), interviewId, true)
             }
             onFinishClickListener = {
-                // TODO 接入 forceCancel 后在这里结束未完成面试。
+                mRealVM.forceFinish(interviewId ?: "") {
+                    it?.message?.showToast()
+                }
             }
         }
     }
