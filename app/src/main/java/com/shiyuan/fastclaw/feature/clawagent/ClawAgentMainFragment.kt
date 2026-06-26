@@ -298,7 +298,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         msgAdapter.onInterviewDoneClickAction = { item, action, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
-                SimpleBrowserActivity.launch(requireActivity(), MOCK_INTERVIEW_RESULT_URL + data?.mockReportId)
+                SimpleBrowserActivity.launch(
+                    requireActivity(),
+                    MOCK_INTERVIEW_RESULT_URL + data?.interviewId + "&interview_mrId=" + data?.mockReportId
+                )
             }
         }
         // 模拟面试报告 - 重新生成
