@@ -303,7 +303,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             val result = this.data ?: return@request
             result.latestCursor?.let { latestCursor = it }
             pulledMessages.value = result
-            // 列表中所有 isThinkMessage 都去除
+            //result.messages?.forEach { if (it.isToastCard()) { it.content?.showToast() } }
             // 如果原列表最后一条是 isThinkMessage，只保留最后这一条
             // 其它位置的 isThinkMessage 全部过滤
             val messages = result.messages?.filterIndexed { index, msg ->
@@ -710,6 +710,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否思考态（think）中间态消息：enterSession / 历史分页等终态数据里的此类残留不再展示 */
     private fun JobAgentMessage.isThinkMessage(): Boolean =
         resolveItemType(this) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
+
+    /** 是否TOAST类型卡片 */
+    private fun JobAgentMessage.isToastCard(): Boolean = messageType == MSG_TOAST
 
     /** 是否属性确认卡（ATTRIBUTE_CONFIRM）：走记忆确认弹窗，不进对话列表 */
     private fun JobAgentMessage.isAttributeConfirm(): Boolean = messageType == MSG_CARD && cardType == CARD_ATTRIBUTE_CONFIRM
