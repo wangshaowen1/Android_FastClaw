@@ -380,6 +380,8 @@ data class CompanyBackgroundReportPayloadBean(
     val generatedAt: String? = null,
     /** 报告生成时间兼容字段 */
     val generateTime: String? = null,
+    /** 报告创建时间兼容字段 */
+    val createTime: String? = null,
     /** 生成失败原因或错误提示 */
     val errorMessage: String? = null,
     /** 报告卡动作列表，如重新生成、查看报告 */
