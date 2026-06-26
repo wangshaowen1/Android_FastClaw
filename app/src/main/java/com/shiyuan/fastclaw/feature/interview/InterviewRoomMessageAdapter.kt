@@ -20,13 +20,21 @@ class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewMessageInfo>()
 
     private class AiViewHolder(private val binding: ItemInterviewAiBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: InterviewMessageInfo) {
-            binding.tvContent.text = item.content
+            bindContent(item.content)
+        }
+
+        fun bindContent(content: String?) {
+            binding.tvContent.text = content
         }
     }
 
     private class UserViewHolder(private val binding: ItemInterviewUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: InterviewMessageInfo) {
-            binding.tvContent.text = item.content
+            bindContent(item.content)
+        }
+
+        fun bindContent(content: String?) {
+            binding.tvContent.text = content
         }
     }
 
