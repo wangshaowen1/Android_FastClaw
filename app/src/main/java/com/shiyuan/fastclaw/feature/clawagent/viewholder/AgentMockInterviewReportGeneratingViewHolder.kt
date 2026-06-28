@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.shiyuan.fastclaw.R
@@ -23,10 +24,9 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
     private val interviewTimeFormat = SimpleDateFormat(INTERVIEW_TIME_FORMAT, Locale.CHINA).apply {
         isLenient = false
     }
-    private var rotateStepAnimator: ObjectAnimator? = null
     private var rotateGenerateAnimator: ObjectAnimator? = null
     private var interviewTimeMs: Long? = null
-    private var rotatingStepIcon: ImageView? = null
+    private val rotateStepAnimators = mutableMapOf<ImageView, ObjectAnimator>()
     private var rotating = false
 
     fun bind(item: ClawAgentMessageInfo) {
@@ -56,7 +56,7 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
     fun stopRotate() {
         rotating = false
         mainHandler.removeCallbacks(refreshStepRunnable)
-        stopStepRotate()
+        stopStepRotates()
         rotateGenerateAnimator?.apply {
             cancel()
             removeAllListeners()
@@ -68,47 +68,60 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
 
     private fun refreshStepState() {
         val elapsedSeconds = ((System.currentTimeMillis() - (interviewTimeMs ?: System.currentTimeMillis())) / 1000L).coerceAtLeast(0L)
-        binding.tvStep1Icon.setImageResource(
-            if (elapsedSeconds >= STEP1_DONE_SECONDS) R.drawable.ic_company_background_report_check
-            else R.drawable.ic_company_background_report_loading
-        )
-        binding.tvStep2Icon.setImageResource(
-            if (elapsedSeconds >= STEP2_DONE_SECONDS) R.drawable.ic_company_background_report_check_2
-            else R.drawable.ic_company_background_report_loading
-        )
+        val step1Done = elapsedSeconds >= STEP1_DONE_SECONDS
+        val step2Done = elapsedSeconds >= STEP2_DONE_SECONDS
+        binding.tvStep1Icon.setImageResource(if (step1Done) R.drawable.ic_company_background_report_check else R.drawable.ic_company_background_report_loading)
+        binding.tvStep2Icon.setImageResource(if (step2Done) R.drawable.ic_company_background_report_check_2 else R.drawable.ic_company_background_report_loading)
         binding.tvStep3Icon.setImageResource(R.drawable.ic_company_background_report_loading)
-        val currentStepIcon = when {
-            elapsedSeconds >= STEP2_DONE_SECONDS -> binding.tvStep3Icon
-            elapsedSeconds >= STEP1_DONE_SECONDS -> binding.tvStep2Icon
-            else -> binding.tvStep1Icon
+        refreshStepTextColor(step1Done, step2Done)
+        val unfinishedIcons = buildList {
+            if (!step1Done) add(binding.tvStep1Icon)
+            if (!step2Done) add(binding.tvStep2Icon)
+            add(binding.tvStep3Icon)
         }
         if (rotating) {
-            startStepRotate(currentStepIcon)
+            syncStepRotates(unfinishedIcons)
         }
     }
 
-    private fun startStepRotate(icon: ImageView) {
-        if (rotateStepAnimator?.isStarted == true && rotatingStepIcon === icon) return
-        stopStepRotate()
-        rotatingStepIcon = icon
-        rotateStepAnimator = ObjectAnimator.ofFloat(icon, "rotation", 0f, 360f).apply {
-            duration = 1000L
-            interpolator = LinearInterpolator()
-            repeatCount = ObjectAnimator.INFINITE
-            repeatMode = ObjectAnimator.RESTART
-            start()
+    private fun refreshStepTextColor(step1Done: Boolean, step2Done: Boolean) {
+        val context = binding.root.context
+        val doneColor = ContextCompat.getColor(context, R.color.color_96_000000)
+        val unfinishedColor = ContextCompat.getColor(context, R.color.color_55_3c3c43)
+        binding.tvStep1.setTextColor(if (step1Done) doneColor else unfinishedColor)
+        binding.tvStep2.setTextColor(if (step2Done) doneColor else unfinishedColor)
+        binding.tvStep3.setTextColor(unfinishedColor)
+    }
+
+    private fun syncStepRotates(icons: List<ImageView>) {
+        val unfinishedIconSet = icons.toSet()
+        rotateStepAnimators.keys
+            .filter { it !in unfinishedIconSet }
+            .toList()
+            .forEach { stopStepRotate(it) }
+        icons.forEach { icon ->
+            if (rotateStepAnimators[icon]?.isStarted == true) return@forEach
+            rotateStepAnimators[icon] = ObjectAnimator.ofFloat(icon, "rotation", 0f, 360f).apply {
+                duration = 1000L
+                interpolator = LinearInterpolator()
+                repeatCount = ObjectAnimator.INFINITE
+                repeatMode = ObjectAnimator.RESTART
+                start()
+            }
         }
     }
 
-    private fun stopStepRotate() {
-        rotateStepAnimator?.apply {
+    private fun stopStepRotate(icon: ImageView) {
+        rotateStepAnimators.remove(icon)?.apply {
             cancel()
             removeAllListeners()
             removeAllUpdateListeners()
         }
-        rotatingStepIcon?.rotation = 0f
-        rotateStepAnimator = null
-        rotatingStepIcon = null
+        icon.rotation = 0f
+    }
+
+    private fun stopStepRotates() {
+        rotateStepAnimators.keys.toList().forEach { stopStepRotate(it) }
     }
 
     private fun parseInterviewTimeMs(interviewTime: String?): Long? {

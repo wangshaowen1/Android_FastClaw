@@ -569,7 +569,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                         .filter { it != key }
                         .forEach { messageStore.remove(it) }
                 }
-            messageStore[key] = msg
+            // 最后如果是Toast消息，将被丢弃不插入处理
+            if (!msg.isToastCard()) {
+                messageStore[key] = msg
+            }
         }
         refreshMessageList()
     }
