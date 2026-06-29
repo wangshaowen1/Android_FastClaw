@@ -66,6 +66,7 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
         binding.ivGenerating.rotation = 0f
     }
 
+    /** 根据面试时间刷新步骤完成态，并让所有未完成步骤保持 loading 动画。 */
     private fun refreshStepState() {
         val elapsedSeconds = ((System.currentTimeMillis() - (interviewTimeMs ?: System.currentTimeMillis())) / 1000L).coerceAtLeast(0L)
         val step1Done = elapsedSeconds >= STEP1_DONE_SECONDS
@@ -84,6 +85,7 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
         }
     }
 
+    /** 同步步骤文案颜色：已完成高亮，未完成置灰。 */
     private fun refreshStepTextColor(step1Done: Boolean, step2Done: Boolean) {
         val context = binding.root.context
         val doneColor = ContextCompat.getColor(context, R.color.color_96_000000)
@@ -93,6 +95,7 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
         binding.tvStep3.setTextColor(unfinishedColor)
     }
 
+    /** 对齐当前未完成步骤图标的旋转动画，移除已完成步骤动画。 */
     private fun syncStepRotates(icons: List<ImageView>) {
         val unfinishedIconSet = icons.toSet()
         rotateStepAnimators.keys
@@ -111,6 +114,7 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
         }
     }
 
+    /** 停止单个步骤图标动画并重置角度，避免复用时残留旋转状态。 */
     private fun stopStepRotate(icon: ImageView) {
         rotateStepAnimators.remove(icon)?.apply {
             cancel()
@@ -120,10 +124,12 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
         icon.rotation = 0f
     }
 
+    /** 停止所有步骤图标动画，用于 item 滑出或回收。 */
     private fun stopStepRotates() {
         rotateStepAnimators.keys.toList().forEach { stopStepRotate(it) }
     }
 
+    /** 将服务端面试时间转成时间戳，解析失败时回退为从当前时刻开始计时。 */
     private fun parseInterviewTimeMs(interviewTime: String?): Long? {
         return interviewTime
             ?.takeIf { it.isNotBlank() }
