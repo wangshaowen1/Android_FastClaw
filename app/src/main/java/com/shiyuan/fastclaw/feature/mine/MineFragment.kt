@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.feature.information.AwardActivity
 import com.shiyuan.fastclaw.feature.information.EducationalActivity
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
+import com.shiyuan.fastclaw.feature.information.PersonalInformationActivity
 import com.shiyuan.fastclaw.feature.information.SkillActivity
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
@@ -132,9 +133,9 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {
-            R.id.tv_name -> {
+          /*  R.id.tv_name -> {
                 AppNavigator.checkLoginIntercepted(false)
-            }
+            }*/
             R.id.layout_mine_point -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
                    // MyShrimpChipsActivity.start(requireActivity())
@@ -177,12 +178,12 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     InviteFriendsActivity.start(requireActivity())
                 }
             }
-            R.id.siv_avatar,
-            R.id.tv_name,
-            R.id.layout_mine_lj,
-            R.id.layout_mine_bj -> {
+            /* R.id.siv_avatar, R.id.tv_name,
+             R.id.layout_mine_lj,
+             R.id.layout_mine_bj */
+            R.id.tv_name -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    MyResumeActivity.start(requireActivity())
+                    PersonalInformationActivity.start(requireActivity())
                 }
             }
 

@@ -957,6 +957,23 @@
     <string name="certificate">证书</string>
     <string name="birth_date">出生年月</string>
     <string name="salary_range">薪资范围</string>
+    <string name="personal_information_title">个人信息</string>
+    <string name="personal_information_avatar">头像</string>
+    <string name="personal_information_name">姓名</string>
+    <string name="personal_information_name_value">张志源</string>
+    <string name="personal_information_gender_value">男</string>
+    <string name="personal_information_phone">手机号</string>
+    <string name="personal_information_phone_value">17883749009</string>
+    <string name="personal_information_wechat">微信号</string>
+    <string name="personal_information_wechat_value">17883749009</string>
+    <string name="personal_information_email">邮箱</string>
+    <string name="personal_information_email_value">17883749@qq.com</string>
+    <string name="personal_information_current_city">现居住城市</string>
+    <string name="personal_information_current_city_value">北京</string>
+    <string name="personal_information_political_status">政治面貌</string>
+    <string name="personal_information_political_status_value">党员</string>
+    <string name="personal_information_marital_status">婚姻状况</string>
+    <string name="personal_information_marital_status_value">未婚</string>
 
     <!-- 城市选择 -->
     <string name="select_city">选择城市</string>
