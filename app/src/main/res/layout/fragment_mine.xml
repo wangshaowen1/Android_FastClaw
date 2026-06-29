@@ -254,100 +254,109 @@
 
         <LinearLayout
             android:id="@+id/ll_understanding_xt"
-            android:layout_width="match_parent"
-            android:layout_height="71dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_width="0dp"
+            android:layout_height="68dp"
             android:layout_marginTop="16dp"
+            android:background="@drawable/bg_ffffff_r20"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            app:layout_constraintLeft_toLeftOf="@id/layout_mine_point"
+            android:paddingStart="19dp"
+            android:paddingEnd="19dp"
+            app:layout_constraintEnd_toEndOf="@id/layout_mine_point"
+            app:layout_constraintStart_toStartOf="@id/layout_mine_point"
             app:layout_constraintTop_toBottomOf="@id/view_mine_resume_banner">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/layout_mine_lj"
                 singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_ffffff_r20"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_width="48dp"
+                android:layout_height="48dp">
 
-                <RelativeLayout
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/rl_bfb"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    tools:ignore="MissingConstraints">
+                <com.shiyuan.fastclaw.widget.progress.WaveProgressView
+                    android:id="@+id/wave_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:wpv_progress="10"
+                    app:wpv_text="0%"
+                    app:wpv_textColor="@color/color_90_000000"
+                    app:wpv_textSize="14sp"
+                    app:wpv_waveAmplitude="6dp"
+                    app:wpv_waveBackgroundColor="#D9FBFE"
+                    app:wpv_waveColor="#54DAF0"
+                    app:wpv_waveCount="1" />
 
-                    <com.shiyuan.fastclaw.widget.progress.WaveProgressView
-                        android:id="@+id/wave_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:wpv_progress="10"
-                        app:wpv_text="0%"
-                        app:wpv_textColor="@color/color_e6_000000"
-                        app:wpv_textSize="18sp"
-                        app:wpv_waveAmplitude="8dp"
-                        app:wpv_waveBackgroundColor="#D9FBFE"
-                        app:wpv_waveColor="#54DAF0"
-                        app:wpv_waveCount="1" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ic_pr_bg" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/ic_pr_bg" />
-
-                </RelativeLayout>
-
-
-                <TextView
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/tv_dn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/resume_understanding"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="@id/rl_bfb"
-                    app:layout_constraintLeft_toRightOf="@id/rl_bfb"
-                    app:layout_constraintTop_toTopOf="@id/rl_bfb" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="15dp"
-                android:layout_height="match_parent" />
+            </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/layout_mine_bj"
-                singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:background="@drawable/bg_ffffff_r20"
-                android:gravity="center">
+                android:layout_marginStart="25dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/iv_jl"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:src="@drawable/ic_jl" />
+                <LinearLayout
+                    android:id="@+id/layout_mine_bj"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="6.5dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/confirm_my_resume2"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="@id/iv_jl"
-                    app:layout_constraintLeft_toRightOf="@id/iv_jl"
-                    app:layout_constraintTop_toTopOf="@id/iv_jl" />
+                    <ImageView
+                        android:layout_marginRight="4dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_mine_resume_info" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/resume_information"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="20dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/color_20_666666" />
+
+                <LinearLayout
+                    android:id="@+id/layout_mine_ph"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_marginRight="4dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_mine_job_preference" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/job_preference"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

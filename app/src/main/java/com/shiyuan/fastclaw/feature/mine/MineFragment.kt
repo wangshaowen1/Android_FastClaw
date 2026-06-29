@@ -172,6 +172,21 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     InviteFriendsActivity.start(requireActivity())
                 }
             }
+            R.id.layout_mine_ph -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    InviteFriendsActivity.start(requireActivity())
+                }
+            }
+            R.id.siv_avatar,
+            R.id.tv_name,
+            R.id.layout_mine_lj,
+            R.id.layout_mine_bj -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    MyResumeActivity.start(requireActivity())
+                }
+            }
+
+
    /*         R.id.siv_avatar,
             R.id.tv_login,
             R.id.tv_name -> {
