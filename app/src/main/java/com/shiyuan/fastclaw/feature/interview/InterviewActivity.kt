@@ -6,16 +6,21 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.animation.LinearInterpolator
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.manager.FileManager
 import com.nhsd.mattise.Matisse
@@ -175,6 +180,11 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         mRealVM.enterOrRecover(mInterviewId, mIsRecover)
     }
 
+
+    override fun setTranslucentStatus() {
+        setupTranslucentStatus(true, Color.WHITE)
+    }
+
     /**
      * 观察面试房间 ViewModel 数据，刷新消息、状态、语音播放和上传结果。
      */
@@ -195,10 +205,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         mRealVM.answerTimeoutEvent.observe(this) {
             if (answerRecording) {
                 answerRecording = false
-                finishVoiceRecognizing(
-                    canceled = false,
-                    endReason = InterviewViewModel.ANSWER_END_TIMEOUT_AUTO_SUBMIT,
-                )
+                finishVoiceRecognizing(canceled = false, endReason = InterviewViewModel.ANSWER_END_TIMEOUT_AUTO_SUBMIT)
             }
         }
         mRealVM.toastMessage.observe(this) {
