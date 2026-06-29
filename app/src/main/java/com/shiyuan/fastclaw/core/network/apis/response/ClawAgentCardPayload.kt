@@ -145,6 +145,7 @@ data class CardAction(
 
 /** CARD 公共：问题卡选项（7.4.3） */
 data class CardOption(
+    val code: String? = null,
     val text: String? = null,
     val label: String? = null,
 //    val value: String? = null,

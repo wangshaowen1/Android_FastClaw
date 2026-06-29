@@ -89,7 +89,7 @@
             android:id="@+id/view_message_top_shadow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-5dp"
+            android:layout_marginTop="-6dp"
             app:layout_constraintTop_toTopOf="@id/rv_message"
             android:background="@drawable/ic_interview_message_top_shadow"
             app:layout_constraintEnd_toEndOf="parent"

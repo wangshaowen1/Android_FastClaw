@@ -1271,6 +1271,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * 查询是否有未结束的面试
+     */
     fun queryUnfinishedInterview() {
         request(
             apiBlock = { mRepo.api.queryMockInterviewUnfinished() },
