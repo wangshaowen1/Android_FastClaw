@@ -737,6 +737,7 @@
     <string name="about">关于快龙虾</string>
     <string name="business_license">营业执照</string>
     <string name="record_filing_information">备案信息</string>
+    <string name="parsing_analysis">解析中</string>
     <string name="parsing_failed">解析失败</string>
     <string name="report_analysis">报告分析中</string>
     <string name="report_analysis_r">你可以稍后在「我的报告」中查看生成结果</string>

@@ -474,7 +474,7 @@ interface ApiService {
      * 重新生成公司背调失败报告
      */
     @POST(ApiConstants.JOB_AGENT_COMPANY_BACKGROUND_REGENERATE_SUBMIT)
-    suspend fun regenerateCompanyBackgroundReport(@Body body: CompanyBackgroundRegenerateSubmitBody): ApiResponse<CompanyBackgroundRegenerateSubmitData?>
+    suspend fun regenerateCompanyBackgroundReport(@Body body: CompanyBackgroundRegenerateSubmitBody): ApiResponse<CompanyBackgroundPreCheckResultData?>
 
     /**
      * 查询当前可确认简历（求职 Agent）
