@@ -109,6 +109,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 端侧兜底流式展示完整 Agent 文本的待播队列。 */
     private val localAiStreamQueue = ArrayDeque<LocalAiStreamMessage>()
 
+    /** 收到面试结束后，等待本地结束语流式展示和 TTS 输入完成再通知页面关闭。 */
+    private var pendingFinishAfterTtsConversationId: String? = null
+
     /** 按消息 ID 保存的端侧消息缓存。 */
     private val messageStore = LinkedHashMap<String, InterviewMessageInfo>()
 
@@ -528,7 +531,8 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 处理面试结束事件，通知页面等待结束语音播报完成后退出面试房间。
      */
     private fun handleInterviewFinished(message: InterviewAgentMessage) {
-        finishAfterTtsEvent.value = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+        pendingFinishAfterTtsConversationId = message.payload?.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
+        notifyFinishAfterTtsIfReady()
     }
 
     /**
@@ -596,8 +600,20 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             localAiStreamJob = null
             if (localAiStreamQueue.isNotEmpty()) {
                 startLocalAiStreamQueue()
+            } else {
+                notifyFinishAfterTtsIfReady()
             }
         }
+    }
+
+    /**
+     * 本地结束语流式展示完成后，再通知页面等待 TTS 播完并关闭。
+     */
+    private fun notifyFinishAfterTtsIfReady() {
+        val conversationId = pendingFinishAfterTtsConversationId ?: return
+        if (localAiStreamJob?.isActive == true || localAiStreamQueue.isNotEmpty()) return
+        pendingFinishAfterTtsConversationId = null
+        finishAfterTtsEvent.value = conversationId
     }
 
     /**
