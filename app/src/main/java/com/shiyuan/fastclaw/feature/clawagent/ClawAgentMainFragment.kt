@@ -370,6 +370,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     mCurrentQuestionId = queueId
                     runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
                 }
+                if (payload?.isJobStatus() ?: false) {// 求职状态
+
+                }
                 if (payload?.isLocationCity() ?: false) {// 现居住城市
                     JobCitySelectorActivity.start(activity, JobCityQueryBody.LOCATION)
                 } else if (payload?.isExpectedCity() ?: false) { //意向城市

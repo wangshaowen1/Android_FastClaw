@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
@@ -25,6 +26,7 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
         val action = payload?.primaryAction ?: payload?.actions?.firstOrNull()
         binding.tvAction.text = binding.root.context.getString(R.string.str_agent_mock_interview_action_main)
         binding.tvCost.text = context.getString(R.string.str_agent_mock_interview_action_cost, payload?.chargeAmount?:0)
+        binding.tvCost.visibility = View.VISIBLE
         val enabled = action?.disabled != true &&
             payload?.interactionState?.disabled != true &&
             payload?.buttonStatus != "DISABLED"
@@ -32,6 +34,10 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
         binding.layoutAction.setBackgroundResource(if (enabled) R.drawable.bg_mock_interview_entry_action else R.drawable.bg_mock_interview_entry_action_disabled)
         binding.tvAction.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
         binding.tvCost.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
+        if (null == payload?.resumeId) {
+            binding.tvAction.text = binding.root.context.getString(R.string.str_agent_mock_interview_action_upload)
+            binding.tvCost.visibility = View.GONE
+        }
         binding.layoutAction.setOnSingleClickListener {
             if (enabled) onInterviewStartClickListener(item, action, payload)
         }

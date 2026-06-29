@@ -245,6 +245,10 @@ data class CoreQuestionPayloadBean(
         return state.disabled == true
     }
 
+    fun isJobStatus(): Boolean {// 求职状态
+        return inputMode == MODE_SINGLE_CHOICE && attributeGroupCode == "jobStatus"
+    }
+
     //`现居住城市-location`、`民族-ethnicity`
     fun isLocationCity(): Boolean {// 现居住城市
         return inputMode == MODE_DICT_SINGLE && attributeGroupCode == "location"
