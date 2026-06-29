@@ -183,6 +183,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
+        android:scaleType="fitXY"
         android:id="@+id/iv_screenshot_preview"
         android:layout_width="145dp"
         android:layout_height="216dp"
