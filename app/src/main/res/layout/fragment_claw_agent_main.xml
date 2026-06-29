@@ -74,12 +74,12 @@
         <com.shiyuan.fastclaw.widget.super_button.SuperButton
             android:id="@+id/tv_agent_status"
             android:layout_width="6dp"
-            android:layout_height="4dp"
+            android:layout_height="6dp"
             app:layout_constraintBottom_toBottomOf="@id/tv_agent_desc"
             app:layout_constraintStart_toStartOf="@id/tv_agent_name"
             app:layout_constraintTop_toTopOf="@id/tv_agent_desc"
             app:sCornersRadius="45dp"
-            app:sSolidColor="@color/color_15D173" />
+            app:sSolidColor="@color/color_ff8D28" />
 
 
         <View

@@ -20,6 +20,7 @@ import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivityIndustrySelectionBinding
 import com.shiyuan.fastclaw.databinding.ActivityJobSelectionBinding
 import com.shiyuan.fastclaw.feature.information.adapter.IyPnAdapter
@@ -91,6 +92,33 @@ class JobSelectionActivity :
     // 是否多选模式
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
 
+    private fun selectOnlyPosition(item: CommonEnumItem) {
+        val selectedCode = item.positionCode
+        mRealVM.allPositioData.value?.forEachIndexed { parentIndex, parent ->
+            var parentSelected = false
+            parent.secondCategories?.forEach { secondCategory ->
+                var secondCategorySelected = false
+                secondCategory.positions?.forEach { child ->
+                    val childSelected = selectedCode != null && child.positionCode == selectedCode
+                    child.isSelected = childSelected
+                    if (childSelected) {
+                        secondCategorySelected = true
+                        parentSelected = true
+                    }
+                }
+                secondCategory.isSelected = secondCategorySelected
+            }
+            parent.isSelected = parentSelected
+            if (parentSelected) {
+                mRealVM.lastSelectedPosition2.value = parentIndex
+                cyIyJobPnSonAdapter.submitList(parent.secondCategories ?: emptyList())
+            }
+        }
+        item.isSelected = true
+        mRealVM.selectPositionData.value = listOf(item)
+        cyIyPnAdapter.notifyDataSetChanged()
+    }
+
     // 当前会话 ID / 对话 ID
     private val sessionId: String by lazy { intent.getStringExtra(JobSelectionActivity.Companion.SESSIONID) ?: "" }
     private val conversationId: String by lazy { intent.getStringExtra(JobSelectionActivity.Companion.CONVERSATIONID)  ?: ""}
@@ -117,13 +145,17 @@ class JobSelectionActivity :
                     item.isSelected = false
                     mRealVM.selectPositionData.value = selectedList.filterNot { it.positionCode == item.positionCode }
                 } else {
-                    if (selectedList.size >= this.multipleNum) {
-                        val showToastMes = "最多选择"+this.multipleNum+"个"
-                        showToastMes .showToast()
-                        return@IyPnJobSonAdapter
+                    if (this.multipleNum == 1) {
+                        selectOnlyPosition(item)
+                    } else {
+                        if (selectedList.size >= this.multipleNum) {
+                            val showToastMes = "最多选择"+this.multipleNum+"个"
+                            showToastMes .showToast()
+                            return@IyPnJobSonAdapter
+                        }
+                        item.isSelected = true
+                        mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
                     }
-                    item.isSelected = true
-                    mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
                 }
             } else {
                 // 单选：回传选中项并关闭页面
@@ -156,21 +188,25 @@ class JobSelectionActivity :
     private val searchAdapter: SearchAdapter by lazy {
         SearchAdapter( { item, position ->
             if (isMultiple) {
-                // 多选：直接追加到已选集合（最多 3 个）
-                val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
-                if (selectedList.size >= this.multipleNum) {
-                    val showToastMes = "最多选择"+this.multipleNum+"个"
-                    showToastMes .showToast()
-                    return@SearchAdapter
-                }
-                item.isSelected = true
-                mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
+                if (this.multipleNum == 1) {
+                    selectOnlyPosition(item)
+                } else {
+                    // 多选：直接追加到已选集合（最多 3 个）
+                    val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
+                    if (selectedList.size >= this.multipleNum) {
+                        val showToastMes = "最多选择"+this.multipleNum+"个"
+                        showToastMes .showToast()
+                        return@SearchAdapter
+                    }
+                    item.isSelected = true
+                    mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
 
-                // 同步右侧列表中的对应项为选中
-                mRealVM.allPositioData.value?.forEach { parent ->
-                    parent.secondCategories?.forEach { secondCategory ->
-                        secondCategory.positions?.firstOrNull { child -> child.positionCode == item.positionCode }?.isSelected =
-                            true
+                    // 同步右侧列表中的对应项为选中
+                    mRealVM.allPositioData.value?.forEach { parent ->
+                        parent.secondCategories?.forEach { secondCategory ->
+                            secondCategory.positions?.firstOrNull { child -> child.positionCode == item.positionCode }?.isSelected =
+                                true
+                        }
                     }
                 }
                 cyIyJobPnSonAdapter.notifyDataSetChanged()
