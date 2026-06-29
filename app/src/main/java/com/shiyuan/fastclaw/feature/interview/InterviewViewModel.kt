@@ -79,6 +79,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** TTS 流式文本结束事件。 */
     val ttsStreamFinishEvent = MutableLiveData<Unit>()
 
+    /** Agent 完整问题播报完成后，自动打开用户作答。 */
+    val autoStartAnswerAfterTtsEvent = MutableLiveData<Unit>()
+
     /** 当前模拟面试会话 ID。 */
     var mInterviewId: String? = null
 
@@ -483,11 +486,15 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         when (message.senderType) {
             SENDER_AGENT -> {
                 val hasStreamingMessage = currentAiMessageId != null
+                val shouldAutoStartAfterTts = if (hasStreamingMessage) currentAiTtsEnabled else message.isTtsEnabled()
                 message.content?.takeIf { it.isNotEmpty() }?.let {
                     if (hasStreamingMessage) {
                         replaceCurrentAiMessage(it)
                     } else {
                         streamFullAiMessage(it, message.isTtsEnabled())
+                    }
+                    if (shouldAutoStartAfterTts) {
+                        autoStartAnswerAfterTtsEvent.value = Unit
                     }
                 }
                 if (hasStreamingMessage && currentAiTtsEnabled) {

@@ -100,6 +100,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /** 是否等待结束语音播报完成后自动关闭页面。 */
     private var finishAfterTts = false
 
+    /** 是否等待当前面试官问题播报完成后自动开始用户作答。 */
+    private var autoStartAnswerAfterTts = false
+
     /** 当前是否正在播放 TTS。 */
     private var ttsPlaying = false
 
@@ -231,6 +234,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             if (!ttsPlaying && pendingTtsStreamTexts.isEmpty()) {
                 finish()
             }
+        }
+        mRealVM.autoStartAnswerAfterTtsEvent.observe(this) {
+            autoStartAnswerAfterTts = true
         }
         mRealVM.messageList.observe(this) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
@@ -520,6 +526,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                     if (playPendingTtsStreamIfNeeded()) return
                     if (finishAfterTts) {
                         finish()
+                    } else {
+                        startAnswerAfterTtsIfNeeded()
                     }
                 }
 
@@ -533,10 +541,20 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                         finish()
                     } else {
                         showMessage(message)
+                        startAnswerAfterTtsIfNeeded()
                     }
                 }
             },
         ).also { ttsPlayer = it }
+    }
+
+    /** TTS 播报结束后，自动进入用户作答录音。 */
+    private fun startAnswerAfterTtsIfNeeded() {
+        if (!autoStartAnswerAfterTts) return
+        autoStartAnswerAfterTts = false
+        if (answerRecording) return
+        if (mRealVM.roomState.value != InterviewRoomState.WAITING_USER_ANSWER) return
+        toggleAnswerRecording()
     }
 
     /**
