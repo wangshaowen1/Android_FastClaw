@@ -115,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -230,9 +230,10 @@
                 android:id="@+id/layout_wait"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="38dp"
+                android:layout_marginBottom="16dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -249,11 +250,11 @@
                     android:id="@+id/iv_wait_icon"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:layout_marginTop="34dp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintTop_toBottomOf="@id/iv_wait_badge"
                     android:src="@drawable/img_interview_voice_icon_waiting"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <ImageView
                     android:id="@+id/iv_wait_loading"
@@ -270,7 +271,6 @@
                     android:id="@+id/tv_wait_press"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:text="@string/interview_room_answer_wait"
@@ -300,7 +300,7 @@
                 android:id="@+id/layout_answer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="38dp"
+                android:layout_marginBottom="16dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:visibility="gone"
@@ -320,17 +320,16 @@
                     android:id="@+id/iv_voice_icon"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:layout_marginTop="34dp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintTop_toBottomOf="@id/iv_voice_badge"
                     android:src="@drawable/img_interview_voice_icon_start"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_voice_press"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:text="@string/interview_room_answer_start"
@@ -359,7 +358,7 @@
                 android:id="@+id/layout_finish"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="38dp"
+                android:layout_marginBottom="16dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
