@@ -19,7 +19,6 @@ import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
-import com.nhsd.basic.ext.dp
 import com.nhsd.basic.manager.FileManager
 import com.nhsd.mattise.Matisse
 import com.nhsd.mattise.MimeType

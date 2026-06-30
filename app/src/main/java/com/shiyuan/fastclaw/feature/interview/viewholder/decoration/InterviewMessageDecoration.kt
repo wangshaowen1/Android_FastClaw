@@ -6,13 +6,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.ext.dp
 
 /**
- * 面试消息列表顶部间距：只给第一条消息增加顶部留白。
+ * 面试消息列表间距：第一条顶部和最后一条底部默认留白 5dp。
  */
 class InterviewMessageDecoration : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-        if (parent.getChildAdapterPosition(view) == 0) {
+        val position = parent.getChildAdapterPosition(view)
+        if (position == 0) {
             outRect.top = 5.dp
+        }
+        if (position == state.itemCount - 1) {
+            outRect.bottom = 5.dp
         }
     }
 }
