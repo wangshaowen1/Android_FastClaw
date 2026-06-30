@@ -602,6 +602,14 @@
     <string name="mine_rule">虾条规则</string>
     <string name="mine_shrimp_rule_tip">虾条更新可能延迟 虾条规则</string>
     <string name="mine_shrimp_record">虾条记录</string>
+    <string name="my_order_record">订单记录</string>
+    <string name="my_order_problem_tip">订单问题请 联系客服</string>
+    <string name="my_order_no">订单号：%1$s</string>
+    <string name="my_order_mock_interview_package">面试通关包</string>
+    <string name="my_order_shrimp_recharge">虾条充值</string>
+    <string name="my_order_sample_order_no">klx993959500992200000</string>
+    <string name="my_order_sample_amount">68.00元</string>
+    <string name="my_order_sample_time">2026.05.07 15:16:18</string>
     <string name="mine_select_recharge_package">选择充值套餐</string>
     <string name="mine_recharge_method">充值方式</string>
     <string name="mine_recharge_agreement_prefix">充值即代表同意</string>

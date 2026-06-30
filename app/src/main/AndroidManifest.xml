@@ -279,6 +279,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.mine.MyOrderActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.invite.InviteFriendsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
