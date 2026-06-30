@@ -12,8 +12,9 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
-import com.shiyuan.fastclaw.core.ext.openTheCustomerServiceCenter
+import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 import com.shiyuan.fastclaw.databinding.FragmentMyOrderRecordBinding
+import com.shiyuan.fastclaw.feature.mine.dialog.MyOrderCustomerServiceDialog
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
 class MyOrderRecordFragment :
@@ -46,7 +47,9 @@ class MyOrderRecordFragment :
         }
         setProblemTipText()
         binding.tvProblemTip.setOnSingleClickListener {
-            requireActivity().openTheCustomerServiceCenter()
+            MyOrderCustomerServiceDialog.show(childFragmentManager) {
+                requireActivity().customerServiceTransfer()
+            }
         }
     }
 
