@@ -43,6 +43,7 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
+import com.shiyuan.fastclaw.feature.information.dialog.JobSelectionDialog
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_SUBMIT
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SESSION_STATUS_PREPARING
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_POSITION_SELECTED
@@ -173,12 +174,16 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             showTargetJobDialog()
         }
         binding.btnNoTargetJob.setOnSingleClickListener {
-            JobSelectionActivity.start(this,
+            JobSelectionDialog.show(  manager = this.supportFragmentManager,true,
+                title = getString(R.string.interview_select_mock_job_title),
+                multipleNum = 1,
+                type = "Interview")
+          /*  JobSelectionActivity.start(this,
                 true,
                 title = getString(R.string.interview_select_mock_job_title),
                 multipleNum = 1,
                 type = "Interview"
-            )
+            )*/
         }
         mRealVM.enterOrRecover(mInterviewId, mIsRecover)
     }
