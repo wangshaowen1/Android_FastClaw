@@ -339,33 +339,32 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 处理单条模拟面试 SSE 消息，并分发到对应业务处理逻辑。
      */
     fun sseInsertMessages(message: InterviewAgentMessage) {
-        message.messageSeq?.let {
-            if (it <= lastMessageSeq) return
-            lastMessageSeq = it
-        }
+        // lastMessageSeq 仅作为下一次请求的水位，不在这里拦截业务消息；
+        // onMeta / payload.latestMessageSeq 可能先推进水位，同序号消息仍要继续分发处理。
+        updateLastMessageSeq(message.messageSeq)
         message.payload?.latestMessageSeq?.let { updateLastMessageSeq(it) }
-        handleRecoverPayload(message)?.let { return }
+        if (!message.payload?.recoverAction.isNullOrBlank() && handleRecoverPayload(message)) return
         when (message.messageType) {
-            MSG_ROOM_STATE_CHANGED -> {
+            MSG_ROOM_STATE_CHANGED -> { //房间状态变化
                 handleRoomState(message)
                 handleTextDone(message)
             }
-            MSG_TEXT_DELTA ->
+            MSG_TEXT_DELTA -> //文本流式片段
                 appendAiDelta(message.content.orEmpty(), message.isTtsEnabled())
-            MSG_TEXT_DONE -> {
+            MSG_TEXT_DONE -> { //文本完整输出
                 handleRoomState(message)
                 handleTextDone(message)
             }
-            MSG_TEXT_BLOCKED -> {
+            MSG_TEXT_BLOCKED -> { //内容安全拦截文本
                 handleRoomState(message)
                 handleTextBlocked(message)
             }
-            MSG_INTERVIEW_FINISHED -> {
+            MSG_INTERVIEW_FINISHED -> { //面试结束
                 handleTextDone(message)
                 handleRoomState(message)
                 handleInterviewFinished(message)
             }
-            MSG_ERROR -> {
+            MSG_ERROR -> { //错误
                 roomState.value = InterviewRoomState.ERROR
                 val errorMessage = message.errorMessage ?: message.payload?.errorMessage ?: TEXT_INTERVIEW_ERROR
                 showToast(errorMessage)
@@ -376,24 +375,24 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /**
      * 处理恢复房间相关 payload，命中恢复动作时拦截后续普通消息处理。
      */
-    private fun handleRecoverPayload(message: InterviewAgentMessage): Unit? {
+    private fun handleRecoverPayload(message: InterviewAgentMessage): Boolean {
         return when (message.payload?.recoverAction) {
             RECOVER_ACTION_RESTORE_ROOM -> {
                 restoreRoom(message)
-                Unit
+                true
             }
             RECOVER_ACTION_RETURN_TO_CHAT -> {
                 handleRoomState(message)
                 finishRoomEvent.value = message.payload.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
-                Unit
+                true
             }
             RECOVER_ACTION_SESSION_CLOSED -> {
                 handleRoomState(message)
                 showToast(TEXT_INTERVIEW_CLOSED)
                 finishRoomEvent.value = message.payload.conversationId?.takeIf { it.isNotEmpty() } ?: mConversationId
-                Unit
+                true
             }
-            else -> null
+            else -> false
         }
     }
 

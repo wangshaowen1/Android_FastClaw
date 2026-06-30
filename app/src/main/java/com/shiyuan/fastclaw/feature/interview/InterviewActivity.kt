@@ -290,11 +290,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 binding.layoutWait.gone()
                 binding.layoutAnswer.gone()
                 binding.layoutFinish.gone()
+                binding.viewBottomShadow.gone()
                 stopWaitAnimation()
             }
             InterviewRoomState.TARGET_JOB_PARSING,
             InterviewRoomState.PLAN_GENERATING,
             InterviewRoomState.ANSWER_SUBMITTED -> {
+                binding.viewBottomShadow.visible()
                 binding.layoutWait.visible()
                 binding.layoutUpload.gone()
                 binding.layoutAnswer.gone()
@@ -306,6 +308,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             InterviewRoomState.WAITING_USER_ANSWER,
             InterviewRoomState.WAITING_FOLLOW_UP_DECISION,
             InterviewRoomState.ANSWERING -> {
+                binding.viewBottomShadow.visible()
                 binding.layoutAnswer.visible()
                 binding.layoutWait.gone()
                 binding.layoutUpload.gone()
@@ -317,12 +320,14 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 binding.layoutWait.gone()
                 binding.layoutAnswer.gone()
                 binding.layoutFinish.gone()
+                binding.viewBottomShadow.gone()
                 stopWaitAnimation()
                 binding.tvTargetJobTitle.text = getString(R.string.reupload)
             }
             InterviewRoomState.REPORT_GENERATING,
             InterviewRoomState.FINISHED,
             InterviewRoomState.CANCELED -> {
+                binding.viewBottomShadow.visible()
                 binding.layoutFinish.visible()
                 binding.layoutWait.gone()
                 binding.layoutUpload.gone()
