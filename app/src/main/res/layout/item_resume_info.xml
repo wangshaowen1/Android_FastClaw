@@ -80,6 +80,28 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rc_field_tree"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:nestedScrollingEnabled="false"
+            android:visibility="gone"
+            tools:itemCount="1"
+            tools:listitem="@layout/item_work_experience_re" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="13sp"
+            android:visibility="gone"
+            tools:text="自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评" />
+
         <View
             android:id="@+id/view_divider"
             android:layout_width="match_parent"
