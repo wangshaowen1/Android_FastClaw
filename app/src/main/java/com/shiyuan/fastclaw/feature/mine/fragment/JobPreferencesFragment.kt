@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.mine
+package com.shiyuan.fastclaw.feature.mine.fragment
 
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +45,7 @@ class JobPreferencesFragment :
                         itemBinding.tvConnect.visibility = View.VISIBLE
                         itemBinding.tvConnect.text = item.fieldItems[0].fieldValue?.toString() ?: ""
                     }
+
                     else -> {
                         itemBinding.rcConnect.visibility = View.GONE
                         itemBinding.tvConnect.visibility = View.VISIBLE

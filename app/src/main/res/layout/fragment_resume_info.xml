@@ -7,32 +7,33 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel" />
+            type="com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel" />
     </data>
 
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
-        <androidx.core.widget.NestedScrollView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:fillViewport="true">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
+                android:background="@drawable/bg_ffffff_leftbot_rightbot_r20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingTop="9dp"
                 android:paddingBottom="@dimen/spacing_xl">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="9dp"
                     android:background="@drawable/bg_f3f9ff_ffffff_r12"
                     android:paddingStart="6dp"
                     android:paddingTop="11dp"
@@ -77,14 +78,14 @@
                         android:id="@+id/tv_tip"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textColor="@color/color_75_3c3c43"
                         android:textSize="13sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/tv_name"
-                        app:layout_constraintTop_toBottomOf="@id/tv_name"
+                        app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
                         tools:text="Status" />
 
                     <LinearLayout
@@ -187,31 +188,29 @@
                     android:id="@+id/iv_profile_decor"
                     android:layout_width="match_parent"
                     android:layout_height="7dp"
-                    android:layout_marginHorizontal="@dimen/spacing_s"
+                    android:layout_marginHorizontal="7dp"
                     android:layout_marginTop="@dimen/spacing_m"
                     android:importantForAccessibility="no"
                     android:scaleType="fitXY"
                     android:src="@drawable/img_online_resume_profile_decor" />
 
-                <FrameLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="4dp"
+                    android:id="@+id/rv_resume_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_m">
+                    android:nestedScrollingEnabled="false" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_resume_info"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false" />
 
-                    <include
-                        android:id="@+id/view_understands"
-                        layout="@layout/view_understands1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone" />
-                </FrameLayout>
+                <include
+                    android:id="@+id/view_understands"
+                    layout="@layout/view_understands1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </FrameLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

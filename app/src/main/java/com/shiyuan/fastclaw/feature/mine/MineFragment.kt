@@ -90,10 +90,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 }
             }
         }
-        binding.sivAvatar.setOnSingleClickListener {
-
-        }
-
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -138,11 +134,10 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }*/
             R.id.layout_mine_point -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                   // MyShrimpChipsActivity.start(requireActivity())
                     MineShrimpRechargeActivity.start(requireActivity())
                 }
             }
-            R.id.ll_setting -> {
+            R.id.iv_setting -> {
                 SettingsActivity.start(requireActivity())
             }
             R.id.ll_interview_report -> {
@@ -156,34 +151,34 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     binding.llMinePointsTip.visibility = View.GONE
                 }
             }
-            R.id.layout_mine_bj -> {
+          /*  R.id.layout_mine_bj -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
                    MyResumeActivity.start(requireActivity())
                 }
-            }
+            }*/
 
-            R.id.layout_mine_lj  -> {
+          /*  R.id.layout_mine_lj  -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
                     ShrimpUnderstandsActivity.start(requireActivity(),mRealVM.underStandingScore.value?.understandingScore ?: 0)
                 }
-            }
+            }*/
             R.id.view_mine_resume_banner,
             R.id.tv_mine_invite_action -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
                     InviteFriendsActivity.start(requireActivity())
                 }
             }
-            R.id.layout_mine_ph -> {
+             R.id.siv_avatar,
+             R.id.layout_mine_lj,
+             R.id.layout_mine_bj,
+              R.id.tv_name -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    InviteFriendsActivity.start(requireActivity())
+                    OnlineResumeActivity.start(requireActivity(),0)
                 }
             }
-            /* R.id.siv_avatar, R.id.tv_name,
-             R.id.layout_mine_lj,
-             R.id.layout_mine_bj */
-            R.id.tv_name -> {
+            R.id.layout_mine_ph -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    OnlineResumeActivity.start(requireActivity())
+                    OnlineResumeActivity.start(requireActivity(),1)
                 }
             }
 

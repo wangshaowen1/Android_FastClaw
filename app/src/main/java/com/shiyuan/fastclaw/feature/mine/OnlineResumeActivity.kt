@@ -12,6 +12,8 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.FragmentStateCacheAdapter
 import com.shiyuan.fastclaw.databinding.ActivityOnlineResumeBinding
+import com.shiyuan.fastclaw.feature.mine.fragment.JobPreferencesFragment
+import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 
 /**
@@ -126,6 +128,7 @@ class OnlineResumeActivity :
         )
         binding.ivTable1.visibility = if (firstSelected) View.VISIBLE else View.GONE
         binding.ivTable2.visibility = if (firstSelected) View.GONE else View.VISIBLE
+        binding.llBt.visibility = if (firstSelected) View.VISIBLE else View.GONE
     }
 
     override fun onDestroy() {
