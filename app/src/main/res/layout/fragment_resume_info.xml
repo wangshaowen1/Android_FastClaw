@@ -12,7 +12,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true">
 
@@ -25,8 +25,7 @@
                 android:background="@drawable/bg_ffffff_leftbot_rightbot_r20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/spacing_xl">
+                android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layout_profile"
@@ -195,11 +194,13 @@
                     android:src="@drawable/img_online_resume_profile_decor" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:layout_marginTop="4dp"
                     android:id="@+id/rv_resume_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="18dp"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_resume_info" />
 
 
                 <include

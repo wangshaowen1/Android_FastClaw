@@ -235,7 +235,6 @@
             </com.google.android.material.appbar.AppBarLayout>
 
             <androidx.viewpager2.widget.ViewPager2
-                android:background="@color/white"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:id="@+id/vp_resume_pages"
                 android:layout_width="match_parent"
