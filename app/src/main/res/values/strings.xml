@@ -777,8 +777,8 @@
     <string name="str_agent_company_background_action_free">(免费3次/日，超出10虾条/次)</string>
     <string name="str_agent_company_background_traceable">信息全部可追述，工商·司法·融资交叉验证</string>
     <string name="str_agent_company_background_report_title">公司背调报告</string>
-    <string name="str_agent_company_background_report_failed_title">生成失败</string>
-    <string name="str_agent_company_background_report_failed_desc">生成加载超时，请点击重试</string>
+    <string name="str_agent_company_background_report_failed_title">公司背调生成失败</string>
+    <string name="str_agent_company_background_report_failed_desc">公司背调生成加载超时，请点击重试</string>
     <string name="str_agent_company_background_report_regenerate">重新生成</string>
     <string name="str_agent_company_background_report_view">查看报告</string>
     <string name="str_agent_company_background_report_step1">公司基础信息整理中</string>
@@ -805,8 +805,8 @@
     <string name="str_agent_mock_interview_action_upload">上传简历后解锁面试</string>
     <string name="str_agent_mock_interview_skip">暂不需要</string>
     <string name="str_agent_mock_interview_report_title">面试复盘报告</string>
-    <string name="str_agent_mock_interview_report_failed_title">生成失败</string>
-    <string name="str_agent_mock_interview_report_failed_desc">生成加载超时，请点击重试</string>
+    <string name="str_agent_mock_interview_report_failed_title">模拟面试生成失败</string>
+    <string name="str_agent_mock_interview_report_failed_desc">模拟面试生成加载超时，请点击重试</string>
     <string name="str_agent_mock_interview_report_regenerate">重新生成</string>
     <string name="str_agent_mock_interview_report_view">查看报告</string>
     <string name="str_agent_mock_interview_report_step1">回顾面试回答</string>
