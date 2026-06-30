@@ -80,6 +80,7 @@
             android:paddingHorizontal="16dp">
 
             <TextView
+                android:textStyle="bold"
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

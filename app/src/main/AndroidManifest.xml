@@ -234,6 +234,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name="com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.information.PersonaFreeFillInActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 

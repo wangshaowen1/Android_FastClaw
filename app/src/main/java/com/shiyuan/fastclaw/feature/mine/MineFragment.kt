@@ -183,7 +183,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
              R.id.layout_mine_bj */
             R.id.tv_name -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    PersonalInformationActivity.start(requireActivity())
+                    OnlineResumeActivity.start(requireActivity())
                 }
             }
 
