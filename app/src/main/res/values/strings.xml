@@ -569,6 +569,7 @@
     <string name="login_new_policy_user_service">《用户服务协议》</string>
     <string name="login_new_policy_privacy">《隐私保护》</string>
     <string name="login_new_policy_terms">《服务条款》</string>
+    <string name="login_new_logging_in">登录中</string>
     <string name="company_backcheck">公司背调</string>
     <string name="mock_interview">模拟面试</string>
 

@@ -31,6 +31,8 @@ import com.umeng.socialize.bean.SHARE_MEDIA
 
 /**
  * 新版手机号登录页
+ *  @author：CaoWei
+ *  @date：2026/6/30 15:50
  */
 class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding, PhoneNewLoginViewModel>(),
     ShareManager.UmengLoginListener {

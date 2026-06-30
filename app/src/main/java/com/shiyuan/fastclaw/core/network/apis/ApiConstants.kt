@@ -32,7 +32,7 @@ object ApiConstants {
     /**
      * 第三方登录
      */
-    const val LOGIN_BY_THIRD = "auth/loginByThirdParty"
+    const val LOGIN_BY_THIRD = "api/candidate/auth/loginByThirdParty"
 
     /**
      * 退出登录

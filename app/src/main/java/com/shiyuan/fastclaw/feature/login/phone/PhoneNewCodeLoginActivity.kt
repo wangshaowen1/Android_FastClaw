@@ -12,9 +12,12 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewCodeLoginBinding
+import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewLoginLoadingDialog
 
 /**
  * 新版验证码登录页
+ *  @author：CaoWei
+ *  @date：2026/6/30 15:49
  */
 class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLoginBinding, PhoneNewLoginViewModel>() {
 
@@ -39,6 +42,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
     private val codeViews by lazy {
         listOf(binding.tvCode1, binding.tvCode2, binding.tvCode3, binding.tvCode4)
     }
+    private var loginLoadingDialog: PhoneNewLoginLoadingDialog? = null
     private var isLoggingIn = false
 
     /**
@@ -123,15 +127,36 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
      */
     private fun loginByPhone() {
         isLoggingIn = true
+        showLoginLoading()
         mRealVM.phoneLogin(
             onLogin = {
+                hideLoginLoading()
                 finish()
             },
             onError = {
+                hideLoginLoading()
                 isLoggingIn = false
                 binding.tvCodeError.visibility = View.VISIBLE
             }
         )
+    }
+
+    /**
+     * 显示新版登录中弹窗。
+     */
+    private fun showLoginLoading() {
+        if (loginLoadingDialog?.isAdded == true) return
+        loginLoadingDialog = PhoneNewLoginLoadingDialog().apply {
+            show(supportFragmentManager, PhoneNewLoginLoadingDialog.TAG)
+        }
+    }
+
+    /**
+     * 关闭新版登录中弹窗。
+     */
+    private fun hideLoginLoading() {
+        loginLoadingDialog?.dismissAllowingStateLoss()
+        loginLoadingDialog = null
     }
 
     /**

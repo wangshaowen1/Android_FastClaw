@@ -27,15 +27,46 @@ import com.shiyuan.fastclaw.kit.SignUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
+/**
+ * 新版验证码登录页
+ *  @author：CaoWei
+ *  @date：2026/6/30 15:49
+ */
 class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
 
+    /**
+     * 用户是否已勾选登录协议。
+     */
     val checkedPolicy = ObservableBoolean(false)
+
+    /**
+     * 手机号输入页和验证码页共用的手机号。
+     */
     val mobile = MutableLiveData<String?>()
+
+    /**
+     * 验证码页输入的 4 位短信验证码。
+     */
     val code = MutableLiveData<String?>()
+
+    /**
+     * 获取验证码按钮是否可点击。
+     */
     val sendCodeEnable = MutableLiveData(false)
+
+    /**
+     * 重新获取验证码文案，倒计时期间显示剩余秒数。
+     */
     val sendCodeText = ObservableField(R.string.send_sms_code.getResString())
+
+    /**
+     * 是否处于验证码倒计时中。
+     */
     val codeCounting = MutableLiveData(false)
 
+    /**
+     * 当前倒计时任务标识，用于丢弃旧倒计时回调。
+     */
     private var countdownId = 0L
 
     /**
@@ -103,7 +134,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
             return
         }
         KeyboardUtils.hideSoftInput(ActivityUtils.getTopActivity())
-        launchWithLoading(block = {
+        launchWithLoading(false, block = {
             response(mRepo.loginByPhone(phone, smsCode), {
                 User.get().updateFrom(data)
                 SignUtils.signIn()
