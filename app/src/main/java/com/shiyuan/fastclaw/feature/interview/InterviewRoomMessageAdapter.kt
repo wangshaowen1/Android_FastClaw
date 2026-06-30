@@ -9,33 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.shiyuan.fastclaw.databinding.ItemInterviewAiBinding
 import com.shiyuan.fastclaw.databinding.ItemInterviewUserBinding
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewMessageInfo
+import com.shiyuan.fastclaw.feature.interview.viewholder.InterviewAiViewHolder
+import com.shiyuan.fastclaw.feature.interview.viewholder.InterviewUserViewHolder
 
 class InterviewRoomMessageAdapter : BaseMultiItemAdapter<InterviewMessageInfo>() {
 
     init {
-        register(TYPE_AGENT, { i, p -> AiViewHolder(ItemInterviewAiBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
-        register(TYPE_USER, { i, p -> UserViewHolder(ItemInterviewUserBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_AGENT, { i, p -> InterviewAiViewHolder(ItemInterviewAiBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_USER, { i, p -> InterviewUserViewHolder(ItemInterviewUserBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         onItemViewType { position, list -> list[position].itemType() }
-    }
-
-    private class AiViewHolder(private val binding: ItemInterviewAiBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: InterviewMessageInfo) {
-            bindContent(item.content)
-        }
-
-        fun bindContent(content: String?) {
-            binding.tvContent.text = content
-        }
-    }
-
-    private class UserViewHolder(private val binding: ItemInterviewUserBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: InterviewMessageInfo) {
-            bindContent(item.content)
-        }
-
-        fun bindContent(content: String?) {
-            binding.tvContent.text = content
-        }
     }
 
     override fun submitList(list: List<InterviewMessageInfo>?) {
