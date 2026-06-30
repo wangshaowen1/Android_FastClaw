@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_mock_interview_entry_card"
     android:layout_width="match_parent"
-    android:layout_height="341dp"
+    android:layout_height="350dp"
     android:background="@color/transparent">
 
     <ImageView
@@ -35,15 +35,15 @@
         android:id="@+id/cl_mock_interview_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
         app:background_normalColor="@color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:super_corner="21dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        tools:layout_editor_absoluteX="0dp">
 
         <ImageView
             android:id="@+id/iv_mock_interview_header_bg"
             android:layout_width="0dp"
-            android:layout_height="240dp"
+            android:layout_height="250dp"
             android:importantForAccessibility="no"
             android:scaleType="fitXY"
             android:src="@drawable/img_mock_interview_header_bg"
@@ -70,14 +70,14 @@
             android:id="@+id/cl_mock_interview_content"
             android:layout_width="0dp"
             android:layout_height="198dp"
-            app:background_normalColor="@color/color_ffffff"
-            app:super_corner="20dp"
             android:paddingHorizontal="16dp"
             android:paddingTop="20dp"
             android:paddingBottom="16dp"
+            app:background_normalColor="@color/color_ffffff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:super_corner="20dp">
 
             <LinearLayout
                 android:id="@+id/ll_mock_interview_steps"
@@ -97,8 +97,9 @@
                     android:textSize="13sp" />
 
                 <ImageView
-                    android:layout_width="7dp"
-                    android:layout_height="6dp"
+                    android:layout_width="8dp"
+                    android:layout_marginTop="1dp"
+                    android:layout_height="8dp"
                     android:layout_marginHorizontal="8dp"
                     android:importantForAccessibility="no"
                     android:src="@drawable/ic_mock_interview_step_arrow" />
@@ -111,8 +112,9 @@
                     android:textSize="13sp" />
 
                 <ImageView
-                    android:layout_width="7dp"
-                    android:layout_height="6dp"
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="1dp"
                     android:layout_marginHorizontal="8dp"
                     android:importantForAccessibility="no"
                     android:src="@drawable/ic_mock_interview_step_arrow" />
@@ -162,10 +164,10 @@
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:background_normalColor="@color/color_2f6bff"
-                app:super_corner="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_mock_interview_desc">
+                app:layout_constraintTop_toBottomOf="@id/tv_mock_interview_desc"
+                app:super_corner="24dp">
 
                 <TextView
                     android:id="@+id/tv_action"
