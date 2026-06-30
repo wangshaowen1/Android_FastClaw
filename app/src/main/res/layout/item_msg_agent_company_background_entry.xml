@@ -57,8 +57,7 @@
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_company_background_title"
-            app:layout_constraintTop_toBottomOf="@id/tv_company_background_title"
-            tools:text="公司在筛选你，你也该调查公司" />
+            app:layout_constraintTop_toBottomOf="@id/tv_company_background_title" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
