@@ -778,7 +778,7 @@
     <string name="str_agent_company_background_traceable">信息全部可追述，工商·司法·融资交叉验证</string>
     <string name="str_agent_company_background_report_title">公司背调报告</string>
     <string name="str_agent_company_background_report_failed_title">生成失败</string>
-    <string name="str_agent_company_background_report_failed_desc">生成加载超时，请点击重试</string>
+    <string name="str_agent_company_background_report_failed_desc">公司背调报告生成加载超时，请点击重试</string>
     <string name="str_agent_company_background_report_regenerate">重新生成</string>
     <string name="str_agent_company_background_report_view">查看报告</string>
     <string name="str_agent_company_background_report_step1">公司基础信息整理中</string>
@@ -795,7 +795,7 @@
     <string name="str_agent_mock_interview_upgrade_title">模拟面试</string>
     <string name="str_agent_mock_interview_step1">01 定制解析</string>
     <string name="str_agent_mock_interview_step2">02 预测押题</string>
-    <string name="str_agent_mock_interview_step3">03 复盘报告与回答模版</string>
+    <string name="str_agent_mock_interview_step3">03 面试复盘报告</string>
     <string name="str_agent_mock_interview_desc">欢迎来到面试间，我将根据你的简历，帮你提前押题，提高面试通过率。</string>
     <string name="str_agent_mock_interview_upgrade_desc">小虾可以根据你的简历，帮你定制押题，提高面试通过率。是否现在立即试试呢？</string>
     <string name="str_agent_mock_interview_action">开始面试(40虾条)</string>
@@ -806,7 +806,7 @@
     <string name="str_agent_mock_interview_skip">暂不需要</string>
     <string name="str_agent_mock_interview_report_title">面试复盘报告</string>
     <string name="str_agent_mock_interview_report_failed_title">生成失败</string>
-    <string name="str_agent_mock_interview_report_failed_desc">生成加载超时，请点击重试</string>
+    <string name="str_agent_mock_interview_report_failed_desc">模拟面试报告生成加载超时，请点击重试</string>
     <string name="str_agent_mock_interview_report_regenerate">重新生成</string>
     <string name="str_agent_mock_interview_report_view">查看报告</string>
     <string name="str_agent_mock_interview_report_step1">回顾面试回答</string>

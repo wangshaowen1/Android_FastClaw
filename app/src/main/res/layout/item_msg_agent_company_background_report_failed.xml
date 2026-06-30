@@ -57,7 +57,7 @@
 
     <TextView
         android:id="@+id/tv_action"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="47dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/bg_company_background_action"

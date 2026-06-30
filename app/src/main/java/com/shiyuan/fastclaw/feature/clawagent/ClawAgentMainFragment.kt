@@ -218,6 +218,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private fun initView() {
         // 消息列表：聊天场景内容自底部对齐
         binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
+        binding.rvMsg.itemAnimator = null
         // 底部间距高点
         binding.rvMsg.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
@@ -708,19 +709,21 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         mRealVM.messageList.observe(viewLifecycleOwner) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
+            val hadObservedNonEmptyMessageList = hasObservedNonEmptyMessageList
             val scrollToLatest = forceScrollToBottom || !binding.rvMsg.canScrollVertically(1)
-            val animateScrollToLatest = hasObservedNonEmptyMessageList
+            val hasNewTailMessage = list.size > msgAdapter.items.size || msgAdapter.items.lastOrNull()?.id != list.lastOrNull()?.id
+            // 首次加载、主动发消息或新增尾部消息时才触发滚动；流式更新同一条消息时不重复滚动。
+            val shouldRunScrollCommand = !hadObservedNonEmptyMessageList || forceScrollToBottom || hasNewTailMessage
             forceScrollToBottom = false
             msgAdapter.submitList(list)
             if (list.isNotEmpty()) {
                 hasObservedNonEmptyMessageList = true
             }
-            if (scrollToLatest && list.isNotEmpty()) {
-                // 首次加载直接贴底，后续新内容用平滑滚动从下往上带出。
-                if (animateScrollToLatest) {
+            if (scrollToLatest && list.isNotEmpty() && shouldRunScrollCommand) {
+                // 首次加载直接贴底；新增消息用平滑滚动。流式内容更新不重复触发滚动，避免 srlMsg 抖动。
+                if (hadObservedNonEmptyMessageList) {
                     binding.rvMsg.stopScroll()
-                    RecyclerViewScrollHelper.smoothScrollToBottom(
-                        binding.rvMsg,
+                    RecyclerViewScrollHelper.smoothScrollToBottom(binding.rvMsg,
                         MESSAGE_SCROLL_DELAY,
                         MESSAGE_SCROLL_SPEED
                     )

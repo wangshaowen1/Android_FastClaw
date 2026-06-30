@@ -13,10 +13,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.animation.LinearInterpolator
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -43,6 +40,7 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
+import com.shiyuan.fastclaw.feature.information.dialog.JobSelectionDialog
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_SUBMIT
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SESSION_STATUS_PREPARING
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_POSITION_SELECTED
@@ -51,6 +49,7 @@ import com.shiyuan.fastclaw.feature.interview.bean.InterviewJobBean
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewJobDialog
+import com.shiyuan.fastclaw.feature.interview.viewholder.decoration.InterviewMessageDecoration
 import com.shiyuan.fastclaw.feature.settings.report.ReportActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.router.AppNavigator
 import java.util.ArrayDeque
@@ -152,6 +151,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun initView() {
         binding.rvMessage.layoutManager = LinearLayoutManager(this) //.apply { stackFromEnd = true }
+        binding.rvMessage.addItemDecoration(InterviewMessageDecoration())
         binding.rvMessage.itemAnimator = null
         binding.rvMessage.adapter = msgAdapter
         binding.ivBack.setOnSingleClickListener {
@@ -173,12 +173,16 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             showTargetJobDialog()
         }
         binding.btnNoTargetJob.setOnSingleClickListener {
-            JobSelectionActivity.start(this,
+            JobSelectionDialog.show(  manager = this.supportFragmentManager,true,
+                title = getString(R.string.interview_select_mock_job_title),
+                multipleNum = 1,
+                type = "Interview")
+          /*  JobSelectionActivity.start(this,
                 true,
                 title = getString(R.string.interview_select_mock_job_title),
                 multipleNum = 1,
                 type = "Interview"
-            )
+            )*/
         }
         mRealVM.enterOrRecover(mInterviewId, mIsRecover)
     }
