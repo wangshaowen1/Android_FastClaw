@@ -5,9 +5,11 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewPropertyAnimator
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -33,6 +35,7 @@ class VoiceRecordingView @JvmOverloads constructor(
 
     companion object {
         private const val WAVE_BAR_COUNT = 25
+        private const val FADE_DURATION_MS = 240L
 
         val VOICE_CANCEL_DISTANCE = 40.dp
         private val WAVE_BASE_HEIGHTS = intArrayOf(
@@ -46,7 +49,9 @@ class VoiceRecordingView @JvmOverloads constructor(
     private val waveLayout: LinearLayout
     private var waveJob: Job? = null
     private var waveVolume = 0.25f
+    private var wavePhase = 0f
     private var canceling = false
+    private var fadeAnimator: ViewPropertyAnimator? = null
 
     init {
         // 将语音浮层布局整体收口到自定义 View 内部，外部只负责显示状态切换。
@@ -56,6 +61,7 @@ class VoiceRecordingView @JvmOverloads constructor(
         waveLayout = findViewById(R.id.layout_voice_wave)
         isClickable = true
         isFocusable = true
+        alpha = 0f
         setupWaveBars()
     }
 
@@ -64,9 +70,8 @@ class VoiceRecordingView @JvmOverloads constructor(
      */
     fun showRecording(canceling: Boolean = false) {
         updateCanceling(canceling)
-        updateVolume(0f)
         startWaveAnimation()
-        visible()
+        fadeIn()
     }
 
     /**
@@ -76,7 +81,7 @@ class VoiceRecordingView @JvmOverloads constructor(
         stopWaveAnimation()
         updateVolume(0f)
         this.canceling = false
-        gone()
+        fadeOut()
     }
 
     /**
@@ -98,7 +103,17 @@ class VoiceRecordingView @JvmOverloads constructor(
      * 接收外部录音音量，换算成 0.15~1 的波形振幅系数。
      */
     fun updateVolume(rmsDb: Float) {
-        waveVolume = ((rmsDb + 2f) / 12f).coerceIn(0.15f, 1f)
+        val targetVolume = when {
+            rmsDb < 0f -> ((rmsDb + 90f) / 45f)
+            rmsDb <= 1f -> rmsDb
+            rmsDb <= 10f -> rmsDb / 10f
+            else -> rmsDb / 60f
+        }.coerceIn(0.08f, 1f)
+        val smoothFactor = if (targetVolume > waveVolume) 0.55f else 0.28f
+        waveVolume += (targetVolume - waveVolume) * smoothFactor
+        if (isVisible) {
+            renderWave(wavePhase)
+        }
     }
 
     /**
@@ -125,10 +140,9 @@ class VoiceRecordingView @JvmOverloads constructor(
     private fun startWaveAnimation() {
         waveJob?.cancel()
         waveJob = (findViewTreeLifecycleOwner()?.lifecycleScope ?: return).launch {
-            var phase = 0f
             while (isActive) {
-                renderWave(phase)
-                phase += 0.35f
+                renderWave(wavePhase)
+                wavePhase += 0.35f
                 delay(48L)
             }
         }
@@ -143,6 +157,37 @@ class VoiceRecordingView @JvmOverloads constructor(
     }
 
     /**
+     * 按住开始录音时渐显浮层。
+     */
+    private fun fadeIn() {
+        fadeAnimator?.cancel()
+        if (!isVisible) {
+            alpha = 0f
+            visible()
+        }
+        fadeAnimator = animate()
+            .alpha(1f)
+            .setDuration(FADE_DURATION_MS)
+            .withEndAction { fadeAnimator = null }
+        fadeAnimator?.start()
+    }
+
+    /**
+     * 松开结束录音时渐隐浮层，动画结束后再隐藏。
+     */
+    private fun fadeOut() {
+        fadeAnimator?.cancel()
+        fadeAnimator = animate()
+            .alpha(0f)
+            .setDuration(FADE_DURATION_MS)
+            .withEndAction {
+                gone()
+                fadeAnimator = null
+            }
+        fadeAnimator?.start()
+    }
+
+    /**
      * 根据相位和实时音量刷新每根波形条的高度，形成持续跳动效果。
      */
     private fun renderWave(phase: Float) {
@@ -151,8 +196,10 @@ class VoiceRecordingView @JvmOverloads constructor(
             val distance = kotlin.math.abs(index - center) / center
             val pulse = ((kotlin.math.sin(index * 0.85f + phase) + 1f) / 2f).coerceIn(0f, 1f)
             val baseHeight = WAVE_BASE_HEIGHTS.getOrElse(index) { 12 }.dp
-            val height = (baseHeight * (0.78f + pulse * 0.32f) * (0.9f + waveVolume * 0.35f)).toInt()
-            val alpha = (0.18f + (1f - distance).coerceIn(0f, 1f) * 0.82f).coerceIn(0.18f, 1f)
+            val volumeScale = 0.42f + waveVolume * 1.05f
+            val pulseScale = 0.65f + pulse * 0.45f
+            val height = (baseHeight * pulseScale * volumeScale).toInt().coerceAtLeast(3.dp)
+            val alpha = (0.22f + waveVolume * 0.38f + (1f - distance).coerceIn(0f, 1f) * 0.4f).coerceIn(0.22f, 1f)
             waveLayout.getChildAt(index).apply {
                 this.alpha = alpha
             }.updateLayoutParams<LinearLayout.LayoutParams> {
@@ -165,6 +212,8 @@ class VoiceRecordingView @JvmOverloads constructor(
      * View 脱离窗口时释放动画任务，避免协程持有旧页面引用。
      */
     override fun onDetachedFromWindow() {
+        fadeAnimator?.cancel()
+        fadeAnimator = null
         stopWaveAnimation()
         super.onDetachedFromWindow()
     }
