@@ -72,66 +72,89 @@
             app:layout_constraintTop_toBottomOf="@id/tvCodeTitle"
             tools:text="验证码已发送至1029309900" />
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/llCodeBoxes"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="42dp"
             android:layout_marginEnd="35dp"
-            android:gravity="center"
-            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvCodeSubtitle">
 
-                <TextView
-                    android:id="@+id/tvCode1"
-                    style="@style/Text20"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/bg_ffffff_r12"
-                    android:gravity="center"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="24sp"
-                    tools:text="6" />
+            <TextView
+                android:id="@+id/tvCode1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/bg_ffffff_r12"
+                android:gravity="center"
+                android:textColor="@color/color_90_000000"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@id/tvCode2"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="60dp"
+                tools:text="6" />
 
             <TextView
                 android:id="@+id/tvCode2"
-                style="@style/Text20"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@drawable/bg_ffffff_r12"
-                    android:gravity="center"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="24sp"
-                    tools:text="6" />
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/bg_ffffff_r12"
+                android:gravity="center"
+                android:textColor="@color/color_90_000000"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@id/tvCode3"
+                app:layout_constraintStart_toEndOf="@id/tvCode1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="60dp"
+                tools:text="6" />
 
             <TextView
                 android:id="@+id/tvCode3"
-                style="@style/Text20"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@drawable/bg_ffffff_r12"
-                    android:gravity="center"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="24sp"
-                    tools:text="6" />
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/bg_ffffff_r12"
+                android:gravity="center"
+                android:textColor="@color/color_90_000000"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@id/tvCode4"
+                app:layout_constraintStart_toEndOf="@id/tvCode2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="60dp"
+                tools:text="6" />
 
             <TextView
                 android:id="@+id/tvCode4"
-                style="@style/Text20"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                    android:layout_marginStart="24dp"
-                    android:background="@drawable/bg_ffffff_r12"
-                    android:gravity="center"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="24sp"
-                    tools:text="1" />
-        </LinearLayout>
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/bg_ffffff_r12"
+                android:gravity="center"
+                android:textColor="@color/color_90_000000"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tvCode3"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="60dp"
+                tools:text="1" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <EditText
             android:id="@+id/etCode"
@@ -169,7 +192,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="34dp"
             android:text="@string/resend_sms_code"
-            android:textColor="@color/color_90_000000"
+            android:textColor="@color/color_55_3c3c43"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/llCodeBoxes" />

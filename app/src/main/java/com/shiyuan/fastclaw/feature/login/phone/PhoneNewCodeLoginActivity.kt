@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.core.widget.doAfterTextChanged
 import com.gyf.immersionbar.ImmersionBar
@@ -164,6 +165,11 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
         } else {
             getString(R.string.resend_sms_code)
         }
-        binding.tvResend.alpha = if (counting) 0.45f else 1f
+        binding.tvResend.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (counting) R.color.color_55_3c3c43 else R.color.color_2f6bff
+            )
+        )
     }
 }

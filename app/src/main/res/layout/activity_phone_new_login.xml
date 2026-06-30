@@ -72,28 +72,47 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvPhoneTitle" />
 
-        <EditText
-            android:id="@+id/etPhone"
+        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+            android:id="@+id/layoutPhoneInput"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="28dp"
             android:layout_marginTop="42dp"
             android:layout_marginEnd="35dp"
-            android:background="@drawable/bg_ffffff_r100"
-            android:importantForAutofill="no"
-            android:gravity="center_vertical"
-            android:inputType="phone"
-            android:maxLength="11"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:text="@={layout.mobile}"
-            android:textColor="@color/color_90_000000"
-            android:textCursorDrawable="@drawable/edittext_cursor"
-            android:textSize="14sp"
+            android:elevation="4dp"
+            android:outlineAmbientShadowColor="#3300258A"
+            android:outlineSpotShadowColor="#3300258A"
+            app:background_normalColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvPhoneSubtitle"
-            tools:text="1309898970" />
+            app:super_corner="24dp"
+            tools:targetApi="p">
+
+            <EditText
+                android:id="@+id/etPhone"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:hint="@string/login_new_phone_hint"
+                android:importantForAutofill="no"
+                android:inputType="phone"
+                android:maxLength="11"
+                android:padding="0dp"
+                android:text="@={layout.mobile}"
+                android:textColor="@color/color_96_000000"
+                android:textColorHint="@color/color_55_3c3c43"
+                android:textCursorDrawable="@drawable/edittext_cursor"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="1309898970" />
+        </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 
         <TextView
             android:id="@+id/tvPhoneError"
@@ -108,7 +127,7 @@
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/etPhone"
+            app:layout_constraintTop_toBottomOf="@id/layoutPhoneInput"
             tools:visibility="visible" />
 
         <LinearLayout
@@ -164,7 +183,7 @@
             android:layout_height="32dp"
             android:layout_marginTop="20dp"
             android:importantForAccessibility="no"
-            android:src="@drawable/img_login_wechat"
+            android:src="@drawable/ic_phone_new_login_wechat"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnGetCode" />

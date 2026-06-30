@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.login.phone
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextPaint
@@ -24,6 +25,7 @@ import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewLoginBinding
 import com.shiyuan.fastclaw.feature.login.LoginActivity
+import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
 
@@ -85,11 +87,24 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
     private fun initInput() {
         binding.etPhone.doAfterTextChanged {
             mRealVM.mobile.value = it?.toString()
+            updatePhoneInputStyle()
             mRealVM.checkSendCodeEnable()
             updatePhoneError(showOnlyWhenComplete = false)
         }
         mRealVM.mobile.value = binding.etPhone.text?.toString()
+        updatePhoneInputStyle()
         mRealVM.checkSendCodeEnable()
+    }
+
+    /**
+     * 按设计区分手机号占位态和已输入态的字重。
+     */
+    private fun updatePhoneInputStyle() {
+        binding.etPhone.typeface = if (binding.etPhone.text.isNullOrEmpty()) {
+            Typeface.DEFAULT
+        } else {
+            Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        }
     }
 
     /**

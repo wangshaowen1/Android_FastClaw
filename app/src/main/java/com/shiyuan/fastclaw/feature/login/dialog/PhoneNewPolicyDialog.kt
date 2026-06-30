@@ -1,5 +1,6 @@
-package com.shiyuan.fastclaw.feature.login.phone
+package com.shiyuan.fastclaw.feature.login.dialog
 
+import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.TextPaint
@@ -52,7 +53,7 @@ class PhoneNewPolicyDialog : BaseDialogFragment<DialogPhoneNewPolicyBinding>() {
     override fun onPrepareView() {
         super.onPrepareView()
         binding.tvContent.movementMethod = LinkMovementMethod.getInstance()
-        binding.tvContent.highlightColor = android.graphics.Color.TRANSPARENT
+        binding.tvContent.highlightColor = Color.TRANSPARENT
         binding.tvContent.text = buildContent()
         binding.btnAgree.setOnSingleClickListener {
             dismissAllowingStateLoss()
@@ -71,10 +72,11 @@ class PhoneNewPolicyDialog : BaseDialogFragment<DialogPhoneNewPolicyBinding>() {
         val service = getString(R.string.login_new_policy_user_service)
         val privacy = getString(R.string.login_new_policy_privacy)
         val terms = getString(R.string.login_new_policy_terms)
-        val text = SpannableString(getString(R.string.login_new_policy_content, service, privacy, terms))
-        addLink(text, service, Config.get().serviceUrl, R.string.login_new_policy_user_service)
-        addLink(text, privacy, Config.get().privacyUrl, R.string.login_new_policy_privacy)
-        addLink(text, terms, Config.get().serviceUrl, R.string.login_new_policy_terms)
+        val text =
+            SpannableString(getString(R.string.login_new_policy_content, service, privacy, terms))
+        addLink(text, service, Config.Companion.get().serviceUrl, R.string.login_new_policy_user_service)
+        addLink(text, privacy, Config.Companion.get().privacyUrl, R.string.login_new_policy_privacy)
+        addLink(text, terms, Config.Companion.get().serviceUrl, R.string.login_new_policy_terms)
         return text
     }
 
@@ -87,7 +89,7 @@ class PhoneNewPolicyDialog : BaseDialogFragment<DialogPhoneNewPolicyBinding>() {
         text.setSpan(
             object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    SimpleBrowserActivity.launch(this@PhoneNewPolicyDialog.activity, url, getString(titleRes))
+                    SimpleBrowserActivity.Companion.launch(this@PhoneNewPolicyDialog.activity, url, getString(titleRes))
                 }
 
                 override fun updateDrawState(ds: TextPaint) {

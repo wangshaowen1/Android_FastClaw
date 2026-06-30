@@ -35,6 +35,7 @@ import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
+import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /**
@@ -90,7 +91,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-
+            PhoneNewLoginActivity.start(false, false)
         }
 
     }
