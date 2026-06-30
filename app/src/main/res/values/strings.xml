@@ -1065,7 +1065,7 @@
     <string name="interview_voice_no_content">未识别到语音内容</string>
     <string name="interview_target_job_screenshot_guide_title">如何获得目标岗位截图</string>
     <string name="interview_target_job_screenshot_step_1_no">1</string>
-    <string name="interview_target_job_screenshot_step_1">打开Boss/招聘网站，查看目标岗位详情页</string>
+    <string name="interview_target_job_screenshot_step_1">打开招聘平台，查看目标岗位详情页</string>
     <string name="interview_target_job_screenshot_step_2_no">2</string>
     <string name="interview_target_job_screenshot_step_2">直接截图，或点击右上角分享按钮</string>
     <string name="interview_target_job_screenshot_step_3_no">3</string>
