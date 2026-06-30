@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_ffffff_r20"
+    android:paddingStart="30dp"
+    android:paddingTop="24dp"
+    android:paddingEnd="30dp"
+    android:paddingBottom="24dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:gravity="center"
+        android:text="@string/login_new_policy_title"
+        android:textColor="@color/color_90_000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="0dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:lineSpacingExtra="0dp"
+        android:textColor="@color/color_90_000000"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        tools:text="我已阅读并同意《用户服务协议》、《隐私保护》和《服务条款》" />
+
+    <TextView
+        android:id="@+id/btnAgree"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_336fff_r100"
+        android:gravity="center"
+        android:text="@string/agree"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvContent" />
+
+    <TextView
+        android:id="@+id/btnReject"
+        android:layout_width="0dp"
+        android:layout_height="21dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/disagree"
+        android:textColor="@color/color_85_3c3c43"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnAgree" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -318,6 +318,15 @@
         <!--闪验-->
         <!-- *******************************授权页*********************************** -->
         <activity
+            android:name=".feature.login.phone.PhoneNewLoginActivity"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".feature.login.phone.PhoneNewCodeLoginActivity"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name="com.chuanglan.shanyan_sdk.view.ShanYanOneKeyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTop"

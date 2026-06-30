@@ -555,6 +555,19 @@
     <string name="login_privacy_policy">《隐私政策》</string>
     <string name="login_agreement_suffix">和</string>
     <string name="login_page_title">你的AI求职经纪人</string>
+    <string name="login_new_phone_title">登录快龙虾</string>
+    <string name="login_new_phone_subtitle">获取你的AI求职经纪人</string>
+    <string name="login_new_phone_error">手机号输入不正确，请重新输入</string>
+    <string name="login_new_get_sms_code">获取短信验证码</string>
+    <string name="login_new_code_title">输入验证码</string>
+    <string name="login_new_code_subtitle">验证码已发送至%1$s</string>
+    <string name="login_new_resend_countdown">重新获取验证码 (%1$ss)</string>
+    <string name="login_new_code_error">验证码错误，请重新输入</string>
+    <string name="login_new_policy_title">用户协议及隐私保护</string>
+    <string name="login_new_policy_content">我已阅读并同意%1$s、%2$s和%3$s</string>
+    <string name="login_new_policy_user_service">《用户服务协议》</string>
+    <string name="login_new_policy_privacy">《隐私保护》</string>
+    <string name="login_new_policy_terms">《服务条款》</string>
     <string name="company_backcheck">公司背调</string>
     <string name="mock_interview">模拟面试</string>
 
