@@ -196,7 +196,7 @@ class VoiceRecordingView @JvmOverloads constructor(
             val distance = kotlin.math.abs(index - center) / center
             val pulse = ((kotlin.math.sin(index * 0.85f + phase) + 1f) / 2f).coerceIn(0f, 1f)
             val baseHeight = WAVE_BASE_HEIGHTS.getOrElse(index) { 12 }.dp
-            val volumeScale = 0.42f + waveVolume * 1.05f
+            val volumeScale = 0.42f + waveVolume * 0.90f
             val pulseScale = 0.65f + pulse * 0.45f
             val height = (baseHeight * pulseScale * volumeScale).toInt().coerceAtLeast(3.dp)
             val alpha = (0.22f + waveVolume * 0.38f + (1f - distance).coerceIn(0f, 1f) * 0.4f).coerceIn(0.22f, 1f)
