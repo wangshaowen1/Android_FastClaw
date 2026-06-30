@@ -74,5 +74,13 @@ class UnderstandsViewModel : AppRepositoryViewModel<AppRepository>() {
             setLoading(false)
         })
     }
+
+    val mToolbarVMOnlineResume = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = "",
+        background = Color.TRANSPARENT,
+    )
+
+    var tableOnlineResumeIndex = MutableLiveData(0)
 }
 
