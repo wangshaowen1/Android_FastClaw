@@ -13,15 +13,13 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.animation.LinearInterpolator
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.ext.dp
 import com.nhsd.basic.manager.FileManager
 import com.nhsd.mattise.Matisse
 import com.nhsd.mattise.MimeType
@@ -51,6 +49,7 @@ import com.shiyuan.fastclaw.feature.interview.bean.InterviewJobBean
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewJobDialog
+import com.shiyuan.fastclaw.feature.interview.viewholder.decoration.InterviewMessageDecoration
 import com.shiyuan.fastclaw.feature.settings.report.ReportActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.router.AppNavigator
 import java.util.ArrayDeque
@@ -152,6 +151,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun initView() {
         binding.rvMessage.layoutManager = LinearLayoutManager(this) //.apply { stackFromEnd = true }
+        binding.rvMessage.addItemDecoration(InterviewMessageDecoration())
         binding.rvMessage.itemAnimator = null
         binding.rvMessage.adapter = msgAdapter
         binding.ivBack.setOnSingleClickListener {

@@ -795,7 +795,7 @@
     <string name="str_agent_mock_interview_upgrade_title">模拟面试</string>
     <string name="str_agent_mock_interview_step1">01 定制解析</string>
     <string name="str_agent_mock_interview_step2">02 预测押题</string>
-    <string name="str_agent_mock_interview_step3">03 复盘报告与回答模版</string>
+    <string name="str_agent_mock_interview_step3">03 面试复盘报告</string>
     <string name="str_agent_mock_interview_desc">欢迎来到面试间，我将根据你的简历，帮你提前押题，提高面试通过率。</string>
     <string name="str_agent_mock_interview_upgrade_desc">小虾可以根据你的简历，帮你定制押题，提高面试通过率。是否现在立即试试呢？</string>
     <string name="str_agent_mock_interview_action">开始面试(40虾条)</string>
