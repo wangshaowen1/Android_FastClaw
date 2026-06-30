@@ -81,7 +81,7 @@ data class JobSearchStatusOption(
     val dotColor: String? = null,
 
     /** 是否选中 */
-    val selected: Boolean? = null,
+    var selected: Boolean? = null,
 
     /** 排序 */
     val sortOrder: Int? = null,

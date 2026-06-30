@@ -145,6 +145,7 @@ data class CardAction(
 
 /** CARD 公共：问题卡选项（7.4.3） */
 data class CardOption(
+    val code: String? = null,
     val text: String? = null,
     val label: String? = null,
 //    val value: String? = null,
@@ -243,6 +244,10 @@ data class CoreQuestionPayloadBean(
     fun isDisabled(): Boolean {
         val state = interactionState ?: return true
         return state.disabled == true
+    }
+
+    fun isJobStatus(): Boolean {// 求职状态
+        return inputMode == MODE_SINGLE_CHOICE && attributeGroupCode == "jobStatus"
     }
 
     //`现居住城市-location`、`民族-ethnicity`

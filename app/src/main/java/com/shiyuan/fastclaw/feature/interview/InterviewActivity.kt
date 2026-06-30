@@ -100,6 +100,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /** 是否等待结束语音播报完成后自动关闭页面。 */
     private var finishAfterTts = false
 
+    /** 是否等待当前面试官问题播报完成后自动开始用户作答。 */
+    private var autoStartAnswerAfterTts = false
+
     /** 当前是否正在播放 TTS。 */
     private var ttsPlaying = false
 
@@ -232,6 +235,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 finish()
             }
         }
+        mRealVM.autoStartAnswerAfterTtsEvent.observe(this) {
+            autoStartAnswerAfterTts = true
+        }
         mRealVM.messageList.observe(this) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
@@ -284,11 +290,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 binding.layoutWait.gone()
                 binding.layoutAnswer.gone()
                 binding.layoutFinish.gone()
+                binding.viewBottomShadow.gone()
                 stopWaitAnimation()
             }
             InterviewRoomState.TARGET_JOB_PARSING,
             InterviewRoomState.PLAN_GENERATING,
             InterviewRoomState.ANSWER_SUBMITTED -> {
+                binding.viewBottomShadow.visible()
                 binding.layoutWait.visible()
                 binding.layoutUpload.gone()
                 binding.layoutAnswer.gone()
@@ -300,6 +308,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             InterviewRoomState.WAITING_USER_ANSWER,
             InterviewRoomState.WAITING_FOLLOW_UP_DECISION,
             InterviewRoomState.ANSWERING -> {
+                binding.viewBottomShadow.visible()
                 binding.layoutAnswer.visible()
                 binding.layoutWait.gone()
                 binding.layoutUpload.gone()
@@ -311,12 +320,14 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 binding.layoutWait.gone()
                 binding.layoutAnswer.gone()
                 binding.layoutFinish.gone()
+                binding.viewBottomShadow.gone()
                 stopWaitAnimation()
                 binding.tvTargetJobTitle.text = getString(R.string.reupload)
             }
             InterviewRoomState.REPORT_GENERATING,
             InterviewRoomState.FINISHED,
             InterviewRoomState.CANCELED -> {
+                binding.viewBottomShadow.visible()
                 binding.layoutFinish.visible()
                 binding.layoutWait.gone()
                 binding.layoutUpload.gone()
@@ -520,6 +531,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                     if (playPendingTtsStreamIfNeeded()) return
                     if (finishAfterTts) {
                         finish()
+                    } else {
+                        startAnswerAfterTtsIfNeeded()
                     }
                 }
 
@@ -533,10 +546,20 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                         finish()
                     } else {
                         showMessage(message)
+                        startAnswerAfterTtsIfNeeded()
                     }
                 }
             },
         ).also { ttsPlayer = it }
+    }
+
+    /** TTS 播报结束后，自动进入用户作答录音。 */
+    private fun startAnswerAfterTtsIfNeeded() {
+        if (!autoStartAnswerAfterTts) return
+        autoStartAnswerAfterTts = false
+        if (answerRecording) return
+        if (mRealVM.roomState.value != InterviewRoomState.WAITING_USER_ANSWER) return
+        toggleAnswerRecording()
     }
 
     /**

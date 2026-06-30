@@ -759,7 +759,7 @@
     <string name="str_agent_understanding_align_title">我与你对齐度达到%1$s！</string>
     <string name="str_agent_understanding_align_subtitle">小虾对你有了更充分的理解！</string>
     <string name="str_agent_understanding_section_title">小虾对你的理解</string>
-    <string name="str_agent_understanding_bottom_tip">现在，小虾可以帮你提升了！</string>
+    <string name="str_agent_understanding_bottom_tip">现在，小虾可以帮你定制分析，精准押题了！</string>
     <string name="str_agent_understanding_field_unaligned">待补齐</string>
     <string name="str_agent_company_background_generating">生成中</string>
     <string name="str_agent_company_background_title">公司背调</string>
@@ -802,6 +802,7 @@
     <string name="str_agent_mock_interview_upgrade_action">好的，开始面试</string>
     <string name="str_agent_mock_interview_action_main">开始面试</string>
     <string name="str_agent_mock_interview_action_cost">(%1$d虾条)</string>
+    <string name="str_agent_mock_interview_action_upload">上传简历后解锁面试</string>
     <string name="str_agent_mock_interview_skip">暂不需要</string>
     <string name="str_agent_mock_interview_report_title">面试复盘报告</string>
     <string name="str_agent_mock_interview_report_failed_title">生成失败</string>

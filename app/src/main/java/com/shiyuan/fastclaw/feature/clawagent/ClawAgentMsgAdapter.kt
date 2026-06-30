@@ -235,6 +235,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         if (holder is AgentThinkViewHolder) holder.startRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.startRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.startRotate()
+        if (holder is AgentMockInterviewEntryViewHolder) holder.startPersonEnterAnim()
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
@@ -242,12 +243,14 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         if (holder is AgentThinkViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
+        if (holder is AgentMockInterviewEntryViewHolder) holder.stopPersonEnterAnim()
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is AgentThinkViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
+        if (holder is AgentMockInterviewEntryViewHolder) holder.stopPersonEnterAnim()
         super.onViewRecycled(holder)
     }
 

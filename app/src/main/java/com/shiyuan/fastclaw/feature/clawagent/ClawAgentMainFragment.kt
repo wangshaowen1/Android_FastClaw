@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
@@ -95,6 +96,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         /** 距顶部多少条时开始预取更早历史 */
         private const val PREFETCH_THRESHOLD = 5
+        private const val MESSAGE_SCROLL_DELAY = 100L
+        private const val MESSAGE_SCROLL_SPEED = 0.08f
 
         /**
          * 业务侧追踪类型：onTrackingEvent 内部根据该值统一调用 EventManager.onAppTrack，
@@ -125,6 +128,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
     private var forceScrollToBottom = false
 
+    private var hasObservedNonEmptyMessageList = false
+
     /** IME 动画进行中flag */
     private var hasRunningImeAnimation = false
 
@@ -151,6 +156,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             if (mRealVM.hasInitSession.value == true) {
                 mRealVM.pullMessages(mRealVM.getLastMessageCursor())
             }
+        }
+        if (!User.get().isVisitor) {
+            mRealVM.queryUnfinishedInterview()
         }
     }
 
@@ -181,6 +189,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             R.id.layout_back_check -> { //背景调查
                 if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
                     mRealVM.sendAction(
                         desc = getString(R.string.company_backcheck),
                         actionData = AgentMsgAction(
@@ -192,6 +201,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             R.id.layout_interview -> { //模拟面试
                 if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
                     mRealVM.sendAction(
                         desc = getString(R.string.mock_interview),
                         actionData = AgentMsgAction(
@@ -358,6 +368,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         actionPayloadJson = option.actionPayload?.let { GsonUtils.toJson(it) },
                     )
                 )
+                if (payload?.isJobStatus() ?: false) {// 求职状态
+                    binding.tvAgentDesc.text = option.text
+                    val options = mRealVM.sessionData.value?.jobSearchStatus?.options.orEmpty()
+                    options.forEach { item ->
+                        item.selected = item.statusCode == option.code
+                    }
+                }
                 onTrackingEvent(payload  = payload)
             }
         }
@@ -594,9 +611,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }, 250L)
             }
         })
-        if (!User.get().isVisitor) {
-            mRealVM.queryUnfinishedInterview()
-        }
     }
 
     private fun updateInputModeView() {
@@ -695,11 +709,24 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
             val scrollToLatest = forceScrollToBottom || !binding.rvMsg.canScrollVertically(1)
+            val animateScrollToLatest = hasObservedNonEmptyMessageList
             forceScrollToBottom = false
             msgAdapter.submitList(list)
+            if (list.isNotEmpty()) {
+                hasObservedNonEmptyMessageList = true
+            }
             if (scrollToLatest && list.isNotEmpty()) {
-                // 跳转 + 补偿滚动距离，确保刚插入(尚未测量高度)的最后一条完整贴底
-                RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, 100)
+                // 首次加载直接贴底，后续新内容用平滑滚动从下往上带出。
+                if (animateScrollToLatest) {
+                    binding.rvMsg.stopScroll()
+                    RecyclerViewScrollHelper.smoothScrollToBottom(
+                        binding.rvMsg,
+                        MESSAGE_SCROLL_DELAY,
+                        MESSAGE_SCROLL_SPEED
+                    )
+                } else {
+                    RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, MESSAGE_SCROLL_DELAY)
+                }
             }
         }
         // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭
@@ -758,10 +785,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             it?.jobSearchStatus.let { data ->
                 if(data?.selected ?: false){
                    // 从 options 中取当前选中的状态项，用于展示文案和颜色
-                   val  JobSearchStatusOption = data.options?.find { it.selected == true }
-                    binding.tvAgentDesc.text = JobSearchStatusOption?.statusText
+                   val  jobSearchStatusOption = data.options?.find { it.selected == true }
+                    binding.tvAgentDesc.text = jobSearchStatusOption?.statusText
                     // setShapeSolidColor 只更新配置，需要 setUseShape 重新应用背景
-                    when(JobSearchStatusOption?.statusCode){
+                    when(jobSearchStatusOption?.statusCode){
                         "NOT_LOOKING" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff383c)).setUseShape()
                         "AVAILABLE_IMMEDIATELY","AVAILABLE_WITHIN_MONTH","OPEN_TO_OPPORTUNITY" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_15D173)).setUseShape()
                         else ->  binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff8D28)).setUseShape()

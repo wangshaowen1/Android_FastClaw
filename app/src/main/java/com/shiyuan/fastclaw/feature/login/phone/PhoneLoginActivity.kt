@@ -161,6 +161,7 @@ class PhoneLoginActivity : BaseViewModelActivity<ActivityPhoneLoginBinding, Phon
 
         mRealVM.mobile.observe(this) {
             mRealVM.checkSendCodeEnable()
+            mRealVM.checkLoginEnable()
             mRealVM.checkPhoneBg()
         }
         mRealVM.code.observe(this) {
