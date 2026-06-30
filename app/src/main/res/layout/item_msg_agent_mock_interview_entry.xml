@@ -69,7 +69,7 @@
         <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
             android:id="@+id/cl_mock_interview_content"
             android:layout_width="0dp"
-            android:layout_height="198dp"
+            android:layout_height="wrap_content"
             android:paddingHorizontal="16dp"
             android:paddingTop="20dp"
             android:paddingBottom="16dp"
