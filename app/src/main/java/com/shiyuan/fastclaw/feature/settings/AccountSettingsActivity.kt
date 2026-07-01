@@ -48,7 +48,7 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
                 PhoneShowActivity.start(this)
             R.id.rlWechat ->
                 handleWechatClick()
-            R.id.rlCancelAccount ->
+            R.id.tvLogoffAccount ->
                 LogoffActivity.start(this)
         }
     }
