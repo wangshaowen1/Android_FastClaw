@@ -86,13 +86,13 @@
             android:id="@+id/rc_field_tree"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             android:nestedScrollingEnabled="false"
             android:visibility="gone"
             tools:itemCount="1"
-            tools:listitem="@layout/item_work_experience_re" />
+            tools:listitem="@layout/item_job_info_re" />
 
         <TextView
+            android:layout_marginStart="12dp"
             android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

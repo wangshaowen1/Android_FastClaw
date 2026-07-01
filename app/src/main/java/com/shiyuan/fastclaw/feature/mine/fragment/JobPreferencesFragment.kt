@@ -1,28 +1,20 @@
 package com.shiyuan.fastclaw.feature.mine.fragment
 
 import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.flexbox.AlignItems
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexWrap
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
-import com.shiyuan.fastclaw.common.ext.gone
-import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
 import com.shiyuan.fastclaw.databinding.FragmentJobPreferencesBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoBinding
-import com.shiyuan.fastclaw.databinding.ItemJobPreference1Binding
-import com.shiyuan.fastclaw.databinding.ItemJobPreference1SonBinding
+import com.shiyuan.fastclaw.databinding.ItemJobInfoReBinding
+import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment.Companion.INCOMPLETE
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
 class JobPreferencesFragment :
@@ -30,6 +22,8 @@ class JobPreferencesFragment :
 
     companion object {
         fun newInstance(): JobPreferencesFragment = JobPreferencesFragment()
+
+        private const val CODE_JOB_STATUS = "jobStatus"
     }
 
     private val preferenceAdapter by lazy {
@@ -78,18 +72,17 @@ class JobPreferencesFragment :
         item: AttributeArrayQueryData
     ) {
         itemBinding.tvTitle.text = item.displayTitle()
-        itemBinding.ivEdit.visibility = View.INVISIBLE
-        val directText = item.directDisplayText()
-        val showDirectText = directText.isNotBlank()
-        itemBinding.tvName.text = directText
-        itemBinding.tvName.visibility = if (showDirectText) View.VISIBLE else View.GONE
-        itemBinding.layoutMissing.visibility =
-            if (item.fieldTree.isNullOrEmpty() && !showDirectText) View.VISIBLE else View.INVISIBLE
-
-        if (showDirectText) {
+        if (item.attributeGroupCode == CODE_JOB_STATUS) {
+            itemBinding.ivEdit.visibility = View.VISIBLE
+            itemBinding.tvName.visibility = if (item.fieldTree.isNullOrEmpty()) View.GONE else View.VISIBLE
+            itemBinding.tvName.text = item.fieldTree?.firstOrNull()?.displayValue?.toString().orEmpty()
+            itemBinding.layoutMissing.visibility = if (item.fieldTree.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
             itemBinding.rcFieldTree.visibility = View.GONE
             itemBinding.rcFieldTree.adapter = null
         } else {
+            itemBinding.ivEdit.visibility = View.INVISIBLE
+            itemBinding.tvName.visibility = View.GONE
+            itemBinding.layoutMissing.visibility = View.INVISIBLE
             bindFieldTreeList(itemBinding, item.fieldTree)
         }
     }
@@ -100,21 +93,10 @@ class JobPreferencesFragment :
             ?: attributeGroupCode.orEmpty()
     }
 
-    private fun AttributeArrayQueryData.directDisplayText(): String {
-        val onlyTree = fieldTree?.takeIf { it.size == 1 }?.firstOrNull() ?: return ""
-        if (!onlyTree.fieldItems.isNullOrEmpty()) return ""
-        return onlyTree.displayText()
-    }
-
     private fun bindFieldTreeList(
         itemBinding: ItemJobInfoBinding,
         fieldTree: List<AttributeFieldTree>?
     ) {
-        if (fieldTree.isNullOrEmpty()) {
-            itemBinding.rcFieldTree.visibility = View.GONE
-            itemBinding.rcFieldTree.adapter = null
-            return
-        }
         itemBinding.rcFieldTree.visibility = View.VISIBLE
         itemBinding.rcFieldTree.layoutManager =
             LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -122,88 +104,38 @@ class JobPreferencesFragment :
         if (itemBinding.rcFieldTree.itemDecorationCount == 0) {
             itemBinding.rcFieldTree.addItemDecoration(SpaceDecoration(12.dp))
         }
-        itemBinding.rcFieldTree.adapter = createFieldTreeAdapter(fieldTree)
+        itemBinding.rcFieldTree.adapter = createFieldTreeAdapter(fieldTree.orEmpty())
     }
 
     private fun createFieldTreeAdapter(
         fieldTree: List<AttributeFieldTree>
-    ): SingleBindingAdapter<ItemJobPreference1Binding, AttributeFieldTree> {
+    ): SingleBindingAdapter<ItemJobInfoReBinding, AttributeFieldTree> {
         return SingleBindingAdapter(
-            R.layout.item_job_preference1,
+            R.layout.item_job_info_re,
             fieldTree,
             onBind = { itemBinding, _, item ->
-                bindJobPreferenceFieldTreeItem(itemBinding, item)
+                bindJobInfoReItem(itemBinding, item)
             }
         )
     }
 
-    private fun bindJobPreferenceFieldTreeItem(
-        itemBinding: ItemJobPreference1Binding,
+    private fun bindJobInfoReItem(
+        itemBinding: ItemJobInfoReBinding,
         item: AttributeFieldTree
     ) {
-        itemBinding.tvTile.text = item.fieldName?.takeIf { it.isNotBlank() } ?: item.fieldCode.orEmpty()
-        val fieldItems = item.fieldItems.orEmpty()
-        when {
-            fieldItems.size > 1 -> bindTagList(itemBinding, fieldItems)
-            fieldItems.size == 1 -> {
-                itemBinding.rcConnect.visibility = View.GONE
-                itemBinding.tvConnect.visibility = View.VISIBLE
-                itemBinding.tvConnect.text = fieldItems.first().displayText()
-            }
-            else -> {
-                itemBinding.rcConnect.visibility = View.GONE
-                itemBinding.tvConnect.visibility = View.VISIBLE
-                itemBinding.tvConnect.text = item.displayText()
-            }
-        }
-    }
+        itemBinding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
+        itemBinding.tvVale.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
+        val valueText = item.displayText()
+        itemBinding.tvName.text = item.fieldName?.takeIf { it.isNotBlank() } ?: item.fieldCode.orEmpty()
+        itemBinding.tvVale.text = valueText
 
-    private fun bindTagList(
-        itemBinding: ItemJobPreference1Binding,
-        fieldItems: List<AttributeFieldItem>
-    ) {
-        itemBinding.tvConnect.visibility = View.GONE
-        itemBinding.rcConnect.visibility = View.VISIBLE
-        val subAdapter = SingleBindingAdapter<ItemJobPreference1SonBinding, AttributeFieldItem>(
-            R.layout.item_job_preference1_son,
-            fieldItems,
-            onBind = { tagBinding, _, sub ->
-                tagBinding.tvTag.text = sub.displayText()
-                val maxTagWidth = itemBinding.rcConnect.measuredWidth
-                    .takeIf { it > 0 }
-                    ?: (resources.displayMetrics.widthPixels - 64.dp)
-                tagBinding.tvTag.maxWidth = maxTagWidth.coerceAtLeast(0)
-                (tagBinding.root.layoutParams as? ViewGroup.MarginLayoutParams)?.let {
-                    it.marginEnd = 10.dp
-                    it.bottomMargin = 10.dp
-                    tagBinding.root.layoutParams = it
-                }
-            }
-        )
-        itemBinding.rcConnect.apply {
-            layoutManager = FlexboxLayoutManager(requireContext()).apply {
-                flexDirection = FlexDirection.ROW
-                flexWrap = FlexWrap.WRAP
-                justifyContent = JustifyContent.FLEX_START
-                alignItems = AlignItems.FLEX_START
-            }
-            isNestedScrollingEnabled = false
-            adapter = subAdapter
-            post { requestLayout() }
-        }
     }
 
     private fun mockJobPreferenceData(): List<AttributeArrayQueryData> {
         return listOf(
             mockJobPreferenceItem(
-                code = "jobStatus",
-                title = "求职状态",
-                fieldTree = mutableListOf(
-                    AttributeFieldTree(
-                        fieldCode = "jobStatus",
-                        displayValue = "在职-正在找"
-                    )
-                )
+                code = CODE_JOB_STATUS,
+                title = "求职状态"
             ),
             mockJobPreferenceItem(
                 code = "jobExpectation",
@@ -241,7 +173,7 @@ class JobPreferencesFragment :
     private fun mockJobPreferenceItem(
         code: String,
         title: String,
-        fieldTree: MutableList<AttributeFieldTree>
+        fieldTree: MutableList<AttributeFieldTree>? = null
     ): AttributeArrayQueryData {
         return AttributeArrayQueryData(
             attributeGroupCode = code,
@@ -279,20 +211,18 @@ class JobPreferencesFragment :
     private fun AttributeFieldTree.displayText(): String {
         return displayValue?.takeIf { it.isNotBlank() }
             ?: fieldValue?.toString()?.takeIf { it.isNotBlank() }
-            ?: findFirstDisplayText(fieldItems).orEmpty()
+            ?: fieldItems.orEmpty()
+                .mapNotNull { it.displayText().takeIf { text -> text.isNotBlank() } }
+                .joinToString("、")
     }
 
     private fun AttributeFieldItem.displayText(): String {
         return displayValue?.takeIf { it.isNotBlank() }
             ?: fieldValue?.toString()?.takeIf { it.isNotBlank() }
+            ?: fieldItems.orEmpty()
+                .mapNotNull { it.displayText().takeIf { text -> text.isNotBlank() } }
+                .joinToString("、")
+                .takeIf { it.isNotBlank() }
             ?: fieldName.orEmpty()
-    }
-
-    private fun findFirstDisplayText(items: List<AttributeFieldItem>?): String? {
-        items.orEmpty().forEach { item ->
-            item.displayText().takeIf { it.isNotBlank() }?.let { return it }
-            findFirstDisplayText(item.fieldItems)?.let { return it }
-        }
-        return null
     }
 }

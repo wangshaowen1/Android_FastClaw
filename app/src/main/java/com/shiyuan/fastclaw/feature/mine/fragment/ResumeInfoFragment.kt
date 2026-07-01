@@ -38,7 +38,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
     companion object {
         fun newInstance(): ResumeInfoFragment = ResumeInfoFragment()
 
-        private const val INCOMPLETE = "INCOMPLETE"
+        const val INCOMPLETE = "INCOMPLETE"
         private const val GROUP_SELF_EVALUATION = "selfEvaluation"
         private const val GROUP_WORK_EXPERIENCE = "workExperience"
         private const val GROUP_PROJECT_EXPERIENCE = "projectExperience"
