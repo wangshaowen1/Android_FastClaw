@@ -42,8 +42,35 @@
                 android:orientation="vertical">
 
                 <RelativeLayout
+                    android:id="@+id/rlAccount"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_ffffff_r12"
+                    android:paddingHorizontal="16dp"
+                    tools:ignore="UselessParent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="@string/account_settings"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_item_arrow_right2" />
+                </RelativeLayout>
+
+                <RelativeLayout
                     singleClick="@{layout.clickHandler::onClick}"
                     android:id="@+id/rl1"
+                    android:layout_marginTop="16dp"
                     android:background="@drawable/bg_ffffff_r12"
                     android:paddingHorizontal="16dp"
                     android:layout_width="match_parent"
@@ -141,8 +168,8 @@
                         android:id="@+id/tv_lg"
                         android:layout_centerInParent="true"
                         android:text="@string/app_log_out"
-                        android:textColor="@color/color_F74C30"
-                        android:textSize="16sp"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                     </TextView>

@@ -173,6 +173,9 @@
         <activity
             android:name=".feature.settings.SettingsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".feature.settings.AccountSettingsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
             android:name=".feature.information.SkillActivity"

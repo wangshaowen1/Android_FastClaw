@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.settings.SettingsViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:toolbar="@{layout.accountSettingsToolbar}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rlPhone"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="23dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:text="@string/phone_number"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/ivPhoneArrow"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_item_arrow_right2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="23dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/ivPhoneArrow"
+                    android:gravity="center_vertical"
+                    android:text="@{layout.maskedPhone}"
+                    android:textColor="@color/color_55_3c3c43"
+                    android:textSize="15sp"
+                    tools:text="178*****000" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/color_10_000000" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlWechat"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                tools:ignore="UselessParent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="23dp"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
+                    android:text="@string/wechat_binding"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/ivWechatArrow"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_item_arrow_right2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="23dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/ivWechatArrow"
+                    android:gravity="center_vertical"
+                    android:text="@{layout.wechatName}"
+                    android:textColor="@color/color_55_3c3c43"
+                    android:textSize="15sp"
+                    tools:text="未绑定" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/color_10_000000" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/rlCancelAccount"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center"
+                android:text="@string/app_cancel_the_account"
+                android:textColor="@color/color_55_3c3c43"
+                android:textSize="15sp" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

@@ -92,6 +92,9 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
+            R.id.rlAccount -> {
+                AccountSettingsActivity.start(this)
+            }
             R.id.rl1 -> {
                 //用户协议
                 SimpleBrowserActivity.launch(
