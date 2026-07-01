@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.CountDownTimer
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import com.blankj.utilcode.util.ActivityUtils
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
@@ -11,6 +12,8 @@ import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.response
+import com.shiyuan.fastclaw.feature.settings.AccountSettingsActivity
+import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.shiyuan.fastclaw.kit.SignUtils
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
@@ -102,9 +105,18 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
         launchWithLoading {
             response(mRepo.api.logOff(UserTokenBody())) {
                 SignUtils.signOut()
+                closeSettingsPages()
                 finish()
             }
         }
+    }
+
+    /**
+     * 注销完成后关闭设置相关页面。
+     */
+    private fun closeSettingsPages() {
+        ActivityUtils.finishActivity(SettingsActivity::class.java)
+        ActivityUtils.finishActivity(AccountSettingsActivity::class.java)
     }
 
     override fun onCleared() {
