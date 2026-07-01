@@ -25,7 +25,6 @@ import com.nhsd.crop.util.ViewUtils
 import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.feature.login.LoginActivity.Companion.checkedPolicy
 import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
-import com.shiyuan.fastclaw.feature.login.flash.FlashLoginDialogFragment
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel
 import com.shiyuan.fastclaw.feature.main.MainActivity

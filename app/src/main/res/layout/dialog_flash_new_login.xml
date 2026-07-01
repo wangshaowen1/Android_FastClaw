@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.login.flash.FlashLoginViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="60dp"
+        android:background="@drawable/bg_flash_new_login_panel">
+
+        <ImageView
+            android:id="@+id/btnClose"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="46dp"
+            android:layout_height="54dp"
+            android:paddingStart="6dp"
+            android:paddingTop="17dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="11dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_flash_new_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginTop="27dp"
+            android:gravity="center"
+            android:text="@{layout.flashPhoneNumber}"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="130****0987" />
+
+        <TextView
+            android:id="@+id/btnOneKeyLogin"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/bg_2f6bff_r100"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:text="@string/sim_card_quick_login"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPhone" />
+
+        <TextView
+            android:id="@+id/btnOtherPhone"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/flash_new_other_phone_login"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/btnOneKeyLogin" />
+
+        <LinearLayout
+            android:id="@+id/layoutAgreement"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="top"
+            android:minHeight="28dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnOtherPhone">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_marginTop="1dp"
+                android:scaleType="center"
+                android:src="@{layout.checkedPolicy ? @drawable/ic_flash_new_check_checked : @drawable/ic_flash_new_check_normal}"
+                tools:src="@drawable/ic_flash_new_check_normal" />
+
+            <TextView
+                android:id="@+id/tvAgreement"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="0dp"
+                android:lineSpacingMultiplier="1"
+                android:textColor="@color/black"
+                android:textColorHighlight="@android:color/transparent"
+                android:textSize="11sp"
+                tools:text="已阅读并同意 服务协议、隐私政策 和 账号服务须知以及中国移动认证服务条款" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnWechat"
+            singleClick="@{layout.clickHandler::onClick}"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="32dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_phone_new_login_wechat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutAgreement" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

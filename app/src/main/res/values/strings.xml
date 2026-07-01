@@ -570,6 +570,12 @@
     <string name="login_new_policy_privacy">《隐私保护》</string>
     <string name="login_new_policy_terms">《服务条款》</string>
     <string name="login_new_logging_in">登录中</string>
+    <string name="flash_new_other_phone_login">其他手机号登录 ></string>
+    <string name="flash_new_agreement_content">已阅读并同意 服务协议、隐私政策 和 账号服务须知以及%1$s</string>
+    <string name="flash_new_agreement_content_no_operator">已阅读并同意 服务协议、隐私政策 和 账号服务须知</string>
+    <string name="flash_new_service_agreement">服务协议</string>
+    <string name="flash_new_privacy_policy">隐私政策</string>
+    <string name="flash_new_account_terms">账号服务须知</string>
     <string name="company_backcheck">公司背调</string>
     <string name="mock_interview">模拟面试</string>
 

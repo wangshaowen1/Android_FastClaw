@@ -68,7 +68,7 @@ object ApiConstants {
     /**
      * 手机登录接口--闪验方式
      */
-    const val LOGIN_BY_FLASH_MOBILE = "auth/loginByFlashMobile"
+    const val LOGIN_BY_FLASH_MOBILE = "/api/candidate/auth/loginByFlashMobile"
 
     /**
      * 手机登录接口--验证码方式

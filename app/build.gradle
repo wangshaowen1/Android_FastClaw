@@ -135,8 +135,8 @@ android {
             //友盟SECRET
             buildConfigField "String", "UMENG_SECRET", '"909431f07f43700ef0a147f5e33fef4f"'//填写Umeng Message Secret对应信息
             buildConfigField "String", "UMENG_APP_KEY", '"6a39fd806f259537c7bd163e"'
-            buildConfigField "String", "SHANYAN_APPID", '"YOUR_SHANYAN_APPID"' //闪验APPID
-            buildConfigField "String", "SHANYAN_APP_KEY", '"YOUR_SHANYAN_APP_KEY"' //闪验APPKEY
+            buildConfigField "String", "SHANYAN_APPID", '"pUH247TE"' //闪验APPID
+            buildConfigField "String", "SHANYAN_APP_KEY", '"BjfmxHIp"' //闪验APPKEY
 
             manifestPlaceholders = [
                     UMENG_APP_KEY      : "6a39fd806f259537c7bd163e",
@@ -171,8 +171,8 @@ android {
             buildConfigField "String", "UMENG_SECRET", '"909431f07f43700ef0a147f5e33fef4f"'//填写Umeng Message Secret对应信息
             buildConfigField "String", "UMENG_APP_KEY", '"6a39fd806f259537c7bd163e"'
             //友盟SECRET
-            buildConfigField "String", "SHANYAN_APPID", '"YOUR_SHANYAN_APPID"' //闪验APPID
-            buildConfigField "String", "SHANYAN_APP_KEY", '"YOUR_SHANYAN_APP_KEY"' //闪验APPKEY
+            buildConfigField "String", "SHANYAN_APPID", '"pUH247TE"' //闪验APPID
+            buildConfigField "String", "SHANYAN_APP_KEY", '"BjfmxHIp"' //闪验APPKEY
 
             versionNameSuffix ""
             signingConfig signingConfigs.debug
