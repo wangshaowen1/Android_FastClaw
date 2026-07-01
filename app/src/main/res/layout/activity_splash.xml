@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><!--欢迎页/招聘启动页-->
+<?xml version="1.0" encoding="utf-8"?><!-- 欢迎页/启动页 -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -16,51 +16,51 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
-        <!-- Logo 图片 (1:1比例，保持原图尺寸) -->
         <ImageView
-            android:id="@+id/ivLogo"
-            android:layout_width="108dp"
-            android:layout_height="108dp"
-            android:adjustViewBounds="true"
+            android:id="@+id/ivSplashBg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:contentDescription="@string/app_name"
-            android:scaleType="fitCenter"
-            android:src="@drawable/img_splash_logo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_splash_bg"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintVertical_bias="0.313"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />
 
-        <!-- 标题: 快龙虾 -->
-        <TextView
-            android:id="@+id/tvTitle"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/glSplashTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/app_name"
-            android:textColor="@color/color_1a1a1a"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/alimama_shu_hei_ti_bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivLogo"
-            tools:text="快龙虾" />
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.295" />
 
-        <!-- 副标题: 抓住每一个好机会 -->
-        <TextView
-            android:id="@+id/tvSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/splash_subtitle"
-            android:textColor="@color/color_999999"
-            android:textSize="16sp"
+        <ImageView
+            android:id="@+id/ivSplashTop"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            android:src="@drawable/img_splash_slogan"
+            app:layout_constraintDimensionRatio="750:269"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle"
-            tools:text="抓住每一个好机会" />
+            app:layout_constraintTop_toTopOf="@id/glSplashTop"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/ivSplashBottom"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitCenter"
+            android:src="@drawable/img_splash_lobster"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="750:595"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
