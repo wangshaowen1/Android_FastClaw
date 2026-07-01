@@ -89,6 +89,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
+import com.shiyuan.fastclaw.core.network.apis.response.PayOrderInfo
 import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.RegionDictData
 import com.shiyuan.fastclaw.core.network.apis.response.RefreshTokenData
@@ -215,6 +216,12 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_ORDER_STATUS)
     suspend fun getOrderStatus(@Body body: OrderStatusBody): ApiResponse<OrderStatusInfo>
+
+    /**
+     * 分页查询候选人支付订单列表
+     */
+    @POST(ApiConstants.QUERY_PAY_ORDER_LIST)
+    suspend fun queryPayOrderList(@Body body: PagedBody): ApiResponse<PagedList<PayOrderInfo>?>
 
     /**
      * 获取banner信息

@@ -91,6 +91,11 @@ object ApiConstants {
      */
     const val GET_ORDER_STATUS = "/api/candidate/app/trade/pay/order/status/query"
 
+    /**
+     * 分页查询候选人支付订单列表
+     */
+    const val QUERY_PAY_ORDER_LIST = "/api/candidate/app/trade/pay/order/list/query"
+
     const val APP_BANNERS = "app/home/banner/list"
 
     /**
