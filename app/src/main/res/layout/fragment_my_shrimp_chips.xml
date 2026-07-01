@@ -36,7 +36,6 @@
             android:background="@drawable/bg_ffffff_r12"
             android:clipToPadding="false"
             android:overScrollMode="never"
-            android:paddingTop="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
