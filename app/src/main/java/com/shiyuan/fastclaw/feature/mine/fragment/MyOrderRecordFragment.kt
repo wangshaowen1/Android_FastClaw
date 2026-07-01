@@ -1,25 +1,32 @@
 package com.shiyuan.fastclaw.feature.mine.fragment
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.UnderlineSpan
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.common.utils.WXUtils
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 import com.shiyuan.fastclaw.databinding.FragmentMyOrderRecordBinding
 import com.shiyuan.fastclaw.feature.mine.dialog.MyOrderCustomerServiceDialog
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+import java.net.URISyntaxException
 
 class MyOrderRecordFragment :
     BaseViewModelFragment<FragmentMyOrderRecordBinding, EmptyViewModel>() {
@@ -53,7 +60,7 @@ class MyOrderRecordFragment :
         setProblemTipText()
         binding.tvProblemTip.setOnSingleClickListener {
             MyOrderCustomerServiceDialog.show(childFragmentManager) {
-                requireActivity().customerServiceTransfer()
+                WXUtils.customerServiceChatWeb(requireActivity(),"https://work.weixin.qq.com/kfid/kfc40a9a48f69a47f52")
             }
         }
         // 配置空视图
