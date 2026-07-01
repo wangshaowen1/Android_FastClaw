@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="24dp">
+
+            <View
+                android:id="@+id/view_indicator"
+                android:layout_width="4dp"
+                android:layout_height="15dp"
+                android:background="@color/color_60_336fff"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/color_96_000000"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/layout_missing"
+                app:layout_constraintStart_toEndOf="@id/view_indicator"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="自我评价" />
+
+            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                android:id="@+id/layout_missing"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:layout_marginEnd="9dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                app:background_normalColor="@color/color_1AF74C30"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_edit"
+                app:layout_constraintTop_toTopOf="parent"
+                app:super_corner="8dp">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_warning" />
+
+                <TextView
+                    android:id="@+id/tv_missing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="待补充"
+                    android:textColor="@color/color_F74C30"
+                    android:textSize="12sp" />
+            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_edit"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_online_resume_profile_edit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rc_field_tree"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:visibility="gone"
+            tools:itemCount="1"
+            tools:listitem="@layout/item_work_experience_re" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="13sp"
+            android:visibility="gone"
+            tools:text="自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评价自我评" />
+
+        <View
+            android:id="@+id/view_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1.5dp"
+            android:layerType="software"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="22dp"
+            android:background="@drawable/bg_home_treasury_divider_dash" />
+    </LinearLayout>
+</layout>

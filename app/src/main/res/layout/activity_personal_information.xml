@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:orientation="vertical"
+                android:paddingTop="20dp"
+                android:paddingBottom="40dp">
+
+                <LinearLayout
+                    android:id="@+id/avatar_row"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="61dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/personal_information_avatar"
+                            android:textColor="@color/color_90_000000"
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-medium" />
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/iv_avatar"
+                            android:layout_width="61dp"
+                            android:layout_height="61dp"
+                            android:contentDescription="@string/personal_information_avatar"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_home_header_avatar"
+                            app:shapeAppearanceOverlay="@style/roundStyle_circle" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/color_04_000000" />
+                </LinearLayout>
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/name_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/personal_information_name"
+                    app:formValueText="@string/personal_information_name_value" />
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/gender_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/gender"
+                    app:formValueText="@string/personal_information_gender_value" />
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/phone_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/personal_information_phone"
+                    app:formValueText="@string/personal_information_phone_value" />
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/wechat_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/personal_information_wechat"
+                    app:formValueText="@string/personal_information_wechat_value" />
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/email_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/personal_information_email"
+                    app:formValueText="@string/personal_information_email_value" />
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/current_city_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/personal_information_current_city"
+                    app:formValueText="@string/personal_information_current_city_value" />
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/political_status_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/personal_information_political_status"
+                    app:formValueText="@string/personal_information_political_status_value" />
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/marital_status_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/personal_information_marital_status"
+                    app:formValueText="@string/personal_information_marital_status_value" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</layout>

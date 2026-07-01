@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_F5F6FA">
+
+        <ImageView
+            android:id="@+id/view_header_bg"
+            android:layout_width="match_parent"
+            android:layout_height="495dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/bg_online_resume_top"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:toolbar="@{layout.mToolbarVMOnlineResume}" />
+
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/layout_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/spacing_m"
+            app:layout_constraintBottom_toTopOf="@id/ll_bt"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appbar_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent"
+                android:orientation="vertical"
+                app:elevation="0dp">
+
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:id="@+id/coll_toolbar_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ll_top"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="26dp">
+
+
+                        <RelativeLayout
+                            android:id="@+id/rl_bfb"
+                            android:layout_width="75dp"
+                            android:layout_height="75dp"
+                            android:layout_marginStart="48.5dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <com.shiyuan.fastclaw.widget.progress.WaveProgressView
+                                android:id="@+id/wave_view"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:wpv_progress="10"
+                                app:wpv_text="0%"
+                                app:wpv_textColor="@color/color_90_000000"
+                                app:wpv_textSize="18sp"
+                                app:wpv_waveAmplitude="@dimen/spacing_s"
+                                app:wpv_waveBackgroundColor="#D9FBFE"
+                                app:wpv_waveColor="#54DAF0"
+                                app:wpv_waveCount="1" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/ic_pr_bg" />
+                        </RelativeLayout>
+
+                        <ImageView
+                            android:layout_width="106dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="37.5dp"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/ic_online_resume_q"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        </ImageView>
+
+                        <TextView
+                            android:id="@+id/tv_understand_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/online_resume_understand_title"
+                            android:textColor="@color/color_96_000000"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@id/tv_understand_desc"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toEndOf="@id/rl_bfb"
+                            app:layout_constraintTop_toTopOf="@id/rl_bfb"
+                            app:layout_constraintVertical_chainStyle="packed" />
+
+                        <TextView
+                            android:id="@+id/tv_understand_desc"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
+                            android:gravity="center"
+                            android:text="@string/online_resume_understand_desc"
+                            android:textColor="@color/color_96_000000"
+                            android:textSize="13sp"
+                            app:layout_constraintBottom_toBottomOf="@id/rl_bfb"
+                            app:layout_constraintEnd_toEndOf="@id/tv_understand_title"
+                            app:layout_constraintStart_toStartOf="@id/tv_understand_title"
+                            app:layout_constraintTop_toBottomOf="@id/tv_understand_title" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginHorizontal="@dimen/spacing_l"
+                    android:background="@drawable/bg_f0f6ff_tr20">
+
+                    <View
+                        android:id="@+id/view_tab_bg"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:background="@drawable/bg_f0f6ff_tr20"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ll_tab1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/ic_online_resume_tab_left"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.5">
+
+                        <TextView
+                            android:id="@+id/tv_table1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/resume_information"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/iv_table1"
+                            android:layout_width="52dp"
+                            android:layout_height="10dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_online_resume_tab_bot"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_table1"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/ll_tab2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_percent="0.5">
+
+                        <TextView
+                            android:textStyle="bold"
+                            android:id="@+id/tv_table2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/job_preference"
+                            android:textColor="@color/color_75_3c3c43"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+
+                        <ImageView
+                            android:id="@+id/iv_table2"
+                            android:layout_width="52dp"
+                            android:layout_height="10dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_online_resume_tab_bot"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_table2"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:id="@+id/vp_resume_pages"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="@dimen/spacing_l"
+                android:layout_height="match_parent" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_bt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginVertical="21dp"
+            android:background="@drawable/bg_ffffff_r20"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_online_resume_attachment" />
+
+            <TextView
+                android:id="@+id/tv_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:text="@string/resume_attachment"
+                android:textColor="@color/color_90_000000"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

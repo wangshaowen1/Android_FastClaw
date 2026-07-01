@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_f5f6fa"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/spacing_xl">
+
+        <TextView
+            android:id="@+id/tv_rule_tip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_l"
+            android:text="@string/mine_shrimp_rule_tip"
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="12sp"
+            tools:text="虾条更新可能延迟 虾条规则" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_ffffff_r12"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_rule_tip"
+            app:layout_constraintVertical_bias="0"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_shrimp_chips"
+            tools:visibility="visible" />
+    </LinearLayout>
+</layout>

@@ -1,0 +1,143 @@
+package com.shiyuan.fastclaw.feature.mine
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.viewpager2.widget.ViewPager2
+import com.gyf.immersionbar.ImmersionBar
+import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.adapter.FragmentStateCacheAdapter
+import com.shiyuan.fastclaw.databinding.ActivityOnlineResumeBinding
+import com.shiyuan.fastclaw.feature.mine.fragment.JobPreferencesFragment
+import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment
+import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
+
+/**
+ * @Introduce: 小虾理解
+ */
+
+class OnlineResumeActivity :
+    BaseViewModelActivity<ActivityOnlineResumeBinding, UnderstandsViewModel>() {
+
+    companion object {
+        private const val EXTRA_SELECTED_INDEX = "extra_selected_index"
+        fun start(activity: Activity?, selectedIndex: Int = 0) {
+            activity ?: return
+            val intent = Intent(activity, OnlineResumeActivity::class.java).apply {
+                putExtra(EXTRA_SELECTED_INDEX, selectedIndex.coerceIn(0, 1))
+            }
+            activity.startActivity(intent)
+        }
+    }
+
+    private val selectedIndex: Int by lazy {
+        intent.getIntExtra(EXTRA_SELECTED_INDEX, 0).coerceIn(0, 1)
+    }
+    private val resumePageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            if (mRealVM.tableOnlineResumeIndex.value != position) {
+                mRealVM.tableOnlineResumeIndex.value = position
+            }
+        }
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initView()
+        initObservers()
+        dataUpdate()
+    }
+
+    override fun setTranslucentStatus() {
+        ImmersionBar.with(this)
+            .statusBarDarkFont(true)
+            .navigationBarColor(R.color.color_F5F8FC)
+            .transparentStatusBar()
+            .init()
+    }
+
+    private fun initView() {
+        binding.vpResumePages.adapter =
+            FragmentStateCacheAdapter(supportFragmentManager, lifecycle).apply {
+                setFragments(
+                    listOf(
+                        ResumeInfoFragment.newInstance(),
+                        JobPreferencesFragment.newInstance()
+                    )
+                )
+            }
+        binding.vpResumePages.offscreenPageLimit = 2
+        mRealVM.tableOnlineResumeIndex.value = selectedIndex
+        binding.vpResumePages.setCurrentItem(selectedIndex, false)
+        updateResumeTabState(selectedIndex)
+        binding.llTab1.setOnSingleClickListener {
+            mRealVM.tableOnlineResumeIndex.value = 0
+        }
+        binding.llTab2.setOnSingleClickListener {
+            mRealVM.tableOnlineResumeIndex.value = 1
+        }
+        binding.vpResumePages.registerOnPageChangeCallback(resumePageChangeCallback)
+
+        binding.llBt.setOnSingleClickListener {
+            MyResumeActivity.start(this)
+        }
+
+    }
+
+    private fun initObservers() {
+        mRealVM.tableOnlineResumeIndex.observe(this) { index ->
+            val targetIndex = index.coerceIn(0, 1)
+            if (binding.vpResumePages.currentItem != targetIndex) {
+                binding.vpResumePages.setCurrentItem(targetIndex, false)
+            }
+            updateResumeTabState(targetIndex)
+        }
+        mRealVM.underStandingScore.observe(this) { data ->
+            val score = data?.understandingScore ?: 0
+            binding.waveView.progress = if (score == 0) 10 else score
+            binding.waveView.text = "${score}%"
+        }
+
+    }
+
+    private fun dataUpdate() {
+        mRealVM.understandingScore()
+        mRealVM.understandingDetail()
+    }
+
+    private fun updateResumeTabState(index: Int) {
+        val firstSelected = index == 0
+        binding.llTab1.setBackgroundResource(
+            if (firstSelected) R.drawable.ic_online_resume_tab_left else 0
+        )
+        binding.llTab2.setBackgroundResource(
+            if (firstSelected) 0 else R.drawable.ic_online_resume_tab_right
+        )
+        binding.tvTable1.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (firstSelected) R.color.white else R.color.color_75_3c3c43
+            )
+        )
+        binding.tvTable2.setTextColor(
+            ContextCompat.getColor(
+                this,
+                if (firstSelected) R.color.color_75_3c3c43 else R.color.white
+            )
+        )
+        binding.ivTable1.visibility = if (firstSelected) View.VISIBLE else View.GONE
+        binding.ivTable2.visibility = if (firstSelected) View.GONE else View.VISIBLE
+        binding.llBt.visibility = if (firstSelected) View.VISIBLE else View.GONE
+    }
+
+    override fun onDestroy() {
+        binding.vpResumePages.unregisterOnPageChangeCallback(resumePageChangeCallback)
+        super.onDestroy()
+    }
+
+}

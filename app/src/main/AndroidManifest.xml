@@ -208,6 +208,10 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.information.PersonalInformationActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.information.ProjectActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
@@ -231,6 +235,14 @@
         <activity
             android:name="com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name="com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.information.PersonaFreeFillInActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <activity
             android:name="com.shiyuan.fastclaw.feature.mine.MyResumeActivity"
@@ -267,6 +279,10 @@
 
         <activity
             android:name=".feature.mine.MyShrimpChipsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.mine.MyOrderActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -302,6 +303,50 @@ public class LoadStateViewHolder extends ViewAnimator {
         }
     }
 
+
+    public void setNoDataPromptSty(Float marginTop,Float textSize,Integer textStyle,Integer textColor) {
+        // 1. 获取视图，判空保护
+        View noDataView = binding.noData;
+        if (noDataView == null) {
+            return;
+        }
+
+        // 2. 设置顶部外边距（marginTop 单位为 dp）
+        if (marginTop != null) {
+            ViewGroup.LayoutParams params = noDataView.getLayoutParams();
+            if (params instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) params;
+                // 四舍五入转换 dp -> px
+                int marginTopPx = (int) (marginTop * getResources().getDisplayMetrics().density + 0.5f);
+                marginParams.topMargin = marginTopPx;
+                noDataView.setLayoutParams(marginParams);
+            }
+        }
+
+        // 3. 设置文字相关属性（仅当 noDataView 是 TextView 或其子类时）
+        if (noDataView instanceof TextView) {
+            TextView textView = (TextView) noDataView;
+
+            // 设置文字大小（textSize 单位为 sp）
+            if (textSize != null) {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+            }
+
+            // 设置文字样式（如 Typeface.BOLD, Typeface.ITALIC 等）
+            if (textStyle != null) {
+                textView.setTypeface(textView.getTypeface(), textStyle);
+            }
+
+            // 设置文字颜色
+            // 注意：textColor 应为颜色整数值（如 0xFF000000 或 Color.BLACK）
+            // 如果传入的是颜色资源 ID（如 R.color.xxx），请改用：
+            // textView.setTextColor(ContextCompat.getColor(getContext(), textColor));
+            if (textColor != null) {
+                textView.setTextColor(textColor);
+            }
+        }
+
+    }
 
     public void setNoDataTipPrompt(CharSequence noDataTipPrompt) {
         binding.noDataTip.setText(noDataTipPrompt);

@@ -58,6 +58,12 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
         }
     )
 
+    val mToolbarVMMyOrder = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = R.string.my_order.getResString(),
+        background = Color.TRANSPARENT
+    )
+
     val mToolbarVMShrimpRecharge = ToolbarViewModel(
         navigationAction = { finish() },
         title = R.string.mine_sticks.getResString(),

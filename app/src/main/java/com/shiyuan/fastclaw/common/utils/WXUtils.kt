@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.common.utils
 
 import android.app.Activity
+import android.content.Intent
 import com.shiyuan.fastclaw.BuildConfig
 import com.nhsd.basic.utils.T
 import com.tencent.mm.opensdk.constants.Build
@@ -39,5 +40,24 @@ object WXUtils {
             req.url = kfUrl
             api.sendReq(req)
         }
+    }
+
+    /**
+     * web的方式吊起微信客服
+     */
+
+    fun customerServiceChatWeb(activity: Activity? = null, url: String? = null) {
+        if (activity == null) return
+        if (url.isNullOrEmpty()) return
+        val api = WXAPIFactory.createWXAPI(activity, BuildConfig.WX_APP_ID)
+        if (!api.isWXAppInstalled) {
+            val msg = "未检测到微信客户端，请先安装微信，若已安装请打开微信一次。"
+            T.showShort(msg)
+            return
+        }
+        val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        activity.startActivity(intent)
     }
 }

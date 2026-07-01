@@ -95,7 +95,7 @@ class AppConfigData {
     val userVipProtocolUrl: String? = null
 
     //1v1客服信息
-    val customerServiceInfo: CustomerServiceInfo? = null
+    val customerServiceInfo: CustomerServiceInfo = CustomerServiceInfo( customerServiceJmpUrl = "https://work.weixin.qq.com/kfid/kfca604d0298fa08862",enterpriseId  = "kfca604d0298fa08862")
 
     //字数输入限制相关
     val shortDramas: TextLimitNum? = null

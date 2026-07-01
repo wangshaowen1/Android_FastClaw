@@ -60,6 +60,7 @@
     <string name="unbind_and_bind_wechat_content">此微信号已与其他快龙虾账号绑定，可以先解除绑定，解绑成功后会自动绑定到当前账号。</string>
     <string name="unbind_and_bind_wechat">解绑并绑定</string>
     <string name="wechat_client_not_found">未监测到您的微信客户端</string>
+    <string name="my_order">我的订单</string>
     <string name="app_contact_customer_service">联系客服</string>
     <string name="app_customer_service_hours">在线时间 9:00–18:00</string>
     <string name="app_personal_information">个人资料</string>
@@ -630,6 +631,15 @@
     <string name="mine_rule">虾条规则</string>
     <string name="mine_shrimp_rule_tip">虾条更新可能延迟 虾条规则</string>
     <string name="mine_shrimp_record">虾条记录</string>
+    <string name="my_order_record">订单记录</string>
+    <string name="my_order_problem_tip">订单问题请 联系客服</string>
+    <string name="my_order_customer_service_confirm_tip">确认跳转到微信打开客服？</string>
+    <string name="my_order_no">订单号：%1$s</string>
+    <string name="my_order_mock_interview_package">面试通关包</string>
+    <string name="my_order_shrimp_recharge">虾条充值</string>
+    <string name="my_order_sample_order_no">klx993959500992200000</string>
+    <string name="my_order_sample_amount">68.00元</string>
+    <string name="my_order_sample_time">2026.05.07 15:16:18</string>
     <string name="mine_select_recharge_package">选择充值套餐</string>
     <string name="mine_recharge_method">充值方式</string>
     <string name="mine_recharge_agreement_prefix">充值即代表同意</string>
@@ -881,6 +891,8 @@
     <string name="resume_tip2">你的简历是小虾理解你的关键信息，请务必上传本人真实简历。</string>
     <string name="resume_understanding">小虾理解度</string>
     <string name="resume_dn">对齐度越高我越懂你</string>
+    <string name="online_resume_understand_title">让小虾更懂你</string>
+    <string name="online_resume_understand_desc">对齐度越高，分析越精准</string>
     <string name="end_month_position">在职-月底岗位</string>
     <string name="alignment_degree">对齐度</string>
     <string name="resume_information">简历信息</string>
@@ -987,6 +999,23 @@
     <string name="certificate">证书</string>
     <string name="birth_date">出生年月</string>
     <string name="salary_range">薪资范围</string>
+    <string name="personal_information_title">个人信息</string>
+    <string name="personal_information_avatar">头像</string>
+    <string name="personal_information_name">姓名</string>
+    <string name="personal_information_name_value">张志源</string>
+    <string name="personal_information_gender_value">男</string>
+    <string name="personal_information_phone">手机号</string>
+    <string name="personal_information_phone_value">17883749009</string>
+    <string name="personal_information_wechat">微信号</string>
+    <string name="personal_information_wechat_value">17883749009</string>
+    <string name="personal_information_email">邮箱</string>
+    <string name="personal_information_email_value">17883749@qq.com</string>
+    <string name="personal_information_current_city">现居住城市</string>
+    <string name="personal_information_current_city_value">北京</string>
+    <string name="personal_information_political_status">政治面貌</string>
+    <string name="personal_information_political_status_value">党员</string>
+    <string name="personal_information_marital_status">婚姻状况</string>
+    <string name="personal_information_marital_status_value">未婚</string>
 
     <!-- 城市选择 -->
     <string name="select_city">选择城市</string>
