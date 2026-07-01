@@ -773,7 +773,7 @@
     <string name="str_agent_understanding_field_unaligned">待补齐</string>
     <string name="str_agent_company_background_generating">生成中</string>
     <string name="str_agent_company_background_title">公司背调</string>
-    <string name="str_agent_company_background_subtitle">公司在筛选你，你也该调查公司</string>
+    <string name="str_agent_company_background_subtitle">帮你调查这家公司值不值得面</string>
     <string name="str_agent_company_background_slogan">30秒判断：这家公司值不值得面</string>
     <string name="str_agent_company_background_item_company">公司靠谱吗</string>
     <string name="str_agent_company_background_item_boss">老板什么背景</string>
@@ -1094,7 +1094,7 @@
     <string name="interview_voice_no_content">未识别到语音内容</string>
     <string name="interview_target_job_screenshot_guide_title">如何获得目标岗位截图</string>
     <string name="interview_target_job_screenshot_step_1_no">1</string>
-    <string name="interview_target_job_screenshot_step_1">打开Boss/招聘网站，查看目标岗位详情页</string>
+    <string name="interview_target_job_screenshot_step_1">打开招聘平台，查看目标岗位详情页</string>
     <string name="interview_target_job_screenshot_step_2_no">2</string>
     <string name="interview_target_job_screenshot_step_2">直接截图，或点击右上角分享按钮</string>
     <string name="interview_target_job_screenshot_step_3_no">3</string>
