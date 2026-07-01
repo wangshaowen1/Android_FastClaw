@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -26,19 +27,27 @@
             android:textSize="12sp"
             tools:text="订单问题请 联系客服" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_order_record"
+        <com.shiyuan.fastclaw.widget.LoadStateViewHolder
+            android:id="@+id/lsv_order_record"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/spacing_l"
             android:layout_marginTop="@dimen/spacing_m"
-            android:background="@drawable/bg_ffffff_r12"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:paddingHorizontal="11dp"
-            android:paddingTop="@dimen/spacing_l"
-            android:paddingBottom="@dimen/spacing_l"
-            tools:itemCount="2"
-            tools:listitem="@layout/item_my_order_record" />
+            app:noData="@string/no_data"
+            app:noDataSrc="@drawable/ic_empty2">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:background="@drawable/bg_ffffff_r12"
+                android:id="@+id/rv_order_record"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingHorizontal="11dp"
+                android:paddingTop="@dimen/spacing_l"
+                android:paddingBottom="@dimen/spacing_l"
+                tools:itemCount="2"
+                tools:listitem="@layout/item_my_order_record" />
+        </com.shiyuan.fastclaw.widget.LoadStateViewHolder>
     </LinearLayout>
 </layout>

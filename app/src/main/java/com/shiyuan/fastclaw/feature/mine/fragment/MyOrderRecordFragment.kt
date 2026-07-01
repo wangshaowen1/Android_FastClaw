@@ -7,11 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
+import com.shiyuan.fastclaw.common.ext.gone
+import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 import com.shiyuan.fastclaw.databinding.FragmentMyOrderRecordBinding
 import com.shiyuan.fastclaw.feature.mine.dialog.MyOrderCustomerServiceDialog
@@ -27,7 +30,7 @@ class MyOrderRecordFragment :
     private val orderAdapter by lazy {
         QuickAdapter<ItemMyOrderRecordVM>(
             R.layout.item_my_order_record,
-            createOrderRecordSamples()
+            emptyList()
         )
     }
 
@@ -45,12 +48,16 @@ class MyOrderRecordFragment :
             }
             adapter = orderAdapter
         }
+        updateOrderRecords(emptyList())
         setProblemTipText()
         binding.tvProblemTip.setOnSingleClickListener {
             MyOrderCustomerServiceDialog.show(childFragmentManager) {
                 requireActivity().customerServiceTransfer()
             }
         }
+        // 配置空视图
+        binding.lsvOrderRecord.setDefaultEmptyImage(R.drawable.ic_empty)
+        binding.lsvOrderRecord.setNoDataPrompt("暂无订单")
     }
 
     private fun setProblemTipText() {
@@ -71,21 +78,15 @@ class MyOrderRecordFragment :
         }
     }
 
-    private fun createOrderRecordSamples(): List<ItemMyOrderRecordVM> {
-        return listOf(
-            MyOrderRecord(
-                orderNo = getString(R.string.my_order_sample_order_no),
-                title = getString(R.string.my_order_mock_interview_package),
-                amount = getString(R.string.my_order_sample_amount),
-                time = getString(R.string.my_order_sample_time)
-            ),
-            MyOrderRecord(
-                orderNo = getString(R.string.my_order_sample_order_no),
-                title = getString(R.string.my_order_shrimp_recharge),
-                amount = getString(R.string.my_order_sample_amount),
-                time = getString(R.string.my_order_sample_time)
-            )
-        ).map(::ItemMyOrderRecordVM)
+    private fun updateOrderRecords(data: List<MyOrderRecord>) {
+        orderAdapter.submitList(data.map(::ItemMyOrderRecordVM))
+        if (data.isEmpty()) {
+            binding.lsvOrderRecord.showEmpty()
+            binding.tvProblemTip.gone()
+        } else {
+            binding.lsvOrderRecord.showContent()
+            binding.tvProblemTip.visible()
+        }
     }
 }
 
