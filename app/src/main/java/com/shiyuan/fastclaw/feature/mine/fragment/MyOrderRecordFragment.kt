@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.mine.fragment
 
+import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.UnderlineSpan
@@ -58,6 +59,7 @@ class MyOrderRecordFragment :
         // 配置空视图
         binding.lsvOrderRecord.setDefaultEmptyImage(R.drawable.ic_empty)
         binding.lsvOrderRecord.setNoDataPrompt("暂无订单")
+        binding.lsvOrderRecord.setNoDataPromptSty(6f,14f, Typeface.NORMAL,requireActivity().getColor(R.color.color_85_3c3c43))
     }
 
     private fun setProblemTipText() {
