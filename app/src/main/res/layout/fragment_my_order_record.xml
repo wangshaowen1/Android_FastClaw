@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel" />
+            type="com.shiyuan.fastclaw.feature.mine.fragment.MyOrderRecordViewModel" />
     </data>
 
     <LinearLayout
