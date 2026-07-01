@@ -8,37 +8,32 @@
             type="com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel" />
     </data>
 
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:clipToPadding="false"
+        android:fillViewport="true">
 
-        <androidx.core.widget.NestedScrollView
+        <FrameLayout
+            android:background="@drawable/bg_ffffff_leftbot_rightbot_r20"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:fillViewport="true">
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingTop="@dimen/spacing_m"
+            android:paddingBottom="@dimen/spacing_xl">
 
-            <FrameLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_job_preferences"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="10dp"
-                android:paddingTop="@dimen/spacing_m"
-                android:paddingBottom="@dimen/spacing_xl">
+                android:nestedScrollingEnabled="false" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_job_preferences"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
-
-                <include
-                    android:id="@+id/view_understands"
-                    layout="@layout/view_understands1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-            </FrameLayout>
-        </androidx.core.widget.NestedScrollView>
-    </FrameLayout>
+            <include
+                android:id="@+id/view_understands"
+                layout="@layout/view_understands1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

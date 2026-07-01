@@ -83,6 +83,10 @@ class OnlineResumeActivity :
         }
         binding.vpResumePages.registerOnPageChangeCallback(resumePageChangeCallback)
 
+        binding.llBt.setOnSingleClickListener {
+            MyResumeActivity.start(this)
+        }
+
     }
 
     private fun initObservers() {
