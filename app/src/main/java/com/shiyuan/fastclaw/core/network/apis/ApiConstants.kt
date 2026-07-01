@@ -42,7 +42,7 @@ object ApiConstants {
     /**
      * 注销账号
      */
-    const val LOG_OFF = "auth/logout"
+    const val LOG_OFF = "/api/candidate/auth/logout"
 
     /**
      * 提交用户的反馈数据

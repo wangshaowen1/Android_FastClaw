@@ -11,7 +11,7 @@ import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.databinding.ActivityAccountSettingsBinding
 import com.shiyuan.fastclaw.feature.mine.PhoneShowActivity
-import com.shiyuan.fastclaw.feature.settings.logoff.LogoffActivity
+import com.shiyuan.fastclaw.feature.settings.logoff.LogoffNewActivity
 import com.umeng.socialize.UMShareAPI
 import com.umeng.socialize.bean.SHARE_MEDIA
 
@@ -48,8 +48,8 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
                 PhoneShowActivity.start(this)
             R.id.rlWechat ->
                 handleWechatClick()
-            R.id.rlCancelAccount ->
-                LogoffActivity.start(this)
+            R.id.tvLogoffAccount ->
+                LogoffNewActivity.start(this)
         }
     }
 

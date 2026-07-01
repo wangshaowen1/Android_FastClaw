@@ -379,6 +379,11 @@
     <string name="upload_photo_limit">上传图片（%1$d/%2$d）: </string>
     <string name="episode_number_format">第%1$d集</string>
     <string name="account_deletion_title">账号注销说明</string>
+    <string name="logoff_new_tip">真的要和小虾说再见吗？\n我对于你简历信息、求职偏好的记忆都将被清空，再也找不回来了。</string>
+    <string name="logoff_new_important_tip">注销重要提示：</string>
+    <string name="logoff_new_content">1. 账号正式注销是不可逆的行为。正式注销完成后，您将无法登录、使用该账号，也无法找回已注销账号中的任何内容、数据或记录；即使您使用相同的手机号再次注册，也将生成一个全新的独立账号。\n2. 您提交注销申请的行为，将视为您自愿、主动放弃包括个人信息、简历信息、面试报告及虾条在内的所有内容、信息和虚拟资产，请自行备份并妥善处理您的相关数据与资产。\n3. 提交申请后将进入 7 天冷静期，冷静期内若您登录该账号，将自动撤销本次注销申请，账号恢复正常使用。\n4. 账号正式注销完成后，除非根据法律法规或监管部门的要求保留或存储您的个人信息，我们将对您的个人信息做删除或匿名化处理；请您知悉并理解，我们可能不会将该等信息立即从备份系统中删除。\n5. 注销申请自提交之日起计算 7 天冷静期，期满后将自动完成正式注销，注销结果不再另行通知，正式注销后不可撤回。\n6. 账号正式注销后，视为您了解并同意，该账号相关的所有虚拟资产，包括但不限于虾条余额等，都将被清除且无法恢复，不予退还</string>
+    <string name="logoff_new_confirm_title">确定注销账号</string>
+    <string name="logoff_new_confirm_content">注销成功将删除您当前账号的所有数据，此操作不可撤销，请慎重考虑！</string>
     <string name="creation_progress_format">已创作 %1$d 集 / 共%2$d集</string>
     <string name="image_description_limit">图片描述（%1$d/%2$d）: </string>
     <string name="episode_progress_format">%1$d/%2$d集</string>

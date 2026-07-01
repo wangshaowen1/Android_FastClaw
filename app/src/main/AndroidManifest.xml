@@ -307,6 +307,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--注销-->
         <activity android:name=".feature.settings.logoff.LogoffActivity" />
+        <activity android:name=".feature.settings.logoff.LogoffNewActivity" />
         <!--申请注销-->
         <activity android:name=".feature.settings.logoff.ApplyLogOffActivity" />
         <!--绑定手机号-->
