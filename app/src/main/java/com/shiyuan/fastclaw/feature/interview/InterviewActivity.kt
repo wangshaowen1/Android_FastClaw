@@ -39,13 +39,12 @@ import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.databinding.ActivityInterviewBinding
-import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.dialog.JobSelectionDialog
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.ACTION_TARGET_JOB_SUBMIT
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SESSION_STATUS_PREPARING
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_POSITION_SELECTED
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_UPLOAD_IMAGE
-import com.shiyuan.fastclaw.feature.interview.bean.InterviewJobBean
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewJobData
 import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewJobDialog
@@ -269,7 +268,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     private fun observeEvents() {
         observeEvents {
             on<Events.InterviewEvent> { event ->
-                val dataList = JsonUtil.parseList(event.msgGson, InterviewJobBean::class.java)
+                val dataList = JsonUtil.parseList(event.msgGson, InterviewJobData::class.java)
                 val dataItem = dataList?.firstOrNull() ?: return@on
                 mRealVM.sendAction(
                     actionType = ACTION_TARGET_JOB_SUBMIT,
