@@ -98,7 +98,7 @@
                 android:layout_weight="1"
                 android:elevation="0dp"
                 android:gravity="center"
-                android:background="@drawable/bg_theme_color1_r50"
+                android:background="@drawable/bg_dialog_common_confirm"
                 android:stateListAnimator="@null"
                 android:text="@string/confirm_ok"
                 android:textColor="@color/white"  />

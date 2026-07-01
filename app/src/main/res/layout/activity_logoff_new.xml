@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.settings.logoff.LogoffViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:toolbar="@{layout.mToolbarVM}" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/ivLogoffTip"
+                android:layout_width="156dp"
+                android:layout_height="133dp"
+                android:layout_marginStart="111dp"
+                android:layout_marginTop="11dp"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_logoff_new_tip"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvLogoffTip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="112dp"
+                android:layout_marginEnd="21dp"
+                android:background="@drawable/img_logoff_new_tip_bg"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="start|top"
+                android:includeFontPadding="false"
+                android:lineHeight="19dp"
+                android:paddingStart="12dp"
+                android:paddingTop="22dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="12dp"
+                android:text="@string/logoff_new_tip"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="真的要和小虾说再见吗？&#10;我对于你简历信息、求职偏好的记忆都将被清空，再也找不回来了。" />
+
+            <TextView
+                android:id="@+id/tvImportantTip"
+                android:layout_width="wrap_content"
+                android:layout_height="21dp"
+                android:layout_marginStart="26dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:lineHeight="21dp"
+                android:text="@string/logoff_new_important_tip"
+                android:textColor="@color/color_90_000000"
+                android:textSize="14sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvLogoffTip" />
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scrollLogoffContent"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="26dp"
+                android:layout_marginBottom="15dp"
+                app:layout_constraintBottom_toTopOf="@id/btnConfirmLogoff"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvImportantTip">
+
+                <TextView
+                    android:id="@+id/tvLogoffContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:includeFontPadding="false"
+                    android:lineHeight="19dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="@string/logoff_new_content"
+                    android:textColor="@color/color_85_3c3c43"
+                    android:textSize="13sp" />
+            </androidx.core.widget.NestedScrollView>
+
+            <com.shiyuan.fastclaw.widget.super_button.SuperButton
+                android:id="@+id/btnConfirmLogoff"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="28dp"
+                android:layout_marginEnd="35dp"
+                android:layout_marginBottom="39dp"
+                android:gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:lineHeight="23dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:stateListAnimator="@null"
+                android:text="@string/unregister_confirm"
+                android:textColor="#BF3C3C43"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:sCornersRadius="100dp"
+                app:sSolidColor="@color/transparent"
+                app:sStrokeColor="@color/color_20_666666"
+                app:sStrokeWidth="1dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</layout>

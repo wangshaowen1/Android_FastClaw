@@ -25,6 +25,7 @@ import com.nhsd.basic.ext.showToast
  * *****************************************
  */
 class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
+
     companion object {
         //注销状态未申请，不可点击状态
         const val REMOVE_ACCOUNT_STATE_NOT_APPLY = 0
