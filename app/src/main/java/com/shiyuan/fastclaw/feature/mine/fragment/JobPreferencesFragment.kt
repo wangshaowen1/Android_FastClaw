@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.mine.fragment
 
+import android.util.TypedValue
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +17,7 @@ import com.shiyuan.fastclaw.databinding.ItemJobInfoBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoReBinding
 import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment.Companion.INCOMPLETE
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+
 
 class JobPreferencesFragment :
     BaseViewModelFragment<FragmentJobPreferencesBinding, EmptyViewModel>() {
@@ -73,13 +75,19 @@ class JobPreferencesFragment :
     ) {
         itemBinding.tvTitle.text = item.displayTitle()
         if (item.attributeGroupCode == CODE_JOB_STATUS) {
+            itemBinding.ll.setBackgroundResource(R.drawable.bg_f3f9ff_ffffff_r12)
+            val paddingTopPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15f, itemBinding.ll.getResources().getDisplayMetrics()).toInt()
+            itemBinding.ll.setPadding(itemBinding.ll.getPaddingLeft(), paddingTopPx, itemBinding.ll.getPaddingRight(), itemBinding.ll.getPaddingBottom());
             itemBinding.ivEdit.visibility = View.VISIBLE
+            itemBinding.viewIndicator.visibility = View.GONE
             itemBinding.tvName.visibility = if (item.fieldTree.isNullOrEmpty()) View.GONE else View.VISIBLE
             itemBinding.tvName.text = item.fieldTree?.firstOrNull()?.displayValue?.toString().orEmpty()
             itemBinding.layoutMissing.visibility = if (item.fieldTree.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
             itemBinding.rcFieldTree.visibility = View.GONE
             itemBinding.rcFieldTree.adapter = null
         } else {
+            itemBinding.ll.setBackgroundResource(R.color.white)
+            itemBinding.ivEdit.visibility = View.VISIBLE
             itemBinding.ivEdit.visibility = View.INVISIBLE
             itemBinding.tvName.visibility = View.GONE
             itemBinding.layoutMissing.visibility = View.INVISIBLE
