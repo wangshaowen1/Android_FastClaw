@@ -23,6 +23,14 @@ import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewLoginLoadingDialog
  */
 class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLoginBinding, PhoneNewLoginViewModel>() {
 
+    private val codeViews by lazy {
+        listOf(binding.tvCode1, binding.tvCode2, binding.tvCode3, binding.tvCode4)
+    }
+    private var loginLoadingDialog: PhoneNewLoginLoadingDialog? = null
+    private var isLoggingIn = false
+    private var bindUserData: UserHomeData? = null
+    private var businessType = BUSINESS_TYPE_LOGIN
+
     companion object {
         private const val EXTRA_PHONE = "phone"
         private const val EXTRA_CHECKED_POLICY = "checked_policy"
@@ -88,14 +96,6 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
             context.startActivity(intent)
         }
     }
-
-    private val codeViews by lazy {
-        listOf(binding.tvCode1, binding.tvCode2, binding.tvCode3, binding.tvCode4)
-    }
-    private var loginLoadingDialog: PhoneNewLoginLoadingDialog? = null
-    private var isLoggingIn = false
-    private var bindUserData: UserHomeData? = null
-    private var businessType = BUSINESS_TYPE_LOGIN
 
     /**
      * 设置验证码页的沉浸式状态栏样式。
@@ -187,7 +187,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
                 loginPhone()
             }
             BUSINESS_TYPE_BIND_PHONE -> {
-                bindMobile()
+                bindPhone()
                 return
             }
 
@@ -228,7 +228,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
     /**
      * 三方登录后绑定手机号，成功后保存三方登录返回的用户信息。
      */
-    private fun bindMobile() {
+    private fun bindPhone() {
         val userData = bindUserData
         if (userData == null) {
             hideLoginLoading()
@@ -236,7 +236,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
             binding.tvCodeError.visibility = View.VISIBLE
             return
         }
-        mRealVM.bindMobile(userData = userData, onLogin = {
+        mRealVM.bindPhone(userData = userData, onLogin = {
                 hideLoginLoading()
                 finish()
             },

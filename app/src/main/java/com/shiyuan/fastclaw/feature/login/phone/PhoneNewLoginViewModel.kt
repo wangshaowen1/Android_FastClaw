@@ -83,7 +83,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      * @param startCountdownOnSuccess 成功后是否立即启动倒计时
      * @param onSent 验证码发送成功后的页面回调
      */
-    fun sendSmsCode(startCountdownOnSuccess: Boolean = true, bizType: Int, onSent: () -> Unit) {
+    fun sendSmsCode(startCountdownOnSuccess: Boolean = true, bizType: Int, onError: ((String?) -> Unit)? = null, onSent: () -> Unit) {
         val phone = mobile.value
         if (!RegexUtils.isMobileSimple(phone)) {
             showToast(R.string.login_new_phone_error)
@@ -103,13 +103,22 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                         onSent()
                     },
                     error = {
-                        this?.msg?.showToast()
+                        if (onError == null) {
+                            this?.msg?.showToast()
+                        } else {
+                            onError.invoke(this?.msg)
+                        }
                         stopCountdown()
                     }
                 )
             },
             onError = {
-                parseMessage(it)?.showToast()
+                val message = parseMessage(it)
+                if (onError == null) {
+                    message?.showToast()
+                } else {
+                    onError.invoke(message)
+                }
                 stopCountdown()
             }
         )
@@ -182,7 +191,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
     /**
      * 三方登录后绑定手机号，成功后再保存三方登录返回的用户信息。
      */
-    fun bindMobile(userData: UserHomeData?, onLogin: ((UserHomeData?) -> Unit)?, onError: (() -> Unit)? = null) {
+    fun bindPhone(userData: UserHomeData?, onLogin: ((UserHomeData?) -> Unit)?, onError: (() -> Unit)? = null) {
         val phone = mobile.value
         val validateCode = smsCode.value
         if (!RegexUtils.isMobileSimple(phone)) {
@@ -213,19 +222,19 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      */
     fun changePhone(onSuccess: (() -> Unit)?, onError: (() -> Unit)? = null) {
         val phone = mobile.value
-        val smsCode = smsCode.value
+        val validateCode = smsCode.value
         if (!RegexUtils.isMobileSimple(phone)) {
             showToast(R.string.login_new_phone_error)
             onError?.invoke()
             return
         }
-        if (smsCode?.length != Constants.SMS_CODE_LENGTH) {
+        if (validateCode?.length != Constants.SMS_CODE_LENGTH) {
             showToast(R.string.enter_right_validate_code)
             onError?.invoke()
             return
         }
         launchWithLoading(false, block = {
-            response(mRepo.bindPhone(phone, smsCode), {
+            response(mRepo.changeMobile(phone, validateCode), {
                 showToast(R.string.bind_success)
                 User.get().storePhoneNum(phone)
                 FlowEventBus.postSync(Events.BindingSuccessfulEvent())

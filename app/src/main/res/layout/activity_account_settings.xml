@@ -60,7 +60,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toStartOf="@id/ivPhoneArrow"
                     android:gravity="center_vertical"
-                    android:text="@{layout.maskedPhone}"
+                    android:text="@{layout.phone}"
                     android:textColor="@color/color_55_3c3c43"
                     android:textSize="15sp"
                     tools:text="178*****000" />
