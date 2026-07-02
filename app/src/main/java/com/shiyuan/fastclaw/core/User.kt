@@ -73,6 +73,12 @@ class User : IUser {
     var isPaid: Int?
         private set
 
+    /**
+     * 微信昵称
+     */
+    var wechatNickName: String?
+        private set
+
     var requestNotificationsPermissionEnable = true
 
     val userInfoStr: String?
@@ -107,6 +113,7 @@ class User : IUser {
         computingPower = sp.getInt(COMPUTING_POWER, 0)
         purchaseCourseStatus = sp.getInt(PURCHASE_COURSE_STATUS, 0)
         isPaid = sp.getInt(IS_PAID, 0)
+        wechatNickName = sp.getString(WECHAT_NICK_NAME, null)
         requestNotificationsPermissionEnable = sp.getBoolean(REQUEST_NOTIFICATIONS_PERMISSION, true)
     }
 
@@ -124,6 +131,7 @@ class User : IUser {
         storeLastLoginTime(userData.lastLoginTime)
         storePurchaseCourseStatus(userData.purchaseCourseStatus)
         storePaid(userData.userTag)
+        storeWechatNickName(userData.wechatNickName)
         userData.registerStatus?.apply {
             storeRegisterStatus(this)
         }
@@ -187,6 +195,8 @@ class User : IUser {
         sp.remove(PURCHASE_COURSE_STATUS)
         isPaid = null
         sp.remove(IS_PAID)
+        wechatNickName = null
+        sp.remove(WECHAT_NICK_NAME)
         token = null
         sp.remove(TOKEN)
         computingPower = 0
@@ -346,6 +356,11 @@ class User : IUser {
         sp.putInt(IS_PAID, this.isPaid ?: 0)
     }
 
+    fun storeWechatNickName(wechatNickName: String?) {
+        this.wechatNickName = wechatNickName
+        sp.putString(WECHAT_NICK_NAME, wechatNickName)
+    }
+
     fun isFemale(): Boolean {
         return gender == FEMALE
     }
@@ -406,6 +421,9 @@ class User : IUser {
         const val PURCHASE_COURSE_STATUS = "purchaseCourseStatus"
 
         const val IS_PAID = "IS_PAID"
+
+        //微信昵称
+        const val WECHAT_NICK_NAME = "wechatNickName"
 
         //性别-男
         const val MALE = 1

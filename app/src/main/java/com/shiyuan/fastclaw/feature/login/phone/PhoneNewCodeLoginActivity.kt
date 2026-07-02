@@ -187,7 +187,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
                 loginPhone()
             }
             BUSINESS_TYPE_BIND_PHONE -> {
-                bindMobile()
+                bindPhone()
                 return
             }
 
@@ -228,7 +228,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
     /**
      * 三方登录后绑定手机号，成功后保存三方登录返回的用户信息。
      */
-    private fun bindMobile() {
+    private fun bindPhone() {
         val userData = bindUserData
         if (userData == null) {
             hideLoginLoading()
@@ -236,7 +236,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
             binding.tvCodeError.visibility = View.VISIBLE
             return
         }
-        mRealVM.bindMobile(userData = userData, onLogin = {
+        mRealVM.bindPhone(userData = userData, onLogin = {
                 hideLoginLoading()
                 finish()
             },

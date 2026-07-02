@@ -279,7 +279,7 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
         }
         mRealVM.loginByThird(loginType, map = data, onLogin = { needBindMobile, userData ->
                 if (needBindMobile && userData != null) {
-                    PhoneNewBindMobileActivity.start(this, userData)
+                    PhoneNewBindActivity.start(this, userData)
                 }
                 finish()
             }

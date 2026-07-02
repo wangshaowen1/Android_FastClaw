@@ -429,6 +429,7 @@
     <string name="enter_content">请输入内容</string>
     <string name="change_phone">换绑手机号</string>
     <string name="bind_success">绑定成功</string>
+    <string name="unbind_success">解绑成功</string>
     <string name="download_image_failed">下载图片失败</string>
     <string name="consumption_details">消耗明细</string>
     <string name="compute_details">算力明细</string>
@@ -574,6 +575,9 @@
     <string name="login_new_phone_hint">请输入手机号码</string>
     <string name="login_new_phone_error">手机号输入不正确，请重新输入</string>
     <string name="login_new_get_sms_code">获取短信验证码</string>
+    <string name="change_mobile_title">修改手机号</string>
+    <string name="change_mobile_subtitle">修改手机号后，可以使用新手机号登录快龙虾。在线简历中手机号会一同修改。</string>
+    <string name="change_mobile_existing_tip">新手机号%1$s已经存在快龙虾账号，请登录账号注销后再返回修改。或修改为未在快龙虾注册过的全新手机号。</string>
     <string name="login_new_code_title">输入验证码</string>
     <string name="login_new_code_subtitle">验证码已发送至%1$s</string>
     <string name="login_new_resend_countdown">重新获取验证码 (%1$ss)</string>

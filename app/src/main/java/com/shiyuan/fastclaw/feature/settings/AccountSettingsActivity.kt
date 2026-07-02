@@ -10,7 +10,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.databinding.ActivityAccountSettingsBinding
-import com.shiyuan.fastclaw.feature.mine.PhoneShowActivity
+import com.shiyuan.fastclaw.feature.login.phone.PhoneNewChangeActivity
 import com.shiyuan.fastclaw.feature.settings.logoff.LogoffNewActivity
 import com.umeng.socialize.UMShareAPI
 import com.umeng.socialize.bean.SHARE_MEDIA
@@ -41,11 +41,17 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
             .init()
     }
 
+    /** 页面重新可见时刷新手机号脱敏展示。 */
+    override fun onResume() {
+        super.onResume()
+        mRealVM.refreshUserInfo()
+    }
+
     override fun <Data> onClick(view: View?, data: Data?) {
         super.onClick(view, data)
         when (view?.id) {
             R.id.rlPhone ->
-                PhoneShowActivity.start(this)
+                PhoneNewChangeActivity.start(this)
             R.id.rlWechat ->
                 handleWechatClick()
             R.id.tvLogoffAccount ->
@@ -56,7 +62,7 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
     /** 根据当前微信绑定状态处理点击事件。 */
     private fun handleWechatClick() {
         if (mRealVM.isWechatBound.get()) {
-            showUnbindWechatDialog()
+            showUnbindDialog()
         } else {
             bindWechat()
         }
@@ -72,14 +78,14 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
     }
 
     /** 展示微信解绑确认弹窗。 */
-    private fun showUnbindWechatDialog() {
+    private fun showUnbindDialog() {
         showConfirmPrompt(
             tip = getString(R.string.unbind_wechat_confirm_content),
             title = getString(R.string.unbind_wechat_confirm_title),
             cancelText = getString(R.string.cancel),
             confirmText = getString(R.string.confirm),
             confirm = {
-                mRealVM.clearWechatBound()
+                mRealVM.unbindWechat()
             }
         )
     }
@@ -92,6 +98,7 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
     override fun onAuthed(platform: SHARE_MEDIA?, data: MutableMap<String, String>?) {
         if (platform != SHARE_MEDIA.WEIXIN) return
         mRealVM.updateWechatBound(data?.get("name"))
+        mRealVM.refreshUserInfo()
         showToast(R.string.bind_success)
     }
 

@@ -19,6 +19,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.AttributeRejectBody
 import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
+import com.shiyuan.fastclaw.core.network.apis.request.ChangeMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
@@ -57,6 +58,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.request.TipOffBody
 import com.shiyuan.fastclaw.core.network.apis.request.TradePayCreateBody
+import com.shiyuan.fastclaw.core.network.apis.request.UnbindThirdPartyBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.SSEvent
 import com.shiyuan.fastclaw.core.network.apis.request.DictIndustryQueryBody
@@ -141,6 +143,12 @@ interface ApiService {
     suspend fun loginByThird(@Body body: LoginByThirdBody): ApiResponse<UserHomeData?>
 
     /**
+     * 解除第三方账号绑定
+     */
+    @POST(ApiConstants.UNBIND_THIRD_PARTY)
+    suspend fun unbindThirdParty(@Body body: UnbindThirdPartyBody): ApiResponse<Any?>
+
+    /**
      * 退出登录
      */
     @POST(ApiConstants.LOGOUT_APP)
@@ -194,6 +202,12 @@ interface ApiService {
      */
     @POST(ApiConstants.BIND_MOBILE)
     suspend fun bindMobile(@Body body: BindMobileBody): ApiResponse<Any?>
+
+    /**
+     * 换绑手机号
+     */
+    @POST(ApiConstants.CHANGE_MOBILE)
+    suspend fun changeMobile(@Body body: ChangeMobileBody): ApiResponse<Any?>
 
     /**
      * 闪验登录

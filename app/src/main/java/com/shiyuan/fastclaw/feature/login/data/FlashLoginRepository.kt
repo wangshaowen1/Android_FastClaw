@@ -6,6 +6,7 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.GrowingIO
 import com.shiyuan.fastclaw.core.network.apis.request.BindMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
+import com.shiyuan.fastclaw.core.network.apis.request.ChangeMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByFlashMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
@@ -84,5 +85,13 @@ class FlashLoginRepository : ThirdLoginRepository() {
     suspend fun bindMobile(phoneNumber: String?, validationCode: String?, userToken: String?) =
         withContext(Dispatchers.IO) {
             api.bindMobile(BindMobileBody(phoneNumber, validationCode, userToken = userToken))
+        }
+
+    /**
+     * 换绑手机号
+     */
+    suspend fun changeMobile(phoneNumber: String?, validationCode: String?) =
+        withContext(Dispatchers.IO) {
+            api.changeMobile(ChangeMobileBody(phoneNumber, validationCode))
         }
 }

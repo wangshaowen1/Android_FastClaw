@@ -20,7 +20,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.databinding.DialogFlashNewLoginBinding
 import com.shiyuan.fastclaw.feature.login.LoginActivity
 import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
-import com.shiyuan.fastclaw.feature.login.phone.PhoneNewBindMobileActivity
+import com.shiyuan.fastclaw.feature.login.phone.PhoneNewBindActivity
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
@@ -218,7 +218,7 @@ class FlashNewLoginDialog : BaseBottomPushVMDialogFragment<DialogFlashNewLoginBi
         }
         mRealVM.loginByThird(loginType, data) { needBindMobile, userData ->
             if (needBindMobile && userData != null) {
-                PhoneNewBindMobileActivity.start(requireActivity(), userData)
+                PhoneNewBindActivity.start(requireActivity(), userData)
             }
             finishOnly()
             ActivityUtils.finishActivity(LoginActivity::class.java)

@@ -35,6 +35,11 @@ object ApiConstants {
     const val LOGIN_BY_THIRD = "api/candidate/auth/loginByThirdParty"
 
     /**
+     * 解除第三方账号绑定
+     */
+    const val UNBIND_THIRD_PARTY = "/api/candidate/auth/unbindThirdParty"
+
+    /**
      * 退出登录
      */
     const val LOGOUT_APP = "auth/sign-out"
@@ -68,6 +73,11 @@ object ApiConstants {
      * 三方登录后绑定手机号
      */
     const val BIND_MOBILE = "/api/candidate/auth/bindMobile"
+
+    /**
+     * 换绑手机号
+     */
+    const val CHANGE_MOBILE = "/api/candidate/auth/changeMobile"
 
 
     /**

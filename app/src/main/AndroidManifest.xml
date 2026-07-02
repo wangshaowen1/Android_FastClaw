@@ -342,7 +342,11 @@
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".feature.login.phone.PhoneNewBindMobileActivity"
+            android:name=".feature.login.phone.PhoneNewBindActivity"
+            android:screenOrientation="behind"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".feature.login.phone.PhoneNewChangeActivity"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity

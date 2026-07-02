@@ -8,40 +8,29 @@ import androidx.core.widget.doAfterTextChanged
 import com.blankj.utilcode.util.RegexUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
-import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
-import com.shiyuan.fastclaw.databinding.ActivityPhoneNewBindMobileBinding
+import com.shiyuan.fastclaw.databinding.ActivityPhoneNewChangeBinding
 
 /**
- * 三方登录后绑定手机号页。
+ * 修改手机号页。
  *  @author：CaoWei
- *  @date：2026/7/2 15:10
+ *  @date：2026/7/2
  */
-class PhoneNewBindMobileActivity : BaseViewModelActivity<ActivityPhoneNewBindMobileBinding, PhoneNewLoginViewModel>() {
+class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBinding, PhoneNewLoginViewModel>() {
 
     companion object {
-        private const val EXTRA_USER_DATA = "user_data"
-
         /**
-         * 打开三方登录后的绑定手机号页。
-         *
-         * @param activity 当前页面
-         * @param userData 三方登录接口返回的临时用户信息
+         * 打开修改手机号页。
          */
-        fun start(activity: Activity, userData: UserHomeData) {
-            val intent = Intent(activity, PhoneNewBindMobileActivity::class.java)
-            intent.putExtra(EXTRA_USER_DATA, userData)
-            activity.startActivity(intent)
+        fun start(activity: Activity) {
+            activity.startActivity(Intent(activity, PhoneNewChangeActivity::class.java))
         }
     }
 
-    private val thirdLoginUserData by lazy {
-        intent.getParcelableExtra<UserHomeData>(EXTRA_USER_DATA)
-    }
-
     /**
-     * 设置绑定手机号页的沉浸式状态栏样式。
+     * 设置修改手机号页的沉浸式状态栏样式。
      */
     override fun setTranslucentStatus() {
         ImmersionBar.with(this)
@@ -62,7 +51,7 @@ class PhoneNewBindMobileActivity : BaseViewModelActivity<ActivityPhoneNewBindMob
     }
 
     /**
-     * 监听手机号输入并刷新错误提示和按钮状态。
+     * 监听手机号输入并刷新错误提示、按钮状态和已有手机号提示。
      */
     private fun initInput() {
         binding.etPhone.doAfterTextChanged {
@@ -107,15 +96,20 @@ class PhoneNewBindMobileActivity : BaseViewModelActivity<ActivityPhoneNewBindMob
     }
 
     /**
-     * 发送绑定手机号验证码，成功后进入验证码页的绑定模式。
+     * 发送换绑手机号验证码，成功后进入验证码页的换绑模式。
      */
     private fun requestCode() {
         if (!updatePhoneError(showOnlyWhenComplete = true)) return
         val phone = binding.etPhone.text?.toString().orEmpty()
-        val userData = thirdLoginUserData ?: return
         mRealVM.mobile.value = phone
-        mRealVM.sendSmsCode(startCountdownOnSuccess = false, bizType = SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE) {
-            PhoneNewCodeLoginActivity.startForBindMobile(this, phone, userData)
+        mRealVM.sendSmsCode(
+            startCountdownOnSuccess = false,
+            bizType = SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE,
+            onError = { message ->
+                showExistingPhoneToastIfNeeded(phone, message)
+            }
+        ) {
+            PhoneNewCodeLoginActivity.startForChangePhone(this, phone)
             finish()
         }
     }
@@ -132,5 +126,25 @@ class PhoneNewBindMobileActivity : BaseViewModelActivity<ActivityPhoneNewBindMob
         val showError = if (showOnlyWhenComplete) !valid else phone.length >= 11 && !valid
         binding.tvPhoneError.visibility = if (showError) View.VISIBLE else View.INVISIBLE
         return valid
+    }
+
+    /**
+     * 后端提示新手机号已存在时，按设计展示黑色提示卡。
+     */
+    private fun showExistingPhoneToastIfNeeded(phone: String, message: String?) {
+        val shouldShow = message?.contains("存在") == true || message?.contains("注册") == true
+        if (shouldShow) {
+            getString(R.string.change_mobile_existing_tip, phone.toMaskedPhone()).showToast()
+        } else {
+            message?.showToast()
+        }
+    }
+
+    /**
+     * 脱敏展示手机号。
+     */
+    private fun String.toMaskedPhone(): String {
+        if (length < 7) return this
+        return replaceRange(3, 7, "****")
     }
 }

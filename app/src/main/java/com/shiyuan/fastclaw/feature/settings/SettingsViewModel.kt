@@ -3,22 +3,19 @@ package com.shiyuan.fastclaw.feature.settings
 import android.graphics.Color
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import com.blankj.utilcode.util.AppUtils
 import com.nhsd.basic.Session
+import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
-import com.shiyuan.fastclaw.core.response
-import com.nhsd.basic.ext.getResColor
-import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.core.ext.launch
-import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
-import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.FAILED
+import com.shiyuan.fastclaw.core.ext.requestWithLoading
+import com.shiyuan.fastclaw.core.network.apis.request.UnbindThirdPartyBody
+import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.kit.SignUtils
 
 /**
@@ -59,19 +56,38 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
 
     val beiAn by lazy { Config.get().appConfig.beianNo }
 
-    val maskedPhone: String
-        get() = maskPhone(User.get().phoneNum)
+    val phone = ObservableField(maskPhone(User.get().phoneNum))
 
     /** 微信绑定状态 */
     val isWechatBound = ObservableBoolean(false)
 
     /** 微信绑定展示名 */
-    val wechatName = ObservableField(R.string.unbound.getResString())
+    val wechatName = ObservableField("")
 
 
     override fun onCreate() {
         super.onCreate()
+    }
 
+    fun refreshUserInfo() {
+        phone.set(maskPhone(User.get().phoneNum))
+        wechatName.set(User.get().wechatNickName?.takeIf { it.isNotBlank() } ?: R.string.unbound.getResString())
+        isWechatBound.set(!User.get().wechatNickName.isNullOrBlank())
+    }
+
+    /**
+     * 解除当前账号的微信绑定。
+     */
+    fun unbindWechat() {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.unbindThirdParty(UnbindThirdPartyBody(UnbindThirdPartyBody.PROVIDER_TYPE_WECHAT))
+            }
+        ) {
+            showToast(R.string.unbind_success)
+            clearWechatBound()
+            refreshUserInfo()
+        }
     }
 
     /**
@@ -105,16 +121,15 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
      * 更新微信绑定展示状态。
      */
     fun updateWechatBound(name: String?) {
-        isWechatBound.set(true)
-        wechatName.set(name?.takeIf { it.isNotBlank() } ?: R.string.wechat_binding.getResString())
+        User.get().storeWechatNickName(name?.takeIf { it.isNotBlank() } ?: R.string.wechat_binding.getResString())
+        isWechatBound.set(!User.get().wechatNickName.isNullOrBlank())
     }
 
     /**
      * 清空当前页面的微信绑定展示状态。
      */
     fun clearWechatBound() {
-        isWechatBound.set(false)
-        wechatName.set(R.string.unbound.getResString())
+        User.get().storeWechatNickName(null)
+        isWechatBound.set(!User.get().wechatNickName.isNullOrBlank())
     }
-
 }
