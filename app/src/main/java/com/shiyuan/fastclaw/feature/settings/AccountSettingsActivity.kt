@@ -85,7 +85,9 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
             cancelText = getString(R.string.cancel),
             confirmText = getString(R.string.confirm),
             confirm = {
-                mRealVM.unbindWechat()
+                mRealVM.unbindWechat() {
+                    showToast(R.string.unbind_success)
+                }
             }
         )
     }
@@ -96,10 +98,11 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
 
     /** 微信授权成功后刷新页面展示状态。 */
     override fun onAuthed(platform: SHARE_MEDIA?, data: MutableMap<String, String>?) {
-        if (platform != SHARE_MEDIA.WEIXIN) return
-        mRealVM.updateWechatBound(data?.get("name"))
-        mRealVM.refreshUserInfo()
-        showToast(R.string.bind_success)
+        if (platform == SHARE_MEDIA.WEIXIN) {
+            mRealVM.bindWechat(data) {
+                showToast(R.string.bind_success)
+            }
+        }
     }
 
     /** 微信授权失败或取消。 */

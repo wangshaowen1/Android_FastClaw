@@ -14,6 +14,7 @@ import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
+import com.shiyuan.fastclaw.core.network.apis.request.BindThirdPartyBody
 import com.shiyuan.fastclaw.core.network.apis.request.UnbindThirdPartyBody
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.kit.SignUtils
@@ -76,17 +77,41 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * 绑定微信账号，接口成功后再更新本地展示状态。
+     */
+    fun bindWechat(data: MutableMap<String, String>?, onSuccess: (() -> Unit)? = null) {
+        val nickName = data?.get("name")
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.bindThirdParty(
+                    BindThirdPartyBody(
+                        providerType = BindThirdPartyBody.PROVIDER_TYPE_WECHAT,
+                        thirdPartyOpenId = data?.get("openid"),
+                        thirdPartyUnionId = data?.get("unionid"),
+                        thirdPartyNickName = nickName,
+                        thirdPartyAvatar = data?.get("iconurl")
+                    )
+                )
+            }
+        ) {
+            updateWechatBound(nickName)
+            refreshUserInfo()
+            onSuccess?.invoke()
+        }
+    }
+
+    /**
      * 解除当前账号的微信绑定。
      */
-    fun unbindWechat() {
+    fun unbindWechat(onSuccess: (() -> Unit)? = null) {
         requestWithLoading(
             apiBlock = {
                 mRepo.api.unbindThirdParty(UnbindThirdPartyBody(UnbindThirdPartyBody.PROVIDER_TYPE_WECHAT))
             }
         ) {
-            showToast(R.string.unbind_success)
             clearWechatBound()
             refreshUserInfo()
+            onSuccess?.invoke()
         }
     }
 

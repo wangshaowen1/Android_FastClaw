@@ -83,12 +83,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      * @param startCountdownOnSuccess 成功后是否立即启动倒计时
      * @param onSent 验证码发送成功后的页面回调
      */
-    fun sendSmsCode(
-        startCountdownOnSuccess: Boolean = true,
-        bizType: Int,
-        onError: ((String?) -> Unit)? = null,
-        onSent: () -> Unit
-    ) {
+    fun sendSmsCode(startCountdownOnSuccess: Boolean = true, bizType: Int, onError: ((String?) -> Unit)? = null, onSent: () -> Unit) {
         val phone = mobile.value
         if (!RegexUtils.isMobileSimple(phone)) {
             showToast(R.string.login_new_phone_error)

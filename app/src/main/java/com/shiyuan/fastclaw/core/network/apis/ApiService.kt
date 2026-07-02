@@ -19,6 +19,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.AttributeRejectBody
 import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
+import com.shiyuan.fastclaw.core.network.apis.request.BindThirdPartyBody
 import com.shiyuan.fastclaw.core.network.apis.request.ChangeMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
@@ -143,6 +144,12 @@ interface ApiService {
      */
     @POST(ApiConstants.LOGIN_BY_THIRD)
     suspend fun loginByThird(@Body body: LoginByThirdBody): ApiResponse<UserHomeData?>
+
+    /**
+     * 绑定第三方账号
+     */
+    @POST(ApiConstants.BIND_THIRD_PARTY)
+    suspend fun bindThirdParty(@Body body: BindThirdPartyBody): ApiResponse<Any?>
 
     /**
      * 解除第三方账号绑定

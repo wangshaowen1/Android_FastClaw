@@ -23,6 +23,14 @@ import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewLoginLoadingDialog
  */
 class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLoginBinding, PhoneNewLoginViewModel>() {
 
+    private val codeViews by lazy {
+        listOf(binding.tvCode1, binding.tvCode2, binding.tvCode3, binding.tvCode4)
+    }
+    private var loginLoadingDialog: PhoneNewLoginLoadingDialog? = null
+    private var isLoggingIn = false
+    private var bindUserData: UserHomeData? = null
+    private var businessType = BUSINESS_TYPE_LOGIN
+
     companion object {
         private const val EXTRA_PHONE = "phone"
         private const val EXTRA_CHECKED_POLICY = "checked_policy"
@@ -88,14 +96,6 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
             context.startActivity(intent)
         }
     }
-
-    private val codeViews by lazy {
-        listOf(binding.tvCode1, binding.tvCode2, binding.tvCode3, binding.tvCode4)
-    }
-    private var loginLoadingDialog: PhoneNewLoginLoadingDialog? = null
-    private var isLoggingIn = false
-    private var bindUserData: UserHomeData? = null
-    private var businessType = BUSINESS_TYPE_LOGIN
 
     /**
      * 设置验证码页的沉浸式状态栏样式。

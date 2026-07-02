@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewBindActivity
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+import com.umeng.socialize.UMShareAPI
 import com.umeng.socialize.bean.SHARE_MEDIA
 
 /**
@@ -119,16 +120,35 @@ class FlashNewLoginDialog : BaseBottomPushVMDialogFragment<DialogFlashNewLoginBi
      * 微信登录，未勾选协议时先弹出协议确认。
      */
     private fun loginByWechat() {
+        if (!isWechatInstalled()) return
         if (mRealVM.checkedPolicy.get()) {
-            shareManager.login(SHARE_MEDIA.WEIXIN, this)
+            startWechatLogin()
             return
         }
         val dialog = PhoneNewPolicyDialog.show(parentFragmentManager)
         dialog.callback = callback@{ agree ->
             if (!agree) return@callback
             mRealVM.checkedPolicy.set(true)
-            shareManager.login(SHARE_MEDIA.WEIXIN, this)
+            startWechatLogin()
         }
+    }
+
+    /**
+     * 检测微信客户端是否已安装，未安装时展示设计图提示。
+     */
+    private fun isWechatInstalled(): Boolean {
+        val installed = UMShareAPI.get(requireActivity()).isInstall(requireActivity(), SHARE_MEDIA.WEIXIN)
+        if (!installed) {
+            showToast(R.string.wechat_client_not_found)
+        }
+        return installed
+    }
+
+    /**
+     * 拉起微信授权。
+     */
+    private fun startWechatLogin() {
+        shareManager.login(SHARE_MEDIA.WEIXIN, this)
     }
 
     /**

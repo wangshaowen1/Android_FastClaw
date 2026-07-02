@@ -19,6 +19,7 @@ import com.nhsd.basic.utils.Logger
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.Config
+import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.ShareManager
@@ -28,6 +29,7 @@ import com.shiyuan.fastclaw.databinding.ActivityPhoneNewLoginBinding
 import com.shiyuan.fastclaw.feature.login.LoginActivity
 import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+import com.umeng.socialize.UMShareAPI
 import com.umeng.socialize.bean.SHARE_MEDIA
 
 /**
@@ -37,6 +39,8 @@ import com.umeng.socialize.bean.SHARE_MEDIA
  */
 class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding, PhoneNewLoginViewModel>(),
     ShareManager.UmengLoginListener {
+
+        private val checkedPolicy by lazy { intent.getBundleValue(EXTRA_CHECKED_POLICY, false) }
 
     companion object {
         /**
@@ -77,7 +81,7 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
      */
     override fun onViewModelCreated() {
         super.onViewModelCreated()
-        mRealVM.checkedPolicy.set(intent.getBooleanExtra(EXTRA_CHECKED_POLICY, LoginActivity.checkedPolicy))
+        mRealVM.checkedPolicy.set(checkedPolicy)
         initAgreement()
         initInput()
         initClicks()
@@ -119,7 +123,6 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
         }
         binding.llAgreement.setOnClickListener {
             mRealVM.checkedPolicy.set(!mRealVM.checkedPolicy.get())
-            LoginActivity.checkedPolicy = mRealVM.checkedPolicy.get()
         }
         binding.btnGetCode.setOnClickListener {
             requestCodeWithPolicy()
@@ -152,7 +155,6 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
         dialog.callback = callback@{ agree ->
             if (!agree) return@callback
             mRealVM.checkedPolicy.set(true)
-            LoginActivity.checkedPolicy = true
             requestCode()
         }
     }
@@ -173,17 +175,35 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
      * 微信登录前校验协议，未同意协议时先展示新版协议弹窗。
      */
     private fun loginByWechatWithPolicy() {
+        if (!isWechatInstalled()) return
         if (mRealVM.checkedPolicy.get()) {
-            shareManager.login(SHARE_MEDIA.WEIXIN, this)
+            startWechatLogin()
             return
         }
         val dialog = PhoneNewPolicyDialog.show(supportFragmentManager)
         dialog.callback = callback@{ agree ->
             if (!agree) return@callback
             mRealVM.checkedPolicy.set(true)
-            LoginActivity.checkedPolicy = true
-            shareManager.login(SHARE_MEDIA.WEIXIN, this)
+            startWechatLogin()
         }
+    }
+
+    /**
+     * 检测微信客户端是否已安装，未安装时展示设计图提示。
+     */
+    private fun isWechatInstalled(): Boolean {
+        val installed = UMShareAPI.get(this).isInstall(this, SHARE_MEDIA.WEIXIN)
+        if (!installed) {
+            showToast(R.string.wechat_client_not_found)
+        }
+        return installed
+    }
+
+    /**
+     * 拉起微信授权。
+     */
+    private fun startWechatLogin() {
+        shareManager.login(SHARE_MEDIA.WEIXIN, this)
     }
 
     /**
