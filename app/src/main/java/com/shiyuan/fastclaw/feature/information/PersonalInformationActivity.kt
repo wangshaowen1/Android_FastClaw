@@ -209,7 +209,7 @@ class PersonalInformationActivity :
                         value = value
                     ) {
                         binding.maritalStatusRow.setValueText(data.name.orEmpty())
-                        mRealVM.queryOnlineResumeInfo()
+                        FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
                     }
                 }
             }
@@ -284,6 +284,7 @@ class PersonalInformationActivity :
                     if (successUrls.isNotEmpty()) {
                         mRealVM.updateAvatar(successUrls.first()) { avatarUrl ->
                             binding.ivAvatar.load(avatarUrl, R.drawable.ic_home_header_avatar)
+                            FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
                         }
                     } else {
                         "头像上传失败".showToast()

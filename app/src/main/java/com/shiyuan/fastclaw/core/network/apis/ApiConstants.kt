@@ -312,6 +312,13 @@ object ApiConstants {
      */
     const val JOB_AGENT_ONLINE_RESUME_INFO_QUERY = "/api/candidate/app/jobAgent/onlineResume/info/query"
 
+
+
+    /**
+     * 查询在
+     */
+    const val JOB_PREFERENCE_RESUME_INFO_QUERY = "/api/candidate/app/jobAgent/onlineResume/preference/query"
+
     /**
      * 更新在线简历属性
      */

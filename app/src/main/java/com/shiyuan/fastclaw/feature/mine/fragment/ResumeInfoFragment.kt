@@ -174,7 +174,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
     private fun updateResumeInfo(data: List<AttributeArrayQueryData>) {
         val showEmpty = data.isEmpty()
         binding.viewUnderstands.root.visibility = if (showEmpty) View.VISIBLE else View.GONE
-        binding.rvResumeInfo.visibility = if (showEmpty) View.GONE else View.VISIBLE
+        binding.ll.visibility = if (showEmpty) View.GONE else View.VISIBLE
         resumeInfoAdapter.submitList(data)
     }
 
@@ -245,35 +245,40 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
                 false,
                 item,
                 0,
-                UUID.randomUUID().toString()
+                UUID.randomUUID().toString(),
+                type = WorkActivity.TYPE_ONLINE_RESUME
             )
             item.isEducationExperience() -> EducationalActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                UUID.randomUUID().toString()
+                UUID.randomUUID().toString(),
+                type = WorkActivity.TYPE_ONLINE_RESUME
             )
             item.isSkill() -> SkillActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                UUID.randomUUID().toString()
+                UUID.randomUUID().toString(),
+                type = WorkActivity.TYPE_ONLINE_RESUME
             )
             item.isAward() -> AwardActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                UUID.randomUUID().toString()
+                UUID.randomUUID().toString(),
+                type = WorkActivity.TYPE_ONLINE_RESUME
             )
             item.isCertificate() -> CertificateActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                UUID.randomUUID().toString()
+                UUID.randomUUID().toString(),
+                type = WorkActivity.TYPE_ONLINE_RESUME
             )
         }
     }
@@ -447,7 +452,14 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             binding.tvDesc.visibility =
                 if (workContent?.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.root.setOnClickListener {
-                ProjectActivity.start(requireActivity(), true, attributeData, position, UUID.randomUUID().toString())
+                ProjectActivity.start(
+                    requireActivity(),
+                    true,
+                    attributeData,
+                    position,
+                    UUID.randomUUID().toString(),
+                    type = WorkActivity.TYPE_ONLINE_RESUME
+                )
             }
         }
     }
@@ -478,7 +490,14 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             binding.tvMajor.visibility = if (hasMajor) View.VISIBLE else View.GONE
             binding.v.visibility = if (hasTime && hasMajor) View.VISIBLE else View.GONE
             binding.root.setOnClickListener {
-                EducationalActivity.start(requireActivity(), true, attributeData, position, UUID.randomUUID().toString())
+                EducationalActivity.start(
+                    requireActivity(),
+                    true,
+                    attributeData,
+                    position,
+                    UUID.randomUUID().toString(),
+                    type = WorkActivity.TYPE_ONLINE_RESUME
+                )
             }
         }
     }
@@ -508,21 +527,24 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
                         true,
                         attributeData,
                         position,
-                        UUID.randomUUID().toString()
+                        UUID.randomUUID().toString(),
+                        type = WorkActivity.TYPE_ONLINE_RESUME
                     )
                     GROUP_CERTIFICATES -> CertificateActivity.start(
                         requireActivity(),
                         true,
                         attributeData,
                         position,
-                        UUID.randomUUID().toString()
+                        UUID.randomUUID().toString(),
+                        type = WorkActivity.TYPE_ONLINE_RESUME
                     )
                     else -> AwardActivity.start(
                         requireActivity(),
                         true,
                         attributeData,
                         position,
-                        UUID.randomUUID().toString()
+                        UUID.randomUUID().toString(),
+                        type = WorkActivity.TYPE_ONLINE_RESUME
                     )
                 }
             }

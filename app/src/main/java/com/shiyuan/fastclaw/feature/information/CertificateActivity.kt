@@ -31,6 +31,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
         private const val EXTRA_INSTANCE_INDEX = "extra_instance_index"
         private const val CLIENTREQUESTID = "clientrequestid"
+        private const val EXTRA_TYPE = "extra_type"
 
         // 字段编码
         private const val FIELD_CERTIFICATE_NAME = "certificateName"
@@ -40,13 +41,21 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         /**
          * 启动证书编辑页。
          */
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null, clientRequestId: String? = null) {
+        fun start(
+            activity: Activity?,
+            isEdit: Boolean = true,
+            attributeData: AttributeArrayQueryData? = null,
+            position: Int? = null,
+            clientRequestId: String? = null,
+            type: String? = null
+        ) {
             activity ?: return
             val intent = Intent(activity, CertificateActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
                 position?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
                 clientRequestId?.let { putExtra(CLIENTREQUESTID, it) }
+                type?.let { putExtra(EXTRA_TYPE, it) }
             }
             activity.startActivity(intent)
         }
@@ -65,6 +74,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
 
     // 是否编辑模式
     private var isEdit = true
+    private var type = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +91,10 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
             FlowEventBus.postSticky(Events.AttributeFieldSuccessfulEvent(attributeData))
             finish()
         }
+        mRealVM.onResumeAttribute.observe(this) {
+            FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+            finish()
+        }
     }
 
     private fun parseIntent() {
@@ -94,6 +108,7 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         }
         position = intent?.getIntExtra(EXTRA_INSTANCE_INDEX, 0) ?: 0
         clientRequestId = intent?.getStringExtra(CLIENTREQUESTID) ?: ""
+        type = intent?.getStringExtra(EXTRA_TYPE) ?: ""
     }
 
 
@@ -109,29 +124,29 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
                 DeleteConfirmDialog.show(
                     manager = supportFragmentManager,
                     onDelete = {
-                        attributeData?.fieldTree?.removeAt(this.position)
-                        attributeData?.draft = true
-                        attributeData?.clientRequestId = this.clientRequestId
-                        attributeData?.let { mRealVM.attributeSave(it) }
+                        attributeData?.let {
+                            if (type == WorkActivity.TYPE_ONLINE_RESUME) {
+                                mRealVM.onlineResumeAttributeDelete(it, position)
+                            } else {
+                                it.fieldTree?.removeAt(this.position)
+                                it.draft = true
+                                it.clientRequestId = this.clientRequestId
+                                mRealVM.attributeSave(it)
+                            }
+                        }
                     }
                 )
             }
             // 完成编辑：写回字段项并保存
             binding.viewActionButtons.setOnPrimaryClickListener {
-                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems  = currentInstance
-                attributeData?.draft = true
-                attributeData?.clientRequestId = this.clientRequestId
-                attributeData?.let { mRealVM.attributeSave(it) }
+                saveCurrentInstance()
             }
         } else {
             // 新增模式：仅显示保存按钮
             binding.tvTitle.text = getString(R.string.add_certificate)
             binding.viewActionButtons.setPrimaryText(getString(R.string.save))
             binding.viewActionButtons.setOnPrimaryClickListener {
-                attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems  = currentInstance
-                attributeData?.draft = true
-                attributeData?.clientRequestId = this.clientRequestId
-                attributeData?.let { mRealVM.attributeSave(it) }
+                saveCurrentInstance()
             }
         }
         // 证书名称：自由填写
@@ -169,6 +184,19 @@ class CertificateActivity : BaseViewModelActivity<ActivityCertificateBinding, In
         }
         // 仅编辑模式显示删除按钮
         binding.viewActionButtons.setSecondaryVisible(isEdit)
+    }
+
+    private fun saveCurrentInstance() {
+        attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
+        attributeData?.draft = true
+        attributeData?.clientRequestId = this.clientRequestId
+        attributeData?.let {
+            if (type == WorkActivity.TYPE_ONLINE_RESUME) {
+                mRealVM.onResumeInfoAttributeSave(it, position, isEdit)
+            } else {
+                mRealVM.attributeSave(it)
+            }
+        }
     }
 
     /**

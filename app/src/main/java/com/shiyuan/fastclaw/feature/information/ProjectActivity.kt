@@ -32,6 +32,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
         private const val EXTRA_INSTANCE_INDEX = "extra_instance_index"
         private const val CLIENTREQUESTID = "clientrequestid"
+        private const val EXTRA_TYPE = "extra_type"
 
         // 字段编码
         private const val FIELD_PROJECT_NAME = "projectName"
@@ -54,13 +55,21 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         /**
          * 启动项目经历编辑页。
          */
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null, clientRequestId: String? = null) {
+        fun start(
+            activity: Activity?,
+            isEdit: Boolean = true,
+            attributeData: AttributeArrayQueryData? = null,
+            position: Int? = null,
+            clientRequestId: String? = null,
+            type: String? = null
+        ) {
             activity ?: return
             val intent = Intent(activity, ProjectActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
                 position?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
                 clientRequestId?.let { putExtra(CLIENTREQUESTID, it) }
+                type?.let { putExtra(EXTRA_TYPE, it) }
             }
             activity.startActivity(intent)
         }
@@ -79,6 +88,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
 
     // 是否编辑模式
     private var isEdit = true
+    private var type = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +105,10 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
             FlowEventBus.postSticky(Events.AttributeFieldSuccessfulEvent(attributeData))
             finish()
         }
+        mRealVM.onResumeAttribute.observe(this) {
+            FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+            finish()
+        }
     }
 
     private fun parseIntent() {
@@ -108,6 +122,7 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         }
         position = intent?.getIntExtra(EXTRA_INSTANCE_INDEX, 0) ?: 0
         clientRequestId = intent?.getStringExtra(CLIENTREQUESTID) ?: ""
+        type = intent?.getStringExtra(EXTRA_TYPE) ?: ""
     }
 
     private fun initView() {
@@ -121,10 +136,16 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
                 DeleteConfirmDialog.show(
                     manager = supportFragmentManager,
                     onDelete = {
-                        attributeData?.fieldTree?.removeAt(this.position)
-                        attributeData?.draft = true
-                        attributeData?.clientRequestId = this.clientRequestId
-                        attributeData?.let { mRealVM.attributeSave(it) }
+                        attributeData?.let {
+                            if (type == WorkActivity.TYPE_ONLINE_RESUME) {
+                                mRealVM.onlineResumeAttributeDelete(it, position)
+                            } else {
+                                it.fieldTree?.removeAt(this.position)
+                                it.draft = true
+                                it.clientRequestId = this.clientRequestId
+                                mRealVM.attributeSave(it)
+                            }
+                        }
                     }
                 )
             }
@@ -238,7 +259,13 @@ class ProjectActivity : BaseViewModelActivity<ActivityProjectBinding, Informatio
         attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
         attributeData?.draft = true
         attributeData?.clientRequestId = this.clientRequestId
-        attributeData?.let { mRealVM.attributeSave(it) }
+        attributeData?.let {
+            if (type == WorkActivity.TYPE_ONLINE_RESUME) {
+                mRealVM.onResumeInfoAttributeSave(it, position, isEdit)
+            } else {
+                mRealVM.attributeSave(it)
+            }
+        }
     }
 
     private fun validateRequiredFields(): Boolean {

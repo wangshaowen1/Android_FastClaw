@@ -313,55 +313,44 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
             onlineResumeBaseInfo.postValue(baseInfo)
             onlineResumeInfo.postValue(resumeInfo)
         }
-       /* setLoading(true)
-        launch(block = {
-            response(
-                mRepo.api.queryOnlineResumeInfo(mapOf("clientRequestId" to UUID.randomUUID().toString())),
-                result = {
-                    val sections = this.data?.sections.orEmpty()
-                    val baseInfo = mutableListOf<AttributeArrayQueryData>()
-                    val resumeInfo = mutableListOf<AttributeArrayQueryData>()
-                    sections.forEach { section ->
-                        if (section.sectionCode == SECTION_BASE_INFO) {
-                            baseInfo.addAll(section.fields)
-                        } else {
-                            resumeInfo.addAll(section.fields)
-                        }
-                    }
-                    onlineResumeBaseInfo.postValue(baseInfo)
-                    onlineResumeInfo.postValue(resumeInfo)
-                },
-                error = {
-                    this?.msg?.showToast()
-                })
-        }, onError = {
-            parseMessage(it)?.showToast()
-        }, onComplete = {
-            setLoading(false)
-        })*/
     }
 
-
-
-/*
-    fun queryOnlineResumeInfo() {
-        postOnlineResumeSections(mockOnlineResumeInfoSections())
-    }
-
-    private fun postOnlineResumeSections(sections: List<OnlineResumeInfoSection>) {
-        val baseInfo = mutableListOf<AttributeArrayQueryData>()
-        val resumeInfo = mutableListOf<AttributeArrayQueryData>()
-        sections.forEach { section ->
-            if (section.sectionCode == SECTION_BASE_INFO) {
-                baseInfo.addAll(section.fields)
-            } else {
-                resumeInfo.addAll(section.fields)
-            }
+    var jobPreferencesInfo = MutableLiveData<List<OnlineResumeInfoSection>>()
+    fun queryJobPreferencesInfo() {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.queryJobPreferencesInfo(mapOf("clientRequestId" to UUID.randomUUID().toString()))
+            },
+            showLoading = true,
+            showToastError = true,
+        ) {
+            val sections = this.data?.sections.orEmpty()
+            jobPreferencesInfo.postValue(sections)
         }
-        onlineResumeBaseInfo.postValue(baseInfo)
-        onlineResumeInfo.postValue(resumeInfo)
     }
-*/
+
+
+
+
+    /*
+        fun queryOnlineResumeInfo() {
+            postOnlineResumeSections(mockOnlineResumeInfoSections())
+        }
+
+        private fun postOnlineResumeSections(sections: List<OnlineResumeInfoSection>) {
+            val baseInfo = mutableListOf<AttributeArrayQueryData>()
+            val resumeInfo = mutableListOf<AttributeArrayQueryData>()
+            sections.forEach { section ->
+                if (section.sectionCode == SECTION_BASE_INFO) {
+                    baseInfo.addAll(section.fields)
+                } else {
+                    resumeInfo.addAll(section.fields)
+                }
+            }
+            onlineResumeBaseInfo.postValue(baseInfo)
+            onlineResumeInfo.postValue(resumeInfo)
+        }
+    */
 
 
 

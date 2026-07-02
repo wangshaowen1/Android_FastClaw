@@ -569,11 +569,21 @@ interface ApiService {
     @POST(ApiConstants.JOB_AGENT_ONLINE_RESUME_INFO_QUERY)
     suspend fun queryOnlineResumeInfo(@Body body: Any): ApiResponse<OnlineResumeInfoData?>
 
+
+
     /**
      * 更新在线简历属性
      */
     @POST(ApiConstants.JOB_AGENT_ONLINE_RESUME_ATTRIBUTE_UPDATE)
     suspend fun updateOnlineResumeAttribute(@Body body: OnlineResumeAttributeUpdateBody): ApiResponse<Any?>
+
+
+
+    /**
+     * 查询在线简历信息
+     */
+    @POST(ApiConstants.JOB_PREFERENCE_RESUME_INFO_QUERY)
+    suspend fun queryJobPreferencesInfo(@Body body: Any): ApiResponse<OnlineResumeInfoData?>
 
     /**
      * 查询属性数组候选值（求职 Agent）
