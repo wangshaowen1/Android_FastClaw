@@ -21,6 +21,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.BindMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindThirdPartyBody
 import com.shiyuan.fastclaw.core.network.apis.request.ChangeMobileBody
+import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
@@ -73,6 +74,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
+import com.shiyuan.fastclaw.core.network.apis.response.CheckMobileBindStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundGenerateResultData
@@ -205,6 +207,11 @@ interface ApiService {
     @POST(ApiConstants.SEND_SMS_VALIDATE_CODE)
     suspend fun sendSmsValidateCode(@Body body: SendSmsValidateCodeBody): ApiResponse<Any?>
 
+    /**
+     * 手机号绑定状态前置校验
+     */
+    @POST(ApiConstants.CHECK_MOBILE_BIND_STATUS)
+    suspend fun checkMobileBindStatus(@Body body: CheckMobileBindStatusBody): ApiResponse<CheckMobileBindStatusData?>
 
     /**
      * 绑定手机号

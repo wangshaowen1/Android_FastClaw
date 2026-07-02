@@ -75,6 +75,11 @@ object ApiConstants {
     const val SEND_SMS_VALIDATE_CODE = "/api/candidate/auth/sendSmsValidateCode"
 
     /**
+     * 手机号绑定状态前置校验
+     */
+    const val CHECK_MOBILE_BIND_STATUS = "/api/candidate/auth/checkMobileBindStatus"
+
+    /**
      * 绑定手机号
      */
     const val BIND_PHONE = "user/phone/action/bind"

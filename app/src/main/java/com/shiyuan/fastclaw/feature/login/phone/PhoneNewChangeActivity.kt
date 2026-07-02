@@ -10,6 +10,9 @@ import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
+import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewChangeBinding
 
@@ -102,14 +105,38 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
         if (!updatePhoneError(showOnlyWhenComplete = true)) return
         val phone = binding.etPhone.text?.toString().orEmpty()
         mRealVM.mobile.value = phone
+        mRealVM.checkMobileBindStatus(scene = CheckMobileBindStatusBody.SCENE_CHANGE_MOBILE, userToken = User.get().token) { data ->
+            if (data?.isAvailable() == true) {
+                sendChangeMobileCode(phone)
+            } else if (data?.popupStyle == 1) {
+                data.message?.showToast()
+            } else if (data?.popupStyle == 2) {
+                showDirectLoginDialog(data.message)
+            }
+        }
+    }
+
+    /**
+     * 手机号前置校验通过后发送换绑验证码。
+     */
+    private fun sendChangeMobileCode(phone: String) {
         mRealVM.sendSmsCode(
             startCountdownOnSuccess = false,
             bizType = SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE,
-            onError = { message ->
-                showExistingPhoneToastIfNeeded(phone, message)
-            }
         ) {
             PhoneNewCodeLoginActivity.startForChangePhone(this, phone)
+            finish()
+        }
+    }
+
+    private fun showDirectLoginDialog(message: String?) {
+        showConfirmPrompt(
+            tip = message,
+            title = getString(R.string.prompt),
+            cancelText = getString(R.string.cancel),
+            confirmText = getString(R.string.login_direct)
+        ) {
+            PhoneNewLoginActivity.start()
             finish()
         }
     }
@@ -126,18 +153,6 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
         val showError = if (showOnlyWhenComplete) !valid else phone.length >= 11 && !valid
         binding.tvPhoneError.visibility = if (showError) View.VISIBLE else View.INVISIBLE
         return valid
-    }
-
-    /**
-     * 后端提示新手机号已存在时，按设计展示黑色提示卡。
-     */
-    private fun showExistingPhoneToastIfNeeded(phone: String, message: String?) {
-        val shouldShow = message?.contains("存在") == true || message?.contains("注册") == true
-        if (shouldShow) {
-            getString(R.string.change_mobile_existing_tip, phone.toMaskedPhone()).showToast()
-        } else {
-            message?.showToast()
-        }
     }
 
     /**

@@ -72,8 +72,9 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
 
     fun refreshUserInfo() {
         phone.set(maskPhone(User.get().phoneNum))
-        wechatName.set(User.get().wechatNickName?.takeIf { it.isNotBlank() } ?: R.string.unbound.getResString())
-        isWechatBound.set(!User.get().wechatNickName.isNullOrBlank())
+        val bound = User.get().wechatBindStatus == User.WECHAT_BIND_STATUS_BOUND
+        wechatName.set(if (bound) User.get().wechatNickName else R.string.unbound.getResString())
+        isWechatBound.set(bound)
     }
 
     /**
@@ -146,15 +147,17 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
      * 更新微信绑定展示状态。
      */
     fun updateWechatBound(name: String?) {
+        User.get().storeWechatBindStatus(User.WECHAT_BIND_STATUS_BOUND)
         User.get().storeWechatNickName(name?.takeIf { it.isNotBlank() } ?: R.string.wechat_binding.getResString())
-        isWechatBound.set(!User.get().wechatNickName.isNullOrBlank())
+        refreshUserInfo()
     }
 
     /**
      * 清空当前页面的微信绑定展示状态。
      */
     fun clearWechatBound() {
+        User.get().storeWechatBindStatus(User.WECHAT_BIND_STATUS_UNBOUND)
         User.get().storeWechatNickName(null)
-        isWechatBound.set(!User.get().wechatNickName.isNullOrBlank())
+        refreshUserInfo()
     }
 }

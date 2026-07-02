@@ -165,7 +165,10 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
     private fun requestCode() {
         val phone = binding.etPhone.text?.toString().orEmpty()
         mRealVM.mobile.value = phone
-        mRealVM.sendSmsCode(startCountdownOnSuccess = false, bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN) {
+        mRealVM.sendSmsCode(
+            startCountdownOnSuccess = false,
+            bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN
+        ) {
             PhoneNewCodeLoginActivity.start(this, phone, checkedPolicy = mRealVM.checkedPolicy.get())
             finish()
         }
