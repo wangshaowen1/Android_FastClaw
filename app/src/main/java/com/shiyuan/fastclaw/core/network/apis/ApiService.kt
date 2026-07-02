@@ -588,4 +588,10 @@ interface ApiService {
     @POST(ApiConstants.JOBAGENT_ATTRIBUTE_ARRAY_SAVE)
     suspend fun attributeSave(@Body body: Any): ApiResponse<AttributeSave?>
 
+    @POST(ApiConstants.ONLINERESUME_ATTRIBUTE_ARRAY_SAVE)
+    suspend fun onlineResumeAttributeSave(@Body body: Any): ApiResponse<AttributeSave?>
+
+    @POST(ApiConstants.ONLINERESUME_ATTRIBUTE_ARRAY_DELETE)
+    suspend fun onlineResumeAttributeDelete(@Body body: Any): ApiResponse<AttributeSave?>
+
 }

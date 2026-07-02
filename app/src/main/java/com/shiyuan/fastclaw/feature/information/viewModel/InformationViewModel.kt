@@ -21,7 +21,6 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.request.UpdateAvatarBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
-import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeOption
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
@@ -162,6 +161,51 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
     }
+
+
+
+    // 字段保存接口的返回结果
+    var onResumeAttribute = MutableLiveData<Any>()
+    /**
+     * 在线简历保存
+     */
+    fun onResumeInfoAttributeSave(attributeData: AttributeArrayQueryData?, position: Int = 0, isEdit: Boolean = true) {
+        launchWithLoading(true, block = {
+            val sourceData = attributeData ?: run {
+                "属性数据异常".showToast()
+                return@launchWithLoading
+            }
+            val data = sourceData.fieldTree?.getOrNull(position) ?: run {
+                "属性数据异常".showToast()
+                return@launchWithLoading
+            }
+            data.attributeGroupCode = sourceData.attributeGroupCode
+            data.operation = if (isEdit) "UPDATE" else "CREATE"
+            data.instanceIndex = position.toLong()
+            response(ApiFactory.apiService.onlineResumeAttributeSave(data), result = {
+                onResumeAttribute.postValue(this.data)
+            }, error = { this?.msg?.showToast() })
+        }, onError = { it.message.toString().showToast() })
+    }
+
+    fun onlineResumeAttributeDelete(attributeData: AttributeArrayQueryData?, position: Int = 0) {
+        val attributeGroupCode = attributeData?.attributeGroupCode
+        if (attributeGroupCode.isNullOrBlank()) {
+            "属性数据异常".showToast()
+            return
+        }
+        launchWithLoading(true, block = {
+            val body = mapOf(
+                "attributeGroupCode" to attributeGroupCode,
+                "instanceIndex" to position.toLong()
+            )
+            response(ApiFactory.apiService.onlineResumeAttributeDelete(body), result = {
+                onResumeAttribute.postValue(this.data)
+            }, error = { this?.msg?.showToast() })
+        }, onError = { it.message.toString().showToast() })
+    }
+
+
 
     fun updateAvatar(avatarUrl: String, onSuccess: (String) -> Unit) {
         requestWithLoading(

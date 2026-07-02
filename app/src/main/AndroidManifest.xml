@@ -245,6 +245,10 @@
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <activity
+            android:name=".feature.information.PersonaDescriptionActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+
+        <activity
             android:name="com.shiyuan.fastclaw.feature.mine.MyResumeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 

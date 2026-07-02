@@ -343,6 +343,15 @@ object ApiConstants {
      *
      */
     const val JOBAGENT_ATTRIBUTE_ARRAY_SAVE = "/api/candidate/app/jobAgent/attribute/array/save"
+
+    /**
+     *
+     */
+    const val ONLINERESUME_ATTRIBUTE_ARRAY_SAVE = "/api/candidate/app/jobAgent/onlineResume/attribute/array/item/save"
+
+    const val ONLINERESUME_ATTRIBUTE_ARRAY_DELETE = "/api/candidate/app/jobAgent/onlineResume/attribute/array/item/delete"
+
+
     /**
      * 查询小虾行业字典
      */

@@ -71,7 +71,7 @@ data class AttributeArrayQueryData(
  */
 @Parcelize
 data class AttributeFieldTree(
-    val instanceIndex: Long? = null,
+    var instanceIndex: Long? = null,
     val fieldCode: String? = null,
     val fieldName: String? = null,
     val fieldValue:@RawValue Any? = null,
@@ -81,6 +81,8 @@ data class AttributeFieldTree(
     val dictApi: String? = null,
     val required: Boolean? = null,
     val missing: Boolean? = null,
+    var attributeGroupCode: String? = null,
+    var operation: String? = null,
     val questionOptionsJson: String? = null,
     val options: List<AttributeOption>? = null,
     val validationRuleJson: String? = null,

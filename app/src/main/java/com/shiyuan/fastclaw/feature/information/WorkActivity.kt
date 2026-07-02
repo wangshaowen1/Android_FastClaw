@@ -36,6 +36,9 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     companion object {
         // Intent 参数 key
         private const val EXTRA_IS_EDIT = "extra_is_edit"
+
+        private const val EXTRA_TYPE = "type"
+        const val TYPE_ONLINE_RESUME = "onlineResume"
         private const val EXTRA_ATTRIBUTE_DATA = "extra_attribute_data"
         private const val EXTRA_INSTANCE_INDEX = "extra_instance_index"
         private const val CLIENTREQUESTID = "clientrequestid"
@@ -63,13 +66,14 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         /**
          * 启动工作经历编辑页。
          */
-        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null, clientRequestId: String? = null) {
+        fun start(activity: Activity?, isEdit: Boolean = true, attributeData: AttributeArrayQueryData? = null, position: Int? = null, clientRequestId: String? = null, type: String? = null) {
             activity ?: return
             val intent = Intent(activity, WorkActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
                 attributeData?.let { putExtra(EXTRA_ATTRIBUTE_DATA, it) }
                 position?.let { putExtra(EXTRA_INSTANCE_INDEX, it) }
                 clientRequestId?.let { putExtra(CLIENTREQUESTID, it) }
+                type?.let { putExtra(EXTRA_TYPE, it) }
             }
             activity.startActivity(intent)
         }
@@ -88,6 +92,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
 
     // 是否编辑模式
     private var isEdit = true
+    private var type = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,6 +109,11 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             FlowEventBus.postSticky(Events.AttributeFieldSuccessfulEvent(attributeData))
             finish()
         }
+        // 保存成功：通知上游并关闭
+        mRealVM.onResumeAttribute.observe(this) {
+            FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+            finish()
+        }
     }
 
     private fun parseIntent() {
@@ -117,6 +127,8 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         }
         position = intent?.getIntExtra(EXTRA_INSTANCE_INDEX, 0) ?: 0
         clientRequestId = intent?.getStringExtra(CLIENTREQUESTID) ?: ""
+
+        type = intent?.getStringExtra(EXTRA_TYPE) ?: ""
     }
 
     private fun initView() {
@@ -130,10 +142,16 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                 DeleteConfirmDialog.show(
                     manager = supportFragmentManager,
                     onDelete = {
-                        attributeData?.fieldTree?.removeAt(this.position)
-                        attributeData?.draft = true
-                        attributeData?.clientRequestId = this.clientRequestId
-                        attributeData?.let { mRealVM.attributeSave(it) }
+                        attributeData?.let {
+                            if (type == TYPE_ONLINE_RESUME) {
+                                mRealVM.onlineResumeAttributeDelete(it, position)
+                            } else {
+                                it.fieldTree?.removeAt(this.position)
+                                it.draft = true
+                                it.clientRequestId = this.clientRequestId
+                                mRealVM.attributeSave(it)
+                            }
+                        }
                     }
                 )
             }
@@ -265,7 +283,13 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         attributeData?.fieldTree?.getOrNull(this.position)?.fieldItems = currentInstance
         attributeData?.draft = true
         attributeData?.clientRequestId = this.clientRequestId
-        attributeData?.let { mRealVM.attributeSave(it) }
+        attributeData?.let {
+            if (type == TYPE_ONLINE_RESUME) {
+                mRealVM.onResumeInfoAttributeSave(it, position, isEdit)
+            } else {
+                mRealVM.attributeSave(it)
+            }
+        }
     }
 
     private fun validateRequiredFields(): Boolean {
