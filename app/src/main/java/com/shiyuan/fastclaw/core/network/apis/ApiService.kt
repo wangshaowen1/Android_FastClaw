@@ -17,6 +17,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeRejectBody
 import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
+import com.shiyuan.fastclaw.core.network.apis.request.BindMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
@@ -195,6 +196,12 @@ interface ApiService {
      */
     @POST(ApiConstants.BIND_PHONE)
     suspend fun bindPhone(@Body body: BindPhoneBody): ApiResponse<Any?>
+
+    /**
+     * 三方登录后绑定手机号
+     */
+    @POST(ApiConstants.BIND_MOBILE)
+    suspend fun bindMobile(@Body body: BindMobileBody): ApiResponse<Any?>
 
     /**
      * 闪验登录

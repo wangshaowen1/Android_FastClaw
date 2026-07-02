@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
+import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewLoginBinding
 import com.shiyuan.fastclaw.feature.login.LoginActivity
 import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
@@ -162,12 +163,8 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
     private fun requestCode() {
         val phone = binding.etPhone.text?.toString().orEmpty()
         mRealVM.mobile.value = phone
-        mRealVM.sendSmsCode(startCountdownOnSuccess = false) {
-            PhoneNewCodeLoginActivity.start(
-                this,
-                phone,
-                checkedPolicy = mRealVM.checkedPolicy.get()
-            )
+        mRealVM.sendSmsCode(startCountdownOnSuccess = false, bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN) {
+            PhoneNewCodeLoginActivity.start(this, phone, checkedPolicy = mRealVM.checkedPolicy.get())
             finish()
         }
     }
@@ -273,10 +270,20 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
      */
     override fun onAuthed(platform: SHARE_MEDIA?, data: MutableMap<String, String>?) {
         Logger.d("onAuthed platform:$platform data:$data")
-        if (platform != SHARE_MEDIA.WEIXIN) return
-        mRealVM.loginByThird(LoginByThirdBody.LOGIN_TYPE_WECHAT, data) {
-            finish()
+        val loginType = when (platform) {
+            SHARE_MEDIA.WEIXIN -> LoginByThirdBody.LOGIN_TYPE_WECHAT
+            SHARE_MEDIA.QQ -> LoginByThirdBody.LOGIN_TYPE_QQ
+            else -> {
+                return
+            }
         }
+        mRealVM.loginByThird(loginType, map = data, onLogin = { needBindMobile, userData ->
+                if (needBindMobile && userData != null) {
+                    PhoneNewBindMobileActivity.start(this, userData)
+                }
+                finish()
+            }
+        )
     }
 
     /**

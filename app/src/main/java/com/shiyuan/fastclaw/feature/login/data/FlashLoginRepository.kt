@@ -4,6 +4,7 @@ import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.GrowingIO
+import com.shiyuan.fastclaw.core.network.apis.request.BindMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByFlashMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByPhoneBody
@@ -75,5 +76,13 @@ class FlashLoginRepository : ThirdLoginRepository() {
     suspend fun bindPhone(phoneNumber: String?, validationCode: String?) =
         withContext(Dispatchers.IO) {
             api.bindPhone(BindPhoneBody(phoneNumber, validationCode))
+        }
+
+    /**
+     * 三方登录后绑定手机。
+     */
+    suspend fun bindMobile(phoneNumber: String?, validationCode: String?, userToken: String?) =
+        withContext(Dispatchers.IO) {
+            api.bindMobile(BindMobileBody(phoneNumber, validationCode, userToken = userToken))
         }
 }

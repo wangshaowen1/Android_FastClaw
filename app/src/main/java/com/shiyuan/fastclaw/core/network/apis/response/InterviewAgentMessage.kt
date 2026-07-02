@@ -36,7 +36,23 @@ data class InterviewAgentMessage(
 
     /** 不同消息类型的扩展数据 */
     val payload: InterviewAgentPayload? = null,
-)
+) {
+    override fun toString(): String {
+        return "InterviewAgentMessage(" +
+            "messageId=$messageId, " +
+            "interviewId=$interviewId, " +
+            "messageSeq=$messageSeq, " +
+            "messageType=$messageType, " +
+            "senderType=$senderType, " +
+            "content=$content, " +
+            "roomState=$roomState, " +
+            "errorCode=$errorCode, " +
+            "errorMessage=$errorMessage, " +
+            "recoverable=$recoverable, " +
+            "payload=$payload" +
+            ")"
+    }
+}
 
 /**
  * 模拟面试 SSE 消息 payload。

@@ -402,10 +402,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun restoreRoom(message: InterviewAgentMessage) {
         val payload = message.payload
         payload?.messages.orEmpty().forEachIndexed { index, item ->
-            Log.d(
-                TAG,
-                "restoreRoom_message[$index]: messageId=${item.messageId}, messageSeq=${item.messageSeq}, messageType=${item.messageType}, senderType=${item.senderType}, roomState=${item.roomState ?: item.payload?.roomState}, questionId=${item.payload?.questionId}, content=${item.content.orEmpty()}"
-            )
+            LogUtils.d("restoreRoom_$item")
         }
         Log.d(TAG, "restoreRoom_---------------------------------------")
         payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }

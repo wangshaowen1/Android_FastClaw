@@ -12,6 +12,7 @@ import com.nhsd.basic.utils.T
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.common.Constants
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
@@ -19,11 +20,11 @@ import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.loginToast
 import com.shiyuan.fastclaw.core.ext.parseMessage
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
-import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.feature.login.data.FlashLoginRepository
 import com.shiyuan.fastclaw.kit.SignUtils
+import com.nhsd.basic.bus.FlowEventBus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
@@ -47,7 +48,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
     /**
      * 验证码页输入的 4 位短信验证码。
      */
-    val code = MutableLiveData<String?>()
+    val smsCode = MutableLiveData<String?>()
 
     /**
      * 获取验证码按钮是否可点击。
@@ -82,7 +83,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      * @param startCountdownOnSuccess 成功后是否立即启动倒计时
      * @param onSent 验证码发送成功后的页面回调
      */
-    fun sendSmsCode(startCountdownOnSuccess: Boolean = true, onSent: () -> Unit) {
+    fun sendSmsCode(startCountdownOnSuccess: Boolean = true, bizType: Int, onSent: () -> Unit) {
         val phone = mobile.value
         if (!RegexUtils.isMobileSimple(phone)) {
             showToast(R.string.login_new_phone_error)
@@ -93,7 +94,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
         launchWithLoading(
             block = {
                 response(
-                    mRepo.sendSmsValidateCode(phone, SendSmsValidateCodeBody.BIZ_TYPE_LOGIN),
+                    mRepo.sendSmsValidateCode(phone, bizType),
                     result = {
                         T.showShort(R.string.get_validate_code_success)
                         if (startCountdownOnSuccess) {
@@ -127,7 +128,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
             return
         }
         val phone = mobile.value
-        val smsCode = code.value
+        val smsCode = smsCode.value
         if (!RegexUtils.isMobileSimple(phone) || smsCode?.length != Constants.SMS_CODE_LENGTH) {
             showToast(R.string.enter_right_validate_code)
             onError?.invoke()
@@ -153,11 +154,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
     /**
      * 使用第三方授权信息登录，目前新版入口只接微信登录。
      */
-    fun loginByThird(
-        loginType: Int,
-        map: MutableMap<String, String>?,
-        onLogin: ((UserHomeData?) -> Unit)?
-    ) {
+    fun loginByThird(loginType: Int, map: MutableMap<String, String>?, onLogin: ((Boolean, UserHomeData?) -> Unit)?) {
         setLoading(true)
         launchWithLoading(false, block = {
             val body = LoginByThirdBody(
@@ -169,12 +166,91 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                 inviteAttribution = Config.get().inviteAttribution,
             )
             response(mRepo.loginByThird(body), result = {
-                User.get().updateFrom(data)
-                SignUtils.signIn()
-                data.loginToast()
-                onLogin?.invoke(data)
+                val userData = data
+                if (userData?.bindMobile == 1) {// 已绑定手机号
+                    saveLoginUser(userData, { _ ->
+                        onLogin?.invoke(false, userData)
+                    })
+                } else {// 未绑定
+                    onLogin?.invoke(true, userData)
+                }
+
             }, error = { this?.msg?.showToast() })
         }, onError = { showToast(R.string.toast_sign_in_fail) })
+    }
+
+    /**
+     * 三方登录后绑定手机号，成功后再保存三方登录返回的用户信息。
+     */
+    fun bindMobile(userData: UserHomeData?, onLogin: ((UserHomeData?) -> Unit)?, onError: (() -> Unit)? = null) {
+        val phone = mobile.value
+        val validateCode = smsCode.value
+        if (!RegexUtils.isMobileSimple(phone)) {
+            showToast(R.string.login_new_phone_error)
+            onError?.invoke()
+            return
+        }
+        if (validateCode?.length != Constants.SMS_CODE_LENGTH) {
+            showToast(R.string.enter_right_validate_code)
+            onError?.invoke()
+            return
+        }
+        launchWithLoading(false, block = {
+            response(mRepo.bindMobile(phone, validateCode, userData?.token), {
+                saveLoginUser(userData, onLogin, phone)
+            }, error = {
+                this?.msg?.showToast()
+                onError?.invoke()
+            })
+        }, onError = {
+            parseMessage(it)?.showToast()
+            onError?.invoke()
+        })
+    }
+
+    /**
+     * 修改手机号场景绑定新手机号。
+     */
+    fun changePhone(onSuccess: (() -> Unit)?, onError: (() -> Unit)? = null) {
+        val phone = mobile.value
+        val smsCode = smsCode.value
+        if (!RegexUtils.isMobileSimple(phone)) {
+            showToast(R.string.login_new_phone_error)
+            onError?.invoke()
+            return
+        }
+        if (smsCode?.length != Constants.SMS_CODE_LENGTH) {
+            showToast(R.string.enter_right_validate_code)
+            onError?.invoke()
+            return
+        }
+        launchWithLoading(false, block = {
+            response(mRepo.bindPhone(phone, smsCode), {
+                showToast(R.string.bind_success)
+                User.get().storePhoneNum(phone)
+                FlowEventBus.postSync(Events.BindingSuccessfulEvent())
+                onSuccess?.invoke()
+            }, error = {
+                this?.msg?.showToast()
+                onError?.invoke()
+            })
+        }, onError = {
+            parseMessage(it)?.showToast()
+            onError?.invoke()
+        })
+    }
+
+    /**
+     * 保存登录用户并发送登录成功事件。
+     */
+    private fun saveLoginUser(userData: UserHomeData?, onLogin: ((UserHomeData?) -> Unit)?, boundPhone: String? = null) {
+        User.get().updateFrom(userData)
+        if (!boundPhone.isNullOrBlank()) {
+            User.get().storePhoneNum(boundPhone)
+        }
+        SignUtils.signIn()
+        userData.loginToast()
+        onLogin?.invoke(userData)
     }
 
     /**
