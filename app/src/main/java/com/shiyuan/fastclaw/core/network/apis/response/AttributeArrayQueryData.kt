@@ -12,6 +12,13 @@ import kotlinx.parcelize.RawValue
  * @param questionQueueId      问题队列 ID
  * @param attributeGroupCode   属性组编码
  * @param attributeGroupName   属性组名称
+ * @param metaCode             元数据编码
+ * @param inputMode            输入方式
+ * @param dictType             字典类型
+ * @param dictApi              字典接口
+ * @param value                字段原始值
+ * @param displayValue         字段展示值
+ * @param options              字段选项
  * @param skippable           是否可跳过
  * @param complete            是否已完成
  * @param missingMetaCodes     缺失的元数据编码列表
@@ -25,6 +32,13 @@ data class AttributeArrayQueryData(
     val questionQueueId: String? = null,
     val attributeGroupCode: String? = null,
     val attributeGroupName: String? = null,
+    val metaCode: String? = null,
+    val inputMode: String? = null,
+    val dictType: String? = null,
+    val dictApi: String? = null,
+    val value: @RawValue Any? = null,
+    val displayValue: String? = null,
+    val options: List<AttributeOption>? = null,
     val skippable: Boolean? = null,
     val complete: Boolean? = null,
     var draft: Boolean? = false,

@@ -87,6 +87,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewForceCancelD
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportProgressData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
+import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.PayOrderInfo
@@ -546,6 +547,12 @@ interface ApiService {
 
     @POST(ApiConstants.JOB_AGENT_RESUME_UPLOAD_MY_SUBMIT)
     suspend fun submitResumeMyUpload(@Body body: ResumeUploadSubmitMyBody): ApiResponse<ResumeUploadSubmitMyData?>
+
+    /**
+     * 查询在线简历信息
+     */
+    @POST(ApiConstants.JOB_AGENT_ONLINE_RESUME_INFO_QUERY)
+    suspend fun queryOnlineResumeInfo(): ApiResponse<OnlineResumeInfoData?>
 
     /**
      * 查询属性数组候选值（求职 Agent）

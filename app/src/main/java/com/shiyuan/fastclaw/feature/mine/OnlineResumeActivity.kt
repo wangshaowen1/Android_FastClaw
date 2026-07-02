@@ -107,7 +107,6 @@ class OnlineResumeActivity :
 
     private fun dataUpdate() {
         mRealVM.understandingScore()
-        mRealVM.understandingDetail()
     }
 
     private fun updateResumeTabState(index: Int) {

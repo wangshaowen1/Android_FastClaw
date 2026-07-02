@@ -297,6 +297,11 @@ object ApiConstants {
      */
     const val JOB_AGENT_RESUME_UPLOAD_MY_SUBMIT = "/api/candidate/app/jobAgent/resume/my/upload/submit"
 
+    /**
+     * 查询在线简历信息
+     */
+    const val JOB_AGENT_ONLINE_RESUME_INFO_QUERY = "/api/candidate/app/jobAgent/onlineResume/info/query"
+
 
     /**
      * 查询属性数组候选值（求职 Agent）

@@ -79,6 +79,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
         super.onPrepareView()
         initView()
         initObservers()
+        mRealVM.queryOnlineResumeInfo()
     }
 
     private fun initView() {
@@ -87,18 +88,25 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
             isNestedScrollingEnabled = false
             adapter = resumeInfoAdapter
         }
-        updateResumeInfo(mockResumeInfoData())
+        updateResumeInfo(emptyList())
         binding.ivProfileEdit.setOnSingleClickListener {
             PersonalInformationActivity.start(requireActivity())
         }
     }
 
     private fun initObservers() {
-
+        mRealVM.onlineResumeBaseInfo.observe(this) { data ->
+            updateBaseResumeInfo(data.orEmpty())
+        }
+        mRealVM.onlineResumeInfo.observe(this) { data ->
+            updateResumeInfo(data.orEmpty())
+        }
     }
 
-    fun submitResumeInfo(data: List<AttributeArrayQueryData>?) {
-        updateResumeInfo(data.orEmpty())
+    private fun updateBaseResumeInfo(data: List<AttributeArrayQueryData>) {
+
+
+
     }
 
     private fun updateResumeInfo(data: List<AttributeArrayQueryData>) {
@@ -344,6 +352,8 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
 
     private fun AttributeArrayQueryData.selfEvaluationText(): String {
         if (attributeGroupCode != GROUP_SELF_EVALUATION) return ""
+        displayValue?.takeIf { it.isNotBlank() }?.let { return it }
+        value?.toString()?.takeIf { it.isNotBlank() }?.let { return it }
         fieldTree.orEmpty().forEach { tree ->
             tree.displayValue?.takeIf { it.isNotBlank() }?.let { return it }
             tree.fieldValue?.toString()?.takeIf { it.isNotBlank() }?.let { return it }
