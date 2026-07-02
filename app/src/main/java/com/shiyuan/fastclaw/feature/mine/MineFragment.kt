@@ -92,7 +92,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
         }
         binding.sivAvatar.setOnSingleClickListener {
-            PhoneNewLoginActivity.start(false, false)
+
         }
 
     }
