@@ -44,6 +44,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgres
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportRetryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStreamBody
+import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.PlayEventBody
@@ -56,6 +57,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.request.TipOffBody
 import com.shiyuan.fastclaw.core.network.apis.request.TradePayCreateBody
+import com.shiyuan.fastclaw.core.network.apis.request.UpdateAvatarBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.SSEvent
 import com.shiyuan.fastclaw.core.network.apis.request.DictIndustryQueryBody
@@ -150,6 +152,12 @@ interface ApiService {
      */
     @POST(ApiConstants.GET_USER_HOME_INFO)
     suspend fun getUserHomeInfo(@Body body: UserTokenBody): ApiResponse<UserHomeData?>
+
+    /**
+     * 更新头像
+     */
+    @POST(ApiConstants.UPDATE_USER_AVATAR)
+    suspend fun updateUserAvatar(@Body body: UpdateAvatarBody): ApiResponse<UserHomeData?>
 
     /**
      * 获取APP升级信息
@@ -552,7 +560,13 @@ interface ApiService {
      * 查询在线简历信息
      */
     @POST(ApiConstants.JOB_AGENT_ONLINE_RESUME_INFO_QUERY)
-    suspend fun queryOnlineResumeInfo(): ApiResponse<OnlineResumeInfoData?>
+    suspend fun queryOnlineResumeInfo(@Body body: Any): ApiResponse<OnlineResumeInfoData?>
+
+    /**
+     * 更新在线简历属性
+     */
+    @POST(ApiConstants.JOB_AGENT_ONLINE_RESUME_ATTRIBUTE_UPDATE)
+    suspend fun updateOnlineResumeAttribute(@Body body: OnlineResumeAttributeUpdateBody): ApiResponse<Any?>
 
     /**
      * 查询属性数组候选值（求职 Agent）

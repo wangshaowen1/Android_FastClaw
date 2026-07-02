@@ -261,6 +261,16 @@ public class Events {
         }
     }
 
+
+    public static class CommonAttributeArrayQueryData implements AppEvent {
+        public AttributeArrayQueryData attributeArrayQueryData ;
+        public CommonAttributeArrayQueryData(AttributeArrayQueryData attributeArrayQueryData) {
+            this.attributeArrayQueryData = attributeArrayQueryData;
+        }
+        public CommonAttributeArrayQueryData() {
+        }
+    }
+
     /**
      * 保存 或者删除返送的数据
      */

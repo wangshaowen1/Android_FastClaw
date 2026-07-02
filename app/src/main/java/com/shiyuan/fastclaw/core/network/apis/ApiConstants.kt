@@ -25,6 +25,11 @@ object ApiConstants {
     const val GET_USER_HOME_INFO = "api/candidate/auth/user/info-detail"
 
     /**
+     * 更新头像
+     */
+    const val UPDATE_USER_AVATAR = "api/candidate/user/avatar/update"
+
+    /**
      * 获取APP升级信息
      */
     const val GET_APP_UPGRADE_INFO = "app/getAppUpgradeInfo"
@@ -301,6 +306,11 @@ object ApiConstants {
      * 查询在线简历信息
      */
     const val JOB_AGENT_ONLINE_RESUME_INFO_QUERY = "/api/candidate/app/jobAgent/onlineResume/info/query"
+
+    /**
+     * 更新在线简历属性
+     */
+    const val JOB_AGENT_ONLINE_RESUME_ATTRIBUTE_UPDATE = "/api/candidate/app/jobAgent/onlineResume/attribute/update"
 
 
     /**

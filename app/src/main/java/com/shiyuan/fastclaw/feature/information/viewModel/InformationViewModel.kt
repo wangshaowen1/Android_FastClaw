@@ -2,27 +2,34 @@ package com.shiyuan.fastclaw.feature.information.viewModel
 
 import android.graphics.Color
 import androidx.lifecycle.MutableLiveData
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.AppRepository
+import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
+import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
+import com.shiyuan.fastclaw.core.ext.parseMessage
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.DictIndustryQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.DictPositionQueryBody
-import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
+import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeUpdateBody
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
+import com.shiyuan.fastclaw.core.network.apis.request.UpdateAvatarBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeOption
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
-import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil
-import com.shiyuan.fastclaw.core.network.apis.response.FieldItems
-import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
+import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
+import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingScore
 import com.shiyuan.fastclaw.core.response
+import java.util.UUID
+import kotlin.collections.forEach
 
 /**
  * *****************************************
@@ -37,7 +44,7 @@ import com.shiyuan.fastclaw.core.response
  * 求职信息填写相关页面共享的 ViewModel：
  * 行业 / 职位字典查询、字段保存等能力。
  */
-class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
+class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     // 顶部导航 ViewModel（占位，未实际绑定 Toolbar）
     val mToolbarVM = ToolbarViewModel(
@@ -156,6 +163,43 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
         }, onError = { it.message.toString().showToast() })
     }
 
+    fun updateAvatar(avatarUrl: String, onSuccess: (String) -> Unit) {
+        requestWithLoading(
+            apiBlock = { mRepo.api.updateUserAvatar(UpdateAvatarBody(avatarUrl)) },
+            onSuccess = {
+                val updatedAvatarUrl = data?.avatarUrl ?: avatarUrl
+                User.get().updateFrom(data)
+                if (data?.avatarUrl.isNullOrBlank()) {
+                    User.get().storeAvatar(updatedAvatarUrl)
+                    User.get().notifyChange(User.AVATAR_URL)
+                }
+                onSuccess(updatedAvatarUrl)
+            }
+        )
+    }
+
+    fun updateOnlineResumeAttribute(
+        attributeGroupCode: String?,
+        inputMode: String?,
+        value: Any?,
+        onSuccess: () -> Unit
+    ) {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.updateOnlineResumeAttribute(
+                    OnlineResumeAttributeUpdateBody(
+                        attributeGroupCode = attributeGroupCode,
+                        inputMode = inputMode,
+                        value = value
+                    )
+                )
+            },
+            onSuccess = {
+                onSuccess()
+            }
+        )
+    }
+
 
     fun queryAttributeArray(
         questionQueueId: String?,
@@ -180,5 +224,113 @@ class InformationViewModel : AppRepositoryViewModel<AppRepository>() {
             this.data?.clientRequestId = clientRequestId
             onResult(this.data)
         }
+    }
+
+    var onlineResumeBaseInfo = MutableLiveData<List<AttributeArrayQueryData>>()
+    var onlineResumeInfo = MutableLiveData<List<AttributeArrayQueryData>>()
+
+    var underStandingScore = MutableLiveData<UnderstandingScore>()
+
+    fun understandingScore() {
+        launch(block = {
+            response(
+                ApiFactory.apiService.understandingScore(),
+                result = {
+                    underStandingScore.postValue(this.data)
+                },
+                error = {
+                    this?.msg?.showToast()
+                })
+        }, onError = {
+            parseMessage(it)?.showToast()
+        }, onComplete = {
+            setLoading(false)
+        })
+    }
+
+    fun queryOnlineResumeInfo() {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.queryOnlineResumeInfo(mapOf("clientRequestId" to UUID.randomUUID().toString()))
+            },
+            showLoading = true,
+            showToastError = true,
+        ) {
+            val sections = this.data?.sections.orEmpty()
+            val baseInfo = mutableListOf<AttributeArrayQueryData>()
+            val resumeInfo = mutableListOf<AttributeArrayQueryData>()
+            sections.forEach { section ->
+                if (section.sectionCode == SECTION_BASE_INFO) {
+                    baseInfo.addAll(section.fields)
+                } else {
+                    resumeInfo.addAll(section.fields)
+                }
+            }
+            onlineResumeBaseInfo.postValue(baseInfo)
+            onlineResumeInfo.postValue(resumeInfo)
+        }
+       /* setLoading(true)
+        launch(block = {
+            response(
+                mRepo.api.queryOnlineResumeInfo(mapOf("clientRequestId" to UUID.randomUUID().toString())),
+                result = {
+                    val sections = this.data?.sections.orEmpty()
+                    val baseInfo = mutableListOf<AttributeArrayQueryData>()
+                    val resumeInfo = mutableListOf<AttributeArrayQueryData>()
+                    sections.forEach { section ->
+                        if (section.sectionCode == SECTION_BASE_INFO) {
+                            baseInfo.addAll(section.fields)
+                        } else {
+                            resumeInfo.addAll(section.fields)
+                        }
+                    }
+                    onlineResumeBaseInfo.postValue(baseInfo)
+                    onlineResumeInfo.postValue(resumeInfo)
+                },
+                error = {
+                    this?.msg?.showToast()
+                })
+        }, onError = {
+            parseMessage(it)?.showToast()
+        }, onComplete = {
+            setLoading(false)
+        })*/
+    }
+
+
+
+/*
+    fun queryOnlineResumeInfo() {
+        postOnlineResumeSections(mockOnlineResumeInfoSections())
+    }
+
+    private fun postOnlineResumeSections(sections: List<OnlineResumeInfoSection>) {
+        val baseInfo = mutableListOf<AttributeArrayQueryData>()
+        val resumeInfo = mutableListOf<AttributeArrayQueryData>()
+        sections.forEach { section ->
+            if (section.sectionCode == SECTION_BASE_INFO) {
+                baseInfo.addAll(section.fields)
+            } else {
+                resumeInfo.addAll(section.fields)
+            }
+        }
+        onlineResumeBaseInfo.postValue(baseInfo)
+        onlineResumeInfo.postValue(resumeInfo)
+    }
+*/
+
+
+
+
+    val mToolbarVMOnlineResume = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = "",
+        background = Color.TRANSPARENT,
+    )
+
+    var tableOnlineResumeIndex = MutableLiveData(0)
+
+    companion object {
+        private const val SECTION_BASE_INFO = "baseInfo"
     }
 }

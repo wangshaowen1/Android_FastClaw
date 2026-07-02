@@ -5,11 +5,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.common.ext.load
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
@@ -32,10 +35,12 @@ import com.shiyuan.fastclaw.feature.information.ProjectActivity
 import com.shiyuan.fastclaw.feature.information.PublicDescriptionActivity
 import com.shiyuan.fastclaw.feature.information.SkillActivity
 import com.shiyuan.fastclaw.feature.information.WorkActivity
+import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import com.shiyuan.fastclaw.feature.login.flash.PhoneLoginDialogActivity.Companion.PHONE
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
-class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, UnderstandsViewModel>() {
+class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, InformationViewModel>() {
 
     companion object {
         fun newInstance(): ResumeInfoFragment = ResumeInfoFragment()
@@ -100,10 +105,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
         }
         updateResumeInfo(emptyList())
         binding.ivProfileEdit.setOnSingleClickListener {
-            PersonalInformationActivity.start(
-                requireActivity(),
-                mRealVM.onlineResumeBaseInfo.value.orEmpty()
-            )
+            PersonalInformationActivity.start(requireActivity())
         }
     }
 
@@ -113,6 +115,12 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
         }
         mRealVM.onlineResumeInfo.observe(this) { data ->
             updateResumeInfo(data.orEmpty())
+        }
+
+        observeEvents {
+            on<Events.CommonAttributeArrayQueryData> { event ->
+               mRealVM.queryOnlineResumeInfo()
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.FragmentStateCacheAdapter
 import com.shiyuan.fastclaw.databinding.ActivityOnlineResumeBinding
+import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import com.shiyuan.fastclaw.feature.mine.fragment.JobPreferencesFragment
 import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
@@ -21,7 +22,7 @@ import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
  */
 
 class OnlineResumeActivity :
-    BaseViewModelActivity<ActivityOnlineResumeBinding, UnderstandsViewModel>() {
+    BaseViewModelActivity<ActivityOnlineResumeBinding, InformationViewModel>() {
 
     companion object {
         private const val EXTRA_SELECTED_INDEX = "extra_selected_index"
