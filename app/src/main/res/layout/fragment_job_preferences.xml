@@ -14,26 +14,36 @@
         android:clipToPadding="false"
         android:fillViewport="true">
 
-        <FrameLayout
-            android:background="@drawable/bg_ffffff_leftbot_rightbot_r20"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
-            android:paddingTop="@dimen/spacing_m"
-            android:paddingBottom="@dimen/spacing_xl">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_job_preferences"
+            android:orientation="vertical">
+            <FrameLayout
+                android:id="@+id/ll"
+                android:background="@drawable/bg_ffffff_leftbot_rightbot_r20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+                android:paddingHorizontal="10dp"
+                android:paddingTop="@dimen/spacing_m"
+                android:paddingBottom="@dimen/spacing_xl">
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_job_preferences"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false" />
+
+            </FrameLayout>
             <include
+                android:visibility="gone"
                 android:id="@+id/view_understands"
                 layout="@layout/view_understands1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-        </FrameLayout>
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+
     </androidx.core.widget.NestedScrollView>
 </layout>

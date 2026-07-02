@@ -1,23 +1,45 @@
 package com.shiyuan.fastclaw.feature.mine.fragment
 
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.EmptyViewModel
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
+import com.shiyuan.fastclaw.common.utils.JsonUtil
+import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
+import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewJobData
+import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
+import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentJobPreferencesBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoReBinding
+import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
+import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
+import com.shiyuan.fastclaw.feature.information.JobWelfareSelectorActivity
+import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment.Companion.INCOMPLETE
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+import org.json.JSONObject
+import javax.annotation.meta.When
+import kotlin.collections.map
+import kotlin.collections.orEmpty
 
 
 class JobPreferencesFragment :
@@ -27,10 +49,31 @@ class JobPreferencesFragment :
         fun newInstance(): JobPreferencesFragment = JobPreferencesFragment()
 
         private const val CODE_JOB_STATUS = "jobStatus"
+        private const val CODE_EXPECTED_CITY = "expectedCity"
+
+        private const val INPUT_MODE_DICT_SINGLE = "DICT_SINGLE"
+        private const val INPUT_MODE_DICT_MULTI = "DICT_MULTI"
+
+        private const val CODE_JOB_INTENTION = "jobIntention"
+
+        private const val CODE_JOB_EXPECTED_SALARY = "expectedSalary"
+
+        private const val CODE_JOB_TYPE = "jobType"
+
+        private const val CODE_JOB_LATESTLEAVING_REASON = "latestLeavingReason"
+        private const val CODE_JOB_CAREERDIRECTION = "careerDirection"
+        private const val CODE_JOB_WORKMODE = "workMode"
+        private const val CODE_JOB_ACCEPTRELOCATION = "acceptRelocation"
+        private const val CODE_JOB_WORKSCHEDULEPREFERENCE = "workSchedulePreference"
+        private const val CODE_JOB_OVERTIMEACCEPTANCE = "overtimeAcceptance"
+        private const val CODE_JOB_COMPANYSCALEPREFERENCE = "companyScalePreference"
+        private const val CODE_JOB_SALARYSTRUCTUREPREFERENCE = "salaryStructurePreference"
+        private const val CODE_JOB_TEAMATMOSPHEREPREFERENCE = "teamAtmospherePreference"
+        private const val CODE_JOB_WELFAREPREFERENCE = "welfarePreference"
     }
 
     private val preferenceAdapter by lazy {
-        SingleBindingAdapter<ItemJobInfoBinding, AttributeArrayQueryData>(
+        SingleBindingAdapter<ItemJobInfoBinding, OnlineResumeInfoSection>(
             R.layout.item_job_info,
             emptyList(),
             onBind = { itemBinding, _, item ->
@@ -44,6 +87,7 @@ class JobPreferencesFragment :
         super.onPrepareView()
         initView()
         initObservers()
+        mRealVM.queryJobPreferencesInfo()
     }
 
     private fun initView() {
@@ -52,59 +96,125 @@ class JobPreferencesFragment :
             isNestedScrollingEnabled = false
             adapter = preferenceAdapter
         }
-        updateJobPreferences(mockJobPreferenceData())
+        updateJobPreferences(emptyList())
     }
 
     private fun initObservers() {
+        mRealVM.jobPreferencesInfo.observe(this) { data ->
+            updateJobPreferences(data.orEmpty())
+        }
+        observeEvents {
+            on<Events.CommonAttributeArrayQueryData> { event ->
+                mRealVM.queryJobPreferencesInfo()
+            }
+
+            on<Events.ClawAgentEvent> { event ->
+                when (event.type) {
+                    AppEvent.KLX_C_EXPECTED_JOB_COMPLETED -> {
+                        handleSelected(event.msgGson, CODE_JOB_INTENTION, INPUT_MODE_DICT_MULTI)
+                    }
+
+                    AppEvent.KLX_C_EXPECTED_CITY_COMPLETED -> {
+                        handleSelected(event.msgGson, CODE_EXPECTED_CITY, INPUT_MODE_DICT_MULTI)
+                    }
+                    else ->{
+                        handleSelected(event.msgGson, CODE_JOB_WELFAREPREFERENCE, INPUT_MODE_DICT_MULTI)
+                    }
+                }
+
+            }
+        }
 
     }
 
-    fun submitJobPreferences(data: List<AttributeArrayQueryData>?) {
-        updateJobPreferences(data.orEmpty())
+    private fun handleSelected(msgGson: String?, attributeGroupCode: String, inputMode: String) {
+        Log.d("handleLocationCitySelected", msgGson.toString())
+        val dataList = JsonUtil.parseList(msgGson.toString(), InterviewJobData::class.java)
+        mRealVM.updateOnlineResumeAttribute(
+            attributeGroupCode = attributeGroupCode,
+            inputMode = inputMode,
+            value = dataList
+        ) {
+            mRealVM.queryJobPreferencesInfo()
+        }
     }
 
-    private fun updateJobPreferences(data: List<AttributeArrayQueryData>) {
+    private fun updateJobPreferences(data: List<OnlineResumeInfoSection>) {
         val showEmpty = data.isEmpty()
         binding.viewUnderstands.root.visibility = if (showEmpty) View.VISIBLE else View.GONE
-        binding.rvJobPreferences.visibility = if (showEmpty) View.GONE else View.VISIBLE
+        binding.ll.visibility = if (showEmpty) View.GONE else View.VISIBLE
         preferenceAdapter.submitList(data)
     }
 
     private fun bindJobInfoItem(
         itemBinding: ItemJobInfoBinding,
-        item: AttributeArrayQueryData
+        item: OnlineResumeInfoSection
     ) {
-        itemBinding.tvTitle.text = item.displayTitle()
-        if (item.attributeGroupCode == CODE_JOB_STATUS) {
+        itemBinding.tvTitle.text = item.sectionName ?: ""
+        if (item.sectionCode == CODE_JOB_STATUS) {
             itemBinding.ll.setBackgroundResource(R.drawable.bg_f3f9ff_ffffff_r12)
-            val paddingTopPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15f, itemBinding.ll.getResources().getDisplayMetrics()).toInt()
-            itemBinding.ll.setPadding(itemBinding.ll.getPaddingLeft(), paddingTopPx, itemBinding.ll.getPaddingRight(), itemBinding.ll.getPaddingBottom());
+            val paddingTopPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                15f,
+                itemBinding.ll.getResources().getDisplayMetrics()
+            ).toInt()
+            itemBinding.ll.setPadding(
+                itemBinding.ll.getPaddingLeft(),
+                paddingTopPx,
+                itemBinding.ll.getPaddingRight(),
+                itemBinding.ll.getPaddingBottom()
+            );
             itemBinding.ivEdit.visibility = View.VISIBLE
             itemBinding.viewIndicator.visibility = View.GONE
-            itemBinding.tvName.visibility = if (item.fieldTree.isNullOrEmpty()) View.GONE else View.VISIBLE
-            itemBinding.tvName.text = item.fieldTree?.firstOrNull()?.displayValue?.toString().orEmpty()
-            itemBinding.layoutMissing.visibility = if (item.fieldTree.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
+            itemBinding.tvName.visibility =
+                if (item.fields.isNullOrEmpty()) View.GONE else View.VISIBLE
+            itemBinding.tvName.text = item.fields.firstOrNull()?.displayValue.orEmpty()
+            itemBinding.layoutMissing.visibility =
+                if (item.fields.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
             itemBinding.rcFieldTree.visibility = View.GONE
             itemBinding.rcFieldTree.adapter = null
+            itemBinding.ll.setOnSingleClickListener {
+                singleSelectDialog(item.fields.firstOrNull(), "求职状态")
+            }
         } else {
             itemBinding.ll.setBackgroundResource(R.color.white)
             itemBinding.ivEdit.visibility = View.VISIBLE
             itemBinding.ivEdit.visibility = View.INVISIBLE
             itemBinding.tvName.visibility = View.GONE
             itemBinding.layoutMissing.visibility = View.INVISIBLE
-            bindFieldTreeList(itemBinding, item.fieldTree)
+            bindFieldTreeList(itemBinding, item.fields)
         }
     }
 
-    private fun AttributeArrayQueryData.displayTitle(): String {
-        return attributeGroupName?.takeIf { it.isNotBlank() }
-            ?: fieldTree?.firstOrNull()?.fieldName?.takeIf { it.isNotBlank() }
-            ?: attributeGroupCode.orEmpty()
+    private fun singleSelectDialog(item: AttributeArrayQueryData?, title: String) {
+        item?.let { item ->
+            val enumItems = item.options.orEmpty()
+                .map { CommonEnumItem(code = it.code, name = it.name) }
+            if (enumItems.isEmpty()) {
+                "暂无选项".showToast()
+                return@let
+            }
+            SingleSelectDialog.show(
+                this.childFragmentManager,
+                title,
+                enumItems
+            ) { data ->
+                val value = mapOf("code" to data.code, "name" to data.name)
+                mRealVM.updateOnlineResumeAttribute(
+                    attributeGroupCode = item.attributeGroupCode ?: item.metaCode,
+                    inputMode = item.inputMode,
+                    value = value
+                ) {
+                    mRealVM.queryJobPreferencesInfo()
+                }
+            }
+        }
     }
+
 
     private fun bindFieldTreeList(
         itemBinding: ItemJobInfoBinding,
-        fieldTree: List<AttributeFieldTree>?
+        fieldTree: List<AttributeArrayQueryData>?
     ) {
         itemBinding.rcFieldTree.visibility = View.VISIBLE
         itemBinding.rcFieldTree.layoutManager =
@@ -117,8 +227,8 @@ class JobPreferencesFragment :
     }
 
     private fun createFieldTreeAdapter(
-        fieldTree: List<AttributeFieldTree>
-    ): SingleBindingAdapter<ItemJobInfoReBinding, AttributeFieldTree> {
+        fieldTree: List<AttributeArrayQueryData>
+    ): SingleBindingAdapter<ItemJobInfoReBinding, AttributeArrayQueryData> {
         return SingleBindingAdapter(
             R.layout.item_job_info_re,
             fieldTree,
@@ -130,108 +240,73 @@ class JobPreferencesFragment :
 
     private fun bindJobInfoReItem(
         itemBinding: ItemJobInfoReBinding,
-        item: AttributeFieldTree
+        item: AttributeArrayQueryData
     ) {
-        itemBinding.layoutMissing.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
-        itemBinding.tvVale.visibility = if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
-        val valueText = item.displayText()
-        itemBinding.tvName.text = item.fieldName?.takeIf { it.isNotBlank() } ?: item.fieldCode.orEmpty()
-        itemBinding.tvVale.text = valueText
+        itemBinding.layoutMissing.visibility =
+            if (item.displayValue.isNullOrEmpty()) View.VISIBLE else View.GONE
+        itemBinding.tvVale.visibility =
+            if (item.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
+        itemBinding.tvName.text = item.attributeGroupName ?: ""
+        itemBinding.tvVale.text = item.displayValue
+        itemBinding.ll.setOnSingleClickListener {
+            when (item.attributeGroupCode) {
+                CODE_EXPECTED_CITY -> {
+                    JobCitySelectorActivity.start(activity, JobCityQueryBody.EXPECTED_CITY)
+                }
 
-    }
-
-    private fun mockJobPreferenceData(): List<AttributeArrayQueryData> {
-        return listOf(
-            mockJobPreferenceItem(
-                code = CODE_JOB_STATUS,
-                title = "求职状态"
-            ),
-            mockJobPreferenceItem(
-                code = "jobExpectation",
-                title = "求职期望",
-                fieldTree = mutableListOf(
-                    mockFieldTree("expectedCity", "期望城市", "深圳"),
-                    mockFieldTree("expectedPosition", "期望职位", "AI训练师"),
-                    mockFieldTree("expectedSalary", "期望薪资", "20k-30k")
-                )
-            ),
-            mockJobPreferenceItem(
-                code = "coreIntention",
-                title = "求职核心意向",
-                fieldTree = mutableListOf(
-                    mockTagTree("coreIntention", "核心意向", listOf("管理方向", "全职", "不符合预期薪资"))
-                )
-            ),
-            mockJobPreferenceItem(
-                code = "workCondition",
-                title = "工作条件",
-                fieldTree = mutableListOf(
-                    mockTagTree("workCondition", "工作条件", listOf("坐班", "是", "可接受996", "可接受出差"))
-                )
-            ),
-            mockJobPreferenceItem(
-                code = "environmentWelfare",
-                title = "环境与福利",
-                fieldTree = mutableListOf(
-                    mockTagTree("environmentWelfare", "偏好福利", listOf("优先大公司", "高底薪", "扁平化", "五险一金"))
-                )
-            )
-        )
-    }
-
-    private fun mockJobPreferenceItem(
-        code: String,
-        title: String,
-        fieldTree: MutableList<AttributeFieldTree>? = null
-    ): AttributeArrayQueryData {
-        return AttributeArrayQueryData(
-            attributeGroupCode = code,
-            attributeGroupName = title,
-            fieldTree = fieldTree
-        )
-    }
-
-    private fun mockFieldTree(
-        fieldCode: String,
-        fieldName: String,
-        displayValue: String
-    ): AttributeFieldTree {
-        return AttributeFieldTree(
-            fieldCode = fieldCode,
-            fieldName = fieldName,
-            displayValue = displayValue
-        )
-    }
-
-    private fun mockTagTree(
-        fieldCode: String,
-        fieldName: String,
-        values: List<String>
-    ): AttributeFieldTree {
-        return AttributeFieldTree(
-            fieldCode = fieldCode,
-            fieldName = fieldName,
-            fieldItems = values.map { value ->
-                AttributeFieldItem(displayValue = value)
+                CODE_JOB_INTENTION -> {
+                    JobSelectionActivity.start(activity, true)
+                }
+                CODE_JOB_EXPECTED_SALARY -> {
+                    SalaryRangePickerDialog.show(
+                        manager = childFragmentManager
+                    ) { minSalary, maxSalary ->
+                        val salaryPayloadJson = SalaryRangePayload.fromPicker(minSalary, maxSalary)
+                        mRealVM.updateOnlineResumeAttribute(
+                            attributeGroupCode = item.attributeGroupCode ?: item.metaCode,
+                            inputMode = item.inputMode,
+                            value = salaryPayloadJson
+                        ) {
+                            mRealVM.queryJobPreferencesInfo()
+                        }
+                    }
+                }
+                CODE_JOB_TYPE ->{
+                    singleSelectDialog(item, "工作类型")
+                }
+                CODE_JOB_LATESTLEAVING_REASON ->{
+                    singleSelectDialog(item, "离职原因")
+                }
+                CODE_JOB_CAREERDIRECTION ->{
+                    singleSelectDialog(item, "职业方向")
+                }
+                CODE_JOB_WORKMODE ->{
+                    singleSelectDialog(item, "办公模式")
+                }
+                CODE_JOB_ACCEPTRELOCATION ->{
+                    singleSelectDialog(item, "是否接受外派")
+                }
+                CODE_JOB_WORKSCHEDULEPREFERENCE ->{
+                    singleSelectDialog(item, "工作制度偏好")
+                }
+                CODE_JOB_OVERTIMEACCEPTANCE ->{
+                    singleSelectDialog(item, "是否接受加班")
+                }
+                CODE_JOB_COMPANYSCALEPREFERENCE ->{
+                    singleSelectDialog(item, "公司规模偏好")
+                }
+                CODE_JOB_SALARYSTRUCTUREPREFERENCE ->{
+                    singleSelectDialog(item, "薪资结构偏好")
+                }
+                CODE_JOB_TEAMATMOSPHEREPREFERENCE ->{
+                    singleSelectDialog(item, "团队氛围偏好")
+                }
+                CODE_JOB_WELFAREPREFERENCE ->{
+                    JobWelfareSelectorActivity.start(activity)
+                }
             }
-        )
-    }
 
-    private fun AttributeFieldTree.displayText(): String {
-        return displayValue?.takeIf { it.isNotBlank() }
-            ?: fieldValue?.toString()?.takeIf { it.isNotBlank() }
-            ?: fieldItems.orEmpty()
-                .mapNotNull { it.displayText().takeIf { text -> text.isNotBlank() } }
-                .joinToString("、")
-    }
+        }
 
-    private fun AttributeFieldItem.displayText(): String {
-        return displayValue?.takeIf { it.isNotBlank() }
-            ?: fieldValue?.toString()?.takeIf { it.isNotBlank() }
-            ?: fieldItems.orEmpty()
-                .mapNotNull { it.displayText().takeIf { text -> text.isNotBlank() } }
-                .joinToString("、")
-                .takeIf { it.isNotBlank() }
-            ?: fieldName.orEmpty()
     }
 }

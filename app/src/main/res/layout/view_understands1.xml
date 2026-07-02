@@ -11,7 +11,7 @@
     <LinearLayout
         android:paddingTop="50dp"
         android:paddingBottom="50dp"
-        android:background="@drawable/bg_ffffff_r18"
+        android:background="@drawable/bg_ffffff_leftbot_rightbot_r20"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
