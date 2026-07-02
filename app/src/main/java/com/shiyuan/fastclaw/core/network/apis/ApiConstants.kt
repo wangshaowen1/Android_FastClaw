@@ -25,6 +25,11 @@ object ApiConstants {
     const val GET_USER_HOME_INFO = "api/candidate/auth/user/info-detail"
 
     /**
+     * 更新头像
+     */
+    const val UPDATE_USER_AVATAR = "api/candidate/user/avatar/update"
+
+    /**
      * 获取APP升级信息
      */
     const val GET_APP_UPGRADE_INFO = "app/getAppUpgradeInfo"
@@ -317,6 +322,11 @@ object ApiConstants {
      */
     const val JOB_AGENT_ONLINE_RESUME_INFO_QUERY = "/api/candidate/app/jobAgent/onlineResume/info/query"
 
+    /**
+     * 更新在线简历属性
+     */
+    const val JOB_AGENT_ONLINE_RESUME_ATTRIBUTE_UPDATE = "/api/candidate/app/jobAgent/onlineResume/attribute/update"
+
 
     /**
      * 查询属性数组候选值（求职 Agent）
@@ -343,6 +353,15 @@ object ApiConstants {
      *
      */
     const val JOBAGENT_ATTRIBUTE_ARRAY_SAVE = "/api/candidate/app/jobAgent/attribute/array/save"
+
+    /**
+     *
+     */
+    const val ONLINERESUME_ATTRIBUTE_ARRAY_SAVE = "/api/candidate/app/jobAgent/onlineResume/attribute/array/item/save"
+
+    const val ONLINERESUME_ATTRIBUTE_ARRAY_DELETE = "/api/candidate/app/jobAgent/onlineResume/attribute/array/item/delete"
+
+
     /**
      * 查询小虾行业字典
      */

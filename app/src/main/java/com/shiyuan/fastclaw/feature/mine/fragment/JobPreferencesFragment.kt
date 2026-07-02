@@ -15,12 +15,13 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
 import com.shiyuan.fastclaw.databinding.FragmentJobPreferencesBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoReBinding
+import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment.Companion.INCOMPLETE
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 
 
 class JobPreferencesFragment :
-    BaseViewModelFragment<FragmentJobPreferencesBinding, EmptyViewModel>() {
+    BaseViewModelFragment<FragmentJobPreferencesBinding, InformationViewModel>() {
 
     companion object {
         fun newInstance(): JobPreferencesFragment = JobPreferencesFragment()

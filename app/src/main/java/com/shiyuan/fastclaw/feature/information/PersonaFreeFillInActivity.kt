@@ -14,6 +14,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.Events.TrackCreatedEvent
+import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
 import com.shiyuan.fastclaw.databinding.ActivityPersonaFreeFillInBinding
@@ -34,6 +35,8 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
         private const val MIN_LENGTH = 1
         private const val MAX_LENGTH = 50
 
+        private const val TEXT = "TEXT"
+
         /**
          * 启动自由填写页。
          *
@@ -41,7 +44,7 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
          * @param isEdit 是否编辑模式。
          * @param data 字段数据。
          */
-        fun start(activity: Activity?, isEdit: Boolean = true, data: AttributeFieldItem) {
+        fun start(activity: Activity?, isEdit: Boolean = true, data: AttributeArrayQueryData) {
             activity ?: return
             Intent(activity, PersonaFreeFillInActivity::class.java).apply {
                 putExtra(EXTRA_IS_EDIT, isEdit)
@@ -53,12 +56,12 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
     private val isEdit: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_EDIT, true) }
 
     // 字段数据缓存，提交时回传
-    private  var data: AttributeFieldItem = AttributeFieldItem()
+    private  var data: AttributeArrayQueryData = AttributeArrayQueryData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 读取 Parcelable 字段数据
-        data = intent.getParcelableExtra(EXTRA_DATA) ?: AttributeFieldItem()
+        data = intent.getParcelableExtra(EXTRA_DATA) ?: AttributeArrayQueryData()
         initView()
     }
 
@@ -74,9 +77,9 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
             imm.showSoftInput( binding.et, InputMethodManager.SHOW_IMPLICIT)
         }
         // 标题 / 提示 / 初值
-        mRealVM.mToolbarVM.mTitle.set(data.fieldName.toString())
+        mRealVM.mToolbarVM.mTitle.set(data.attributeGroupName.toString())
         mRealVM.mToolbarVM.mMenuText.set(getString(R.string.confirm))
-        binding.et.hint = data.fieldName.toString()
+        binding.et.hint = data.attributeGroupName.toString()
         binding.et.setText(data.displayValue ?: "")
         binding.tvWordCount.text = "${binding.et.text?.length ?: 0}/$MAX_LENGTH"
       /*  // 有初始值时显示清空图标
@@ -86,11 +89,11 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
             val showIcon = !editable.isNullOrEmpty()
           /*  if (showIcon)  binding.ivClear.visibility = View.VISIBLE else binding.ivClear.visibility = View.GONE*/
             binding.tvWordCount.text = "${editable?.length ?: 0}/$MAX_LENGTH"
-            data.displayValue = editable.toString()
+          /*  data.displayValue = editable.toString()
             data.fieldValue =  mapOf(
                 "value" to editable.toString() ,
                 "displayText" to editable.toString()
-            )
+            )*/
         }
      /*   // 清空输入
         binding.ivClear.setOnSingleClickListener {
@@ -103,8 +106,14 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
                 "至少输入1个字".showToast()
                 return@menuAction
             }
-            FlowEventBus.postSticky(Events.CommonAttributeFieldItemEvent(data))
-            finish()
+            mRealVM.updateOnlineResumeAttribute(
+                attributeGroupCode = data.attributeGroupCode ?: data.metaCode,
+                inputMode = data.inputMode ?: TEXT,
+                value =  binding.et.text.toString()
+            ) {
+                FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+                finish()
+            }
         }
 
     }

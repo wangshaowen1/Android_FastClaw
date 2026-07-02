@@ -5,11 +5,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.common.ext.load
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
@@ -27,15 +30,19 @@ import com.shiyuan.fastclaw.databinding.ItemWorkExperienceReBinding
 import com.shiyuan.fastclaw.feature.information.AwardActivity
 import com.shiyuan.fastclaw.feature.information.CertificateActivity
 import com.shiyuan.fastclaw.feature.information.EducationalActivity
+import com.shiyuan.fastclaw.feature.information.PersonaDescriptionActivity
 import com.shiyuan.fastclaw.feature.information.PersonalInformationActivity
 import com.shiyuan.fastclaw.feature.information.ProjectActivity
 import com.shiyuan.fastclaw.feature.information.PublicDescriptionActivity
 import com.shiyuan.fastclaw.feature.information.SkillActivity
 import com.shiyuan.fastclaw.feature.information.WorkActivity
+import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import com.shiyuan.fastclaw.feature.login.flash.PhoneLoginDialogActivity.Companion.PHONE
 import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+import java.util.UUID
 
-class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, UnderstandsViewModel>() {
+class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, InformationViewModel>() {
 
     companion object {
         fun newInstance(): ResumeInfoFragment = ResumeInfoFragment()
@@ -100,10 +107,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
         }
         updateResumeInfo(emptyList())
         binding.ivProfileEdit.setOnSingleClickListener {
-            PersonalInformationActivity.start(
-                requireActivity(),
-                mRealVM.onlineResumeBaseInfo.value.orEmpty()
-            )
+            PersonalInformationActivity.start(requireActivity())
         }
     }
 
@@ -113,6 +117,12 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
         }
         mRealVM.onlineResumeInfo.observe(this) { data ->
             updateResumeInfo(data.orEmpty())
+        }
+
+        observeEvents {
+            on<Events.CommonAttributeArrayQueryData> { event ->
+               mRealVM.queryOnlineResumeInfo()
+            }
         }
     }
 
@@ -211,11 +221,11 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
 
     private fun handleEditIconClick(item: AttributeArrayQueryData) {
         if (item.isSelfEvaluation()) {
-            PublicDescriptionActivity.start(
+            PersonaDescriptionActivity.start(
                 requireActivity(),
                 true,
-                item.selfEvaluationFieldItem(),
-                item.displayTitle()
+                item,
+                "介绍个人又是，突出你的亮点"
             )
             return
         }
@@ -227,42 +237,43 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
                 false,
                 item,
                 0,
-                item.clientRequestId
+                UUID.randomUUID().toString(),
+                type = WorkActivity.TYPE_ONLINE_RESUME
             )
             item.isProjectExperience() -> ProjectActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                item.clientRequestId
+                UUID.randomUUID().toString()
             )
             item.isEducationExperience() -> EducationalActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                item.clientRequestId
+                UUID.randomUUID().toString()
             )
             item.isSkill() -> SkillActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                item.clientRequestId
+                UUID.randomUUID().toString()
             )
             item.isAward() -> AwardActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                item.clientRequestId
+                UUID.randomUUID().toString()
             )
             item.isCertificate() -> CertificateActivity.start(
                 requireActivity(),
                 false,
                 item,
                 0,
-                item.clientRequestId
+                UUID.randomUUID().toString()
             )
         }
     }
@@ -279,23 +290,6 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
             }?.toMutableList()
         )
         treeList.add(0, copy)
-    }
-
-    private fun AttributeArrayQueryData.selfEvaluationFieldItem(): AttributeFieldItem {
-        findFirstFieldItem(fieldTree?.firstOrNull()?.fieldItems)?.let { return it }
-        val text = selfEvaluationText()
-        val fieldValue = text.takeIf { it.isNotBlank() }?.let {
-            mapOf(
-                "value" to it,
-                "displayText" to it
-            )
-        }
-        return AttributeFieldItem(
-            fieldCode = fieldTree?.firstOrNull()?.fieldCode ?: GROUP_SELF_EVALUATION,
-            fieldName = fieldTree?.firstOrNull()?.fieldName ?: displayTitle(),
-            fieldValue = fieldValue,
-            displayValue = text
-        )
     }
 
     private fun findFirstFieldItem(items: List<AttributeFieldItem>?): AttributeFieldItem? {
@@ -413,7 +407,14 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
             binding.tvDesc.visibility =
                 if (workContent?.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.root.setOnClickListener {
-                WorkActivity.start(requireActivity(), true, attributeData, position, attributeData.clientRequestId)
+                WorkActivity.start(
+                    requireActivity(),
+                    true,
+                    attributeData,
+                    position,
+                    UUID.randomUUID().toString(),
+                    type = WorkActivity.TYPE_ONLINE_RESUME
+                )
             }
         }
     }
@@ -446,7 +447,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
             binding.tvDesc.visibility =
                 if (workContent?.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.root.setOnClickListener {
-                ProjectActivity.start(requireActivity(), true, attributeData, position, attributeData.clientRequestId)
+                ProjectActivity.start(requireActivity(), true, attributeData, position, UUID.randomUUID().toString())
             }
         }
     }
@@ -477,7 +478,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
             binding.tvMajor.visibility = if (hasMajor) View.VISIBLE else View.GONE
             binding.v.visibility = if (hasTime && hasMajor) View.VISIBLE else View.GONE
             binding.root.setOnClickListener {
-                EducationalActivity.start(requireActivity(), true, attributeData, position, attributeData.clientRequestId)
+                EducationalActivity.start(requireActivity(), true, attributeData, position, UUID.randomUUID().toString())
             }
         }
     }
@@ -507,21 +508,21 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
                         true,
                         attributeData,
                         position,
-                        attributeData.clientRequestId
+                        UUID.randomUUID().toString()
                     )
                     GROUP_CERTIFICATES -> CertificateActivity.start(
                         requireActivity(),
                         true,
                         attributeData,
                         position,
-                        attributeData.clientRequestId
+                        UUID.randomUUID().toString()
                     )
                     else -> AwardActivity.start(
                         requireActivity(),
                         true,
                         attributeData,
                         position,
-                        attributeData.clientRequestId
+                        UUID.randomUUID().toString()
                     )
                 }
             }
