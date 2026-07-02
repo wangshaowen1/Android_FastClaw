@@ -241,7 +241,6 @@ class FlashNewLoginDialog : BaseBottomPushVMDialogFragment<DialogFlashNewLoginBi
                 PhoneNewBindActivity.start(requireActivity(), userData)
             }
             finishOnly()
-            ActivityUtils.finishActivity(LoginActivity::class.java)
         }
     }
 

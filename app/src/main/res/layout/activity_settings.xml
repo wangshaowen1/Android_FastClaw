@@ -46,6 +46,7 @@
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_ffffff_r12"
                     android:paddingHorizontal="16dp"
                     tools:ignore="UselessParent">
@@ -70,7 +71,6 @@
                 <RelativeLayout
                     singleClick="@{layout.clickHandler::onClick}"
                     android:id="@+id/rl1"
-                    android:layout_marginTop="16dp"
                     android:background="@drawable/bg_ffffff_r12"
                     android:paddingHorizontal="16dp"
                     android:layout_width="match_parent"
@@ -157,7 +157,7 @@
 
                 <RelativeLayout
                     singleClick="@{layout.clickHandler::onClick}"
-                    android:id="@+id/rl4"
+                    android:id="@+id/rlLogOut"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_ffffff_r12"
                     android:layout_width="match_parent"
