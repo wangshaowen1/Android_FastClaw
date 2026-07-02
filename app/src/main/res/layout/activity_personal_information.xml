@@ -78,6 +78,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/personal_information_name"
+                    app:formPlaceholderText="@string/personal_information_name_placeholder"
                     app:formValueText="@string/personal_information_name_value" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
@@ -85,6 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/gender"
+                    app:formPlaceholderText="@string/personal_information_gender_placeholder"
                     app:formValueText="@string/personal_information_gender_value" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
@@ -92,6 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/personal_information_phone"
+                    app:formPlaceholderText="@string/personal_information_phone_placeholder"
                     app:formValueText="@string/personal_information_phone_value" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
@@ -99,6 +102,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/personal_information_wechat"
+                    app:formPlaceholderText="@string/personal_information_wechat_placeholder"
                     app:formValueText="@string/personal_information_wechat_value" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
@@ -106,6 +110,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/personal_information_email"
+                    app:formPlaceholderText="@string/personal_information_email_placeholder"
                     app:formValueText="@string/personal_information_email_value" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
@@ -113,6 +118,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/personal_information_current_city"
+                    app:formPlaceholderText="@string/personal_information_current_city_placeholder"
                     app:formValueText="@string/personal_information_current_city_value" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
@@ -120,6 +126,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/personal_information_political_status"
+                    app:formPlaceholderText="@string/personal_information_political_status_placeholder"
                     app:formValueText="@string/personal_information_political_status_value" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
@@ -127,6 +134,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/personal_information_marital_status"
+                    app:formPlaceholderText="@string/personal_information_marital_status_placeholder"
                     app:formValueText="@string/personal_information_marital_status_value" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.mine.fragment
 
 import android.view.View
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
@@ -8,6 +9,7 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
+import com.shiyuan.fastclaw.common.ext.load
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
@@ -53,6 +55,14 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
 
         private const val FIELD_START_DATE = "startDate"
         private const val FIELD_END_DATE = "endDate"
+        private const val FIELD_AVATAR_URL = "avatarUrl"
+        private const val FIELD_NAME = "name"
+        private const val FIELD_GENDER = "gender"
+        private const val FIELD_AGE = "age"
+        private const val FIELD_PHONE = "phone"
+        private const val FIELD_WECHAT_ID = "wechatId"
+        private const val FIELD_EMAIL = "email"
+        private const val FIELD_LOCATION = "location"
         private const val FIELD_POSITION = "position"
         private const val FIELD_COMPANY_NAME = "companyName"
         private const val FIELD_WORK_CONTENT = "workContent"
@@ -90,7 +100,10 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
         }
         updateResumeInfo(emptyList())
         binding.ivProfileEdit.setOnSingleClickListener {
-            PersonalInformationActivity.start(requireActivity())
+            PersonalInformationActivity.start(
+                requireActivity(),
+                mRealVM.onlineResumeBaseInfo.value.orEmpty()
+            )
         }
     }
 
@@ -104,9 +117,48 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
     }
 
     private fun updateBaseResumeInfo(data: List<AttributeArrayQueryData>) {
+        val avatarUrl = data.findBaseFieldValue(FIELD_AVATAR_URL)
+        if (avatarUrl.isBlank()) {
+            binding.ivAvatar.setImageResource(R.drawable.ic_home_header_avatar)
+        } else {
+            binding.ivAvatar.load(avatarUrl, R.drawable.ic_home_header_avatar)
+        }
 
+        binding.tvName.text = data.findBaseFieldValue(FIELD_NAME).ifBlank { "暂无姓名" }
 
+        binding.tvTip.text = listOf(
+            data.findBaseFieldValue(FIELD_GENDER),
+            data.findBaseFieldValue(FIELD_AGE),
+            data.findBaseFieldValue(FIELD_LOCATION)
+        ).filter { it.isNotBlank() }.joinToString(" | ")
+        binding.tvTip.visibility = if (binding.tvTip.text.isNullOrBlank()) View.GONE else View.VISIBLE
 
+        bindBaseContact(
+            binding.layoutProfilePhone,
+            binding.tvProfilePhone,
+            data.findBaseFieldValue(FIELD_PHONE)
+        )
+        bindBaseContact(
+            binding.layoutProfileEmail,
+            binding.tvProfileEmail,
+            data.findBaseFieldValue(FIELD_EMAIL)
+        )
+        bindBaseContact(
+            binding.layoutProfileWechat,
+            binding.tvProfileWechat,
+            data.findBaseFieldValue(FIELD_WECHAT_ID)
+        )
+
+        val hasContact = binding.layoutProfilePhone.visibility == View.VISIBLE ||
+                binding.layoutProfileEmail.visibility == View.VISIBLE ||
+                binding.layoutProfileWechat.visibility == View.VISIBLE
+        binding.layoutProfileContacts.visibility = if (hasContact) View.VISIBLE else View.GONE
+    }
+
+    private fun bindBaseContact(layout: View, textView: TextView, value: String) {
+        val show = value.isNotBlank()
+        layout.visibility = if (show) View.VISIBLE else View.GONE
+        textView.text = value
     }
 
     private fun updateResumeInfo(data: List<AttributeArrayQueryData>) {
@@ -139,109 +191,23 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Unde
             ?: attributeGroupCode.orEmpty()
     }
 
-    private fun mockResumeInfoData(): List<AttributeArrayQueryData> {
-        return listOf(
-            mockResumeInfoItem(
-                GROUP_SELF_EVALUATION,
-                "自我评价",
-                mutableListOf(
-                    AttributeFieldTree(
-                        displayValue = "具备产品体验设计和移动端页面落地经验，关注细节与协作效率。"
-                    )
-                )
-            ),
-            mockResumeInfoItem(
-                GROUP_WORK_EXPERIENCE,
-                "工作经历",
-                mockTree(
-                    titleCode = FIELD_COMPANY_NAME,
-                    titleValue = "深圳市乘海科技有限公司",
-                    subtitleCode = FIELD_POSITION,
-                    subtitleValue = "UI设计师",
-                    descCode = FIELD_WORK_CONTENT,
-                    descValue = "负责产品体验设计、视觉规范维护与核心页面改版。",
-                    statusCode = INCOMPLETE
-                )
-            ),
-            mockResumeInfoItem(
-                GROUP_PROJECT_EXPERIENCE,
-                "项目经历",
-                mockTree(
-                    titleCode = FIELD_PROJECT_NAME,
-                    titleValue = "快龙虾在线简历",
-                    subtitleCode = FIELD_POSITION,
-                    subtitleValue = "产品设计",
-                    descCode = FIELD_RESPONSIBILITIES,
-                    descValue = "搭建简历信息结构，优化编辑与补充路径。"
-                )
-            ),
-            mockResumeInfoItem(
-                GROUP_EDUCATION_INFO,
-                "教育经历",
-                mockTree(
-                    titleCode = FIELD_SCHOOL_NAME,
-                    titleValue = "北京大学",
-                    subtitleCode = FIELD_MAJOR,
-                    subtitleValue = "计算机科学"
-                )
-            ),
-            mockResumeInfoItem(
-                GROUP_SKILLS,
-                "技能",
-                mockTree(FIELD_SKILL_NAME, "Figma / Android XML / Kotlin")
-            ),
-            mockResumeInfoItem(
-                GROUP_AWARDS,
-                "奖项",
-                mockTree(FIELD_AWARD_NAME, "优秀项目奖")
-            ),
-            mockResumeInfoItem(
-                GROUP_CERTIFICATES,
-                "证书",
-                mockTree(FIELD_CERTIFICATE_NAME, "产品设计认证")
-            )
-        )
+    private fun List<AttributeArrayQueryData>.findBaseFieldValue(code: String): String {
+        return firstOrNull { it.attributeGroupCode == code || it.metaCode == code }
+            ?.baseDisplayText()
+            .orEmpty()
     }
 
-    private fun mockResumeInfoItem(
-        code: String,
-        title: String,
-        fieldTree: MutableList<AttributeFieldTree>? = null
-    ): AttributeArrayQueryData {
-        return AttributeArrayQueryData(
-            attributeGroupCode = code,
-            attributeGroupName = title,
-            fieldTree = fieldTree
-        )
+    private fun AttributeArrayQueryData.baseDisplayText(): String {
+        displayValue?.takeIf { it.isNotBlank() }?.let { return it }
+        val rawValue = value ?: return ""
+        if (rawValue is Map<*, *>) {
+            rawValue["displayText"]?.toString()?.takeIf { it.isNotBlank() }?.let { return it }
+            rawValue["name"]?.toString()?.takeIf { it.isNotBlank() }?.let { return it }
+            rawValue["value"]?.toString()?.takeIf { it.isNotBlank() }?.let { return it }
+        }
+        return rawValue.toString()
     }
 
-    private fun mockTree(
-        titleCode: String,
-        titleValue: String,
-        subtitleCode: String? = null,
-        subtitleValue: String? = null,
-        descCode: String? = null,
-        descValue: String? = null,
-        statusCode: String? = null
-    ): MutableList<AttributeFieldTree> {
-        val fieldItems = mutableListOf(
-            AttributeFieldItem(fieldCode = titleCode, displayValue = titleValue),
-            AttributeFieldItem(fieldCode = FIELD_START_DATE, displayValue = "2021.09"),
-            AttributeFieldItem(fieldCode = FIELD_END_DATE, displayValue = "2024.05")
-        )
-        if (subtitleCode != null) {
-            fieldItems.add(AttributeFieldItem(fieldCode = subtitleCode, displayValue = subtitleValue))
-        }
-        if (descCode != null) {
-            fieldItems.add(AttributeFieldItem(fieldCode = descCode, displayValue = descValue))
-        }
-        return mutableListOf(
-            AttributeFieldTree(
-                statusCode = statusCode,
-                fieldItems = fieldItems
-            )
-        )
-    }
 
     private fun handleEditIconClick(item: AttributeArrayQueryData) {
         if (item.isSelfEvaluation()) {

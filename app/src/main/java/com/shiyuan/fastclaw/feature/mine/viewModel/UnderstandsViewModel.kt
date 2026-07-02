@@ -174,19 +174,7 @@ class UnderstandsViewModel : AppRepositoryViewModel<AppRepository>() {
                             choiceOption("MASSES", "群众")
                         )
                     ),
-                    mockField(
-                        "maritalStatus",
-                        "婚姻状况",
-                        "SINGLE_CHOICE",
-                        "未婚",
-                        value = choice("UNMARRIED", "未婚"),
-                        options = listOf(
-                            choiceOption("UNMARRIED", "未婚"),
-                            choiceOption("MARRIED", "已婚"),
-                            choiceOption("WIDOWED", "丧偶"),
-                            choiceOption("DIVORCED", "离异")
-                        )
-                    )
+
                 )
             ),
             OnlineResumeInfoSection(
@@ -502,4 +490,3 @@ class UnderstandsViewModel : AppRepositoryViewModel<AppRepository>() {
         private const val SECTION_BASE_INFO = "baseInfo"
     }
 }
-
