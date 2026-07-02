@@ -153,11 +153,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
     /**
      * 使用第三方授权信息登录，目前新版入口只接微信登录。
      */
-    fun loginByThird(
-        loginType: Int,
-        map: MutableMap<String, String>?,
-        onLogin: ((UserHomeData?) -> Unit)?
-    ) {
+    fun loginByThird(loginType: Int, map: MutableMap<String, String>?, onLogin: ((UserHomeData?) -> Unit)?) {
         setLoading(true)
         launchWithLoading(false, block = {
             val body = LoginByThirdBody(
