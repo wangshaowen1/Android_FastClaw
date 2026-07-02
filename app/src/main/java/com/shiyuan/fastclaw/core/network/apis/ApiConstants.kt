@@ -64,6 +64,11 @@ object ApiConstants {
      */
     const val BIND_PHONE = "user/phone/action/bind"
 
+    /**
+     * 三方登录后绑定手机号
+     */
+    const val BIND_MOBILE = "/api/candidate/auth/bindMobile"
+
 
     /**
      * 手机登录接口--闪验方式

@@ -55,6 +55,8 @@ data class UserHomeData(
     val userTag: Int? = null,
     //访问令牌
     val token: String? = null,
+    //是否绑定手机号 0=未绑定 1=已绑定
+    val bindMobile: Int? = null,
 ) : Parcelable {
 
     //新注册

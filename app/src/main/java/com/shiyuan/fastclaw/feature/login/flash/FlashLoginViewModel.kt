@@ -125,7 +125,7 @@ class FlashLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      * @param loginType 3-微信登录 4-qq登录 5-苹果登录
      * @param map 第三方授权信息
      */
-    fun loginByThird(loginType: Int, map: MutableMap<String, String>?, onLogin: ((UserHomeData?) -> Unit)?) {
+    fun loginByThird(loginType: Int, map: MutableMap<String, String>?, onLogin: ((Boolean, UserHomeData?) -> Unit)?) {
         setLoading(true)
         launchWithLoading(false, block = {
             val body = LoginByThirdBody(
@@ -137,9 +137,15 @@ class FlashLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                 inviteAttribution = Config.get().inviteAttribution,
             )
             response(mRepo.loginByThird(body), result = {
-                User.get().updateFrom(data)
-                SignUtils.signIn()
-                onLogin?.invoke(data)
+                val userData = data
+                if (userData?.bindMobile == 1) {
+                    User.get().updateFrom(userData)
+                    SignUtils.signIn()
+                    userData.loginToast()
+                    onLogin?.invoke(false, userData)
+                } else {
+                    onLogin?.invoke(true, userData)
+                }
             }, error = { this?.msg?.showToast() })
         }, onError = { showToast(R.string.toast_sign_in_fail) })
     }

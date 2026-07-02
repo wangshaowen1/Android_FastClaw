@@ -15,6 +15,7 @@ import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.databinding.DialogFlashLoginBinding
 import com.shiyuan.fastclaw.feature.login.LoginActivity
+import com.shiyuan.fastclaw.feature.login.phone.PhoneNewBindMobileActivity
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
@@ -196,7 +197,10 @@ class FlashLoginDialogFragment :
                 return
             }
         }
-        mRealVM.loginByThird(loginType, data) {
+        mRealVM.loginByThird(loginType, data) { needBindMobile, userData ->
+            if (needBindMobile && userData != null) {
+                PhoneNewBindMobileActivity.start(requireActivity(), userData)
+            }
             shouldDismiss()
         }
     }

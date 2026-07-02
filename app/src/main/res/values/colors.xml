@@ -506,6 +506,7 @@
 
     <!-- Phone Login 页面专用色值 -->
     <color name="login_bg">#F5F8FC</color>
+    <color name="color_f7faff">#F7FAFF</color>
     <color name="login_input_bg">#FFFFFF</color>
     <color name="login_input_hint">#999999</color>
     <color name="login_input_divider">#1A000000</color>
