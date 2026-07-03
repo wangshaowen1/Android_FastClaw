@@ -160,15 +160,19 @@ object ApiConstants {
      */
     const val QUERY_WALLET_INFO = "trade/user/wallet/current"
 
-    /**
+/*
+    */
+/**
      * App转发H5支付-微信下单
-     */
+     *//*
+
     const val H5_PAY_WX = "app/forward/h5/createAppWechat"
+*/
 
     /**
-     * App转发H5支付-支付宝下单
+     * App转发H5支付-支付宝 微信下单
      */
-    const val H5_PAY_ALIPAY = "app/forward/h5/createAppAliPay"
+    const val H5_PAY = "/api/candidate/app/interviewPassPackage/pay/create"
 
     /**
      * 创建app微信支付订单

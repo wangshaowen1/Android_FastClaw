@@ -38,6 +38,7 @@ import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
+import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 
 /**
  * *****************************************
@@ -183,12 +184,14 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
              R.id.layout_mine_bj,
               R.id.tv_name -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    OnlineResumeActivity.start(requireActivity(),0)
+                    //OnlineResumeActivity.start(requireActivity(),0)
+                    SimpleBrowserActivity.launch(requireActivity(),"http://192.168.10.23:5555/pages/passPackage/resumeUpload")
                 }
             }
             R.id.layout_mine_ph -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    OnlineResumeActivity.start(requireActivity(),1)
+                    SimpleBrowserActivity.launch(requireActivity(),"http://192.168.10.23:5555/pages/passPackage/jobUpload")
+                  //  OnlineResumeActivity.start(requireActivity(),1)
                 }
             }
 
