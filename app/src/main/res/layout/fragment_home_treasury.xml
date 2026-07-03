@@ -222,6 +222,110 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/card_package"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="@dimen/spacing_m"
+                android:background="@drawable/bg_home_treasury_card2"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/spacing_m"
+                android:paddingVertical="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <ImageView
+                        android:layout_width="53dp"
+                        android:layout_height="53dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/img_home_treasury_package" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="9dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/home_treasury_mock_package"
+                            android:textColor="@color/color_96_000000"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:lineSpacingExtra="1dp"
+                            android:text="@string/home_treasury_mock_desc"
+                            android:textColor="@color/color_90_000000"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1.5dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="@drawable/bg_home_treasury_divider_dash" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_package_action"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="102dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/bg_home_treasury_blue_btn2"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/home_treasury_use_now"
+                            android:textColor="@color/color_6364EC"
+                            android:textSize="15sp" />
+
+                        <ImageView
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_home_treasury_arrow_blue2" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/card_interview"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="match_parent"
