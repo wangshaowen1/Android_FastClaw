@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
 import com.google.gson.annotations.SerializedName
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.core.network.apis.entity.KeyValueInfo
 
 
@@ -95,7 +96,7 @@ class AppConfigData {
     val userVipProtocolUrl: String? = null
 
     //1v1客服信息
-    val customerServiceInfo: CustomerServiceInfo = CustomerServiceInfo( customerServiceJmpUrl = "https://work.weixin.qq.com/kfid/kfca604d0298fa08862",enterpriseId  = "kfca604d0298fa08862")
+    val customerServiceInfo: CustomerServiceInfo = CustomerServiceInfo(BuildConfig.WX_KF_URL,BuildConfig.WX_KF_CORPID)
 
     //字数输入限制相关
     val shortDramas: TextLimitNum? = null
