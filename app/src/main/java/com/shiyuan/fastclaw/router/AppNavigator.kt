@@ -5,6 +5,7 @@ import com.blankj.utilcode.util.AppUtils
 import com.shiyuan.fastclaw.common.Constant
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.feature.login.flash.FlashLoginDialogFragment
 import com.shiyuan.fastclaw.feature.login.flash.FlashNewLoginDialog
 import com.shiyuan.fastclaw.feature.login.flash.PhoneLoginDialogActivity
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginActivity
@@ -49,11 +50,15 @@ object AppNavigator {
         isFullScreen: Boolean = false
     ) {
         val activity = topActivity ?: return
-        FlashNewLoginDialog.show(
+        FlashLoginDialogFragment.show(
+            (activity as AppCompatActivity).supportFragmentManager,
+            showToast,
+            checkedPolicy = false)
+        /*FlashNewLoginDialog.show(
             showToast = showToast,
             checkedPolicy = false,
             manager = (activity as AppCompatActivity).supportFragmentManager
-        )
+        )*/
 
         //PhoneLoginActivity.start(showToast = showToast, checkedPolicy = false)
 /*        if (Constant.SDKConfiguration.IS_SHOW_WE_CHAT.not()) {

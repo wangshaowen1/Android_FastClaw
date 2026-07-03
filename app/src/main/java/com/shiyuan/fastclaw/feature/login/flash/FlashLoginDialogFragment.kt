@@ -15,6 +15,7 @@ import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.databinding.DialogFlashLoginBinding
 import com.shiyuan.fastclaw.feature.login.LoginActivity
+import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewBindActivity
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel
@@ -24,6 +25,7 @@ import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
+import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
 import java.lang.ref.WeakReference
 
@@ -31,8 +33,7 @@ import java.lang.ref.WeakReference
  * 闪验登录入口
  * @author xiaoowuu
  */
-class FlashLoginDialogFragment :
-    BaseVMDialogFragment<DialogFlashLoginBinding, FlashLoginViewModel>(),
+class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, FlashLoginViewModel>(),
     FlashLoginManager.Listener, ShareManager.UmengLoginListener {
 
     companion object {
@@ -161,14 +162,7 @@ class FlashLoginDialogFragment :
      * 手机号登录
      */
     private fun loginByPhoneDialog(dismiss: Boolean) {
-        LoginActivity.checkedPolicy = FlashLoginManager.checkedPolicy
-        PhoneLoginDialog.show(
-            showToast = false,
-            checkedPolicy = FlashLoginManager.checkedPolicy,
-            manager = this.parentFragmentManager,
-            loginType = PhoneLoginViewModel.SHOW_VERIFY_CODE_LOGIN
-        )
-        //PhoneLoginDialogActivity.start(requireActivity(), checkedPolicy = checkedPolicy)
+        PhoneNewLoginActivity.start(checkedPolicy = checkedPolicy)
         if (dismiss) {
             isCancelable = true
             shouldDismiss()
@@ -181,6 +175,16 @@ class FlashLoginDialogFragment :
     }
 
     override fun showPolicyDialog() {
+        PhoneNewPolicyDialog.show(
+            activity = topActivity,
+            operatorName = FlashLoginManager.operatorPolicyName,
+            operatorUrl = FlashLoginManager.operatorPolicyUrl
+        ) { agree ->
+            if (agree) {
+                checkedPolicy = true
+                FlashLoginManager.agreePolicyAndLogin()
+            }
+        }
     }
 
     override fun onStart(platform: SHARE_MEDIA?) {

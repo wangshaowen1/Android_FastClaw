@@ -2,7 +2,6 @@ package com.shiyuan.fastclaw.core.manager
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.ViewGroup.LayoutParams
 import android.widget.LinearLayout
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.ScreenUtils
@@ -13,7 +12,6 @@ import com.nhsd.basic.ext.dp2px
 import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResDrawable
 import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.BuildConfig
@@ -51,7 +49,7 @@ object FlashLoginManager {
         OneKeyLoginManager.getInstance().setActionListener { type, code, message ->
             //type=3 ，一键登录点击事件，code 分为 0,1（0 为协议未勾选时，1 为协议勾选时）
             if (type == 3 && code == 0) {
-                R.string.please_check_policy_below.getResString().showToast()
+                FlashLoginManager.listener?.get()?.showPolicyDialog()
             } else if (type == 2 && code == 1) {
                 //type=2 ，checkbox 点击事件，code 分为 0,1（0 为未选中，1 为选中）
             }
@@ -73,11 +71,11 @@ object FlashLoginManager {
         val screenWidth = ScreenUtils.getScreenWidth()
         val width = SizeUtils.px2dp(screenWidth.toFloat())
         val navHeight = topActivity?.let { SizeUtils.px2dp(ViewUtils.getNavigationBarHeight(it).toFloat()) }
-        val height = width / 375f * (352 + (navHeight ?: 0))
+        val height = width / 375f * (337 + (navHeight ?: 0))
         val customView = LayoutShanyanCustomBinding.inflate(LayoutInflater.from(App.instance))
         binding = customView
         binding?.bg?.layoutParams?.height = height.toInt().dp
-        customView.container.layoutParams = LinearLayout.LayoutParams(screenWidth, LayoutParams.WRAP_CONTENT)
+        customView.container.layoutParams = LinearLayout.LayoutParams(screenWidth, height.toInt().dp)
         singleClick(customView.btnClose) {
             finishAuthActivity()
             onCancel.invoke()
@@ -96,47 +94,44 @@ object FlashLoginManager {
             //logo图标
             .setLogoHidden(true)
             //号码栏
-            .setNumberColor(R.color.text_color_1_dark.getResColor())
-            .setNumFieldOffsetY(78)
+            .setNumberColor(R.color.color_96_000000.getResColor())
+            .setNumFieldOffsetY(27)
             .setNumberSize(24)
             .setNumberBold(true)
             //登录按钮（默认高度：46dp）
-            .setLogBtnImgPath(R.drawable.btn_common_normal.getResDrawable())
-            .setLogBtnText("本机一键登录")
-            .setLogBtnTextSize(16)
-            .setLogBtnTextColor(R.color.text_color_3_dark.getResColor())
+            .setLogBtnImgPath(R.drawable.bg_2f6bff_r100.getResDrawable())
+            .setLogBtnText(R.string.sim_card_quick_login.getResString())
+            .setLogBtnTextSize(15)
+            .setLogBtnTextColor(R.color.white.getResColor())
             .setLogBtnTextBold(true)
-            .setLogBtnWidth(291)
-            .setLogBtnHeight(50)
-            .setLogBtnOffsetY(146)
+            .setLogBtnWidth(327)
+            .setLogBtnHeight(48)
+            .setLogBtnOffsetY(81)
             //其他登录
             .addCustomView(customView.root, false, false, null)
             //隐私栏
             .setAppPrivacyOne(R.string.tvSYUserService.getResString(), Config.get().serviceUrl)
             .setAppPrivacyTwo(R.string.tvSYPrivateService.getResString(), Config.get().privacyUrl)
             .setPrivacySmhHidden(false)
-            .setPrivacyTextSize(12)
-            .setAppPrivacyColor(R.color.text_color_3_dark.getResColor(), R.color.text_color_1_dark.getResColor())
-            .setPrivacyOffsetX(30)
-            .setPrivacyOffsetY(274)
+            .setPrivacyTextSize(11)
+            .setAppPrivacyColor(R.color.color_90_000000.getResColor(), R.color.color_2f6bff.getResColor())
+            .setPrivacyOffsetX(24)
+            .setPrivacyOffsetY(185)
             .setPrivacyState(false)
-            .setCheckedImgPath(R.drawable.icon_choose_checked.getResDrawable())
-            .setUncheckedImgPath(R.drawable.icon_choose_normal_dark.getResDrawable())
-            .setCheckBoxWH(16, 16)
-            .setcheckBoxOffsetXY(5, 5)
-            .setCheckBoxMargin(5, 5, 5, 5)
+            .setCheckedImgPath(R.drawable.ic_flash_new_check_checked.getResDrawable())
+            .setUncheckedImgPath(R.drawable.ic_flash_new_check_normal.getResDrawable())
+            .setCheckBoxWH(14, 14)
+            .setcheckBoxOffsetXY(0, 6)
+            .setCheckBoxMargin(0, 0, 0, 0)
             .setCheckBoxTipDisable(true)
-            .setPrivacyText("登录即代表同意和", "和", "以及", "", "")
-            .setPrivacyGravityHorizontalCenter(true)
+            .setPrivacyText("已阅读并同意", "、", "以及", "", "")
+            .setPrivacyGravityHorizontalCenter(false)
             .setPrivacyOffsetGravityLeft(true)
             .setPrivacyActivityEnabled(false)
             .setOperatorPrivacyAtLast(true)
-            .setPrivacyTextBold(true)
+            .setPrivacyTextBold(false)
             //运营商slogan（**提供认证服务）
-            .setSloganHidden(false)
-            .setSloganOffsetY(112)
-            .setSloganTextSize(12)
-            .setSloganTextColor(R.color.text_color_3_dark.getResColor())
+            .setSloganHidden(true)
             //底部弹窗
             .setDialogTheme(true, width, height.toInt(), 0, 0, true)
             .build()

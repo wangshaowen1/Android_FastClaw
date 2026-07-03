@@ -26,23 +26,23 @@
     <TextView
         android:id="@+id/tvContent"
         android:layout_width="0dp"
-        android:layout_height="38dp"
+        android:layout_height="42dp"
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:lineSpacingExtra="0dp"
         android:textColor="@color/color_90_000000"
-        android:textSize="13sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        tools:text="我已阅读并同意《用户服务协议》、《隐私保护》和《服务条款》" />
+        tools:text="已阅读并同意 服务协议、隐私政策 以及中国移动认证服务条款" />
 
     <TextView
         android:id="@+id/btnAgree"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_336fff_r100"
+        android:background="@drawable/bg_2f6bff_r100"
         android:gravity="center"
         android:text="@string/agree"
         android:textColor="@color/white"
