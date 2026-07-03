@@ -736,10 +736,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
         }
         return when (payload?.reportStatus) {
-            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_INTERVIEW_PASS_PACKAGE_REPORT_FAILED
-            REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_INTERVIEW_PASS_PACKAGE_REPORT_DONE
-            REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_INTERVIEW_PASS_PACKAGE_REPORT_GENERATING
-            else -> ClawAgentMsgAdapter.TYPE_INTERVIEW_PASS_PACKAGE_REPORT_GENERATING
+            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_PASS_PACKAGE_REPORT_FAILED
+            REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_PASS_PACKAGE_REPORT_DONE
+            REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_PASS_PACKAGE_REPORT_GENERATING
+            else -> ClawAgentMsgAdapter.TYPE_PASS_PACKAGE_REPORT_GENERATING
         }
     }
 

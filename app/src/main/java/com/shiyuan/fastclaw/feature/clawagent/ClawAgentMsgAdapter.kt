@@ -196,17 +196,17 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                 }
             }) { h, item -> h.bind(item) }
         // 面试通关包报告卡：生成中
-        register(TYPE_INTERVIEW_PASS_PACKAGE_REPORT_GENERATING,
+        register(TYPE_PASS_PACKAGE_REPORT_GENERATING,
             { i, p -> AgentPassPackageReportGeneratingViewHolder(ItemMsgAgentPassPackageReportGeneratingBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 面试通关包报告卡：失败
-        register(TYPE_INTERVIEW_PASS_PACKAGE_REPORT_FAILED,
+        register(TYPE_PASS_PACKAGE_REPORT_FAILED,
             { i, p ->
                 AgentPassPackageReportFailedViewHolder(ItemMsgAgentPassPackageReportFailedBinding.inflate(i, p, false)).apply {
                     onPassPackageRetryClickListener = { item, action, data -> onPassPackageRetryClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 面试通关包报告卡：成功
-        register(TYPE_INTERVIEW_PASS_PACKAGE_REPORT_DONE,
+        register(TYPE_PASS_PACKAGE_REPORT_DONE,
             { i, p ->
                 AgentPassPackageReportDoneViewHolder(ItemMsgAgentPassPackageReportDoneBinding.inflate(i, p, false)).apply {
                     onPassPackageDoneClickListener = { item, action, data -> onPassPackageDoneClickAction(item, action, data) }
@@ -408,13 +408,13 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         const val TYPE_TEXT_TIP = 24
 
         /** 面试通关包报告 - 生成中 */
-        const val TYPE_INTERVIEW_PASS_PACKAGE_REPORT_GENERATING = 25
+        const val TYPE_PASS_PACKAGE_REPORT_GENERATING = 25
 
         /** 面试通关包报告 - 生成失败 */
-        const val TYPE_INTERVIEW_PASS_PACKAGE_REPORT_FAILED = 26
+        const val TYPE_PASS_PACKAGE_REPORT_FAILED = 26
 
         /** 面试通关包报告 - 生成成功 */
-        const val TYPE_INTERVIEW_PASS_PACKAGE_REPORT_DONE = 27
+        const val TYPE_PASS_PACKAGE_REPORT_DONE = 27
     }
 
 }
