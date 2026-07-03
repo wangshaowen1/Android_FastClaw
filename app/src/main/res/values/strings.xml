@@ -598,6 +598,7 @@
     <string name="flash_new_account_terms">账号服务须知</string>
     <string name="company_backcheck">公司背调</string>
     <string name="mock_interview">模拟面试</string>
+    <string name="interview_pass_packet">面试通关包</string>
     <string name="login_direct">直接登录</string>
     <string name="prompt">提示</string>
 

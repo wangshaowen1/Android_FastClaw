@@ -211,6 +211,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     )
                 }
             }
+            R.id.layout_pass -> { //面试通关包
+
+             }
         }
     }
 

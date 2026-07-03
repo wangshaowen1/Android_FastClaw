@@ -201,6 +201,36 @@
 
             </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
 
+            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                singleClick="@{layout.clickHandler::onClick}"
+                android:id="@+id/layout_pass"
+                android:layout_width="110dp"
+                android:layout_height="34dp"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:layout_marginBottom="12dp"
+                app:background_normalColor="@color/color_ffffff"
+                app:layout_constraintBottom_toTopOf="@id/layout_send"
+                app:layout_constraintStart_toEndOf="@id/layout_interview"
+                app:super_corner="17dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/icon_anent_interview_pass" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:drawablePadding="3dp"
+                    android:gravity="center"
+                    android:text="@string/interview_pass_packet"
+                    android:textColor="@color/color_90_000000"
+                    android:textSize="13sp" />
+
+            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
             <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
                 android:id="@+id/layout_send"
                 android:layout_width="match_parent"
