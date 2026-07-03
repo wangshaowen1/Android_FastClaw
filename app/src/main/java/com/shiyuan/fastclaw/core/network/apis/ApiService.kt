@@ -31,6 +31,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.FeedbackBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImgUrlBody
+import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.core.network.apis.request.InviteShareInfoBody
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
@@ -83,6 +84,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheck
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundRegenerateSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
 import com.shiyuan.fastclaw.core.network.apis.response.InviteStatsData
@@ -372,6 +374,14 @@ interface ApiService {
 
     @POST(ApiConstants.JD_RESUME_MATERIAL_QUALITY_RESULT)
     suspend fun jdMaterialQualityResult(@Body body: JdMaterialQualityBody): ApiResponse<ResumeData>
+
+    /**
+     * 查询通关包简历状态
+     */
+    @POST(ApiConstants.INTERVIEW_PASS_PACKAGE_RESUME_STATUS)
+    suspend fun queryInterviewPassPackageResumeStatus(
+        @Body body: InterviewPassPackageResumeStatusBody
+    ): ApiResponse<InterviewPassPackageResumeStatusData?>
 
     @POST(ApiConstants.INTERVIEW_REPORT)
     suspend fun interviewReport(@Body body: InterviewReportData): ApiResponse<ReportData>

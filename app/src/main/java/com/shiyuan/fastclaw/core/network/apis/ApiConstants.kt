@@ -149,6 +149,7 @@ object ApiConstants {
 
     const val JD_RESUME_MATERIAL_QUALITY = "/api/candidate/app/interviewReport/jdMaterialQuality/check"
     const val JD_RESUME_MATERIAL_QUALITY_RESULT = "/api/candidate/app/interviewReport/jdMaterialQuality/result/query"
+    const val INTERVIEW_PASS_PACKAGE_RESUME_STATUS = "/api/candidate/app/interviewPassPackage/resume/status"
     const val INTERVIEW_REPORT_LIST_QUERY = "/api/candidate/app/myReport/report/list/query"
     const val INTERVIEW_REPORT = "/api/candidate/app/interviewReport/report/submit"
     const val INTERVIEW_REPORT_RESULT = "/api/candidate/app/interviewReport/report/status/query"

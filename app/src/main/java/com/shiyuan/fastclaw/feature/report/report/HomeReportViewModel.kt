@@ -17,9 +17,11 @@ import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
+import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
@@ -50,6 +52,8 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
     val resumeListData = MutableLiveData<ResumeListData?>()
 
     val resumeUploadResult = MutableLiveData<ResumeUploadSubmitMyData?>()
+
+    val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
 
     val selectIndex = MutableLiveData<Int>(0)
 
@@ -187,6 +191,20 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
             } else {
                 "上传失败".showToast()
             }
+        }
+    }
+
+    fun queryInterviewPassPackageResumeStatus() {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.queryInterviewPassPackageResumeStatus(
+                    InterviewPassPackageResumeStatusBody()
+                )
+            },
+            showLoading = true,
+            showToastError = true,
+        ) {
+            interviewPassPackageResumeStatus.postValue(this.data)
         }
     }
 

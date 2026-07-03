@@ -10,11 +10,8 @@ import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
-import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
-import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.FragmentHomeTreasuryBinding
-import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -24,6 +21,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
     override fun onPrepareView() {
         super.onPrepareView()
         setDailyText()
+        observePassPackageResumeStatus()
     }
 
     private fun setDailyText() {
@@ -44,6 +42,20 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         }
     }
 
+    private fun observePassPackageResumeStatus() {
+        mRealVM.interviewPassPackageResumeStatus.observe(this) { data ->
+            openPassPackage(data?.resumeCheckId)
+        }
+    }
+
+    private fun openPassPackage(resumeCheckId: Long?) {
+        val url = if (resumeCheckId == null) {
+            Constants.PASS_PACKAGE_RESUME_UPLOAD_URL
+        } else {
+            "${Constants.PASS_PACKAGE_JOB_UPLOAD_URL}?resumeCheckId=$resumeCheckId"
+        }
+        SimpleBrowserActivity.launch(requireActivity(), url)
+    }
 
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
@@ -61,6 +73,12 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
                 if (!AppNavigator.checkLoginIntercepted(true)) {
                     FlowEventBus.postSync(Events.CompanyInterviewEvent(1))
                     FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
+                }
+            }
+            R.id.card_package,
+            R.id.ll_package_action  -> {
+                if (!AppNavigator.checkLoginIntercepted(true)) {
+                    mRealVM.queryInterviewPassPackageResumeStatus()
                 }
             }
             R.id.ll_resume_check_tool-> {

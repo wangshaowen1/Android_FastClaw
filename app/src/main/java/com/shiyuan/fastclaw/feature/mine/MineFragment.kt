@@ -184,14 +184,12 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
              R.id.layout_mine_bj,
               R.id.tv_name -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    //OnlineResumeActivity.start(requireActivity(),0)
-                    SimpleBrowserActivity.launch(requireActivity(),"http://192.168.10.23:5555/pages/passPackage/resumeUpload")
+                   OnlineResumeActivity.start(requireActivity(),0)
                 }
             }
             R.id.layout_mine_ph -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    SimpleBrowserActivity.launch(requireActivity(),"http://192.168.10.23:5555/pages/passPackage/jobUpload")
-                  //  OnlineResumeActivity.start(requireActivity(),1)
+                    OnlineResumeActivity.start(requireActivity(),1)
                 }
             }
 
