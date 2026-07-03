@@ -181,7 +181,7 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
             }
             data.attributeGroupCode = sourceData.attributeGroupCode
             data.operation = if (isEdit) "UPDATE" else "CREATE"
-            data.instanceIndex = position.toLong()
+            data.instanceIndex =data.instanceIndex
             response(ApiFactory.apiService.onlineResumeAttributeSave(data), result = {
                 onResumeAttribute.postValue(this.data)
             }, error = { this?.msg?.showToast() })
@@ -193,6 +193,10 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
         if (attributeGroupCode.isNullOrBlank()) {
             "属性数据异常".showToast()
             return
+        }
+        val data = attributeData.fieldTree?.getOrNull(position) ?: run {
+            "属性数据异常".showToast()
+            return@onlineResumeAttributeDelete
         }
         launchWithLoading(true, block = {
             val body = mapOf(
