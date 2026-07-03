@@ -1,6 +1,5 @@
 package com.shiyuan.fastclaw.core.network.apis
 
-import com.shiyuan.fastclaw.core.model.H5PayInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.BannerInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.OrderStatusInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.PaymentData
@@ -83,6 +82,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundGenerate
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
+import com.shiyuan.fastclaw.core.network.apis.response.H5InterviewPassPackageRep
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.PassPackageStatusData
@@ -304,13 +304,13 @@ interface ApiService {
      * App转发H5支付-微信下单
      */
     @POST(ApiConstants.H5_PAY)
-    suspend fun h5PayWx(@Body body: H5PayInfo): ApiResponse<PaymentData?>
+    suspend fun h5PayWx(@Body body: Any?): ApiResponse<H5InterviewPassPackageRep?>
 
     /**
      * 购买会员-支付宝方式
      */
     @POST(ApiConstants.H5_PAY)
-    suspend fun h5PayAlipay(@Body body: H5PayInfo): ApiResponse<PaymentData?>
+    suspend fun h5PayAlipay(@Body body: Any?): ApiResponse<H5InterviewPassPackageRep?>
 
     /**
      * 创建app微信支付订单
