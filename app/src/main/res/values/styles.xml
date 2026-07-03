@@ -378,7 +378,7 @@
         <item name="android:windowAnimationStyle">@style/ScaleActivity</item>
     </style>
 
-    <style name="Theme.ActivityBottomDialogStyle" parent="AppTheme">
+    <style name="Theme.ActivityBottomDialogStyle" parent="AppTheme.Light">
         <!--背景透明-->
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsTranslucent">true</item>
@@ -386,7 +386,6 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:windowAnimationStyle">@style/BottomActivity</item>
         <item name="android:navigationBarColor">@android:color/white</item>
-        <item name="colorAccent">@color/color_121212</item>
     </style>
 
     <style name="roundStyle_r20">
