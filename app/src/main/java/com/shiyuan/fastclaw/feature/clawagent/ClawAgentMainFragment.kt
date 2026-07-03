@@ -16,7 +16,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
@@ -184,12 +183,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 binding.etSend.text = null
             }
             R.id.iv_agent_memory -> { //对你的理解
-                if(!AppNavigator.checkLoginIntercepted(false)){
+                if (!AppNavigator.checkLoginIntercepted(false)){
                     ShrimpUnderstandsActivity.start(requireActivity())
                 }
             }
             R.id.layout_back_check -> { //背景调查
-                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.sendAction(
                         desc = getString(R.string.company_backcheck),
@@ -201,7 +200,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             R.id.layout_interview -> { //模拟面试
-                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.sendAction(
                         desc = getString(R.string.mock_interview),
@@ -214,6 +213,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             R.id.layout_pass -> { //面试通关包
                 if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
                     mRealVM.queryInterviewPassPackageResumeStatus()
                 }
              }
@@ -311,7 +311,21 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mRealVM.startInterview(data?.entryMessageId, data?.entrySource, data?.resumeId)
             }
         }
-        // 模拟面试 - 面试报告
+        // 模拟面试 - 暂不需要
+        msgAdapter.onInterviewNotNeedClickAction = { item, action, data ->
+            if (!interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.sendAction(
+                    desc = action?.text.orEmpty(),
+                    actionData = AgentMsgAction(
+                        actionCode = action?.actionCode,
+                        sourceMessageId = item.id,
+                        actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
+                    )
+                )
+            }
+        }
+        // 模拟面试报告 - 面试报告
         msgAdapter.onInterviewDoneClickAction = { item, action, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
@@ -328,18 +342,21 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mRealVM.retryGenerateMockInterviewReport(data?.mockReportId, data?.interviewId)
             }
         }
-        // 模拟面试 - 暂不需要
-        msgAdapter.onInterviewNotNeedClickAction = { item, action, data ->
+        // 面试通关包 - 查看报告
+        msgAdapter.onPassPackageDoneClickAction = { item, action, data ->
+            if (!interceptIfStreaming() && action != null) {
+                forceScrollToBottom = true
+                /*SimpleBrowserActivity.launch(
+                    requireActivity(),
+                    MOCK_INTERVIEW_RESULT_URL + data?.interviewId + "&interview_mrId=" + data?.mockReportId
+                )*/
+            }
+        }
+        // 面试通关包 - 重新生成
+        msgAdapter.onPassPackageRetryClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
-                mRealVM.sendAction(
-                    desc = action?.text.orEmpty(),
-                    actionData = AgentMsgAction(
-                        actionCode = action?.actionCode,
-                        sourceMessageId = item.id,
-                        actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
-                    )
-                )
+                mRealVM.retryGeneratePassPackageReport(data?.packageId)
             }
         }
 

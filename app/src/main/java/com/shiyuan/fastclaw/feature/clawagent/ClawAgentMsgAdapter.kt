@@ -30,8 +30,12 @@ import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.PassPackageReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloadBean
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentPassPackageReportDoneBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentPassPackageReportFailedBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentPassPackageReportGeneratingBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTextTipBinding
@@ -40,6 +44,9 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundE
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportDoneViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportFailedViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportGeneratingViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPassPackageReportDoneViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPassPackageReportFailedViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPassPackageReportGeneratingViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewEntryViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewEntryUpgradeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportDoneViewHolder
@@ -100,6 +107,10 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     var onInterviewNotNeedClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
     /** 模拟面试报告 - 重新生成 */
     var onInterviewRetryClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
+    /** 面试通关包 - 查看报告 */
+    var onPassPackageDoneClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: PassPackageReportPayloadBean?) -> Unit = { _, _, _ -> }
+    /** 面试通关包 - 重新生成 */
+    var onPassPackageRetryClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: PassPackageReportPayloadBean?) -> Unit = { _, _, _ -> }
 
     init {
         // 用户消息（靠右气泡）
@@ -112,6 +123,22 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_WELCOME, { i, p -> AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 文本居中卡
         register(TYPE_TEXT_TIP, { i, p -> AgentTextTipViewHolder(ItemMsgAgentTextTipBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 核心补问卡
+        register(TYPE_QUESTION,
+            { i, p ->
+                AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
+                    onOptionClickListener = { item, option, queueId -> onQuestionOptionClickAction(item, option, queueId) }
+                    onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
+                    onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                }
+            }) { h, item -> h.bind(item) }
+        register(TYPE_TABLE_FORM,
+            { i, p ->
+                AgentTableFormViewHolder(ItemMsgAgentTableFormBinding.inflate(i, p, false)).apply {
+                    onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
+                    onSkipClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                }
+            }) { h, item -> h.bind(item) }
         // 公司背调入口卡
         register(TYPE_COMPANY_BACKGROUND_ENTRY,
             { i, p ->
@@ -168,20 +195,21 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                     onInterviewDoneClickListener = { item, action, data -> onInterviewDoneClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
-        // 核心补问卡
-        register(TYPE_QUESTION,
+        // 面试通关包报告卡：生成中
+        register(TYPE_PASS_PACKAGE_REPORT_GENERATING,
+            { i, p -> AgentPassPackageReportGeneratingViewHolder(ItemMsgAgentPassPackageReportGeneratingBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 面试通关包报告卡：失败
+        register(TYPE_PASS_PACKAGE_REPORT_FAILED,
             { i, p ->
-                AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
-                    onOptionClickListener = { item, option, queueId -> onQuestionOptionClickAction(item, option, queueId) }
-                    onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
-                    onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                AgentPassPackageReportFailedViewHolder(ItemMsgAgentPassPackageReportFailedBinding.inflate(i, p, false)).apply {
+                    onPassPackageRetryClickListener = { item, action, data -> onPassPackageRetryClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
-        register(TYPE_TABLE_FORM,
+        // 面试通关包报告卡：成功
+        register(TYPE_PASS_PACKAGE_REPORT_DONE,
             { i, p ->
-                AgentTableFormViewHolder(ItemMsgAgentTableFormBinding.inflate(i, p, false)).apply {
-                    onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
-                    onSkipClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                AgentPassPackageReportDoneViewHolder(ItemMsgAgentPassPackageReportDoneBinding.inflate(i, p, false)).apply {
+                    onPassPackageDoneClickListener = { item, action, data -> onPassPackageDoneClickAction(item, action, data) }
                 }
             }) { h, item -> h.bind(item) }
         // 历史简历确认卡
@@ -235,6 +263,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         if (holder is AgentThinkViewHolder) holder.startRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.startRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.startRotate()
+        if (holder is AgentPassPackageReportGeneratingViewHolder) holder.startRotate()
         if (holder is AgentMockInterviewEntryViewHolder) holder.startPersonEnterAnim()
     }
 
@@ -243,6 +272,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         if (holder is AgentThinkViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
+        if (holder is AgentPassPackageReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewEntryViewHolder) holder.stopPersonEnterAnim()
     }
 
@@ -250,6 +280,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         if (holder is AgentThinkViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
+        if (holder is AgentPassPackageReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewEntryViewHolder) holder.stopPersonEnterAnim()
         super.onViewRecycled(holder)
     }
@@ -375,6 +406,15 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 展示文本居中显示 */
         const val TYPE_TEXT_TIP = 24
+
+        /** 面试通关包报告 - 生成中 */
+        const val TYPE_PASS_PACKAGE_REPORT_GENERATING = 25
+
+        /** 面试通关包报告 - 生成失败 */
+        const val TYPE_PASS_PACKAGE_REPORT_FAILED = 26
+
+        /** 面试通关包报告 - 生成成功 */
+        const val TYPE_PASS_PACKAGE_REPORT_DONE = 27
     }
 
 }

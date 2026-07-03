@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="192dp"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="20dp"
+    app:background_normalColor="@color/color_70_ffffff"
+    app:super_corner="20dp">
+
+    <ImageView
+        android:id="@+id/iv_report_icon"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="5dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_mock_interview_report_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_report_title"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="@string/str_agent_interview_pass_package_report_title"
+        android:textColor="@color/color_90_000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/iv_report_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_report_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_report_icon" />
+
+    <View
+        android:id="@+id/v_report_divider"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_marginTop="16dp"
+        android:background="@color/color_10_000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_report_icon" />
+
+    <TextView
+        android:id="@+id/tv_score_title"
+        android:layout_width="181dp"
+        android:layout_height="23dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="@string/str_agent_interview_pass_package_score_title"
+        android:textColor="@color/color_000000"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_report_divider" />
+
+    <TextView
+        android:id="@+id/tv_report_time"
+        android:layout_width="181dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:textColor="@color/color_75_3c3c43"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_score_title"
+        tools:text="报告时间：2026/05/16 13:30:12" />
+
+    <TextView
+        android:id="@+id/tv_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:textColor="@color/color_2f6bff"
+        android:textSize="42sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/tv_score_unit"
+        app:layout_constraintTop_toTopOf="@id/tv_score_title"
+        tools:text="75" />
+
+    <TextView
+        android:id="@+id/tv_score_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginEnd="3dp"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
+        android:text="@string/str_agent_interview_pass_package_score_unit"
+        android:textColor="@color/color_55_3c3c43"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_report_time"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_action"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_company_background_action"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/str_agent_interview_pass_package_report_view"
+        android:textColor="@color/color_ffffff"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_report_time" />
+</com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
