@@ -182,12 +182,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 binding.etSend.text = null
             }
             R.id.iv_agent_memory -> { //对你的理解
-                if(!AppNavigator.checkLoginIntercepted(false)){
+                if (!AppNavigator.checkLoginIntercepted(false)){
                     ShrimpUnderstandsActivity.start(requireActivity())
                 }
             }
             R.id.layout_back_check -> { //背景调查
-                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.sendAction(
                         desc = getString(R.string.company_backcheck),
@@ -199,7 +199,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             R.id.layout_interview -> { //模拟面试
-                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.sendAction(
                         desc = getString(R.string.mock_interview),
@@ -211,7 +211,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             R.id.layout_pass -> { //面试通关包
-
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                }
              }
         }
     }
