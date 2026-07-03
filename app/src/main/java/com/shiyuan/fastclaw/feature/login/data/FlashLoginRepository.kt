@@ -7,6 +7,7 @@ import com.shiyuan.fastclaw.core.manager.GrowingIO
 import com.shiyuan.fastclaw.core.network.apis.request.BindMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.ChangeMobileBody
+import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByFlashMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
@@ -49,6 +50,14 @@ class FlashLoginRepository : ThirdLoginRepository() {
             )
         )
     }
+
+    /**
+     * 手机号绑定状态前置校验。
+     */
+    suspend fun checkMobileBindStatus(phoneNumber: String?, scene: Int, userToken: String?) =
+        withContext(Dispatchers.IO) {
+            api.checkMobileBindStatus(CheckMobileBindStatusBody(phoneNumber, scene, userToken))
+        }
 
     suspend fun loginByPhone(phoneNumber: String?, validationCode: String?) =
         withContext(Dispatchers.IO) {

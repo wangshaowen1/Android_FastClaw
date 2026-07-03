@@ -79,6 +79,12 @@ class User : IUser {
     var wechatNickName: String?
         private set
 
+    /**
+     * 微信绑定状态 0-未绑定 1-已绑定
+     */
+    var wechatBindStatus: Int?
+        private set
+
     var requestNotificationsPermissionEnable = true
 
     val userInfoStr: String?
@@ -114,6 +120,7 @@ class User : IUser {
         purchaseCourseStatus = sp.getInt(PURCHASE_COURSE_STATUS, 0)
         isPaid = sp.getInt(IS_PAID, 0)
         wechatNickName = sp.getString(WECHAT_NICK_NAME, null)
+        wechatBindStatus = sp.getInt(WECHAT_BIND_STATUS, WECHAT_BIND_STATUS_UNBOUND)
         requestNotificationsPermissionEnable = sp.getBoolean(REQUEST_NOTIFICATIONS_PERMISSION, true)
     }
 
@@ -132,6 +139,7 @@ class User : IUser {
         storePurchaseCourseStatus(userData.purchaseCourseStatus)
         storePaid(userData.userTag)
         storeWechatNickName(userData.wechatNickName)
+        storeWechatBindStatus(userData.wechatBindStatus)
         userData.registerStatus?.apply {
             storeRegisterStatus(this)
         }
@@ -197,6 +205,8 @@ class User : IUser {
         sp.remove(IS_PAID)
         wechatNickName = null
         sp.remove(WECHAT_NICK_NAME)
+        wechatBindStatus = WECHAT_BIND_STATUS_UNBOUND
+        sp.remove(WECHAT_BIND_STATUS)
         token = null
         sp.remove(TOKEN)
         computingPower = 0
@@ -361,6 +371,15 @@ class User : IUser {
         sp.putString(WECHAT_NICK_NAME, wechatNickName)
     }
 
+    /**
+     * 保存微信绑定状态
+     */
+    fun storeWechatBindStatus(wechatBindStatus: Int?) {
+        val status = wechatBindStatus ?: WECHAT_BIND_STATUS_UNBOUND
+        this.wechatBindStatus = status
+        sp.putInt(WECHAT_BIND_STATUS, status)
+    }
+
     fun isFemale(): Boolean {
         return gender == FEMALE
     }
@@ -424,6 +443,9 @@ class User : IUser {
 
         //微信昵称
         const val WECHAT_NICK_NAME = "wechatNickName"
+        const val WECHAT_BIND_STATUS = "wechatBindStatus"
+        const val WECHAT_BIND_STATUS_UNBOUND = 0
+        const val WECHAT_BIND_STATUS_BOUND = 1
 
         //性别-男
         const val MALE = 1

@@ -70,11 +70,13 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
     }
 
     private fun initView() {
-         if( User.get().isVisitor){
-             binding.rl4.visibility = View.GONE
-         }else{
-             binding.rl4.visibility = View.VISIBLE
-         }
+        if (User.get().isVisitor) {
+            binding.rlAccount.visibility = View.GONE
+            binding.rlLogOut.visibility = View.GONE
+        } else {
+            binding.rlAccount.visibility = View.VISIBLE
+            binding.rlLogOut.visibility = View.VISIBLE
+        }
     }
 
     override fun setTranslucentStatus() {
@@ -115,7 +117,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
             R.id.rl3 -> {
                 AboutActivity.start(this)
             }
-            R.id.rl4 -> {
+            R.id.rlLogOut -> {
                 if( User.get().isVisitor){
                     // 登录
                     AppNavigator.checkLoginIntercepted(true)

@@ -8,7 +8,10 @@ import androidx.core.widget.doAfterTextChanged
 import com.blankj.utilcode.util.RegexUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
+import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewBindBinding
@@ -114,8 +117,38 @@ class PhoneNewBindActivity : BaseViewModelActivity<ActivityPhoneNewBindBinding, 
         val phone = binding.etPhone.text?.toString().orEmpty()
         val userData = thirdLoginUserData ?: return
         mRealVM.mobile.value = phone
-        mRealVM.sendSmsCode(startCountdownOnSuccess = false, bizType = SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE) {
+        mRealVM.checkMobileBindStatus(CheckMobileBindStatusBody.SCENE_BIND_MOBILE, userData.token) { data ->
+            if (data?.isAvailable() == true) {
+                sendBindMobileCode(phone, userData)
+            } else if (data?.popupStyle == 1) {
+                data.message?.showToast()
+            } else if (data?.popupStyle == 2) {
+                showDirectLoginDialog(data.message)
+            }
+        }
+    }
+
+    /**
+     * 手机号前置校验通过后发送绑定验证码。
+     */
+    private fun sendBindMobileCode(phone: String, userData: UserHomeData) {
+        mRealVM.sendSmsCode(
+            startCountdownOnSuccess = false,
+            bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN
+        ) {
             PhoneNewCodeLoginActivity.startForBindMobile(this, phone, userData)
+            finish()
+        }
+    }
+
+    private fun showDirectLoginDialog(message: String?) {
+        showConfirmPrompt(
+            tip = message,
+            title = getString(R.string.prompt),
+            cancelText = getString(R.string.cancel),
+            confirmText = getString(R.string.login_direct)
+        ) {
+            PhoneNewLoginActivity.start()
             finish()
         }
     }

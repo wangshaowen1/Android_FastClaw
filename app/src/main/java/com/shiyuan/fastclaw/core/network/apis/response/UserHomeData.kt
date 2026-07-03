@@ -57,6 +57,8 @@ data class UserHomeData(
     val token: String? = null,
     //是否绑定手机号 0=未绑定 1=已绑定
     val bindMobile: Int? = null,
+    //微信绑定状态 0-未绑定 1-已绑定
+    val wechatBindStatus: Int? = null,
     //微信昵称
     val wechatNickName: String? = null,
 

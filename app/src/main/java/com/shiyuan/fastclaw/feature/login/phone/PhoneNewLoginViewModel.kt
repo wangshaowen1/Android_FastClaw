@@ -19,12 +19,14 @@ import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.loginToast
 import com.shiyuan.fastclaw.core.ext.parseMessage
+import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.feature.login.data.FlashLoginRepository
 import com.shiyuan.fastclaw.kit.SignUtils
 import com.nhsd.basic.bus.FlowEventBus
+import com.shiyuan.fastclaw.core.network.apis.response.CheckMobileBindStatusData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 
@@ -120,6 +122,37 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                     onError.invoke(message)
                 }
                 stopCountdown()
+            }
+        )
+    }
+
+    /**
+     * 获取验证码前校验手机号绑定状态。
+     *
+     * @param scene 校验场景，1-绑定手机号，2-换绑手机号
+     * @param userToken 三方登录返回的临时 token
+     * @param onAvailable 手机号可用时继续执行
+     */
+    fun checkMobileBindStatus(scene: Int, userToken: String?, onSuccess: (CheckMobileBindStatusData?) -> Unit) {
+        val phone = mobile.value
+        if (!RegexUtils.isMobileSimple(phone)) {
+            showToast(R.string.login_new_phone_error)
+            return
+        }
+        launchWithLoading(
+            block = {
+                response(
+                    mRepo.checkMobileBindStatus(phone, scene, userToken),
+                    result = {
+                        onSuccess(data)
+                    },
+                    error = {
+                        this?.msg?.showToast()
+                    }
+                )
+            },
+            onError = {
+                parseMessage(it)?.showToast()
             }
         )
     }
