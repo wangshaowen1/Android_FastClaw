@@ -11,8 +11,10 @@ import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.PollingState
 import com.shiyuan.fastclaw.core.ext.launchPolling
+import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
+import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
@@ -22,6 +24,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckS
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundRegenerateSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobStatusUpdateBody
@@ -43,6 +46,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
@@ -59,6 +63,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.ClawAgentSseProcessor
+import com.shiyuan.fastclaw.core.response
 import kotlinx.coroutines.Job
 import java.util.UUID
 
@@ -1268,6 +1273,22 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             showToastError = true,
         ) {
             onSuccess(this.data)
+        }
+    }
+
+
+    val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
+    fun queryInterviewPassPackageResumeStatus() {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.queryInterviewPassPackageResumeStatus(
+                    InterviewPassPackageResumeStatusBody()
+                )
+            },
+            showLoading = true,
+            showToastError = true,
+        ) {
+            interviewPassPackageResumeStatus.postValue(this.data)
         }
     }
 

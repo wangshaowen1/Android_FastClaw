@@ -30,6 +30,7 @@ import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
 import com.shiyuan.fastclaw.common.Constants.MOCK_INTERVIEW_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
@@ -212,7 +213,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             R.id.layout_pass -> { //面试通关包
-
+                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    mRealVM.queryInterviewPassPackageResumeStatus()
+                }
              }
         }
     }
@@ -801,6 +804,15 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     }
                 }
             }
+        }
+        //面试通关包
+        mRealVM.interviewPassPackageResumeStatus.observe(this) { data ->
+            val url = if (data?.resumeCheckId == null) {
+                Constants.PASS_PACKAGE_RESUME_UPLOAD_URL
+            } else {
+                "${Constants.PASS_PACKAGE_JOB_UPLOAD_URL}?resumeCheckId=${data?.resumeCheckId}"
+            }
+            SimpleBrowserActivity.launch(requireActivity(), url)
         }
     }
 

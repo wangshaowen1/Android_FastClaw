@@ -2,21 +2,27 @@ package com.shiyuan.fastclaw.feature.web
 
 import android.app.Activity
 import android.graphics.Color
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
-import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
-import com.shiyuan.fastclaw.common.Constants
-import com.shiyuan.fastclaw.core.ext.launchWithLoading
-import com.shiyuan.fastclaw.core.ext.toPaymentParams
-import com.shiyuan.fastclaw.core.model.H5PayInfo
-import com.shiyuan.fastclaw.core.model.H5PayStatusInfo
-import com.shiyuan.fastclaw.feature.web.data.BrowserRepository
+import com.alibaba.fastjson.JSON
+import com.alibaba.fastjson.JSONObject
+import com.blankj.utilcode.util.GsonUtils
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.PaymentResultStrategy
 import com.kuaige.payment.entity.PaymentParams
 import com.nhsd.basic.ext.getDrawable
 import com.nhsd.basic.ext.getResColor
+import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
+import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
+import com.shiyuan.fastclaw.common.Constants
+import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.ext.launchWithLoading
+import com.shiyuan.fastclaw.core.ext.toPaymentParams
+import com.shiyuan.fastclaw.core.model.H5PayInfo
+import com.shiyuan.fastclaw.core.model.H5PayStatusInfo
+import com.shiyuan.fastclaw.core.network.apis.response.H5InterviewPassPackageRep
+import com.shiyuan.fastclaw.feature.web.data.BrowserRepository
 
 class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
 
@@ -41,6 +47,7 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
     }
     val openWebUrl = MutableLiveData<String?>(null)
     val payStatusCallback = MutableLiveData<H5PayStatusInfo?>(null)
+    var data: H5InterviewPassPackageRep? = null
     fun startPay(info: H5PayInfo) {
         val launchPay = {
             val isZfb = "zfb".equals(info.payWay, true)
@@ -54,7 +61,7 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
                         mRepo.h5PayWx(info.payInfo)
                     }
                     if (response.isSuccess) {
-                        val data = response.data
+                        data = response.data
                         orderNo = data?.orderNo
                         data?.payOrder?.let {
                             responseSender?.sendData(it.toPaymentParams(payment))
@@ -66,7 +73,9 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
             }
             paymentClient.setResultStrategy(object : PaymentResultStrategy() {
                 override fun doWithSuccess(context: Activity?, method: PaymentClient.PaymentMethod?, paymentParams: PaymentParams?) {
-                    payStatusCallback.value = H5PayStatusInfo(200, orderNo)
+                    payStatusCallback.value = H5PayStatusInfo(200, data?.packageId)
+                   // payStatusCallback.value = H5PayStatusInfo(200, User.get().userInfoStr)
+                   // payStatusCallback.value = H5PayStatusInfo(200, "{\"goodsName\":\"面试通关包\",\"orderNo\":\"2026070317454005114103344\",\"packageId\":\"66580780191911\"}")
                 }
 
                 override fun doWithFailure(context: Activity?, method: PaymentClient.PaymentMethod?, paymentParams: PaymentParams?, e: Throwable?) {

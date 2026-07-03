@@ -44,18 +44,15 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
 
     private fun observePassPackageResumeStatus() {
         mRealVM.interviewPassPackageResumeStatus.observe(this) { data ->
-            openPassPackage(data?.resumeCheckId)
+            val url = if (data?.resumeCheckId == null) {
+                Constants.PASS_PACKAGE_RESUME_UPLOAD_URL
+            } else {
+                "${Constants.PASS_PACKAGE_JOB_UPLOAD_URL}?resumeCheckId=${data?.resumeCheckId}"
+            }
+            SimpleBrowserActivity.launch(requireActivity(), url)
         }
     }
 
-    private fun openPassPackage(resumeCheckId: Long?) {
-        val url = if (resumeCheckId == null) {
-            Constants.PASS_PACKAGE_RESUME_UPLOAD_URL
-        } else {
-            "${Constants.PASS_PACKAGE_JOB_UPLOAD_URL}?resumeCheckId=$resumeCheckId"
-        }
-        SimpleBrowserActivity.launch(requireActivity(), url)
-    }
 
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)

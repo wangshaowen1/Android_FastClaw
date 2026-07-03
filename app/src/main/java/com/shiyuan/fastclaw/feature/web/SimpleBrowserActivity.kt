@@ -11,6 +11,7 @@ import android.net.Uri
 import android.net.http.SslError
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.webkit.SslErrorHandler
@@ -453,6 +454,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
             url?.openWithBrowser()
         }
         mRealVM.payStatusCallback.observe(this) { info ->
+            GsonUtils.toJson(info).showToast()
             info?.let { bridge?.callHandler("payStatusCallback", GsonUtils.toJson(it)) }
         }
         observeEvents {

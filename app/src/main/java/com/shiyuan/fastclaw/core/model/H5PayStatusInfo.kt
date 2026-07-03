@@ -12,7 +12,7 @@ data class H5PayStatusInfo(
      */
     val code: Int,
     /**
-     * 支付后的接口回调（订单ID）
+     * 支付后的数据
      */
-    val data: String?
+    val data: Any?
 )
