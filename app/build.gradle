@@ -76,6 +76,8 @@ android {
         buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-b4c3df125fee41c6a83135074b12a8b6"'
         buildConfigField "String", "DASHSCOPE_SPEECH_URL", '"wss://dashscope.aliyuncs.com/api-ws/v1/inference"'
         buildConfigField "boolean", "ENABLE_CHANNEL_PUSH", "false"
+        buildConfigField "String", "WX_KF_URL", '"https://work.weixin.qq.com/kfid/kfc40a9a48f69a47f52"'
+        buildConfigField "String", "WX_KF_CORPID", '"wwc3993f67fa68ae04"'
         manifestPlaceholders = [
                 "GROWING_URL_SCHEME": growingScheme, // 埋点库GROWINGIO的Urlscheme
                 "KWAI_APP_ID": "YOUR_KWAI_APP_ID", // 快手申请分配的appId

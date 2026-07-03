@@ -26,6 +26,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 
 /**
  * *****************************************
@@ -124,6 +125,9 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 }else{
                     showConfirmLogoutDialog()
                 }
+            }
+            R.id.rl5 -> {
+                customerServiceTransfer()
             }
         }
     }

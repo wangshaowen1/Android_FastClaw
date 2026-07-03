@@ -8,7 +8,7 @@ data class H5PayInfo(
     /**
      *  json字符串
      */
-    val payInfo: String? = null,
+    val payInfo: Any? = null,
 
     /**
      * wx||zfb

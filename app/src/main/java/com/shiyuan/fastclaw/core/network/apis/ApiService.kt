@@ -300,13 +300,13 @@ interface ApiService {
     /**
      * App转发H5支付-微信下单
      */
-    @POST(ApiConstants.H5_PAY_WX)
+    @POST(ApiConstants.H5_PAY)
     suspend fun h5PayWx(@Body body: H5PayInfo): ApiResponse<PaymentData?>
 
     /**
      * 购买会员-支付宝方式
      */
-    @POST(ApiConstants.H5_PAY_ALIPAY)
+    @POST(ApiConstants.H5_PAY)
     suspend fun h5PayAlipay(@Body body: H5PayInfo): ApiResponse<PaymentData?>
 
     /**
