@@ -49,13 +49,16 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
             paymentClient.setDataSource { _, _, responseSender ->
                 launchWithLoading(true, {
                     val response = if (isZfb) {
-                        mRepo.h5PayAlipay(info)
+                        mRepo.h5PayAlipay(info.payInfo)
                     } else {
-                        mRepo.h5PayWx(info)
+                        mRepo.h5PayWx(info.payInfo)
                     }
                     if (response.isSuccess) {
-                        orderNo = response.data?.orderNo
-                        response.data?.let { responseSender?.sendData(it.toPaymentParams(payment)) }
+                        val data = response.data
+                        orderNo = data?.orderNo
+                        data?.payOrder?.let {
+                            responseSender?.sendData(it.toPaymentParams(payment))
+                        } ?: responseSender?.sendError(null)
                     } else {
                         responseSender?.sendError(null)
                     }
