@@ -31,6 +31,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImgUrlBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
+import com.shiyuan.fastclaw.core.network.apis.request.PassPackageRegenerateBody
 import com.shiyuan.fastclaw.core.network.apis.request.PassPackageStatusQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
 import com.shiyuan.fastclaw.core.network.apis.request.InviteShareInfoBody
@@ -85,6 +86,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.H5InterviewPassPackageRep
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
+import com.shiyuan.fastclaw.core.network.apis.response.PassPackageRegenerateData
 import com.shiyuan.fastclaw.core.network.apis.response.PassPackageStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
@@ -472,6 +474,9 @@ interface ApiService {
 
     @POST(ApiConstants.INTERVIEW_PASS_PACKAGE_STATUS_QUERY)
     suspend fun queryPassPackageProgress(@Body body: PassPackageStatusQueryBody): ApiResponse<PassPackageStatusData?>
+
+    @POST(ApiConstants.INTERVIEW_PASS_PACKAGE_REGENERATE)
+    suspend fun regeneratePassPackageReport(@Body body: PassPackageRegenerateBody): ApiResponse<PassPackageRegenerateData?>
 
     @POST(ApiConstants.MOCK_INTERVIEW_REPORT_RETRY)
     suspend fun retryMockInterviewReport(@Body body: MockInterviewReportRetryBody): ApiResponse<MockInterviewReportProgressData?>

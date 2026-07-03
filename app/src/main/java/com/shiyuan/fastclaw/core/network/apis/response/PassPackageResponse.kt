@@ -19,13 +19,25 @@ data class PassPackageStatusData(
     /** 对用户可见时间，格式 yyyy-MM-dd HH:mm:ss */
     val visibleTime: String? = null,
     /** 通关包模块生成状态 */
-    val modules: List<InterviewPassPackageModuleStatusData>? = null,
+    val modules: List<PassPackageModuleStatusData>? = null,
+)
+
+/**
+ * 面试通关包重新生成结果。
+ */
+data class PassPackageRegenerateData(
+    /** 通关包业务 ID */
+    val packageId: String? = null,
+    /** 新生成批次号 */
+    val generateBatchNo: Int? = null,
+    /** 通关包状态，重新生成成功后为生成中 */
+    val packageStatus: Int? = null,
 )
 
 /**
  * 面试通关包模块生成状态。
  */
-data class InterviewPassPackageModuleStatusData(
+data class PassPackageModuleStatusData(
     /** 模块类型，取值来自 InterviewPassPackageModuleTypeEnum */
     val moduleType: String? = null,
     /** 模块名称 */

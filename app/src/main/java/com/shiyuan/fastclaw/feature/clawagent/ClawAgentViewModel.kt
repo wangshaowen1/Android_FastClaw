@@ -27,6 +27,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePageBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePullBody
+import com.shiyuan.fastclaw.core.network.apis.request.PassPackageRegenerateBody
 import com.shiyuan.fastclaw.core.network.apis.request.PassPackageStatusQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewForceCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgressBody
@@ -1258,6 +1259,27 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 pullMessages(getLastMessageCursor())
             },
         )
+    }
+
+    /**
+     * 面试通关包报告 - 重新生成。
+     * 重新生成成功后复用通关包进度轮询，终态由增量消息刷新卡片。
+     */
+    fun retryGeneratePassPackageReport(packageId: String?) {
+        if (packageId.isNullOrBlank()) return
+        passPackageReportPollingJob?.cancel()
+        passPackageReportPollingJob = null
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.regeneratePassPackageReport(
+                    PassPackageRegenerateBody(packageId = packageId)
+                )
+            }
+        ) {
+            val newPackageId = data?.packageId ?: packageId
+            pullMessages(getLastMessageCursor())
+            pollPassPackageReportProgress(newPackageId)
+        }
     }
 
     /**

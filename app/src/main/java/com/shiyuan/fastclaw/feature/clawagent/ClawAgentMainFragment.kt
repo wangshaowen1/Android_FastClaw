@@ -349,10 +349,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 面试通关包 - 重新生成
-        msgAdapter.onPassPackageRetryClickAction = { item, action, data ->
-            if (!interceptIfStreaming() && action != null) {
+        msgAdapter.onPassPackageRetryClickAction = { _, _, data ->
+            if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
-
+                mRealVM.retryGeneratePassPackageReport(data?.packageId)
             }
         }
 
