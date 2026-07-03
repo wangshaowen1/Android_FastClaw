@@ -108,9 +108,7 @@ class FlashNewLoginDialog : BaseBottomPushVMDialogFragment<DialogFlashNewLoginBi
             mRealVM.flashLoginVerification()
             return
         }
-        val dialog = PhoneNewPolicyDialog.show(parentFragmentManager)
-        dialog.callback = callback@{ agree ->
-            if (!agree) return@callback
+        showPolicyDialog {
             mRealVM.checkedPolicy.set(true)
             mRealVM.flashLoginVerification()
         }
@@ -125,11 +123,24 @@ class FlashNewLoginDialog : BaseBottomPushVMDialogFragment<DialogFlashNewLoginBi
             startWechatLogin()
             return
         }
-        val dialog = PhoneNewPolicyDialog.show(parentFragmentManager)
-        dialog.callback = callback@{ agree ->
-            if (!agree) return@callback
+        showPolicyDialog {
             mRealVM.checkedPolicy.set(true)
             startWechatLogin()
+        }
+    }
+
+    /**
+     * 展示协议确认弹框，同意后继续执行当前登录动作。
+     */
+    private fun showPolicyDialog(onAgree: () -> Unit) {
+        val dialog = PhoneNewPolicyDialog.show(
+            manager = parentFragmentManager,
+            operatorName = mRealVM.flashPhoneInfo.get()?.protocolName,
+            operatorUrl = mRealVM.flashPhoneInfo.get()?.protocolUrl
+        )
+        dialog.callback = callback@{ agree ->
+            if (!agree) return@callback
+            onAgree()
         }
     }
 
