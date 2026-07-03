@@ -456,3 +456,30 @@ data class MockInterviewReportPayloadBean(
     /** 报告卡动作列表，如重新生成、查看报告 */
     val actions: List<CardAction>? = null,
 )
+
+data class PassPackageReportPayloadBean(
+    /** 面试通关包 ID，用于后续查看报告或重新生成动作回传。 */
+    val packageId: String? = null,
+    /** 报告生成状态：GENERATING / SUCCESS / FAILED 等。 */
+    val reportStatus: String? = null,
+    /** 报告生成进度百分比。 */
+    val progress: Int? = null,
+    /** 是否允许重新生成。 */
+    val retryable: Boolean? = null,
+    /** 生成批次。 */
+    val generateBatchNo: Int? = null,
+    /** 创建时间。 */
+    val createTime: String? = null,
+    /** 生成时间。 */
+    val generateTime: String? = null,
+    /** 报告时间。 */
+    val reportTime: String? = null,
+    /** 面试通过率。 */
+    val passRate: Int? = null,
+    /** 生成失败原因或错误提示。 */
+    val errorMessage: String? = null,
+    /** 卡片交互状态。 */
+    val interactionState: CardInteractionState? = null,
+    /** 报告卡动作列表，如重新生成、查看报告。 */
+    val actions: List<CardAction>? = null,
+)

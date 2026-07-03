@@ -260,6 +260,7 @@ object ApiConstants {
     const val MOCK_INTERVIEW_AUDIO_TOKEN_QUERY = "/api/candidate/app/interviewReport/mockInterview/audioToken/query"
     const val MOCK_INTERVIEW_REPORT_PROGRESS_QUERY = "/api/candidate/app/interviewReport/mockInterview/report/progress/query"
     const val MOCK_INTERVIEW_REPORT_RETRY = "/api/candidate/app/interviewReport/mockInterview/report/retry"
+    const val INTERVIEW_PASS_PACKAGE_STATUS_QUERY = "/api/candidate/app/interviewPassPackage/status/query"
 
     /**
      * 取消流式生成（求职 Agent）

@@ -49,3 +49,14 @@ Apikit 路径 `/api/candidate/app/myReport/report/list/query` 虽然包含 `myRe
 
 ### 验证结论
 静态检查：`rg -n "GET_MY_REPORT_LIST|getMyReportList|INTERVIEW_REPORT_LIST_QUERY|getInterviewReportList|InterviewReportPagingSource"` 确认旧链路仍走旧接口，新页面走新接口；按项目规则未运行 Gradle。
+
+## v本轮 面试通关包报告卡片状态字段收口
+
+### 变更了什么
+求职 Agent 消息卡片 → 新增 `INTERVIEW_PASS_PACKAGE_REPORT` 三态卡片时，只按 `payloadJson.reportStatus` 分发生成中 / 失败 / 成功卡片，不读取 `packageStatus`。
+
+### 为什么
+联调样例曾包含 `packageStatus`，但用户明确要求“就用 reportStatus”。为避免状态来源分叉，端侧卡片渲染统一以 `reportStatus` 为唯一状态入口，未知或缺失时兜底为生成中。
+
+### 验证结论
+静态检查：`rg -n "packageStatus" app\src\main\java\com\shiyuan\fastclaw\feature\clawagent app\src\main\java\com\shiyuan\fastclaw\core\network\apis\response\ClawAgentCardPayload.kt` 无使用；按项目规则未运行 Gradle。

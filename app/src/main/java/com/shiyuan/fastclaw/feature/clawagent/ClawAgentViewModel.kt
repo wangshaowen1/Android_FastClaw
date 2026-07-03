@@ -27,6 +27,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.JobAgentStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePageBody
 import com.shiyuan.fastclaw.core.network.apis.request.MessagePullBody
+import com.shiyuan.fastclaw.core.network.apis.request.PassPackageStatusQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewForceCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgressBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportRetryBody
@@ -43,8 +44,8 @@ import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.PassPackageReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
-import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
@@ -168,6 +169,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 模拟面试报告生成结果轮询任务，只保留最后一个轮询 */
     private var mockInterviewReportPollingJob: Job? = null
+
+    /** 面试通关包报告生成状态轮询任务，只保留最后一个轮询 */
+    private var passPackageReportPollingJob: Job? = null
 
     private fun JobAgentMessage.storeKey(): String? = messageId ?: cursor ?: sequenceNo?.toString()
 
@@ -519,6 +523,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                     pollMockInterviewReportProgress(payload.mockReportId, payload.interviewId)
                 }
             }
+            // 是否面试通关包报告生成中，启动通关包报告轮询接口
+            if (msg.isPassPackageReportCard()) {
+                val payload = msg.payloadJson?.let {
+                    runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
+                }
+                if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
+                    pollPassPackageReportProgress(payload.packageId)
+                }
+            }
 
             // 简历待上传/失败/确认流程卡类型合并只展示最新一张
             val rawKey = msg.storeKey() ?: return@forEach
@@ -645,6 +658,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 CARD_COMPANY_BACKGROUND_REPORT -> resolveCompanyBackgroundReportItemType(msg)
                 CARD_MOCK_INTERVIEW_ENTRY -> resolveMockInterviewEntryItemType(msg)
                 CARD_MOCK_INTERVIEW_REPORT -> resolveMockInterviewReportItemType(msg)
+                CARD_INTERVIEW_PASS_PACKAGE_REPORT -> resolveInterviewPassPackageReportItemType(msg)
                 // todo: v1.2 暂时不做
 //                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
 //                CARD_TODAY_PROGRESS -> ClawAgentMsgAdapter.TYPE_TODAY_PROGRESS
@@ -715,6 +729,19 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    private fun resolveInterviewPassPackageReportItemType(msg: JobAgentMessage): Int {
+        // 面试通关包报告卡
+        val payload = msg.payloadJson?.let {
+            runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
+        }
+        return when (payload?.reportStatus) {
+            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_INTERVIEW_PASS_PACKAGE_REPORT_FAILED
+            REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_INTERVIEW_PASS_PACKAGE_REPORT_DONE
+            REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_INTERVIEW_PASS_PACKAGE_REPORT_GENERATING
+            else -> ClawAgentMsgAdapter.TYPE_INTERVIEW_PASS_PACKAGE_REPORT_GENERATING
+        }
+    }
+
     /** 是否思考态（think）中间态消息：enterSession / 历史分页等终态数据里的此类残留不再展示 */
     private fun JobAgentMessage.isThinkMessage(): Boolean =
         resolveItemType(this) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
@@ -747,6 +774,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否模拟面试报告生成中（CARD_MOCK_INTERVIEW_REPORT） */
     private fun JobAgentMessage.isMockInterviewReportCard(): Boolean =
         messageType == MSG_CARD && cardType == CARD_MOCK_INTERVIEW_REPORT
+
+    /** 是否面试通关包报告生成中（CARD_INTERVIEW_PASS_PACKAGE_REPORT） */
+    private fun JobAgentMessage.isPassPackageReportCard(): Boolean =
+        messageType == MSG_CARD && cardType == CARD_INTERVIEW_PASS_PACKAGE_REPORT
 
     /**
      * 始终第一条插入自我介绍卡片
@@ -1196,6 +1227,40 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * 面试通关包报告 - 查询生成状态。
+     * 0/1 继续轮询，2 成功，3/4 失败；终态后拉取增量消息刷新卡片。
+     */
+    private fun pollPassPackageReportProgress(packageId: String?) {
+        if (packageId.isNullOrBlank()) return
+        passPackageReportPollingJob?.cancel()
+        passPackageReportPollingJob = launchPolling(
+            intervalMs = 3000L,
+            retryOnNetworkError = true,
+            apiBlock = {
+                mRepo.api.queryPassPackageProgress(
+                    PassPackageStatusQueryBody(packageId = packageId)
+                )
+            },
+            checkState = { response ->
+                when (response?.data?.packageStatus) {
+                    PASS_PACKAGE_STATUS_SUCCESS -> PollingState.SUCCESS
+                    PASS_PACKAGE_STATUS_FAILED,
+                    PASS_PACKAGE_STATUS_BLOCKED -> PollingState.FAIL
+                    else -> PollingState.CONTINUE
+                }
+            },
+            onSuccess = {
+                passPackageReportPollingJob = null
+                pullMessages(getLastMessageCursor())
+            },
+            onFail = { _, _ ->
+                passPackageReportPollingJob = null
+                pullMessages(getLastMessageCursor())
+            },
+        )
+    }
+
+    /**
      * 查询属性数组候选值（工作经历、教育经历等表单数据）。
      * @param questionQueueId 问题队列 ID
      * @param attributeGroupCode 属性组编码
@@ -1302,6 +1367,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         loadingHistory = false
         mockInterviewReportPollingJob?.cancel()
         mockInterviewReportPollingJob = null
+        passPackageReportPollingJob?.cancel()
+        passPackageReportPollingJob = null
     }
 
     fun hardPreMsgListCard(list: List<ClawAgentMessageInfo>) {
@@ -1314,6 +1381,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         companyBackgroundGeneratePollingJob?.cancel()
         mockInterviewReportPollingJob?.cancel()
         mockInterviewReportPollingJob = null
+        passPackageReportPollingJob?.cancel()
+        passPackageReportPollingJob = null
         super.onCleared()
     }
 
@@ -1374,6 +1443,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val REPORT_STATUS_FAILED = "FAILED"
         private const val REPORT_STATUS_FAILED_RETRYABLE = "FAILED_RETRYABLE"
         private const val REPORT_STATUS_FAILED_FINAL = "FAILED_FINAL"
+        private const val PASS_PACKAGE_STATUS_SUCCESS = 2
+        private const val PASS_PACKAGE_STATUS_FAILED = 3
+        private const val PASS_PACKAGE_STATUS_BLOCKED = 4
 
         // displayPolicy（端侧展示策略）：think 等中间态消息在结果消息到达后的收口方式
         private const val POLICY_REPLACE_ON_TERMINAL = "REPLACE_ON_TERMINAL"
@@ -1409,6 +1481,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_MOCK_INTERVIEW_ENTRY = "MOCK_INTERVIEW_ENTRY"
         // 面试复盘报告卡片
         private const val CARD_MOCK_INTERVIEW_REPORT = "MOCK_INTERVIEW_REPORT"
+        //面试通关报告卡片
+        private const val CARD_INTERVIEW_PASS_PACKAGE_REPORT = "INTERVIEW_PASS_PACKAGE_REPORT"
         //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
 
         // 寻找岗位中
