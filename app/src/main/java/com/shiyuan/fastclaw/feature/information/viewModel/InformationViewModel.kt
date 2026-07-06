@@ -201,7 +201,7 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
         launchWithLoading(true, block = {
             val body = mapOf(
                 "attributeGroupCode" to attributeGroupCode,
-                "instanceIndex" to position.toLong()
+                "instanceIndex" to data.instanceIndex
             )
             response(ApiFactory.apiService.onlineResumeAttributeDelete(body), result = {
                 onResumeAttribute.postValue(this.data)
