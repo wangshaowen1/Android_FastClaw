@@ -77,6 +77,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
+import com.shiyuan.fastclaw.core.network.apis.response.BindThirdPartyData
 import com.shiyuan.fastclaw.core.network.apis.response.CheckMobileBindStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
@@ -158,10 +159,13 @@ interface ApiService {
      * 绑定第三方账号
      */
     @POST(ApiConstants.BIND_THIRD_PARTY)
-    suspend fun bindThirdParty(@Body body: BindThirdPartyBody): ApiResponse<Any?>
+    suspend fun bindThirdParty(@Body body: BindThirdPartyBody): ApiResponse<BindThirdPartyData?>
+
+    @POST(ApiConstants.REBIND_THIRD_PARTY)
+    suspend fun rebindThirdParty(@Body body: BindThirdPartyBody): ApiResponse<BindThirdPartyData?>
 
     /**
-     * 解除第三方账号绑定
+     * 解除第三方账号绑定并与当前账号绑定
      */
     @POST(ApiConstants.UNBIND_THIRD_PARTY)
     suspend fun unbindThirdParty(@Body body: UnbindThirdPartyBody): ApiResponse<Any?>

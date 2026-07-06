@@ -44,6 +44,8 @@ object ApiConstants {
      */
     const val BIND_THIRD_PARTY = "/api/candidate/auth/bindThirdParty"
 
+    const val REBIND_THIRD_PARTY = "/api/candidate/auth/rebindThirdParty"
+
     /**
      * 解除第三方账号绑定
      */

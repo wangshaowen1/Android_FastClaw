@@ -12,7 +12,7 @@ data class CheckMobileBindStatusData(
     val message: String? = null,//前端展示提示文案
     val popupStyle: Int? = null//弹窗样式，1-透明弹窗，2-不透明弹窗
 ) {
-    fun isAvailable() = status == STATUS_AVAILABLE
+    fun isSuccess() = status == STATUS_AVAILABLE
 
     companion object {
         const val STATUS_AVAILABLE = 0

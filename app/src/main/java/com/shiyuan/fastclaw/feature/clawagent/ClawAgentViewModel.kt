@@ -1043,8 +1043,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-    fun queryCompanyBackgroundCompanySearch(companyName: String, onResult: (keyword: String, companies: List<CompanyBackgroundCompanyInfo>) -> Unit, ) {
-        val keyword = companyName.trim()
+    fun queryCompanyBackgroundCompanySearch(keyword: String, onResult: (keyword: String, companies: List<CompanyBackgroundCompanyInfo>) -> Unit, ) {
         if (keyword.isEmpty()) {
             onResult(keyword, emptyList())
             return
@@ -1052,7 +1051,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         request(
             apiBlock = {
                 mRepo.api.queryCompanyBackgroundCompanySearch(
-                    CompanyBackgroundCompanySearchQueryBody(companyName = keyword)
+                    CompanyBackgroundCompanySearchQueryBody(keyword = keyword)
                 )
             },
             showToast = false,

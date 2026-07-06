@@ -115,7 +115,7 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
         val phone = binding.etPhone.text?.toString().orEmpty()
         mRealVM.mobile.value = phone
         mRealVM.checkMobileBindStatus(scene = CheckMobileBindStatusBody.SCENE_CHANGE_MOBILE, userToken = User.get().token) { data ->
-            if (data?.isAvailable() == true) {
+            if (data?.isSuccess() == true) {
                 sendChangeMobileCode(phone)
             } else if (data?.popupStyle == 1) {
                 data.message?.showToast()
