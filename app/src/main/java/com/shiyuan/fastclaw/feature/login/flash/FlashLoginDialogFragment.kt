@@ -45,13 +45,8 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
         /**
          * 闪验登录
          */
-        fun show(
-            manager: FragmentManager?,
-            showToast: Boolean = false,
-            checkedPolicy: Boolean = false
-        ) {
-            val manager =
-                manager ?: (topActivity as? FragmentActivity)?.supportFragmentManager ?: return
+        fun show(showToast: Boolean = false, checkedPolicy: Boolean = false) {
+            val manager = (topActivity as? FragmentActivity)?.supportFragmentManager ?: return
             if (showToast) {
                 showToast(R.string.toast_login_please)
             }
