@@ -20,6 +20,11 @@ abstract class BaseBottomDialogFragment<V : ViewDataBinding, T : BaseLayoutViewM
 
     override fun onStart() {
         super.onStart()
+        setupWindowStyle()
+
+    }
+
+    private fun setupWindowStyle() {
         dialog?.window?.let { dialogWindow ->
             dialogWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -46,8 +51,9 @@ abstract class BaseBottomDialogFragment<V : ViewDataBinding, T : BaseLayoutViewM
     }
 
     private fun updateNavigationBarPaddingBottom() {
-        setRootPaddingBottom(getNavigationBarHeight())
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+        val root = binding.root
+        setRootPaddingBottom(root, getNavigationBarHeight())
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
             val navigationBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
             if (navigationBarHeight > 0) {
                 view.setPadding(
@@ -59,8 +65,8 @@ abstract class BaseBottomDialogFragment<V : ViewDataBinding, T : BaseLayoutViewM
             }
             insets
         }
-        binding.root.post {
-            ViewCompat.requestApplyInsets(binding.root)
+        root.post {
+            ViewCompat.requestApplyInsets(root)
         }
     }
 
@@ -80,11 +86,11 @@ abstract class BaseBottomDialogFragment<V : ViewDataBinding, T : BaseLayoutViewM
         }
     }
 
-    private fun setRootPaddingBottom(paddingBottom: Int) {
-        binding.root.setPadding(
-            binding.root.paddingLeft,
-            binding.root.paddingTop,
-            binding.root.paddingRight,
+    private fun setRootPaddingBottom(root: View, paddingBottom: Int) {
+        root.setPadding(
+            root.paddingLeft,
+            root.paddingTop,
+            root.paddingRight,
             paddingBottom
         )
     }
