@@ -192,8 +192,8 @@
     <!-- Base application theme. -->
     <style name="AppTheme.Light">
         <item name="android:windowBackground">@android:color/white</item>
-        <item name="colorPrimary">@color/color_121212</item> <!-- 下划线颜色 -->
-        <item name="colorControlActivated">@color/color_121212</item> <!-- 激活状态颜色 -->
+        <item name="colorPrimary">@android:color/white</item> <!-- 下划线颜色 -->
+        <item name="colorControlActivated">@android:color/white</item> <!-- 激活状态颜色 -->
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
