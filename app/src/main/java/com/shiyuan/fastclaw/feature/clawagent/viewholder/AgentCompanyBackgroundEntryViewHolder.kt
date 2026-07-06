@@ -136,12 +136,7 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
         }
     }
 
-    private fun createCompanySearchRow(
-        name: String,
-        keyword: String,
-        enabled: Boolean,
-        showDivider: Boolean,
-    ): LinearLayout {
+    private fun createCompanySearchRow(name: String, keyword: String, enabled: Boolean, showDivider: Boolean, ): LinearLayout {
         val context = binding.root.context
         return LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -176,11 +171,7 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
         }
     }
 
-    private fun createCompanySearchRow(
-        company: CompanyBackgroundCompanyInfo,
-        keyword: String,
-        showDivider: Boolean,
-    ): LinearLayout {
+    private fun createCompanySearchRow(company: CompanyBackgroundCompanyInfo, keyword: String, showDivider: Boolean, ): LinearLayout {
         return createCompanySearchRow(company.displayName(), keyword, enabled = true, showDivider = showDivider).apply {
             setOnSingleClickListener {
                 val name = company.displayName()
