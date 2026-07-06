@@ -119,7 +119,10 @@ class JobSelectionActivity :
     private var suppressRightScrollSync = false
     private var isViewDestroyed = false
 
-    private fun selectOnlyPosition(item: CommonEnumItem) {
+    private fun selectOnlyPosition(
+        item: CommonEnumItem,
+        locateAfterSelect: Boolean = true
+    ) {
         val selectedCode = item.positionCode
         var selectedParentIndex: Int? = null
         mRealVM.allPositioData.value?.forEachIndexed { parentIndex, parent ->
@@ -148,7 +151,9 @@ class JobSelectionActivity :
             scrollLeftToJob(leftIndex)
         }
         jobRightAdapter.notifyDataSetChanged()
-        locateSelectedJob(item)
+        if (locateAfterSelect) {
+            locateSelectedJob(item)
+        }
     }
 
     // 左侧一级职位分类列表适配器
@@ -205,7 +210,7 @@ class JobSelectionActivity :
         }
 
         if (multipleNum == 1) {
-            selectOnlyPosition(item)
+            selectOnlyPosition(item, locateAfterSelect = false)
             return
         }
 
@@ -537,7 +542,12 @@ class JobSelectionActivity :
         if (suppressSync) {
             suppressRightScrollSync = true
         }
-        rightLayoutManager?.scrollToPositionWithOffset(rightPosition, 0)
+        val offset = if (jobRightAdapter.isHeaderPosition(rightPosition)) {
+            0
+        } else {
+            rightGroupDecoration.headerHeight
+        }
+        rightLayoutManager?.scrollToPositionWithOffset(rightPosition, offset)
     }
 
     private fun syncLeftByRightPosition(recyclerView: RecyclerView) {
