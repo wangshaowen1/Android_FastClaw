@@ -8,13 +8,14 @@ import com.flqy.datepicker.NumberPicker
 import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
 import com.shiyuan.fastclaw.databinding.DialogSalaryRangePickerBinding
 
 /**
  * 薪资范围选择底部弹窗。
  * 支持“面议”或 0K 到 250K 内的最小薪资与最大薪资区间。
  */
-class SalaryRangePickerDialog : BaseBottomPushDialogFragment<DialogSalaryRangePickerBinding>() {
+class SalaryRangePickerDialog : BaseBottomDialogFragment<DialogSalaryRangePickerBinding>() {
 
     companion object {
         // NumberPicker 选中/未选中文字大小（sp）

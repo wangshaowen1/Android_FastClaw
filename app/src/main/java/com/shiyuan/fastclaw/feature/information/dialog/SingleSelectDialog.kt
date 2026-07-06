@@ -7,6 +7,7 @@ import com.flqy.datepicker.NumberPicker
 import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.DialogSingleSelectBinding
 
@@ -14,7 +15,7 @@ import com.shiyuan.fastclaw.databinding.DialogSingleSelectBinding
  * 单选弹窗（基于滚轮）。
  * 常用于奖励等级、熟练度、公司规模、公司类型、离职原因等枚举型字段。
  */
-class SingleSelectDialog : BaseBottomPushDialogFragment<DialogSingleSelectBinding>() {
+class SingleSelectDialog : BaseBottomDialogFragment<DialogSingleSelectBinding>() {
 
     companion object {
         // NumberPicker 选中/未选中文字大小（sp）

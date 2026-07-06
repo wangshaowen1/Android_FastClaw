@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.mine.dialog
 import androidx.fragment.app.FragmentManager
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
 import com.shiyuan.fastclaw.databinding.DialogUploadCancelBinding
 import com.shiyuan.fastclaw.feature.report.ReportViewModel
 
@@ -10,7 +11,7 @@ import com.shiyuan.fastclaw.feature.report.ReportViewModel
  * 上传取消dialog
  *
  */
-class UploadCancelDialog : BaseBottomDialogFragment<DialogUploadCancelBinding, ReportViewModel>() {
+class UploadCancelDialog : BaseBottomDialogVmFragment<DialogUploadCancelBinding, ReportViewModel>() {
 
     companion object {
         const val TAG = "UploadCancelDialog"

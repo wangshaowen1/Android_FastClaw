@@ -17,6 +17,8 @@ import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.feature.information.AwardActivity
@@ -28,7 +30,7 @@ import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
  * 技能 / 证书 / 奖项通用列表底部弹窗。
  * 通过 type 区分当前展示的是哪一类数据，渲染不同字段项与点击跳转目标。
  */
-class CertificateSkillsAwardsDialog : BaseBottomPushVMDialogFragment<DialogCertificateSkillsAwardsBinding, InformationViewModel>() {
+class CertificateSkillsAwardsDialog : BaseBottomDialogVmFragment<DialogCertificateSkillsAwardsBinding, InformationViewModel>() {
 
     companion object {
         const val TAG = "CertificateSkillsAwardsDialog"
