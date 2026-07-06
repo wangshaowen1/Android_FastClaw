@@ -1,37 +1,43 @@
 package com.shiyuan.fastclaw.feature.information
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
+import android.util.TypedValue
+import android.view.MotionEvent
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
-import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil
+import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivityIndustrySelectionBinding
 import com.shiyuan.fastclaw.feature.information.adapter.IyPnAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.IyPnSonAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.SearchAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.SelectedIyPnAdapter
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
-import kotlin.collections.distinctBy
-import kotlin.collections.plus
 
 
 /**
- * 行业选择页：左侧一级行业、右侧二级行业网格，
+ * 行业选择页：左侧一级行业、右侧分组网格展示所有二级行业，
  * 支持单选（搜索 / 列表点击直接回传）和多选（底部已选 + 完成回调）。
  */
 class IndustrySelectionActivity :
@@ -42,11 +48,19 @@ class IndustrySelectionActivity :
         // 会话 ID / 对话 ID
         private const val SESSIONID = "SESSIONID"
         private const val CONVERSATIONID = "CONVERSATIONID"
+        private const val RIGHT_GRID_SPAN_COUNT = 2
+        private const val MAX_SELECTED_INDUSTRY_COUNT = 3
+        private const val INDUSTRY_GRID_PLACEHOLDER_CODE = "__industry_grid_placeholder__"
 
         /**
          * 启动行业选择页。
          */
-        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String? = "", conversationId: String? = "") {
+        fun start(
+            activity: Activity?,
+            isMultiple: Boolean = false,
+            sessionId: String? = "",
+            conversationId: String? = ""
+        ) {
             activity ?: return
             val intent = Intent(activity, IndustrySelectionActivity::class.java).apply {
                 putExtra(EXTRA_IS_MULTIPLE, isMultiple)
@@ -65,7 +79,7 @@ class IndustrySelectionActivity :
         // 监听 ViewModel 状态变化
         observeEvents()
         // 首次进入请求行业字典
-        mRealVM.queryDictIndustryQuery(sessionId,conversationId)
+        mRealVM.queryDictIndustryQuery(sessionId, conversationId)
     }
 
 
@@ -73,167 +87,100 @@ class IndustrySelectionActivity :
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
     // 会话 ID / 对话 ID
     private val sessionId: String by lazy { intent.getStringExtra(SESSIONID) ?: "" }
-    private val conversationId: String by lazy { intent.getStringExtra(CONVERSATIONID)  ?: ""}
+    private val conversationId: String by lazy { intent.getStringExtra(CONVERSATIONID) ?: "" }
+    private val rightIndustryItems = mutableListOf<CommonEnumItem>()
+    private val rightSections = mutableListOf<IndustrySection>()
+    private val rightGroupDecoration by lazy { IndustryGroupDecoration(this, RIGHT_GRID_SPAN_COUNT) }
+    private val leftLayoutManager: LinearLayoutManager?
+        get() = binding.rcLeft.layoutManager as? LinearLayoutManager
+    private val rightLayoutManager: GridLayoutManager?
+        get() = binding.rcRight.layoutManager as? GridLayoutManager
+    private var suppressRightScrollSync = false
+
     // 左侧一级行业列表适配器
     private val cyIyPnAdapter: IyPnAdapter by lazy {
-        IyPnAdapter( { item, position ->
-            // 单选样式：重置其他项的选中态
-            mRealVM.allData.value?.forEach { it.isSelected = false }
-            item.isSelected = true
-            cyIyPnAdapter.notifyDataSetChanged()
-            // 切换右侧二级行业
-            cyIyPnSonAdapter.submitList(mRealVM.allData.value?.get(position)?.children)
-            mRealVM.lastSelectedPosition.value  = position
-        },0)
+        IyPnAdapter({ _, position -> onLeftIndustryClick(position) }, 0)
     }
+
     // 右侧二级行业网格适配器
     private val cyIyPnSonAdapter: IyPnSonAdapter by lazy {
-        IyPnSonAdapter( { item, _ ->
-            if (isMultiple) {
-                // 多选：维护已选集合，最多 3 个
-                val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
-                if(item.isSelected){
-                    item.isSelected  =false
-                    mRealVM.selectData.value = selectedList.filterNot { it.code == item.code }
-                }else{
-                    if (selectedList.size >= 3) {
-                        "最多选择三个".showToast()
-                        return@IyPnSonAdapter
-                    }
-                    item.isSelected = true
-                    mRealVM.selectData.value = (selectedList + item).distinctBy { it.code }
-                }
-            } else {
-                // 单选：回传并关闭
-                item.fieldCode = "industry"
-                FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
-                finish()
-            }
-            cyIyPnSonAdapter.notifyDataSetChanged()
-        },0)
+        IyPnSonAdapter({ item, _ -> onRightIndustryClick(item) }, 0, ::isIndustryGridPlaceholder)
     }
 
     // 底部已选行业横滑标签适配器
     private val selectCyIyPnAdapter: SelectedIyPnAdapter by lazy {
-        SelectedIyPnAdapter( { item ->
-            // 从已选集合中移除
-            val newList = mRealVM.selectData.value?.filterNot { it.code == item.code }
-            mRealVM.selectData.value = newList
-
-            // 同步清除右侧列表中的选中态
-            mRealVM.allData.value?.forEach { parent ->
-                parent.children?.firstOrNull { child -> child.code == item.code }?.isSelected = false
-            }
-            cyIyPnSonAdapter.notifyDataSetChanged()
-        },0)
+        SelectedIyPnAdapter({ item -> removeSelectedIndustry(item) }, 0)
     }
 
     // 搜索结果列表适配器
     private val searchAdapter: SearchAdapter by lazy {
-        SearchAdapter( { item, position ->
-            if (isMultiple) {
-                // 多选：直接追加到已选集合（最多 3 个）
-                val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
-                if (selectedList.size >= 3) {
-                    "最多选择三个".showToast()
-                    return@SearchAdapter
-                }
-                item.isSelected = true
-                mRealVM.selectData.value = (selectedList + item).distinctBy { it.code }
-
-                // 同步右侧列表中的对应项为选中
-                mRealVM.allData.value?.forEach { parent ->
-                    parent.children?.firstOrNull { child -> child.code == item.code }?.isSelected = true
-                }
-                cyIyPnSonAdapter.notifyDataSetChanged()
-                // 关闭搜索面板 + 收起键盘
-                binding.rlSc.visibility = View.GONE
-                hideKeyboard(binding.et)
-            } else {
-                // 单选：回传并关闭
-                item.fieldCode = "industry"
-                FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
-                finish()
-            }
-
-        },0){ binding.et.text?.toString().orEmpty() }
+        SearchAdapter({ item, _ -> onSearchIndustryClick(item) }, 0) {
+            binding.et.text?.toString().orEmpty()
+        }
     }
 
     private fun initView() {
-        // 多选模式：显示顶部/底部已选区域，并配置横滑列表
+        initMultipleMode()
+        initRecyclerViews()
+        initSearch()
+        initClicks()
+    }
+
+    private fun initMultipleMode() {
         if (isMultiple) {
             binding.tvTitle.text = getString(R.string.choose_expected_industry)
             binding.llMultipleTop.visibility = View.VISIBLE
             binding.llMultipleBot.visibility = View.VISIBLE
-            binding.rcSelected.apply {
-                layoutManager = LinearLayoutManager(
-                    this@IndustrySelectionActivity,
-                    RecyclerView.HORIZONTAL,
-                    false
-                )
-                isNestedScrollingEnabled = false
-                adapter = selectCyIyPnAdapter
-            }
+            binding.rcSelected.adapter = selectCyIyPnAdapter
         } else {
-            // 单选模式：隐藏多选相关 UI
             binding.tvTitle.text = getString(R.string.industry)
             binding.llMultipleTop.visibility = View.GONE
             binding.llMultipleBot.visibility = View.GONE
         }
+    }
 
-        // 左侧一级行业列表
-        binding.rcLeft.apply {
-            layoutManager = LinearLayoutManager(
-                this@IndustrySelectionActivity,
-                RecyclerView.VERTICAL,
-                false
-            )
-            adapter = cyIyPnAdapter
-        }
+    private fun initRecyclerViews() {
+        binding.rcLeft.adapter = cyIyPnAdapter
 
-        // 右侧二级行业网格（两列）
         binding.rcRight.apply {
-            layoutManager = GridLayoutManager(
-                this@IndustrySelectionActivity,
-                2,
-                RecyclerView.VERTICAL,
-                false
-            )
+            addItemDecoration(rightGroupDecoration)
+            addOnScrollListener(rightScrollListener)
+            addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    if (e.actionMasked == MotionEvent.ACTION_DOWN) {
+                        suppressRightScrollSync = false
+                    }
+                    return false
+                }
+            })
             adapter = cyIyPnSonAdapter
         }
 
-        // 搜索结果列表
-        binding.rcSc.apply {
-            layoutManager = LinearLayoutManager(
-                this@IndustrySelectionActivity,
-                RecyclerView.VERTICAL,
-                false
-            )
-            adapter = searchAdapter
-        }
-        // 搜索框输入变化：触发搜索 + 控制搜索面板显隐
+        binding.rcSc.adapter = searchAdapter
+    }
+
+    private fun initSearch() {
         binding.et.doAfterTextChanged { editable ->
-            val showIcon = !editable.isNullOrEmpty()
-            if (showIcon) {
-                // 有输入：发起搜索，显示搜索结果面板
-                mRealVM.queryDictIndustryQuery(editable.toString(),sessionId,conversationId)
+            val keyword = editable?.toString().orEmpty()
+            if (keyword.isNotEmpty()) {
+                mRealVM.queryDictIndustryQuery(keyword, sessionId, conversationId)
                 binding.ivClear.visibility = View.VISIBLE
                 binding.rlSc.visibility = View.VISIBLE
             } else {
-                // 无输入：清空搜索面板
                 binding.rlSc.visibility = View.GONE
                 binding.ivClear.visibility = View.GONE
             }
         }
-        // 搜索框清空按钮
+
         binding.ivClear.setOnSingleClickListener {
-            binding.rlSc.visibility = View.GONE
+            closeSearchPanel(shouldHideKeyboard = false)
             binding.et.text.clear()
         }
-        // 返回
+    }
+
+    private fun initClicks() {
         binding.ivBack.setOnSingleClickListener { finish() }
 
-        // 底部完成按钮：未选时提示，否则回传并关闭
         binding.layoutPrimary.setOnSingleClickListener {
             val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
             if (selectedList.isEmpty()) {
@@ -246,38 +193,122 @@ class IndustrySelectionActivity :
         }
     }
 
+    private fun onLeftIndustryClick(position: Int) {
+        selectLeftIndustry(position, scrollLeft = false)
+        scrollRightToIndustry(position, suppressSync = true)
+    }
+
+    private fun onRightIndustryClick(item: CommonEnumItem) {
+        if (isIndustryGridPlaceholder(item)) return
+        if (isMultiple) {
+            toggleIndustrySelection(item)
+        } else {
+            finishWithIndustry(item)
+        }
+        cyIyPnSonAdapter.notifyDataSetChanged()
+    }
+
+    private fun onSearchIndustryClick(item: CommonEnumItem) {
+        if (isMultiple) {
+            selectIndustryFromSearch(item)
+        } else {
+            finishWithIndustry(item)
+        }
+    }
+
+    private fun toggleIndustrySelection(item: CommonEnumItem) {
+        val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
+        if (item.isSelected) {
+            item.isSelected = false
+            mRealVM.selectData.value = selectedList.filterNot { it.code == item.code }
+            return
+        }
+
+        if (selectedList.size >= MAX_SELECTED_INDUSTRY_COUNT) {
+            "最多选择三个".showToast()
+            return
+        }
+        item.isSelected = true
+        mRealVM.selectData.value = (selectedList + item).distinctBy { it.code }
+    }
+
+    private fun removeSelectedIndustry(item: CommonEnumItem) {
+        mRealVM.selectData.value = mRealVM.selectData.value?.filterNot { it.code == item.code }
+        setChildSelected(item.code, false)
+        cyIyPnSonAdapter.notifyDataSetChanged()
+    }
+
+    private fun selectIndustryFromSearch(item: CommonEnumItem) {
+        val selectedList = mRealVM.selectData.value?.toMutableList() ?: mutableListOf()
+        val alreadySelected = selectedList.any { it.code == item.code }
+        if (!alreadySelected && selectedList.size >= MAX_SELECTED_INDUSTRY_COUNT) {
+            "最多选择三个".showToast()
+            return
+        }
+
+        item.isSelected = true
+        setChildSelected(item.code, true)
+        mRealVM.selectData.value = (selectedList + item).distinctBy { it.code }
+        cyIyPnSonAdapter.notifyDataSetChanged()
+        closeSearchPanel()
+        locateSelectedIndustry(item)
+    }
+
+    private fun setChildSelected(code: String?, isSelected: Boolean) {
+        if (code.isNullOrEmpty()) return
+        mRealVM.allData.value?.forEach { parent ->
+            parent.children?.firstOrNull { child -> child.code == code }?.isSelected = isSelected
+        }
+    }
+
+    private fun closeSearchPanel(shouldHideKeyboard: Boolean = true) {
+        binding.rlSc.visibility = View.GONE
+        if (shouldHideKeyboard) {
+            hideKeyboard(binding.et)
+        }
+    }
+
+    private fun finishWithIndustry(item: CommonEnumItem) {
+        item.fieldCode = "industry"
+        FlowEventBus.postSticky(Events.CommonEnumItemEvent(item))
+        finish()
+    }
+
     private fun observeEvents() {
-        // 已选集合变化：刷新已选列表、计数和完成按钮
+        observeSelectedData()
+        observeSearchData()
+        observeIndustryData()
+    }
+
+    private fun observeSelectedData() {
         mRealVM.selectData.observe(this) {
             binding.tvWordCount.text = it.size.toString()
             selectCyIyPnAdapter.submitList(it)
         }
+    }
 
-        // 搜索结果变化：空态切换 + 刷新列表
+    private fun observeSearchData() {
         mRealVM.searchData.observe(this) {
-            if(it.isNullOrEmpty()){
-                // 无结果：显示空态文案
-              binding.tvEm.visibility = View.VISIBLE
-              binding.rcSc.visibility = View.GONE
-            }else{
-                binding.tvEm.visibility = View.GONE
-                binding.rcSc.visibility = View.VISIBLE
-            }
+            showSearchEmpty(it.isNullOrEmpty())
             searchAdapter.submitList(it)
         }
-        // 一级行业数据变化：刷新左侧分类，并默认选中第二个分类
-        mRealVM.allData.observe(this){
+    }
+
+    private fun observeIndustryData() {
+        mRealVM.allData.observe(this) {
             cyIyPnAdapter.submitList(it)
-
-            //默认第 2个
-            mRealVM.allData.value?.getOrNull(mRealVM.lastSelectedPosition.value ?: 1)?.also { node ->
-                node.isSelected = true
-                cyIyPnSonAdapter.submitList(node.children ?: emptyList())
-            } ?: cyIyPnSonAdapter.submitList(emptyList())
+            submitRightIndustryList(it)
+            val targetPosition = (mRealVM.lastSelectedPosition.value ?: 1)
+                .takeIf { position -> position in it.indices }
+                ?: 0
+            selectLeftIndustry(targetPosition, scrollLeft = false)
+            binding.rcRight.post { scrollRightToIndustry(targetPosition, smooth = false) }
         }
-        observeEvents {
+    }
 
-        }
+    private fun showSearchEmpty(isEmpty: Boolean) {
+        binding.tvEm.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.rcSc.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
 
     override fun setTranslucentStatus() {
@@ -287,6 +318,235 @@ class IndustrySelectionActivity :
             .navigationBarColor(R.color.white)
             .transparentStatusBar()
             .init()
+    }
+
+    private val rightScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            if (suppressRightScrollSync) return
+            syncLeftByRightPosition()
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                if (suppressRightScrollSync) {
+                    suppressRightScrollSync = false
+                    return
+                }
+                syncLeftByRightPosition()
+            }
+        }
+    }
+
+    private fun submitRightIndustryList(data: List<CommonEnumItem>) {
+        rightIndustryItems.clear()
+        rightSections.clear()
+
+        val groups = buildIndustryGroups(data)
+        groups.forEachIndexed { groupIndex, group ->
+            appendIndustryGroup(group, hasNextGroup = groupIndex < groups.lastIndex)
+        }
+
+        rightGroupDecoration.submitSections(rightSections)
+        cyIyPnSonAdapter.submitList(rightIndustryItems.toList())
+        binding.rcRight.post { binding.rcRight.invalidateItemDecorations() }
+    }
+
+    private fun buildIndustryGroups(data: List<CommonEnumItem>): List<IndustryGroup> {
+        return data.mapIndexedNotNull { leftIndex, parent ->
+            val children = parent.children.orEmpty().takeIf { it.isNotEmpty() } ?: return@mapIndexedNotNull null
+            IndustryGroup(
+                leftIndex = leftIndex,
+                title = parent.name.orEmpty().ifBlank { parent.fullNamePath.orEmpty() },
+                children = children
+            )
+        }
+    }
+
+    private fun appendIndustryGroup(group: IndustryGroup, hasNextGroup: Boolean) {
+        rightSections.add(
+            IndustrySection(
+                leftIndex = group.leftIndex,
+                startPosition = rightIndustryItems.size,
+                title = group.title
+            )
+        )
+        rightIndustryItems.addAll(group.children)
+        if (hasNextGroup) {
+            appendGridPlaceholders(group.children.size)
+        }
+    }
+
+    private fun appendGridPlaceholders(itemCount: Int) {
+        val placeholderCount = (RIGHT_GRID_SPAN_COUNT - itemCount % RIGHT_GRID_SPAN_COUNT) % RIGHT_GRID_SPAN_COUNT
+        repeat(placeholderCount) {
+            rightIndustryItems.add(CommonEnumItem(code = INDUSTRY_GRID_PLACEHOLDER_CODE))
+        }
+    }
+
+    private fun selectLeftIndustry(position: Int, scrollLeft: Boolean = true) {
+        val data = mRealVM.allData.value ?: return
+        if (position !in data.indices) return
+        val oldPosition = mRealVM.lastSelectedPosition.value
+        val alreadySelected = data.getOrNull(position)?.isSelected == true
+        if (oldPosition == position && alreadySelected) return
+        data.forEachIndexed { index, item -> item.isSelected = index == position }
+        mRealVM.lastSelectedPosition.value = position
+        cyIyPnAdapter.notifyDataSetChanged()
+        if (scrollLeft) {
+            leftLayoutManager?.scrollToPositionWithOffset(position, 0)
+        }
+    }
+
+    private fun locateSelectedIndustry(item: CommonEnumItem) {
+        val targetCode = item.code ?: return
+        val rightPosition = rightIndustryItems.indexOfFirst { child ->
+            !isIndustryGridPlaceholder(child) && child.code == targetCode
+        }
+        if (rightPosition < 0) return
+        val leftIndex = rightSections.lastOrNull { it.startPosition <= rightPosition }?.leftIndex ?: return
+        selectLeftIndustry(leftIndex, scrollLeft = false)
+        scrollLeftToIndustry(leftIndex)
+        binding.rcRight.post { scrollRightToIndustryItem(rightPosition, suppressSync = true) }
+    }
+
+    private fun scrollLeftToIndustry(position: Int) {
+        leftLayoutManager?.scrollToPositionWithOffset(position, 0)
+    }
+
+    private fun scrollRightToIndustry(
+        leftIndex: Int,
+        smooth: Boolean = true,
+        suppressSync: Boolean = false
+    ) {
+        if (suppressSync) {
+            suppressRightScrollSync = true
+        }
+        val section = rightSections.firstOrNull { it.leftIndex == leftIndex } ?: return
+        if (smooth) {
+            val smoothScroller = object : LinearSmoothScroller(this) {
+                override fun getVerticalSnapPreference(): Int = SNAP_TO_START
+            }
+            smoothScroller.targetPosition = section.startPosition
+            rightLayoutManager?.startSmoothScroll(smoothScroller)
+        } else {
+            rightLayoutManager?.scrollToPositionWithOffset(section.startPosition, 0)
+        }
+    }
+
+    private fun scrollRightToIndustryItem(rightPosition: Int, suppressSync: Boolean = false) {
+        if (suppressSync) {
+            suppressRightScrollSync = true
+        }
+        val section = rightSections.lastOrNull { it.startPosition <= rightPosition } ?: return
+        val offset = if (rightPosition < section.startPosition + RIGHT_GRID_SPAN_COUNT) {
+            0
+        } else {
+            rightGroupDecoration.headerHeight
+        }
+        rightLayoutManager?.scrollToPositionWithOffset(rightPosition, offset)
+    }
+
+    private fun syncLeftByRightPosition() {
+        if (rightSections.isEmpty()) return
+        val firstVisible = rightLayoutManager?.findFirstVisibleItemPosition() ?: return
+        if (firstVisible == RecyclerView.NO_POSITION) return
+        val section = rightSections.lastOrNull { it.startPosition <= firstVisible } ?: return
+        selectLeftIndustry(section.leftIndex)
+    }
+
+    private fun isIndustryGridPlaceholder(item: CommonEnumItem): Boolean {
+        return item.code == INDUSTRY_GRID_PLACEHOLDER_CODE
+    }
+
+    private data class IndustryGroup(
+        val leftIndex: Int,
+        val title: String,
+        val children: List<CommonEnumItem>
+    )
+
+    private data class IndustrySection(
+        val leftIndex: Int,
+        val startPosition: Int,
+        val title: String
+    )
+
+    private class IndustryGroupDecoration(
+        context: Context,
+        private val spanCount: Int
+    ) : RecyclerView.ItemDecoration() {
+        val headerHeight = context.dp(34f).toInt()
+        private val titleStart = context.dp(2f)
+        private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.WHITE
+        }
+        private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = ContextCompat.getColor(context, R.color.color_90_000000)
+            textSize = context.sp(13f)
+            typeface = Typeface.DEFAULT_BOLD
+        }
+        private var sections: List<IndustrySection> = emptyList()
+
+        fun submitSections(newSections: List<IndustrySection>) {
+            sections = newSections.toList()
+        }
+
+        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+            outRect.set(0, 0, 0, 0)
+            val position = parent.getChildAdapterPosition(view)
+            if (needsHeaderOffset(position)) {
+                outRect.top = headerHeight
+            }
+        }
+
+        override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+            for (index in 0 until parent.childCount) {
+                val child = parent.getChildAt(index)
+                val position = parent.getChildAdapterPosition(child)
+                val section = sections.firstOrNull { it.startPosition == position } ?: continue
+                drawHeader(canvas, parent, child.top - headerHeight, section.title)
+            }
+        }
+
+        override fun onDrawOver(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+            val layoutManager = parent.layoutManager as? LinearLayoutManager ?: return
+            val firstVisible = layoutManager.findFirstVisibleItemPosition()
+            if (firstVisible == RecyclerView.NO_POSITION) return
+            val currentSection = sections.lastOrNull { it.startPosition <= firstVisible } ?: return
+            val nextSection = sections.firstOrNull { it.startPosition > firstVisible }
+            val baseTop = parent.paddingTop
+            val nextHeaderTop = nextSection
+                ?.let { parent.findViewHolderForAdapterPosition(it.startPosition)?.itemView }
+                ?.let { it.top - headerHeight }
+            val top = nextHeaderTop
+                ?.takeIf { it < baseTop + headerHeight }
+                ?.let { it - headerHeight }
+                ?: baseTop
+            drawHeader(canvas, parent, top, currentSection.title)
+        }
+
+        private fun drawHeader(canvas: Canvas, parent: RecyclerView, top: Int, title: String) {
+            val left = parent.paddingLeft.toFloat()
+            val right = (parent.width - parent.paddingRight).toFloat()
+            val bottom = top + headerHeight
+            canvas.drawRect(left, top.toFloat(), right, bottom.toFloat(), backgroundPaint)
+            val baseline = top + headerHeight / 2f - (textPaint.ascent() + textPaint.descent()) / 2f
+            canvas.drawText(title, left + titleStart, baseline, textPaint)
+        }
+
+        private fun needsHeaderOffset(position: Int): Boolean {
+            val section = sections.lastOrNull { it.startPosition <= position } ?: return false
+            val nextSectionStart = sections.firstOrNull { it.startPosition > section.startPosition }?.startPosition
+                ?: Int.MAX_VALUE
+            return position < nextSectionStart && position < section.startPosition + spanCount
+        }
+
+        private fun Context.dp(value: Float): Float {
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics)
+        }
+
+        private fun Context.sp(value: Float): Float {
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics)
+        }
     }
 
 }

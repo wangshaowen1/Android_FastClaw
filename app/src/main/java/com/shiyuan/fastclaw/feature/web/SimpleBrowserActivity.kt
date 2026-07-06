@@ -454,7 +454,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
             url?.openWithBrowser()
         }
         mRealVM.payStatusCallback.observe(this) { info ->
-            GsonUtils.toJson(info).showToast()
+            //GsonUtils.toJson(info).showToast()
             info?.let { bridge?.callHandler("payStatusCallback", GsonUtils.toJson(it)) }
         }
         observeEvents {
