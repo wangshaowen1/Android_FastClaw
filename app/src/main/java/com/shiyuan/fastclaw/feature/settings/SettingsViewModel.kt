@@ -16,6 +16,7 @@ import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.BindThirdPartyBody
 import com.shiyuan.fastclaw.core.network.apis.request.UnbindThirdPartyBody
+import com.shiyuan.fastclaw.core.network.apis.response.BindThirdPartyData
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.kit.SignUtils
 
@@ -78,26 +79,54 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * 组装微信第三方绑定参数。
+     */
+    private fun createWechatBindBody(authData: MutableMap<String, String>?): BindThirdPartyBody {
+        return BindThirdPartyBody(
+            providerType = BindThirdPartyBody.PROVIDER_TYPE_WECHAT,
+            thirdPartyOpenId = authData?.get("openid"),
+            thirdPartyUnionId = authData?.get("unionid"),
+            thirdPartyNickName = authData?.get("name"),
+            thirdPartyAvatar = authData?.get("iconurl"),
+            authCode = authData?.get("authCode") ?: authData?.get("code"),
+            identityToken = authData?.get("identityToken"),
+            nonce = authData?.get("nonce")
+        )
+    }
+
+    /**
      * 绑定微信账号，接口成功后再更新本地展示状态。
      */
-    fun bindWechat(data: MutableMap<String, String>?, onSuccess: (() -> Unit)? = null) {
-        val nickName = data?.get("name")
+    fun bindWechat(authData: MutableMap<String, String>?, onResult: ((MutableMap<String, String>?, BindThirdPartyData?) -> Unit)? = null) {
+        val nickName = authData?.get("name")
         requestWithLoading(
             apiBlock = {
-                mRepo.api.bindThirdParty(
-                    BindThirdPartyBody(
-                        providerType = BindThirdPartyBody.PROVIDER_TYPE_WECHAT,
-                        thirdPartyOpenId = data?.get("openid"),
-                        thirdPartyUnionId = data?.get("unionid"),
-                        thirdPartyNickName = nickName,
-                        thirdPartyAvatar = data?.get("iconurl")
-                    )
-                )
+                mRepo.api.bindThirdParty(createWechatBindBody(authData))
             }
         ) {
-            updateWechatBound(nickName)
-            refreshUserInfo()
-            onSuccess?.invoke()
+            if (data?.isSuccess() == true) {
+                updateWechatBound(nickName)
+                refreshUserInfo()
+            }
+            onResult?.invoke(authData, data)
+        }
+    }
+
+    /**
+     * 解绑旧账号并绑定到当前账号。
+     */
+    fun rebindWechat(authData: MutableMap<String, String>?, onResult: ((BindThirdPartyData?) -> Unit)? = null) {
+        val nickName = authData?.get("name")
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.rebindThirdParty(createWechatBindBody(authData))
+            }
+        ) {
+            if (data?.isSuccess() == true) {
+                updateWechatBound(nickName)
+                refreshUserInfo()
+            }
+            onResult?.invoke(data)
         }
     }
 

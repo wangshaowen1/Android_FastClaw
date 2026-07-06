@@ -9,6 +9,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.core.manager.ShareManager
+import com.shiyuan.fastclaw.core.network.apis.response.BindThirdPartyData
 import com.shiyuan.fastclaw.databinding.ActivityAccountSettingsBinding
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewChangeActivity
 import com.shiyuan.fastclaw.feature.settings.logoff.LogoffNewActivity
@@ -99,13 +100,44 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
     /** 微信授权成功后刷新页面展示状态。 */
     override fun onAuthed(platform: SHARE_MEDIA?, data: MutableMap<String, String>?) {
         if (platform == SHARE_MEDIA.WEIXIN) {
-            mRealVM.bindWechat(data) {
-                showToast(R.string.bind_success)
-            }
+            mRealVM.bindWechat(data, ::handleBindWechatResult)
         }
     }
 
+    /** 根据微信绑定接口返回状态展示结果。 */
+    private fun handleBindWechatResult(authData: MutableMap<String, String>?, result: BindThirdPartyData?) {
+        if (result?.isSuccess() == true) {
+            showToast(R.string.bind_success)
+        } else if (result?.status == 1) {
+            showBindWechatPrompt(authData, result.message)
+        } else {
+            result?.message?.showToast()
+        }
+    }
+
+    /** 展示微信绑定失败的不透明提示弹框。 */
+    private fun showBindWechatPrompt(authData: MutableMap<String, String>?, message: String?) {
+        showConfirmPrompt(
+            tip = message,
+            title = getString(R.string.unbind_and_bind_wechat_title),
+            cancelText = getString(R.string.cancel),
+            confirmText = getString(R.string.unbind_and_bind_wechat),
+            confirm = {
+                mRealVM.rebindWechat(authData, ::handleRebindWechatResult)
+            }
+        )
+    }
+
     /** 微信授权失败或取消。 */
+    /** 根据微信重新绑定接口返回状态展示结果。 */
+    private fun handleRebindWechatResult(result: BindThirdPartyData?) {
+        if (result?.isSuccess() == true) {
+            showToast(R.string.bind_success)
+            return
+        }
+        result?.message?.showToast()
+    }
+
     override fun onError(e: Exception?, platform: SHARE_MEDIA?, onCancel: Boolean) {
     }
 }

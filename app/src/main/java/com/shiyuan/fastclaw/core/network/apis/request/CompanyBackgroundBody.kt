@@ -14,10 +14,10 @@ data class CompanyBackgroundStartBody(
 /**
  * 查询公司背调公司搜索结果
  *
- * @param companyName 用户输入的公司名称、简称、品牌名或缩写
+ * @param keyword 用户输入的公司名称、简称、品牌名或缩写
  */
 data class CompanyBackgroundCompanySearchQueryBody(
-    val companyName: String?,
+    val keyword: String?,
 )
 
 /**

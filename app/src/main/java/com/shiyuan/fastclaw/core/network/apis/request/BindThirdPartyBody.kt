@@ -14,7 +14,10 @@ data class BindThirdPartyBody(
     val thirdPartyOpenId: String?,
     val thirdPartyUnionId: String?,
     val thirdPartyNickName: String?,
-    val thirdPartyAvatar: String?
+    val thirdPartyAvatar: String?,
+    val authCode: String? = null,
+    val identityToken: String? = null,
+    val nonce: String? = null
 ) : UserTokenBody() {
     companion object {
         /** 微信 */
