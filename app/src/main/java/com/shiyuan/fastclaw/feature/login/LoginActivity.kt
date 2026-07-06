@@ -66,7 +66,6 @@ class LoginActivity : BaseViewModelActivity<DialogLoginBinding, LoginViewModel>(
             R.id.btnPhone -> {
                 checkedPolicy = mRealVM.checkedPolicy.get()
                 FlashLoginDialogFragment.show(
-                    supportFragmentManager,
                     false,
                     checkedPolicy = mRealVM.checkedPolicy.get()
                 )

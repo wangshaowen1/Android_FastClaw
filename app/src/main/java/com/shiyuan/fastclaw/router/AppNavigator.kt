@@ -48,9 +48,7 @@ object AppNavigator {
         showToast: Boolean,
         isFullScreen: Boolean = false
     ) {
-        val activity = topActivity ?: return
         FlashLoginDialogFragment.show(
-            (activity as AppCompatActivity).supportFragmentManager,
             showToast,
             checkedPolicy = false)
 

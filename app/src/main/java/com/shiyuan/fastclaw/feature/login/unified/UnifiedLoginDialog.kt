@@ -88,7 +88,7 @@ class UnifiedLoginDialog :
 //                    checkedPolicy = mRealVM.checkedPolicy.get(),
 //                    parentFragmentManager
 //                )
-                FlashLoginDialogFragment.show(parentFragmentManager,false, checkedPolicy = mRealVM.checkedPolicy.get())
+                FlashLoginDialogFragment.show(false, checkedPolicy = mRealVM.checkedPolicy.get())
                 finishOnly()
             }
 
