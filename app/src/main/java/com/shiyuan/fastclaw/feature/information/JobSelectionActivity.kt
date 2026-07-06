@@ -4,15 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
-import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
@@ -21,16 +22,12 @@ import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
-import com.shiyuan.fastclaw.databinding.ActivityIndustrySelectionBinding
 import com.shiyuan.fastclaw.databinding.ActivityJobSelectionBinding
 import com.shiyuan.fastclaw.feature.information.adapter.IyPnAdapter
-import com.shiyuan.fastclaw.feature.information.adapter.IyPnJobSonAdapter
-import com.shiyuan.fastclaw.feature.information.adapter.IyPnSonAdapter
+import com.shiyuan.fastclaw.feature.information.adapter.JobRightAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.SearchAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.SelectedIyPnAdapter
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
-import kotlin.getValue
-import kotlin.reflect.typeOf
 
 /**
  * 职位选择页：左侧一级职位分类、右侧二级职位和三级职位列表，
@@ -49,6 +46,8 @@ class JobSelectionActivity :
 
         private const val MULTIPLENUM = "multipleNum"
         private const val TYPE = "type"
+        private const val JOB_RIGHT_SPAN_COUNT = 2
+        private const val JOB_SECTION_HEADER_CODE = "__job_section_header__"
 
         /**
          * 启动职位选择页。
@@ -58,12 +57,20 @@ class JobSelectionActivity :
          * @param sessionId 会话 ID。
          * @param conversationId 对话 ID。
          */
-        fun start(activity: Activity?, isMultiple: Boolean = false, sessionId: String? = "", conversationId: String? = "", title: String? = null,multipleNum: Int = 3,type:String = "ClawAgent") {
+        fun start(
+            activity: Activity?,
+            isMultiple: Boolean = false,
+            sessionId: String? = "",
+            conversationId: String? = "",
+            title: String? = null,
+            multipleNum: Int = 3,
+            type: String = "ClawAgent"
+        ) {
             activity ?: return
             val intent = Intent(activity, JobSelectionActivity::class.java).apply {
                 putExtra(EXTRA_IS_MULTIPLE, isMultiple)
-                putExtra(JobSelectionActivity.Companion.SESSIONID, sessionId)
-                putExtra(JobSelectionActivity.Companion.CONVERSATIONID, conversationId)
+                putExtra(SESSIONID, sessionId)
+                putExtra(CONVERSATIONID, conversationId)
                 putExtra(TITLE, title)
                 putExtra(MULTIPLENUM, multipleNum)
                 putExtra(TYPE, type)
@@ -80,20 +87,41 @@ class JobSelectionActivity :
         // 监听 ViewModel 状态变化
         observeEvents()
         // 首次进入请求职位字典
-        mRealVM.queryDictPositionQuery(sessionId,conversationId)
+        mRealVM.queryDictPositionQuery(sessionId, conversationId)
     }
 
-    private val title: String by lazy { intent.getStringExtra(Companion.TITLE)  ?: ""}
+    private val title: String by lazy { intent.getStringExtra(TITLE) ?: "" }
 
-    private val type: String by lazy { intent.getStringExtra(Companion.TYPE)  ?: "ClawAgent"}
+    private val type: String by lazy { intent.getStringExtra(TYPE) ?: "ClawAgent" }
 
-    private val multipleNum: Int by lazy { intent.getIntExtra(Companion.MULTIPLENUM,3) }
+    private val multipleNum: Int by lazy { intent.getIntExtra(MULTIPLENUM, 3) }
 
     // 是否多选模式
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
 
+    // 当前会话 ID / 对话 ID
+    private val sessionId: String by lazy { intent.getStringExtra(SESSIONID) ?: "" }
+    private val conversationId: String by lazy { intent.getStringExtra(CONVERSATIONID) ?: "" }
+
+    private val rightJobCategoryItems = mutableListOf<CommonEnumItem>()
+    private val rightJobSections = mutableListOf<JobSection>()
+    private val rightGroupDecoration by lazy {
+        StickyHeaderDecoration(
+            context = this,
+            headerLayoutId = R.layout.item_job_second_category_header,
+            titleViewId = R.id.tv_name
+        )
+    }
+    private val leftLayoutManager: LinearLayoutManager?
+        get() = binding.rcLeft.layoutManager as? LinearLayoutManager
+    private val rightLayoutManager: GridLayoutManager?
+        get() = binding.rcRight.layoutManager as? GridLayoutManager
+    private var suppressRightScrollSync = false
+    private var isViewDestroyed = false
+
     private fun selectOnlyPosition(item: CommonEnumItem) {
         val selectedCode = item.positionCode
+        var selectedParentIndex: Int? = null
         mRealVM.allPositioData.value?.forEachIndexed { parentIndex, parent ->
             var parentSelected = false
             parent.secondCategories?.forEach { secondCategory ->
@@ -110,202 +138,212 @@ class JobSelectionActivity :
             }
             parent.isSelected = parentSelected
             if (parentSelected) {
-                mRealVM.lastSelectedPosition2.value = parentIndex
-                cyIyJobPnSonAdapter.submitList(parent.secondCategories ?: emptyList())
+                selectedParentIndex = parentIndex
             }
         }
         item.isSelected = true
         mRealVM.selectPositionData.value = listOf(item)
-        cyIyPnAdapter.notifyDataSetChanged()
+        selectedParentIndex?.let { leftIndex ->
+            selectLeftJob(leftIndex, scrollLeft = false)
+            scrollLeftToJob(leftIndex)
+        }
+        jobRightAdapter.notifyDataSetChanged()
+        locateSelectedJob(item)
     }
 
-    // 当前会话 ID / 对话 ID
-    private val sessionId: String by lazy { intent.getStringExtra(JobSelectionActivity.Companion.SESSIONID) ?: "" }
-    private val conversationId: String by lazy { intent.getStringExtra(JobSelectionActivity.Companion.CONVERSATIONID)  ?: ""}
     // 左侧一级职位分类列表适配器
     private val cyIyPnAdapter: IyPnAdapter by lazy {
-        IyPnAdapter( { item, position ->
-            // 单选样式：重置其他项的选中态
-            mRealVM.allPositioData.value?.forEach { it.isSelected = false }
-            item.isSelected = true
-            cyIyPnAdapter.notifyDataSetChanged()
-            // 切换右侧二级职位
-            cyIyJobPnSonAdapter.submitList(mRealVM.allPositioData.value?.get(position)?.secondCategories)
-            mRealVM.lastSelectedPosition2.value = position
-        },1)
+        IyPnAdapter({ _, position -> onLeftJobClick(position) }, 1)
     }
 
-    // 右侧二级职位下的具体职位网格适配器
-    private val cyIyJobPnSonAdapter: IyPnJobSonAdapter by lazy {
-        IyPnJobSonAdapter { item, _ ->
-            if (isMultiple) {
-                // 多选：维护已选集合，最多 3 个
-                val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
-                if (item.isSelected) {
-                    item.isSelected = false
-                    mRealVM.selectPositionData.value = selectedList.filterNot { it.positionCode == item.positionCode }
-                } else {
-                    if (this.multipleNum == 1) {
-                        selectOnlyPosition(item)
-                    } else {
-                        if (selectedList.size >= this.multipleNum) {
-                            val showToastMes = "最多选择"+this.multipleNum+"个"
-                            showToastMes .showToast()
-                            return@IyPnJobSonAdapter
-                        }
-                        item.isSelected = true
-                        mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
-                    }
-                }
-            } else {
-                // 单选：回传选中项并关闭页面
-                item.fieldCode = "position"
-                FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
-                finish()
-            }
-            cyIyJobPnSonAdapter.notifyDataSetChanged()
-        }
+    // 右侧二级标题 + 三级职位扁平列表适配器
+    private val jobRightAdapter: JobRightAdapter by lazy {
+        JobRightAdapter(::isJobSectionHeader) { item, _ -> onRightJobClick(item) }
     }
 
     // 底部已选职位横滑标签适配器
     private val selectCyIyPnAdapter: SelectedIyPnAdapter by lazy {
-        SelectedIyPnAdapter( { item ->
-            // 从已选集合中移除
-            val newList = mRealVM.selectPositionData.value?.filterNot { it.positionCode == item.positionCode }
-            mRealVM.selectPositionData.value = newList
-
-            // 同步清除右侧列表中的选中态
-            mRealVM.allPositioData.value?.forEach { parent ->
-                parent.secondCategories?.forEach { secondCategory ->
-                    secondCategory.positions?.firstOrNull { child -> child.positionCode == item.positionCode }?.isSelected = false
-                }
-            }
-            cyIyJobPnSonAdapter.notifyDataSetChanged()
-        },1)
+        SelectedIyPnAdapter({ item -> removeSelectedJob(item) }, 1)
     }
 
     // 搜索结果列表适配器
     private val searchAdapter: SearchAdapter by lazy {
-        SearchAdapter( { item, position ->
-            if (isMultiple) {
-                if (this.multipleNum == 1) {
-                    selectOnlyPosition(item)
-                } else {
-                    // 多选：直接追加到已选集合（最多 3 个）
-                    val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
-                    if (selectedList.size >= this.multipleNum) {
-                        val showToastMes = "最多选择"+this.multipleNum+"个"
-                        showToastMes .showToast()
-                        return@SearchAdapter
-                    }
-                    item.isSelected = true
-                    mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
-
-                    // 同步右侧列表中的对应项为选中
-                    mRealVM.allPositioData.value?.forEach { parent ->
-                        parent.secondCategories?.forEach { secondCategory ->
-                            secondCategory.positions?.firstOrNull { child -> child.positionCode == item.positionCode }?.isSelected =
-                                true
-                        }
-                    }
-                }
-                cyIyJobPnSonAdapter.notifyDataSetChanged()
-                // 关闭搜索面板 + 收起键盘
-                binding.rlSc.visibility = View.GONE
-                hideKeyboard(binding.et)
-            } else {
-                // 单选：回传并关闭
-                item.fieldCode = "position"
-                FlowEventBus.postSticky(Events.CommonEnumItemEvent(item));
-                finish()
-            }
-
+        SearchAdapter({ item, _ ->
+            onSearchJobClick(item)
         }, 1) { binding.et.text?.toString().orEmpty() }
     }
 
+    private fun onLeftJobClick(position: Int) {
+        selectLeftJob(position, scrollLeft = false)
+        scrollRightToJob(position, smooth = false, suppressSync = true)
+    }
+
+    private fun onRightJobClick(item: CommonEnumItem) {
+        if (isJobSectionHeader(item)) return
+        if (isMultiple) {
+            toggleJobSelection(item)
+        } else {
+            finishWithJob(item)
+        }
+        jobRightAdapter.notifyDataSetChanged()
+    }
+
+    private fun onSearchJobClick(item: CommonEnumItem) {
+        if (isMultiple) {
+            selectJobFromSearch(item)
+        } else {
+            finishWithJob(item)
+        }
+    }
+
+    private fun toggleJobSelection(item: CommonEnumItem) {
+        val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
+        if (item.isSelected) {
+            item.isSelected = false
+            mRealVM.selectPositionData.value = selectedList.filterNot { it.positionCode == item.positionCode }
+            return
+        }
+
+        if (multipleNum == 1) {
+            selectOnlyPosition(item)
+            return
+        }
+
+        if (selectedList.size >= multipleNum) {
+            "最多选择${multipleNum}个".showToast()
+            return
+        }
+        item.isSelected = true
+        mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
+    }
+
+    private fun removeSelectedJob(item: CommonEnumItem) {
+        mRealVM.selectPositionData.value =
+            mRealVM.selectPositionData.value?.filterNot { it.positionCode == item.positionCode }
+        setJobSelected(item.positionCode, false)
+        jobRightAdapter.notifyDataSetChanged()
+    }
+
+    private fun selectJobFromSearch(item: CommonEnumItem) {
+        if (multipleNum == 1) {
+            selectOnlyPosition(item)
+            closeSearchPanel()
+            return
+        }
+
+        val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
+        val alreadySelected = selectedList.any { it.positionCode == item.positionCode }
+        if (!alreadySelected && selectedList.size >= multipleNum) {
+            "最多选择${multipleNum}个".showToast()
+            return
+        }
+
+        item.isSelected = true
+        setJobSelected(item.positionCode, true)
+        mRealVM.selectPositionData.value = (selectedList + item).distinctBy { it.positionCode }
+        jobRightAdapter.notifyDataSetChanged()
+        closeSearchPanel()
+        locateSelectedJob(item)
+    }
+
+    private fun setJobSelected(positionCode: String?, isSelected: Boolean) {
+        if (positionCode.isNullOrEmpty()) return
+        mRealVM.allPositioData.value?.forEach { parent ->
+            parent.secondCategories?.forEach { secondCategory ->
+                secondCategory.positions
+                    ?.firstOrNull { child -> child.positionCode == positionCode }
+                    ?.isSelected = isSelected
+            }
+        }
+    }
+
+    private fun closeSearchPanel(shouldHideKeyboard: Boolean = true) {
+        binding.rlSc.visibility = View.GONE
+        if (shouldHideKeyboard) {
+            hideKeyboard(binding.et)
+        }
+    }
+
+    private fun finishWithJob(item: CommonEnumItem) {
+        item.fieldCode = "position"
+        FlowEventBus.postSticky(Events.CommonEnumItemEvent(item))
+        finish()
+    }
+
     private fun initView() {
-        // 多选模式：显示顶部/底部已选区域，并配置横滑列表
+        initMultipleMode()
+        initRecyclerViews()
+        initSearch()
+        initClicks()
+    }
+
+    private fun initMultipleMode() {
         if (isMultiple) {
             binding.tvTitle.text = getString(R.string.choose_desired_position)
             binding.llMultipleTop.visibility = View.VISIBLE
             binding.llMultipleBot.visibility = View.VISIBLE
-            binding.tvAllCount.text = "/"+ this.multipleNum
-            binding.rcSelected.apply {
-                layoutManager = LinearLayoutManager(
-                    this@JobSelectionActivity,
-                    RecyclerView.HORIZONTAL,
-                    false
-                )
-                isNestedScrollingEnabled = false
-                adapter = selectCyIyPnAdapter
-            }
+            binding.tvAllCount.text = "/$multipleNum"
+            binding.rcSelected.adapter = selectCyIyPnAdapter
         } else {
-            // 单选模式：隐藏多选相关 UI
             binding.tvTitle.text = getString(R.string.select_job_title)
             binding.llMultipleTop.visibility = View.GONE
             binding.llMultipleBot.visibility = View.GONE
         }
 
-        if(!this.title.isNullOrEmpty()){
-            binding.tvTitle.text = this.title
+        if (title.isNotEmpty()) {
+            binding.tvTitle.text = title
         }
+    }
 
-        // 左侧一级分类列表
-        binding.rcLeft.apply {
-            layoutManager = LinearLayoutManager(
-                this@JobSelectionActivity,
-                RecyclerView.VERTICAL,
-                false
-            )
-            adapter = cyIyPnAdapter
-        }
+    private fun initRecyclerViews() {
+        binding.rcLeft.adapter = cyIyPnAdapter
 
-        // 右侧二级职位 + 嵌入式三级职位网格
         binding.rcRight.apply {
-            layoutManager = LinearLayoutManager(
-                this@JobSelectionActivity,
-                RecyclerView.VERTICAL,
-                false
-            )
+            addItemDecoration(rightGroupDecoration)
+            addOnScrollListener(rightScrollListener)
+            addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    if (e.actionMasked == MotionEvent.ACTION_DOWN) {
+                        suppressRightScrollSync = false
+                    }
+                    return false
+                }
+            })
             setHasFixedSize(true)
-            isNestedScrollingEnabled = false
             itemAnimator = null
-            adapter = cyIyJobPnSonAdapter
+            rightLayoutManager?.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if (jobRightAdapter.isHeaderPosition(position)) JOB_RIGHT_SPAN_COUNT else 1
+                }
+            }
+            adapter = jobRightAdapter
         }
 
-        // 搜索结果列表
-        binding.rcSc.apply {
-            layoutManager = LinearLayoutManager(
-                this@JobSelectionActivity,
-                RecyclerView.VERTICAL,
-                false
-            )
-            adapter = searchAdapter
-        }
-        // 搜索框输入变化：触发搜索 + 控制搜索面板显隐
+        binding.rcSc.adapter = searchAdapter
+    }
+
+    private fun initSearch() {
         binding.et.doAfterTextChanged { editable ->
             val keyword = editable?.toString().orEmpty()
-            val showIcon = keyword.isNotEmpty()
-            if (showIcon) {
-                // 有输入：发起搜索，显示搜索结果面板
-                mRealVM.queryDictPositionQuery(keyword,sessionId,conversationId)
+            if (keyword.isNotEmpty()) {
+                mRealVM.queryDictPositionQuery(keyword, sessionId, conversationId)
                 binding.ivClear.visibility = View.VISIBLE
                 binding.rlSc.visibility = View.VISIBLE
             } else {
-                // 无输入：清空搜索面板
                 binding.rlSc.visibility = View.GONE
                 binding.ivClear.visibility = View.GONE
             }
         }
-        // 搜索框清空按钮
+
         binding.ivClear.setOnSingleClickListener {
-            binding.rlSc.visibility = View.GONE
+            closeSearchPanel(shouldHideKeyboard = false)
             binding.et.text.clear()
         }
-        // 返回
+    }
+
+    private fun initClicks() {
         binding.ivBack.setOnSingleClickListener { finish() }
 
-        // 底部完成按钮：把已选职位以简化结构回传给上游，并关闭页面
         binding.layoutPrimary.setOnSingleClickListener {
             val selectedList = mRealVM.selectPositionData.value?.toMutableList() ?: mutableListOf()
             if (selectedList.isEmpty()) {
@@ -329,40 +367,199 @@ class JobSelectionActivity :
 
 
     private fun observeEvents() {
-        // 已选集合变化：刷新已选列表、计数和完成按钮
+        observeSelectedJobs()
+        observeSearchJobs()
+        observeJobData()
+    }
+
+    private fun observeSelectedJobs() {
         mRealVM.selectPositionData.observe(this) {
-            binding.tvWordCount.text = it.size.toString()
-            selectCyIyPnAdapter.submitList(it)
-            cyIyJobPnSonAdapter.notifyDataSetChanged()
+            val selectedJobs = it.orEmpty()
+            binding.tvWordCount.text = selectedJobs.size.toString()
+            selectCyIyPnAdapter.submitList(selectedJobs)
+            jobRightAdapter.notifyDataSetChanged()
         }
+    }
 
-        // 搜索结果变化：空态切换 + 刷新列表
+    private fun observeSearchJobs() {
         mRealVM.searchPositionData.observe(this) {
-            if(it.isNullOrEmpty()){
-                // 无结果：显示空态文案
-              binding.tvEm.visibility = View.VISIBLE
-              binding.rcSc.visibility = View.GONE
-            }else{
-                binding.tvEm.visibility = View.GONE
-                binding.rcSc.visibility = View.VISIBLE
+            val searchJobs = it.orEmpty()
+            showSearchEmpty(searchJobs.isEmpty())
+            searchAdapter.submitList(searchJobs)
+        }
+    }
+
+    private fun observeJobData() {
+        mRealVM.allPositioData.observe(this) {
+            val jobData = it.orEmpty()
+            cyIyPnAdapter.submitList(jobData)
+            submitRightJobList(jobData)
+
+            val targetPosition = (mRealVM.lastSelectedPosition2.value ?: 1)
+                .takeIf { position -> position in jobData.indices }
+                ?: 0
+            selectLeftJob(targetPosition, scrollLeft = false)
+            binding.rcRight.post {
+                if (!isViewDestroyed) {
+                    scrollRightToJob(targetPosition, smooth = false)
+                }
             }
-            searchAdapter.submitList(it)
         }
-        // 一级职位数据变化：刷新左侧分类，并默认选中第二个分类
-        mRealVM.allPositioData.observe(this){
-            cyIyPnAdapter.submitList(it)
-            Log.d("node.allPositioData", it?.toJsonString().toString())
+    }
 
-            //默认第 2个
-            mRealVM.allPositioData.value?.getOrNull(mRealVM.lastSelectedPosition2.value ?: 1)?.also { node ->
-                node.isSelected = true
-                Log.d("node.secondCategories", node.secondCategories?.toJsonString().toString())
-                cyIyJobPnSonAdapter.submitList(node.secondCategories ?: emptyList())
-            } ?: cyIyJobPnSonAdapter.submitList(emptyList())
-        }
-        observeEvents {
+    private fun showSearchEmpty(isEmpty: Boolean) {
+        binding.tvEm.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        binding.rcSc.visibility = if (isEmpty) View.GONE else View.VISIBLE
+    }
 
+    private val rightScrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            if (isViewDestroyed || suppressRightScrollSync) return
+            syncLeftByRightPosition(recyclerView)
         }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            if (isViewDestroyed) return
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                if (suppressRightScrollSync) {
+                    suppressRightScrollSync = false
+                    return
+                }
+                syncLeftByRightPosition(recyclerView)
+            }
+        }
+    }
+
+    private fun submitRightJobList(data: List<CommonEnumItem>) {
+        rightJobCategoryItems.clear()
+        rightJobSections.clear()
+
+        val groups = buildJobGroups(data)
+        groups.forEach { group ->
+            appendJobGroup(group)
+        }
+
+        rightGroupDecoration.submitSections(rightJobSections.map { it.toStickyHeaderSection() })
+        jobRightAdapter.submitList(rightJobCategoryItems.toList())
+        binding.rcRight.post {
+            if (!isViewDestroyed) {
+                binding.rcRight.invalidateItemDecorations()
+            }
+        }
+    }
+
+    private fun buildJobGroups(data: List<CommonEnumItem>): List<JobGroup> {
+        return data.mapIndexedNotNull { leftIndex, parent ->
+            val secondCategories = parent.secondCategories.orEmpty()
+                .takeIf { it.isNotEmpty() } ?: return@mapIndexedNotNull null
+            JobGroup(
+                leftIndex = leftIndex,
+                secondCategories = secondCategories
+            )
+        }
+    }
+
+    private fun appendJobGroup(group: JobGroup) {
+        group.secondCategories.forEach { secondCategory ->
+            rightJobSections.add(
+                JobSection(
+                    leftIndex = group.leftIndex,
+                    startPosition = rightJobCategoryItems.size,
+                    title = secondCategory.secondCategoryName.orEmpty()
+                        .ifBlank { secondCategory.name.orEmpty() }
+                )
+            )
+            rightJobCategoryItems.add(secondCategory.copy(fieldCode = JOB_SECTION_HEADER_CODE))
+            rightJobCategoryItems.addAll(secondCategory.positions.orEmpty())
+        }
+    }
+
+    private fun selectLeftJob(position: Int, scrollLeft: Boolean = true) {
+        if (isViewDestroyed) return
+        val data = mRealVM.allPositioData.value ?: return
+        if (position !in data.indices) return
+        val oldPosition = mRealVM.lastSelectedPosition2.value
+        val alreadySelected = data.getOrNull(position)?.isSelected == true
+        if (oldPosition == position && alreadySelected) return
+        data.forEachIndexed { index, item -> item.isSelected = index == position }
+        mRealVM.lastSelectedPosition2.value = position
+        cyIyPnAdapter.notifyDataSetChanged()
+        if (scrollLeft) {
+            leftLayoutManager?.scrollToPositionWithOffset(position, 0)
+        }
+    }
+
+    private fun locateSelectedJob(item: CommonEnumItem) {
+        if (isViewDestroyed) return
+        val targetCode = item.positionCode ?: return
+        val rightPosition = rightJobCategoryItems.indexOfFirst { secondCategory ->
+            !isJobSectionHeader(secondCategory) && secondCategory.positionCode == targetCode
+        }
+        if (rightPosition < 0) return
+        val leftIndex = rightJobSections.lastOrNull { it.startPosition <= rightPosition }?.leftIndex ?: return
+        selectLeftJob(leftIndex, scrollLeft = false)
+        scrollLeftToJob(leftIndex)
+        binding.rcRight.post {
+            if (!isViewDestroyed) {
+                scrollRightToJobCategory(rightPosition, suppressSync = true)
+            }
+        }
+    }
+
+    private fun scrollLeftToJob(position: Int) {
+        if (isViewDestroyed) return
+        leftLayoutManager?.scrollToPositionWithOffset(position, 0)
+    }
+
+    private fun scrollRightToJob(
+        leftIndex: Int,
+        smooth: Boolean = true,
+        suppressSync: Boolean = false
+    ) {
+        if (isViewDestroyed) return
+        if (suppressSync) {
+            suppressRightScrollSync = true
+        }
+        val section = rightJobSections.firstOrNull { it.leftIndex == leftIndex } ?: return
+        if (smooth) {
+            val smoothScroller = object : LinearSmoothScroller(this) {
+                override fun getVerticalSnapPreference(): Int = SNAP_TO_START
+            }
+            smoothScroller.targetPosition = section.startPosition
+            rightLayoutManager?.startSmoothScroll(smoothScroller)
+        } else {
+            rightLayoutManager?.scrollToPositionWithOffset(section.startPosition, 0)
+        }
+    }
+
+    private fun scrollRightToJobCategory(rightPosition: Int, suppressSync: Boolean = false) {
+        if (isViewDestroyed) return
+        if (suppressSync) {
+            suppressRightScrollSync = true
+        }
+        rightLayoutManager?.scrollToPositionWithOffset(rightPosition, 0)
+    }
+
+    private fun syncLeftByRightPosition(recyclerView: RecyclerView) {
+        if (isViewDestroyed) return
+        if (rightJobSections.isEmpty()) return
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        val firstVisible = layoutManager.findFirstVisibleItemPosition()
+        if (firstVisible == RecyclerView.NO_POSITION) return
+        val section = rightJobSections.lastOrNull { it.startPosition <= firstVisible } ?: return
+        selectLeftJob(section.leftIndex)
+    }
+
+    private fun isJobSectionHeader(item: CommonEnumItem): Boolean {
+        return item.fieldCode == JOB_SECTION_HEADER_CODE
+    }
+
+    override fun onDestroy() {
+        isViewDestroyed = true
+        runCatching {
+            binding.rcRight.removeOnScrollListener(rightScrollListener)
+        }
+        super.onDestroy()
     }
 
     override fun setTranslucentStatus() {
@@ -372,6 +569,21 @@ class JobSelectionActivity :
             .navigationBarColor(R.color.white)
             .transparentStatusBar()
             .init()
+    }
+
+    private data class JobGroup(
+        val leftIndex: Int,
+        val secondCategories: List<CommonEnumItem>
+    )
+
+    private data class JobSection(
+        val leftIndex: Int,
+        val startPosition: Int,
+        val title: String
+    ) {
+        fun toStickyHeaderSection(): StickyHeaderSection {
+            return StickyHeaderSection(startPosition, title)
+        }
     }
 
 }

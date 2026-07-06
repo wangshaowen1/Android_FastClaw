@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.information.adapter
 
 import android.graphics.Color
+import android.content.Context
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -9,12 +10,14 @@ import android.util.SparseArray
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.item.QuickViewHolder
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.common.ext.toJsonString
@@ -24,6 +27,7 @@ import com.shiyuan.fastclaw.databinding.ItemIyCyPnBinding
 import com.shiyuan.fastclaw.databinding.ItemIyPnBinding
 import com.shiyuan.fastclaw.databinding.ItemIySearchBinding
 import com.shiyuan.fastclaw.databinding.ItemJobIyCyPnBinding
+import com.shiyuan.fastclaw.databinding.ItemJobSecondCategoryHeaderBinding
 import com.shiyuan.fastclaw.databinding.ItemSelectedBinding
 import kotlin.collections.distinctBy
 import kotlin.collections.plus
@@ -49,6 +53,44 @@ private fun highlightSearchKeyword(text: String?, keyword: String): CharSequence
         startIndex = text.indexOf(keyword, startIndex + keyword.length, ignoreCase = true)
     }
     return builder
+}
+
+private const val GRID_SPAN_COUNT = 2
+private const val GRID_ITEM_SIDE_SPACE_DP = 5f
+
+private fun ItemIyCyPnBinding.bindOptionItem(
+    title: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    tvName.text = title
+    if (isSelected) {
+        suItem.setNormalColor(ContextCompat.getColor(root.context, R.color.color_E8F1FF))
+        suItem.setBorderColor(ContextCompat.getColor(root.context, R.color.color_2f6bff))
+        suItem.setBorderWidth(2)
+    } else {
+        suItem.setNormalColor(ContextCompat.getColor(root.context, R.color.color_F4F4F4))
+        suItem.setBorderColor(ContextCompat.getColor(root.context, R.color.color_F4F4F4))
+        suItem.setBorderWidth(0)
+    }
+    suItem.setOnSingleClickListener { onClick() }
+}
+
+private fun View.updateTwoColumnMargins(column: Int) {
+    val lp = layoutParams as? ViewGroup.MarginLayoutParams ?: return
+    val space = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        GRID_ITEM_SIDE_SPACE_DP,
+        context.resources.displayMetrics
+    ).toInt()
+    if (column == 0) {
+        lp.leftMargin = 0
+        lp.rightMargin = space
+    } else {
+        lp.leftMargin = space
+        lp.rightMargin = 0
+    }
+    layoutParams = lp
 }
 
 
@@ -160,48 +202,77 @@ class IyPnSonAdapter(
             return@bind
         }
         binding.root.visibility = View.VISIBLE
-        if(type == 0){
-            binding.tvName.text = item.name+ ""
-        }else{
-            binding.tvName.text = item.positionName+ ""
-        }
-        if (item.isSelected) {
-            // 选中态：蓝底 + 蓝边框 + 加粗
-            binding.suItem.setNormalColor(ContextCompat.getColor(binding.root.context, R.color.color_E8F1FF))
-            binding.suItem.setBorderColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
-            binding.suItem.setBorderWidth(2)
-        } else {
-            // 未选中态：灰底 + 无边框
-            binding.suItem.setNormalColor(ContextCompat.getColor(binding.root.context, R.color.color_F4F4F4))
-            binding.suItem.setBorderColor(ContextCompat.getColor(binding.root.context, R.color.color_F4F4F4))
-            binding.suItem.setBorderWidth(0)
-        }
-        // 点击切换
-        binding.suItem.setOnSingleClickListener {
+        val title = if (type == 0) item.name.orEmpty() else item.positionName.orEmpty()
+        binding.bindOptionItem(title, item.isSelected) {
             onSelected?.invoke(item, position)
         }
-        // 行业页和职位页均为两列网格，按列设置左右间距。
-        val root = binding.root
-        val lp = root.layoutParams
-        if (lp is ViewGroup.MarginLayoutParams) {
-            val dp5 = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                5f,
-                root.context.resources.displayMetrics
-            ).toInt()
-            if (position % 2 == 0) {
-                // 左列：无左间距，有右间距
-                lp.leftMargin = 0
-                lp.rightMargin = dp5
-            } else {
-                // 右列：有左间距，无右间距
-                lp.leftMargin = dp5
-                lp.rightMargin = 0
-            }
-            root.layoutParams = lp
-        }
+        binding.root.updateTwoColumnMargins(position % GRID_SPAN_COUNT)
     }
 )
+
+
+/**
+ * 职位页右侧扁平列表：二级分类标题和三级职位 item 共用同一个 RecyclerView。
+ */
+class JobRightAdapter(
+    private val isHeader: (CommonEnumItem) -> Boolean,
+    private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null
+) : BaseQuickAdapter<CommonEnumItem, QuickViewHolder>(emptyList()) {
+
+    companion object {
+        private const val VIEW_TYPE_HEADER = 1
+        private const val VIEW_TYPE_POSITION = 2
+    }
+
+    fun isHeaderPosition(position: Int): Boolean {
+        return getItem(position)?.let(isHeader) == true
+    }
+
+    override fun getItemViewType(position: Int, list: List<CommonEnumItem>): Int {
+        return if (isHeader(list[position])) VIEW_TYPE_HEADER else VIEW_TYPE_POSITION
+    }
+
+    override fun onCreateViewHolder(context: Context, parent: ViewGroup, viewType: Int): QuickViewHolder {
+        val layoutId = if (viewType == VIEW_TYPE_HEADER) {
+            R.layout.item_job_second_category_header
+        } else {
+            R.layout.item_iy_cy_pn
+        }
+        return QuickViewHolder.create(layoutId, parent)
+    }
+
+    override fun onBindViewHolder(holder: QuickViewHolder, position: Int, item: CommonEnumItem?) {
+        item ?: return
+        val binding = DataBindingUtil.bind<ViewDataBinding>(holder.itemView) ?: return
+        if (isHeader(item)) {
+            (binding as? ItemJobSecondCategoryHeaderBinding)?.let { bindHeader(it, item) }
+        } else {
+            (binding as? ItemIyCyPnBinding)?.let { bindPosition(it, position, item) }
+        }
+    }
+
+    private fun bindHeader(binding: ItemJobSecondCategoryHeaderBinding, item: CommonEnumItem) {
+        binding.tvName.text = item.secondCategoryName.orEmpty().ifBlank { item.name.orEmpty() }
+    }
+
+    private fun bindPosition(binding: ItemIyCyPnBinding, position: Int, item: CommonEnumItem) {
+        binding.root.visibility = View.VISIBLE
+        binding.bindOptionItem(item.positionName.orEmpty(), item.isSelected) {
+            onSelected?.invoke(item, position)
+        }
+        binding.root.updateTwoColumnMargins(positionColumn(position))
+    }
+
+    private fun positionColumn(position: Int): Int {
+        var count = 0
+        for (index in position - 1 downTo 0) {
+            val item = getItem(index) ?: continue
+            if (isHeader(item)) break
+            count++
+        }
+        return count % 2
+    }
+}
 
 
 /**
@@ -218,14 +289,7 @@ class IyPnJobSonAdapter(
         // 用 Tag 缓存内层 RecyclerView 的适配器，避免重复创建
         val childAdapter = (binding.rcSon.getTag(R.id.rc_son) as? IyPnSonAdapter)
             ?: IyPnSonAdapter(onSelected, 1).also { adapter ->
-                binding.rcSon.layoutManager = GridLayoutManager(
-                    binding.root.context,
-                    2,
-                    RecyclerView.VERTICAL,
-                    false
-                )
                 binding.rcSon.setHasFixedSize(true)
-                binding.rcSon.isNestedScrollingEnabled = false
                 binding.rcSon.itemAnimator = null
                 binding.rcSon.adapter = adapter
                 binding.rcSon.setTag(R.id.rc_son, adapter)

@@ -14,17 +14,22 @@
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="互联网"
-            android:textStyle="bold"
+            android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="互联网" />
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rc_son"
-            android:layout_marginTop="13dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/item_iy_cy_pn">
         </androidx.recyclerview.widget.RecyclerView>
 
     </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>

@@ -164,22 +164,26 @@
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/rc_left"
-                                tools:itemCount="30"
-                                tools:listitem="@layout/item_iy_pn"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
+                                android:layout_height="wrap_content"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:itemCount="30"
+                                tools:listitem="@layout/item_iy_pn" />
 
                         </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
 
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rc_right"
-                            tools:listitem="@layout/item_iy_cy_pn"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
                             android:layout_marginLeft="10dp"
                             android:layout_marginRight="7dp"
-                            android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="match_parent"/>
+                            android:nestedScrollingEnabled="false"
+                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                            app:spanCount="2"
+                            tools:listitem="@layout/item_iy_cy_pn" />
 
                     </LinearLayout>
 
@@ -213,7 +217,9 @@
                             android:id="@+id/rc_selected"
                             android:layout_width="match_parent"
                             android:layout_height="22dp"
-                            app:orientation="horizontal"
+                            android:nestedScrollingEnabled="false"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:itemCount="0"
                             tools:listitem="@layout/item_selected" />
                     </LinearLayout>
@@ -265,7 +271,8 @@
                     android:paddingTop="20dp"
                     android:id="@+id/rc_sc"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
                 </androidx.recyclerview.widget.RecyclerView>
 
 

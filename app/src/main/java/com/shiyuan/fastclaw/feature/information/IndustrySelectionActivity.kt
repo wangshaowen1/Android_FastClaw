@@ -1,18 +1,10 @@
 package com.shiyuan.fastclaw.feature.information
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.Typeface
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -90,12 +82,21 @@ class IndustrySelectionActivity :
     private val conversationId: String by lazy { intent.getStringExtra(CONVERSATIONID) ?: "" }
     private val rightIndustryItems = mutableListOf<CommonEnumItem>()
     private val rightSections = mutableListOf<IndustrySection>()
-    private val rightGroupDecoration by lazy { IndustryGroupDecoration(this, RIGHT_GRID_SPAN_COUNT) }
+    private val rightGroupDecoration by lazy {
+        StickyHeaderDecoration(
+            context = this,
+            headerLayoutId = R.layout.item_industry_group_header,
+            titleViewId = R.id.tv_name,
+            spanCount = RIGHT_GRID_SPAN_COUNT,
+            reserveHeaderSpace = true
+        )
+    }
     private val leftLayoutManager: LinearLayoutManager?
         get() = binding.rcLeft.layoutManager as? LinearLayoutManager
     private val rightLayoutManager: GridLayoutManager?
         get() = binding.rcRight.layoutManager as? GridLayoutManager
     private var suppressRightScrollSync = false
+    private var isViewDestroyed = false
 
     // 左侧一级行业列表适配器
     private val cyIyPnAdapter: IyPnAdapter by lazy {
@@ -195,7 +196,7 @@ class IndustrySelectionActivity :
 
     private fun onLeftIndustryClick(position: Int) {
         selectLeftIndustry(position, scrollLeft = false)
-        scrollRightToIndustry(position, suppressSync = true)
+        scrollRightToIndustry(position, smooth = false, suppressSync = true)
     }
 
     private fun onRightIndustryClick(item: CommonEnumItem) {
@@ -302,7 +303,11 @@ class IndustrySelectionActivity :
                 .takeIf { position -> position in it.indices }
                 ?: 0
             selectLeftIndustry(targetPosition, scrollLeft = false)
-            binding.rcRight.post { scrollRightToIndustry(targetPosition, smooth = false) }
+            binding.rcRight.post {
+                if (!isViewDestroyed) {
+                    scrollRightToIndustry(targetPosition, smooth = false)
+                }
+            }
         }
     }
 
@@ -322,17 +327,18 @@ class IndustrySelectionActivity :
 
     private val rightScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            if (suppressRightScrollSync) return
-            syncLeftByRightPosition()
+            if (isViewDestroyed || suppressRightScrollSync) return
+            syncLeftByRightPosition(recyclerView)
         }
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            if (isViewDestroyed) return
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 if (suppressRightScrollSync) {
                     suppressRightScrollSync = false
                     return
                 }
-                syncLeftByRightPosition()
+                syncLeftByRightPosition(recyclerView)
             }
         }
     }
@@ -346,9 +352,13 @@ class IndustrySelectionActivity :
             appendIndustryGroup(group, hasNextGroup = groupIndex < groups.lastIndex)
         }
 
-        rightGroupDecoration.submitSections(rightSections)
+        rightGroupDecoration.submitSections(rightSections.map { it.toStickyHeaderSection() })
         cyIyPnSonAdapter.submitList(rightIndustryItems.toList())
-        binding.rcRight.post { binding.rcRight.invalidateItemDecorations() }
+        binding.rcRight.post {
+            if (!isViewDestroyed) {
+                binding.rcRight.invalidateItemDecorations()
+            }
+        }
     }
 
     private fun buildIndustryGroups(data: List<CommonEnumItem>): List<IndustryGroup> {
@@ -384,6 +394,7 @@ class IndustrySelectionActivity :
     }
 
     private fun selectLeftIndustry(position: Int, scrollLeft: Boolean = true) {
+        if (isViewDestroyed) return
         val data = mRealVM.allData.value ?: return
         if (position !in data.indices) return
         val oldPosition = mRealVM.lastSelectedPosition.value
@@ -398,6 +409,7 @@ class IndustrySelectionActivity :
     }
 
     private fun locateSelectedIndustry(item: CommonEnumItem) {
+        if (isViewDestroyed) return
         val targetCode = item.code ?: return
         val rightPosition = rightIndustryItems.indexOfFirst { child ->
             !isIndustryGridPlaceholder(child) && child.code == targetCode
@@ -406,10 +418,15 @@ class IndustrySelectionActivity :
         val leftIndex = rightSections.lastOrNull { it.startPosition <= rightPosition }?.leftIndex ?: return
         selectLeftIndustry(leftIndex, scrollLeft = false)
         scrollLeftToIndustry(leftIndex)
-        binding.rcRight.post { scrollRightToIndustryItem(rightPosition, suppressSync = true) }
+        binding.rcRight.post {
+            if (!isViewDestroyed) {
+                scrollRightToIndustryItem(rightPosition, suppressSync = true)
+            }
+        }
     }
 
     private fun scrollLeftToIndustry(position: Int) {
+        if (isViewDestroyed) return
         leftLayoutManager?.scrollToPositionWithOffset(position, 0)
     }
 
@@ -418,6 +435,7 @@ class IndustrySelectionActivity :
         smooth: Boolean = true,
         suppressSync: Boolean = false
     ) {
+        if (isViewDestroyed) return
         if (suppressSync) {
             suppressRightScrollSync = true
         }
@@ -434,6 +452,7 @@ class IndustrySelectionActivity :
     }
 
     private fun scrollRightToIndustryItem(rightPosition: Int, suppressSync: Boolean = false) {
+        if (isViewDestroyed) return
         if (suppressSync) {
             suppressRightScrollSync = true
         }
@@ -446,9 +465,11 @@ class IndustrySelectionActivity :
         rightLayoutManager?.scrollToPositionWithOffset(rightPosition, offset)
     }
 
-    private fun syncLeftByRightPosition() {
+    private fun syncLeftByRightPosition(recyclerView: RecyclerView) {
+        if (isViewDestroyed) return
         if (rightSections.isEmpty()) return
-        val firstVisible = rightLayoutManager?.findFirstVisibleItemPosition() ?: return
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        val firstVisible = layoutManager.findFirstVisibleItemPosition()
         if (firstVisible == RecyclerView.NO_POSITION) return
         val section = rightSections.lastOrNull { it.startPosition <= firstVisible } ?: return
         selectLeftIndustry(section.leftIndex)
@@ -456,6 +477,14 @@ class IndustrySelectionActivity :
 
     private fun isIndustryGridPlaceholder(item: CommonEnumItem): Boolean {
         return item.code == INDUSTRY_GRID_PLACEHOLDER_CODE
+    }
+
+    override fun onDestroy() {
+        isViewDestroyed = true
+        runCatching {
+            binding.rcRight.removeOnScrollListener(rightScrollListener)
+        }
+        super.onDestroy()
     }
 
     private data class IndustryGroup(
@@ -468,84 +497,9 @@ class IndustrySelectionActivity :
         val leftIndex: Int,
         val startPosition: Int,
         val title: String
-    )
-
-    private class IndustryGroupDecoration(
-        context: Context,
-        private val spanCount: Int
-    ) : RecyclerView.ItemDecoration() {
-        val headerHeight = context.dp(34f).toInt()
-        private val titleStart = context.dp(2f)
-        private val backgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.WHITE
-        }
-        private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = ContextCompat.getColor(context, R.color.color_90_000000)
-            textSize = context.sp(13f)
-            typeface = Typeface.DEFAULT_BOLD
-        }
-        private var sections: List<IndustrySection> = emptyList()
-
-        fun submitSections(newSections: List<IndustrySection>) {
-            sections = newSections.toList()
-        }
-
-        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-            outRect.set(0, 0, 0, 0)
-            val position = parent.getChildAdapterPosition(view)
-            if (needsHeaderOffset(position)) {
-                outRect.top = headerHeight
-            }
-        }
-
-        override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-            for (index in 0 until parent.childCount) {
-                val child = parent.getChildAt(index)
-                val position = parent.getChildAdapterPosition(child)
-                val section = sections.firstOrNull { it.startPosition == position } ?: continue
-                drawHeader(canvas, parent, child.top - headerHeight, section.title)
-            }
-        }
-
-        override fun onDrawOver(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-            val layoutManager = parent.layoutManager as? LinearLayoutManager ?: return
-            val firstVisible = layoutManager.findFirstVisibleItemPosition()
-            if (firstVisible == RecyclerView.NO_POSITION) return
-            val currentSection = sections.lastOrNull { it.startPosition <= firstVisible } ?: return
-            val nextSection = sections.firstOrNull { it.startPosition > firstVisible }
-            val baseTop = parent.paddingTop
-            val nextHeaderTop = nextSection
-                ?.let { parent.findViewHolderForAdapterPosition(it.startPosition)?.itemView }
-                ?.let { it.top - headerHeight }
-            val top = nextHeaderTop
-                ?.takeIf { it < baseTop + headerHeight }
-                ?.let { it - headerHeight }
-                ?: baseTop
-            drawHeader(canvas, parent, top, currentSection.title)
-        }
-
-        private fun drawHeader(canvas: Canvas, parent: RecyclerView, top: Int, title: String) {
-            val left = parent.paddingLeft.toFloat()
-            val right = (parent.width - parent.paddingRight).toFloat()
-            val bottom = top + headerHeight
-            canvas.drawRect(left, top.toFloat(), right, bottom.toFloat(), backgroundPaint)
-            val baseline = top + headerHeight / 2f - (textPaint.ascent() + textPaint.descent()) / 2f
-            canvas.drawText(title, left + titleStart, baseline, textPaint)
-        }
-
-        private fun needsHeaderOffset(position: Int): Boolean {
-            val section = sections.lastOrNull { it.startPosition <= position } ?: return false
-            val nextSectionStart = sections.firstOrNull { it.startPosition > section.startPosition }?.startPosition
-                ?: Int.MAX_VALUE
-            return position < nextSectionStart && position < section.startPosition + spanCount
-        }
-
-        private fun Context.dp(value: Float): Float {
-            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics)
-        }
-
-        private fun Context.sp(value: Float): Float {
-            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, value, resources.displayMetrics)
+    ) {
+        fun toStickyHeaderSection(): StickyHeaderSection {
+            return StickyHeaderSection(startPosition, title)
         }
     }
 
