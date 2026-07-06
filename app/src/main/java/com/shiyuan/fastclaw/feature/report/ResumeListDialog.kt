@@ -8,6 +8,8 @@ import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.DialogResumeListBinding
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog.Companion.onFileSelected
@@ -17,7 +19,7 @@ import com.umeng.analytics.pro.da
 /**
  * 简历列表dialog
  */
-class ResumeListDialog : BaseBottomPushVMDialogFragment<DialogResumeListBinding, ReportViewModel>(){
+class ResumeListDialog : BaseBottomDialogVmFragment<DialogResumeListBinding, ReportViewModel>(){
 
     companion object {
         const val TAG = "UploadResumeDialog"

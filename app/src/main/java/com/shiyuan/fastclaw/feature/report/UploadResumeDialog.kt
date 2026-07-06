@@ -12,13 +12,13 @@ import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
 
 /**
  * 上传简历dialog
  * 新增：通过 tvTrue 选择本地文件（PDF/Word/图片）并回调
  */
-class UploadResumeDialog : BaseBottomDialogFragment<DialogUploadResumeBinding, ReportViewModel>() {
+class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding, ReportViewModel>() {
 
     companion object {
         const val TAG = "UploadResumeDialog"

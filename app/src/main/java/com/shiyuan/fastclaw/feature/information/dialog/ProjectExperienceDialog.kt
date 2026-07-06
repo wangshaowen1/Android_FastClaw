@@ -18,6 +18,8 @@ import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.feature.information.ProjectActivity
@@ -27,7 +29,7 @@ import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
  * 项目经历列表底部弹窗。
  * 展示已有项目经历，点击条目进入编辑页，可新增或完成提交。
  */
-class ProjectExperienceDialog : BaseBottomPushVMDialogFragment<DialogProjectExperienceBinding, InformationViewModel>() {
+class ProjectExperienceDialog : BaseBottomDialogVmFragment<DialogProjectExperienceBinding, InformationViewModel>() {
 
     companion object {
         const val TAG = "ProjectExperienceDialog"

@@ -8,7 +8,10 @@ import android.view.WindowManager
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.ViewDataBinding
+import androidx.viewbinding.ViewBinding
+import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
+import com.nhsd.basic.BaseDialogFragment
 import com.nhsd.basic.viewmodel.BaseLayoutViewModel
 
 /**
@@ -16,7 +19,7 @@ import com.nhsd.basic.viewmodel.BaseLayoutViewModel
  * @author：CaoWei
  * @date：2026/7/6 12:47
  */
-abstract class BaseBottomDialogFragment<V : ViewDataBinding, T : BaseLayoutViewModel>: BaseBottomPushVMDialogFragment<V, T>() {
+abstract class BaseBottomDialogFragment<V : ViewBinding>: BaseBottomPushDialogFragment<V>() {
 
     override fun onStart() {
         super.onStart()

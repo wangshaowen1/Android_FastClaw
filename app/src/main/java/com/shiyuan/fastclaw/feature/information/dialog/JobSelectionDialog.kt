@@ -15,6 +15,8 @@ import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
 import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.core.Events
@@ -31,7 +33,7 @@ import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
  * 职位选择底部弹窗：复用职位选择页的单选、多选、搜索与完成回传逻辑。
  */
 class JobSelectionDialog :
-    BaseBottomPushVMDialogFragment<DialogJobSelectionBinding, InformationViewModel>() {
+    BaseBottomDialogVmFragment<DialogJobSelectionBinding, InformationViewModel>() {
 
     companion object {
         const val TAG = "JobSelectionDialog"
