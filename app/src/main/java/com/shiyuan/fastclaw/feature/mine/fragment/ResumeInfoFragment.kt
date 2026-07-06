@@ -412,6 +412,10 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             binding.tvDesc.visibility =
                 if (workContent?.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.root.setOnClickListener {
+                if(item.instanceIndex == -1L || item.instanceIndex == null){
+                    handleEditIconClick(attributeData)
+                    return@setOnClickListener
+                }
                 WorkActivity.start(
                     requireActivity(),
                     true,
@@ -452,6 +456,10 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             binding.tvDesc.visibility =
                 if (workContent?.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.root.setOnClickListener {
+                if(item.instanceIndex == -1L || item.instanceIndex == null){
+                    handleEditIconClick(attributeData)
+                    return@setOnClickListener
+                }
                 ProjectActivity.start(
                     requireActivity(),
                     true,
@@ -490,6 +498,10 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             binding.tvMajor.visibility = if (hasMajor) View.VISIBLE else View.GONE
             binding.v.visibility = if (hasTime && hasMajor) View.VISIBLE else View.GONE
             binding.root.setOnClickListener {
+                if(item.instanceIndex == -1L || item.instanceIndex == null){
+                    handleEditIconClick(attributeData)
+                    return@setOnClickListener
+                }
                 EducationalActivity.start(
                     requireActivity(),
                     true,
@@ -521,6 +533,10 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             val name = AttributeFieldItemFinder.findFirst(item.fieldItems, fieldCode)
             binding.tvName.text = name?.displayValue ?: "暂无"
             binding.root.setOnClickListener {
+                if(item.instanceIndex == -1L || item.instanceIndex == null){
+                    handleEditIconClick(attributeData)
+                    return@setOnClickListener
+                }
                 when (type) {
                     GROUP_SKILLS -> SkillActivity.start(
                         requireActivity(),
