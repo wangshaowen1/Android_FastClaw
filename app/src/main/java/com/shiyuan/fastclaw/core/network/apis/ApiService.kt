@@ -21,6 +21,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.BindPhoneBody
 import com.shiyuan.fastclaw.core.network.apis.request.BindThirdPartyBody
 import com.shiyuan.fastclaw.core.network.apis.request.ChangeMobileBody
 import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundCompanySearchQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
@@ -79,9 +80,10 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
 import com.shiyuan.fastclaw.core.network.apis.response.CheckMobileBindStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyInfo
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanySearchData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundGenerateResultData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
-import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.H5InterviewPassPackageRep
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
@@ -523,10 +525,16 @@ interface ApiService {
     suspend fun pullMessages(@Body body: MessagePullBody): ApiResponse<MessagePullData?>
 
     /**
+     * 查询公司背调公司搜索结果
+     */
+    @POST(ApiConstants.JOB_AGENT_COMPANY_BACKGROUND_COMPANY_SEARCH_QUERY)
+    suspend fun queryCompanyBackgroundCompanySearch(@Body body: CompanyBackgroundCompanySearchQueryBody): ApiResponse<CompanyBackgroundCompanySearchData?>
+
+    /**
      * 提交公司背调报告生成前置校验
      */
     @POST(ApiConstants.JOB_AGENT_COMPANY_BACKGROUND_PRE_CHECK_SUBMIT)
-    suspend fun submitCompanyBackgroundPreCheck(@Body body: CompanyBackgroundPreCheckSubmitBody): ApiResponse<CompanyBackgroundPreCheckSubmitData?>
+    suspend fun submitCompanyBackgroundPreCheck(@Body body: CompanyBackgroundPreCheckSubmitBody): ApiResponse<CompanyBackgroundPreCheckResultData?>
 
     /**
      * 查询公司背调报告生成前置校验结果

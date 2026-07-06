@@ -29,6 +29,7 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgUserRightBinding
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CardOption
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyInfo
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.PassPackageReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
@@ -94,6 +95,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     /** 公司背调 - 开始背调 */
     var onCompanyStartClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
+    /** 公司背调 - 搜索公司 */
+    var onCompanySearchQueryAction: (keyword: String, callback: (keyword: String, companies: List<CompanyBackgroundCompanyInfo>) -> Unit, ) -> Unit = { keyword, callback -> callback(keyword, emptyList()) }
     /** 公司背调 - 查看报告 */
     var onCompanyDoneClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
     /** 公司背调 - 重新生成 */
@@ -144,6 +147,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             { i, p ->
                 AgentCompanyBackgroundEntryViewHolder(ItemMsgAgentCompanyBackgroundEntryBinding.inflate(i, p, false)).apply {
                     onCompanyStartClickListener = { item, action, data -> onCompanyStartClickAction(item, action, data) }
+                    onCompanySearchQueryListener = { keyword, callback -> onCompanySearchQueryAction(keyword, callback) }
                 }
             }) { h, item -> h.bind(item) }
         // 公司背调报告卡：生成中
@@ -274,6 +278,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentPassPackageReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewEntryViewHolder) holder.stopPersonEnterAnim()
+        if (holder is AgentCompanyBackgroundEntryViewHolder) holder.clear()
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
@@ -282,6 +287,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentPassPackageReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewEntryViewHolder) holder.stopPersonEnterAnim()
+        if (holder is AgentCompanyBackgroundEntryViewHolder) holder.clear()
         super.onViewRecycled(holder)
     }
 

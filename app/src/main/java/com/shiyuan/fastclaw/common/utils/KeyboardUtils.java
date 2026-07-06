@@ -36,12 +36,14 @@ public class KeyboardUtils {
     }
 
     public static void showKeyboard(View view) {
-        InputMethodManager imm = (InputMethodManager) view.getContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            view.requestFocus();
-            imm.showSoftInput(view, 0);
-        }
+        view.postDelayed(() -> {
+            InputMethodManager imm = (InputMethodManager) view.getContext()
+                    .getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                view.requestFocus();
+                imm.showSoftInput(view, 0);
+            }
+        }, 100);
     }
 
     public static void hideKeyboard(View view) {

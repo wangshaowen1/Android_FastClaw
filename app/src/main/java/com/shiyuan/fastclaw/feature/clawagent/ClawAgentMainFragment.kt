@@ -32,6 +32,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
 import com.shiyuan.fastclaw.common.Constants.MOCK_INTERVIEW_RESULT_URL
+import com.shiyuan.fastclaw.common.Constants.MOCK_PASS_PACKET_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
@@ -287,8 +288,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         msgAdapter.onCompanyStartClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
-                mRealVM.submitCompanyBackgroundPreCheck(data.companyName.orEmpty())
+                mRealVM.submitCompanyBackgroundPreCheck(data.companyId)
             }
+        }
+        // 公司背调 - 搜索公司
+        msgAdapter.onCompanySearchQueryAction = { keyword, callback ->
+            mRealVM.queryCompanyBackgroundCompanySearch(keyword, callback)
         }
         // 公司背调 - 查看报告
         msgAdapter.onCompanyDoneClickAction = { _, _, data ->
@@ -346,10 +351,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         msgAdapter.onPassPackageDoneClickAction = { item, action, data ->
             if (!interceptIfStreaming() && action != null) {
                 forceScrollToBottom = true
-                /*SimpleBrowserActivity.launch(
+                SimpleBrowserActivity.launch(
                     requireActivity(),
-                    MOCK_INTERVIEW_RESULT_URL + data?.interviewId + "&interview_mrId=" + data?.mockReportId
-                )*/
+                    MOCK_PASS_PACKET_RESULT_URL + data?.packageId
+                )
             }
         }
         // 面试通关包 - 重新生成
