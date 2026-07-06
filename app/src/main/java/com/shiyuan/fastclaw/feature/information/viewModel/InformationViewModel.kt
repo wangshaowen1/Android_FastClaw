@@ -155,7 +155,7 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 调用字段保存接口。data 直接以 Any 透传给底层接口，便于支持多种数据类型。
      */
     fun attributeSave(data: Any) {
-        launchWithLoading(false, block = {
+        launchWithLoading(true, block = {
             response(ApiFactory.apiService.attributeSave(data), result = {
                 attributeSave.postValue(this.data)
             }, error = { this?.msg?.showToast() })

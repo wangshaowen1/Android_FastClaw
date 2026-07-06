@@ -25,30 +25,30 @@
             android:layout_height="wrap_content" />
 
 
-         <ImageView
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="16dp"
+        <ImageView
             android:id="@+id/iv_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:src="@drawable/ic_close2" />
 
-         <LinearLayout
-            android:paddingHorizontal="16dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="16dp">
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:text="@string/select_expected_industry"
                 android:textColor="@color/color_90_000000"
                 android:textSize="20sp"
-                android:text="@string/select_expected_industry"
                 tools:text="选择期望行业" />
 
             <View
@@ -85,10 +85,10 @@
 
         </LinearLayout>
 
-         <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-            android:layout_marginHorizontal="16dp"
+        <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:layout_marginHorizontal="16dp"
             android:layout_marginTop="12dp"
             android:orientation="horizontal"
             android:paddingHorizontal="10dp"
@@ -140,55 +140,54 @@
                 android:orientation="vertical">
 
 
-                    <LinearLayout
-                        android:layout_marginTop="9dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="9dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                        <com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout
-                            android:layout_width="113dp"
-                            app:background_normalColor="@color/white"
-                            app:corner_rightTop="8dp"
-                            app:corner_rightBottom="8dp"
-                            android:layout_height="match_parent">
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/rc_left"
-                                tools:itemCount="30"
-                                tools:listitem="@layout/item_iy_pn"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"/>
-
-                        </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
-
-
-
+                    <com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout
+                        android:layout_width="113dp"
+                        android:layout_height="match_parent"
+                        app:background_normalColor="@color/white"
+                        app:corner_rightBottom="8dp"
+                        app:corner_rightTop="8dp">
 
                         <androidx.recyclerview.widget.RecyclerView
-                            app:spanCount="2"
-                            android:id="@+id/rc_right"
-                            tools:listitem="@layout/item_iy_cy_pn"
-                            android:layout_marginTop="15dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginRight="7dp"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"/>
+                            android:id="@+id/rc_left"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="30"
+                            tools:listitem="@layout/item_iy_pn" />
 
-                    </LinearLayout>
+                    </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rc_right"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="7dp"
+                        android:layout_weight="1"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="2"
+                        tools:listitem="@layout/item_iy_cy_pn" />
+
+                </LinearLayout>
 
 
                 <LinearLayout
-                    android:paddingHorizontal="16dp"
                     android:id="@+id/ll_multiple_bot"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
                     android:layout_marginBottom="40dp"
                     android:background="@color/white"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -207,7 +206,9 @@
                             android:id="@+id/rc_selected"
                             android:layout_width="match_parent"
                             android:layout_height="22dp"
-                            app:orientation="horizontal"
+                            android:nestedScrollingEnabled="false"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:itemCount="0"
                             tools:listitem="@layout/item_selected" />
                     </LinearLayout>
@@ -225,10 +226,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
+                            android:text="@string/complete"
                             android:textColor="@color/white"
                             android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:text="@string/complete" />
+                            android:textStyle="bold" />
 
                     </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
 
@@ -238,33 +239,32 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:visibility="gone"
                 android:id="@+id/rl_sc"
-                android:background="@color/white"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tv_em"
-                    android:visibility="gone"
-                    android:textColor="@color/color_75_3c3c43"
-                    android:textSize="13sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="43dp"
                     android:text="@string/no_related_industry_found"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:textColor="@color/color_75_3c3c43"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:paddingTop="20dp"
                     android:id="@+id/rc_sc"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                </androidx.recyclerview.widget.RecyclerView>
+                    android:layout_height="match_parent"
+                    android:paddingTop="20dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"></androidx.recyclerview.widget.RecyclerView>
 
 
             </RelativeLayout>
-
 
 
         </RelativeLayout>

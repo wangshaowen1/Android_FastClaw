@@ -7,6 +7,7 @@ import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.util.SparseArray
 import android.util.TypedValue
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -141,15 +142,24 @@ class SearchAdapter(
 )
 
 /**
- * 二级行业 / 二级职位下的具体项网格适配器。
- * 通过 type 区分行业（name）和职位（positionName）的展示字段。
- *
- * 额外为两列网格按列设置左右 margin，让两列间距均匀。
+ * 行业 / 职位选项适配器。
+ * type = 0：行业页右侧二级网格，展示 name。
+ * type = 1：职位页内层职位网格，展示 positionName。
  */
-class IyPnSonAdapter( private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null,type: Int) : SingleBindingAdapter<ItemIyCyPnBinding, CommonEnumItem>(
+class IyPnSonAdapter(
+    private val onSelected: ((CommonEnumItem, Int) -> Unit)? = null,
+    type: Int,
+    private val isPlaceholder: ((CommonEnumItem) -> Boolean)? = null
+) : SingleBindingAdapter<ItemIyCyPnBinding, CommonEnumItem>(
     layoutId = R.layout.item_iy_cy_pn,
     mData = emptyList(),
-    onBind = { binding, position, item ->
+    onBind = bind@{ binding, position, item ->
+        if (isPlaceholder?.invoke(item) == true) {
+            binding.root.visibility = View.INVISIBLE
+            binding.suItem.setOnClickListener(null)
+            return@bind
+        }
+        binding.root.visibility = View.VISIBLE
         if(type == 0){
             binding.tvName.text = item.name+ ""
         }else{
@@ -170,7 +180,7 @@ class IyPnSonAdapter( private val onSelected: ((CommonEnumItem, Int) -> Unit)? =
         binding.suItem.setOnSingleClickListener {
             onSelected?.invoke(item, position)
         }
-        // 两列网格：根据列索引调整左右 margin，让两列间距均匀
+        // 行业页和职位页均为两列网格，按列设置左右间距。
         val root = binding.root
         val lp = root.layoutParams
         if (lp is ViewGroup.MarginLayoutParams) {
