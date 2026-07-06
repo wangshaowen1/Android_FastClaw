@@ -18,6 +18,7 @@ import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.topActivity
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.core.manager.AppEvent
@@ -86,6 +87,7 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
         initInput()
         initClicks()
         observeVm()
+        showKeyboard()
     }
 
     /**
@@ -112,6 +114,13 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
         } else {
             Typeface.create("sans-serif-medium", Typeface.NORMAL)
         }
+    }
+
+    /**
+     * 进入页面后聚焦手机号输入框并弹出软键盘。
+     */
+    private fun showKeyboard() {
+        KeyboardUtils.showKeyboard(binding.etPhone)
     }
 
     /**
