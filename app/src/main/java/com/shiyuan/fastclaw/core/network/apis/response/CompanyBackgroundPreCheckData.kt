@@ -1,6 +1,29 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
 /**
+ * 公司背调公司搜索结果
+ *
+ * @param companyName 公司名称
+ * @param name 公司名称兜底字段
+ */
+data class CompanyBackgroundCompanyInfo(
+    val companyId: Long? = null,
+    val companyName: String? = null,
+    val name: String? = null,
+) {
+    fun displayName(): String = companyName?.takeIf { it.isNotBlank() } ?: name.orEmpty()
+}
+
+/**
+ * 公司背调公司搜索聚合结果
+ *
+ * @param items 公司搜索结果列表
+ */
+data class CompanyBackgroundCompanySearchData(
+    val items: List<CompanyBackgroundCompanyInfo>? = null,
+)
+
+/**
  * 公司背调报告生成前置校验提交结果
  *
  * @param preCheckId 前置校验任务 ID

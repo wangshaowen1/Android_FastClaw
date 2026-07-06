@@ -294,6 +294,11 @@ object ApiConstants {
     const val JOB_AGENT_MESSAGE_PULL = "/api/candidate/app/jobAgent/message/pull"
 
     /**
+     * 查询公司背调公司搜索结果
+     */
+    const val JOB_AGENT_COMPANY_BACKGROUND_COMPANY_SEARCH_QUERY = "/api/candidate/app/jobAgent/companyBackground/company/search/query"
+
+    /**
      * 提交公司背调报告生成前置校验
      */
     const val JOB_AGENT_COMPANY_BACKGROUND_PRE_CHECK_SUBMIT = "/api/candidate/app/jobAgent/companyBackground/report/preCheck/submit"

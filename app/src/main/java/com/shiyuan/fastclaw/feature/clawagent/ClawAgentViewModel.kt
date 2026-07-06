@@ -18,6 +18,7 @@ import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundCompanySearchQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
@@ -42,6 +43,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyInfo
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
@@ -166,9 +168,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 记录是否初始化会话id, 用于判断是否拉取增量数据 */
     val hasInitSession = MutableLiveData<Boolean>(false)
-
-    /** 公司背调前置校验轮询任务 */
-    private var companyBackgroundPreCheckPollingJob: Job? = null
 
     /** 公司背调报告生成结果轮询任务 */
     private var companyBackgroundGeneratePollingJob: Job? = null
@@ -1044,11 +1043,32 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    fun queryCompanyBackgroundCompanySearch(companyName: String, onResult: (keyword: String, companies: List<CompanyBackgroundCompanyInfo>) -> Unit, ) {
+        val keyword = companyName.trim()
+        if (keyword.isEmpty()) {
+            onResult(keyword, emptyList())
+            return
+        }
+        request(
+            apiBlock = {
+                mRepo.api.queryCompanyBackgroundCompanySearch(
+                    CompanyBackgroundCompanySearchQueryBody(companyName = keyword)
+                )
+            },
+            showToast = false,
+            onError = {
+                onResult(keyword, emptyList())
+            },
+        ) {
+            onResult(keyword, data?.items.orEmpty())
+        }
+    }
+
     /**
      * 公司背调 - 提交报告生成前置校验。
      * 后端返回 preCheckId 后立即进入前置校验轮询，失败按文档 errorMessage/errorCode 提示。
      */
-    fun submitCompanyBackgroundPreCheck(companyName: String) {
+    fun submitCompanyBackgroundPreCheck(companyId: Long?) {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
@@ -1056,7 +1076,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             return
         }
         val clientRequestId = "company-bg-precheck-${System.currentTimeMillis()}-${UUID.randomUUID()}"
-        companyBackgroundPreCheckPollingJob?.cancel()
         requestWithLoading(
             apiBlock = {
                 mRepo.api.submitCompanyBackgroundPreCheck(
@@ -1064,60 +1083,20 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                         sessionId = currentSessionId,
                         conversationId = currentConversationId,
                         clientRequestId = clientRequestId,
-                        companyName = companyName,
+                        companyId = companyId,
                     )
                 )
             }
         ) {
-            val preCheckId = data?.preCheckId
-            if (preCheckId.isNullOrBlank()) {
-                R.string.str_agent_company_background_precheck_failed.getResString().showToast()
+            val reportId = data?.reportId
+            if (reportId.isNullOrBlank()) {
+                companyBackgroundResult.value = data
                 return@requestWithLoading
             }
             // 权益可用时后端会写入“正在识别公司名称”，提交成功后先拉取一次增量消息展示处理中状态。
             pullMessages(getLastMessageCursor())
-            pollCompanyBackgroundPreCheck(preCheckId)
+            pollCompanyBackgroundGenerateResult(reportId)
         }
-    }
-
-    /**
-     * 轮询公司背调前置校验结果。
-     * finished=false 继续等待；finished=true 且 passed=false 按文档提示失败；passed=true 后进入报告生成轮询。
-     */
-    private fun pollCompanyBackgroundPreCheck(preCheckId: String) {
-        companyBackgroundPreCheckPollingJob?.cancel()
-        companyBackgroundPreCheckPollingJob = launchPolling(
-            intervalMs = 2000L,
-            retryOnNetworkError = true,
-            apiBlock = {
-                mRepo.api.queryCompanyBackgroundPreCheckResult(
-                    CompanyBackgroundPreCheckResultQueryBody(preCheckId = preCheckId)
-                )
-            },
-            checkState = { response ->
-                val result = response?.data
-                when {
-                    result?.finished == true && result.passed == true -> PollingState.SUCCESS
-                    result?.finished == true -> PollingState.FAIL
-                    else -> PollingState.CONTINUE
-                }
-            },
-            onSuccess = { response ->
-                val reportId = response?.data?.reportId
-                if (reportId.isNullOrBlank()) {
-                    R.string.str_agent_company_background_precheck_failed.getResString().showToast()
-                } else {
-                    // 前置校验通过后，拉取后端写入的“生成中”卡，再轮询报告生成终态。
-                    pullMessages(getLastMessageCursor())
-                    pollCompanyBackgroundGenerateResult(reportId)
-                }
-            },
-            onFail = { response, _ ->
-                companyBackgroundResult.value = response?.data
-                // 前置失败时后端可能写入同组失败终态消息，拉取一次用于移除处理中提示。
-                pullMessages(getLastMessageCursor())
-            },
-        )
     }
 
     /**
@@ -1420,7 +1399,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     override fun onCleared() {
         sseHandler.cancel()
-        companyBackgroundPreCheckPollingJob?.cancel()
         companyBackgroundGeneratePollingJob?.cancel()
         mockInterviewReportPollingJob?.cancel()
         mockInterviewReportPollingJob = null

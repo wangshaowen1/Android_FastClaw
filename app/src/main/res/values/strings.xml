@@ -826,6 +826,7 @@
     <string name="str_agent_company_background_item_prepare">面试前重点准备</string>
     <string name="str_agent_company_background_input_hint">输入你想了解的公司</string>
     <string name="str_agent_company_background_input_empty">请输入想了解的公司</string>
+    <string name="str_agent_company_background_company_unselected">请选择想了解的公司</string>
     <string name="str_agent_company_background_action">开始背调</string>
     <string name="str_agent_company_background_action_free">(免费3次/日，超出10虾条/次)</string>
     <string name="str_agent_company_background_traceable">信息全部可追述，工商·司法·融资交叉验证</string>

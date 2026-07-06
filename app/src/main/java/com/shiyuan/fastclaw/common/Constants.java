@@ -51,6 +51,7 @@ public class Constants {
     public static final String PASS_PACKAGE_JOB_UPLOAD_URL = BuildConfig.H5_SERVER_URL+"/pages/passPackage/jobUpload"; //面试通关包-上传JD
     public static final String COMPANY_BACKGROUND_RESULT_URL = BuildConfig.H5_SERVER_URL+"/pages/reports/companyBackgroundReport?nav=1&company_bd_checkId=";  //公司背调结果页
     public static final String MOCK_INTERVIEW_RESULT_URL = BuildConfig.H5_SERVER_URL+"/pages/reports/interviewReviewReport?nav=1&interview_df_checkId=";  //面试报告结果页
+    public static final String MOCK_PASS_PACKET_RESULT_URL = BuildConfig.H5_SERVER_URL+"/pages/passPackage/reportDetail/index?nav=1&packageId=";  //面试通关包报告页
 
     public static final String KEY_UNLIMITED = "不限";
 
