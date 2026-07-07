@@ -25,8 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"
-                android:paddingTop="@dimen/spacing_m"
-                android:paddingBottom="@dimen/spacing_xl">
+                android:paddingBottom="2dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_job_preferences"

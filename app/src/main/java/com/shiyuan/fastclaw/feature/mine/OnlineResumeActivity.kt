@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.mine
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -111,28 +112,22 @@ class OnlineResumeActivity :
     }
 
     private fun updateResumeTabState(index: Int) {
-        val firstSelected = index == 0
-        binding.llTab1.setBackgroundResource(
-            if (firstSelected) R.drawable.ic_online_resume_tab_left else 0
-        )
-        binding.llTab2.setBackgroundResource(
-            if (firstSelected) 0 else R.drawable.ic_online_resume_tab_right
-        )
-        binding.tvTable1.setTextColor(
-            ContextCompat.getColor(
-                this,
-                if (firstSelected) R.color.white else R.color.color_75_3c3c43
-            )
-        )
-        binding.tvTable2.setTextColor(
-            ContextCompat.getColor(
-                this,
-                if (firstSelected) R.color.color_75_3c3c43 else R.color.white
-            )
-        )
-        binding.ivTable1.visibility = if (firstSelected) View.VISIBLE else View.GONE
-        binding.ivTable2.visibility = if (firstSelected) View.GONE else View.VISIBLE
-        binding.llBt.visibility = if (firstSelected) View.VISIBLE else View.GONE
+        if (index == 0) {
+            binding.layoutTable.setBackgroundResource(R.drawable.ic_understands_table1)
+            binding.tvTable1.setTypeface( Typeface.DEFAULT_BOLD)
+            binding.tvTable2.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
+            binding.ivTable1.visibility = View.VISIBLE
+            binding.ivTable2.visibility = View.GONE
+            binding.llBt.visibility =  View.VISIBLE
+
+        } else {
+            binding.layoutTable.setBackgroundResource(R.drawable.ic_understands_table2)
+            binding.tvTable1.setTypeface( Typeface.create("sans-serif-medium", Typeface.NORMAL))
+            binding.tvTable2.setTypeface(Typeface.DEFAULT_BOLD)
+            binding.ivTable1.visibility = View.GONE
+            binding.ivTable2.visibility = View.VISIBLE
+            binding.llBt.visibility =  View.GONE
+        }
     }
 
     override fun onDestroy() {
