@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
@@ -56,7 +57,7 @@ class MyOrderRecordFragment :
         setProblemTipText()
         binding.tvProblemTip.setOnSingleClickListener {
             MyOrderCustomerServiceDialog.show(childFragmentManager) {
-                WXUtils.customerServiceChatWeb(requireActivity(),"https://work.weixin.qq.com/kfid/kfc40a9a48f69a47f52")
+                WXUtils.customerServiceChat(requireActivity(),BuildConfig.WX_KF_URL,BuildConfig.WX_KF_CORPID)
             }
         }
         // 配置空视图
