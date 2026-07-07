@@ -33,7 +33,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:layout_marginTop="9dp"
                     android:background="@drawable/bg_f3f9ff_ffffff_r12"
                     android:paddingStart="6dp"
                     android:paddingTop="11dp"
