@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="3"
             android:textColor="@color/color_75_3c3c43"
             android:textSize="13sp"
             tools:text="内容：1.负责主导beela海外语聊app风格定义、视觉改版..." />

@@ -524,6 +524,8 @@
     <string name="got_it">我知道啦</string>
     <string name="got_it_s">我知道啦(%ds)</string>
     <string name="no_data">暂无数据</string>
+    <string name="unknown">未知</string>
+    <string name="resume_age_with_unit">%1$s岁</string>
     <string name="delete_episode">删除剧集</string>
     <string name="delete_episode_warning">删除后，该集的剧本、资产图、分镜视频等将被清空，已消耗算力将无法恢复</string>
     <string name="deselect_all">取消全选</string>
