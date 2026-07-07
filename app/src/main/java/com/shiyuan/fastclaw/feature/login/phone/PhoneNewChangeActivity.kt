@@ -12,7 +12,6 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
-import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewChangeBinding
@@ -73,11 +72,13 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
      * 按设计区分手机号占位态和已输入态的字重。
      */
     private fun updatePhoneInputStyle() {
-        binding.etPhone.typeface = if (binding.etPhone.text.isNullOrEmpty()) {
+        val isEmpty = binding.etPhone.text.isNullOrEmpty()
+        binding.etPhone.typeface = if (isEmpty) {
             Typeface.DEFAULT
         } else {
             Typeface.create("sans-serif-medium", Typeface.NORMAL)
         }
+        binding.ivClearPhone.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
 
     /**
@@ -92,6 +93,10 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
      */
     private fun initClicks() {
         binding.ivBack.setOnClickListener { finish() }
+        binding.ivClearPhone.setOnClickListener {
+            binding.etPhone.text?.clear()
+            showKeyboard()
+        }
         binding.btnGetCode.setOnClickListener {
             requestCode()
         }
@@ -114,7 +119,7 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
         if (!updatePhoneError(showOnlyWhenComplete = true)) return
         val phone = binding.etPhone.text?.toString().orEmpty()
         mRealVM.mobile.value = phone
-        mRealVM.checkMobileBindStatus(scene = CheckMobileBindStatusBody.SCENE_CHANGE_MOBILE, userToken = User.get().token) { data ->
+        mRealVM.checkMobileBindStatus(scene = CheckMobileBindStatusBody.SCENE_CHANGE_MOBILE, bindTicket = null) { data ->
             if (data?.isSuccess() == true) {
                 sendChangeMobileCode(phone)
             } else if (data?.popupStyle == 1) {

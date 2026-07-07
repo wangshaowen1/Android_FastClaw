@@ -22,7 +22,6 @@ import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.nhsd.basic.BaseVMDialogFragment
 import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
@@ -143,7 +142,9 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
         if (FlashLoginManager.checkedPolicy) {
             shareManager?.login(platform, this)
         } else {
-            R.string.please_check_policy_below.getResString().showToast()
+            showPolicyDialog {
+                shareManager?.login(platform, this)
+            }
         }
     }
 
@@ -165,11 +166,26 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
     }
 
 
+    /**
+     * 跳转闪验授权页中的运营商协议或平台协议。
+     */
     override fun toPolicy(url: String?, name: String?) {
         activity?.let { SimpleBrowserActivity.launch(it, url ?: "", name ?: "") }
     }
 
+    /**
+     * 闪验一键登录未勾选协议时，展示二次确认协议弹框。
+     */
     override fun showPolicyDialog() {
+        showPolicyDialog {
+            FlashLoginManager.agreePolicyAndLogin()
+        }
+    }
+
+    /**
+     * 展示登录协议弹框，并在用户同意后继续执行当前登录动作。
+     */
+    private fun showPolicyDialog(onAgree: () -> Unit) {
         PhoneNewPolicyDialog.show(
             activity = topActivity,
             operatorName = FlashLoginManager.operatorPolicyName,
@@ -177,7 +193,8 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
         ) { agree ->
             if (agree) {
                 checkedPolicy = true
-                FlashLoginManager.agreePolicyAndLogin()
+                FlashLoginManager.agreePolicy()
+                onAgree()
             }
         }
     }

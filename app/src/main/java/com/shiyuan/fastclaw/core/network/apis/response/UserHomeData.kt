@@ -61,6 +61,8 @@ data class UserHomeData(
     val wechatBindStatus: Int? = null,
     //微信昵称
     val wechatNickName: String? = null,
+    //第三方首次登录待绑定手机号票据
+    val bindTicket: String? = null,
 
 ) : Parcelable {
 

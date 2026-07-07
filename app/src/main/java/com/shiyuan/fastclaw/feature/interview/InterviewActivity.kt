@@ -104,6 +104,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /** 当前是否正在播放 TTS。 */
     private var ttsPlaying = false
 
+    /** 用户作答录音期间禁止继续播报当前面试官语音，避免后续流式片段重新启动 TTS。 */
+    private var suppressTtsForAnswer = false
+
     /** 当前是否正在进行流式 TTS 输入。 */
     private var ttsStreaming = false
 
@@ -218,15 +221,18 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             showMessage(it)
         }
         mRealVM.ttsSpeakEvent.observe(this) {
+            if (suppressTtsForAnswer || answerRecording) return@observe
             pendingTtsStreamTexts.clear()
             pendingTtsStreamFinish = false
             ttsPlaying = ensureTtsPlayer().speak(it)
             ttsStreaming = false
         }
         mRealVM.ttsStreamDeltaEvent.observe(this) {
+            if (suppressTtsForAnswer || answerRecording) return@observe
             handleTtsStreamDelta(it)
         }
         mRealVM.ttsStreamFinishEvent.observe(this) {
+            if (suppressTtsForAnswer || answerRecording) return@observe
             handleTtsStreamFinish()
         }
         mRealVM.finishRoomEvent.observe(this) {
@@ -239,6 +245,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             }
         }
         mRealVM.autoStartAnswerAfterTtsEvent.observe(this) {
+            if (suppressTtsForAnswer || answerRecording) return@observe
             autoStartAnswerAfterTts = true
         }
         mRealVM.messageList.observe(this) { list ->
@@ -422,7 +429,10 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             }
             return false
         }
-        ttsPlayer?.stop()
+        suppressTtsForAnswer = true
+        autoStartAnswerAfterTts = false
+        ttsPlayer?.stopBlocking()
+        ttsPlaying = false
         ttsStreaming = false
         pendingTtsStreamTexts.clear()
         pendingTtsStreamFinish = false
@@ -434,6 +444,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         return runCatching {
             ensureSpeechTranscriber().start()
         }.getOrElse { throwable ->
+            suppressTtsForAnswer = false
             Log.d(TAG, "start voice recognizing failed", throwable)
             showMessage(getString(R.string.interview_voice_start_failed))
             false
@@ -698,6 +709,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun resetVoiceRecognizingState() {
         answerRecording = false
+        suppressTtsForAnswer = false
         updateVoiceActionRecording(false)
         mRealVM.stopTiming()
     }

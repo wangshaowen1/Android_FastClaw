@@ -205,7 +205,7 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
     }
 
     companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 300L
+        private const val SEARCH_DEBOUNCE_DELAY = 120L
         private const val MAX_SEARCH_RESULT_COUNT = 4
         private const val TEXT_NO_COMPANY = "暂无相关公司"
         private val SEARCH_POPUP_HEIGHT = 177.dp

@@ -14,6 +14,8 @@ import com.alibaba.idst.nui.NativeNui
 import org.json.JSONObject
 import java.util.UUID
 import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 /**
  * 百炼 CosyVoice 流式语音合成封装。
@@ -151,6 +153,24 @@ class DashCosyVoiceStreamTtsPlayer(
      */
     fun stop() {
         workerHandler.post { stopInternal(releasePlayer = true) }
+    }
+
+    /**
+     * 同步停止当前播报并清空播放器缓冲。
+     *
+     * 开始录音前使用，避免异步 stop 尚未执行时 ASR 已经打开，录入 TTS 尾音。
+     */
+    fun stopBlocking(timeoutMillis: Long = 500L) {
+        if (Looper.myLooper() == workerHandler.looper) {
+            stopInternal(releasePlayer = true)
+            return
+        }
+        val latch = CountDownLatch(1)
+        workerHandler.post {
+            stopInternal(releasePlayer = true)
+            latch.countDown()
+        }
+        runCatching { latch.await(timeoutMillis, TimeUnit.MILLISECONDS) }
     }
 
     /**

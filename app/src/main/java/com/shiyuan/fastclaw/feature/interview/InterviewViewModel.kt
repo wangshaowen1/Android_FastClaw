@@ -475,6 +475,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 处理完整文本消息，Agent 文本用于展示和 TTS，User 文本由本地提交时已插入。
      */
     private fun handleTextDone(message: InterviewAgentMessage) {
+        if (message.isIgnoredTextState()) return
         message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         message.payload?.questionId?.takeIf { it.isNotEmpty() }?.let {
             updateQuestionId(it)
@@ -726,6 +727,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 将服务端面试消息转换为端侧列表消息。
      */
     private fun InterviewAgentMessage.toRoomMessage(): InterviewMessageInfo? {
+        if (isIgnoredTextState()) return null
         val text = content?.takeIf { it.isNotBlank() } ?: return null
         val sender = senderType?.takeIf { it.isNotBlank() } ?: SENDER_AGENT
         val localId = messageId
@@ -737,6 +739,13 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             content = text,
             answerSubmitId = payload?.answerSubmitId,
         )
+    }
+
+    /**
+     * 等待追问判断状态只用于切换底部等待态，不作为面试官消息展示或播报。
+     */
+    private fun InterviewAgentMessage.isIgnoredTextState(): Boolean {
+        return (payload?.roomState ?: roomState) == ROOM_STATE_WAITING_FOLLOW_UP_DECISION
     }
 
     /**
