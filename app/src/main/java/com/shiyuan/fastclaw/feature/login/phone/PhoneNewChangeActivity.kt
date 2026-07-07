@@ -12,7 +12,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
-import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
+import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody.Companion.SCENE_CHANGE_MOBILE
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewChangeBinding
 
@@ -119,15 +119,19 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
         if (!updatePhoneError(showOnlyWhenComplete = true)) return
         val phone = binding.etPhone.text?.toString().orEmpty()
         mRealVM.mobile.value = phone
-        mRealVM.checkMobileBindStatus(scene = CheckMobileBindStatusBody.SCENE_CHANGE_MOBILE, bindTicket = null) { data ->
-            if (data?.isSuccess() == true) {
-                sendChangeMobileCode(phone)
-            } else if (data?.popupStyle == 1) {
-                data.message?.showToast()
-            } else if (data?.popupStyle == 2) {
-                showDirectLoginDialog(data.message)
+        mRealVM.checkMobileBindStatus(scene = SCENE_CHANGE_MOBILE, bindTicket = null, onSuccess = { data ->
+                if (data?.isSuccess() == true) {
+                    sendChangeMobileCode(phone)
+                } else if (data?.popupStyle == 1) {
+                    data.message?.showToast()
+                } else if (data?.popupStyle == 2) {
+                    showDirectLoginDialog(data.message)
+                }
+            },
+            onError = {
+                showPhoneError(it)
             }
-        }
+        )
     }
 
     /**
@@ -165,8 +169,20 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
         val phone = binding.etPhone.text?.toString().orEmpty()
         val valid = RegexUtils.isMobileSimple(phone)
         val showError = if (showOnlyWhenComplete) !valid else phone.length >= 11 && !valid
+        if (showError) {
+            binding.tvPhoneError.text = getString(R.string.login_new_phone_error)
+        }
         binding.tvPhoneError.visibility = if (showError) View.VISIBLE else View.INVISIBLE
         return valid
+    }
+
+    /**
+     * 在手机号输入框底部展示接口返回的错误提示。
+     */
+    private fun showPhoneError(message: String?) {
+        binding.tvPhoneError.text = message.takeUnless { it.isNullOrBlank() }
+            ?: getString(R.string.login_new_phone_error)
+        binding.tvPhoneError.visibility = View.VISIBLE
     }
 
     /**

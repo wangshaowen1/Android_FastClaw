@@ -590,6 +590,7 @@
     <string name="login_new_policy_privacy">《隐私保护》</string>
     <string name="login_new_policy_terms">《服务条款》</string>
     <string name="login_new_logging_in">登录中</string>
+    <string name="login_new_getting_code">正在获取验证码</string>
     <string name="flash_new_other_phone_login">其他手机号登录 ></string>
     <string name="flash_new_agreement_content">已阅读并同意 服务协议、隐私政策 和 账号服务须知以及%1$s</string>
     <string name="flash_new_agreement_content_no_operator">已阅读并同意 服务协议、隐私政策 和 账号服务须知</string>

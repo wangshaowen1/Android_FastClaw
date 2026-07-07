@@ -92,7 +92,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
         }
         codeCounting.postValue(true)
         sendCodeEnable.postValue(false)
-        launchWithLoading(
+        launch(
             block = {
                 response(
                     mRepo.sendSmsValidateCode(phone, bizType),
@@ -104,22 +104,16 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                         onSent()
                     },
                     error = {
-                        if (onError == null) {
-                            this?.msg?.showToast()
-                        } else {
-                            onError.invoke(this?.msg)
-                        }
+                        this?.msg?.showToast()
+                        onError?.invoke(this?.msg)
                         stopCountdown()
                     }
                 )
             },
             onError = {
                 val message = parseMessage(it)
-                if (onError == null) {
-                    message?.showToast()
-                } else {
-                    onError.invoke(message)
-                }
+                message?.showToast()
+                onError?.invoke(message)
                 stopCountdown()
             }
         )
@@ -132,10 +126,10 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      * @param bindTicket 三方登录返回的绑定票据，仅绑定手机号场景使用
      * @param onAvailable 手机号可用时继续执行
      */
-    fun checkMobileBindStatus(scene: Int, bindTicket: String?, onSuccess: (CheckMobileBindStatusData?) -> Unit) {
+    fun checkMobileBindStatus(scene: Int, bindTicket: String?, onSuccess: (CheckMobileBindStatusData?) -> Unit, onError: ((String?) -> Unit)? = null) {
         val phone = mobile.value
         if (!RegexUtils.isMobileSimple(phone)) {
-            showToast(R.string.login_new_phone_error)
+            onError?.invoke(R.string.login_new_phone_error.getResString())
             return
         }
         launchWithLoading(
@@ -146,7 +140,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
                         onSuccess(data)
                     },
                     error = {
-                        this?.msg?.showToast()
+                        onError?.invoke(this?.msg)
                     }
                 )
             },
