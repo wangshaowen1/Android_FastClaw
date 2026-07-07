@@ -14,7 +14,7 @@ import com.shiyuan.fastclaw.core.ext.toMaskedPhone
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewCodeLoginBinding
-import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewLoginLoadingDialog
+import com.shiyuan.fastclaw.feature.login.dialog.LoginNewLoadingDialog
 
 /**
  * 新版验证码登录页
@@ -26,7 +26,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
     private val codeViews by lazy {
         listOf(binding.tvCode1, binding.tvCode2, binding.tvCode3, binding.tvCode4)
     }
-    private var loginLoadingDialog: PhoneNewLoginLoadingDialog? = null
+    private var loginLoadingDialog: LoginNewLoadingDialog? = null
     private var isLoggingIn = false
     private var bindUserData: UserHomeData? = null
     private var businessType = BUSINESS_TYPE_LOGIN
@@ -152,9 +152,23 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
         binding.etCode.setOnClickListener { showCodeKeyboard() }
         binding.tvResend.setOnClickListener {
             if (mRealVM.codeCounting.value == true) return@setOnClickListener
-            mRealVM.sendSmsCode(bizType = smsBizType()) {
-                binding.etCode.setText("")
+            resendSmsCode()
+        }
+    }
+
+    /**
+     * 重新获取验证码时展示获取中弹框，接口完成后关闭。
+     */
+    private fun resendSmsCode() {
+        showLoginLoading(getString(R.string.login_new_getting_code))
+        mRealVM.sendSmsCode(
+            bizType = smsBizType(),
+            onError = {
+                hideLoginLoading()
             }
+        ) {
+            hideLoginLoading()
+            binding.etCode.setText("")
         }
     }
 
@@ -181,7 +195,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
      */
     private fun loginByPhone() {
         isLoggingIn = true
-        showLoginLoading()
+        showLoginLoading(getString(R.string.login_new_logging_in))
         when (businessType) {
             BUSINESS_TYPE_LOGIN -> {
                 loginPhone()
@@ -267,10 +281,10 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
     /**
      * 显示新版登录中弹窗。
      */
-    private fun showLoginLoading() {
+    private fun showLoginLoading(text: String? = null) {
         if (loginLoadingDialog?.isAdded == true) return
-        loginLoadingDialog = PhoneNewLoginLoadingDialog().apply {
-            show(supportFragmentManager, PhoneNewLoginLoadingDialog.TAG)
+        loginLoadingDialog = LoginNewLoadingDialog.newInstance(text).apply {
+            show(supportFragmentManager, LoginNewLoadingDialog.TAG)
         }
     }
 
