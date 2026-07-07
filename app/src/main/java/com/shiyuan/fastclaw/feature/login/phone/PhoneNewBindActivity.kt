@@ -126,7 +126,7 @@ class PhoneNewBindActivity : BaseViewModelActivity<ActivityPhoneNewBindBinding, 
         val phone = binding.etPhone.text?.toString().orEmpty()
         val userData = thirdLoginUserData ?: return
         mRealVM.mobile.value = phone
-        mRealVM.checkMobileBindStatus(CheckMobileBindStatusBody.SCENE_BIND_MOBILE, userData.token) { data ->
+        mRealVM.checkMobileBindStatus(CheckMobileBindStatusBody.SCENE_BIND_MOBILE, userData.bindTicket) { data ->
             if (data?.isSuccess() == true) {
                 sendBindMobileCode(phone, userData)
             } else if (data?.popupStyle == 1) {

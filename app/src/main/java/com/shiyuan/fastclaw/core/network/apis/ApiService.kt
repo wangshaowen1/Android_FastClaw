@@ -234,7 +234,7 @@ interface ApiService {
      * 三方登录后绑定手机号
      */
     @POST(ApiConstants.BIND_MOBILE)
-    suspend fun bindMobile(@Body body: BindMobileBody): ApiResponse<Any?>
+    suspend fun bindMobile(@Body body: BindMobileBody): ApiResponse<UserHomeData?>
 
     /**
      * 换绑手机号

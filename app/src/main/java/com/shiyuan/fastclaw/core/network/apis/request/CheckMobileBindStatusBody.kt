@@ -5,13 +5,13 @@ package com.shiyuan.fastclaw.core.network.apis.request
  *
  * @param mobile 待校验手机号
  * @param scene 校验场景，1-绑定手机号，2-换绑手机号
- * @param userToken 用户登录令牌，绑定手机号场景使用三方登录返回的临时 token
+ * @param bindTicket 绑定手机号场景使用的绑定票据，来源于三方登录返回值 bindTicket
  */
-class CheckMobileBindStatusBody(
+data class CheckMobileBindStatusBody(
     val mobile: String?,
     val scene: Int,
-    userToken: String?
-) : UserTokenBody(userToken) {
+    val bindTicket: String?
+) {
     companion object {
         /** 绑定手机号 */
         const val SCENE_BIND_MOBILE = 1

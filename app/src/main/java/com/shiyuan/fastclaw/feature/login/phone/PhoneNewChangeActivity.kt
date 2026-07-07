@@ -12,7 +12,6 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
-import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewChangeBinding
@@ -114,7 +113,7 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
         if (!updatePhoneError(showOnlyWhenComplete = true)) return
         val phone = binding.etPhone.text?.toString().orEmpty()
         mRealVM.mobile.value = phone
-        mRealVM.checkMobileBindStatus(scene = CheckMobileBindStatusBody.SCENE_CHANGE_MOBILE, userToken = User.get().token) { data ->
+        mRealVM.checkMobileBindStatus(scene = CheckMobileBindStatusBody.SCENE_CHANGE_MOBILE, bindTicket = null) { data ->
             if (data?.isSuccess() == true) {
                 sendChangeMobileCode(phone)
             } else if (data?.popupStyle == 1) {

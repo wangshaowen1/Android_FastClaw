@@ -54,9 +54,10 @@ class FlashLoginRepository : ThirdLoginRepository() {
     /**
      * 手机号绑定状态前置校验。
      */
-    suspend fun checkMobileBindStatus(phoneNumber: String?, scene: Int, userToken: String?) =
+    suspend fun checkMobileBindStatus(phoneNumber: String?, scene: Int, bindTicket: String?) =
         withContext(Dispatchers.IO) {
-            api.checkMobileBindStatus(CheckMobileBindStatusBody(phoneNumber, scene, userToken))
+            val ticket = bindTicket.takeIf { scene == CheckMobileBindStatusBody.SCENE_BIND_MOBILE }
+            api.checkMobileBindStatus(CheckMobileBindStatusBody(phoneNumber, scene, ticket))
         }
 
     suspend fun loginByPhone(phoneNumber: String?, validationCode: String?) =
@@ -91,9 +92,9 @@ class FlashLoginRepository : ThirdLoginRepository() {
     /**
      * 三方登录后绑定手机。
      */
-    suspend fun bindMobile(phoneNumber: String?, validationCode: String?, userToken: String?) =
+    suspend fun bindMobile(phoneNumber: String?, validationCode: String?, bindTicket: String?) =
         withContext(Dispatchers.IO) {
-            api.bindMobile(BindMobileBody(phoneNumber, validationCode, userToken = userToken))
+            api.bindMobile(BindMobileBody(phoneNumber, validationCode, bindTicket = bindTicket))
         }
 
     /**

@@ -19,7 +19,6 @@ import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.loginToast
 import com.shiyuan.fastclaw.core.ext.parseMessage
-import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.core.response
@@ -130,10 +129,10 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
      * 获取验证码前校验手机号绑定状态。
      *
      * @param scene 校验场景，1-绑定手机号，2-换绑手机号
-     * @param userToken 三方登录返回的临时 token
+     * @param bindTicket 三方登录返回的绑定票据，仅绑定手机号场景使用
      * @param onAvailable 手机号可用时继续执行
      */
-    fun checkMobileBindStatus(scene: Int, userToken: String?, onSuccess: (CheckMobileBindStatusData?) -> Unit) {
+    fun checkMobileBindStatus(scene: Int, bindTicket: String?, onSuccess: (CheckMobileBindStatusData?) -> Unit) {
         val phone = mobile.value
         if (!RegexUtils.isMobileSimple(phone)) {
             showToast(R.string.login_new_phone_error)
@@ -142,7 +141,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
         launchWithLoading(
             block = {
                 response(
-                    mRepo.checkMobileBindStatus(phone, scene, userToken),
+                    mRepo.checkMobileBindStatus(phone, scene, bindTicket),
                     result = {
                         onSuccess(data)
                     },
@@ -238,12 +237,14 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
             return
         }
         launchWithLoading(false, block = {
-            response(mRepo.bindMobile(phone, validateCode, userData?.token), {
-                saveLoginUser(userData, onLogin, phone)
-            }, error = {
-                this?.msg?.showToast()
-                onError?.invoke()
-            })
+            response(
+                mRepo.bindMobile(phone, validateCode, userData?.bindTicket),
+                result = {
+                    saveLoginUser(data, onLogin, phone)
+                }, error = {
+                    this?.msg?.showToast()
+                    onError?.invoke()
+                })
         }, onError = {
             parseMessage(it)?.showToast()
             onError?.invoke()
