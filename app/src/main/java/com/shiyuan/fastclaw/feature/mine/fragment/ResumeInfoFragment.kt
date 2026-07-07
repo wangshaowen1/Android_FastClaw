@@ -69,7 +69,6 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         private const val FIELD_PHONE = "phone"
         private const val FIELD_WECHAT_ID = "wechatId"
         private const val FIELD_EMAIL = "email"
-        private const val FIELD_LOCATION = "location"
         private const val FIELD_POSITION = "position"
         private const val FIELD_COMPANY_NAME = "companyName"
         private const val FIELD_WORK_CONTENT = "workContent"
@@ -77,9 +76,12 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         private const val FIELD_PROJECT_NAME = "projectName"
         private const val FIELD_SCHOOL_NAME = "schoolName"
         private const val FIELD_MAJOR = "major"
+        private const val FIELD_DEGREE = "degree"
         private const val FIELD_SKILL_NAME = "skillName"
         private const val FIELD_CERTIFICATE_NAME = "certificateName"
         private const val FIELD_AWARD_NAME = "awardName"
+
+        private const val FIELD_PROJECT_ROLE = "projectRole"
     }
 
     private val resumeInfoAdapter by lazy {
@@ -109,6 +111,9 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         binding.ivProfileEdit.setOnSingleClickListener {
             PersonalInformationActivity.start(requireActivity())
         }
+        binding.layoutProfile.setOnSingleClickListener {
+            PersonalInformationActivity.start(requireActivity())
+        }
     }
 
     private fun initObservers() {
@@ -134,14 +139,19 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             binding.ivAvatar.load(avatarUrl, R.drawable.ic_home_header_avatar)
         }
 
-        binding.tvName.text = data.findBaseFieldValue(FIELD_NAME).ifBlank { "暂无姓名" }
+        binding.tvName.text = data.findBaseFieldValue(FIELD_NAME).ifBlank { "姓名" }
 
-        binding.tvTip.text = listOf(
-            data.findBaseFieldValue(FIELD_GENDER),
-            data.findBaseFieldValue(FIELD_AGE),
-            data.findBaseFieldValue(FIELD_LOCATION)
-        ).filter { it.isNotBlank() }.joinToString(" | ")
-        binding.tvTip.visibility = if (binding.tvTip.text.isNullOrBlank()) View.GONE else View.VISIBLE
+        val ageValue = data.findBaseFieldValue(FIELD_AGE).trim().ifBlank { "0" }
+        val ageText = if (ageValue.endsWith("岁")) {
+            ageValue
+        } else {
+            getString(R.string.resume_age_with_unit, ageValue)
+        }
+        val genderText = data.findBaseFieldValue(FIELD_GENDER)
+            .trim()
+            .ifBlank { getString(R.string.unknown) }
+        binding.tvTip.text = listOf(ageText, genderText).joinToString(" | ")
+        binding.tvTip.visibility = View.VISIBLE
 
         bindBaseContact(
             binding.layoutProfilePhone,
@@ -159,16 +169,12 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             data.findBaseFieldValue(FIELD_WECHAT_ID)
         )
 
-        val hasContact = binding.layoutProfilePhone.visibility == View.VISIBLE ||
-                binding.layoutProfileEmail.visibility == View.VISIBLE ||
-                binding.layoutProfileWechat.visibility == View.VISIBLE
-        binding.layoutProfileContacts.visibility = if (hasContact) View.VISIBLE else View.GONE
+        binding.layoutProfileContacts.visibility = View.VISIBLE
     }
 
     private fun bindBaseContact(layout: View, textView: TextView, value: String) {
-        val show = value.isNotBlank()
-        layout.visibility = if (show) View.VISIBLE else View.GONE
-        textView.text = value
+        layout.visibility = View.VISIBLE
+        textView.text = value.ifBlank { getString(R.string.unknown) }
     }
 
     private fun updateResumeInfo(data: List<AttributeArrayQueryData>) {
@@ -393,7 +399,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             fieldTree
         ) { binding, position, item ->
             val companyName = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_COMPANY_NAME)
-            binding.tvCompany.text = companyName?.displayValue ?: "暂无"
+            binding.tvCompany.text = companyName?.displayValue ?: ""
             binding.layoutMissing.visibility =
                 if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
 
@@ -437,17 +443,17 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             fieldTree
         ) { binding, position, item ->
             val projectName = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_PROJECT_NAME)
-            binding.tvCompany.text = projectName?.displayValue ?: "暂无"
+            binding.tvCompany.text = projectName?.displayValue ?: ""
             binding.layoutMissing.visibility =
                 if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
 
             val startDate = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_START_DATE)
             val endDate = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_END_DATE)
-            val positionItem = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_POSITION)
+            val projectRoleItem = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_PROJECT_ROLE)
             val workContent = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_RESPONSIBILITIES)
             binding.tvTime.text =
                 (startDate?.displayValue ?: "") + " - " + (endDate?.displayValue ?: "")
-            binding.tvJob.text = positionItem?.displayValue ?: ""
+            binding.tvJob.text = projectRoleItem?.displayValue ?: ""
             binding.tvDesc.text = workContent?.displayValue?.let { "内容:$it" }.orEmpty()
 
             bindWorkLikeVisibility(binding.tvTime.text.toString(), binding.tvJob.text.toString(), binding.v)
@@ -481,16 +487,17 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             fieldTree
         ) { binding, position, item ->
             val schoolName = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_SCHOOL_NAME)
-            binding.tvCompany.text = schoolName?.displayValue ?: "暂无"
+            binding.tvCompany.text = schoolName?.displayValue ?: ""
             binding.layoutMissing.visibility =
                 if (item.statusCode == INCOMPLETE) View.VISIBLE else View.GONE
 
             val startDate = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_START_DATE)
             val endDate = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_END_DATE)
             val major = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_MAJOR)
+            val degree = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_DEGREE)
             binding.tvTime.text =
                 (startDate?.displayValue ?: "") + " - " + (endDate?.displayValue ?: "")
-            binding.tvMajor.text = major?.displayValue ?: ""
+            binding.tvMajor.text =(if(degree?.displayValue.isNullOrBlank()) "" else (degree?.displayValue +" · "))  + major?.displayValue ?: ""
 
             val hasTime = binding.tvTime.text != " - "
             val hasMajor = !binding.tvMajor.text.isNullOrEmpty()
@@ -531,7 +538,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
                 else -> FIELD_AWARD_NAME
             }
             val name = AttributeFieldItemFinder.findFirst(item.fieldItems, fieldCode)
-            binding.tvName.text = name?.displayValue ?: "暂无"
+            binding.tvName.text = name?.displayValue ?: ""
             binding.root.setOnClickListener {
                 if(item.instanceIndex == -1L || item.instanceIndex == null){
                     handleEditIconClick(attributeData)
