@@ -74,6 +74,7 @@ import com.shiyuan.fastclaw.feature.interview.InterviewActivity
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewRecoverDialog
 import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
 import com.shiyuan.fastclaw.feature.mine.MineShrimpRechargeActivity
+import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
@@ -185,7 +186,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             R.id.iv_agent_memory -> { //对你的理解
                 if (!AppNavigator.checkLoginIntercepted(false)){
-                    ShrimpUnderstandsActivity.start(requireActivity())
+                    OnlineResumeActivity.start(requireActivity(),0)
                 }
             }
             R.id.layout_back_check -> { //背景调查
@@ -967,7 +968,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         jumpMemory.setOnSingleClickListener {
             if(!AppNavigator.checkLoginIntercepted(false)){
-                ShrimpUnderstandsActivity.start(requireActivity())
+                OnlineResumeActivity.start(requireActivity(),0)
             }
         }
 
