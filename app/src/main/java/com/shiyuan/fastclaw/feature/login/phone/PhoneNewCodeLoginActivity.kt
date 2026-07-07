@@ -10,6 +10,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
+import com.shiyuan.fastclaw.core.ext.toMaskedPhone
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewCodeLoginBinding
@@ -117,7 +118,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
         bindUserData = intent.getParcelableExtra(EXTRA_BIND_USER_DATA)
         mRealVM.mobile.value = phone
         mRealVM.checkedPolicy.set(intent.getBooleanExtra(EXTRA_CHECKED_POLICY, true))
-        binding.tvCodeSubtitle.text = getString(R.string.login_new_code_subtitle, phone)
+        binding.tvCodeSubtitle.text = getString(R.string.login_new_code_subtitle, phone.toMaskedPhone())
         initInput()
         initClicks()
         observeVm()

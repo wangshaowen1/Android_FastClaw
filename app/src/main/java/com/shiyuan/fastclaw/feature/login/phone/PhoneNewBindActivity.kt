@@ -84,11 +84,13 @@ class PhoneNewBindActivity : BaseViewModelActivity<ActivityPhoneNewBindBinding, 
      * 按设计区分手机号占位态和已输入态的字重。
      */
     private fun updatePhoneInputStyle() {
-        binding.etPhone.typeface = if (binding.etPhone.text.isNullOrEmpty()) {
+        val isEmpty = binding.etPhone.text.isNullOrEmpty()
+        binding.etPhone.typeface = if (isEmpty) {
             Typeface.DEFAULT
         } else {
             Typeface.create("sans-serif-medium", Typeface.NORMAL)
         }
+        binding.ivClearPhone.visibility = if (isEmpty) View.GONE else View.VISIBLE
     }
 
     /**
@@ -103,6 +105,10 @@ class PhoneNewBindActivity : BaseViewModelActivity<ActivityPhoneNewBindBinding, 
      */
     private fun initClicks() {
         binding.ivBack.setOnClickListener { finish() }
+        binding.ivClearPhone.setOnClickListener {
+            binding.etPhone.text?.clear()
+            showKeyboard()
+        }
         binding.btnGetCode.setOnClickListener {
             requestCode()
         }

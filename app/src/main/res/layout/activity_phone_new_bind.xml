@@ -98,7 +98,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="4dp"
                 android:background="@android:color/transparent"
                 android:gravity="center_vertical"
                 android:hint="@string/login_new_phone_hint"
@@ -112,10 +112,24 @@
                 android:textCursorDrawable="@drawable/edittext_cursor"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/ivClearPhone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_goneMarginEnd="20dp"
                 tools:text="1309898970" />
+
+            <ImageView
+                android:id="@+id/ivClearPhone"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:padding="15dp"
+                android:src="@drawable/icon_backcheck_search_close"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription"
+                tools:visibility="visible" />
         </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 
         <TextView
