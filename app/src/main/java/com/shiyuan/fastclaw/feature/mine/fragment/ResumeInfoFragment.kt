@@ -82,6 +82,8 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         private const val FIELD_AWARD_NAME = "awardName"
 
         private const val FIELD_PROJECT_ROLE = "projectRole"
+
+        private const val FIELD_PROFICIENCY = "proficiency"
     }
 
     private val resumeInfoAdapter by lazy {
@@ -539,6 +541,17 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             }
             val name = AttributeFieldItemFinder.findFirst(item.fieldItems, fieldCode)
             binding.tvName.text = name?.displayValue ?: ""
+            if(type == GROUP_SKILLS){
+                val tvValeName = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_PROFICIENCY)
+                tvValeName?.displayValue?.let {
+                    binding.tvVale.visibility = View.VISIBLE
+                    binding.tvVale.text = it
+                } ?:run {
+                    binding.tvVale.visibility = View.GONE
+                }
+            }else{
+                binding.tvVale.visibility = View.GONE
+            }
             binding.root.setOnClickListener {
                 if(item.instanceIndex == -1L || item.instanceIndex == null){
                     handleEditIconClick(attributeData)

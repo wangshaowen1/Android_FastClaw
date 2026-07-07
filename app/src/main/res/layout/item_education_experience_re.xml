@@ -37,14 +37,14 @@
                 android:layout_toStartOf="@id/iv_arrow"
                 android:orientation="horizontal"
                 android:paddingHorizontal="10dp"
-                android:paddingVertical="6dp"
+                android:paddingVertical="3dp"
                 android:visibility="gone"
                 app:background_normalColor="@color/color_1AF74C30"
                 app:super_corner="8dp">
 
                 <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_warning"
                     tools:ignore="ContentDescription" />

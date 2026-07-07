@@ -998,7 +998,7 @@
     <string name="edit_award">编辑奖项</string>
     <string name="add_award">添加奖项</string>
     <string name="award_name">奖励名称</string>
-    <string name="award_time">奖励时间</string>
+    <string name="award_time">获奖时间</string>
 
     <!-- 证书 -->
     <string name="edit_certificate">编辑证书</string>
