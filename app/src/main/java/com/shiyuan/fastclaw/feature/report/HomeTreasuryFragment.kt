@@ -45,9 +45,9 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
     private fun observePassPackageResumeStatus() {
         mRealVM.interviewPassPackageResumeStatus.observe(this) { data ->
             val url = if (data?.resumeCheckId == null) {
-                Constants.PASS_PACKAGE_RESUME_UPLOAD_URL
+                Constants.PASS_PACKAGE_INDEX_URL
             } else {
-                "${Constants.PASS_PACKAGE_JOB_UPLOAD_URL}?resumeCheckId=${data?.resumeCheckId}"
+                "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${data?.resumeCheckId}"
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
         }
