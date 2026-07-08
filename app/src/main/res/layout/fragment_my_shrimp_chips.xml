@@ -27,22 +27,34 @@
             android:textSize="12sp"
             tools:text="虾条更新可能延迟 虾条规则" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/srl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_ffffff_r12"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
+            android:paddingTop="@dimen/spacing_m"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_rule_tip"
             app:layout_constraintVertical_bias="0"
-            tools:itemCount="3"
-            tools:listitem="@layout/item_shrimp_chips"
-            tools:visibility="visible" />
+            app:srlEnableLoadMore="false">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_ffffff_r12"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_rule_tip"
+                app:layout_constraintVertical_bias="0"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_shrimp_chips"
+                tools:visibility="visible" />
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
     </LinearLayout>
 </layout>

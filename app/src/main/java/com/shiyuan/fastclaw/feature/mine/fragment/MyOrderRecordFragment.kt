@@ -7,9 +7,11 @@ import android.text.style.UnderlineSpan
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.ClipboardUtils
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.item.AppItemViewModel
@@ -54,6 +56,10 @@ class MyOrderRecordFragment :
             }
             adapter = orderAdapter
         }
+        binding.srl.setEnableLoadMore(false)
+        binding.srl.setOnRefreshListener {
+            mRealVM.loadOrderRecords()
+        }
         setProblemTipText()
         binding.tvProblemTip.setOnSingleClickListener {
             MyOrderCustomerServiceDialog.show(childFragmentManager) {
@@ -67,6 +73,7 @@ class MyOrderRecordFragment :
         binding.tvProblemTip.gone()
         binding.lsvOrderRecord.showLoading()
         mRealVM.orderRecords.observe(viewLifecycleOwner) { records ->
+            binding.srl.finishRefresh()
             updateOrderRecords(records.orEmpty())
         }
         mRealVM.loadOrderRecords()
@@ -91,7 +98,13 @@ class MyOrderRecordFragment :
     }
 
     private fun updateOrderRecords(data: List<MyOrderRecord>) {
-        orderAdapter.submitList(data.map(::ItemMyOrderRecordVM))
+        orderAdapter.submitList(data.map { record ->
+            ItemMyOrderRecordVM(record).apply {
+                onItemClick.value = {
+                    copyOrderNo(record.orderNo)
+                }
+            }
+        })
         if (data.isEmpty()) {
             binding.lsvOrderRecord.showEmpty()
             binding.tvProblemTip.gone()
@@ -99,6 +112,12 @@ class MyOrderRecordFragment :
             binding.lsvOrderRecord.showContent()
             binding.tvProblemTip.visible()
         }
+    }
+
+    private fun copyOrderNo(orderNo: String) {
+        if (orderNo.isEmpty()) return
+        ClipboardUtils.copyText(orderNo)
+        getString(R.string.toast_copied).showToast()
     }
 }
 
