@@ -42,6 +42,12 @@ class AccountSettingsActivity : BaseViewModelActivity<ActivityAccountSettingsBin
             .init()
     }
 
+    /** 页面创建后拉取用户详情，保存本地并刷新展示。 */
+    override fun onViewModelCreated() {
+        super.onViewModelCreated()
+        mRealVM.fetchUserInfo()
+    }
+
     /** 页面重新可见时刷新手机号脱敏展示。 */
     override fun onResume() {
         super.onResume()

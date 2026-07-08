@@ -63,7 +63,7 @@
                     android:text="@{layout.phone}"
                     android:textColor="@color/color_55_3c3c43"
                     android:textSize="15sp"
-                    tools:text="178*****000" />
+                    tools:text="178******00" />
 
                 <View
                     android:layout_width="match_parent"

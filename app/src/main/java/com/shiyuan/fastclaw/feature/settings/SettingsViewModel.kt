@@ -17,6 +17,7 @@ import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.BindThirdPartyBody
 import com.shiyuan.fastclaw.core.network.apis.request.UnbindThirdPartyBody
+import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.BindThirdPartyData
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.kit.SignUtils
@@ -77,6 +78,26 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
         val bound = User.get().wechatBindStatus == User.WECHAT_BIND_STATUS_BOUND
         wechatName.set(if (bound) User.get().wechatNickName else R.string.unbound.getResString())
         isWechatBound.set(bound)
+    }
+
+    /**
+     * 拉取账号详情，保存本地用户信息后刷新账号设置展示。
+     */
+    fun fetchUserInfo() {
+        if (User.get().isVisitor) return
+        launch(
+            block = {
+                response(
+                    bean = mRepo.api.getUserHomeInfo(UserTokenBody()),
+                    result = {
+                        User.get().updateFrom(data)
+                        refreshUserInfo()
+                    },
+                    error = {}
+                )
+            },
+            onError = {}
+        )
     }
 
     /**
