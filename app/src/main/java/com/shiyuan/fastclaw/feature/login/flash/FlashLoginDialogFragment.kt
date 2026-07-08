@@ -97,7 +97,7 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
 
     override fun onPrepareView() {
         super.onPrepareView()
-        bindingNullable?.root?.visibility = View.VISIBLE
+        bindingNullable?.root?.visibility = View.GONE
         FlashLoginManager.login(
             onOpen = {
             },
