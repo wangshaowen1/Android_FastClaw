@@ -1,7 +1,15 @@
 package com.shiyuan.fastclaw.core.manager
 
+import android.app.Activity
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
+import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.LinearLayout
 import com.blankj.utilcode.util.BarUtils
 import com.blankj.utilcode.util.ScreenUtils
@@ -34,8 +42,11 @@ import java.lang.ref.WeakReference
 object FlashLoginManager {
 
     private const val TAG = "FlashLoginManager"
+    private const val SHANYAN_AUTH_ACTIVITY_CLASS = "com.chuanglan.shanyan_sdk.view.ShanYanOneKeyActivity"
+    private const val SHANYAN_AUTH_ACTIVITY_REF_FIELD = "mLoginActivityWeakReference"
     private var listener: WeakReference<Listener>? = null
     private var binding: LayoutShanyanCustomBinding? = null
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
     val checkedPolicy
         get() = OneKeyLoginManager.getInstance().privacyCheckBox?.isChecked == true
 
@@ -89,6 +100,8 @@ object FlashLoginManager {
             .setAuthBGImgPath(R.color.transparent.getResDrawable())
             //状态栏
             .setLightColor(true)
+            .setVirtualKeyTransparent(true)
+            .setFitsSystemWindows(false)
             //导航栏（默认高度：50dp）
             .setAuthNavHidden(true)
             //logo图标
@@ -124,7 +137,7 @@ object FlashLoginManager {
             .setcheckBoxOffsetXY(0, 6)
             .setCheckBoxMargin(0, 0, 0, 0)
             .setCheckBoxTipDisable(true)
-            .setPrivacyText("已阅读并同意", "、", "以及", "", "")
+            .setPrivacyText("已阅读并同意 ", "、", "、", " 以及", "")
             .setPrivacyGravityHorizontalCenter(false)
             .setPrivacyOffsetGravityLeft(true)
             .setPrivacyActivityEnabled(false)
@@ -173,6 +186,7 @@ object FlashLoginManager {
                 //code为1000：授权页成功拉起 其他：失败
                 Logger.i(TAG, "getOpenLoginAuthStatus($code, $result)")
                 if (1000 == code) {
+                    applyAuthWindowBehindNavigationBar()
                     onOpen.invoke()
                 } else {
                     onOpenFail.invoke(code, result)
@@ -190,6 +204,76 @@ object FlashLoginManager {
                     else -> onLoginFail.invoke(code, result)
                 }
             }
+    }
+
+    private fun applyAuthWindowBehindNavigationBar() {
+        runOnMainThread {
+            setupAuthWindowBehindNavigationBar()
+            mainHandler.postDelayed({ setupAuthWindowBehindNavigationBar() }, 80)
+        }
+    }
+
+    private fun runOnMainThread(action: () -> Unit) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            action()
+        } else {
+            mainHandler.post(action)
+        }
+    }
+
+    private fun setupAuthWindowBehindNavigationBar() {
+        val activity = getShanYanAuthActivity()
+        if (activity == null) {
+            Logger.i(TAG, "setupAuthWindowBehindNavigationBar auth activity is null")
+            return
+        }
+        activity.window?.let(::setupWindowBehindNavigationBar)
+        setupAuthRootFitsSystemWindows(activity)
+    }
+
+    private fun getShanYanAuthActivity(): Activity? {
+        return runCatching {
+            val activityClass = Class.forName(SHANYAN_AUTH_ACTIVITY_CLASS)
+            val activityRefField = activityClass.getDeclaredField(SHANYAN_AUTH_ACTIVITY_REF_FIELD)
+            activityRefField.isAccessible = true
+            val activityRef = activityRefField.get(null) as? WeakReference<*>
+            activityRef?.get() as? Activity
+        }.onFailure {
+            Logger.e(TAG, "getShanYanAuthActivity error:${it.stackTraceToString()}")
+        }.getOrNull()
+    }
+
+    private fun setupWindowBehindNavigationBar(window: Window) {
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.navigationBarColor = Color.TRANSPARENT
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false)
+        }
+
+        var systemUiVisibility = window.decorView.systemUiVisibility or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        }
+        window.decorView.systemUiVisibility = systemUiVisibility
+    }
+
+    private fun setupAuthRootFitsSystemWindows(activity: Activity) {
+        val rootId = activity.resources.getIdentifier(
+            "shanyan_view_login_layout",
+            "id",
+            activity.packageName
+        )
+        if (rootId == 0) return
+        activity.findViewById<View>(rootId)?.fitsSystemWindows = false
     }
 
     /**

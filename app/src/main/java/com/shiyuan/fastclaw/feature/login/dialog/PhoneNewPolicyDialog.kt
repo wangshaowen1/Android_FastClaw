@@ -111,7 +111,8 @@ class PhoneNewPolicyDialog : BaseDialogFragment<DialogPhoneNewPolicyBinding>() {
         ): SpannableString {
             val service = activity.getString(R.string.flash_new_service_agreement)
             val privacy = activity.getString(R.string.flash_new_privacy_policy)
-            val operator = operatorName ?: activity.getString(R.string.flash_new_account_terms)
+            val operator = operatorName?.takeIf { it.isNotBlank() }?.toPolicyDisplayName()
+                ?: activity.getString(R.string.flash_new_account_terms)
             return SpannableString(
                 activity.getString(R.string.login_new_policy_flash_content, service, privacy, operator)
             ).apply {
@@ -196,12 +197,13 @@ class PhoneNewPolicyDialog : BaseDialogFragment<DialogPhoneNewPolicyBinding>() {
         if (!operatorName.isNullOrBlank()) {
             val service = getString(R.string.flash_new_service_agreement)
             val privacy = getString(R.string.flash_new_privacy_policy)
+            val operator = operatorName.toPolicyDisplayName()
             return SpannableString(
-                getString(R.string.login_new_policy_flash_content, service, privacy, operatorName)
+                getString(R.string.login_new_policy_flash_content, service, privacy, operator)
             ).apply {
                 addLink(this, service, Config.get().serviceUrl, R.string.flash_new_service_agreement)
                 addLink(this, privacy, Config.get().privacyUrl, R.string.flash_new_privacy_policy)
-                addLink(this, operatorName, operatorUrl, 0)
+                addLink(this, operator, operatorUrl, 0)
             }
         }
         val service = getString(R.string.login_new_policy_user_service)
@@ -242,4 +244,8 @@ class PhoneNewPolicyDialog : BaseDialogFragment<DialogPhoneNewPolicyBinding>() {
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
     }
+}
+
+private fun String.toPolicyDisplayName(): String {
+    return replace("统一认证服务条款", "认证服务条款")
 }
