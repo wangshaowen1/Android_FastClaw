@@ -124,7 +124,7 @@ object FlashLoginManager {
             .setcheckBoxOffsetXY(0, 6)
             .setCheckBoxMargin(0, 0, 0, 0)
             .setCheckBoxTipDisable(true)
-            .setPrivacyText("已阅读并同意", "、", "以及", "", "")
+            .setPrivacyText("已阅读并同意 ", "、", "、", " 以及", "")
             .setPrivacyGravityHorizontalCenter(false)
             .setPrivacyOffsetGravityLeft(true)
             .setPrivacyActivityEnabled(false)
