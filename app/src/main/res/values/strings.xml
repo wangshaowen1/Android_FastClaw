@@ -1108,7 +1108,7 @@
     <string name="invite_reward_register_desc">通过你的链接首次注册</string>
     <string name="invite_reward_register_amount">+20</string>
     <string name="invite_reward_experience_title">好友体验任一指定工具</string>
-    <string name="invite_reward_experience_desc">公司背调、模拟面试</string>
+    <string name="invite_reward_experience_desc">公司背调、模拟面试、面试通关包</string>
     <string name="invite_reward_experience_amount">+80</string>
     <string name="invite_now">立即邀请</string>
     <string name="invite_share_wechat_friend">微信好友</string>

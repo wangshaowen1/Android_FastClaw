@@ -36,7 +36,7 @@
                     android:background="@drawable/bg_f3f9ff_ffffff_r12"
                     android:paddingStart="6dp"
                     android:paddingTop="11dp"
-                    android:paddingEnd="12dp"
+                    android:paddingEnd="22dp"
                     android:paddingBottom="3dp">
 
                     <com.google.android.material.imageview.ShapeableImageView
