@@ -21,7 +21,7 @@ import com.shiyuan.fastclaw.feature.login.dialog.LoginNewLoadingDialog
  *  @author：CaoWei
  *  @date：2026/6/30 15:49
  */
-class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLoginBinding, PhoneNewLoginViewModel>() {
+class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLoginBinding, PhoneNewLoginViewModel>() {
 
     private val codeViews by lazy {
         listOf(binding.tvCode1, binding.tvCode2, binding.tvCode3, binding.tvCode4)
@@ -59,7 +59,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
          * @param checkedPolicy 协议勾选状态
          */
         fun start(context: Context, phone: String, checkedPolicy: Boolean) {
-            val intent = Intent(context, PhoneNewCodeLoginActivity::class.java)
+            val intent = Intent(context, PhoneNewLoginCodeActivity::class.java)
             intent.putExtra(EXTRA_PHONE, phone)
             intent.putExtra(EXTRA_CHECKED_POLICY, checkedPolicy)
             intent.putExtra(EXTRA_BUSINESS_TYPE, BUSINESS_TYPE_LOGIN)
@@ -74,7 +74,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
          * @param userData 三方登录接口返回的临时用户信息
          */
         fun startForBindMobile(context: Context, phone: String, userData: UserHomeData) {
-            val intent = Intent(context, PhoneNewCodeLoginActivity::class.java)
+            val intent = Intent(context, PhoneNewLoginCodeActivity::class.java)
             intent.putExtra(EXTRA_PHONE, phone)
             intent.putExtra(EXTRA_CHECKED_POLICY, true)
             intent.putExtra(EXTRA_BUSINESS_TYPE, BUSINESS_TYPE_BIND_PHONE)
@@ -89,7 +89,7 @@ class PhoneNewCodeLoginActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
          * @param phone 已发送验证码的新手机号
          */
         fun startForChangePhone(context: Context, phone: String) {
-            val intent = Intent(context, PhoneNewCodeLoginActivity::class.java)
+            val intent = Intent(context, PhoneNewLoginCodeActivity::class.java)
             intent.putExtra(EXTRA_PHONE, phone)
             intent.putExtra(EXTRA_CHECKED_POLICY, true)
             intent.putExtra(EXTRA_BUSINESS_TYPE, BUSINESS_TYPE_CHANGE_PHONE)

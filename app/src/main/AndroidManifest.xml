@@ -354,7 +354,7 @@
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".feature.login.phone.PhoneNewCodeLoginActivity"
+            android:name=".feature.login.phone.PhoneNewLoginCodeActivity"
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
