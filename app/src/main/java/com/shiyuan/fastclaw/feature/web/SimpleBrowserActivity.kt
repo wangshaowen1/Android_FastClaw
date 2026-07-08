@@ -310,7 +310,6 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
         }
 
         override fun onShowFileChooser(webView: WebView?, filePathCallback: ValueCallback<Array<Uri?>?>?, fileChooserParams: FileChooserParams?): Boolean {
-            mUploadCallbackAboveL?.onReceiveValue(null)
             mUploadCallbackAboveL = filePathCallback
             try {
                 startActivityForResult(
@@ -318,7 +317,6 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
                     REQUEST_CODE_PHOTO_PICKER
                 )
             } catch (e: ActivityNotFoundException) {
-                mUploadCallbackAboveL?.onReceiveValue(null)
                 mUploadCallbackAboveL = null
             }
             return true
