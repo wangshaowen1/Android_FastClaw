@@ -1461,19 +1461,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val REPORT_STATUS_SUCCESS = "SUCCESS"
         /** 报告生成失败 */
         private const val REPORT_STATUS_FAILED = "FAILED"
-        // Report generation failed, but can still be retried.
+        /** 报告生成失败，但仍可重试 */
         private const val REPORT_STATUS_FAILED_RETRYABLE = "FAILED_RETRYABLE"
-
-        // Report generation failed permanently and should stop polling.
+        /** 报告生成最终失败，需停止轮询 */
         private const val REPORT_STATUS_FAILED_FINAL = "FAILED_FINAL"
-
-        // Pass package generation completed successfully.
+        /** 面试通关包生成成功 */
         private const val PASS_PACKAGE_STATUS_SUCCESS = 2
-
-        // Pass package generation failed and should stop polling.
+        /** 面试通关包生成失败，需停止轮询 */
         private const val PASS_PACKAGE_STATUS_FAILED = 3
-
-        // Pass package generation was blocked and should stop polling.
+        /** 面试通关包生成异常阻断，需停止轮询 */
         private const val PASS_PACKAGE_STATUS_BLOCKED = 4
 
         // displayPolicy（端侧展示策略）：think 等中间态消息在结果消息到达后的收口方式
