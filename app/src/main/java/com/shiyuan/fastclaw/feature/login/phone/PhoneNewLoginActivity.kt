@@ -27,7 +27,6 @@ import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewLoginBinding
-import com.shiyuan.fastclaw.feature.login.LoginActivity
 import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.umeng.socialize.UMShareAPI
@@ -184,7 +183,7 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
             startCountdownOnSuccess = false,
             bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN
         ) {
-            PhoneNewCodeLoginActivity.start(this, phone, checkedPolicy = mRealVM.checkedPolicy.get())
+            PhoneNewLoginCodeActivity.start(this, phone, checkedPolicy = mRealVM.checkedPolicy.get())
             finish()
         }
     }

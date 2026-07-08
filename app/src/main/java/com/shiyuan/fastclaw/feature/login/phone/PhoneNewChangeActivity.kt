@@ -142,7 +142,7 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
             startCountdownOnSuccess = false,
             bizType = SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE,
         ) {
-            PhoneNewCodeLoginActivity.startForChangePhone(this, phone)
+            PhoneNewLoginCodeActivity.startForChangePhone(this, phone)
             finish()
         }
     }

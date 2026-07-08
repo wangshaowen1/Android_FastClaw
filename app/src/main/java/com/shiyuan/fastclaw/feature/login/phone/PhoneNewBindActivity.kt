@@ -155,7 +155,7 @@ class PhoneNewBindActivity : BaseViewModelActivity<ActivityPhoneNewBindBinding, 
             startCountdownOnSuccess = false,
             bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN
         ) {
-            PhoneNewCodeLoginActivity.startForBindMobile(this, phone, userData)
+            PhoneNewLoginCodeActivity.startForBindMobile(this, phone, userData)
             finish()
         }
     }
