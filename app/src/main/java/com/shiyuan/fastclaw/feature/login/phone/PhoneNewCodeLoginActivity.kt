@@ -9,8 +9,8 @@ import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
+import com.shiyuan.fastclaw.common.ext.toMaskedPhone
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
-import com.shiyuan.fastclaw.core.ext.toMaskedPhone
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewCodeLoginBinding

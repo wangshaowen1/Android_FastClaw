@@ -9,6 +9,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
+import com.shiyuan.fastclaw.common.ext.toMaskedPhone
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.User
@@ -165,11 +166,7 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
 
     private fun maskPhone(phone: String?): String {
         if (phone.isNullOrBlank()) return R.string.unbound.getResString()
-        return if (phone.length >= 7) {
-            "${phone.take(3)}*****${phone.takeLast(3)}"
-        } else {
-            phone
-        }
+        return phone.toMaskedPhone()
     }
 
     /**

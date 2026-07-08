@@ -350,7 +350,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
         // 面试通关包 - 查看报告
         msgAdapter.onPassPackageDoneClickAction = { item, action, data ->
-            if (!interceptIfStreaming() && action != null) {
+            if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 SimpleBrowserActivity.launch(
                     requireActivity(),

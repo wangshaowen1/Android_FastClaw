@@ -84,12 +84,4 @@ fun <Value> Intent?.getBundleValue(key: String?): Value? {
     return null
 }
 
-/**
- * 验证码页手机号展示为前 3 位 + 6 个星号 + 后 2 位，例如 158******88。
- */
-fun String.toMaskedPhone(): String {
-    if (length < 11) return this
-    return "${take(3)}******${takeLast(2)}"
-}
-
 
