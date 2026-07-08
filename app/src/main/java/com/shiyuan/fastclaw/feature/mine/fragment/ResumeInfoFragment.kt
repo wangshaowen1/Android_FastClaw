@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.mine.fragment
 
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -497,12 +498,12 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             val endDate = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_END_DATE)
             val major = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_MAJOR)
             val degree = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_DEGREE)
-            binding.tvTime.text =
-                (startDate?.displayValue ?: "") + " - " + (endDate?.displayValue ?: "")
-            binding.tvMajor.text =(if(degree?.displayValue.isNullOrBlank()) "" else (degree?.displayValue +" · "))  + major?.displayValue ?: ""
+            binding.tvTime.text = (startDate?.displayValue ?: "") + " - " + (endDate?.displayValue ?: "")
+
+            binding.tvMajor.text = ((if (degree?.displayValue.isNullOrBlank()) "" else (degree?.displayValue + " · ")) + major?.displayValue) ?: ""
 
             val hasTime = binding.tvTime.text != " - "
-            val hasMajor = !binding.tvMajor.text.isNullOrEmpty()
+            val hasMajor = !(binding.tvMajor.text.isNullOrBlank() ||  binding.tvMajor.text == "null")
             binding.tvTime.visibility = if (hasTime) View.VISIBLE else View.GONE
             binding.tvMajor.visibility = if (hasMajor) View.VISIBLE else View.GONE
             binding.v.visibility = if (hasTime && hasMajor) View.VISIBLE else View.GONE
