@@ -32,7 +32,7 @@ import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobWelfareSelectorActivity
 import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment.Companion.INCOMPLETE
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
@@ -194,10 +194,13 @@ class JobPreferencesFragment :
                 "暂无选项".showToast()
                 return@let
             }
-            SingleSelectDialog.show(
-                this.childFragmentManager,
-                title,
-                enumItems
+           val selectedCode = (item.value as? Map<*, *>)?.get("code")?.toString()
+           val selectedEnumItem =enumItems.firstOrNull { enumItem -> (enumItem.code == selectedCode) }
+            SingleSelectDialog2.show(
+                manager = childFragmentManager,
+                title = title,
+                items = enumItems,
+                selectedItem = selectedEnumItem
             ) { data ->
                 val value = mapOf("code" to data.code, "name" to data.name)
                 mRealVM.updateOnlineResumeAttribute(
