@@ -100,6 +100,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         private const val PREFETCH_THRESHOLD = 5
         private const val MESSAGE_SCROLL_DELAY = 100L
         private const val MESSAGE_SCROLL_SPEED = 0.08f
+        private const val RESUME_EVENT_POLL_INTERVAL = 10000L
+        private const val RESUME_EVENT_POLL_TIMEOUT = 60000L
 
         /**
          * 业务侧追踪类型：onTrackingEvent 内部根据该值统一调用 EventManager.onAppTrack，
@@ -140,6 +142,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private var mCurrentAction: CardAction? = null
 
     private var mCurrentQuestionId: String? = null
+
+    private var resumeEventPullJob: Job? = null
 
     private var isVoiceInputMode = false
 
@@ -707,9 +711,20 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             on<Events.ResumeEvent> { event ->
                 // 上传简历通知拉取
-                if (!User.get().isVisitor) {
+                if (User.get().isVisitor) {
                     if (mRealVM.hasInitSession.value == true) {
                         mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+                        resumeEventPullJob?.cancel()
+                        resumeEventPullJob = lifecycleScope.launch {
+                            val startTime = System.currentTimeMillis()
+                            while (!User.get().isVisitor
+                                && mRealVM.hasInitSession.value == true
+                                && System.currentTimeMillis() - startTime < RESUME_EVENT_POLL_TIMEOUT
+                            ) {
+                                delay(RESUME_EVENT_POLL_INTERVAL)
+                                mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+                            }
+                        }
                     }
                 }
             }
@@ -1081,6 +1096,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     }
 
     override fun onDestroyView() {
+        resumeEventPullJob?.cancel()
+        resumeEventPullJob = null
         agentStatusPopup?.dismiss()
         agentStatusPopup = null
         super.onDestroyView()
