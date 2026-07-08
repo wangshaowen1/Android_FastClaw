@@ -12,6 +12,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants.SHRIMPSTICKS_URL
+import com.shiyuan.fastclaw.common.ext.startRefreshWithAdapter
 import com.shiyuan.fastclaw.databinding.FragmentMyShrimpChipsBinding
 import com.shiyuan.fastclaw.feature.mine.MineUserPointAdapter
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
@@ -41,6 +42,7 @@ class MyShrimpChipsFragment :
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             adapter = listAdapter
         }
+        binding.srl.startRefreshWithAdapter(listAdapter)
         setRuleTipText()
         binding.tvRuleTip.setOnSingleClickListener {
             SimpleBrowserActivity.launch(requireActivity(), SHRIMPSTICKS_URL)
