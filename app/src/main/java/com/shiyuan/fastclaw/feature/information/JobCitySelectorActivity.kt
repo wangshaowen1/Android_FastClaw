@@ -121,7 +121,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
         // 根据入口场景切换标题文案与最大可选数
         if (mType == JobCityQueryBody.EXPECTED_CITY) {
             binding.tvSubtitle.text = getString(R.string.city_selector_add_multiple)
-            maxSelectCount = 3
+            maxSelectCount = 10
         } else {
             binding.tvSubtitle.text = getString(R.string.city_selector_now_city)
             maxSelectCount = 1

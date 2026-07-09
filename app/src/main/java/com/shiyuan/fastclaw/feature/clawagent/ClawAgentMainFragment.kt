@@ -426,7 +426,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 } else if (payload?.isExpectedCity() ?: false) { //意向城市
                     JobCitySelectorActivity.start(activity, JobCityQueryBody.EXPECTED_CITY)
                 } else if (payload?.isJobIntention() ?: false) { //意向岗位
-                    JobSelectionActivity.start(activity,true,mRealVM.sessionId,mRealVM.conversationId)
+                    JobSelectionActivity.start(activity,true,mRealVM.sessionId,mRealVM.conversationId, multipleNum = 10)
                 } else if (payload?.isExpectedIndustry() ?: false) { //期望行业
                     IndustrySelectionActivity.start(activity, true, mRealVM.sessionId,mRealVM.conversationId)
                 }  else if (payload?.isWelfarePreference() ?: false) { //福利偏好

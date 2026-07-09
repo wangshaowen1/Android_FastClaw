@@ -166,11 +166,9 @@ class JobPreferencesFragment :
             );
             itemBinding.ivEdit.visibility = View.VISIBLE
             itemBinding.viewIndicator.visibility = View.GONE
-            itemBinding.tvName.visibility =
-                if (item.fields.isNullOrEmpty()) View.GONE else View.VISIBLE
+            itemBinding.tvName.visibility = if (item.fields.firstOrNull()?.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
             itemBinding.tvName.text = item.fields.firstOrNull()?.displayValue.orEmpty()
-            itemBinding.layoutMissing.visibility =
-                if (item.fields.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
+            itemBinding.layoutMissing.visibility = if (item.fields.firstOrNull()?.displayValue.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
             itemBinding.rcFieldTree.visibility = View.GONE
             itemBinding.rcFieldTree.adapter = null
             itemBinding.ll.setOnSingleClickListener {
@@ -258,7 +256,7 @@ class JobPreferencesFragment :
                 }
 
                 CODE_JOB_INTENTION -> {
-                    JobSelectionActivity.start(activity, true)
+                    JobSelectionActivity.start(activity, true,multipleNum = 10)
                 }
                 CODE_JOB_EXPECTED_SALARY -> {
                     SalaryRangePickerDialog.show(
