@@ -1036,6 +1036,7 @@
     <string name="personal_information_name_placeholder">请填写姓名</string>
     <string name="personal_information_gender_value">男</string>
     <string name="personal_information_gender_placeholder">请选择性别</string>
+    <string name="personal_information_birth_date_placeholder">请选择出生年月</string>
     <string name="personal_information_phone">手机号</string>
     <string name="personal_information_phone_value">17883749009</string>
     <string name="personal_information_phone_placeholder">请填写手机号</string>
