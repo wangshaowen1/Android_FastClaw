@@ -295,7 +295,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            //streamError.value = IllegalStateException("会话未就绪，请先进入会话")
             return
         }
         request(
