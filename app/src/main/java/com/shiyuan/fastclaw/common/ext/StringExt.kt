@@ -112,3 +112,11 @@ fun String.toMaskedPhone(): String {
     if (length < 11) return this
     return "${take(3)}******${takeLast(2)}"
 }
+
+/**
+ * 校验真实大陆手机号，过滤 11、12 等非真实手机号段。
+ */
+fun String?.isRealMobile(): Boolean {
+    var regex = Regex("^1[3-9]\\d{9}$")
+    return !isNullOrBlank() && regex.matches(this)
+}

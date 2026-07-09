@@ -5,11 +5,11 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
-import com.blankj.utilcode.util.RegexUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.ext.isRealMobile
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody.Companion.SCENE_BIND_MOBILE
@@ -153,11 +153,15 @@ class PhoneNewBindActivity : BaseViewModelActivity<ActivityPhoneNewBindBinding, 
     private fun sendBindMobileCode(phone: String, userData: UserHomeData) {
         mRealVM.sendSmsCode(
             startCountdownOnSuccess = false,
-            bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN
-        ) {
-            PhoneNewLoginCodeActivity.startForBindMobile(this, phone, userData)
-            finish()
-        }
+            bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN,
+            onSuccess = {
+                PhoneNewLoginCodeActivity.startForBindMobile(this, phone, userData)
+                finish()
+            },
+            onError = {
+                showPhoneError(it)
+            }
+        )
     }
 
     private fun showDirectLoginDialog(message: String?) {
@@ -180,7 +184,7 @@ class PhoneNewBindActivity : BaseViewModelActivity<ActivityPhoneNewBindBinding, 
      */
     private fun updatePhoneError(showOnlyWhenComplete: Boolean): Boolean {
         val phone = binding.etPhone.text?.toString().orEmpty()
-        val valid = RegexUtils.isMobileSimple(phone)
+        val valid = phone.isRealMobile()
         val showError = if (showOnlyWhenComplete) !valid else phone.length >= 11 && !valid
         if (showError) {
             binding.tvPhoneError.text = getString(R.string.login_new_phone_error)
