@@ -165,6 +165,7 @@
             android:alpha="0"
             android:background="@android:color/transparent"
             android:importantForAutofill="no"
+            android:digits="0123456789"
             android:inputType="number"
             android:maxLength="4"
             app:layout_constraintEnd_toEndOf="parent"
