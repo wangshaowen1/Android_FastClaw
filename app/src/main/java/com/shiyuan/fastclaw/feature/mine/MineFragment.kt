@@ -92,10 +92,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 }
             }
         }
-        binding.sivAvatar.setOnSingleClickListener {
-
-        }
-
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -180,6 +176,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 }
             }
              R.id.siv_avatar,
+             R.id.iv_name,
              R.id.layout_mine_lj,
              R.id.layout_mine_bj,
               R.id.tv_name -> {
