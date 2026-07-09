@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentJobPreferencesBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoReBinding
+import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobWelfareSelectorActivity
@@ -50,6 +51,7 @@ class JobPreferencesFragment :
 
         private const val CODE_JOB_STATUS = "jobStatus"
         private const val CODE_EXPECTED_CITY = "expectedCity"
+        private const val CODE_EXPECTED_INDUSTRY = "expectedIndustry"
 
         private const val INPUT_MODE_DICT_SINGLE = "DICT_SINGLE"
         private const val INPUT_MODE_DICT_MULTI = "DICT_MULTI"
@@ -70,6 +72,7 @@ class JobPreferencesFragment :
         private const val CODE_JOB_SALARYSTRUCTUREPREFERENCE = "salaryStructurePreference"
         private const val CODE_JOB_TEAMATMOSPHEREPREFERENCE = "teamAtmospherePreference"
         private const val CODE_JOB_WELFAREPREFERENCE = "welfarePreference"
+        private const val EVENT_EXPECTED_INDUSTRY_COMPLETED = "expectedIndustryCompleted"
     }
 
     private val preferenceAdapter by lazy {
@@ -116,6 +119,9 @@ class JobPreferencesFragment :
 
                     AppEvent.KLX_C_EXPECTED_CITY_COMPLETED -> {
                         handleSelected(event.msgGson, CODE_EXPECTED_CITY, INPUT_MODE_DICT_MULTI)
+                    }
+                    EVENT_EXPECTED_INDUSTRY_COMPLETED -> {
+                        handleSelected(event.msgGson, CODE_EXPECTED_INDUSTRY, INPUT_MODE_DICT_MULTI)
                     }
                     else ->{
                         handleSelected(event.msgGson, CODE_JOB_WELFAREPREFERENCE, INPUT_MODE_DICT_MULTI)
@@ -263,6 +269,13 @@ class JobPreferencesFragment :
 
                 CODE_JOB_INTENTION -> {
                     JobSelectionActivity.start(activity, true)
+                }
+                CODE_EXPECTED_INDUSTRY -> {
+                    IndustrySelectionActivity.start(
+                        activity,
+                        isMultiple = true,
+                        resultEventType = EVENT_EXPECTED_INDUSTRY_COMPLETED
+                    )
                 }
                 CODE_JOB_EXPECTED_SALARY -> {
                     SalaryRangePickerDialog.show(
