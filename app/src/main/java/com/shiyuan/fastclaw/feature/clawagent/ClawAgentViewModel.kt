@@ -538,8 +538,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
 
-            // 简历待上传/失败/确认流程卡类型合并只展示最新一张
             val rawKey = msg.storeKey() ?: return@forEach
+            // 自我介绍卡是端侧补充卡，折叠屏重建或会话恢复可能重复补充，这里只保留最新一张
+            if (msg.isIntroduceYourselfCard()) {
+                messageStore.filterValues { it.isIntroduceYourselfCard() }
+                    .keys
+                    .filter { it != rawKey }
+                    .forEach { messageStore.remove(it) }
+            }
+            // 简历待上传/失败/确认流程卡类型合并只展示最新一张
             if (msg.isLatestOnlyResumeCard()) {
                 val msgSeq = msg.sequenceNo ?: Long.MIN_VALUE
                 // 筛选出所有关于“简历流程卡”类型的消息列表
@@ -763,6 +770,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否上传简历卡（UPLOAD_RESUME） */
     private fun JobAgentMessage.isUploadResumeCard(): Boolean =
         messageType == MSG_CARD && cardType == CARD_UPLOAD_RESUME
+
+    /** 是否自我介绍卡（CARD_INTRODUCE_YOURSELF） */
+    private fun JobAgentMessage.isIntroduceYourselfCard(): Boolean =
+        messageType == MSG_CARD && cardType == CARD_INTRODUCE_YOURSELF
 
     /** 是否历史简历确认卡（HISTORY_RESUME_CONFIRM） */
     private fun JobAgentMessage.isHistoryResumeConfirmCard(): Boolean =
