@@ -301,7 +301,7 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
             apiBlock = {
                 mRepo.api.queryOnlineResumeInfo(mapOf("clientRequestId" to UUID.randomUUID().toString()))
             },
-            showLoading = true,
+            showLoading = false,
             showToastError = true,
         ) {
             val sections = this.data?.sections.orEmpty()
@@ -320,7 +320,7 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     var jobPreferencesInfo = MutableLiveData<List<OnlineResumeInfoSection>>()
-    fun queryJobPreferencesInfo() {
+    fun queryJobPreferencesInfo(onCallback: (() -> Unit)? = null) {
         requestWithLoading(
             apiBlock = {
                 mRepo.api.queryJobPreferencesInfo(mapOf("clientRequestId" to UUID.randomUUID().toString()))
@@ -330,6 +330,7 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
         ) {
             val sections = this.data?.sections.orEmpty()
             jobPreferencesInfo.postValue(sections)
+            onCallback?.invoke()
         }
     }
 

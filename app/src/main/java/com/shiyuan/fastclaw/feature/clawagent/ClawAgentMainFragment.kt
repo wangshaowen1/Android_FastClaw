@@ -706,6 +706,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     }
                     Events.UserChangedEvent.SIGN_OUT -> {
                         mRealVM.hardPreMsgListCard(insertPreCard())
+                        mRealVM.sessionData.value = mRealVM.sessionData.value?.copy(jobSearchStatus = null) //清除求职状态
                     }
                 }
             }
@@ -741,6 +742,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     0 ->  binding.layoutBackCheck.performClick()
                     else ->  binding.layoutInterview.performClick()
                 }
+            }
+
+            /**
+             * 接受消息，求职状态
+             */
+            on<Events.JobSearchStatusEvent> { event ->
+                mRealVM.updateJobStatus(event.code)
             }
         }
 
@@ -829,7 +837,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
         // 监听会话返回的求职状态，已选中时同步顶部状态展示
         mRealVM.sessionData.observe(this){
-            it?.jobSearchStatus.let { data ->
+            it?.jobSearchStatus?.let { data ->
                 if(data?.selected ?: false){
                    // 从 options 中取当前选中的状态项，用于展示文案和颜色
                    val  jobSearchStatusOption = data.options?.find { it.selected == true }
@@ -841,6 +849,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         else ->  binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff8D28)).setUseShape()
                     }
                 }
+            }?:run {
+                binding.tvAgentDesc.text = requireActivity().getString(R.string.str_agent_desc2)
+                binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff8D28)).setUseShape()
             }
         }
         //面试通关包
