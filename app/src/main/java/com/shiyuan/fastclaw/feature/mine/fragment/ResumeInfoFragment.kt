@@ -500,10 +500,14 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             val degree = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_DEGREE)
             binding.tvTime.text = (startDate?.displayValue ?: "") + " - " + (endDate?.displayValue ?: "")
 
-            binding.tvMajor.text = ((if (degree?.displayValue.isNullOrBlank()) "" else (degree?.displayValue + " · ")) + major?.displayValue) ?: ""
+            val majorText = listOfNotNull(
+                degree?.displayValue?.takeIf { it.isNotBlank() },
+                major?.displayValue?.takeIf { it.isNotBlank() }
+            ).joinToString(" · ")
+            binding.tvMajor.text = majorText
 
             val hasTime = binding.tvTime.text != " - "
-            val hasMajor = !(binding.tvMajor.text.isNullOrBlank() ||  binding.tvMajor.text == "null")
+            val hasMajor = majorText.isNotBlank()
             binding.tvTime.visibility = if (hasTime) View.VISIBLE else View.GONE
             binding.tvMajor.visibility = if (hasMajor) View.VISIBLE else View.GONE
             binding.v.visibility = if (hasTime && hasMajor) View.VISIBLE else View.GONE

@@ -301,7 +301,7 @@ class InformationViewModel : CommonRepositoryViewModel<AppRepository>() {
             apiBlock = {
                 mRepo.api.queryOnlineResumeInfo(mapOf("clientRequestId" to UUID.randomUUID().toString()))
             },
-            showLoading = true,
+            showLoading = false,
             showToastError = true,
         ) {
             val sections = this.data?.sections.orEmpty()
