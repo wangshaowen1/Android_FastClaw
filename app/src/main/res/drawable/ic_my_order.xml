@@ -1,0 +1,28 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="40dp" android:viewportHeight="34" android:viewportWidth="34" android:width="40dp">
+      
+    <path android:fillColor="#F0F5FE" android:pathData="M0,10C0,4.477 4.477,0 10,0H24C29.523,0 34,4.477 34,10V24C34,29.523 29.523,34 24,34H10C4.477,34 0,29.523 0,24V10Z"/>
+      
+    <path android:fillColor="#00000000" android:pathData="M20.5,10.5H13.5C12.395,10.5 11.5,11.395 11.5,12.5V21.5C11.5,22.605 12.395,23.5 13.5,23.5H20.5C21.605,23.5 22.5,22.605 22.5,21.5V12.5C22.5,11.395 21.605,10.5 20.5,10.5Z" android:strokeColor="#2F6BFF" android:strokeWidth="1.2"/>
+      
+    <path android:fillColor="#F0F5FE" android:pathData="M14.7,9.5L19.3,9.5A1.2,1.2 0,0 1,20.5 10.7L20.5,10.7A1.2,1.2 0,0 1,19.3 11.9L14.7,11.9A1.2,1.2 0,0 1,13.5 10.7L13.5,10.7A1.2,1.2 0,0 1,14.7 9.5z" android:strokeColor="#2F6BFF" android:strokeWidth="1"/>
+      
+    <path android:fillColor="#2F6BFF" android:pathData="M14.526,16.388L14.526,16.388A0.6,0.6 0,0 1,15.374 16.388L17.052,18.066A0.6,0.6 90,0 1,17.052 18.914L17.052,18.914A0.6,0.6 0,0 1,16.203 18.914L14.526,17.237A0.6,0.6 90,0 1,14.526 16.388z"/>
+      
+    <path android:fillColor="#2F6BFF" android:pathData="M19.715,15.423L19.715,15.423A0.6,0.6 0,0 0,18.867 15.423L16.228,18.062A0.6,0.6 0,0 0,16.228 18.911L16.228,18.911A0.6,0.6 0,0 0,17.076 18.911L19.715,16.272A0.6,0.6 0,0 0,19.715 15.423z"/>
+    
+</vector>
