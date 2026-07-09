@@ -81,6 +81,7 @@
             tools:text="虾米虾虾米虾" />
 
         <ImageView
+            singleClick="@{layout.clickHandler::onClick}"
             android:id="@+id/iv_name"
             android:layout_marginEnd="26dp"
             android:importantForAccessibility="no"
