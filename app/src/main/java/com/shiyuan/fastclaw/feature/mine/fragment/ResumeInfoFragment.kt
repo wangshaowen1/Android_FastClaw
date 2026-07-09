@@ -199,9 +199,14 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         val showSelfEvaluation = selfEvaluationText.isNotBlank()
         itemBinding.tvName.text = selfEvaluationText
         itemBinding.tvName.visibility = if (showSelfEvaluation) View.VISIBLE else View.GONE
-        itemBinding.layoutMissing.visibility = if (item.fieldTree == null && !showSelfEvaluation) View.VISIBLE else View.GONE
+        val showMissing = item.passable == false
+        itemBinding.layoutMissing.visibility = if (showMissing) View.VISIBLE else View.GONE
         itemBinding.ivEdit.setImageResource(item.editIconRes())
-        bindFieldTreeList(itemBinding, item)
+        if (showMissing) {
+            itemBinding.rcFieldTree.visibility = View.GONE
+        } else {
+            bindFieldTreeList(itemBinding, item)
+        }
     }
 
     private fun AttributeArrayQueryData.displayTitle(): String {
