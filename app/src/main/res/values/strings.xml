@@ -1028,7 +1028,7 @@
     <string name="project_experience">项目经历</string>
     <string name="certificate">证书</string>
     <string name="birth_date">出生年月</string>
-    <string name="salary_range">薪资范围</string>
+    <string name="salary_range">期望薪资（月薪,单位: K=千元）</string>
     <string name="personal_information_title">个人信息</string>
     <string name="personal_information_avatar">头像</string>
     <string name="personal_information_name">姓名</string>
