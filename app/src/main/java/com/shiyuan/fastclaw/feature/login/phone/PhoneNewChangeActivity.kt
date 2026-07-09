@@ -5,11 +5,11 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
-import com.blankj.utilcode.util.RegexUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.ext.isRealMobile
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.core.network.apis.request.CheckMobileBindStatusBody.Companion.SCENE_CHANGE_MOBILE
@@ -141,10 +141,14 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
         mRealVM.sendSmsCode(
             startCountdownOnSuccess = false,
             bizType = SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE,
-        ) {
-            PhoneNewLoginCodeActivity.startForChangePhone(this, phone)
-            finish()
-        }
+            onSuccess = {
+                PhoneNewLoginCodeActivity.startForChangePhone(this, phone)
+                finish()
+            },
+            onError = {
+                showPhoneError(it)
+            }
+        )
     }
 
     private fun showDirectLoginDialog(message: String?) {
@@ -167,7 +171,7 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
      */
     private fun updatePhoneError(showOnlyWhenComplete: Boolean): Boolean {
         val phone = binding.etPhone.text?.toString().orEmpty()
-        val valid = RegexUtils.isMobileSimple(phone)
+        val valid = phone.isRealMobile()
         val showError = if (showOnlyWhenComplete) !valid else phone.length >= 11 && !valid
         if (showError) {
             binding.tvPhoneError.text = getString(R.string.login_new_phone_error)
@@ -180,16 +184,7 @@ class PhoneNewChangeActivity : BaseViewModelActivity<ActivityPhoneNewChangeBindi
      * 在手机号输入框底部展示接口返回的错误提示。
      */
     private fun showPhoneError(message: String?) {
-        binding.tvPhoneError.text = message.takeUnless { it.isNullOrBlank() }
-            ?: getString(R.string.login_new_phone_error)
+        binding.tvPhoneError.text = message.takeUnless { it.isNullOrBlank() } ?: getString(R.string.login_new_phone_error)
         binding.tvPhoneError.visibility = View.VISIBLE
-    }
-
-    /**
-     * 脱敏展示手机号。
-     */
-    private fun String.toMaskedPhone(): String {
-        if (length < 7) return this
-        return replaceRange(3, 7, "****")
     }
 }

@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.ext.toMaskedPhone
@@ -163,13 +164,15 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
         showLoginLoading(getString(R.string.login_new_getting_code))
         mRealVM.sendSmsCode(
             bizType = smsBizType(),
+            onSuccess = {
+                hideLoginLoading()
+                binding.etCode.setText("")
+            },
             onError = {
+                it?.showToast()
                 hideLoginLoading()
             }
-        ) {
-            hideLoginLoading()
-            binding.etCode.setText("")
-        }
+        )
     }
 
     /**
@@ -329,5 +332,13 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
                 if (counting) R.color.color_55_3c3c43 else R.color.color_2f6bff
             )
         )
+    }
+
+    /**
+     * 在手机号输入框底部展示接口返回的错误提示。
+     */
+    private fun showCodeError(message: String?) {
+        binding.tvCodeError.text = message.takeUnless { it.isNullOrBlank() } ?: getString(R.string.login_new_code_error)
+        binding.tvCodeError.visibility = View.VISIBLE
     }
 }

@@ -11,13 +11,13 @@ import android.text.style.ClickableSpan
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
-import com.blankj.utilcode.util.RegexUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.utils.Logger
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.topActivity
+import com.shiyuan.fastclaw.common.ext.isRealMobile
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.ext.getBundleValue
@@ -181,11 +181,15 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
         mRealVM.mobile.value = phone
         mRealVM.sendSmsCode(
             startCountdownOnSuccess = false,
-            bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN
-        ) {
-            PhoneNewLoginCodeActivity.start(this, phone, checkedPolicy = mRealVM.checkedPolicy.get())
-            finish()
-        }
+            bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN,
+            onSuccess = {
+                PhoneNewLoginCodeActivity.start(this, phone, checkedPolicy = mRealVM.checkedPolicy.get())
+                finish()
+            },
+            onError = {
+                showPhoneError(it)
+            }
+        )
     }
 
     /**
@@ -231,10 +235,18 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
      */
     private fun updatePhoneError(showOnlyWhenComplete: Boolean): Boolean {
         val phone = binding.etPhone.text?.toString().orEmpty()
-        val valid = RegexUtils.isMobileSimple(phone)
+        val valid = phone.isRealMobile()
         val showError = if (showOnlyWhenComplete) !valid else phone.length >= 11 && !valid
         binding.tvPhoneError.visibility = if (showError) View.VISIBLE else View.INVISIBLE
         return valid
+    }
+
+    /**
+     * 在手机号输入框底部展示接口返回的错误提示。
+     */
+    private fun showPhoneError(message: String?) {
+        binding.tvPhoneError.text = message.takeUnless { it.isNullOrBlank() } ?: getString(R.string.login_new_phone_error)
+        binding.tvPhoneError.visibility = View.VISIBLE
     }
 
     /**
@@ -269,13 +281,7 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
     /**
      * 给协议文案的指定区间增加点击样式和跳转事件。
      */
-    private fun addAgreementSpan(
-        text: SpannableString,
-        start: Int,
-        length: Int,
-        url: String?,
-        titleRes: Int
-    ) {
+    private fun addAgreementSpan(text: SpannableString, start: Int, length: Int, url: String?, titleRes: Int) {
         if (start < 0) return
         text.setSpan(
             object : ClickableSpan() {
