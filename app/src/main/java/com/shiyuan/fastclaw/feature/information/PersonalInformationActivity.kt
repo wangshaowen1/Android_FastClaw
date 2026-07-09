@@ -16,6 +16,7 @@ import com.shiyuan.fastclaw.common.ext.load
 import com.shiyuan.fastclaw.common.ext.selectSinglePhotoFromAlbums
 import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
@@ -69,7 +70,12 @@ class PersonalInformationActivity :
             }
 
             on<Events.ClawAgentEvent> { event ->
-                handleLocationCitySelected(event.msgGson)
+                when (event.type) {
+                    AppEvent.KLX_C_EXPECTED_CURRENTLY_CITY_COMPLETED -> {
+                        handleLocationCitySelected(event.msgGson)
+                    }
+                }
+
             }
         }
     }
