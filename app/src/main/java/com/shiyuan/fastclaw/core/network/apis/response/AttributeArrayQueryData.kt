@@ -42,6 +42,7 @@ data class AttributeArrayQueryData(
     val skippable: Boolean? = null,
     val complete: Boolean? = null,
     var draft: Boolean? = false,
+    var passable: Boolean? = false,
     val missingMetaCodes: MutableList<String>? = null,
     var fieldTree: MutableList<AttributeFieldTree>? = null,
 ) : Parcelable

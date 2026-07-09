@@ -172,11 +172,9 @@ class JobPreferencesFragment :
             );
             itemBinding.ivEdit.visibility = View.VISIBLE
             itemBinding.viewIndicator.visibility = View.GONE
-            itemBinding.tvName.visibility =
-                if (item.fields.isNullOrEmpty()) View.GONE else View.VISIBLE
+            itemBinding.tvName.visibility = if (item.fields.firstOrNull()?.passable == true) View.VISIBLE else View.GONE
             itemBinding.tvName.text = item.fields.firstOrNull()?.displayValue.orEmpty()
-            itemBinding.layoutMissing.visibility =
-                if (item.fields.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
+            itemBinding.layoutMissing.visibility = if (item.fields.firstOrNull()?.passable == true) View.INVISIBLE  else View.VISIBLE
             itemBinding.rcFieldTree.visibility = View.GONE
             itemBinding.rcFieldTree.adapter = null
             itemBinding.ll.setOnSingleClickListener {
@@ -255,10 +253,8 @@ class JobPreferencesFragment :
         itemBinding: ItemJobInfoReBinding,
         item: AttributeArrayQueryData
     ) {
-        itemBinding.layoutMissing.visibility =
-            if (item.displayValue.isNullOrEmpty()) View.VISIBLE else View.GONE
-        itemBinding.tvVale.visibility =
-            if (item.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
+        itemBinding.layoutMissing.visibility = if (item.displayValue.isNullOrEmpty()) View.VISIBLE else View.GONE
+        itemBinding.tvVale.visibility = if (item.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
         itemBinding.tvName.text = item.attributeGroupName ?: ""
         itemBinding.tvVale.text = item.displayValue
         itemBinding.ll.setOnSingleClickListener {
