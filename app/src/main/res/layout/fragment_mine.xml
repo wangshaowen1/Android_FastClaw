@@ -92,108 +92,119 @@
             android:layout_width="19dp"
             android:layout_height="19dp"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_mine_point"
+
+        <androidx.cardview.widget.CardView
             singleClick="@{layout.clickHandler::onClick}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="20dp"
-            android:background="@drawable/bg_mine_shrimp_card"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="24dp"
-            android:paddingBottom="16dp"
+            android:id="@+id/layout_mine_point"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="@dimen/dp20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/siv_avatar">
+            app:layout_constraintTop_toBottomOf="@id/siv_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/mine_sticks"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_points"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/outfit_600"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="@id/tv_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_title"
-                tools:text="0" />
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_item_arrow_right"
-                app:layout_constraintBottom_toBottomOf="@id/tv_points"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_points" />
-
-            <LinearLayout
-                android:id="@+id/ll_mine_points_tip"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/bg_mine_shrimp_tip"
-                android:orientation="horizontal"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_points">
-
-                <ImageView
-                    android:id="@+id/iv_pack"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_pack" />
+                android:background="@drawable/bg_mine_shrimp_card"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="24dp"
+                android:paddingBottom="16dp">
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/tv_mine_points_tip"
-                    singleClick="@{layout.clickHandler::onClick}"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:text="@string/mine_tip"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-
-
-                <TextView
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/tv_mine_tip_btn"
-                    singleClick="@{layout.clickHandler::onClick}"
+                    android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_ffffff_r45"
                     android:fontFamily="sans-serif-medium"
+                    android:text="@string/mine_sticks"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/outfit_600"
+                    android:textColor="@color/white"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="@id/tv_title"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title"
+                    tools:text="0" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_item_arrow_right"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_points"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_points" />
+
+                <LinearLayout
+                    android:id="@+id/ll_mine_points_tip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_mine_shrimp_tip"
+                    android:orientation="horizontal"
                     android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
-                    android:text="@string/mine_tip2"
-                    android:textColor="@color/color_336fff"
-                    android:textSize="12sp" />
+                    android:paddingVertical="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_points">
+
+                    <ImageView
+                        android:id="@+id/iv_pack"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_pack" />
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:id="@+id/tv_mine_points_tip"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="@string/mine_tip"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
 
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:id="@+id/tv_mine_tip_btn"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_ffffff_r45"
+                        android:fontFamily="sans-serif-medium"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/mine_tip2"
+                        android:textColor="@color/color_336fff"
+                        android:textSize="12sp" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/view_mine_resume_banner"
