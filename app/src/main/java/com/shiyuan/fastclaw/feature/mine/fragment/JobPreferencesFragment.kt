@@ -174,7 +174,9 @@ class JobPreferencesFragment :
             itemBinding.rcFieldTree.visibility = View.GONE
             itemBinding.rcFieldTree.adapter = null
             itemBinding.ll.setOnSingleClickListener {
-                singleSelectDialog(item.fields.firstOrNull(), "求职状态")
+                singleSelectDialog(item.fields.firstOrNull(), "求职状态"){ code ->
+                    FlowEventBus.postSticky(Events.JobSearchStatusEvent(code))
+                }
             }
         } else {
             itemBinding.ll.setBackgroundResource(R.color.white)
@@ -186,7 +188,7 @@ class JobPreferencesFragment :
         }
     }
 
-    private fun singleSelectDialog(item: AttributeArrayQueryData?, title: String) {
+    private fun singleSelectDialog(item: AttributeArrayQueryData?, title: String,  onCallback: ((code: String) -> Unit)? = null) {
         item?.let { item ->
             val enumItems = item.options.orEmpty()
                 .map { CommonEnumItem(code = it.code, name = it.name) }
@@ -208,7 +210,9 @@ class JobPreferencesFragment :
                     inputMode = item.inputMode,
                     value = value
                 ) {
-                    mRealVM.queryJobPreferencesInfo()
+                    mRealVM.queryJobPreferencesInfo(){
+                        onCallback?.invoke(data.code ?:"")
+                    }
                 }
             }
         }
