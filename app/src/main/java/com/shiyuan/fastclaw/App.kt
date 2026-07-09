@@ -22,6 +22,7 @@ import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.UmInitConfig
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AdStrategyManager
+import com.shiyuan.fastclaw.core.manager.DataNexusManager
 import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.core.manager.OssManager
 import com.shiyuan.fastclaw.core.manager.PlaceManager
@@ -298,6 +299,7 @@ class App : BaseApp() {
             Oaid.init()
             // 强烈建议在应用对应的Application#onCreate()方法中调用，避免出现content为null的异常
 
+            DataNexusManager.initAfterPrivacyAgreed(this)
             // 友盟正式初始化
             umInitConfig.init(this, AppRouter)
             GrowingAutotracker.get().setDataCollectionEnabled(true)

@@ -11,6 +11,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.nhsd.basic.Session
 import com.nhsd.basic.bus.FlowEventBus
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.DataNexusManager
 import com.shiyuan.fastclaw.core.manager.EventManager
 
 /**
@@ -151,7 +152,8 @@ class User : IUser {
         if (id.isNullOrEmpty()) {
             return
         }
-        GrowingAutotracker.get().setLoginUserId(id)
+        GrowingAutotracker.get().setLoginUserId(userData.accountId)
+        DataNexusManager.setUserUniqueId(userData.accountId)
        /* val mutableMap = mutableMapOf(
             "jg_user_jinguo_id" to get().userId,//用户金果唯一 Id，用户成功注册时更新，或用户登录到新版本后上初始化上传数据时候更新
             "\$basic_mobile" to get().phoneNum,//手机号

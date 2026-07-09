@@ -16,10 +16,12 @@ import com.shiyuan.fastclaw.common.ext.load
 import com.shiyuan.fastclaw.common.ext.selectSinglePhotoFromAlbums
 import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivityPersonalInformationBinding
+import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import org.json.JSONObject
@@ -33,6 +35,9 @@ class PersonalInformationActivity :
         private const val FIELD_AVATAR_URL = "avatarUrl"
         private const val FIELD_NAME = "name"
         private const val FIELD_GENDER = "gender"
+        private const val FIELD_BIRTHDAY = "birthday"
+        private const val DEFAULT_BIRTHDAY_YEAR = 2000
+        private const val DEFAULT_BIRTHDAY_MONTH = 1
         private const val FIELD_PHONE = "phone"
         private const val FIELD_WECHAT_ID = "wechatId"
         private const val FIELD_EMAIL = "email"
@@ -41,6 +46,7 @@ class PersonalInformationActivity :
         private const val FIELD_MARITAL_STATUS = "maritalStatus"
         private const val INPUT_MODE_SINGLE_CHOICE = "SINGLE_CHOICE"
         private const val INPUT_MODE_DICT_SINGLE = "DICT_SINGLE"
+        private const val INPUT_MODE_DATE_MONTH = "DATE_MONTH"
 
 
         fun start(context: Context?) {
@@ -69,7 +75,12 @@ class PersonalInformationActivity :
             }
 
             on<Events.ClawAgentEvent> { event ->
-                handleLocationCitySelected(event.msgGson)
+                when (event.type) {
+                    AppEvent.KLX_C_EXPECTED_CURRENTLY_CITY_COMPLETED -> {
+                        handleLocationCitySelected(event.msgGson)
+                    }
+                }
+
             }
         }
     }
@@ -133,6 +144,29 @@ class PersonalInformationActivity :
                     }
                 }
             }
+        }
+        binding.birthDateRow.setOnSingleClickListener {
+            val item = findBaseInfoItem(FIELD_BIRTHDAY)
+            val selectedDate = getBaseInfoDate(FIELD_BIRTHDAY)
+            BirthYearMonthPickerDialog.show(
+                manager = supportFragmentManager,
+                title = getString(R.string.birth_date),
+                selectedYear = selectedDate?.first ?: DEFAULT_BIRTHDAY_YEAR,
+                selectedMonth = selectedDate?.second ?: DEFAULT_BIRTHDAY_MONTH,
+                maxTimestamp = System.currentTimeMillis(),
+                onConfirmWithTimestamp = { year, month, _ ->
+                    val displayText = "$year-$month"
+                    mRealVM.updateOnlineResumeAttribute(
+                        attributeGroupCode = item?.attributeGroupCode ?: item?.metaCode
+                        ?: FIELD_BIRTHDAY,
+                        inputMode = item?.inputMode ?: INPUT_MODE_DATE_MONTH,
+                        value = displayText
+                    ) {
+                        binding.birthDateRow.setValueText(displayText)
+                        FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+                    }
+                }
+            )
         }
         binding.phoneRow.setOnSingleClickListener {
             "手机号暂不能修改".showToast()
@@ -225,6 +259,7 @@ class PersonalInformationActivity :
         }
         binding.nameRow.setValueText(findBaseInfoText(FIELD_NAME))
         binding.genderRow.setValueText(findBaseInfoText(FIELD_GENDER))
+        binding.birthDateRow.setValueText(findBaseInfoText(FIELD_BIRTHDAY))
         binding.phoneRow.setValueText(findBaseInfoText(FIELD_PHONE))
         binding.wechatRow.setValueText(findBaseInfoText(FIELD_WECHAT_ID))
         binding.emailRow.setValueText(findBaseInfoText(FIELD_EMAIL))
@@ -241,6 +276,13 @@ class PersonalInformationActivity :
         return baseInfoItems.firstOrNull {
             it.attributeGroupCode == fieldCode || it.metaCode == fieldCode
         }
+    }
+
+    private fun getBaseInfoDate(fieldCode: String): Pair<Int, Int>? {
+        val parts = findBaseInfoText(fieldCode).split("-").takeIf { it.size == 2 } ?: return null
+        val year = parts[0].toIntOrNull() ?: return null
+        val month = parts[1].toIntOrNull()?.takeIf { it in 1..12 } ?: return null
+        return year to month
     }
 
     private fun AttributeArrayQueryData.baseDisplayText(): String {

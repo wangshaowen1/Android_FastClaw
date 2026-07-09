@@ -163,6 +163,12 @@ object AppEvent {
     const val KLX_C_EXPECTED_CITY_COMPLETED = "klx_c_expected_city_completed"
 
     /**
+     * 快龙虾｜填写现居向城市（归到同一动作中）
+     * 用户在APP小虾对话过程中。完成意向城市填写时上报
+     */
+    const val KLX_C_EXPECTED_CURRENTLY_CITY_COMPLETED = "klx_c_expected_currently_city_completed"
+
+    /**
      * 快龙虾｜填写意向薪资（归到同一动作中）
      * 用户在APP小虾对话过程中。完成意向薪资填写时上报
      */

@@ -149,7 +149,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
             R.id.ll_my_order -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
-                    MyOrderActivity.start(requireActivity())
+                    MyOrderActivity.start(requireActivity(),1)
                 }
             }
             R.id.tv_mine_tip_btn -> {

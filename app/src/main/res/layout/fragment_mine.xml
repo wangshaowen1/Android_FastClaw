@@ -183,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_ffffff_r45"
                     android:fontFamily="sans-serif-medium"
-                    android:paddingHorizontal="12dp"
+                    android:paddingHorizontal="10dp"
                     android:paddingVertical="5dp"
                     android:text="@string/mine_tip2"
                     android:textColor="@color/color_336fff"
