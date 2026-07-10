@@ -199,10 +199,15 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         val showSelfEvaluation = selfEvaluationText.isNotBlank()
         itemBinding.tvName.text = selfEvaluationText
         itemBinding.tvName.visibility = if (showSelfEvaluation) View.VISIBLE else View.GONE
+
+        //展示待补充
         val showMissing = item.passable == false
         itemBinding.layoutMissing.visibility = if (showMissing) View.VISIBLE else View.GONE
         itemBinding.ivEdit.setImageResource(item.editIconRes())
-        if (showMissing) {
+
+        //是否展示列表
+        val hidePlaceholderList = item.fieldTree?.singleOrNull()?.instanceIndex?.let { it == -1L } ?: (item.fieldTree?.size == 1)
+        if (hidePlaceholderList) {
             itemBinding.rcFieldTree.visibility = View.GONE
         } else {
             bindFieldTreeList(itemBinding, item)
