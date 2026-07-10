@@ -5,38 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
-    <com.shiyuan.fastclaw.widget.AutoRotateLayout
-        android:id="@+id/al_think"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        app:autoRotate="true"
-        app:duration="1000"
-        app:layout_constraintBottom_toBottomOf="@id/tv_think"
+    <LinearLayout
+        android:id="@+id/ll_think"
+        android:layout_width="wrap_content"
+        android:layout_height="51dp"
+        android:background="@drawable/bg_msg_agent_left"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_think">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/iv_think"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/ic_agent_think" />
+            android:layout_width="47dp"
+            android:layout_height="25dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_agent_think" />
 
-    </com.shiyuan.fastclaw.widget.AutoRotateLayout>
+        <TextView
+            android:id="@+id/tv_think"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="0dp"
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="15sp"
+            tools:text="小虾理解中..." />
 
-
-    <TextView
-        android:id="@+id/tv_think"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textColor="@color/color_56_3c3c43"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/al_think"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="小虾正在读取你的简历..." />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
