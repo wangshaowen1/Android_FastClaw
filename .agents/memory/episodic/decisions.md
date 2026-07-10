@@ -93,3 +93,14 @@ DataNexus 官方文档要求在用户同意隐私协议后尽早调用 `GDTActio
 
 ### 验证结论
 静态检查：`rg -n "JobCitySelectorActivity\\.start|JobSelectionActivity\\.start|IndustrySelectionActivity\\.start|streamError\\.observe|canShowStreamErrorToast"` 确认 Agent 页自身存在外部选择页入口，Toast 门禁已改为仅依赖 `!isHidden`；按项目规则未运行 Gradle。
+
+## v本轮 H5 支付 payInfo 数字保真
+
+### 变更了什么
+`H5PayInfo.payInfo` → 从 `Any?` 改为 `JsonElement?`，`BrowserViewModel.startPay()` 下单前通过 `payInfoBody()` 取请求体，保留 H5 传入的 JSON 数字原文。
+
+### 为什么
+H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加引号的 `goodsCode`、`resumeCheckId`、`jdCheckId` 会先变成 `Double`，Retrofit 再序列化时可能输出 `9.0001001E7` 一类科学计数法，导致下单参数变形。改用 Gson JSON 树后，数字节点按原始十进制文本写出；历史上若 `payInfo` 传的是 JSON 字符串，也在发送前尝试解析成 JSON。
+
+### 验证结论
+静态检查：`git diff --check` 未发现空白错误；`rg -n "payInfoBody|val payInfo|h5PayAlipay\\(|h5PayWx\\("` 确认请求链路改为使用 `payInfoBody()`。JShell 使用本地 Gson 2.10.1 验证：`Any/Map` 会输出 `9.0001001E7`，`JsonElement/JsonParser` 会输出 `90001001`；按项目规则未运行 Gradle。
