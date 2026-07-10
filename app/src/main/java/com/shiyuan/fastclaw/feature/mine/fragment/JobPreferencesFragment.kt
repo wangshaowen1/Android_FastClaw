@@ -44,7 +44,7 @@ import kotlin.collections.orEmpty
 
 
 class JobPreferencesFragment :
-    BaseViewModelFragment<FragmentJobPreferencesBinding, InformationViewModel>() {
+    BaseViewModelFragment<FragmentJobPreferencesBinding, InformationViewModel>(true) {
 
     companion object {
         fun newInstance(): JobPreferencesFragment = JobPreferencesFragment()
@@ -141,7 +141,7 @@ class JobPreferencesFragment :
             inputMode = inputMode,
             value = dataList
         ) {
-            mRealVM.queryJobPreferencesInfo()
+            FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
         }
     }
 
@@ -214,9 +214,8 @@ class JobPreferencesFragment :
                     inputMode = item.inputMode,
                     value = value
                 ) {
-                    mRealVM.queryJobPreferencesInfo(){
-                        onCallback?.invoke(data.code ?:"")
-                    }
+                    FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+                    onCallback?.invoke(data.code ?: "")
                 }
             }
         }
@@ -283,7 +282,7 @@ class JobPreferencesFragment :
                             inputMode = item.inputMode,
                             value = salaryPayloadJson
                         ) {
-                            mRealVM.queryJobPreferencesInfo()
+                            FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
                         }
                     }
                 }

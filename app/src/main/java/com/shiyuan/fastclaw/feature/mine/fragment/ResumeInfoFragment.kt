@@ -43,7 +43,7 @@ import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import java.util.UUID
 
-class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, InformationViewModel>() {
+class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, InformationViewModel>(true) {
 
     companion object {
         fun newInstance(): ResumeInfoFragment = ResumeInfoFragment()
