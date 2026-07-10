@@ -712,19 +712,18 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             on<Events.ResumeEvent> { event ->
                 // 上传简历通知拉取
-                if (User.get().isVisitor) {
-                    if (mRealVM.hasInitSession.value == true) {
-                        mRealVM.pullMessages(mRealVM.getLastMessageCursor())
-                        resumeEventPullJob?.cancel()
-                        resumeEventPullJob = lifecycleScope.launch {
-                            val startTime = System.currentTimeMillis()
-                            while (!User.get().isVisitor
-                                && mRealVM.hasInitSession.value == true
-                                && System.currentTimeMillis() - startTime < RESUME_EVENT_POLL_TIMEOUT
-                            ) {
-                                delay(RESUME_EVENT_POLL_INTERVAL)
-                                mRealVM.pullMessages(mRealVM.getLastMessageCursor())
-                            }
+                if (User.get().isVisitor) return@on
+                if (mRealVM.hasInitSession.value == true) {
+                    mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+                    resumeEventPullJob?.cancel()
+                    resumeEventPullJob = lifecycleScope.launch {
+                        val startTime = System.currentTimeMillis()
+                        while (!User.get().isVisitor
+                            && mRealVM.hasInitSession.value == true
+                            && System.currentTimeMillis() - startTime < RESUME_EVENT_POLL_TIMEOUT
+                        ) {
+                            delay(RESUME_EVENT_POLL_INTERVAL)
+                            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
                         }
                     }
                 }
@@ -791,6 +790,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
         mRealVM.streamError.observe(viewLifecycleOwner) { e ->
             e ?: return@observe
+            if (!canShowStreamErrorToast()) {
+                mRealVM.streamError.value = null
+                return@observe
+            }
             showMessage(e.message ?: "对话出错")
             mRealVM.streamError.value = null
         }
@@ -863,6 +866,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
         }
+    }
+
+    private fun canShowStreamErrorToast(): Boolean {
+        return isAdded && !isHidden && view != null
     }
 
     private fun showInterviewRecoverDialog(interviewId: String?) {

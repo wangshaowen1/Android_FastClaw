@@ -86,7 +86,7 @@ class FlashLoginRepository : ThirdLoginRepository() {
      */
     suspend fun bindPhone(phoneNumber: String?, validationCode: String?) =
         withContext(Dispatchers.IO) {
-            api.bindPhone(BindPhoneBody(phoneNumber, validationCode))
+            api.bindPhone(BindPhoneBody(phoneNumber, validationCode,))
         }
 
     /**
@@ -94,7 +94,11 @@ class FlashLoginRepository : ThirdLoginRepository() {
      */
     suspend fun bindMobile(phoneNumber: String?, validationCode: String?, bindTicket: String?) =
         withContext(Dispatchers.IO) {
-            api.bindMobile(BindMobileBody(phoneNumber, validationCode, bindTicket = bindTicket))
+            api.bindMobile(BindMobileBody(
+                telNum = phoneNumber,
+                smsValidateCode = validationCode,
+                bizType = LoginByPhoneBody.BIZ_TYPE_CHANGE_PHONE,
+                bindTicket = bindTicket))
         }
 
     /**
@@ -102,6 +106,11 @@ class FlashLoginRepository : ThirdLoginRepository() {
      */
     suspend fun changeMobile(phoneNumber: String?, validationCode: String?) =
         withContext(Dispatchers.IO) {
-            api.changeMobile(ChangeMobileBody(phoneNumber, validationCode))
+            api.changeMobile(ChangeMobileBody(
+                newTelNum = phoneNumber,
+                smsValidateCode = validationCode,
+                bizType = SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE
+                )
+            )
         }
 }
