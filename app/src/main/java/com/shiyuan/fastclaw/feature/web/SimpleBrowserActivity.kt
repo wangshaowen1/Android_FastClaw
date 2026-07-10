@@ -75,6 +75,7 @@ import com.nhsd.basic.ext.statusBarHeight
 import com.nhsd.basic.utils.Logger
 import com.nhsd.mattise.Matisse
 import com.shiyuan.fastclaw.core.databinding.backgroundColor
+import com.shiyuan.fastclaw.feature.mine.InterviewReportActivity
 import com.tencent.bugly.crashreport.CrashReport
 import com.umeng.analytics.MobclickAgent
 import org.json.JSONObject
@@ -499,6 +500,9 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
 
     private fun registerHandle() {
         bridge?.apply {
+            registerHandler("myReport") { _, _ ->
+                InterviewReportActivity.start(this@SimpleBrowserActivity)
+            }
             registerHandler("back") { _, _ -> super.onBackPressed() }
             registerHandler("backIntercept") { data, _ ->
                 if (data == null || !data.contains("true")) {

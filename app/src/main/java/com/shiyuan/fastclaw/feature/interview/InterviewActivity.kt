@@ -179,12 +179,6 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 title = getString(R.string.interview_select_mock_job_title),
                 multipleNum = 1,
                 type = "Interview")
-          /*  JobSelectionActivity.start(this,
-                true,
-                title = getString(R.string.interview_select_mock_job_title),
-                multipleNum = 1,
-                type = "Interview"
-            )*/
         }
         mRealVM.enterOrRecover(mInterviewId, mIsRecover)
     }

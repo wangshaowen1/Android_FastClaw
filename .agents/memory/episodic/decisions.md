@@ -60,3 +60,14 @@ Apikit 路径 `/api/candidate/app/myReport/report/list/query` 虽然包含 `myRe
 
 ### 验证结论
 静态检查：`rg -n "packageStatus" app\src\main\java\com\shiyuan\fastclaw\feature\clawagent app\src\main\java\com\shiyuan\fastclaw\core\network\apis\response\ClawAgentCardPayload.kt` 无使用；按项目规则未运行 Gradle。
+
+## v本轮 DataNexus/广点通转化 SDK 合规接入
+
+### 变更了什么
+第三方归因 SDK → 新增 `DataNexusManager` 收口 SDK 调用；官方 `GDTActionSDK.min.1.9.7.aar` 放入 `app/libs`；DataNexus 数据源 ID 和 secret 通过 `local.properties` 注入 BuildConfig。
+
+### 为什么
+DataNexus 官方文档要求在用户同意隐私协议后尽早调用 `GDTAction.init`，并在 `init` 后调用 `GDTAction.start`；项目红线要求第三方 SDK 隔离在 `core/manager/`，且不能把密钥写入仓库。当前工程已有 `App.initSdkAfterAgreeLicense()` 隐私同意后统一入口，因此 SDK 初始化接入该入口，不提前到 `Application.onCreate()`。
+
+### 验证结论
+静态检查：`rg -n "import com\\.qq\\.gdt\\.action|GDTAction\\.|DataNexusManager\\.initAfterPrivacyAgreed|DATANEXUS_"` 确认 SDK 直接调用只在 Manager 内、初始化只接入隐私同意后入口；Manifest 所需权限已存在；按项目规则未运行 Gradle。

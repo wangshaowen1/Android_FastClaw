@@ -271,6 +271,14 @@ public class Events {
         }
     }
 
+    public static class JobSearchStatusEvent implements AppEvent {
+        public String code ;
+        public JobSearchStatusEvent(String code) {
+            this.code = code;
+        }
+
+    }
+
     /**
      * 保存 或者删除返送的数据
      */

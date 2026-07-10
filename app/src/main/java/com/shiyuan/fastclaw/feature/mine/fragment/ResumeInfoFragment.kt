@@ -43,7 +43,7 @@ import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import java.util.UUID
 
-class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, InformationViewModel>() {
+class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, InformationViewModel>(true) {
 
     companion object {
         fun newInstance(): ResumeInfoFragment = ResumeInfoFragment()
@@ -199,9 +199,19 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         val showSelfEvaluation = selfEvaluationText.isNotBlank()
         itemBinding.tvName.text = selfEvaluationText
         itemBinding.tvName.visibility = if (showSelfEvaluation) View.VISIBLE else View.GONE
-        itemBinding.layoutMissing.visibility = if (item.fieldTree == null && !showSelfEvaluation) View.VISIBLE else View.GONE
+
+        //展示待补充
+        val showMissing = item.passable == false
+        itemBinding.layoutMissing.visibility = if (showMissing) View.VISIBLE else View.GONE
         itemBinding.ivEdit.setImageResource(item.editIconRes())
-        bindFieldTreeList(itemBinding, item)
+
+        //是否展示列表
+        val hidePlaceholderList = item.fieldTree?.singleOrNull()?.instanceIndex?.let { it == -1L } ?: (item.fieldTree?.size == 1)
+        if (hidePlaceholderList) {
+            itemBinding.rcFieldTree.visibility = View.GONE
+        } else {
+            bindFieldTreeList(itemBinding, item)
+        }
     }
 
     private fun AttributeArrayQueryData.displayTitle(): String {
@@ -500,10 +510,14 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             val degree = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_DEGREE)
             binding.tvTime.text = (startDate?.displayValue ?: "") + " - " + (endDate?.displayValue ?: "")
 
-            binding.tvMajor.text = ((if (degree?.displayValue.isNullOrBlank()) "" else (degree?.displayValue + " · ")) + major?.displayValue) ?: ""
+            val majorText = listOfNotNull(
+                degree?.displayValue?.takeIf { it.isNotBlank() },
+                major?.displayValue?.takeIf { it.isNotBlank() }
+            ).joinToString(" · ")
+            binding.tvMajor.text = majorText
 
             val hasTime = binding.tvTime.text != " - "
-            val hasMajor = !(binding.tvMajor.text.isNullOrBlank() ||  binding.tvMajor.text == "null")
+            val hasMajor = majorText.isNotBlank()
             binding.tvTime.visibility = if (hasTime) View.VISIBLE else View.GONE
             binding.tvMajor.visibility = if (hasMajor) View.VISIBLE else View.GONE
             binding.v.visibility = if (hasTime && hasMajor) View.VISIBLE else View.GONE

@@ -37,6 +37,7 @@ class IndustrySelectionActivity :
     companion object {
         // 是否多选模式参数 key
         private const val EXTRA_IS_MULTIPLE = "extra_is_multiple"
+        private const val EXTRA_RESULT_EVENT_TYPE = "extra_result_event_type"
         // 会话 ID / 对话 ID
         private const val SESSIONID = "SESSIONID"
         private const val CONVERSATIONID = "CONVERSATIONID"
@@ -51,11 +52,13 @@ class IndustrySelectionActivity :
             activity: Activity?,
             isMultiple: Boolean = false,
             sessionId: String? = "",
-            conversationId: String? = ""
+            conversationId: String? = "",
+            resultEventType: String? = null
         ) {
             activity ?: return
             val intent = Intent(activity, IndustrySelectionActivity::class.java).apply {
                 putExtra(EXTRA_IS_MULTIPLE, isMultiple)
+                putExtra(EXTRA_RESULT_EVENT_TYPE, resultEventType)
                 putExtra(SESSIONID, sessionId)
                 putExtra(CONVERSATIONID, conversationId)
             }
@@ -77,6 +80,7 @@ class IndustrySelectionActivity :
 
     // 是否多选模式
     private val isMultiple: Boolean by lazy { intent.getBooleanExtra(EXTRA_IS_MULTIPLE, false) }
+    private val resultEventType: String by lazy { intent.getStringExtra(EXTRA_RESULT_EVENT_TYPE).orEmpty() }
     // 会话 ID / 对话 ID
     private val sessionId: String by lazy { intent.getStringExtra(SESSIONID) ?: "" }
     private val conversationId: String by lazy { intent.getStringExtra(CONVERSATIONID) ?: "" }
@@ -189,7 +193,12 @@ class IndustrySelectionActivity :
                 return@setOnSingleClickListener
             }
             val msgGson = CommonEnumTreeUtil.toJson(selectedList)
-            FlowEventBus.postSticky(Events.ClawAgentEvent(msgGson))
+            val event = if (resultEventType.isBlank()) {
+                Events.ClawAgentEvent(msgGson)
+            } else {
+                Events.ClawAgentEvent(msgGson, resultEventType)
+            }
+            FlowEventBus.postSticky(event)
             finish()
         }
     }

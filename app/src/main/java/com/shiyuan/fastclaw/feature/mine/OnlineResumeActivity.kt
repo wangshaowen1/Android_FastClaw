@@ -9,14 +9,15 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.FragmentStateCacheAdapter
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.databinding.ActivityOnlineResumeBinding
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import com.shiyuan.fastclaw.feature.mine.fragment.JobPreferencesFragment
 import com.shiyuan.fastclaw.feature.mine.fragment.ResumeInfoFragment
-import com.shiyuan.fastclaw.feature.mine.viewModel.UnderstandsViewModel
 
 /**
  * @Introduce: 小虾理解
@@ -103,6 +104,11 @@ class OnlineResumeActivity :
             val score = data?.understandingScore ?: 0
             binding.waveView.progress = if (score == 0) 10 else score
             binding.waveView.text = "${score}%"
+        }
+        observeEvents {
+            on<Events.CommonAttributeArrayQueryData> {
+                mRealVM.understandingScore()
+            }
         }
 
     }

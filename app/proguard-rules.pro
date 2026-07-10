@@ -136,6 +136,17 @@
 -keepclasseswithmembernames class * {
     native <methods>;
 }
+
+# DataNexus/广点通转化 SDK
+-dontwarn com.qq.gdt.action.**
+-keep class com.qq.gdt.action.** {*;}
+-keepclassmembers class com.qq.gdt.action.** {*;}
+-keep public class com.tencent.turingfd.sdk.**
+-keep class com.**.TNative$aa {public *;}
+-keep class com.**.TNative$aa$bb {public *;}
+-keep class com.**.TNative$bb {*;}
+-keep class com.**.TNative$bb$I {*;}
+
 #Android序列化
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;

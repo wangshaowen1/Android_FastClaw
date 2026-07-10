@@ -70,6 +70,7 @@ class JobPreferencesFragment :
         private const val CODE_JOB_SALARYSTRUCTUREPREFERENCE = "salaryStructurePreference"
         private const val CODE_JOB_TEAMATMOSPHEREPREFERENCE = "teamAtmospherePreference"
         private const val CODE_JOB_WELFAREPREFERENCE = "welfarePreference"
+        private const val EVENT_EXPECTED_INDUSTRY_COMPLETED = "expectedIndustryCompleted"
     }
 
     private val preferenceAdapter by lazy {
@@ -117,6 +118,9 @@ class JobPreferencesFragment :
                     AppEvent.KLX_C_EXPECTED_CITY_COMPLETED -> {
                         handleSelected(event.msgGson, CODE_EXPECTED_CITY, INPUT_MODE_DICT_MULTI)
                     }
+                    EVENT_EXPECTED_INDUSTRY_COMPLETED -> {
+                        handleSelected(event.msgGson, CODE_EXPECTED_INDUSTRY, INPUT_MODE_DICT_MULTI)
+                    }
                     else ->{
                         handleSelected(event.msgGson, CODE_JOB_WELFAREPREFERENCE, INPUT_MODE_DICT_MULTI)
                     }
@@ -135,7 +139,7 @@ class JobPreferencesFragment :
             inputMode = inputMode,
             value = dataList
         ) {
-            mRealVM.queryJobPreferencesInfo()
+            FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
         }
     }
 
@@ -166,13 +170,15 @@ class JobPreferencesFragment :
             );
             itemBinding.ivEdit.visibility = View.VISIBLE
             itemBinding.viewIndicator.visibility = View.GONE
-            itemBinding.tvName.visibility = if (item.fields.firstOrNull()?.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
+            itemBinding.tvName.visibility = if (item.fields.firstOrNull()?.passable == true) View.VISIBLE else View.GONE
             itemBinding.tvName.text = item.fields.firstOrNull()?.displayValue.orEmpty()
-            itemBinding.layoutMissing.visibility = if (item.fields.firstOrNull()?.displayValue.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
+            itemBinding.layoutMissing.visibility = if (item.fields.firstOrNull()?.passable == true) View.INVISIBLE  else View.VISIBLE
             itemBinding.rcFieldTree.visibility = View.GONE
             itemBinding.rcFieldTree.adapter = null
             itemBinding.ll.setOnSingleClickListener {
-                singleSelectDialog(item.fields.firstOrNull(), "求职状态")
+                singleSelectDialog(item.fields.firstOrNull(), "求职状态"){ code ->
+                    FlowEventBus.postSticky(Events.JobSearchStatusEvent(code))
+                }
             }
         } else {
             itemBinding.ll.setBackgroundResource(R.color.white)
@@ -184,7 +190,7 @@ class JobPreferencesFragment :
         }
     }
 
-    private fun singleSelectDialog(item: AttributeArrayQueryData?, title: String) {
+    private fun singleSelectDialog(item: AttributeArrayQueryData?, title: String,  onCallback: ((code: String) -> Unit)? = null) {
         item?.let { item ->
             val enumItems = item.options.orEmpty()
                 .map { CommonEnumItem(code = it.code, name = it.name) }
@@ -206,7 +212,8 @@ class JobPreferencesFragment :
                     inputMode = item.inputMode,
                     value = value
                 ) {
-                    mRealVM.queryJobPreferencesInfo()
+                    FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+                    onCallback?.invoke(data.code ?: "")
                 }
             }
         }
@@ -243,10 +250,8 @@ class JobPreferencesFragment :
         itemBinding: ItemJobInfoReBinding,
         item: AttributeArrayQueryData
     ) {
-        itemBinding.layoutMissing.visibility =
-            if (item.displayValue.isNullOrEmpty()) View.VISIBLE else View.GONE
-        itemBinding.tvVale.visibility =
-            if (item.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
+        itemBinding.layoutMissing.visibility = if (item.displayValue.isNullOrEmpty()) View.VISIBLE else View.GONE
+        itemBinding.tvVale.visibility = if (item.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
         itemBinding.tvName.text = item.attributeGroupName ?: ""
         itemBinding.tvVale.text = item.displayValue
         itemBinding.ll.setOnSingleClickListener {
@@ -258,6 +263,13 @@ class JobPreferencesFragment :
                 CODE_JOB_INTENTION -> {
                     JobSelectionActivity.start(activity, true,multipleNum = 10)
                 }
+                CODE_EXPECTED_INDUSTRY -> {
+                    IndustrySelectionActivity.start(
+                        activity,
+                        isMultiple = true,
+                        resultEventType = EVENT_EXPECTED_INDUSTRY_COMPLETED
+                    )
+                }
                 CODE_JOB_EXPECTED_SALARY -> {
                     SalaryRangePickerDialog.show(
                         manager = childFragmentManager
@@ -268,7 +280,7 @@ class JobPreferencesFragment :
                             inputMode = item.inputMode,
                             value = salaryPayloadJson
                         ) {
-                            mRealVM.queryJobPreferencesInfo()
+                            FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
                         }
                     }
                 }

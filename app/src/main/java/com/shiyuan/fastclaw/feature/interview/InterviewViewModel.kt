@@ -413,17 +413,28 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
         val restoredMessages = payload?.messages
             ?.sortedBy { it.messageSeq ?: Long.MAX_VALUE }
+            ?.distinctBy {
+                // 恢复列表里目标岗位确认提示（欢迎语）可能因重复进房生成多条不同 messageId，只按文案保留一条。
+                if (it.senderType == SENDER_AGENT && (it.payload?.roomState ?: it.roomState) == ROOM_STATE_WAITING_TARGET_JOB) {
+                    it.content
+                } else {
+                    // 其他消息必须按服务端唯一字段保留，避免相同回答内容被误合并。
+                    it.messageId ?: it.messageSeq ?: it
+                }
+            }
             ?.mapNotNull { it.toRoomMessage() }
             .orEmpty()
 
         messageStore.clear()
         currentAiMessageId = null
+        // 恢复列表为空也要刷新页面，避免继续显示旧缓存。
         if (restoredMessages.isEmpty()) {
             refreshMessageList()
         } else {
             ingestMessages(restoredMessages)
         }
 
+        // 历史消息没有当前题正文时，用 currentQuestion 补齐最后一道面试官问题。
         payload?.currentQuestion?.takeIf { question ->
             question.questionId == currentQuestionId && question.content?.isNotBlank() == true && restoredMessages.none {
                 it.senderType == SENDER_AGENT && it.content == question.content

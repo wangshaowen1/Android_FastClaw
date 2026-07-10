@@ -673,8 +673,8 @@
     <string name="mine_invite_title">邀请好友赚虾条</string>
     <string name="mine_invite_subtitle">好友注册成功，你们都能获得奖励</string>
     <string name="mine_invite_action">去邀请</string>
-    <string name="mine_tip">每日打开APP可以获得2根虾条哦～</string>
-    <string name="mine_tip2">知道了</string>
+    <string name="mine_tip">每日打开APP可以获得 2 根虾条哦～</string>
+    <string name="mine_tip2">知道啦</string>
 
     <string name="report_my_name">我的报告</string>
     <string name="report_empty_tip">还没有生成报告哦</string>
@@ -1036,6 +1036,7 @@
     <string name="personal_information_name_placeholder">请填写姓名</string>
     <string name="personal_information_gender_value">男</string>
     <string name="personal_information_gender_placeholder">请选择性别</string>
+    <string name="personal_information_birth_date_placeholder">请选择出生年月</string>
     <string name="personal_information_phone">手机号</string>
     <string name="personal_information_phone_value">17883749009</string>
     <string name="personal_information_phone_placeholder">请填写手机号</string>
@@ -1080,8 +1081,8 @@
     <string name="home_treasury_daily_free2">免费3次/日，超出10虾条/次</string>
     <string name="home_treasury_use_now">立即使用</string>
     <string name="home_treasury_mock_interview">模拟面试</string>
-    <string name="home_treasury_mock_package">面试准备包</string>
-    <string name="home_treasury_mock_desc">根据你的简历 + 目标岗位，精准还原真实面试场景，练到你面试不慌、发挥稳定！</string>
+    <string name="home_treasury_mock_package">面试通关包</string>
+    <string name="home_treasury_mock_desc">一包搞定！岗位匹配拆解 + 定制自我介绍 + 精准面试押题等，360度帮你全方位备战。</string>
     <string name="home_treasury_mock_package_desc">一包搞定！岗位匹配拆解 + 定制自我介绍 + 精准面试押题等，360度帮你全方位备战。</string>
     <string name="home_treasury_shrimp_chip">虾条</string>
     <string name="home_treasury_shrimp_chip2">虾条/次</string>

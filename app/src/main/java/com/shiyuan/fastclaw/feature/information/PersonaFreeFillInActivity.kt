@@ -14,6 +14,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.Events.TrackCreatedEvent
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonItems
@@ -35,6 +36,7 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
         private const val MIN_LENGTH = 1
         private const val MAX_LENGTH = 50
 
+        private const val FIELD_NAME = "name"
         private const val TEXT = "TEXT"
 
         /**
@@ -111,11 +113,19 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
                 inputMode = data.inputMode ?: TEXT,
                 value =  binding.et.text.toString()
             ) {
+                syncUserNameIfNeeded(binding.et.text.toString())
                 FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
                 finish()
             }
         }
 
+    }
+
+    private fun syncUserNameIfNeeded(name: String) {
+        val fieldCode = data.attributeGroupCode ?: data.metaCode
+        if (fieldCode != FIELD_NAME) return
+        User.get().storeNickname(name)
+        User.get().notifyChange(User.NICK_NAME)
     }
 
     override fun setTranslucentStatus() {

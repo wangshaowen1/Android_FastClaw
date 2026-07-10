@@ -3,8 +3,6 @@ package com.shiyuan.fastclaw.feature.splash
 import androidx.lifecycle.MutableLiveData
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
-import com.shiyuan.fastclaw.core.Config
-import com.shiyuan.fastclaw.core.User
 
 /**
  * @Introduce: 启动页 ViewModel，管理启动流程
@@ -26,10 +24,6 @@ class SplashViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun onPolicyAgreed() {
-        if (Config.get().isFirstOpenApp) {
-            Config.get().markAppOpenedWithNotify()
-            com.shiyuan.fastclaw.App.instance.initSdkAfterAgreeLicense()
-        }
         proceedToNext()
     }
 

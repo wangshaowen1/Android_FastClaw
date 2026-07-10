@@ -138,7 +138,11 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
                 showToast(R.string.city_selector_at_least)
             } else {
                 val msgGson = JobCityData.toJson(mType, selectedLocations)
-                FlowEventBus.postSync(Events.ClawAgentEvent(msgGson,AppEvent.KLX_C_EXPECTED_CITY_COMPLETED))
+                if (mType == JobCityQueryBody.EXPECTED_CITY) {
+                    FlowEventBus.postSync(Events.ClawAgentEvent(msgGson,AppEvent.KLX_C_EXPECTED_CITY_COMPLETED))
+                } else {
+                    FlowEventBus.postSync(Events.ClawAgentEvent(msgGson,AppEvent.KLX_C_EXPECTED_CURRENTLY_CITY_COMPLETED))
+                }
                 finish()
             }
         }

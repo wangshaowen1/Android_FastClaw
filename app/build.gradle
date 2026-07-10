@@ -73,6 +73,12 @@ android {
         if (localPropsFile.exists()) {
             localPropsFile.withInputStream { localProps.load(it) }
         }
+        // DataNexus/广点通转化 SDK ，避免写入仓库。
+        buildConfigField "String", "DATANEXUS_USER_ACTION_SET_ID", '""'
+        buildConfigField "String", "DATANEXUS_APP_SECRET_KEY", '""'
+        buildConfigField "boolean", "ENABLE_DATANEXUS", "false"
+
+        buildConfigField "boolean", "DATANEXUS_ANID_ENABLE", "true"
         buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-b4c3df125fee41c6a83135074b12a8b6"'
         buildConfigField "String", "DASHSCOPE_SPEECH_URL", '"wss://dashscope.aliyuncs.com/api-ws/v1/inference"'
         buildConfigField "boolean", "ENABLE_CHANNEL_PUSH", "false"

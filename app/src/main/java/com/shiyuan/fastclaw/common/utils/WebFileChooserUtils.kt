@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.common.utils
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.webkit.MimeTypeMap
@@ -34,9 +35,28 @@ object WebFileChooserUtils {
     }
 
     fun parseFileChooserResult(resultCode: Int, data: Intent?): Array<Uri?>? {
-        return WebChromeClient.FileChooserParams.parseResult(resultCode, data)
-            ?.map { it as Uri? }
-            ?.toTypedArray()
+        val parsedResult = WebChromeClient.FileChooserParams.parseResult(resultCode, data)
+        if (!parsedResult.isNullOrEmpty()) {
+            return parsedResult
+                .map { it as Uri? }
+                .toTypedArray()
+        }
+
+        if (resultCode != Activity.RESULT_OK || data == null) return null
+
+        val result = mutableListOf<Uri?>()
+        data.clipData?.let { clipData ->
+            for (index in 0 until clipData.itemCount) {
+                clipData.getItemAt(index)?.uri?.let { result.add(it) }
+            }
+        }
+        data.data?.let { uri ->
+            if (result.none { it == uri }) {
+                result.add(uri)
+            }
+        }
+
+        return result.takeIf { it.isNotEmpty() }?.toTypedArray()
     }
 
     private fun String.toChooserMimeType(): String? {
