@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingSummaryPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUnderstandingUpgradeBinding
@@ -32,6 +33,9 @@ class AgentUnderstandingUpgradeViewHolder(private val binding: ItemMsgAgentUnder
         binding.wpvAlignProgress.text = "$score%"
         // 标题：我与你对齐度达到 85%！
         binding.tvAlignTitle.text = context.getString(R.string.str_agent_understanding_align_title, "$score%")
+        binding.tvDetailEdit.setOnSingleClickListener {
+
+        }
         // 摘要主文案非空时覆盖副标题，否则保留布局默认文案
 //        payload?.summary?.text?.takeIf { it.isNotBlank() }?.let { binding.tvAlignSubtitle.text = it }
         // 理解明细行

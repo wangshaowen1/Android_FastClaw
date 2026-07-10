@@ -118,9 +118,22 @@
             android:text="@string/str_agent_understanding_section_title"
             android:textColor="@color/color_90_000000"
             android:textSize="15sp"
+            android:paddingEnd="20dp"
+            android:lines="1"
+            android:ellipsize="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/tv_detail_edit"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@drawable/icon_agent_edit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_detail_title"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_detail_title"
+            />
 
         <!-- 行列表：通过代码 addView + flow.referencedIds 绑定动态行 -->
         <androidx.constraintlayout.helper.widget.Flow
