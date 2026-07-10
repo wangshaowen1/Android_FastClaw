@@ -24,6 +24,7 @@ import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.ext.switchFragment
 import com.shiyuan.fastclaw.App
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.core.Config
@@ -34,6 +35,7 @@ import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_MOVE
 import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_UP
 import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_VOLUME
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.manager.AdsManager
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.UpgradeManager
@@ -456,6 +458,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     fun onAgreePolicy() {
         Config.get().markAppOpenedWithNotify()
+        AdsManager.initAdsReporter(this,BuildConfig.DEBUG)
         App.instance.initSdkAfterAgreeLicense()
         //遍历查询是否初始化完成
         waitApiSecurityInit()
