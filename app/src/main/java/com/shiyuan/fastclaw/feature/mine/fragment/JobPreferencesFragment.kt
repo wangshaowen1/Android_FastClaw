@@ -71,6 +71,8 @@ class JobPreferencesFragment :
         private const val CODE_JOB_TEAMATMOSPHEREPREFERENCE = "teamAtmospherePreference"
         private const val CODE_JOB_WELFAREPREFERENCE = "welfarePreference"
         private const val EVENT_EXPECTED_INDUSTRY_COMPLETED = "expectedIndustryCompleted"
+
+        private const val CODE_EXPECTED_INDUSTRY = "expectedIndustry"
     }
 
     private val preferenceAdapter by lazy {
