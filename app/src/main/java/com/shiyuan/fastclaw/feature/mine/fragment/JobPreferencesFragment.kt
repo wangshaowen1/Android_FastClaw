@@ -74,6 +74,8 @@ class JobPreferencesFragment :
         private const val EVENT_EXPECTED_INDUSTRY_COMPLETED = "expectedIndustryCompleted"
 
         private const val CODE_EXPECTED_INDUSTRY = "expectedIndustry"
+
+        private const val CODE_JOB_IDENTITY = "jobIdentity"
     }
 
     private val preferenceAdapter by lazy {
@@ -316,6 +318,9 @@ class JobPreferencesFragment :
                 }
                 CODE_JOB_TEAMATMOSPHEREPREFERENCE ->{
                     singleSelectDialog(item, "团队氛围偏好")
+                }
+                CODE_JOB_IDENTITY ->{
+                    singleSelectDialog(item, "求职身份")
                 }
                 CODE_JOB_WELFAREPREFERENCE ->{
                     JobWelfareSelectorActivity.start(activity)
