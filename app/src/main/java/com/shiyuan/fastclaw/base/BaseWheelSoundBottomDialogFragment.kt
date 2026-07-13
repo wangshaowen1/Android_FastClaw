@@ -2,7 +2,13 @@ package com.shiyuan.fastclaw.base
 
 import android.media.AudioAttributes
 import android.media.SoundPool
+import android.os.Build
 import android.os.SystemClock
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import android.content.Context
+import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewbinding.ViewBinding
@@ -16,11 +22,15 @@ abstract class BaseWheelSoundBottomDialogFragment<V : ViewBinding> : BaseBottomD
 
     protected open val wheelSoundIntervalMs: Long = 20L
     protected open val wheelSoundVolume: Float = 0.5f
+    protected open val wheelHapticEnabled: Boolean = true
+    protected open val wheelVibrateMs: Long = 12L
+    protected open val wheelVibrateAmplitude: Int = 90
 
     private var wheelSoundPool: SoundPool? = null
     private var wheelSoundId = 0
     private var wheelSoundLoaded = false
     private var lastWheelSoundTime = 0L
+    private var vibrator: Vibrator? = null
     private val boundPickers = mutableSetOf<NumberPicker>()
 
     override fun onPrepareView() {
@@ -34,7 +44,7 @@ abstract class BaseWheelSoundBottomDialogFragment<V : ViewBinding> : BaseBottomD
     private fun bindWheelSound(view: View) {
         if (view is NumberPicker && boundPickers.add(view)) {
             view.addOnValueChangedListener { _, _, _ ->
-                playWheelSound()
+                playWheelFeedback(view)
             }
         }
         if (view is ViewGroup) {
@@ -44,12 +54,15 @@ abstract class BaseWheelSoundBottomDialogFragment<V : ViewBinding> : BaseBottomD
         }
     }
 
-    private fun playWheelSound() {
+    private fun playWheelFeedback(view: View) {
         val now = SystemClock.elapsedRealtime()
         if (now - lastWheelSoundTime < wheelSoundIntervalMs) {
             return
         }
         lastWheelSoundTime = now
+        if (wheelHapticEnabled) {
+            playWheelHaptic(view)
+        }
         if (!wheelSoundLoaded || wheelSoundId == 0) {
             return
         }
@@ -61,6 +74,56 @@ abstract class BaseWheelSoundBottomDialogFragment<V : ViewBinding> : BaseBottomD
             0,
             1f
         )
+    }
+
+    private fun playWheelHaptic(view: View) {
+        val performed = view.performHapticFeedback(
+            HapticFeedbackConstants.CLOCK_TICK,
+            HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
+        )
+        if (!performed || shouldForceWheelVibrator()) {
+            vibrateWheelTick()
+        }
+    }
+
+    private fun shouldForceWheelVibrator(): Boolean {
+        val deviceName = "${Build.MANUFACTURER} ${Build.BRAND}".lowercase()
+        return deviceName.contains("oppo") ||
+                deviceName.contains("realme") ||
+                deviceName.contains("oneplus")
+    }
+
+    private fun vibrateWheelTick(): Boolean {
+        val vibrator = getWheelVibrator() ?: return false
+        if (!vibrator.hasVibrator()) {
+            return false
+        }
+        return runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        wheelVibrateMs,
+                        wheelVibrateAmplitude.coerceIn(1, 255)
+                    )
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(wheelVibrateMs)
+            }
+        }.isSuccess
+    }
+
+    private fun getWheelVibrator(): Vibrator? {
+        vibrator?.let { return it }
+        val service = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val manager = requireContext().getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+            manager?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            requireContext().getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        }
+        vibrator = service
+        return service
     }
 
     private fun initWheelSound() {
@@ -90,6 +153,7 @@ abstract class BaseWheelSoundBottomDialogFragment<V : ViewBinding> : BaseBottomD
         wheelSoundPool = null
         wheelSoundId = 0
         wheelSoundLoaded = false
+        vibrator = null
         boundPickers.clear()
         super.onDestroy()
     }
