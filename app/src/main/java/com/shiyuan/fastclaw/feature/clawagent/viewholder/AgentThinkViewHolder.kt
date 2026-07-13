@@ -1,8 +1,8 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
-import android.animation.ObjectAnimator
-import android.view.animation.LinearInterpolator
 import androidx.recyclerview.widget.RecyclerView
+import com.kuaige.imageloader.GlideApp
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentThinkBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -13,33 +13,25 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 class AgentThinkViewHolder(private val binding: ItemMsgAgentThinkBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    private var rotateAnimator: ObjectAnimator? = null
+    private val typewriter = BaseAgentTypewriterController(binding.tvThink)
 
-    fun bind(item: ClawAgentMessageInfo) {
-        binding.tvThink.text = "${item.content}"
+    fun bind(item: ClawAgentMessageInfo, displayedLength: Int = item.content.orEmpty().length, onDisplayedLengthChange: (Int) -> Unit = {}, ) {
+        typewriter.bind(item.content.orEmpty(), displayedLength, onDisplayedLengthChange)
     }
 
-    /** 启动 iv_think 旋转动画；附着到窗口时由 Adapter 调用 */
+    /** 播放思考中的 gif；附着到窗口时由 Adapter 调用 */
     fun startRotate() {
-        if (rotateAnimator?.isStarted == true) return
-        rotateAnimator = ObjectAnimator.ofFloat(binding.ivThink, "rotation", 0f, 360f).apply {
-            duration = 1000L
-            interpolator = LinearInterpolator()
-            repeatCount = ObjectAnimator.INFINITE
-            repeatMode = ObjectAnimator.RESTART
-            start()
-        }
+        GlideApp.with(binding.ivThink)
+            .asGif()
+            .load(R.drawable.icon_agent_think)
+            .into(binding.ivThink)
+        typewriter.start()
     }
 
-    /** 停止并释放动画；脱离窗口或回收时由 Adapter 调用，避免 Animator 持有 View 造成泄漏 */
+    /** 停止 gif；脱离窗口或回收时由 Adapter 调用 */
     fun stopRotate() {
-        rotateAnimator?.apply {
-            cancel()
-            removeAllListeners()
-            removeAllUpdateListeners()
-        }
-        rotateAnimator = null
-        binding.ivThink.rotation = 0f
+        typewriter.stop()
+        GlideApp.with(binding.ivThink).clear(binding.ivThink)
     }
 
 }

@@ -11,7 +11,13 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 class AgentViewHolder(private val binding: ItemMsgAgentLeftBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: ClawAgentMessageInfo) {
-        binding.tvMsgContent.text = item.content
+    private val typewriter = BaseAgentTypewriterController(binding.tvMsgContent)
+
+    fun bind(item: ClawAgentMessageInfo, displayedLength: Int = item.content.orEmpty().length, onDisplayedLengthChange: (Int) -> Unit = {}, ) {
+        typewriter.bind(item.content.orEmpty(), displayedLength, onDisplayedLengthChange)
     }
+
+    fun startTypewriter() = typewriter.start()
+
+    fun stopTypewriter() = typewriter.stop()
 }

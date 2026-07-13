@@ -285,6 +285,7 @@ public class NumberPicker extends LinearLayout {
      * Listener to be notified upon current value change.
      */
     private OnValueChangeListener mOnValueChangeListener;
+    private final List<OnValueChangeListener> mExtraOnValueChangeListeners = new ArrayList<>();
 
     /**
      * Listener to be notified upon scroll state change.
@@ -1208,6 +1209,16 @@ public class NumberPicker extends LinearLayout {
         mOnValueChangeListener = onValueChangedListener;
     }
 
+    public void addOnValueChangedListener(OnValueChangeListener onValueChangedListener) {
+        if (onValueChangedListener != null && !mExtraOnValueChangeListeners.contains(onValueChangedListener)) {
+            mExtraOnValueChangeListeners.add(onValueChangedListener);
+        }
+    }
+
+    public void removeOnValueChangedListener(OnValueChangeListener onValueChangedListener) {
+        mExtraOnValueChangeListeners.remove(onValueChangedListener);
+    }
+
     /**
      * Set listener to be notified for scroll state changes.
      *
@@ -1971,6 +1982,9 @@ public class NumberPicker extends LinearLayout {
     private void notifyChange(int previous, int current) {
         if (mOnValueChangeListener != null) {
             mOnValueChangeListener.onValueChange(this, previous, mValue);
+        }
+        for (OnValueChangeListener listener : new ArrayList<>(mExtraOnValueChangeListeners)) {
+            listener.onValueChange(this, previous, mValue);
         }
     }
 
