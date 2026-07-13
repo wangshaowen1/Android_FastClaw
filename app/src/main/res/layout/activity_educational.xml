@@ -144,6 +144,7 @@
                     android:textSize="11sp" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
+                    android:visibility="gone"
                     android:id="@+id/v_form5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

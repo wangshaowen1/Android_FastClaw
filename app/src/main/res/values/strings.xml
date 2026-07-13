@@ -962,7 +962,8 @@
     <string name="gpa_score">GPA 成绩</string>
     <string name="school_ranking_honor">在校排名/荣誉</string>
     <string name="main_courses">主修课程</string>
-    <string name="education_supplement_desc">教育补充描述</string>
+    <string name="education_supplement_desc">在校经历</string>
+    <string name="work_experience_is_internship">本段经历是实习经历</string>
 
     <!-- 工作经历 -->
     <string name="edit_working">编辑工作经历</string>
@@ -1028,7 +1029,7 @@
     <string name="project_experience">项目经历</string>
     <string name="certificate">证书</string>
     <string name="birth_date">出生年月</string>
-    <string name="salary_range">薪资范围</string>
+    <string name="salary_range">期望薪资（月薪,单位: K=千元）</string>
     <string name="personal_information_title">个人信息</string>
     <string name="personal_information_avatar">头像</string>
     <string name="personal_information_name">姓名</string>

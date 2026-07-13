@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
@@ -20,6 +21,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil.conver
 import com.shiyuan.fastclaw.databinding.ActivityEducationalBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.DeleteConfirmDialog
+import com.shiyuan.fastclaw.feature.information.dialog.EducationDegreePickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
@@ -180,19 +182,36 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
             }
         }
 
-        // 学历：单选
+        // 学历 + 学习形式：双列选择，并分别回写原字段
         binding.vForm2.setOnSingleClickListener {
-            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_DEGREE)
-            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,"学历",list){  data->
-                binding.vForm2.setValueText(data.name)
-                item?.let {
-                    item.displayValue =  data.name
-                    item.fieldValue = mapOf(
-                        "value" to data.code ,
-                        "displayText" to data.name
+            val degreeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_DEGREE)
+            val fullTimeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_FULL_TIME)
+            val degreeOptions = Json.decodeFromString<List<CommonEnumItem>>(requireNotNull(degreeItem?.questionOptionsJson))
+            val studyTypeOptions = Json.decodeFromString<List<CommonEnumItem>>(convertCodeBooleanToString(requireNotNull(fullTimeItem?.questionOptionsJson)))
+            EducationDegreePickerDialog.show(
+                manager = supportFragmentManager,
+                degreeOptions = degreeOptions,
+                studyTypeOptions = studyTypeOptions,
+                selectedDegree = degreeItem?.displayValue,
+                selectedStudyType = fullTimeItem?.displayValue,
+            ) { degree, studyType ->
+                degreeItem?.apply {
+                    displayValue = degree.name
+                    fieldValue = mapOf(
+                        "value" to degree.code,
+                        "displayText" to degree.name,
                     )
                 }
+                fullTimeItem?.apply {
+                    displayValue = studyType?.name
+                    fieldValue = studyType?.let {
+                        mapOf(
+                            "value" to it.code,
+                            "displayText" to it.name,
+                        )
+                    }
+                }
+                binding.vForm2.setValueText(formatDegree(degree.name, studyType?.name))
             }
         }
         // 专业：自由填写
@@ -245,21 +264,8 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                 }
             )
         }
-        // 是否全日制：单选（先做布尔编码转字符串）
-        binding.vForm5.setOnSingleClickListener {
-            val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_FULL_TIME)
-            val list = Json.decodeFromString<List<CommonEnumItem>>(convertCodeBooleanToString(item?.questionOptionsJson?:"[]"))
-            SingleSelectDialog.show(this.supportFragmentManager,"是否全日制",list){  data->
-                binding.vForm5.setValueText(data.name)
-                item?.let {
-                    item.displayValue =  data.name
-                    item.fieldValue = mapOf(
-                        "value" to data.code ,
-                        "displayText" to data.name
-                    )
-                }
-            }
-        }
+        // 已合并到学历双列弹窗，不再展示独立的“是否全日制”行
+        binding.vForm5.visibility = View.GONE
         // 院校性质：单选
         binding.vForm6.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_SCHOOL_TYPE)
@@ -354,9 +360,10 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         }
 
         val degreeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_DEGREE)
-        degreeItem?.let {
-            binding.vForm2.setValueText(it.displayValue)
-        }
+        val fullTimeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_FULL_TIME)
+        binding.vForm2.setValueText(
+            formatDegree(degreeItem?.displayValue, fullTimeItem?.displayValue)
+        )
 
         val majorItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_MAJOR)
         majorItem?.let {
@@ -371,11 +378,6 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         val endDateItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_END_DATE)
         endDateItem?.displayValue?.let {
             binding.tvEnd.text = it
-        }
-
-        val fullTimeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_FULL_TIME)
-        fullTimeItem?.let {
-            binding.vForm5.setValueText(it.displayValue)
         }
 
         val schoolTypeItem = AttributeFieldItemFinder.findFirst(currentInstance, FIELD_SCHOOL_TYPE)
@@ -440,6 +442,12 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
                 }
             }
         }
+    }
+
+    private fun formatDegree(degree: String?, studyType: String?): String {
+        return listOfNotNull(degree, studyType)
+            .filter { it.isNotBlank() }
+            .joinToString(" · ")
     }
 
     override fun setTranslucentStatus() {

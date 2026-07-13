@@ -82,6 +82,7 @@ data class AttributeFieldTree(
     val dictApi: String? = null,
     val required: Boolean? = null,
     val missing: Boolean? = null,
+    var internship: Boolean? = null,
     var attributeGroupCode: String? = null,
     var operation: String? = null,
     val questionOptionsJson: String? = null,

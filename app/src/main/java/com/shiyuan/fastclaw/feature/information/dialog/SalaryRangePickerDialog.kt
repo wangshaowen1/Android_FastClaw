@@ -5,7 +5,6 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.flqy.datepicker.NumberPicker
-import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
@@ -13,7 +12,7 @@ import com.shiyuan.fastclaw.databinding.DialogSalaryRangePickerBinding
 
 /**
  * 薪资范围选择底部弹窗。
- * 支持“面议”或 0K 到 250K 内的最小薪资与最大薪资区间。
+ * 支持“面议”或有效薪资档位内的最小薪资与最大薪资区间。
  */
 class SalaryRangePickerDialog : BaseBottomDialogFragment<DialogSalaryRangePickerBinding>() {
 
@@ -25,10 +24,18 @@ class SalaryRangePickerDialog : BaseBottomDialogFragment<DialogSalaryRangePicker
         private const val WHEEL_ITEM_COUNT = 5
         private const val NEGOTIABLE_TEXT = "面议"
         const val TAG = "SalaryRangePickerDialog"
+        private const val MIN_SALARY_K = 1
+        private const val LEFT_MAX_SALARY_K = 250
+        private const val RIGHT_MAX_SALARY_K = 260
+        private const val LOW_STEP_BOUNDARY_K = 30
+        private const val MID_STEP_BOUNDARY_K = 100
 
-        // 薪资候选项：0K - 250K
-        private val allSalaryList = (0..250).map { "${it}K" }
-        private val minSalaryList = listOf(NEGOTIABLE_TEXT) + allSalaryList
+        // 1K-29K 步进 1K，30K-95K 步进 5K，100K 起步进 10K。
+        private val salaryValueList = buildSalaryValueList(RIGHT_MAX_SALARY_K)
+        private val minSalaryList = listOf(NEGOTIABLE_TEXT) +
+            salaryValueList
+                .filter { it <= LEFT_MAX_SALARY_K }
+                .map(::formatSalaryValue)
         // 外部传入的初值与回调
         private var selectedMinSalary: String? = null
         private var selectedMaxSalary: String? = null
@@ -60,6 +67,39 @@ class SalaryRangePickerDialog : BaseBottomDialogFragment<DialogSalaryRangePicker
                 show(manager)
             }
         }
+
+        private fun buildSalaryValueList(maxSalaryK: Int): List<Int> {
+            val values = mutableListOf<Int>()
+            var salary = MIN_SALARY_K
+            while (salary < LOW_STEP_BOUNDARY_K && salary <= maxSalaryK) {
+                values.add(salary)
+                salary += 1
+            }
+
+            salary = LOW_STEP_BOUNDARY_K
+            while (salary < MID_STEP_BOUNDARY_K && salary <= maxSalaryK) {
+                values.add(salary)
+                salary += 5
+            }
+
+            salary = MID_STEP_BOUNDARY_K
+            while (salary <= maxSalaryK) {
+                values.add(salary)
+                salary += 10
+            }
+            return values
+        }
+
+        private fun formatSalaryValue(salaryValue: Int): String {
+            return "${salaryValue}K"
+        }
+
+        private fun parseSalaryValue(salary: String?): Int? {
+            return salary
+                ?.takeUnless { it == NEGOTIABLE_TEXT }
+                ?.removeSuffix("K")
+                ?.toIntOrNull()
+        }
     }
 
     override fun onPrepareView() {
@@ -68,7 +108,7 @@ class SalaryRangePickerDialog : BaseBottomDialogFragment<DialogSalaryRangePicker
         initMinSalaryPicker()
         initClick()
         applyDefaultSelection()
-        binding.title.text = dialogTitle ?: "薪资范围"
+        binding.title.text = dialogTitle ?: getString(R.string.salary_range)
     }
 
     /**
@@ -81,7 +121,11 @@ class SalaryRangePickerDialog : BaseBottomDialogFragment<DialogSalaryRangePicker
         binding.wheelMinSalary.maxValue = displayValues.lastIndex
         binding.wheelMinSalary.displayedValues = displayValues
         // 还原初值，未命中时回到首位
-        binding.wheelMinSalary.value = minSalaryList.indexOf(selectedMinSalary).takeIf { it >= 0 } ?: 0
+        binding.wheelMinSalary.value = resolveSalaryIndex(
+            salaryList = minSalaryList,
+            salary = selectedMinSalary,
+            fallbackIndex = 0,
+        )
         // 切换最小薪资后，最大薪资范围需要重算
         binding.wheelMinSalary.setOnValueChangedListener { _, _, _ ->
             updateMaxSalaryPicker(resetSelection = true)
@@ -144,29 +188,56 @@ class SalaryRangePickerDialog : BaseBottomDialogFragment<DialogSalaryRangePicker
             return 0
         }
         val selectedIndex = maxSalaryList.indexOf(selectedMaxSalary)
-        // 命中初值用初值，否则选最后一项
         return if (selectedIndex >= 0) {
+            // 命中初值用初值
             selectedIndex
         } else {
-            maxSalaryList.lastIndex
+            resolveSalaryIndex(
+                salaryList = maxSalaryList,
+                salary = selectedMaxSalary,
+                fallbackIndex = maxSalaryList.lastIndex,
+            )
         }
     }
 
     /**
      * 根据当前最小薪资计算最大薪资可选列表。
-     * 最小薪资为“面议”时返回空；否则取从最小薪资开始到 250K 的子列表。
+     * 最小薪资为“面议”时返回空；否则取大于最小薪资且不超过右侧上限的有效档位。
      */
     private fun getCurrentMaxSalaryList(): List<String> {
-        val minSalary = minSalaryList.getOrNull(binding.wheelMinSalary.value) ?: return allSalaryList
-        if (minSalary == NEGOTIABLE_TEXT) {
-            return emptyList()
+        val minSalaryValue = parseSalaryValue(minSalaryList.getOrNull(binding.wheelMinSalary.value))
+            ?: return emptyList()
+        val maxSalaryValue = getRightMaxSalaryValue(minSalaryValue)
+        return salaryValueList
+            .filter { it > minSalaryValue && it <= maxSalaryValue }
+            .map(::formatSalaryValue)
+    }
+
+    /**
+     * 右侧最大值：min(左侧当前值 * 2, 260K)，再向下取最近有效档位。
+     */
+    private fun getRightMaxSalaryValue(minSalaryValue: Int): Int {
+        val cappedMaxSalaryValue = (minSalaryValue * 2).coerceAtMost(RIGHT_MAX_SALARY_K)
+        return salaryValueList.lastOrNull { it <= cappedMaxSalaryValue } ?: cappedMaxSalaryValue
+    }
+
+    /**
+     * 初值命中旧的非有效档位时，向下兼容到最近的有效档位。
+     */
+    private fun resolveSalaryIndex(
+        salaryList: List<String>,
+        salary: String?,
+        fallbackIndex: Int,
+    ): Int {
+        val exactIndex = salaryList.indexOf(salary)
+        if (exactIndex >= 0) {
+            return exactIndex
         }
-        val minSalaryIndex = allSalaryList.indexOf(minSalary)
-        return if (minSalaryIndex >= 0) {
-            allSalaryList.subList(minSalaryIndex, allSalaryList.size)
-        } else {
-            allSalaryList
-        }
+        val salaryValue = parseSalaryValue(salary) ?: return fallbackIndex
+        return salaryList.indexOfLast {
+            val optionValue = parseSalaryValue(it)
+            optionValue != null && optionValue <= salaryValue
+        }.takeIf { it >= 0 } ?: fallbackIndex
     }
 
     /**

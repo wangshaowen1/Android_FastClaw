@@ -135,6 +135,7 @@
                     app:formPlaceholderText="@string/please_input" />
 
 
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -177,6 +178,33 @@
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/reason_for_leaving"
                     app:formPlaceholderText="@string/please_select" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="78dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:lineHeight="23dp"
+                        android:text="@string/work_experience_is_internship"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/switch_internship"
+                        android:layout_width="61dp"
+                        android:layout_height="26dp"
+                        android:clickable="true"
+                        android:contentDescription="@string/work_experience_is_internship"
+                        android:focusable="true"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/internship_false" />
+                </LinearLayout>
 
 
             </LinearLayout>
