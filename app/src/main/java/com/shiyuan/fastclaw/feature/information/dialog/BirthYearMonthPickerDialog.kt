@@ -19,7 +19,7 @@ class BirthYearMonthPickerDialog : BaseWheelSoundBottomDialogFragment<DialogBirt
 
     companion object {
         // NumberPicker 选中/未选中文字大小（sp）
-        private const val SELECTED_TEXT_SIZE_SP = 16f
+        private const val SELECTED_TEXT_SIZE_SP = 14f
         private const val UNSELECTED_TEXT_SIZE_SP = 14f
         // 滚轮可见条目数
         private const val WHEEL_ITEM_COUNT = 5

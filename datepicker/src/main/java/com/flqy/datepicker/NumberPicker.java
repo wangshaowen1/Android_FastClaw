@@ -317,6 +317,10 @@ public class NumberPicker extends LinearLayout {
      */
     private final Paint mSelectorWheelPaint;
     private final Paint mWheelPaint;
+    private float mWheelHorizontalArcOffset;
+    private static final int WHEEL_ARC_DIRECTION_LEFT = 0;
+    private static final int WHEEL_ARC_DIRECTION_RIGHT = 1;
+    private static final int WHEEL_ARC_OFFSET_DP = 28;
     /**
      * The {@link Drawable} for pressed virtual (increment/decrement) buttons.
      */
@@ -583,6 +587,17 @@ public class NumberPicker extends LinearLayout {
         mHasSelectorWheel = (layoutResId != DEFAULT_LAYOUT_RESOURCE_ID);
 
         mSolidColor = attributesArray.getColor(R.styleable.NumberPicker_solidColor, 0);
+        boolean wheelArcEnabled = attributesArray.getBoolean(
+                R.styleable.NumberPicker_wheelArcEnabled, false);
+        int wheelArcDirection = attributesArray.getInt(
+                R.styleable.NumberPicker_wheelArcDirection, WHEEL_ARC_DIRECTION_LEFT);
+        if (wheelArcEnabled) {
+            float arcOffset = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, WHEEL_ARC_OFFSET_DP,
+                    getResources().getDisplayMetrics());
+            mWheelHorizontalArcOffset =
+                    wheelArcDirection == WHEEL_ARC_DIRECTION_LEFT ? arcOffset : -arcOffset;
+        }
 
         mSelectionDivider = attributesArray.getDrawable(R.styleable.NumberPicker_selectionDivider);
 
@@ -803,6 +818,11 @@ public class NumberPicker extends LinearLayout {
         if (mTextSize != 0) {
             setWheelScale(textSizePx / mTextSize);
         }
+    }
+
+    public void setWheelHorizontalArcOffsetPx(float offsetPx) {
+        mWheelHorizontalArcOffset = offsetPx;
+        invalidate();
     }
 
     @Override
@@ -1582,6 +1602,7 @@ public class NumberPicker extends LinearLayout {
         for (int i = 0; i < selectorIndices.length; i++) {
             int selectorIndex = selectorIndices[i];
             String scrollSelectorValue = mSelectorIndexToStringCache.get(selectorIndex);
+            float itemX = x + getWheelHorizontalArcOffset(y);
             // Do not draw the middle item if input is visible since the input
             // is shown only if the wheel is static and it covers the middle
             // item. Otherwise, if the user starts editing the text via the
@@ -1597,17 +1618,28 @@ public class NumberPicker extends LinearLayout {
                     }
                 }
                 if(i == selectorMiddleItemIndex ) {
-                    canvas.drawText(scrollSelectorValue, x, y, mSelectorWheelPaint);
+                    canvas.drawText(scrollSelectorValue, itemX, y, mSelectorWheelPaint);
                 }else {
-                    canvas.drawText(scrollSelectorValue, x, y, mWheelPaint);
+                    canvas.drawText(scrollSelectorValue, itemX, y, mWheelPaint);
                 }
             }else if(i == selectorMiddleItemIndex ) {
-                canvas.drawText(scrollSelectorValue, x, y, mSelectorWheelPaint);
+                canvas.drawText(scrollSelectorValue, itemX, y, mSelectorWheelPaint);
             }
             y += mSelectorElementHeight;
         }
 
 
+    }
+
+    private float getWheelHorizontalArcOffset(float itemY) {
+        if (mWheelHorizontalArcOffset == 0f || selectorMiddleItemIndex <= 0) {
+            return 0f;
+        }
+        float centerY = mInitialScrollOffset + mSelectorElementHeight * selectorMiddleItemIndex;
+        float distance = Math.abs(itemY - centerY);
+        float maxDistance = mSelectorElementHeight * selectorMiddleItemIndex;
+        float progress = Math.min(1f, distance / maxDistance);
+        return mWheelHorizontalArcOffset * progress * progress;
     }
 
     @Override
