@@ -153,7 +153,7 @@ class PhoneNewBindActivity : BaseViewModelActivity<ActivityPhoneNewBindBinding, 
     private fun sendBindMobileCode(phone: String, userData: UserHomeData) {
         mRealVM.sendSmsCode(
             startCountdownOnSuccess = false,
-            bizType = SendSmsValidateCodeBody.BIZ_TYPE_LOGIN,
+            bizType = SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE,
             onSuccess = {
                 PhoneNewLoginCodeActivity.startForBindMobile(this, phone, userData)
                 finish()

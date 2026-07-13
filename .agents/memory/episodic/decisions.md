@@ -71,3 +71,36 @@ DataNexus 官方文档要求在用户同意隐私协议后尽早调用 `GDTActio
 
 ### 验证结论
 静态检查：`rg -n "import com\\.qq\\.gdt\\.action|GDTAction\\.|DataNexusManager\\.initAfterPrivacyAgreed|DATANEXUS_"` 确认 SDK 直接调用只在 Manager 内、初始化只接入隐私同意后入口；Manifest 所需权限已存在；按项目规则未运行 Gradle。
+
+## v本轮 隐藏 Agent Fragment 错误 Toast 串页
+
+### 变更了什么
+`ClawAgentMainFragment.streamError` → 增加当前 Fragment 可见性判断；隐藏 tab 收到 SSE 错误时只消费事件，不在 `MineFragment` 页面弹 Toast。
+
+### 为什么
+在求职偏好页选择意向城市、意向岗位、期望行业后返回我的页时，日志显示 `SseCallAdapter` 因 Agent SSE `/jobAgent/stream` 返回 400 生成 `IOException("Unknown error")`，隐藏的 `ClawAgentMainFragment` 仍处于 resumed/observer 可用状态并无条件 `showMessage(e.message)`，导致错误 Toast 串到 `MineFragment`。
+
+### 验证结论
+静态检查：确认 `MainActivity` 使用 `switchFragment` hide/show tab；`ClawAgentMainFragment` 仅在 `isAdded && isResumed && !isHidden && view != null` 时显示 `streamError`。`git diff --check` 无空白错误；按项目规则未运行 Gradle。
+
+## v本轮 Agent 错误 Toast 可见性条件收窄
+
+### 变更了什么
+`ClawAgentMainFragment.streamError` → 可见性判断从 `isResumed && !isHidden` 收窄为只拦截 `isHidden` 场景：`isAdded && !isHidden && view != null` 才显示 Toast。
+
+### 为什么
+`ClawAgentMainFragment` 自己也会打开意向城市、意向岗位、期望行业等选择 Activity。选择 Activity 覆盖时宿主 Fragment 会暂停但并不是主 tab 隐藏；如果用 `isResumed` 判断，会误吞 Agent 自己流程里的 `streamError` Toast。真正需要拦截的是主 tab 切到 `MineFragment` 后 `ClawAgentMainFragment.isHidden == true` 的串页错误。
+
+### 验证结论
+静态检查：`rg -n "JobCitySelectorActivity\\.start|JobSelectionActivity\\.start|IndustrySelectionActivity\\.start|streamError\\.observe|canShowStreamErrorToast"` 确认 Agent 页自身存在外部选择页入口，Toast 门禁已改为仅依赖 `!isHidden`；按项目规则未运行 Gradle。
+
+## v本轮 H5 支付 payInfo 数字保真
+
+### 变更了什么
+`H5PayInfo.payInfo` → 从 `Any?` 改为 `JsonElement?`，`BrowserViewModel.startPay()` 下单前通过 `payInfoBody()` 取请求体，保留 H5 传入的 JSON 数字原文。
+
+### 为什么
+H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加引号的 `goodsCode`、`resumeCheckId`、`jdCheckId` 会先变成 `Double`，Retrofit 再序列化时可能输出 `9.0001001E7` 一类科学计数法，导致下单参数变形。改用 Gson JSON 树后，数字节点按原始十进制文本写出；历史上若 `payInfo` 传的是 JSON 字符串，也在发送前尝试解析成 JSON。
+
+### 验证结论
+静态检查：`git diff --check` 未发现空白错误；`rg -n "payInfoBody|val payInfo|h5PayAlipay\\(|h5PayWx\\("` 确认请求链路改为使用 `payInfoBody()`。JShell 使用本地 Gson 2.10.1 验证：`Any/Map` 会输出 `9.0001001E7`，`JsonElement/JsonParser` 会输出 `90001001`；按项目规则未运行 Gradle。

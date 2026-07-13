@@ -299,7 +299,9 @@ class App : BaseApp() {
             Oaid.init()
             // 强烈建议在应用对应的Application#onCreate()方法中调用，避免出现content为null的异常
 
-            DataNexusManager.initAfterPrivacyAgreed(this)
+            if(BuildConfig.ENABLE_DATANEXUS){
+                DataNexusManager.initAfterPrivacyAgreed(this)
+            }
             // 友盟正式初始化
             umInitConfig.init(this, AppRouter)
             GrowingAutotracker.get().setDataCollectionEnabled(true)

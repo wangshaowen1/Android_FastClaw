@@ -790,6 +790,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
         mRealVM.streamError.observe(viewLifecycleOwner) { e ->
             e ?: return@observe
+            if (!canShowStreamErrorToast()) {
+                mRealVM.streamError.value = null
+                return@observe
+            }
             showMessage(e.message ?: "对话出错")
             mRealVM.streamError.value = null
         }
@@ -862,6 +866,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
         }
+    }
+
+    private fun canShowStreamErrorToast(): Boolean {
+        return isAdded && !isHidden && view != null
     }
 
     private fun showInterviewRecoverDialog(interviewId: String?) {

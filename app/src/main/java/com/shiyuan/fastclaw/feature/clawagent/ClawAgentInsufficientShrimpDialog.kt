@@ -9,12 +9,13 @@ import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
 import com.shiyuan.fastclaw.databinding.DialogClawAgentInsufficientShrimpBinding
 import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 
 /** 虾条不足底部浮层 */
 class ClawAgentInsufficientShrimpDialog :
-    BaseBottomPushVMDialogFragment<DialogClawAgentInsufficientShrimpBinding, MineViewModel>() {
+    BaseBottomDialogVmFragment<DialogClawAgentInsufficientShrimpBinding, MineViewModel>() {
 
     companion object {
         private const val KEY_REMAINING_COUNT = "remainingCount"

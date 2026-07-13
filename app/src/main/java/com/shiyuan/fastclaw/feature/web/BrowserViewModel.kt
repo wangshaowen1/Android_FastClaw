@@ -55,10 +55,11 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
             else PaymentClient.PaymentMethod.WxPay
             paymentClient.setDataSource { _, _, responseSender ->
                 launchWithLoading(true, {
+                    val payInfoBody = info.payInfoBody()
                     val response = if (isZfb) {
-                        mRepo.h5PayAlipay(info.payInfo)
+                        mRepo.h5PayAlipay(payInfoBody)
                     } else {
-                        mRepo.h5PayWx(info.payInfo)
+                        mRepo.h5PayWx(payInfoBody)
                     }
                     if (response.isSuccess) {
                         data = response.data
