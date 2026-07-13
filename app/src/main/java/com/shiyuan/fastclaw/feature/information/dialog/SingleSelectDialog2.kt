@@ -83,7 +83,7 @@ class SingleSelectDialog2 : BaseBottomDialogFragment<DialogSingSelectStatusList2
         val selectedCode = selectedItem?.code
         val selectedName = selectedItem?.name
         return when {
-            !selectedCode.isNullOrBlank() -> item.code == selectedCode
+        /*    !selectedCode.isNullOrBlank() -> item.code == selectedCode*/
             !selectedName.isNullOrBlank() -> item.name == selectedName
             else -> item.isSelected
         }

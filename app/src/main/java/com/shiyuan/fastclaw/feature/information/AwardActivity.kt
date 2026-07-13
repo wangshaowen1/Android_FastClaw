@@ -18,7 +18,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivityAwardBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.DeleteConfirmDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
 
@@ -160,7 +160,15 @@ class AwardActivity : BaseViewModelActivity<ActivityAwardBinding, InformationVie
         binding.vForm2.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_AWARD_LEVEL)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,"奖励等级",list){  data->
+            SingleSelectDialog2.show(
+                manager = supportFragmentManager,
+                title = "奖励等级",
+                items = list,
+                selectedItem = CommonEnumItem(
+                    code = (item?.fieldValue as? Map<*, *>)?.get("value")?.toString(),
+                    name = item?.displayValue
+                )
+            ) { data ->
                 binding.vForm2.setValueText(data.name)
                 item?.let {
                     item.displayValue =  data.name

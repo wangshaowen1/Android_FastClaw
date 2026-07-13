@@ -17,7 +17,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivitySkillBinding
 import com.shiyuan.fastclaw.feature.information.dialog.DeleteConfirmDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
 
@@ -171,7 +171,15 @@ class SkillActivity : BaseViewModelActivity<ActivitySkillBinding, InformationVie
         binding.vForm2.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_PROFICIENCY)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,"熟练度",list){  data->
+            SingleSelectDialog2.show(
+                manager = supportFragmentManager,
+                title = "熟练度",
+                items = list,
+                selectedItem = CommonEnumItem(
+                    code = (item?.fieldValue as? Map<*, *>)?.get("value")?.toString(),
+                    name = item?.displayValue
+                )
+            ) { data ->
                 // 回填显示文本和字段值
                 binding.vForm2.setValueText(data.name)
                 item?.let {

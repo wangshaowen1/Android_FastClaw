@@ -22,7 +22,7 @@ import com.shiyuan.fastclaw.databinding.ActivityEducationalBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.DeleteConfirmDialog
 import com.shiyuan.fastclaw.feature.information.dialog.EducationDegreePickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -270,7 +270,15 @@ class EducationalActivity : BaseViewModelActivity<ActivityEducationalBinding, In
         binding.vForm6.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_SCHOOL_TYPE)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,"院校性质",list){  data->
+            SingleSelectDialog2.show(
+                manager = supportFragmentManager,
+                title = "院校性质",
+                items = list,
+                selectedItem = CommonEnumItem(
+                    code = (item?.fieldValue as? Map<*, *>)?.get("value")?.toString(),
+                    name = item?.displayValue
+                )
+            ) { data ->
                 binding.vForm6.setValueText(data.name)
                 item?.let {
                     item.displayValue =  data.name

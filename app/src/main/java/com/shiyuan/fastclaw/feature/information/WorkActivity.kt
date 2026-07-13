@@ -23,7 +23,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivityWorkBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.DeleteConfirmDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
 import java.util.Calendar
@@ -231,7 +231,15 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         binding.vForm6.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_COMPANY_SCALE)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,"公司规模",list){  data->
+            SingleSelectDialog2.show(
+                manager = supportFragmentManager,
+                title = "公司规模",
+                items = list,
+                selectedItem = CommonEnumItem(
+                    code = (item?.fieldValue as? Map<*, *>)?.get("value")?.toString(),
+                    name = item?.displayValue
+                )
+            ) { data ->
                 binding.vForm6.setValueText(data.name)
                 item?.let {
                     item.displayValue =  data.name
@@ -246,7 +254,15 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         binding.vForm7.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_COMPANY_TYPE)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,"公司类型",list){  data->
+            SingleSelectDialog2.show(
+                manager = supportFragmentManager,
+                title = "公司类型",
+                items = list,
+                selectedItem = CommonEnumItem(
+                    code = (item?.fieldValue as? Map<*, *>)?.get("value")?.toString(),
+                    name = item?.displayValue
+                )
+            ) { data ->
                 binding.vForm7.setValueText(data.name)
                 item?.let {
                     item.displayValue =  data.name
@@ -257,18 +273,42 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                 }
             }
         }
-        // 团队规模：自由填写
+        // 团队规模：单选
         binding.vForm8.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_TEAM_SIZE)
-            item?.let {
-                PublicFreeFillInActivity.start(this, isEdit, it)
+            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson ?: "[]")
+            SingleSelectDialog2.show(
+                manager = supportFragmentManager,
+                title = "团队规模",
+                items = list,
+                selectedItem = CommonEnumItem(
+                    code = (item?.fieldValue as? Map<*, *>)?.get("value")?.toString(),
+                    name = item?.displayValue
+                )
+            ) { data ->
+                binding.vForm8.setValueText(data.name)
+                item?.let {
+                    item.displayValue = data.name
+                    item.fieldValue = mapOf(
+                        "value" to data.code,
+                        "displayText" to data.name
+                    )
+                }
             }
         }
         // 离职原因：单选
         binding.vForm9.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance,fieldCode = FIELD_LEAVING_REASON)
             val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson?:"[]")
-            SingleSelectDialog.show(this.supportFragmentManager,"离职原因",list){  data->
+            SingleSelectDialog2.show(
+                manager = supportFragmentManager,
+                title = "离职原因",
+                items = list,
+                selectedItem = CommonEnumItem(
+                    code = (item?.fieldValue as? Map<*, *>)?.get("value")?.toString(),
+                    name = item?.displayValue
+                )
+            ) { data ->
                 binding.vForm9.setValueText(data.name)
                 item?.let {
                     item.displayValue =  data.name
