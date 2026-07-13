@@ -11,6 +11,7 @@ import kotlinx.coroutines.CancellationException
 
 class InterviewReportPagingSource(
     private val api: ApiService,
+    private val hiddenReportIds: () -> Set<String> = { emptySet() },
 ) : PagingSource<Int, ReportInfo>() {
 
     override fun getRefreshKey(state: PagingState<Int, ReportInfo>): Int? {
@@ -28,12 +29,13 @@ class InterviewReportPagingSource(
             if (!response.isSuccess) {
                 return LoadResult.Error(response.apiException)
             }
-            val items = response.data?.toInterviewReportInfoList()
+            val pageItems = response.data?.toInterviewReportInfoList()
                 ?: return LoadResult.Error(IOException("data is null"))
+            val items = pageItems.filterNot { it.id in hiddenReportIds() }
             LoadResult.Page(
                 data = items,
                 prevKey = if (page == 1) null else page - 1,
-                nextKey = if (items.size < pageSize) null else page + 1
+                nextKey = if (pageItems.size < pageSize) null else page + 1
             )
         } catch (e: CancellationException) {
             throw e

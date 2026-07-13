@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="49dp"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_ff3535_right_r12"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="@dimen/spacing_l"
+        android:layout_height="@dimen/spacing_l"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_interview_report_delete" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xs"
+        android:text="@string/delete"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+</LinearLayout>

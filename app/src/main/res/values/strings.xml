@@ -680,6 +680,8 @@
     <string name="report_empty_tip">还没有生成报告哦</string>
     <string name="report_empty_tip3">完成企业背调 / 模拟面试后，\n生成的报告将自动保存在此</string>
     <string name="report_empty_tip2">暂未收录任何信息</string>
+    <string name="report_delete_confirm_title">确定删除这份报告吗？</string>
+    <string name="report_delete_confirm_content">报告删除后将无法恢复</string>
     <string name="report_generating_progress">预计还需2分钟，请耐心等待</string>
     <string name="report_failed_no_cost">报告生成失败，本次不消耗虾条</string>
     <string name="report_upload_resume_date">上传简历于 %s</string>
