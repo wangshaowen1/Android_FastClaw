@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentJobPreferencesBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoBinding
 import com.shiyuan.fastclaw.databinding.ItemJobInfoReBinding
+import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobWelfareSelectorActivity
