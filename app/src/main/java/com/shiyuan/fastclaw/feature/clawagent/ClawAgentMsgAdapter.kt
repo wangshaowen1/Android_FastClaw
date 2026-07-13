@@ -79,6 +79,9 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
  */
 class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
+    private val typewriterDisplayedLengthMap = mutableMapOf<String, Int>()
+    private var hasSubmittedNonEmptyList = false
+
     var onUploadClickAction: (itemData: ClawAgentMessageInfo,reUpload: Boolean) -> Unit = { _, _ -> }
 
     /** 补问卡选项点击（B 方案：仅暴露，提交后续统一接 sendAction(QUESTION_OPTION_SUBMIT)） */
@@ -119,9 +122,17 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         // 用户消息（靠右气泡）
         register(TYPE_USER_TEXT, { i, p -> SendViewHolder(ItemMsgUserRightBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // agent 普通文本（靠左气泡）
-        register(TYPE_AGENT_TEXT, { i, p -> AgentViewHolder(ItemMsgAgentLeftBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_AGENT_TEXT, { i, p -> AgentViewHolder(ItemMsgAgentLeftBinding.inflate(i, p, false)) }) { h, item ->
+            h.bind(item, getTypewriterDisplayedLength(item)) { length ->
+                updateTypewriterDisplayedLength(item, length)
+            }
+        }
         // agent 思考中
-        register(TYPE_AGENT_THINK, { i, p -> AgentThinkViewHolder(ItemMsgAgentThinkBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_AGENT_THINK, { i, p -> AgentThinkViewHolder(ItemMsgAgentThinkBinding.inflate(i, p, false)) }) { h, item ->
+            h.bind(item, getTypewriterDisplayedLength(item)) { length ->
+                updateTypewriterDisplayedLength(item, length)
+            }
+        }
         // 欢迎引导卡
         register(TYPE_WELCOME, { i, p -> AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 文本居中卡
@@ -264,6 +275,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
      */
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)
+        if (holder is AgentViewHolder) holder.startTypewriter()
         if (holder is AgentThinkViewHolder) holder.startRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.startRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.startRotate()
@@ -273,6 +285,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
+        if (holder is AgentViewHolder) holder.stopTypewriter()
         if (holder is AgentThinkViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
@@ -282,6 +295,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        if (holder is AgentViewHolder) holder.stopTypewriter()
         if (holder is AgentThinkViewHolder) holder.stopRotate()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
@@ -299,6 +313,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         var newList = list ?: emptyList()
         //测试数据
        // newList = ClawDataTest.getDataList(newList)
+        prepareTypewriterDisplayedLength(newList)
         val result = DiffUtil.calculateDiff(MessageDiffCallback(items, newList))
         items = newList
         result.dispatchUpdatesTo(this)
@@ -307,6 +322,49 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     /**
      * 收敛 [addItemType] 的样板：传入创建与绑定逻辑即可注册一种消息样式。
      */
+    private fun prepareTypewriterDisplayedLength(newList: List<ClawAgentMessageInfo>) {
+        if (newList.isEmpty()) {
+            typewriterDisplayedLengthMap.clear()
+            hasSubmittedNonEmptyList = false
+            return
+        }
+        val hadNonEmptyList = hasSubmittedNonEmptyList
+        val oldContentLengthMap = items.associate { it.id to it.content.orEmpty().length }
+        val newIds = newList.mapTo(mutableSetOf()) { it.id }
+        typewriterDisplayedLengthMap.keys.retainAll(newIds)
+        newList.forEachIndexed { index, item ->
+            if (!item.isTypewriterItem()) return@forEachIndexed
+            val contentLength = item.content.orEmpty().length
+            val oldLength = oldContentLengthMap[item.id]
+            val currentDisplayedLength = typewriterDisplayedLengthMap[item.id]
+            val displayedLength = when {
+                !hadNonEmptyList -> contentLength
+                oldLength == null && (index >= items.size || index == newList.lastIndex) -> currentDisplayedLength ?: 0
+                oldLength == null -> contentLength
+                contentLength > oldLength -> currentDisplayedLength?.coerceAtMost(oldLength) ?: oldLength
+                currentDisplayedLength != null && currentDisplayedLength < contentLength -> currentDisplayedLength
+                else -> contentLength
+            }
+            typewriterDisplayedLengthMap[item.id] = displayedLength.coerceIn(0, contentLength)
+        }
+        hasSubmittedNonEmptyList = true
+    }
+
+    private fun getTypewriterDisplayedLength(item: ClawAgentMessageInfo): Int {
+        if (!item.isTypewriterItem()) return item.content.orEmpty().length
+        val contentLength = item.content.orEmpty().length
+        return (typewriterDisplayedLengthMap[item.id] ?: contentLength).coerceIn(0, contentLength)
+    }
+
+    private fun updateTypewriterDisplayedLength(item: ClawAgentMessageInfo, length: Int) {
+        if (!item.isTypewriterItem()) return
+        val contentLength = item.content.orEmpty().length
+        typewriterDisplayedLengthMap[item.id] = length.coerceIn(0, contentLength)
+    }
+
+    private fun ClawAgentMessageInfo.isTypewriterItem(): Boolean =
+        messageType == TYPE_AGENT_TEXT || messageType == TYPE_AGENT_THINK
+
     private inline fun <VH : RecyclerView.ViewHolder> register(
         itemType: Int,
         crossinline create: (inflater: LayoutInflater, parent: ViewGroup) -> VH,
