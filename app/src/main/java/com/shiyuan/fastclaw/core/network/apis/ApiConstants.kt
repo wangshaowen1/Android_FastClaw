@@ -358,6 +358,11 @@ object ApiConstants {
      */
     const val JOB_AGENT_ONLINE_RESUME_ATTRIBUTE_UPDATE = "/api/candidate/app/jobAgent/onlineResume/attribute/update"
 
+    /**
+     * 查询线上简历单个普通属性
+     */
+    const val JOB_AGENT_ONLINE_RESUME_ATTRIBUTE_QUERY = "/api/candidate/app/jobAgent/onlineResume/attribute/query"
+
 
     /**
      * 查询属性数组候选值（求职 Agent）

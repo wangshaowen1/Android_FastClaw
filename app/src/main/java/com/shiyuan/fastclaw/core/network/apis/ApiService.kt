@@ -51,6 +51,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgres
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportRetryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStreamBody
+import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
@@ -103,6 +104,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewForceCancelD
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportProgressData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
+import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
@@ -635,6 +637,12 @@ interface ApiService {
      */
     @POST(ApiConstants.JOB_AGENT_ONLINE_RESUME_ATTRIBUTE_UPDATE)
     suspend fun updateOnlineResumeAttribute(@Body body: OnlineResumeAttributeUpdateBody): ApiResponse<Any?>
+
+    /**
+     * 查询线上简历单个普通属性
+     */
+    @POST(ApiConstants.JOB_AGENT_ONLINE_RESUME_ATTRIBUTE_QUERY)
+    suspend fun queryOnlineResumeAttribute(@Body body: OnlineResumeAttributeQueryBody): ApiResponse<OnlineResumeAttributeData?>
 
 
 
