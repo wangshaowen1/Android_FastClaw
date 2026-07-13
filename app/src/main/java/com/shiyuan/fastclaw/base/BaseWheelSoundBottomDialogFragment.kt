@@ -23,7 +23,8 @@ abstract class BaseWheelSoundBottomDialogFragment<V : ViewBinding> : BaseBottomD
     protected open val wheelSoundIntervalMs: Long = 20L
     protected open val wheelSoundVolume: Float = 0.5f
     protected open val wheelHapticEnabled: Boolean = true
-    protected open val wheelVibrateFallbackMs: Long = 8L
+    protected open val wheelVibrateMs: Long = 12L
+    protected open val wheelVibrateAmplitude: Int = 90
 
     private var wheelSoundPool: SoundPool? = null
     private var wheelSoundId = 0
@@ -80,26 +81,36 @@ abstract class BaseWheelSoundBottomDialogFragment<V : ViewBinding> : BaseBottomD
             HapticFeedbackConstants.CLOCK_TICK,
             HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
         )
-        if (performed) {
-            return
+        if (!performed || shouldForceWheelVibrator()) {
+            vibrateWheelTick()
         }
-        val vibrator = getWheelVibrator() ?: return
+    }
+
+    private fun shouldForceWheelVibrator(): Boolean {
+        val deviceName = "${Build.MANUFACTURER} ${Build.BRAND}".lowercase()
+        return deviceName.contains("oppo") ||
+                deviceName.contains("realme") ||
+                deviceName.contains("oneplus")
+    }
+
+    private fun vibrateWheelTick(): Boolean {
+        val vibrator = getWheelVibrator() ?: return false
         if (!vibrator.hasVibrator()) {
-            return
+            return false
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK))
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(
-                VibrationEffect.createOneShot(
-                    wheelVibrateFallbackMs,
-                    VibrationEffect.DEFAULT_AMPLITUDE
+        return runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        wheelVibrateMs,
+                        wheelVibrateAmplitude.coerceIn(1, 255)
+                    )
                 )
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(wheelVibrateFallbackMs)
-        }
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(wheelVibrateMs)
+            }
+        }.isSuccess
     }
 
     private fun getWheelVibrator(): Vibrator? {
