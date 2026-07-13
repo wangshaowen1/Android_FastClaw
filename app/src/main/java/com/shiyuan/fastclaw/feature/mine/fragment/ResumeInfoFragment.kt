@@ -85,14 +85,17 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         private const val FIELD_PROJECT_ROLE = "projectRole"
 
         private const val FIELD_PROFICIENCY = "proficiency"
+        private const val COLLAPSED_ITEM_COUNT = 3
     }
+
+    private val expandedGroupCodes = mutableSetOf<String>()
 
     private val resumeInfoAdapter by lazy {
         SingleBindingAdapter<ItemResumeInfoBinding, AttributeArrayQueryData>(
             R.layout.item_resume_info,
             emptyList(),
-            onBind = { itemBinding, _, item ->
-                bindResumeInfoItem(itemBinding, item)
+            onBind = { itemBinding, position, item ->
+                bindResumeInfoItem(itemBinding, position, item)
             }
         )
     }
@@ -181,6 +184,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
     }
 
     private fun updateResumeInfo(data: List<AttributeArrayQueryData>) {
+        expandedGroupCodes.clear()
         val showEmpty = data.isEmpty()
         binding.viewUnderstands.root.visibility = if (showEmpty) View.VISIBLE else View.GONE
         binding.ll.visibility = if (showEmpty) View.GONE else View.VISIBLE
@@ -189,6 +193,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
 
     private fun bindResumeInfoItem(
         itemBinding: ItemResumeInfoBinding,
+        position: Int,
         item: AttributeArrayQueryData
     ) {
         itemBinding.tvTitle.text = item.displayTitle()
@@ -209,8 +214,11 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         val hidePlaceholderList = item.fieldTree?.singleOrNull()?.instanceIndex?.let { it == -1L } ?: (item.fieldTree?.size == 1)
         if (hidePlaceholderList) {
             itemBinding.rcFieldTree.visibility = View.GONE
+            //隐藏展开收起
+            itemBinding.layoutExpand.visibility = View.GONE
+            itemBinding.layoutExpand.setOnClickListener(null)
         } else {
-            bindFieldTreeList(itemBinding, item)
+            bindFieldTreeList(itemBinding, position, item)
         }
     }
 
@@ -357,13 +365,25 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
 
     private fun bindFieldTreeList(
         itemBinding: ItemResumeInfoBinding,
+        position: Int,
         attributeData: AttributeArrayQueryData
     ) {
         val fieldTree = attributeData.fieldTree
-        val adapter = createFieldTreeAdapter(attributeData)
+        //技能 证书和奖项 判断是显示展示隐藏
+        val canExpand = attributeData.isCollapsibleGroup() && fieldTree.orEmpty().size > COLLAPSED_ITEM_COUNT
+        val groupCode = attributeData.attributeGroupCode.orEmpty()
+        val isExpanded = canExpand && groupCode in expandedGroupCodes
+        val displayFieldTree = if (canExpand && !isExpanded) {
+            fieldTree.orEmpty().take(COLLAPSED_ITEM_COUNT)
+        } else {
+            fieldTree.orEmpty()
+        }
+        val adapter = createFieldTreeAdapter(attributeData, displayFieldTree)
         if (fieldTree.isNullOrEmpty() || adapter == null) {
             itemBinding.rcFieldTree.visibility = View.GONE
             itemBinding.rcFieldTree.adapter = null
+            itemBinding.layoutExpand.visibility = View.GONE
+            itemBinding.layoutExpand.setOnClickListener(null)
             return
         }
         itemBinding.rcFieldTree.visibility = View.VISIBLE
@@ -374,12 +394,30 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             itemBinding.rcFieldTree.addItemDecoration(SpaceDecoration(12.dp))
         }
         itemBinding.rcFieldTree.adapter = adapter
+
+        itemBinding.layoutExpand.visibility = if (canExpand) View.VISIBLE else View.GONE
+        if (canExpand) {
+            itemBinding.tvExpand.text = getString(
+                if (isExpanded) R.string.collapse_all else R.string.expand_all
+            )
+            itemBinding.ivExpand.rotation = if (isExpanded) 0f else 180f
+            itemBinding.layoutExpand.setOnSingleClickListener {
+                if (isExpanded) {
+                    expandedGroupCodes.remove(groupCode)
+                } else {
+                    expandedGroupCodes.add(groupCode)
+                }
+                resumeInfoAdapter.notifyItemChanged(position)
+            }
+        } else {
+            itemBinding.layoutExpand.setOnClickListener(null)
+        }
     }
 
     private fun createFieldTreeAdapter(
-        attributeData: AttributeArrayQueryData
+        attributeData: AttributeArrayQueryData,
+        fieldTree: List<AttributeFieldTree>
     ): RecyclerView.Adapter<*>? {
-        val fieldTree = attributeData.fieldTree.orEmpty()
         return when {
             attributeData.isWorkExperience() -> createWorkExperienceAdapter(attributeData, fieldTree)
             attributeData.isProjectExperience() -> createProjectExperienceAdapter(attributeData, fieldTree)
@@ -627,5 +665,8 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
 
     private fun AttributeArrayQueryData.isCertificate(): Boolean =
         attributeGroupCode == GROUP_CERTIFICATES || attributeGroupCode == GROUP_CERTIFICATE
+
+    private fun AttributeArrayQueryData.isCollapsibleGroup(): Boolean =
+        isSkill() || isAward() || isCertificate()
 
 }
