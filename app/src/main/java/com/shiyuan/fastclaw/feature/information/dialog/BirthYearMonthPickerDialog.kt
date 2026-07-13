@@ -5,10 +5,9 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.flqy.datepicker.NumberPicker
-import com.nhsd.basic.BaseBottomPushDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseWheelSoundBottomDialogFragment
 import com.shiyuan.fastclaw.databinding.DialogBirthYearMonthPickerBinding
 import java.util.Calendar
 
@@ -16,7 +15,7 @@ import java.util.Calendar
  * 年月选择底部弹窗。
  * 适用于出生年月、获奖时间等场景。月份以两位字符串（"01"-"12"）回传。
  */
-class BirthYearMonthPickerDialog : BaseBottomDialogFragment<DialogBirthYearMonthPickerBinding>() {
+class BirthYearMonthPickerDialog : BaseWheelSoundBottomDialogFragment<DialogBirthYearMonthPickerBinding>() {
 
     companion object {
         // NumberPicker 选中/未选中文字大小（sp）
