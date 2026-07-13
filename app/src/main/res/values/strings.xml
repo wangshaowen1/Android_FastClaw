@@ -962,7 +962,8 @@
     <string name="gpa_score">GPA 成绩</string>
     <string name="school_ranking_honor">在校排名/荣誉</string>
     <string name="main_courses">主修课程</string>
-    <string name="education_supplement_desc">教育补充描述</string>
+    <string name="education_supplement_desc">在校经历</string>
+    <string name="work_experience_is_internship">本段经历是实习经历</string>
 
     <!-- 工作经历 -->
     <string name="edit_working">编辑工作经历</string>

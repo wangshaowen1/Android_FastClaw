@@ -153,6 +153,8 @@ class WorkExperienceDialog :
             } else {
                 binding.tvDesc.visibility = View.VISIBLE
             }
+            binding.rlTag.visibility  = if (item.internship == true) View.VISIBLE else View.GONE
+
             // 点击进入编辑页
             binding.root.setOnClickListener {
                 attributeData?.let { attr ->

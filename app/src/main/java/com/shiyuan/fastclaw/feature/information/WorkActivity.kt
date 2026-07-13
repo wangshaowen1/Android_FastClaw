@@ -217,6 +217,12 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                 PublicDescriptionActivity.start(this, isEdit, item,getString(R.string.job_responsibilities))
             }
         }
+        updateInternshipSwitch()
+        binding.switchInternship.setOnSingleClickListener {
+            val currentTree = attributeData?.fieldTree?.getOrNull(position) ?: return@setOnSingleClickListener
+            currentTree.internship = currentTree.internship != true
+            updateInternshipSwitch()
+        }
         // 行业：跳到行业选择页
         binding.vForm5.setOnSingleClickListener {
             IndustrySelectionActivity.start(this, false)
@@ -445,6 +451,14 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         leavingReasonItem?.let {
             binding.vForm9.setValueText(it.displayValue)
         }
+    }
+
+    private fun updateInternshipSwitch() {
+        val checked = attributeData?.fieldTree?.getOrNull(position)?.internship == true
+        binding.switchInternship.isSelected = checked
+        binding.switchInternship.setImageResource(
+            if (checked) R.drawable.internship_true else R.drawable.internship_false
+        )
     }
 
     private fun observeEvents() {
