@@ -83,13 +83,13 @@
 
 
         <View
-            app:layout_constraintLeft_toRightOf="@id/tv_agent_desc"
-            app:layout_constraintBottom_toBottomOf="@id/tv_agent_desc"
-            app:layout_constraintTop_toTopOf="@id/tv_agent_desc"
             android:id="@+id/tv_agent_index"
             android:layout_width="12dp"
             android:layout_height="12dp"
-            android:background="@drawable/ic_arrow_right_gray_12"/>
+            android:background="@drawable/ic_arrow_right_gray_12"
+            app:layout_constraintBottom_toBottomOf="@id/tv_agent_desc"
+            app:layout_constraintLeft_toRightOf="@id/tv_agent_desc"
+            app:layout_constraintTop_toTopOf="@id/tv_agent_desc" />
 
         <ImageView
             android:id="@+id/iv_agent_memory"
@@ -135,20 +135,20 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            app:layout_constraintStart_toStartOf="parent">
 
             <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-                singleClick="@{layout.clickHandler::onClick}"
                 android:id="@+id/layout_back_check"
+                singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="97dp"
                 android:layout_height="34dp"
                 android:layout_marginStart="16dp"
-                android:gravity="center"
                 android:layout_marginBottom="12dp"
+                android:gravity="center"
                 app:background_normalColor="@color/color_ffffff"
                 app:layout_constraintBottom_toTopOf="@id/layout_send"
                 app:layout_constraintStart_toStartOf="parent"
@@ -172,13 +172,13 @@
             </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
 
             <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-                singleClick="@{layout.clickHandler::onClick}"
                 android:id="@+id/layout_interview"
+                singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="97dp"
                 android:layout_height="34dp"
                 android:layout_marginStart="8dp"
-                android:gravity="center"
                 android:layout_marginBottom="12dp"
+                android:gravity="center"
                 app:background_normalColor="@color/color_ffffff"
                 app:layout_constraintBottom_toTopOf="@id/layout_send"
                 app:layout_constraintStart_toEndOf="@id/layout_back_check"
@@ -202,13 +202,13 @@
             </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
 
             <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-                singleClick="@{layout.clickHandler::onClick}"
                 android:id="@+id/layout_pass"
+                singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="110dp"
                 android:layout_height="34dp"
                 android:layout_marginStart="8dp"
-                android:gravity="center"
                 android:layout_marginBottom="12dp"
+                android:gravity="center"
                 app:background_normalColor="@color/color_ffffff"
                 app:layout_constraintBottom_toTopOf="@id/layout_send"
                 app:layout_constraintStart_toEndOf="@id/layout_interview"
