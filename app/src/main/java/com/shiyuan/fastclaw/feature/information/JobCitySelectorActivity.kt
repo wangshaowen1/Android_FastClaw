@@ -74,6 +74,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     private var selectedAlphabet: String? = null
     // 入口场景编码，区分现居住城市与意向城市
     private val mType by lazy { intent.getBundleValue("sceneCode", "") }
+    private val isLocationScene by lazy { mType == JobCityQueryBody.LOCATION }
     // 城市列表接口请求体，固定当前场景
     private val mCityParams by lazy { JobCityQueryBody(sceneCode = mType) }
     // 接口返回的城市数据缓存
@@ -126,6 +127,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
             binding.tvSubtitle.text = getString(R.string.city_selector_now_city)
             maxSelectCount = 1
         }
+        binding.layoutBottom.visibility = if (isLocationScene) View.GONE else View.VISIBLE
+        binding.tvCount.visibility = if (isLocationScene) View.GONE else View.VISIBLE
+        binding.tvMax.visibility = if (isLocationScene) View.GONE else View.VISIBLE
         // 顶部关闭按钮
         binding.ivClose.setOnSingleClickListener { finish() }
         // 搜索框右侧清空图标
@@ -137,13 +141,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
             if (selectedLocations.isEmpty()) {
                 showToast(R.string.city_selector_at_least)
             } else {
-                val msgGson = JobCityData.toJson(mType, selectedLocations)
-                if (mType == JobCityQueryBody.EXPECTED_CITY) {
-                    FlowEventBus.postSync(Events.ClawAgentEvent(msgGson,AppEvent.KLX_C_EXPECTED_CITY_COMPLETED))
-                } else {
-                    FlowEventBus.postSync(Events.ClawAgentEvent(msgGson,AppEvent.KLX_C_EXPECTED_CURRENTLY_CITY_COMPLETED))
-                }
-                finish()
+                submitSelection()
             }
         }
         // 监听软键盘搜索按钮触发
@@ -450,6 +448,12 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     private fun toggleLocation(item: CityLocation) {
         val code = item.regionCode
         if (code.isNullOrBlank()) return
+        if (isLocationScene) {
+            selectedLocations.clear()
+            selectedLocations[code] = item
+            submitSelection()
+            return
+        }
         if (selectedLocations.containsKey(code)) {
             // 已选 → 取消
             selectedLocations.remove(code)
@@ -468,6 +472,18 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
             searchAdapter.notifyDataSetChanged()
         }
         refreshSelectedState()
+    }
+
+    private fun submitSelection() {
+        val msgGson = JobCityData.toJson(mType, selectedLocations)
+        if (mType == JobCityQueryBody.EXPECTED_CITY) {
+            FlowEventBus.postSync(Events.ClawAgentEvent(msgGson, AppEvent.KLX_C_EXPECTED_CITY_COMPLETED))
+        } else {
+            FlowEventBus.postSync(
+                Events.ClawAgentEvent(msgGson, AppEvent.KLX_C_EXPECTED_CURRENTLY_CITY_COMPLETED)
+            )
+        }
+        finish()
     }
 
     /**
