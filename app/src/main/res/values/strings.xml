@@ -367,6 +367,8 @@
     <string name="report_details_required_10_plus">请输入10个字以上的举报描述（必填）</string>
     <string name="collapse">收起</string>
     <string name="expand">展开</string>
+    <string name="collapse_all">收起全部</string>
+    <string name="expand_all">展开全部</string>
     <string name="input_original_story_content">请输入您的原著内容，「快龙虾」将严格基于你提供的章节内容生成漫剧，不会新增剧情</string>
     <string name="login_for_more_highlights">登录后更精彩</string>
     <string name="bind_phone_number">绑定手机号</string>
@@ -680,6 +682,8 @@
     <string name="report_empty_tip">还没有生成报告哦</string>
     <string name="report_empty_tip3">完成企业背调 / 模拟面试后，\n生成的报告将自动保存在此</string>
     <string name="report_empty_tip2">暂未收录任何信息</string>
+    <string name="report_delete_confirm_title">确定删除这份报告吗？</string>
+    <string name="report_delete_confirm_content">报告删除后将无法恢复</string>
     <string name="report_generating_progress">预计还需2分钟，请耐心等待</string>
     <string name="report_failed_no_cost">报告生成失败，本次不消耗虾条</string>
     <string name="report_upload_resume_date">上传简历于 %s</string>

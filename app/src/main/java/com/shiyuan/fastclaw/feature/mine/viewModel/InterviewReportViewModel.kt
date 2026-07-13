@@ -34,6 +34,11 @@ class InterviewReportViewModel : AppRepositoryViewModel<AppRepository>() {
         .flowOn(Dispatchers.Default)
         .cachedIn(viewModelScope)
 
+    fun hideReport(reportId: String) {
+        if (reportId.isBlank()) return
+       // hiddenReportIds = hiddenReportIds + reportId
+    }
+
     companion object {
         fun buildLayoutManager(context: Context?) = LinearLayoutManager(context).apply {
             isAutoMeasureEnabled = false

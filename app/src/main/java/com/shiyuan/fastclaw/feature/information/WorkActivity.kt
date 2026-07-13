@@ -273,27 +273,11 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
                 }
             }
         }
-        // 团队规模：单选
+        // 团队规模
         binding.vForm8.setOnSingleClickListener {
             val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_TEAM_SIZE)
-            val list = Json.decodeFromString<List<CommonEnumItem>>(item?.questionOptionsJson ?: "[]")
-            SingleSelectDialog2.show(
-                manager = supportFragmentManager,
-                title = "团队规模",
-                items = list,
-                selectedItem = CommonEnumItem(
-                    code = (item?.fieldValue as? Map<*, *>)?.get("value")?.toString(),
-                    name = item?.displayValue
-                )
-            ) { data ->
-                binding.vForm8.setValueText(data.name)
-                item?.let {
-                    item.displayValue = data.name
-                    item.fieldValue = mapOf(
-                        "value" to data.code,
-                        "displayText" to data.name
-                    )
-                }
+            item?.let {
+                PublicFreeFillInActivity.start(this, isEdit, it)
             }
         }
         // 离职原因：单选
