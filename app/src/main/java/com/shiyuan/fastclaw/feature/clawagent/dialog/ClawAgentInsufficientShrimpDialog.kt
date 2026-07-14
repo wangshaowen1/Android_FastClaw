@@ -1,12 +1,10 @@
-package com.shiyuan.fastclaw.feature.clawagent
+package com.shiyuan.fastclaw.feature.clawagent.dialog
 
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
 import androidx.fragment.app.FragmentManager
-import com.nhsd.basic.BaseBottomPushDialogFragment
-import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment

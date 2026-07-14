@@ -53,13 +53,15 @@ import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ATTRIBUTE_GROUP_JOB_STATUS
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_MODEL_FAILED
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_NOT_COMPANY
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_POINTS_INSUFFICIENT
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.QUICK_ENTRY
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
-import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentStatusPopup
+import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentInsufficientShrimpDialog
+import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentStatusDialog
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
@@ -75,7 +77,6 @@ import com.shiyuan.fastclaw.feature.interview.dialog.InterviewRecoverDialog
 import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
 import com.shiyuan.fastclaw.feature.mine.MineShrimpRechargeActivity
 import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
-import com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -90,6 +91,30 @@ import java.util.UUID
  */
 
 class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
+
+    private val msgAdapter by lazy { ClawAgentMsgAdapter() }
+
+    /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
+    private var forceScrollToBottom = false
+
+    private var hasObservedNonEmptyMessageList = false
+
+    /** IME 动画进行中flag */
+    private var hasRunningImeAnimation = false
+
+    private var mCurrentMessage: ClawAgentMessageInfo? = null
+
+    private var mCurrentAction: CardAction? = null
+
+    private var mCurrentQuestionId: String? = null
+
+    private var resumeEventPullJob: Job? = null
+
+    private var isVoiceInputMode = false
+
+    private var agentStatusPopup: ClawAgentStatusDialog? = null
+
+    private var mJobStatusSelected: String? = null
 
     companion object {
         const val TAG = "ClawAgentMainFragment"
@@ -126,28 +151,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             return fragment
         }
     }
-
-    private val msgAdapter by lazy { ClawAgentMsgAdapter() }
-
-    /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
-    private var forceScrollToBottom = false
-
-    private var hasObservedNonEmptyMessageList = false
-
-    /** IME 动画进行中flag */
-    private var hasRunningImeAnimation = false
-
-    private var mCurrentMessage: ClawAgentMessageInfo? = null
-
-    private var mCurrentAction: CardAction? = null
-
-    private var mCurrentQuestionId: String? = null
-
-    private var resumeEventPullJob: Job? = null
-
-    private var isVoiceInputMode = false
-
-    private var agentStatusPopup: ClawAgentStatusPopup? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -248,10 +251,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.rvMsg.adapter = msgAdapter
 
         binding.tvAgentDesc.setOnSingleClickListener {
-            showAgentStatusPopup()
+            showAgentStatusDialog()
         }
         binding.tvAgentIndex.setOnSingleClickListener {
-            showAgentStatusPopup()
+            showAgentStatusDialog()
         }
 
         msgAdapter.onUploadClickAction = { data,reUpload ->
@@ -403,11 +406,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     )
                 )
                 if (payload?.isJobStatus() ?: false) {// 求职状态
-                    binding.tvAgentDesc.text = option.text
-                    val options = mRealVM.sessionData.value?.jobSearchStatus?.options.orEmpty()
+                    mJobStatusSelected = option.text
+                    mRealVM.queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
+                    /*binding.tvAgentDesc.text = option.text
+                    val options = mRealVM.jobStatusResult.value?.options.orEmpty()
                     options.forEach { item ->
                         item.selected = item.statusCode == option.code
-                    }
+                    }*/
                 }
                 onTrackingEvent(payload  = payload)
             }
@@ -838,23 +843,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 showInsufficientShrimpDialog()
             }
         }
-        // 监听会话返回的求职状态，已选中时同步顶部状态展示
-        mRealVM.sessionData.observe(this){
-            it?.jobSearchStatus?.let { data ->
-                if(data?.selected ?: false){
-                   // 从 options 中取当前选中的状态项，用于展示文案和颜色
-                   val  jobSearchStatusOption = data.options?.find { it.selected == true }
-                    binding.tvAgentDesc.text = jobSearchStatusOption?.statusText
-                    // setShapeSolidColor 只更新配置，需要 setUseShape 重新应用背景
-                    when(jobSearchStatusOption?.statusCode){
-                        "NOT_LOOKING" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff383c)).setUseShape()
-                        "AVAILABLE_IMMEDIATELY","AVAILABLE_WITHIN_MONTH","OPEN_TO_OPPORTUNITY" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_15D173)).setUseShape()
-                        else ->  binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff8D28)).setUseShape()
-                    }
-                }
-            }?:run {
-                binding.tvAgentDesc.text = requireActivity().getString(R.string.str_agent_desc2)
-                binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff8D28)).setUseShape()
+        // 监听求职状态属性，使用线上简历属性接口结果同步顶部状态展示
+        mRealVM.jobStatusResult.observe(this) { data ->
+            if (data?.displayValue.isNullOrBlank()) data?.displayValue = mJobStatusSelected
+            val statusCode = data?.options.orEmpty().firstOrNull { it.name == data?.displayValue }?.code
+            binding.tvAgentDesc.text = data?.displayValue
+                ?.takeIf { it.isNotBlank() }
+                ?: requireActivity().getString(R.string.str_agent_desc2)
+            when (statusCode) {
+                "NOT_LOOKING" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff383c)).setUseShape()
+                "AVAILABLE_IMMEDIATELY", "AVAILABLE_WITHIN_MONTH", "OPEN_TO_OPPORTUNITY" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_15D173)).setUseShape()
+                else -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff8D28)).setUseShape()
             }
         }
         //面试通关包
@@ -1091,24 +1090,19 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     }
 
     /**
-     * 展示顶部求职状态弹窗：使用 enterSession 返回的 options 渲染列表，
-     * 选中后调用更新状态接口，并在成功回调里同步顶部状态展示。
+     * 展示顶部求职状态弹窗：使用线上简历属性接口返回的 options 渲染列表，
+     * displayValue 与 option.name 相等时为选中项。
      */
-    private fun showAgentStatusPopup() {
-        agentStatusPopup?.takeIf { it.isShow() }?.let {
-            it.dismiss()
-            return
-        }
-        val agentIndexView = binding.tvAgentIndex
-        agentIndexView.setBackgroundResource(R.drawable.ic_arrow_down_gray_12)
-        val options = mRealVM.sessionData.value?.jobSearchStatus?.options.orEmpty()
-        agentStatusPopup = ClawAgentStatusPopup(requireContext(), options).apply {
+    private fun showAgentStatusDialog() {
+        agentStatusPopup?.dismiss()
+        val attributeData = mRealVM.jobStatusResult.value ?: return
+        binding.tvAgentIndex.setBackgroundResource(R.drawable.ic_arrow_down_gray_12)
+        agentStatusPopup = ClawAgentStatusDialog(requireContext(), attributeData).apply {
             onDismissListener = {
-                agentStatusPopup = null
-                agentIndexView.setBackgroundResource(R.drawable.ic_arrow_right_gray_12)
+                binding.tvAgentIndex.setBackgroundResource(R.drawable.ic_arrow_right_gray_12)
             }
             onItemClickListener = { item ->
-                mRealVM.updateJobStatus(item.statusCode)
+                mRealVM.updateJobStatus(item.code)
             }
         }.showDialog(binding.tvAgentDesc)
     }

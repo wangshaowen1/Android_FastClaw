@@ -3,24 +3,19 @@ package com.shiyuan.fastclaw.feature.clawagent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
-import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.PollingState
 import com.shiyuan.fastclaw.core.ext.launchPolling
-import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
-import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.ActionSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeArrayQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundCompanySearchQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundGenerateResultQueryBody
-import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckResultQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundRegenerateSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
@@ -37,6 +32,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewForceCancelBo
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportProgressBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewReportRetryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
+import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
@@ -60,6 +56,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewForceCancelD
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
+import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
@@ -67,7 +64,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.ClawAgentSseProcessor
-import com.shiyuan.fastclaw.core.response
 import kotlinx.coroutines.Job
 import java.util.UUID
 
@@ -124,6 +120,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 查询属性数组候选值结果（工作经历/教育经历等表单数据） */
     val attributeArrayResult = MutableLiveData<AttributeArrayQueryData?>()
+
+    /** 查询线上简历单个普通属性结果 */
+    val jobStatusResult = MutableLiveData<OnlineResumeAttributeData?>()
 
     val interviewStartResult = MutableLiveData<MockInterviewStartData?>()
 
@@ -248,6 +247,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             conversationId = result.conversationId
             latestCursor = result.latestCursor
             sessionData.value = result
+            queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
 
             hasCanRefresh.value = result.sessionId.isNullOrBlank() || result.conversationId.isNullOrBlank()
             // 恢复的最近消息为终态数据，过滤掉残留的思考态(think)中间态消息；并在 UPLOAD_RESUME 卡前补自我介绍卡
@@ -1026,6 +1026,22 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * 查询求职状态属性
+     * @param attributeGroupCode 属性组编码
+     */
+    fun queryJobStatus(attributeGroupCode: String?) {
+        request(
+            apiBlock = {
+                mRepo.api.queryOnlineResumeAttribute(
+                    OnlineResumeAttributeQueryBody(attributeGroupCode = attributeGroupCode)
+                )
+            }
+        ) {
+            jobStatusResult.value = data
+        }
+    }
+
+    /**
      * 更新顶部求职状态
      */
     fun updateJobStatus(statusCode: String?) {
@@ -1048,9 +1064,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             },
             showToast = true,
         ) {
-            val result = this.data ?: return@request
-            sessionData.value = sessionData.value?.copy(jobSearchStatus = result)
-            //onResult(result)
+            //val result = this.data ?: return@request
+            //sessionData.value = sessionData.value?.copy(jobSearchStatus = result)
+            val jobStatusData = jobStatusResult.value
+            val selectedOption = jobStatusData?.options.orEmpty().firstOrNull { it.code == statusCode }
+            jobStatusResult.value = jobStatusData?.copy(displayValue = selectedOption?.name ?: jobStatusData.displayValue,)
         }
     }
 
@@ -1282,11 +1300,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
      * @param attributeGroupCode 属性组编码
      * @param onResult 查询结果回调
      */
-    fun queryAttributeArray(
-        questionQueueId: String?,
-        attributeGroupCode: String?,
-        onResult: (AttributeArrayQueryData?) -> Unit
-    ) {
+    fun queryAttributeArray(questionQueueId: String?, attributeGroupCode: String?, onResult: (AttributeArrayQueryData?) -> Unit) {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
@@ -1456,6 +1470,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
         /** APP点击快捷入口后推送 */
         const val QUICK_ENTRY = "QUICK_ENTRY"
+        const val ATTRIBUTE_GROUP_JOB_STATUS = "jobStatus"
         /** 小虾对话里理解度升级后推送 */
         const val RESUME_UNDERSTANDING_UPGRADE = "RESUME_UNDERSTANDING_UPGRADE"
 

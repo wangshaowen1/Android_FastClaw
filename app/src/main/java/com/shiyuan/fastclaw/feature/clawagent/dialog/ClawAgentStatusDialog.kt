@@ -12,25 +12,27 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
-import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatusOption
+import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
+import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeOption
 import com.shiyuan.fastclaw.databinding.ItemPopupClawAgentStatusBinding
 import com.shiyuan.fastclaw.databinding.PopupClawAgentStatusBinding
 
-class ClawAgentStatusPopup(
-    context: Context,
-    private val options: List<JobSearchStatusOption> = emptyList()
-) : AttachPopupView(context) {
+class ClawAgentStatusDialog(context: Context, private val attributeData: OnlineResumeAttributeData) : AttachPopupView(context) {
 
     private lateinit var mBinding: PopupClawAgentStatusBinding
     var onDismissListener: (() -> Unit)? = null
-    var onItemClickListener: ((JobSearchStatusOption) -> Unit)? = null
-    private val statusAdapter: SingleBindingAdapter<ItemPopupClawAgentStatusBinding, JobSearchStatusOption> by lazy {
+    var onItemClickListener: ((OnlineResumeAttributeOption) -> Unit)? = null
+    private val statusAdapter: SingleBindingAdapter<ItemPopupClawAgentStatusBinding, OnlineResumeAttributeOption> by lazy {
         SingleBindingAdapter(
             R.layout.item_popup_claw_agent_status,
             emptyList()
         ) { binding, position, item ->
-            binding.tvStatus.text = item.statusText.orEmpty()
-            binding.ivSelected.visibility = if (item.selected == true) View.VISIBLE else View.GONE
+            binding.tvStatus.text = item.name.orEmpty()
+            binding.ivSelected.visibility = if (attributeData.displayValue == item.name) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
             binding.vDivider.visibility = if (position == statusAdapter.itemCount - 1) {
                 View.INVISIBLE
             } else {
@@ -53,11 +55,12 @@ class ClawAgentStatusPopup(
         mBinding = PopupClawAgentStatusBinding.bind(popupImplView)
         mBinding.rvStatus.layoutManager = LinearLayoutManager(context)
         mBinding.rvStatus.adapter = statusAdapter
-        statusAdapter.submitList(options.sortedBy { it.sortOrder ?: Int.MAX_VALUE })
+        statusAdapter.submitList(attributeData.options.orEmpty().sortedBy { it.sortOrder ?: Long.MAX_VALUE })
     }
 
-    fun showDialog(anchorView: View): ClawAgentStatusPopup {
+    fun showDialog(anchorView: View): ClawAgentStatusDialog {
         XPopup.Builder(context)
+            .isViewMode(true)
             .atView(anchorView)
             .popupPosition(PopupPosition.Bottom)
             .popupWidth(151.dp)
