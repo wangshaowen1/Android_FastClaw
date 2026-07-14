@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.mine
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
@@ -28,7 +29,7 @@ class OnlineResumeActivity :
 
     companion object {
         private const val EXTRA_SELECTED_INDEX = "extra_selected_index"
-        fun start(activity: Activity?, selectedIndex: Int = 0) {
+        fun start(activity: Context?, selectedIndex: Int = 0) {
             activity ?: return
             val intent = Intent(activity, OnlineResumeActivity::class.java).apply {
                 putExtra(EXTRA_SELECTED_INDEX, selectedIndex.coerceIn(0, 1))

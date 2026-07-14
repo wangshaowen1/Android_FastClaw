@@ -11,6 +11,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.UnderstandingSummaryPaylo
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUnderstandingUpgradeBinding
 import com.shiyuan.fastclaw.databinding.ItemUnderstandingRowBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 
 /** agent理解度升级卡（UNDERSTANDING_SUMMARY 理解度摘要卡）
  * @createtime 2026年05月25日 15:05
@@ -34,7 +35,7 @@ class AgentUnderstandingUpgradeViewHolder(private val binding: ItemMsgAgentUnder
         // 标题：我与你对齐度达到 85%！
         binding.tvAlignTitle.text = context.getString(R.string.str_agent_understanding_align_title, "$score%")
         binding.tvDetailEdit.setOnSingleClickListener {
-
+            OnlineResumeActivity.start(context,0)
         }
         // 摘要主文案非空时覆盖副标题，否则保留布局默认文案
 //        payload?.summary?.text?.takeIf { it.isNotBlank() }?.let { binding.tvAlignSubtitle.text = it }
