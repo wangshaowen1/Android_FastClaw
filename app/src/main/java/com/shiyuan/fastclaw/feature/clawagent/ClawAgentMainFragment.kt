@@ -38,13 +38,11 @@ import com.shiyuan.fastclaw.common.ext.invisible
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
-import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AppEvent
-import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
@@ -117,8 +115,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
     private var mJobStatusSelected: String? = null
 
-    private var mShowKeyBoard: Boolean = false
-
     companion object {
         const val TAG = "ClawAgentMainFragment"
         /** 记忆卡片等待时长 */
@@ -126,25 +122,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         /** 距顶部多少条时开始预取更早历史 */
         private const val PREFETCH_THRESHOLD = 5
-        private const val MESSAGE_SCROLL_DELAY = 100L
-        private const val MESSAGE_SCROLL_SPEED = 0.08f
         private const val RESUME_EVENT_POLL_INTERVAL = 10000L
         private const val RESUME_EVENT_POLL_TIMEOUT = 60000L
-
-        /**
-         * 业务侧追踪类型：onTrackingEvent 内部根据该值统一调用 EventManager.onAppTrack，
-         * 避免埋点 code 散落在各处回调中
-         */
-        internal enum class TrackingType {
-            /** 首次点击上传附件简历 */
-            UPLOAD_RESUME,
-            /** 简历解析失败后点击重新上传 */
-            UPLOAD_RESUME_RETRY,
-            /** 确认绑定历史简历 */
-            RESUME_CONFIRM,
-            /** 拒绝绑定历史简历 */
-            RESUME_DENY,
-        }
 
         fun getInstance(): ClawAgentMainFragment {
             val fragment = ClawAgentMainFragment()
@@ -639,13 +618,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
             override fun keyBoardShow(height: Int) {
-                mShowKeyBoard = true
+                isScrollBottomKeyboardShowing = true
                 binding.layoutAction.invisible()
                 binding.ivScrollBottom.gone()
             }
 
             override fun keyBoardHide(height: Int) {
-                mShowKeyBoard = false
+                isScrollBottomKeyboardShowing = false
                 updateScrollBottomButton()
                 binding.layoutAction.visible()
                 // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
@@ -730,15 +709,20 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             val hasNewTailMessage = list.size > msgAdapter.items.size || msgAdapter.items.lastOrNull()?.id != list.lastOrNull()?.id
             // 首次加载、主动发消息或新增尾部消息时才触发滚动；流式更新同一条消息时不重复滚动。
             val shouldRunScrollCommand = !hadObservedNonEmptyMessageList || forceScrollToBottom || hasNewTailMessage
+            // 最终是否需要滚到最新：既要当前允许跟随底部，也要本次列表变化确实需要滚动。
+            val shouldScrollToLatest = scrollToLatest && list.isNotEmpty() && shouldRunScrollCommand
             forceScrollToBottom = false
+            if (shouldScrollToLatest) {
+                // submitList 会先触发布局和滚动回调，提前屏蔽按钮可避免新增卡片时短暂闪现。
+                suppressScrollBottomButton()
+            }
             msgAdapter.submitList(list)
-            binding.rvMsg.post { updateScrollBottomButton() }
             if (list.isNotEmpty()) {
                 hasObservedNonEmptyMessageList = true
             }
-            if (scrollToLatest && list.isNotEmpty() && shouldRunScrollCommand) {
+            if (shouldScrollToLatest) {
                 // 首次加载直接贴底；新增消息用平滑滚动。流式内容更新不重复触发滚动，避免 srlMsg 抖动。
-                scrollToBottom(hadObservedNonEmptyMessageList, MESSAGE_SCROLL_DELAY)
+                scrollToBottom(hadObservedNonEmptyMessageList)
             }
         }
         // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭
@@ -836,24 +820,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             binding.ivInputMode.visibility = if (hasText) View.GONE else View.VISIBLE
             binding.ivIcon.visibility = if (hasText) View.GONE else View.VISIBLE
             binding.ivInputMode.setImageResource(R.drawable.ic_agent_voice_mode)
-        }
-    }
-
-    private fun updateScrollBottomButton() {
-        if (msgAdapter.items.isNotEmpty() && binding.rvMsg.canScrollVertically(1) && !mShowKeyBoard) {
-            binding.ivScrollBottom.visible()
-        } else {
-            binding.ivScrollBottom.gone()
-        }
-    }
-
-    private fun scrollToBottom(hadObservedAnimation: Boolean, delayTime: Long = MESSAGE_SCROLL_DELAY) {
-        binding.ivScrollBottom.gone()
-        if (hadObservedAnimation) {
-            binding.rvMsg.stopScroll()
-            RecyclerViewScrollHelper.smoothScrollToBottom(binding.rvMsg, delayTime, MESSAGE_SCROLL_SPEED)
-        } else {
-            RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, delayTime)
         }
     }
 
@@ -1131,48 +1097,4 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         super.onDestroyView()
     }
 
-    /**
-     * 业务埋点统一出口：所有 EventManager.onAppTrack 调用都收拢到本方法中，
-     * 避免在各类点击/事件回调中散落埋点 code。业务回调只需传入对应 TrackingType，
-     * 即可由本方法完成 code → EventManager 调用的映射。
-     *
-     * - [trackingType]：UI 层的离散动作（点击上传/重传/确认简历/否认简历）
-     * - [payload] / [clawAgentEvent]：与原有 CoreQuestionPayloadBean / ClawAgentEvent 联动触发的埋点保持不变
-     */
-    internal fun onTrackingEvent(
-        trackingType: TrackingType? = null,
-        payload: CoreQuestionPayloadBean? = null,
-        clawAgentEvent: Events.ClawAgentEvent? = null,
-    ) {
-        // 1) UI 离散动作埋点（点击/重传/确认/否认等）
-        when (trackingType) {
-            TrackingType.UPLOAD_RESUME ->
-                EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME, mutableMapOf("klx_pipe_source" to "APP"))
-            TrackingType.UPLOAD_RESUME_RETRY ->
-                EventManager.onAppTrack(AppEvent.KLX_CAPP_UPLOAD_FAILED_RE_RESUME)
-            TrackingType.RESUME_CONFIRM ->
-                EventManager.onAppTrack(AppEvent.KLX_CAPP_CONFIRM_RESUME)
-            TrackingType.RESUME_DENY ->
-                EventManager.onAppTrack(AppEvent.KLX_CAPP_DENY_RESUME)
-            null -> Unit
-        }
-
-        // 2) CoreQuestionPayloadBean 触发的埋点（求职状态完成）
-        payload?.let { it ->
-            if (it.attributeGroupCode == "jobStatus") {
-                EventManager.onAppTrack(AppEvent.KLX_C_JOBSEEKING_STATUS_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
-            }
-        }
-
-        // 3) ClawAgentEvent 触发的埋点（意向岗位/城市/薪资完成）
-        clawAgentEvent?.let { it ->
-            if (it.type == AppEvent.KLX_C_EXPECTED_JOB_COMPLETED) {
-                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_JOB_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
-            } else if (it.type == AppEvent.KLX_C_EXPECTED_CITY_COMPLETED) {
-                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_CITY_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
-            } else if (it.type == AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED) {
-                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
-            }
-        }
-    }
 }
