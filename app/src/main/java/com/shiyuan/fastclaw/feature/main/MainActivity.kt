@@ -195,7 +195,8 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         when (Config.get().appConfig.openAppLoadTab) {
             0 -> binding.mrg.check(R.id.rbHome)
             1 -> binding.mrg.check(R.id.rbTreasury)
-            else -> binding.mrg.check(R.id.rbMine)
+            2 -> binding.mrg.check(R.id.rbMine)
+            else -> binding.mrg.check(R.id.rbHome)
         }
     }
 
@@ -204,7 +205,8 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         when(position){
             0 -> binding.mrg.check(R.id.rbHome)
             1 -> binding.mrg.check(R.id.rbTreasury)
-            else -> binding.mrg.check(R.id.rbMine)
+            2 -> binding.mrg.check(R.id.rbMine)
+            else -> binding.mrg.check(R.id.rbHome)
         }
 
     }
