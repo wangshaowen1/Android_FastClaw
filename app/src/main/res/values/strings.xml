@@ -11,6 +11,7 @@
     <string name="page_network_error">请检查网络连接后重试</string>
     <string name="refresh_to_retry">刷新重试</string>
     <string name="download_failed">下载失败</string>
+    <string name="download_complete_click_to_open">下载完成，点击打开</string>
     <string name="i_know">我知道了</string>
     <string name="permissionx_default_denied_forever_rationale_message">为正常使用该功能，请前往系统应用设置中开启%s权限</string>
 

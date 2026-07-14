@@ -2,7 +2,6 @@ package com.shiyuan.fastclaw.core.manager
 
 // TODO: Feature
 import android.app.ProgressDialog
-import android.content.Intent
 import android.text.TextUtils
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -12,12 +11,11 @@ import com.shiyuan.fastclaw.common.ext.ioScope
 import com.shiyuan.fastclaw.common.permissions.PermissionsUtils
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.utils.FileUtils
-import com.shiyuan.fastclaw.common.utils.Utils
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.feature.upgrade.UpgradeDialogFragment
-import com.shiyuan.fastclaw.service.DownloadService
+import com.shiyuan.fastclaw.service.DownloadWorker
 import com.nhsd.basic.BaseActivity
 import com.nhsd.basic.Session
 import com.nhsd.basic.bus.FlowEventBus
@@ -59,13 +57,23 @@ class UpgradeManager(private val context: BaseActivity) {
         context.lifecycleScope.launch {
             // 当 Activity 至少处于 STARTED 状态时才接收事件 (避免后台弹窗崩溃)
             context.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // 页面不在前台 → 缓存 sticky，返回前台时 getStickyEvent 取出
+                FlowEventBus.getStickyEvent(DownloadWorker.DownloadApkEvent::class.java)?.let {
+                    consumeDownloadApkEvent(it)
+                }
+               // 页面正在前台 → collect 立即收到
                 FlowEventBus.events.collect { event ->
-                    if (event is DownloadService.DownloadApkEvent) {
-                        onFinishDownload(event)
+                    if (event is DownloadWorker.DownloadApkEvent) {
+                        consumeDownloadApkEvent(event)
                     }
                 }
             }
         }
+    }
+
+    private fun consumeDownloadApkEvent(event: DownloadWorker.DownloadApkEvent) {
+        FlowEventBus.removeStickyEvent(DownloadWorker.DownloadApkEvent::class.java)
+        onFinishDownload(event)
     }
 
     fun setOnUpgradeListener(onUpgradeListener: OnUpgradeListener?) {
@@ -75,8 +83,6 @@ class UpgradeManager(private val context: BaseActivity) {
     @Synchronized
     fun upgrade(showProgress: Boolean) {
         if (isRequesting) return
-        if (Utils.isServiceRunning(context, DownloadService::class.java.name)) return
-
         if (showProgress) {
             showUpgradeDialog()
         }
@@ -117,7 +123,7 @@ class UpgradeManager(private val context: BaseActivity) {
 
                         val file = File(
                             FileManager.getInstance().apkFolder,
-                            DownloadService.UPDATE_FILE_NAME
+                            DownloadWorker.UPDATE_FILE_NAME
                         )
 
                         // 本地 APK 存在且 MD5 符合 → 直接安装
@@ -165,15 +171,10 @@ class UpgradeManager(private val context: BaseActivity) {
             permissions = PermissionsUtils.getAndroid12WritePermission()
         ) { aBoolean ->
             if (aBoolean) {
-                val intent = Intent(context, DownloadService::class.java)
-                intent.putExtra(DownloadService.DOWNLOADURL, url)
-                intent.putExtra(DownloadService.MD5_HASH, md5)
-
                 if (autoUpdate) {
                     ("当前为WIFI环境,将自动为你下载更新" + Session.getInstance().appName + "。").showToast()
-                    intent.putExtra(DownloadService.DOWNLOAD_WITH_NOTIFY, true)
                 }
-                context.startService(intent)
+                DownloadWorker.enqueue(context, url, md5, null, autoUpdate, null)
             }
         }
 
@@ -207,7 +208,7 @@ class UpgradeManager(private val context: BaseActivity) {
     }
 
     // 替代原 @Subscribe 方法
-    private fun onFinishDownload(downloadApkEvent: DownloadService.DownloadApkEvent) {
+    private fun onFinishDownload(downloadApkEvent: DownloadWorker.DownloadApkEvent) {
         showInstallDialog(downloadApkEvent.path)
     }
 
