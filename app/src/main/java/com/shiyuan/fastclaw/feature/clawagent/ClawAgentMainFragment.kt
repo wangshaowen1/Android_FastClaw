@@ -34,6 +34,7 @@ import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
 import com.shiyuan.fastclaw.common.Constants.MOCK_INTERVIEW_RESULT_URL
 import com.shiyuan.fastclaw.common.Constants.MOCK_PASS_PACKET_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
+import com.shiyuan.fastclaw.common.ext.invisible
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
@@ -640,9 +641,11 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
             override fun keyBoardShow(height: Int) {
+                binding.layoutAction.invisible()
             }
 
             override fun keyBoardHide(height: Int) {
+                binding.layoutAction.visible()
                 // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
                 binding.layoutSend.postDelayed({
                     hasRunningImeAnimation = false
