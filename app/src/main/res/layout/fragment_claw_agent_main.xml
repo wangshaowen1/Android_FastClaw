@@ -133,6 +133,20 @@
             app:sGradientEndColor="#00E9F0FE"
             app:sGradientStartColor="#FFE9F0FE" />
 
+        <ImageView
+            android:id="@+id/iv_scroll_bottom"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_agent_scroll_bottom"
+            android:visibility="gone"
+            android:layout_marginBottom="-8dp"
+            singleClick="@{layout.clickHandler::onClick}"
+            app:layout_constraintBottom_toBottomOf="@id/srl_msg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_bottom"
             android:layout_width="match_parent"
@@ -141,95 +155,103 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-                android:id="@+id/layout_back_check"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="97dp"
-                android:layout_height="34dp"
-                android:layout_marginStart="16dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:gravity="center"
-                app:background_normalColor="@color/color_ffffff"
                 app:layout_constraintBottom_toTopOf="@id/layout_send"
-                app:layout_constraintStart_toStartOf="parent"
-                app:super_corner="17dp">
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/icon_anent_back_check" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:drawablePadding="3dp"
+                <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                    android:id="@+id/layout_back_check"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="97dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="16dp"
                     android:gravity="center"
-                    android:text="@string/company_backcheck"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="13sp" />
+                    app:background_normalColor="@color/color_ffffff"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:super_corner="17dp">
 
-            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/icon_anent_back_check" />
 
-            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-                android:id="@+id/layout_interview"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="97dp"
-                android:layout_height="34dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="12dp"
-                android:gravity="center"
-                app:background_normalColor="@color/color_ffffff"
-                app:layout_constraintBottom_toTopOf="@id/layout_send"
-                app:layout_constraintStart_toEndOf="@id/layout_back_check"
-                app:super_corner="17dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:drawablePadding="3dp"
+                        android:gravity="center"
+                        android:text="@string/company_backcheck"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="13sp" />
 
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/icon_anent_interview" />
+                </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:drawablePadding="3dp"
+                <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                    android:id="@+id/layout_interview"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="97dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="8dp"
                     android:gravity="center"
-                    android:text="@string/mock_interview"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="13sp" />
+                    app:background_normalColor="@color/color_ffffff"
+                    app:layout_constraintStart_toEndOf="@id/layout_back_check"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:super_corner="17dp">
 
-            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/icon_anent_interview" />
 
-            <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-                android:id="@+id/layout_pass"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="110dp"
-                android:layout_height="34dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="12dp"
-                android:gravity="center"
-                app:background_normalColor="@color/color_ffffff"
-                app:layout_constraintBottom_toTopOf="@id/layout_send"
-                app:layout_constraintStart_toEndOf="@id/layout_interview"
-                app:super_corner="17dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:drawablePadding="3dp"
+                        android:gravity="center"
+                        android:text="@string/mock_interview"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="13sp" />
 
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/icon_anent_interview_pass" />
+                </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="3dp"
-                    android:drawablePadding="3dp"
+                <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+                    android:id="@+id/layout_pass"
+                    singleClick="@{layout.clickHandler::onClick}"
+                    android:layout_width="110dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="8dp"
                     android:gravity="center"
-                    android:text="@string/interview_pass_packet"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="13sp" />
+                    app:background_normalColor="@color/color_ffffff"
+                    app:layout_constraintStart_toEndOf="@id/layout_interview"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:super_corner="17dp">
 
-            </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/icon_anent_interview_pass" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:drawablePadding="3dp"
+                        android:gravity="center"
+                        android:text="@string/interview_pass_packet"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="13sp" />
+
+                </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
                 android:id="@+id/layout_send"
