@@ -113,9 +113,17 @@ class InterviewReportActivity :
                 swipeDeleteHelper?.restoreOpenItem()
             },
             confirm = {
-                mRealVM.hideReport(info.id)
-                swipeDeleteHelper?.clearOpenItem()
-                mListAdapter.refresh()
+                mRealVM.hideReport(
+                    reportId = info.id,
+                    reportType = info.reportType,
+                    onSuccess = {
+                        swipeDeleteHelper?.clearOpenItem()
+                        mListAdapter.refresh()
+                    },
+                    onError = {
+                        swipeDeleteHelper?.restoreOpenItem()
+                    },
+                )
             }
         )
     }
