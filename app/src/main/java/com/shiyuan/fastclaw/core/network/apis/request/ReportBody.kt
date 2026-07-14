@@ -62,6 +62,18 @@ class InterviewReportData(
     val reportId:String? = null,
 )
 
+/**
+ * 从“我的报告”列表隐藏报告
+ *
+ * @param reportType 报告类型
+ * @param reportId 我的报告列表项 ID
+ */
+class InterviewReportDeleteBody(
+    /** 报告类型 */
+    val reportType: String,
+    /** 我的报告列表项 ID */
+    val reportId: String,
+)
 
 
 

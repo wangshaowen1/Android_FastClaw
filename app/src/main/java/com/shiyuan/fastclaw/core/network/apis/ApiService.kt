@@ -35,6 +35,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResume
 import com.shiyuan.fastclaw.core.network.apis.request.PassPackageRegenerateBody
 import com.shiyuan.fastclaw.core.network.apis.request.PassPackageStatusQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportData
+import com.shiyuan.fastclaw.core.network.apis.request.InterviewReportDeleteBody
 import com.shiyuan.fastclaw.core.network.apis.request.InviteShareInfoBody
 import com.shiyuan.fastclaw.core.network.apis.request.JdMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobAgentCancelBody
@@ -357,6 +358,12 @@ interface ApiService {
      */
     @POST(ApiConstants.INTERVIEW_REPORT_LIST_QUERY)
     suspend fun getInterviewReportList(@Body body: PagedBody): ApiResponse<PagedList<InterviewReportListItem>?>
+
+    /**
+     * 从“我的报告”列表隐藏报告
+     */
+    @POST(ApiConstants.INTERVIEW_REPORT_DELETE)
+    suspend fun deleteInterviewReport(@Body body: InterviewReportDeleteBody): ApiResponse<Any?>
 
     /**
      * 上传简历

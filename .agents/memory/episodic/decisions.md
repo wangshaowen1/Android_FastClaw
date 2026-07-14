@@ -104,3 +104,14 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 静态检查：`git diff --check` 未发现空白错误；`rg -n "payInfoBody|val payInfo|h5PayAlipay\\(|h5PayWx\\("` 确认请求链路改为使用 `payInfoBody()`。JShell 使用本地 Gson 2.10.1 验证：`Any/Map` 会输出 `9.0001001E7`，`JsonElement/JsonParser` 会输出 `90001001`；按项目规则未运行 Gradle。
+
+## v本轮 ViewModel 扩展函数导包检查
+
+### 变更了什么
+接口调用代码使用 `requestWithLoading` 时，必须显式导入 `com.shiyuan.fastclaw.core.ext.requestWithLoading`。
+
+### 为什么
+`requestWithLoading` 定义在 `core/ext/ViewModelExt.kt`，是 `BaseViewModel` 的扩展函数。即使 `AppRepositoryViewModel.kt` 自身导入并使用了该扩展，子类文件也不会继承 import；漏导会导致目标 ViewModel 无法解析该符号。
+
+### 验证结论
+以后新增或修改 `request`、`requestWithLoading` 等扩展调用时，先对照同类 ViewModel 的 import，并用 `rg -n "^import .*requestWithLoading|requestWithLoading\\("` 静态确认定义与调用文件都已接入。
