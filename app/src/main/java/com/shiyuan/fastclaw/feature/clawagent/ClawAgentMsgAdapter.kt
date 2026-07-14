@@ -276,7 +276,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)
         if (holder is AgentViewHolder) holder.startTypewriter()
-        if (holder is AgentThinkViewHolder) holder.startRotate()
+        if (holder is AgentThinkViewHolder) holder.startTypewriter()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.startRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.startRotate()
         if (holder is AgentPassPackageReportGeneratingViewHolder) holder.startRotate()
@@ -286,7 +286,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
         if (holder is AgentViewHolder) holder.stopTypewriter()
-        if (holder is AgentThinkViewHolder) holder.stopRotate()
+        if (holder is AgentThinkViewHolder) holder.stopTypewriter()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentPassPackageReportGeneratingViewHolder) holder.stopRotate()
@@ -296,7 +296,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         if (holder is AgentViewHolder) holder.stopTypewriter()
-        if (holder is AgentThinkViewHolder) holder.stopRotate()
+        if (holder is AgentThinkViewHolder) holder.stopTypewriter()
         if (holder is AgentMockInterviewReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentCompanyBackgroundReportGeneratingViewHolder) holder.stopRotate()
         if (holder is AgentPassPackageReportGeneratingViewHolder) holder.stopRotate()
