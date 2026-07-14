@@ -72,7 +72,9 @@
                     android:layout_weight="1"
                     app:internalLayout="@layout/data_picker_with_selector_wheel"
                     app:internalMinWidth="140dp"
-                    app:selectionDividersDistance="46dp" />
+                    app:selectionDividersDistance="46dp"
+                    app:wheelArcDirection="left"
+                    app:wheelArcEnabled="true" />
 
                 <com.flqy.datepicker.NumberPicker
                     android:id="@+id/studyTypePicker"
@@ -81,7 +83,9 @@
                     android:layout_weight="1"
                     app:internalLayout="@layout/data_picker_with_selector_wheel"
                     app:internalMinWidth="140dp"
-                    app:selectionDividersDistance="46dp" />
+                    app:selectionDividersDistance="46dp"
+                    app:wheelArcDirection="right"
+                    app:wheelArcEnabled="true" />
             </LinearLayout>
         </FrameLayout>
 

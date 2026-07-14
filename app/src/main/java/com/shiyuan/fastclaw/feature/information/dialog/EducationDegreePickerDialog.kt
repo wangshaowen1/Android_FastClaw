@@ -8,6 +8,7 @@ import com.flqy.datepicker.NumberPicker
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseWheelSoundBottomDialogFragment
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.DialogEducationDegreePickerBinding
 import kotlinx.serialization.encodeToString
@@ -17,7 +18,7 @@ import kotlinx.serialization.json.Json
  * 学历与学习形式双列选择弹窗。
  */
 class EducationDegreePickerDialog :
-    BaseBottomDialogFragment<DialogEducationDegreePickerBinding>() {
+    BaseWheelSoundBottomDialogFragment<DialogEducationDegreePickerBinding>() {
 
     companion object {
         private const val SELECTED_TEXT_SIZE_SP = 16f
