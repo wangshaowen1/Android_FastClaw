@@ -22,7 +22,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivityPersonalInformationBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import org.json.JSONObject
 
@@ -130,7 +130,10 @@ class PersonalInformationActivity :
                     "暂无选项".showToast()
                     return@let
                 }
-                SingleSelectDialog.show(this.supportFragmentManager, "性别", enumItems) { data ->
+                SingleSelectDialog2.show(this.supportFragmentManager, "性别", enumItems,CommonEnumItem(
+                    code = (item.value as? Map<*, *>)?.get("value")?.toString(),
+                    name = item.displayValue
+                )) { data ->
                     val value = mapOf(
                         "code" to data.code,
                         "name" to data.name
@@ -183,7 +186,13 @@ class PersonalInformationActivity :
                     "暂无选项".showToast()
                     return@let
                 }
-                SingleSelectDialog.show(this.supportFragmentManager, "求职身份", enumItems) { data ->
+                SingleSelectDialog2.show(this.supportFragmentManager,
+                    "求职身份",
+                    enumItems,
+                    CommonEnumItem(
+                    code = (item.value as? Map<*, *>)?.get("value")?.toString(),
+                    name = item.displayValue
+                )) { data ->
                     val value = mapOf(
                         "code" to data.code,
                         "name" to data.name
@@ -233,7 +242,10 @@ class PersonalInformationActivity :
                     "暂无选项".showToast()
                     return@let
                 }
-                SingleSelectDialog.show(this.supportFragmentManager, "政治面貌", enumItems) { data ->
+                SingleSelectDialog2.show(this.supportFragmentManager, "政治面貌", enumItems,CommonEnumItem(
+                    code = (item.value as? Map<*, *>)?.get("value")?.toString(),
+                    name = item.displayValue
+                )) { data ->
                     val value = mapOf(
                         "code" to data.code,
                         "name" to data.name
@@ -260,7 +272,10 @@ class PersonalInformationActivity :
                     "暂无选项".showToast()
                     return@let
                 }
-                SingleSelectDialog.show(this.supportFragmentManager, "婚姻状况", enumItems) { data ->
+                SingleSelectDialog2.show(this.supportFragmentManager, "婚姻状况", enumItems,CommonEnumItem(
+                    code = (item.value as? Map<*, *>)?.get("value")?.toString(),
+                    name = item.displayValue
+                )) { data ->
                     val value = mapOf(
                         "code" to data.code,
                         "name" to data.name
