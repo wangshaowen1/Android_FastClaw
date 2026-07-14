@@ -1094,7 +1094,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         agentIndexView.setBackgroundResource(R.drawable.ic_arrow_down_gray_12)
         agentStatusPopup = ClawAgentStatusDialog(requireContext(), attributeData).apply {
             onDismissListener = {
-                agentStatusPopup = null
                 agentIndexView.setBackgroundResource(R.drawable.ic_arrow_right_gray_12)
             }
             onItemClickListener = { item ->
