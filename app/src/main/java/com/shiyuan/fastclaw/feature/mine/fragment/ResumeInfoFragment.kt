@@ -85,6 +85,9 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         private const val FIELD_PROJECT_ROLE = "projectRole"
 
         private const val FIELD_PROFICIENCY = "proficiency"
+        private const val FIELD_JOBIDENTITY = "jobIdentity"
+
+        private const val FIELD_INTERNSHIP = "internship"
         private const val COLLAPSED_ITEM_COUNT = 3
     }
 
@@ -176,6 +179,8 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         )
 
         binding.layoutProfileContacts.visibility = View.VISIBLE
+
+        binding.rlTag.visibility =  if(data.findBaseFieldValue(FIELD_JOBIDENTITY) == "学生")  View.VISIBLE else   View.GONE
     }
 
     private fun bindBaseContact(layout: View, textView: TextView, value: String) {
@@ -468,6 +473,10 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
             binding.tvJob.visibility = if (binding.tvJob.text.isNullOrEmpty()) View.GONE else View.VISIBLE
             binding.tvDesc.visibility =
                 if (workContent?.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
+
+            val internship = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_INTERNSHIP)
+            binding.rlTag.visibility  = if (internship?.displayValue == "是") View.VISIBLE else View.GONE
+
             binding.root.setOnClickListener {
                 if(item.instanceIndex == -1L || item.instanceIndex == null){
                     handleEditIconClick(attributeData)

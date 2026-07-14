@@ -22,7 +22,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.ActivityPersonalInformationBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog
+import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import org.json.JSONObject
 
@@ -47,6 +47,8 @@ class PersonalInformationActivity :
         private const val INPUT_MODE_SINGLE_CHOICE = "SINGLE_CHOICE"
         private const val INPUT_MODE_DICT_SINGLE = "DICT_SINGLE"
         private const val INPUT_MODE_DATE_MONTH = "DATE_MONTH"
+
+        private const val FIELD_JOBIDENTITY = "jobIdentity"
 
 
         fun start(context: Context?) {
@@ -128,7 +130,10 @@ class PersonalInformationActivity :
                     "暂无选项".showToast()
                     return@let
                 }
-                SingleSelectDialog.show(this.supportFragmentManager, "性别", enumItems) { data ->
+                SingleSelectDialog2.show(this.supportFragmentManager, "性别", enumItems,CommonEnumItem(
+                    code = (item.value as? Map<*, *>)?.get("value")?.toString(),
+                    name = item.displayValue
+                )) { data ->
                     val value = mapOf(
                         "code" to data.code,
                         "name" to data.name
@@ -171,6 +176,39 @@ class PersonalInformationActivity :
         binding.phoneRow.setOnSingleClickListener {
             "手机号暂不能修改".showToast()
         }
+
+        binding.JobStatusRow.setOnSingleClickListener {
+            findBaseInfoItem(FIELD_JOBIDENTITY)?.let { item ->
+                val enumItems = item.options.orEmpty().map {
+                    CommonEnumItem(code = it.code, name = it.name)
+                }
+                if (enumItems.isEmpty()) {
+                    "暂无选项".showToast()
+                    return@let
+                }
+                SingleSelectDialog2.show(this.supportFragmentManager,
+                    "求职身份",
+                    enumItems,
+                    CommonEnumItem(
+                    code = (item.value as? Map<*, *>)?.get("value")?.toString(),
+                    name = item.displayValue
+                )) { data ->
+                    val value = mapOf(
+                        "code" to data.code,
+                        "name" to data.name
+                    )
+                    mRealVM.updateOnlineResumeAttribute(
+                        attributeGroupCode = item.attributeGroupCode ?: item.metaCode
+                        ?: FIELD_JOBIDENTITY,
+                        inputMode = item.inputMode ?: INPUT_MODE_SINGLE_CHOICE,
+                        value = value
+                    ) {
+                        binding.JobStatusRow.setValueText(data.name.orEmpty())
+                        FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+                    }
+                }
+            }
+        }
         binding.wechatRow.setOnSingleClickListener {
             PersonaFreeFillInActivity.start(
                 this,
@@ -204,7 +242,10 @@ class PersonalInformationActivity :
                     "暂无选项".showToast()
                     return@let
                 }
-                SingleSelectDialog.show(this.supportFragmentManager, "政治面貌", enumItems) { data ->
+                SingleSelectDialog2.show(this.supportFragmentManager, "政治面貌", enumItems,CommonEnumItem(
+                    code = (item.value as? Map<*, *>)?.get("value")?.toString(),
+                    name = item.displayValue
+                )) { data ->
                     val value = mapOf(
                         "code" to data.code,
                         "name" to data.name
@@ -231,7 +272,10 @@ class PersonalInformationActivity :
                     "暂无选项".showToast()
                     return@let
                 }
-                SingleSelectDialog.show(this.supportFragmentManager, "婚姻状况", enumItems) { data ->
+                SingleSelectDialog2.show(this.supportFragmentManager, "婚姻状况", enumItems,CommonEnumItem(
+                    code = (item.value as? Map<*, *>)?.get("value")?.toString(),
+                    name = item.displayValue
+                )) { data ->
                     val value = mapOf(
                         "code" to data.code,
                         "name" to data.name
@@ -261,6 +305,7 @@ class PersonalInformationActivity :
         binding.genderRow.setValueText(findBaseInfoText(FIELD_GENDER))
         binding.birthDateRow.setValueText(findBaseInfoText(FIELD_BIRTHDAY))
         binding.phoneRow.setValueText(findBaseInfoText(FIELD_PHONE))
+        binding.JobStatusRow.setValueText(findBaseInfoText(FIELD_JOBIDENTITY))
         binding.wechatRow.setValueText(findBaseInfoText(FIELD_WECHAT_ID))
         binding.emailRow.setValueText(findBaseInfoText(FIELD_EMAIL))
         binding.currentCityRow.setValueText(findBaseInfoText(FIELD_LOCATION))

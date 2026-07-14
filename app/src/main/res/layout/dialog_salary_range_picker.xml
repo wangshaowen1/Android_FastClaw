@@ -68,19 +68,25 @@
 
                 <com.flqy.datepicker.NumberPicker
                     android:id="@+id/wheelMinSalary"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     app:internalLayout="@layout/data_picker_with_selector_wheel"
                     app:internalMinWidth="140dp"
-                    app:selectionDividersDistance="46dp" />
+                    app:selectionDividersDistance="46dp"
+                    app:wheelArcDirection="left"
+                    app:wheelArcEnabled="true" />
 
                 <com.flqy.datepicker.NumberPicker
                     android:id="@+id/wheelMaxSalary"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
                     app:internalLayout="@layout/data_picker_with_selector_wheel"
-                    app:internalMinWidth="110dp"
-                    app:selectionDividersDistance="46dp" />
+                    app:internalMinWidth="140dp"
+                    app:selectionDividersDistance="46dp"
+                    app:wheelArcDirection="right"
+                    app:wheelArcEnabled="true" />
             </LinearLayout>
         </FrameLayout>
 

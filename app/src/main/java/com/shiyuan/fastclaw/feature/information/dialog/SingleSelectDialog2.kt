@@ -8,12 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
+import com.shiyuan.fastclaw.base.BaseWheelSoundBottomDialogFragment
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.databinding.DialogSingSelectStatusList2Binding
 import com.shiyuan.fastclaw.databinding.ItemSingSelectStatusList2Binding
 
-class SingleSelectDialog2 : BaseBottomDialogFragment<DialogSingSelectStatusList2Binding>() {
+class SingleSelectDialog2 : BaseWheelSoundBottomDialogFragment<DialogSingSelectStatusList2Binding>() {
 
     companion object {
         const val TAG = "SingleSelectDialog2"

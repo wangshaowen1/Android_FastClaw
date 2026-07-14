@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import com.alibaba.fastjson.JSON
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
@@ -26,6 +27,7 @@ import com.shiyuan.fastclaw.feature.information.dialog.DeleteConfirmDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
 import java.util.Calendar
 
 /**
@@ -54,6 +56,8 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         private const val FIELD_LEAVING_REASON = "leavingReason"
         private const val FIELD_START_DATE = "startDate"
         private const val FIELD_END_DATE = "endDate"
+
+        private const val FIELD_INTERNSHIP = "internship"
         private const val PRESENT_TEXT = "至今"
         private val REQUIRED_FIELDS = listOf(
             FIELD_COMPANY_NAME to R.string.company_name,
@@ -219,8 +223,15 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
         }
         updateInternshipSwitch()
         binding.switchInternship.setOnSingleClickListener {
-            val currentTree = attributeData?.fieldTree?.getOrNull(position) ?: return@setOnSingleClickListener
-            currentTree.internship = currentTree.internship != true
+            val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_INTERNSHIP)
+            val checked = item?.displayValue == "是"
+            item?.let {
+                item.displayValue =  if(checked) "否" else "是"
+                item.fieldValue = mapOf(
+                    "value" to if(checked) false else true ,
+                    "displayText" to if(checked) "否" else "是"
+                )
+            }
             updateInternshipSwitch()
         }
         // 行业：跳到行业选择页
@@ -478,8 +489,8 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
     }
 
     private fun updateInternshipSwitch() {
-        val checked = attributeData?.fieldTree?.getOrNull(position)?.internship == true
-        binding.switchInternship.isSelected = checked
+        val item = AttributeFieldItemFinder.findFirst(currentInstance, fieldCode = FIELD_INTERNSHIP)
+        val checked = item?.displayValue == "是"
         binding.switchInternship.setImageResource(
             if (checked) R.drawable.internship_true else R.drawable.internship_false
         )
