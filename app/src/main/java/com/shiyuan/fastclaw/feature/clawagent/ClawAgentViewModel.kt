@@ -608,11 +608,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         messageList.value = messageStore.values
             .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
             .map { it.toMessageInfo() }
-
         if (BuildConfig.DEBUG) {
-            println("test_data---------------------------------------------------------")
+            println("messageList---------------------------------------------------------")
             messageStore.forEach { (key, msg) ->
-                println("test_data=$key, msg=$msg")
+                println("messageList=$key, msg=$msg")
             }
         }
     }

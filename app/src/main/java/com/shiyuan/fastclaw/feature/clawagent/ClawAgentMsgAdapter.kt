@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundStartBody
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportDoneBinding
@@ -67,6 +68,8 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadSuccessViewH
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentWelcomeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 /**
  * agent对话消息适配器
@@ -320,7 +323,12 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     }
 
     /**
-     * 收敛 [addItemType] 的样板：传入创建与绑定逻辑即可注册一种消息样式。
+     * 提交新列表前，计算每条打字机消息本次应该展示到哪个字符位置。
+     *
+     * 核心原则：
+     * 1. 首次提交历史列表时直接展示完整内容，不回放历史打字动画。
+     * 2. 新增在尾部的打字机消息从 0 开始播放。
+     * 3. 已存在消息内容增长时，延续上一次展示进度，避免刷新时文字跳动。
      */
     private fun prepareTypewriterDisplayedLength(newList: List<ClawAgentMessageInfo>) {
         if (newList.isEmpty()) {
@@ -331,6 +339,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         val hadNonEmptyList = hasSubmittedNonEmptyList
         val oldContentLengthMap = items.associate { it.id to it.content.orEmpty().length }
         val newIds = newList.mapTo(mutableSetOf()) { it.id }
+        // 清理已经从列表中移除的消息进度，避免 id 缓存越积越多。
         typewriterDisplayedLengthMap.keys.retainAll(newIds)
         newList.forEachIndexed { index, item ->
             if (!item.isTypewriterItem()) return@forEachIndexed
@@ -338,10 +347,14 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             val oldLength = oldContentLengthMap[item.id]
             val currentDisplayedLength = typewriterDisplayedLengthMap[item.id]
             val displayedLength = when {
+                // 首屏/历史消息恢复不播放动画，直接完整显示。
                 !hadNonEmptyList -> contentLength
+                // 新增到列表尾部的消息才从 0 开始打字；中间插入的历史消息直接完整显示。
                 oldLength == null && (index >= items.size || index == newList.lastIndex) -> currentDisplayedLength ?: 0
                 oldLength == null -> contentLength
+                // 流式内容增长时，最多从旧内容末尾继续，不能直接跳到新增内容末尾。
                 contentLength > oldLength -> currentDisplayedLength?.coerceAtMost(oldLength) ?: oldLength
+                // 已经在播放中的消息保持当前进度，等待 ViewHolder 继续推进。
                 currentDisplayedLength != null && currentDisplayedLength < contentLength -> currentDisplayedLength
                 else -> contentLength
             }
@@ -350,15 +363,23 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         hasSubmittedNonEmptyList = true
     }
 
+    /**
+     * 获取当前消息应展示的打字机字符长度。
+     */
     private fun getTypewriterDisplayedLength(item: ClawAgentMessageInfo): Int {
         if (!item.isTypewriterItem()) return item.content.orEmpty().length
         val contentLength = item.content.orEmpty().length
+        // 没有缓存进度时默认完整显示，避免历史消息被误判为需要重新播放。
         return (typewriterDisplayedLengthMap[item.id] ?: contentLength).coerceIn(0, contentLength)
     }
 
+    /**
+     * 记录打字机播放进度，供列表刷新或 ViewHolder 复用后继续展示。
+     */
     private fun updateTypewriterDisplayedLength(item: ClawAgentMessageInfo, length: Int) {
         if (!item.isTypewriterItem()) return
         val contentLength = item.content.orEmpty().length
+        // ViewHolder 回传播放进度时统一夹到内容长度内，防止内容变化导致越界。
         typewriterDisplayedLengthMap[item.id] = length.coerceIn(0, contentLength)
     }
 
