@@ -24,6 +24,7 @@ import com.shiyuan.fastclaw.databinding.ActivityPersonalInformationBinding
 import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
 import com.shiyuan.fastclaw.feature.information.dialog.SingleSelectDialog2
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import com.shiyuan.fastclaw.feature.login.phone.PhoneNewChangeActivity
 import org.json.JSONObject
 
 class PersonalInformationActivity :
@@ -82,7 +83,9 @@ class PersonalInformationActivity :
                         handleLocationCitySelected(event.msgGson)
                     }
                 }
-
+            }
+            on<Events.BindingSuccessfulEvent> { event ->
+                mRealVM.queryOnlineResumeInfo()
             }
         }
     }
@@ -174,7 +177,8 @@ class PersonalInformationActivity :
             )
         }
         binding.phoneRow.setOnSingleClickListener {
-            "手机号暂不能修改".showToast()
+            //"手机号暂不能修改".showToast()
+            PhoneNewChangeActivity.start(this)
         }
 
         binding.JobStatusRow.setOnSingleClickListener {
