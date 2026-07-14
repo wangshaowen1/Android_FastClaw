@@ -60,6 +60,7 @@ class ClawAgentStatusDialog(context: Context, private val attributeData: OnlineR
 
     fun showDialog(anchorView: View): ClawAgentStatusDialog {
         XPopup.Builder(context)
+            .isViewMode(true)
             .atView(anchorView)
             .popupPosition(PopupPosition.Bottom)
             .popupWidth(151.dp)

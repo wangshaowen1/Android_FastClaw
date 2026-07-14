@@ -1090,11 +1090,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private fun showAgentStatusDialog() {
         agentStatusPopup?.dismiss()
         val attributeData = mRealVM.jobStatusResult.value ?: return
-        val agentIndexView = binding.tvAgentIndex
-        agentIndexView.setBackgroundResource(R.drawable.ic_arrow_down_gray_12)
+        binding.tvAgentIndex.setBackgroundResource(R.drawable.ic_arrow_down_gray_12)
         agentStatusPopup = ClawAgentStatusDialog(requireContext(), attributeData).apply {
             onDismissListener = {
-                agentIndexView.setBackgroundResource(R.drawable.ic_arrow_right_gray_12)
+                binding.tvAgentIndex.setBackgroundResource(R.drawable.ic_arrow_right_gray_12)
             }
             onItemClickListener = { item ->
                 mRealVM.updateJobStatus(item.code)
