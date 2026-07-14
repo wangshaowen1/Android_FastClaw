@@ -117,6 +117,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
     private var mJobStatusSelected: String? = null
 
+    private var mShowKeyBoard: Boolean = false
+
     companion object {
         const val TAG = "ClawAgentMainFragment"
         /** 记忆卡片等待时长 */
@@ -227,6 +229,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     mRealVM.queryInterviewPassPackageResumeStatus()
                 }
              }
+            R.id.iv_scroll_bottom -> { //滚动到底部
+                scrollToBottom(true, 0L)
+            }
         }
     }
 
@@ -307,7 +312,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 公司背调 - 查看报告
         msgAdapter.onCompanyDoneClickAction = { _, _, data ->
             if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
                 SimpleBrowserActivity.launch(requireActivity(), COMPANY_BACKGROUND_RESULT_URL + data?.reportId)
             }
         }
@@ -342,7 +346,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 模拟面试报告 - 面试报告
         msgAdapter.onInterviewDoneClickAction = { item, action, data ->
             if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
                 SimpleBrowserActivity.launch(
                     requireActivity(),
                     MOCK_INTERVIEW_RESULT_URL + data?.interviewId + "&interview_mrId=" + data?.mockReportId
@@ -359,7 +362,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 面试通关包 - 查看报告
         msgAdapter.onPassPackageDoneClickAction = { item, action, data ->
             if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
                 SimpleBrowserActivity.launch(
                     requireActivity(),
                     MOCK_PASS_PACKET_RESULT_URL + data?.packageId
@@ -409,11 +411,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 if (payload?.isJobStatus() ?: false) {// 求职状态
                     mJobStatusSelected = option.text
                     mRealVM.queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
-                    /*binding.tvAgentDesc.text = option.text
-                    val options = mRealVM.jobStatusResult.value?.options.orEmpty()
-                    options.forEach { item ->
-                        item.selected = item.statusCode == option.code
-                    }*/
                 }
                 onTrackingEvent(payload  = payload)
             }
@@ -556,6 +553,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 无感知加载：向上滚动到接近顶部时提前预取更早历史（DiffUtil 顶部静默插入，不出现下拉转圈）
         binding.rvMsg.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                updateScrollBottomButton()
                 if (dy >= 0) return // 仅在向上滚动时预取
                 val lm = rv.layoutManager as? LinearLayoutManager ?: return
                 if (lm.findFirstVisibleItemPosition() <= PREFETCH_THRESHOLD) {
@@ -641,10 +639,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
             override fun keyBoardShow(height: Int) {
+                mShowKeyBoard = true
                 binding.layoutAction.invisible()
+                binding.ivScrollBottom.gone()
             }
 
             override fun keyBoardHide(height: Int) {
+                mShowKeyBoard = false
+                updateScrollBottomButton()
                 binding.layoutAction.visible()
                 // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
                 binding.layoutSend.postDelayed({
@@ -653,51 +655,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }, 250L)
             }
         })
-    }
-
-    private fun updateInputModeView() {
-        val hasText = binding.etSend.text?.isNotBlank() == true
-        if (isVoiceInputMode) {
-            binding.etSend.visibility = View.INVISIBLE
-            binding.tvVoicePress.visible()
-            binding.ivIcon.gone()
-            binding.ivSend.gone()
-            binding.ivInputMode.visible()
-            binding.ivInputMode.setImageResource(R.drawable.ic_agent_keyboard_mode)
-        } else {
-            binding.etSend.visible()
-            binding.tvVoicePress.gone()
-            binding.ivSend.visibility = if (hasText) View.VISIBLE else View.GONE
-            binding.ivInputMode.visibility = if (hasText) View.GONE else View.VISIBLE
-            binding.ivIcon.visibility = if (hasText) View.GONE else View.VISIBLE
-            binding.ivInputMode.setImageResource(R.drawable.ic_agent_voice_mode)
-        }
-    }
-
-    override fun onVoiceTextRecognized(text: String) {
-        if (interceptIfStreaming()) return
-        forceScrollToBottom = true
-        mRealVM.sendMessage(text)
-    }
-
-    override fun onVoiceRecognizingStateReset() {
-        updateInputModeView()
-    }
-
-    private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null) {
-        if (!interceptIfStreaming()) {
-            forceScrollToBottom = true
-            action?.actionPayload?.selectedValue = msgGson
-            mRealVM.sendAction(
-                desc = action?.text.orEmpty(),
-                actionData = AgentMsgAction(
-                    questionQueueId = queueId,
-                    actionCode = action?.actionCode,
-                    sourceMessageId = item?.id,
-                    actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
-                )
-            )
-        }
     }
 
     private fun observeData() {
@@ -775,20 +732,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             val shouldRunScrollCommand = !hadObservedNonEmptyMessageList || forceScrollToBottom || hasNewTailMessage
             forceScrollToBottom = false
             msgAdapter.submitList(list)
+            binding.rvMsg.post { updateScrollBottomButton() }
             if (list.isNotEmpty()) {
                 hasObservedNonEmptyMessageList = true
             }
             if (scrollToLatest && list.isNotEmpty() && shouldRunScrollCommand) {
                 // 首次加载直接贴底；新增消息用平滑滚动。流式内容更新不重复触发滚动，避免 srlMsg 抖动。
-                if (hadObservedNonEmptyMessageList) {
-                    binding.rvMsg.stopScroll()
-                    RecyclerViewScrollHelper.smoothScrollToBottom(binding.rvMsg,
-                        MESSAGE_SCROLL_DELAY,
-                        MESSAGE_SCROLL_SPEED
-                    )
-                } else {
-                    RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, MESSAGE_SCROLL_DELAY)
-                }
+                scrollToBottom(hadObservedNonEmptyMessageList, MESSAGE_SCROLL_DELAY)
             }
         }
         // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭
@@ -867,6 +817,72 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${data?.resumeCheckId}"
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
+        }
+    }
+
+    private fun updateInputModeView() {
+        val hasText = binding.etSend.text?.isNotBlank() == true
+        if (isVoiceInputMode) {
+            binding.etSend.visibility = View.INVISIBLE
+            binding.tvVoicePress.visible()
+            binding.ivIcon.gone()
+            binding.ivSend.gone()
+            binding.ivInputMode.visible()
+            binding.ivInputMode.setImageResource(R.drawable.ic_agent_keyboard_mode)
+        } else {
+            binding.etSend.visible()
+            binding.tvVoicePress.gone()
+            binding.ivSend.visibility = if (hasText) View.VISIBLE else View.GONE
+            binding.ivInputMode.visibility = if (hasText) View.GONE else View.VISIBLE
+            binding.ivIcon.visibility = if (hasText) View.GONE else View.VISIBLE
+            binding.ivInputMode.setImageResource(R.drawable.ic_agent_voice_mode)
+        }
+    }
+
+    private fun updateScrollBottomButton() {
+        if (msgAdapter.items.isNotEmpty() && binding.rvMsg.canScrollVertically(1) && !mShowKeyBoard) {
+            binding.ivScrollBottom.visible()
+        } else {
+            binding.ivScrollBottom.gone()
+        }
+    }
+
+    private fun scrollToBottom(hadObservedAnimation: Boolean, delayTime: Long = MESSAGE_SCROLL_DELAY) {
+        binding.ivScrollBottom.gone()
+        if (hadObservedAnimation) {
+            binding.rvMsg.stopScroll()
+            RecyclerViewScrollHelper.smoothScrollToBottom(binding.rvMsg,
+                delayTime,
+                MESSAGE_SCROLL_SPEED
+            )
+        } else {
+            RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, delayTime)
+        }
+    }
+
+    override fun onVoiceTextRecognized(text: String) {
+        if (interceptIfStreaming()) return
+        forceScrollToBottom = true
+        mRealVM.sendMessage(text)
+    }
+
+    override fun onVoiceRecognizingStateReset() {
+        updateInputModeView()
+    }
+
+    private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null) {
+        if (!interceptIfStreaming()) {
+            forceScrollToBottom = true
+            action?.actionPayload?.selectedValue = msgGson
+            mRealVM.sendAction(
+                desc = action?.text.orEmpty(),
+                actionData = AgentMsgAction(
+                    questionQueueId = queueId,
+                    actionCode = action?.actionCode,
+                    sourceMessageId = item?.id,
+                    actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
+                )
+            )
         }
     }
 
