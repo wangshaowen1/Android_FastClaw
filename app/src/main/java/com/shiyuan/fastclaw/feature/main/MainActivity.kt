@@ -96,7 +96,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 配合修改导航栏颜色适配部分rom的底部手势提示线
+     /*   // 配合修改导航栏颜色适配部分rom的底部手势提示线
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             // 获取系统栏（状态栏 + 导航栏）的 Insets
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -105,7 +105,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             // 返回 insets 以便继续传递
             insets
         }
-
+*/
         registerTime = System.currentTimeMillis()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             try {
@@ -174,33 +174,28 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                         ClawAgentMainFragment::class.java
                     )
                 }
-
-
-//                R.id.rbWorks -> {
-//                    //热门
-//                    EventManager.onAppTrack(AppEvent.SF_VIEW_WORKS_TAB_PAGE)
-//                    setKeepScreenOn(false)
-//                    mRealVM.showTab.set(1)
-//                    supportFragmentManager.switchFragment(
-//                        R.id.fragment,
-//                        HomeReportFragment::class.java
-//                    )
-//                }
-
-
+                R.id.rbTreasury -> {
+                    EventManager.onAppTrack(AppEvent.KLX_CAPP_INTERVIEWREPORT_LANDING_PAGE)
+                    setKeepScreenOn(false)
+                    mRealVM.showTab.set(1)
+                    supportFragmentManager.switchFragment(
+                        R.id.fragment,
+                        HomeTreasuryFragment::class.java
+                    )
+                }
                 R.id.rbMine -> {
                     //我的
                     EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_PAGE,mutableMapOf("klx_is_login" to if(User.get().isVisitor) "否" else "是"))
                     setKeepScreenOn(false)
-                    mRealVM.showTab.set(1)
+                    mRealVM.showTab.set(2)
                     supportFragmentManager.switchFragment(R.id.fragment, MineFragment::class.java)
                 }
             }
         }
         when (Config.get().appConfig.openAppLoadTab) {
             0 -> binding.mrg.check(R.id.rbHome)
-            1 -> binding.mrg.check(R.id.rbMine)
-            else -> binding.mrg.check(R.id.rbHome)
+            1 -> binding.mrg.check(R.id.rbTreasury)
+            else -> binding.mrg.check(R.id.rbMine)
         }
     }
 
@@ -208,8 +203,8 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     fun switchToTab(position:Int) {
         when(position){
             0 -> binding.mrg.check(R.id.rbHome)
-            1 -> binding.mrg.check(R.id.rbMine)
-            else -> binding.mrg.check(R.id.rbHome)
+            1 -> binding.mrg.check(R.id.rbTreasury)
+            else -> binding.mrg.check(R.id.rbMine)
         }
 
     }
@@ -258,15 +253,13 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 }
             }
 
-            R.id.iv_main_report -> {
-                binding.mrg.clearCheck()
-                EventManager.onAppTrack(AppEvent.KLX_CAPP_INTERVIEWREPORT_LANDING_PAGE)
-                setKeepScreenOn(false)
-                mRealVM.showTab.set(2)
-                supportFragmentManager.switchFragment(
-                    R.id.fragment,
-                    HomeTreasuryFragment::class.java
-                )
+            R.id.tabTreasury -> {
+                clickTab(
+                    tabId = R.id.tabTreasury,
+                    null
+                ) {
+                    binding.mrg.check(R.id.tabTreasury) // 真正执行切换
+                }
             }
         }
     }
@@ -295,7 +288,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
                 }
                 else -> {
-                    FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_WORKS))
+                    FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_TREASURY))
                 }
             }
             return // 连续点击直接拦截，不再执行拦截器 check

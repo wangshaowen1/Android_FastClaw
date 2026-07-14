@@ -18,7 +18,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.permissions.requestRead2WritePermissions
 import com.shiyuan.fastclaw.common.utils.Utils
-import com.shiyuan.fastclaw.service.DownloadService
+import com.shiyuan.fastclaw.service.DownloadWorker
 import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.ext.toArrayList
 import com.nhsd.basic.manager.FileManager
@@ -26,6 +26,7 @@ import com.nhsd.mattise.Matisse
 import com.nhsd.mattise.MimeType
 import com.nhsd.mattise.engine.impl.GlideEngine
 import com.nhsd.mattise.internal.entity.CaptureStrategy
+import com.shiyuan.fastclaw.service.DownloadService
 
 // Fragment参数扩展
 fun Fragment.putArgument(key: String, value: String?) {
@@ -69,6 +70,15 @@ fun Context.openBrowser(url: String?) {
     }
 }
 
+fun FragmentActivity.downloadWorkerFile(url: String?) {
+    requestRead2WritePermissions(R.string.sdcard_permission_description) { allGranted ->
+        if (!allGranted) return@requestRead2WritePermissions
+        val fileName = Utils.parseName(url)
+        DownloadWorker.enqueue(this, url, fileName)
+        getString(R.string.downloading_please_wait).showToast()
+    }
+}
+
 fun FragmentActivity.downloadFile(url: String?) {
     requestRead2WritePermissions(R.string.sdcard_permission_description) { allGranted ->
         if (!allGranted) return@requestRead2WritePermissions
@@ -81,6 +91,7 @@ fun FragmentActivity.downloadFile(url: String?) {
         getString(R.string.downloading_please_wait).showToast()
     }
 }
+
 
 fun List<Fragment>.clear(host: Fragment) {
     forEach { host.childFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }

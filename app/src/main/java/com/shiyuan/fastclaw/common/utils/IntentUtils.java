@@ -12,10 +12,17 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.shiyuan.fastclaw.App;
 import com.shiyuan.fastclaw.service.DownloadService;
+import com.shiyuan.fastclaw.service.DownloadWorker;
 import com.shiyuan.fastclaw.widget.CommonDialog;
 import com.nhsd.basic.ext.ToastExtKt;
 
 public class IntentUtils {
+
+    public static void startWorkerDownload(Context context, String schemeUri) {
+        String fileName = Utils.parseName(schemeUri);
+        DownloadWorker.enqueue(context, schemeUri, fileName);
+        ToastExtKt.showToast("正在为你下载，请稍候");
+    }
 
     public static void startDownload(Context context, String schemeUri) {
         String fileName = Utils.parseName(schemeUri);
