@@ -207,7 +207,12 @@ public class Events {
      */
     public static class BindingSuccessfulEvent implements AppEvent {
 
+        public String phone;
+
         public BindingSuccessfulEvent() {
+        }
+        public BindingSuccessfulEvent(String phone) {
+            this.phone = phone;
         }
     }
 

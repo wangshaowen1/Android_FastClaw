@@ -264,7 +264,7 @@ class PhoneNewLoginViewModel : AppRepositoryViewModel<FlashLoginRepository>() {
             response(mRepo.changeMobile(phone, validateCode), {
                 showToast(R.string.bind_success)
                 User.get().storePhoneNum(phone)
-                FlowEventBus.postSync(Events.BindingSuccessfulEvent())
+                FlowEventBus.postSync(Events.BindingSuccessfulEvent(phone))
                 onSuccess?.invoke()
             }, error = {
                 this?.msg?.showToast()
