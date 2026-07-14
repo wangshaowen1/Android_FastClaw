@@ -53,6 +53,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ATTRIBUTE_GROUP_JOB_STATUS
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_MODEL_FAILED
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_NOT_COMPANY
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_POINTS_INSUFFICIENT
@@ -91,6 +92,30 @@ import java.util.UUID
 
 class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
 
+    private val msgAdapter by lazy { ClawAgentMsgAdapter() }
+
+    /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
+    private var forceScrollToBottom = false
+
+    private var hasObservedNonEmptyMessageList = false
+
+    /** IME 动画进行中flag */
+    private var hasRunningImeAnimation = false
+
+    private var mCurrentMessage: ClawAgentMessageInfo? = null
+
+    private var mCurrentAction: CardAction? = null
+
+    private var mCurrentQuestionId: String? = null
+
+    private var resumeEventPullJob: Job? = null
+
+    private var isVoiceInputMode = false
+
+    private var agentStatusPopup: ClawAgentStatusDialog? = null
+
+    private var mJobStatusSelected: String? = null
+
     companion object {
         const val TAG = "ClawAgentMainFragment"
         /** 记忆卡片等待时长 */
@@ -126,28 +151,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             return fragment
         }
     }
-
-    private val msgAdapter by lazy { ClawAgentMsgAdapter() }
-
-    /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
-    private var forceScrollToBottom = false
-
-    private var hasObservedNonEmptyMessageList = false
-
-    /** IME 动画进行中flag */
-    private var hasRunningImeAnimation = false
-
-    private var mCurrentMessage: ClawAgentMessageInfo? = null
-
-    private var mCurrentAction: CardAction? = null
-
-    private var mCurrentQuestionId: String? = null
-
-    private var resumeEventPullJob: Job? = null
-
-    private var isVoiceInputMode = false
-
-    private var agentStatusPopup: ClawAgentStatusDialog? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
@@ -403,11 +406,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     )
                 )
                 if (payload?.isJobStatus() ?: false) {// 求职状态
-                    binding.tvAgentDesc.text = option.text
-                    val options = mRealVM.sessionData.value?.jobSearchStatus?.options.orEmpty()
+                    mJobStatusSelected = option.text
+                    mRealVM.queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
+                    /*binding.tvAgentDesc.text = option.text
+                    val options = mRealVM.jobStatusResult.value?.options.orEmpty()
                     options.forEach { item ->
                         item.selected = item.statusCode == option.code
-                    }
+                    }*/
                 }
                 onTrackingEvent(payload  = payload)
             }
@@ -840,6 +845,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
         // 监听求职状态属性，使用线上简历属性接口结果同步顶部状态展示
         mRealVM.jobStatusResult.observe(this) { data ->
+            if (data?.displayValue.isNullOrBlank()) data?.displayValue = mJobStatusSelected
             val statusCode = data?.options.orEmpty().firstOrNull { it.name == data?.displayValue }?.code
             binding.tvAgentDesc.text = data?.displayValue
                 ?.takeIf { it.isNotBlank() }

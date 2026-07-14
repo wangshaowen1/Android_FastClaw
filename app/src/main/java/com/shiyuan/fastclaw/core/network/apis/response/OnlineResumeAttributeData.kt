@@ -25,7 +25,7 @@ data class OnlineResumeAttributeData(
     val dictType: String? = null,
     val dictApi: String? = null,
     val value: Any? = null,
-    val displayValue: String? = null,
+    var displayValue: String? = null,
     val options: List<OnlineResumeAttributeOption>? = null,
     val complete: Boolean? = null,
     val skippable: Boolean? = null,
