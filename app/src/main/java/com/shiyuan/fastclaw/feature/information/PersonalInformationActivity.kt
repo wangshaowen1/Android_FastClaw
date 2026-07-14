@@ -48,6 +48,8 @@ class PersonalInformationActivity :
         private const val INPUT_MODE_DICT_SINGLE = "DICT_SINGLE"
         private const val INPUT_MODE_DATE_MONTH = "DATE_MONTH"
 
+        private const val FIELD_JOBIDENTITY = "jobIdentity"
+
 
         fun start(context: Context?) {
             context ?: return
@@ -171,6 +173,33 @@ class PersonalInformationActivity :
         binding.phoneRow.setOnSingleClickListener {
             "手机号暂不能修改".showToast()
         }
+
+        binding.JobStatusRow.setOnSingleClickListener {
+            findBaseInfoItem(FIELD_JOBIDENTITY)?.let { item ->
+                val enumItems = item.options.orEmpty().map {
+                    CommonEnumItem(code = it.code, name = it.name)
+                }
+                if (enumItems.isEmpty()) {
+                    "暂无选项".showToast()
+                    return@let
+                }
+                SingleSelectDialog.show(this.supportFragmentManager, "求职身份", enumItems) { data ->
+                    val value = mapOf(
+                        "code" to data.code,
+                        "name" to data.name
+                    )
+                    mRealVM.updateOnlineResumeAttribute(
+                        attributeGroupCode = item.attributeGroupCode ?: item.metaCode
+                        ?: FIELD_JOBIDENTITY,
+                        inputMode = item.inputMode ?: INPUT_MODE_SINGLE_CHOICE,
+                        value = value
+                    ) {
+                        binding.JobStatusRow.setValueText(data.name.orEmpty())
+                        FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
+                    }
+                }
+            }
+        }
         binding.wechatRow.setOnSingleClickListener {
             PersonaFreeFillInActivity.start(
                 this,
@@ -261,6 +290,7 @@ class PersonalInformationActivity :
         binding.genderRow.setValueText(findBaseInfoText(FIELD_GENDER))
         binding.birthDateRow.setValueText(findBaseInfoText(FIELD_BIRTHDAY))
         binding.phoneRow.setValueText(findBaseInfoText(FIELD_PHONE))
+        binding.JobStatusRow.setValueText(findBaseInfoText(FIELD_JOBIDENTITY))
         binding.wechatRow.setValueText(findBaseInfoText(FIELD_WECHAT_ID))
         binding.emailRow.setValueText(findBaseInfoText(FIELD_EMAIL))
         binding.currentCityRow.setValueText(findBaseInfoText(FIELD_LOCATION))

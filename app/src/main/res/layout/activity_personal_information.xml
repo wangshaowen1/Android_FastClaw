@@ -95,6 +95,13 @@
                     app:formPlaceholderText="@string/personal_information_birth_date_placeholder" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:id="@+id/Job_status_row"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/Job_status"
+                    app:formPlaceholderText="@string/personal_information_Job_status" />
+
+                <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
                     android:id="@+id/phone_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

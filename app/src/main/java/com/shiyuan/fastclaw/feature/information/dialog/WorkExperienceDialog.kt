@@ -3,9 +3,11 @@ package com.shiyuan.fastclaw.feature.information.dialog
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.fastjson.JSON
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
@@ -25,6 +27,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItemFinder
 import com.shiyuan.fastclaw.feature.information.EducationalActivity
 import com.shiyuan.fastclaw.feature.information.WorkActivity
 import com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel
+import kotlinx.serialization.json.Json
 
 /**
  * 工作经验列表底部弹窗。
@@ -100,6 +103,8 @@ class WorkExperienceDialog :
         // 字段编码：公司名称
         private const val FIELD_COMPANY_NAME = "companyName"
 
+        private const val FIELD_INTERNSHIP = "internship"
+
     }
 
     // 透传进来的工作经历数据
@@ -153,7 +158,8 @@ class WorkExperienceDialog :
             } else {
                 binding.tvDesc.visibility = View.VISIBLE
             }
-            binding.rlTag.visibility  = if (item.internship == true) View.VISIBLE else View.GONE
+            val internship = AttributeFieldItemFinder.findFirst(item.fieldItems, FIELD_INTERNSHIP)
+            binding.rlTag.visibility  = if (internship?.displayValue == "是") View.VISIBLE else View.GONE
 
             // 点击进入编辑页
             binding.root.setOnClickListener {

@@ -60,21 +60,53 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/tv_name" />
 
+                    <!-- 姓名 -->
                     <TextView
                         android:id="@+id/tv_name"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="11dp"
-                        android:layout_marginEnd="@dimen/spacing_s"
                         android:ellipsize="end"
                         android:maxLines="1"
+                        android:layout_marginStart="11dp"
                         android:textColor="@color/color_96_000000"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@id/iv_profile_edit"
+                        app:layout_constraintHorizontal_bias="0"
                         app:layout_constraintStart_toEndOf="@id/iv_avatar"
+                        app:layout_constraintEnd_toStartOf="@id/rl_tag"
                         app:layout_constraintTop_toTopOf="@id/iv_avatar"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constrainedWidth="true"
                         tools:text="Name" />
+
+                   <com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout
+                       android:visibility="gone"
+                       android:layout_marginEnd="@dimen/spacing_s"
+                       android:layout_marginStart="10dp"
+                       app:layout_constraintStart_toEndOf="@id/tv_name"
+                       app:layout_constraintEnd_toStartOf="@id/iv_profile_edit"
+                       app:layout_constraintTop_toTopOf="@id/tv_name"
+                       app:layout_constraintBottom_toBottomOf="@id/tv_name"
+                       android:id="@+id/rl_tag"
+                       app:background_normalColor="@color/color_e1ecfe"
+                       app:super_corner="4dp"
+                       android:paddingHorizontal="6dp"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content">
+
+                       <!-- 标签 -->
+                       <TextView
+                           android:text="学生"
+                           android:id="@+id/tv_tag"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textColor="@color/color_56657E"
+                           android:textSize="13sp"
+                           tools:text="学生" />
+
+                   </com.shiyuan.fastclaw.widget.shape.SuperRelativeLayout>
+
+
 
                     <TextView
                         android:id="@+id/tv_tip"
