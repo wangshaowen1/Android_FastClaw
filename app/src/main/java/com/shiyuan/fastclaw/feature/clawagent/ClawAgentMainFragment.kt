@@ -851,8 +851,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.ivScrollBottom.gone()
         if (hadObservedAnimation) {
             binding.rvMsg.stopScroll()
-            RecyclerViewScrollHelper.smoothScrollToBottom(binding.rvMsg, delayTime, MESSAGE_SCROLL_SPEED
-            )
+            RecyclerViewScrollHelper.smoothScrollToBottom(binding.rvMsg, delayTime, MESSAGE_SCROLL_SPEED)
         } else {
             RecyclerViewScrollHelper.scrollToBottom(binding.rvMsg, delayTime)
         }
