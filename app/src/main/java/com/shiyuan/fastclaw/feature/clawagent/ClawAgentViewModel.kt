@@ -177,8 +177,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 面试通关包报告生成状态轮询任务，只保留最后一个轮询 */
     private var passPackageReportPollingJob: Job? = null
 
-    private fun JobAgentMessage.storeKey(): String? = messageId ?: cursor ?: sequenceNo?.toString()
-
     private val sseProcessor by lazy {
         ClawAgentSseProcessor(
             onStart = {
@@ -486,42 +484,42 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     private fun ingestMessages(messages: List<JobAgentMessage>?, isReal: Boolean = false) {
         if (messages.isNullOrEmpty()) return
-        messages.forEach { msg ->
+        messages.forEach { newMsg ->
             // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
-            if (msg.isAttributeConfirm()) return@forEach
-            if (msg.isNotificationSwitch()) return@forEach
+            if (newMsg.isAttributeConfirm()) return@forEach
+            if (newMsg.isNotificationSwitch()) return@forEach
             // HISTORY_RESUME_CONFIRM 已操作过（interactionState.disabled=true）的不展示：
             // 覆盖 SSE 实时操作后服务端回写禁用态 与 enterSession / 历史分页里已操作过的残留两种场景；
             // 同时把 messageStore 里已渲染的同 id 旧卡移除，避免之前的可点击态滞留在列表
-            if (msg.isHistoryResumeConfirmCard()) {
-                val disabled = msg.payloadJson?.let {
+            if (newMsg.isHistoryResumeConfirmCard()) {
+                val disabled = newMsg.payloadJson?.let {
                     runCatching {
                         GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java)?.interactionState?.disabled
                     }.getOrNull()
                 }
                 if (disabled == true) {
-                    val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString()
+                    val key = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString()
                     key?.let { messageStore.remove(it) }
                     return@forEach
                 }
             }
             // 待上传和上传失败 在历史消息中已操作过的不展示，在实时sse的消息中要进行更新展示
-            if (msg.isUploadResumeCard()) {
-                val interactionState = msg.payloadJson?.let {
+            if (newMsg.isUploadResumeCard()) {
+                val interactionState = newMsg.payloadJson?.let {
                     runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
                 }
                 if (interactionState?.disabled == true) {
                     // 实时sse需要删除操作过的消息，历史和拉取
                     if (isReal) {
-                        val key = msg.messageId ?: msg.cursor ?: msg.sequenceNo?.toString()
+                        val key = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString()
                         key?.let { messageStore.remove(it) }
                     }
                     return@forEach
                 }
             }
             // 是否模拟面试报告生成中，启动面试报告轮询接口
-            if (msg.isMockInterviewReportCard()) {
-                val payload = msg.payloadJson?.let {
+            if (newMsg.isMockInterviewReportCard()) {
+                val payload = newMsg.payloadJson?.let {
                     runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
                 }
                 if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
@@ -529,8 +527,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
             // 是否面试通关包报告生成中，启动通关包报告轮询接口
-            if (msg.isPassPackageReportCard()) {
-                val payload = msg.payloadJson?.let {
+            if (newMsg.isPassPackageReportCard()) {
+                val payload = newMsg.payloadJson?.let {
                     runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
                 }
                 if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
@@ -538,17 +536,17 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
 
-            val rawKey = msg.storeKey() ?: return@forEach
+            val rawKey = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString() ?: return@forEach
             // 自我介绍卡是端侧补充卡，折叠屏重建或会话恢复可能重复补充，这里只保留最新一张
-            if (msg.isIntroduceYourselfCard()) {
+            if (newMsg.isIntroduceYourselfCard()) {
                 messageStore.filterValues { it.isIntroduceYourselfCard() }
                     .keys
                     .filter { it != rawKey }
                     .forEach { messageStore.remove(it) }
             }
             // 简历待上传/失败/确认流程卡类型合并只展示最新一张
-            if (msg.isLatestOnlyResumeCard()) {
-                val msgSeq = msg.sequenceNo ?: Long.MIN_VALUE
+            if (newMsg.isLatestOnlyResumeCard()) {
+                val msgSeq = newMsg.sequenceNo ?: Long.MIN_VALUE
                 // 筛选出所有关于“简历流程卡”类型的消息列表
                 val resumeCards = messageStore.filterValues { it.isLatestOnlyResumeCard() }
                 // 历史分页可能返回旧卡，不能覆盖当前更新的简历流程状态
@@ -562,32 +560,32 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                     .forEach { messageStore.remove(it) }
             }
             var key = rawKey
-            if (msg.senderType == SENDER_USER) {
+            if (newMsg.senderType == SENDER_USER) {
                 // 已合并过的服务端用户消息，继续复用本地占位 key，避免 pull/page 重复插入
                 key = serverUserMessageKeyToLocalKey[rawKey] ?: rawKey
                 if (key != rawKey) {
                     messageStore.remove(rawKey)
-                    messageStore[key] = msg.copy(messageId = key)
-                    msg.rememberServerKeys(key)
+                    messageStore[key] = newMsg.copy(messageId = key)
+                    newMsg.rememberServerKeys(key)
                     return@forEach
                 }
             }
             // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
             // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
-            if (msg.senderType == SENDER_USER && key !in optimisticUserMessageIds) {
-                val localKey = optimisticUserMessageIds.firstOrNull { messageStore[it]?.content == msg.content }
+            if (newMsg.senderType == SENDER_USER && key !in optimisticUserMessageIds) {
+                val localKey = optimisticUserMessageIds.firstOrNull { messageStore[it]?.content == newMsg.content }
                 if (localKey != null) {
                     messageStore.remove(rawKey)
-                    messageStore[localKey] = msg.copy(messageId = localKey)
+                    messageStore[localKey] = newMsg.copy(messageId = localKey)
                     optimisticUserMessageIds.remove(localKey)
                     // 首次把服务端回显合并进本地占位时，记录真实 key 到本地 key 的映射
-                    msg.rememberServerKeys(localKey)
+                    newMsg.rememberServerKeys(localKey)
                     // 已填充进占位，不再以服务端 messageId 另存，避免重复
                     return@forEach
                 }
             }
             // 同一响应组内，REPLACE_ON_TERMINAL 的中间态消息由后续终态/结果消息替换。
-            msg.responseGroupId?.takeIf { it.isNotBlank() }?.let { groupId ->
+            newMsg.responseGroupId?.takeIf { it.isNotBlank() }?.let { groupId ->
                     messageStore.filterValues { it.responseGroupId == groupId && (it.displayPolicy == POLICY_REPLACE_ON_TERMINAL
                             || it.displayPolicy == POLICY_DISMISS_ON_TERMINAL) }
                         .keys
@@ -595,8 +593,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                         .forEach { messageStore.remove(it) }
                 }
             // 最后如果是Toast消息，将被丢弃不插入处理
-            if (!msg.isToastCard()) {
-                messageStore[key] = msg
+            if (!newMsg.isToastCard()) {
+                messageStore[key] = newMsg
             }
         }
         refreshMessageList()
