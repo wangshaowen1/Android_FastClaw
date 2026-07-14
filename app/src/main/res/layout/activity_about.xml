@@ -115,6 +115,37 @@
                            android:src="@drawable/ic_item_arrow_right2" />
                    </RelativeLayout>
 
+                   <View
+                       android:background="@color/color_10_000000"
+                       android:layout_width="match_parent"
+                       android:layout_height="0.5dp"/>
+
+                   <RelativeLayout
+                       android:id="@+id/check_for_updates"
+                       android:paddingVertical="18dp"
+                       android:paddingHorizontal="16dp"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       tools:ignore="UselessParent">
+
+                       <TextView
+                           android:text="@string/check_for_updates"
+                           android:textColor="@color/color_90_000000"
+                           android:textSize="15sp"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content">
+                       </TextView>
+
+
+                       <ImageView
+                           android:layout_width="20dp"
+                           android:layout_height="20dp"
+                           android:layout_alignParentEnd="true"
+                           android:layout_centerVertical="true"
+                           android:importantForAccessibility="no"
+                           android:src="@drawable/ic_item_arrow_right2" />
+                   </RelativeLayout>
+
                </LinearLayout>
 
 

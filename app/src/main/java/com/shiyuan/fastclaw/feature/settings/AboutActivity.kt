@@ -5,14 +5,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.core.util.Pair
+import androidx.lifecycle.lifecycleScope
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Config
+import com.shiyuan.fastclaw.core.manager.UpgradeManager
 import com.shiyuan.fastclaw.databinding.ActivityAboutBinding
 import com.shiyuan.fastclaw.feature.PhotoPagerActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+import kotlinx.coroutines.delay
 
 
 /**
@@ -32,6 +36,7 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
             activity.startActivity(intent)
         }
     }
+    private val upgradeManager by lazy { UpgradeManager(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +55,17 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
             PhotoPagerActivity. launch(this, uris) // 复用现有的 launch 方法
         }
 
-
-
+        binding.checkForUpdates.setOnSingleClickListener {
+            checkUpgrade()
+        }
     }
+
+    private fun checkUpgrade() {
+        lifecycleScope.launchNoCrash {
+            upgradeManager.upgrade(true)
+        }
+    }
+
 
     override fun setTranslucentStatus() {
         ImmersionBar.with(this)
