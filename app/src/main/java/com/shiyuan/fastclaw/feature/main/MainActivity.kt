@@ -13,6 +13,7 @@ import android.view.WindowManager
 import androidx.core.util.getOrDefault
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.setPadding
 import androidx.lifecycle.lifecycleScope
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
@@ -96,16 +97,17 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-     /*   // 配合修改导航栏颜色适配部分rom的底部手势提示线
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        // 配合修改导航栏颜色适配部分rom的底部手势提示线
+        /*ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             // 获取系统栏（状态栏 + 导航栏）的 Insets
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             // 动态设置 Padding：保持原有的左、上、右 Padding，仅改变底部 Padding
             v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, -systemBars.bottom)
+            binding.mrg.setPadding(binding.mrg.paddingLeft, binding.mrg.paddingTop, binding.mrg.paddingRight, systemBars.bottom)
             // 返回 insets 以便继续传递
             insets
-        }
-*/
+        }*/
+
         registerTime = System.currentTimeMillis()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             try {
