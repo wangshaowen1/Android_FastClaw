@@ -153,7 +153,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             { i, p ->
                 AgentTableFormViewHolder(ItemMsgAgentTableFormBinding.inflate(i, p, false)).apply {
                     onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
-                    onSkipClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                    onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item) }
         // 公司背调入口卡

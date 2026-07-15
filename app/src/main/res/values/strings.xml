@@ -643,7 +643,7 @@
     <string name="home_upload_please_subtitle">没有简历无法和求职经纪人对话哦</string>
 
     <!-- 工作经历 -->
-    <string name="work_experience_lack">识别到你的工作经历不太完整，\n可以告诉我详细信息吗？</string>
+    <string name="work_experience_lack">识别到你的工作经历不太完整，可以告诉我详细信息吗？</string>
 
     <string name="mine_title">我的主页</string>
     <string name="mine_sticks">我的虾条</string>
@@ -936,6 +936,7 @@
     <string name="job_preference">求职偏好</string>
     <string name="inaccurate">让小虾理解你</string>
     <string name="str_agent_question_skip">跳过</string>
+    <string name="str_agent_question_reanswer">重新回答</string>
     <string name="str_agent_intercept_hint">小虾回复中，请稍后</string>
     <string name="record_name">粤ICP备2026052853号-6A</string>
     <string name="record_tip">快龙虾备案号</string>

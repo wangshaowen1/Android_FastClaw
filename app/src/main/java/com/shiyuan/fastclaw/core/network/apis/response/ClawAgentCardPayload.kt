@@ -181,6 +181,8 @@ data class CoreQuestionPayloadBean(
     companion object {
         /** 跳过按钮 */
         const val ACTION_SKIP_CURRENT_QUESTION = "SKIP_CURRENT_QUESTION"
+        /** 重新回答 */
+        const val ACTION_QUESTION_REANSWER_SUBMIT = "QUESTION_REANSWER_SUBMIT"
         /** 没有简历 */
         const val ACTION_NO_RESUME_START_QUESTIONING = "NO_RESUME_START_QUESTIONING"
         /** 暂时不需要面试 */

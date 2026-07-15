@@ -10,6 +10,7 @@ import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_QUESTION_REANSWER_SUBMIT
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
@@ -26,7 +27,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
     var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     /** 动作按钮（如跳过）点击回调 */
-    var onSkipClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+    var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -36,35 +37,53 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
             binding.tvTitle.text = payload.questionText ?: payload.question ?: item.content
             bindActionRows(item, payload)
             bindSkipAction(item, payload)
+            bindReAnswerAction(item, payload)
         }
     }
 
     private fun bindActionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
-        if (payload?.actions?.isNotEmpty() == true) {
+        val action = payload?.actions?.firstOrNull()
+        action?.let {
             val parent = binding.layoutTableCard
-            val action = payload.actions[0]
             //binding.btnName.text = action.text
             if (payload.isAnsweredV2()) { //已回答
-                binding.btnName.text = parent.context.getString(R.string.already_write)
-                binding.btnName.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
-                binding.btnName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
-                binding.btnLayout.setBackgroundResource(R.drawable.bg_option_selected)
+                binding.tvContent.text = parent.context.getString(R.string.already_write)
+                binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
+                binding.flowOptions.setBackgroundResource(R.drawable.bg_option_selected)
             } else if (action.disabled == true) { //置灰
-                binding.btnName.text = parent.context.getString(R.string.please_write)
-                binding.btnName.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
-                binding.btnName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
-                binding.btnLayout.setBackgroundResource(R.drawable.bg_option_unselected)
+                binding.tvContent.text = parent.context.getString(R.string.please_write)
+                binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
+                binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
+                binding.flowOptions.setBackgroundResource(R.drawable.bg_option_unselected)
             } else { //未回答
-                binding.btnName.text = parent.context.getString(R.string.please_write)
-                binding.btnName.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
-                binding.btnName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_ffffff))
-                binding.btnLayout.setBackgroundResource(R.drawable.bg_upload_resume_btn)
+                binding.tvContent.text = parent.context.getString(R.string.please_write)
+                binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_75_3c3c43))
+                binding.flowOptions.setBackgroundResource(R.drawable.bg_option_ripple)
             }
             action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
-            binding.btnLayout.isEnabled = payload.isDisabled() != true
+            binding.flowOptions.isEnabled = payload.isDisabled() != true
             //binding.btnLayout.isEnabled = true
-            binding.btnLayout.setOnSingleClickListener { onActionClickListener(item, action, payload.questionQueueId) }
+            binding.flowOptions.setOnSingleClickListener { onActionClickListener(item, action, payload.questionQueueId) }
         }
+    }
+
+    /**
+     * 重新回答 匹配 QUESTION_REANSWER_SUBMIT
+     */
+    private fun bindReAnswerAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
+        val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }
+        if (action == null) {
+            binding.tvReanswer.gone()
+            binding.tvReanswer.setOnClickListener(null)
+            return
+        }
+        binding.tvReanswer.visible()
+        binding.tvReanswer.text = action.text
+        binding.tvReanswer.isEnabled = action.disabled != true
+        binding.tvReanswer.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }
+        binding.flowOptions.gone()
     }
 
     /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */
@@ -73,7 +92,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
         if (action != null && !payload.isAnsweredV2() && !payload.isDisabled()) {
             binding.tvSkip.visible()
             binding.tvSkip.isEnabled = action.disabled != true
-            binding.tvSkip.setOnSingleClickListener { onSkipClickListener(item, action, payload.questionQueueId) }
+            binding.tvSkip.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }
         } else {
             binding.tvSkip.gone()
         }

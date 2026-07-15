@@ -64,7 +64,28 @@
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/flow_options"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_reanswer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="4dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:drawableEnd="@drawable/icon_agent_into"
+        android:drawablePadding="3dp"
+        android:text="@string/str_agent_question_reanswer"
+        android:textColor="@color/color_56_3c3c43"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/flow_options"
+        tools:visibility="gone" />
 
     <!-- 已回复回显（已回复状态可见，与 flow_options 互斥） -->
     <TextView
