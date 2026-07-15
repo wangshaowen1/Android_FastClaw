@@ -29,6 +29,8 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
     /** 动作按钮（如跳过）点击回调 */
     var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
+    private var mIsReanswer: Boolean = false
+
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
@@ -52,12 +54,14 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_selected)
             } else if (action.disabled == true) { //置灰
-                binding.tvContent.text = parent.context.getString(R.string.please_write)
+                //binding.tvContent.text = parent.context.getString(R.string.please_write)
+                binding.tvContent.text = action.text
                 binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_unselected)
             } else { //未回答
-                binding.tvContent.text = parent.context.getString(R.string.please_write)
+                //binding.tvContent.text = parent.context.getString(R.string.please_write)
+                binding.tvContent.text = action.text
                 binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_75_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_ripple)
@@ -79,11 +83,13 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
             binding.tvReanswer.setOnClickListener(null)
             return
         }
+        binding.flowOptions.gone()
         binding.tvReanswer.visible()
         binding.tvReanswer.text = action.text
         binding.tvReanswer.isEnabled = action.disabled != true
-        binding.tvReanswer.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }
-        binding.flowOptions.gone()
+        binding.tvReanswer.setOnSingleClickListener {
+            //刷新当前item
+        }
     }
 
     /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */

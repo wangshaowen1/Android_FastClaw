@@ -136,23 +136,24 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             val tvContent = view.findViewById<TextView>(R.id.tv_content)
             val ivInto = view.findViewById<ImageView>(R.id.iv_into)
             if (payload.isAnsweredV2()) { //已回答
-                //tvContent.text = parent.context.getString(R.string.already_selected)
+                tvContent.text = parent.context.getString(R.string.already_selected)
                 tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
                 tvContent.setBackgroundResource(R.drawable.bg_option_selected)
                 tvContent.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else if (payload.isDisabled()) { //置灰
                 //tvContent.text = parent.context.getString(R.string.please_selected)
+                tvContent.text = action.text
                 tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 tvContent.setBackgroundResource(R.drawable.bg_option_unselected)
                 tvContent.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_55_3c3c43))
             } else { //未回答
                 //tvContent.text = parent.context.getString(R.string.please_selected)
+                tvContent.text = action.text
                 tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 tvContent.setBackgroundResource(R.drawable.bg_option_ripple)
                 tvContent.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_75_3c3c43))
             }
             ivInto.visible()
-            tvContent.text = action.text
             tvContent.isEnabled = payload.isDisabled() != true
             tvContent.setOnSingleClickListener { onActionClickListener(item, payload.buildSubmitAction(), payload.questionQueueId) }
             view.id = View.generateViewId()
