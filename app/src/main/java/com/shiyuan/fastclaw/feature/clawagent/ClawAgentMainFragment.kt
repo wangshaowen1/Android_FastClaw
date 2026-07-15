@@ -127,11 +127,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         private const val RESUME_EVENT_POLL_TIMEOUT = 60000L
 
         fun getInstance(): ClawAgentMainFragment {
-            val fragment = ClawAgentMainFragment()
-//            fragment.arguments = Bundle().also {
-//
-//            }
-            return fragment
+            return ClawAgentMainFragment()
         }
     }
 
