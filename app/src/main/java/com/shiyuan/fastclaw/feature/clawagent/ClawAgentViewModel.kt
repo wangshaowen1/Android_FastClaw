@@ -194,6 +194,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 // message/snapshot 是完整消息，按 messageId upsert
                 sseInsertMessages(msg)
             },
+            onPatch = { patch ->
+                // patch 也携带 seq，记录后可用于断线重连 lastSeq。
+                patch.seq?.let { lastSeq = it }
+                // 目前文档只要求处理 REMOVE：重新回答后移除旧答案气泡和旧下游问题卡。
+                if (patch.patchType == PATCH_TYPE_REMOVE) {
+                    removeMessageById(patch.messageId)
+                }
+            },
             onDone = { _, seq ->
                 seq?.let { lastSeq = it }
                 streaming.value = false
@@ -596,6 +604,41 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             if (!newMsg.isToastCard()) {
                 messageStore[key] = newMsg
             }
+        }
+        refreshMessageList()
+    }
+
+    /**
+     * 处理 SSE patch REMOVE：按服务端 messageId 从当前内存列表移除消息。
+     *
+     * 用户消息可能已合并到本地乐观占位 key，这里同时通过 serverUserMessageKeyToLocalKey 找到本地 key 删除。
+     */
+    private fun removeMessageById(messageId: String?) {
+        if (messageId.isNullOrBlank()) return
+        // 用户气泡可能已被服务端回显合并到本地乐观占位，patch 给的是服务端 messageId，
+        // 所以先查映射表，找到真正展示在 messageStore 里的本地 key。
+        val localKey = serverUserMessageKeyToLocalKey[messageId]
+        val keysToRemove = messageStore
+            .filter { (key, msg) ->
+                // messageStore 的 key 通常是 messageId；历史/兜底场景也可能使用 cursor 或 sequenceNo。
+                key == messageId ||
+                    key == localKey ||
+                    msg.messageId == messageId ||
+                    msg.cursor == messageId ||
+                    msg.sequenceNo?.toString() == messageId
+            }
+            .keys
+            .toMutableSet()
+        // 如果命中了本地乐观占位 key，即使当前 filter 没扫到，也加入待删除集合。
+        localKey?.let(keysToRemove::add)
+        if (keysToRemove.isEmpty()) return
+        keysToRemove.forEach { key ->
+            messageStore.remove(key)
+            optimisticUserMessageIds.remove(key)
+        }
+        // 清理服务端 key -> 本地 key 映射，避免后续 pull/page 再把已删除消息映射回本地占位。
+        serverUserMessageKeyToLocalKey.entries.removeAll { (serverKey, mappedLocalKey) ->
+            serverKey == messageId || serverKey in keysToRemove || mappedLocalKey in keysToRemove
         }
         refreshMessageList()
     }
@@ -1499,6 +1542,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val POLICY_REPLACE_ON_TERMINAL = "REPLACE_ON_TERMINAL"
         private const val POLICY_DISMISS_ON_TERMINAL = "DISMISS_ON_TERMINAL"
         private const val POLICY_REPLACE_TARGET = "REPLACE_TARGET"
+
+        /** SSE patch 删除当前内存列表消息 */
+        private const val PATCH_TYPE_REMOVE = "REMOVE"
 
         // resumeUploadStatus：上传简历卡状态机（PARSE_SUCCESS / PARSE_FAILED 路由到独立卡）
         private const val UPLOAD_STATUS_PARSE_SUCCESS = "PARSE_SUCCESS"

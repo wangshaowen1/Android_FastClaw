@@ -21,6 +21,8 @@ class ClawAgentSseProcessor(
     private val onStart: () -> Unit = {},
     private val onMeta: (requestId: String?, seq: Long?) -> Unit = { _, _ -> },
     private val onMessage: (JobAgentMessage) -> Unit = {},
+    /** patch 事件回调，目前用于处理服务端要求端侧实时移除消息。 */
+    private val onPatch: (SsePatch) -> Unit = {},
     private val onDone: (status: String?, seq: Long?) -> Unit = { _, _ -> },
     private val onComplete: () -> Unit = {},
     private val onErrorCallback: (Throwable?) -> Unit = {},
@@ -37,6 +39,8 @@ class ClawAgentSseProcessor(
             EVENT_META -> parse(data, SseMeta::class.java) { onMeta(it.requestId, it.seq) }
             // event:message
             EVENT_MESSAGE, EVENT_SNAPSHOT, null -> parse(data, JobAgentMessage::class.java) { onMessage(it) }
+            // event:patch，服务端用来通知端侧删除旧答案气泡或旧下游问题卡。
+            EVENT_PATCH -> parse(data, SsePatch::class.java) { onPatch(it) }
             // event:done
             EVENT_DONE -> parse(data, SseDone::class.java) { onDone(it.status, it.seq) }
             // event:ping
@@ -70,11 +74,26 @@ class ClawAgentSseProcessor(
         val messageId: String? = null,
     )
 
+    /** patch 事件 data，当前只消费 patchType=REMOVE 的删除指令。 */
+    data class SsePatch(
+        val requestId: String? = null,
+        val seq: Long? = null,
+        /** 需要从当前内存列表移除的服务端消息 ID。 */
+        val messageId: String? = null,
+        /** REMOVE 表示删除当前内存列表中的对应消息。 */
+        val patchType: String? = null,
+        /** 服务端可见状态，visibleStatus=0 表示该消息已被标记不可见。 */
+        val visibleStatus: Int? = null,
+        /** 删除原因，仅用于调试排查，端侧展示逻辑不依赖它。 */
+        val reason: String? = null,
+    )
+
     companion object {
         private const val TAG = "[SSE-JobAgent]"
         private const val EVENT_META = "meta"
         private const val EVENT_MESSAGE = "message"
         private const val EVENT_SNAPSHOT = "snapshot"
+        private const val EVENT_PATCH = "patch"
         private const val EVENT_DONE = "done"
         private const val EVENT_PING = "ping"
         private val gson = Gson()
