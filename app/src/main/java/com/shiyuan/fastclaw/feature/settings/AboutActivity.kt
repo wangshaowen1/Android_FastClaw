@@ -15,6 +15,7 @@ import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.manager.UpgradeManager
 import com.shiyuan.fastclaw.databinding.ActivityAboutBinding
 import com.shiyuan.fastclaw.feature.PhotoPagerActivity
+import com.shiyuan.fastclaw.feature.upgrade.UpgradeDialogFragment
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import kotlinx.coroutines.delay
 
@@ -56,7 +57,13 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
         }
 
         binding.checkForUpdates.setOnSingleClickListener {
-            checkUpgrade()
+            UpgradeDialogFragment.show(
+                this.supportFragmentManager,
+                "1.3.8",
+                "R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32",
+                false
+            )
+          //  checkUpgrade()
         }
     }
 
