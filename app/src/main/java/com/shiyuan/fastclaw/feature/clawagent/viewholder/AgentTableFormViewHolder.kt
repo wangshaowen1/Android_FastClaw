@@ -9,6 +9,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
+import com.shiyuan.fastclaw.core.network.apis.response.CardActionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_QUESTION_REANSWER_SUBMIT
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
@@ -29,18 +30,49 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
     /** 动作按钮（如跳过）点击回调 */
     var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
-    private var mIsReanswer: Boolean = false
-
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
         }
         payload?.let {
-            binding.tvTitle.text = payload.questionText ?: payload.question ?: item.content
-            bindActionRows(item, payload)
-            bindSkipAction(item, payload)
-            bindReAnswerAction(item, payload)
+            // 本地验证用：服务端未下发时，临时补齐跳过/重新回答 action，方便验证重新回答按钮展示。
+            val verifyPayload = payload.buildVerifyReAnswerPayload()
+            binding.tvTitle.text = verifyPayload.questionText ?: verifyPayload.question ?: item.content
+            bindActionRows(item, verifyPayload)
+            bindSkipAction(item, verifyPayload)
+            bindReAnswerAction(item, verifyPayload)
         }
+    }
+
+    private fun CoreQuestionPayloadBean.buildVerifyReAnswerPayload(): CoreQuestionPayloadBean {
+        val currentActions = actions.orEmpty()
+        val verifyActions = currentActions.toMutableList()
+        val commonPayload = CardActionPayloadBean(
+            questionQueueId = questionQueueId,
+            attributeGroupCode = attributeGroupCode,
+            metaCode = metaCode,
+        )
+        if (currentActions.none { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }) {
+            verifyActions.add(
+                CardAction(
+                    actionCode = ACTION_SKIP_CURRENT_QUESTION,
+                    text = itemView.context.getString(R.string.skip),
+                    disabled = false,
+                    actionPayload = commonPayload,
+                )
+            )
+        }
+        if (currentActions.none { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }) {
+            verifyActions.add(
+                CardAction(
+                    actionCode = ACTION_QUESTION_REANSWER_SUBMIT,
+                    text = itemView.context.getString(R.string.reanswer),
+                    disabled = false,
+                    actionPayload = commonPayload,
+                )
+            )
+        }
+        return copy(actions = verifyActions)
     }
 
     private fun bindActionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
@@ -78,7 +110,8 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
      */
     private fun bindReAnswerAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }
-        if (action == null) {
+        if (action == null || item.isReplyAnswer) {
+            binding.flowOptions.visible()
             binding.tvReanswer.gone()
             binding.tvReanswer.setOnClickListener(null)
             return
@@ -88,7 +121,10 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
         binding.tvReanswer.text = action.text
         binding.tvReanswer.isEnabled = action.disabled != true
         binding.tvReanswer.setOnSingleClickListener {
-            //刷新当前item
+            binding.flowOptions.visible()
+            binding.tvReanswer.gone()
+            item.isReplyAnswer = true
+            bindActionRows(item, payload)
         }
     }
 
