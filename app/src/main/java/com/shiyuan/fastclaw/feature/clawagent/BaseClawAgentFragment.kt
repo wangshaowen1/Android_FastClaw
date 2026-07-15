@@ -7,7 +7,6 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.nhsd.basic.BaseViewModelFragment
-import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.viewmodel.BaseLayoutViewModel
 import com.shiyuan.fastclaw.BuildConfig
@@ -19,17 +18,12 @@ import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Events
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_CANCEL
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_DOWN
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_MOVE
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_UP
-import com.shiyuan.fastclaw.core.Events.ClawVoiceEvent.MSG_ACTION_VOLUME
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
+import com.shiyuan.fastclaw.feature.clawagent.dialog.VoiceRecordingDialog
 import com.shiyuan.fastclaw.router.AppNavigator
-import com.shiyuan.fastclaw.widget.VoiceRecordingView.Companion.VOICE_CANCEL_DISTANCE
 
 /**
  * @desc：聊天基类
@@ -59,6 +53,9 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     /** 语音识别开始时间，用于过滤过短按压。 */
     private var voiceStartElapsedMs = 0L
 
+    /** 按住说话期间展示的录音底部 Dialog。 */
+    private var voiceRecordingDialog: VoiceRecordingDialog? = null
+
     /** 软键盘展示时不显示“滚动到底部”按钮。 */
     protected var isScrollBottomKeyboardShowing = false
 
@@ -77,6 +74,9 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     companion object {
         /** 语音输入最短有效按压时长。 */
         private const val MIN_VOICE_INPUT_DURATION_MS = 1000L
+
+        /** 按住说话上滑取消的触发距离。 */
+        private val VOICE_CANCEL_DISTANCE = 40.dp
 
         /** 消息列表滚到底部前的默认延迟，等待列表布局完成。 */
         private const val MESSAGE_SCROLL_DELAY = 100L
@@ -217,22 +217,22 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
                 voiceTouchRecording = startVoiceRecognizing()
                 if (voiceTouchRecording) {
                     // 识别启动成功后再展示录音浮层，避免权限申请或启动失败时出现假录音态。
-                    FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_DOWN, event))
+                    voiceRecordingDialog = VoiceRecordingDialog.show(parentFragmentManager)
                 }
             }
             MotionEvent.ACTION_MOVE -> {
                 if (!voiceTouchRecording) return true
                 updateVoiceCancelState(event.rawY)
-                FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_MOVE, event))
+                voiceRecordingDialog?.updateCanceling(voiceCanceling)
             }
             MotionEvent.ACTION_UP -> {
                 if (!voiceTouchRecording) return true
-                FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_UP, event))
+                hideVoiceRecordingDialog()
                 finishVoiceRecognizing(canceled = voiceCanceling)
             }
             MotionEvent.ACTION_CANCEL -> {
                 if (!voiceTouchRecording) return true
-                FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_CANCEL, event))
+                hideVoiceRecordingDialog()
                 finishVoiceRecognizing(canceled = true)
             }
         }
@@ -245,13 +245,28 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     protected fun releaseVoiceRecognizing() {
         speechTranscriber?.release()
         speechTranscriber = null
+        hideVoiceRecordingDialog()
     }
 
+    /**
+     * 根据手指 Y 坐标更新上滑取消态。
+     */
     private fun updateVoiceCancelState(rawY: Float) {
         // 以按下点为基准，上滑超过阈值进入取消态；滑回阈值内恢复发送态。
         voiceCanceling = voiceDownRawY - rawY > VOICE_CANCEL_DISTANCE
     }
 
+    /**
+     * 隐藏录音 Dialog 并清空当前引用。
+     */
+    private fun hideVoiceRecordingDialog() {
+        voiceRecordingDialog?.hideRecording()
+        voiceRecordingDialog = null
+    }
+
+    /**
+     * 结束本次语音识别，根据取消态、时长和识别结果决定是否发送。
+     */
     private fun finishVoiceRecognizing(canceled: Boolean) {
         if (canceled) {
             shouldSendVoiceResult = false
@@ -271,7 +286,6 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         }
         // 松开时如果已有 partial 结果先发送；否则等待最终结果或 stopped 回调再兜底处理。
         shouldSendVoiceResult = true
-        shouldSendVoiceResult = true
         if (sendVoiceMessage()) {
             speechTranscriber?.cancel()
         } else {
@@ -280,6 +294,9 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         resetVoiceTouchState()
     }
 
+    /**
+     * 检查录音权限并启动语音识别。
+     */
     private fun startVoiceRecognizing(): Boolean {
         if (!PermissionsUtils.checkPermission(requireContext(), Manifest.permission.RECORD_AUDIO)) {
             requestRxPermissions(getString(R.string.toast_open_mike_permission), Manifest.permission.RECORD_AUDIO) { granted ->
@@ -301,6 +318,9 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         }
     }
 
+    /**
+     * 懒创建语音识别器，并把识别回调同步到当前页面状态。
+     */
     private fun ensureSpeechTranscriber(): DashFunAsrSpeechTranscriber {
         return speechTranscriber ?: DashFunAsrSpeechTranscriber(
             context = requireContext().applicationContext,
@@ -321,7 +341,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
                 }
 
                 override fun onVolumeChanged(rmsDb: Float) {
-                    FlowEventBus.postSticky(Events.ClawVoiceEvent(MSG_ACTION_VOLUME, rmsDb))
+                    voiceRecordingDialog?.updateVolume(rmsDb)
                 }
 
                 override fun onError(message: String) {
@@ -345,6 +365,9 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         ).also { speechTranscriber = it }
     }
 
+    /**
+     * 将已识别文本交给子类发送，发送成功后清空本次识别缓存。
+     */
     private fun sendVoiceMessage(): Boolean {
         val text = pendingVoiceText?.trim()?.takeIf { it.isNotEmpty() } ?: return false
         pendingVoiceText = null
@@ -354,6 +377,9 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         return true
     }
 
+    /**
+     * 重置触摸和取消态，并通知子类刷新输入区 UI。
+     */
     private fun resetVoiceTouchState() {
         voiceTouchRecording = false
         voiceCanceling = false

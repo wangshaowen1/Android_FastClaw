@@ -22,7 +22,7 @@ import kotlin.math.sin
 /**
  * 面试作答按钮上方的语音状态波形。
  *
- * 参照 VoiceRecordingView，把竖条创建、动画刷新和生命周期释放收口到自定义 View 内部。
+ * 把竖条创建、动画刷新和生命周期释放收口到自定义 View 内部。
  */
 class InterviewVoiceBadgeView @JvmOverloads constructor(
     context: Context,

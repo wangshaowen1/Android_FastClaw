@@ -122,15 +122,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         /** 距顶部多少条时开始预取更早历史 */
         private const val PREFETCH_THRESHOLD = 5
+        private const val KEYBOARD_BASE_BOTTOM_OFFSET = 95
         private const val RESUME_EVENT_POLL_INTERVAL = 10000L
         private const val RESUME_EVENT_POLL_TIMEOUT = 60000L
 
         fun getInstance(): ClawAgentMainFragment {
-            val fragment = ClawAgentMainFragment()
-//            fragment.arguments = Bundle().also {
-//
-//            }
-            return fragment
+            return ClawAgentMainFragment()
         }
     }
 
@@ -579,31 +576,28 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val navigationBottom = insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars()).bottom
             // 动画期间不再改变margin，防多次分发触发动画
             if (!hasRunningImeAnimation) {
                 v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                    bottomMargin = resolveBottomMargin(imeBottom)
+                    bottomMargin = resolveBottomMargin(imeBottom, navigationBottom)
                 }
             }
             insets
         }
         // 键盘动画监听期间逐帧跟随 IME，键盘弹/收过程中 layoutSend 跟随改变底部边距
-        ViewCompat.setWindowInsetsAnimationCallback(
-            binding.layoutSend,
-            object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+        ViewCompat.setWindowInsetsAnimationCallback(binding.layoutSend, object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
                 override fun onPrepare(animation: WindowInsetsAnimationCompat) {
                     if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
                         hasRunningImeAnimation = true
                     }
                 }
 
-                override fun onProgress(
-                    insets: WindowInsetsCompat,
-                    runningAnimations: MutableList<WindowInsetsAnimationCompat>
-                ): WindowInsetsCompat {
+                override fun onProgress(insets: WindowInsetsCompat, runningAnimations: MutableList<WindowInsetsAnimationCompat>): WindowInsetsCompat {
                     val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                    val navigationBottom = insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars()).bottom
                     binding.layoutSend.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                        bottomMargin = resolveBottomMargin(imeBottom)
+                        bottomMargin = resolveBottomMargin(imeBottom, navigationBottom)
                     }
                     return insets
                 }
@@ -1059,10 +1053,11 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         return GsonUtils.toJson(map)
     }
 
-    // 计算 layoutSend 相对父容器底部应有的 margin
-    private fun resolveBottomMargin(imeBottom: Int): Int =
-        // 弹出键盘距离底部距离，收起键盘距离底部距离（82dp距离底部导航栏）
-        maxOf(12.dp, imeBottom - 82.dp)
+    // 计算 layoutSend 相对父容器底部应有的 margin，兼容三键导航和全屏手势导航。
+    private fun resolveBottomMargin(imeBottom: Int, navigationBottom: Int): Int {
+        val gestureInsetOffset = (binding.layoutContainer.paddingBottom - navigationBottom).coerceAtLeast(0)
+        return maxOf(12.dp, imeBottom - KEYBOARD_BASE_BOTTOM_OFFSET.dp + gestureInsetOffset)
+    }
 
     private fun dismissMemoryCard() {
         autoConfirmJob?.cancel()
