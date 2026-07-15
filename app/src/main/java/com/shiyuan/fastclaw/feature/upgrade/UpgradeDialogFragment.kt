@@ -67,7 +67,7 @@ class UpgradeDialogFragment : BaseVMDialogFragment<DialogUpgradeBinding, EmptyVi
         dialog?.window?.let { dialogWindow ->
             dialogWindow.attributes?.let { attr ->
                 val screenWidth = min(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight())
-                attr.width = (285 / 375f * screenWidth).toInt()
+                attr.width = (280 / 375f * screenWidth).toInt()
                 attr.gravity = Gravity.CENTER
                 dialogWindow.attributes = attr
             }
