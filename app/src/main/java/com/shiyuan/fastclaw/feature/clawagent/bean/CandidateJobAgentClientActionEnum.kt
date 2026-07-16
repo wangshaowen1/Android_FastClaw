@@ -48,6 +48,11 @@ enum class CandidateJobAgentClientActionEnum {
     QUESTION_OPTION_SUBMIT,
 
     /**
+     * 重新回答
+     */
+    QUESTION_REANSWER_SUBMIT,
+
+    /**
      * 打开公司背调卡片
      */
     OPEN_COMPANY_BACKGROUND,

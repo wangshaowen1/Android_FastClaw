@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_msg_agent_left"
+    android:paddingBottom="14dp"
     android:visibility="visible">
 
     <TextView
@@ -43,7 +44,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_question"
         app:layout_constraintVertical_bias="0"
-        app:layout_goneMarginBottom="18dp"
         tools:visibility="gone" />
 
     <!--  跳过按钮  -->
@@ -54,7 +54,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginBottom="4dp"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="10dp"
+        android:paddingTop="10dp"
         android:text="@string/str_agent_question_skip"
         android:textColor="@color/color_56_3c3c43"
         android:textSize="12sp"
@@ -64,7 +64,7 @@
         app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/flow_options"
-        tools:visibility="gone" />
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/tv_reanswer"
@@ -73,7 +73,7 @@
         android:layout_marginTop="2dp"
         android:layout_marginBottom="4dp"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="10dp"
+        android:paddingTop="10dp"
         android:drawableEnd="@drawable/icon_agent_into"
         android:drawablePadding="3dp"
         android:text="@string/str_agent_question_reanswer"
@@ -94,7 +94,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="14dp"
         android:textColor="@color/color_56_3c3c43"
         android:textSize="13sp"
         android:visibility="gone"
@@ -104,7 +103,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_question"
         app:layout_constraintVertical_bias="0"
         tools:text="已回复：积极找"
-        tools:visibility="visible" />
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

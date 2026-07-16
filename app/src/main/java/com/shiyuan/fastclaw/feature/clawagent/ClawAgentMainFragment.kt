@@ -396,6 +396,20 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 补问卡动作按钮：actionCode 取自 payload action
+        // 文本补问卡点击“重新回答”时，聚焦底部输入框并拉起输入法
+        msgAdapter.onQuestionInputClickAction = { _, _, _ ->
+            if (!interceptIfStreaming()) {
+                isVoiceInputMode = false
+                binding.layoutReanswer.visible()
+                binding.layoutSend.setCorners(21.dp.toFloat())
+                updateInputModeView()
+                binding.etSend.post {
+                    binding.etSend.requestFocus()
+                    binding.etSend.setSelection(binding.etSend.text?.length ?: 0)
+                    KeyboardUtils.showKeyboard(binding.etSend)
+                }
+            }
+        }
         msgAdapter.onQuestionActionClickAction = { item, action, queueId ->
             if (!interceptIfStreaming()) {
                 val payload = item.metaData?.let {

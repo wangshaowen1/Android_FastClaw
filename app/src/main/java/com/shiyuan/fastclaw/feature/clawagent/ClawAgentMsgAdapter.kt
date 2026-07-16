@@ -93,6 +93,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     /** 补问卡动作按钮点击 */
     var onQuestionActionClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
+    /** 文本补问卡点击输入时，通知页面聚焦底部输入框 */
+    var onQuestionInputClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+
     /**（如跳过）点击 */
     var onDefaultActionClickAction: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
@@ -146,6 +149,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                 AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
                     onOptionClickListener = { item, option, queueId -> onQuestionOptionClickAction(item, option, queueId) }
                     onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
+                    onInputClickListener = { item, action, queueId -> onQuestionInputClickAction(item, action, queueId) }
                     onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item) }
