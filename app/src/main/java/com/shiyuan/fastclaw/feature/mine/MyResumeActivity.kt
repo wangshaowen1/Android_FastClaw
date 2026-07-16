@@ -28,6 +28,8 @@ import com.shiyuan.fastclaw.core.databinding.setLoadState
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody
+import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
 import com.shiyuan.fastclaw.databinding.ActivityMyResumeBinding
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
 import com.shiyuan.fastclaw.feature.mine.dialog.UploadCancelDialog
@@ -95,9 +97,16 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         //上传简历
         UploadResumeDialog.show(manager = this.supportFragmentManager,false) { fileInfo ->
             if (fileInfo != null) {
-                mRealVM.submitResume(fileInfo.uri) { resumeFileUrl ->
-                    mRealVM.submitResumeUpload(resumeFileUrl,fileInfo.fileName,mRealVM.resumeListData.value?.resumeTaskId)
-                }
+                mRealVM.setLoading(true)
+                mRealVM.uploadFilesWithSecurityCheck(listOf(fileInfo.uri) , BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
+                    onSuccess ={ successUrls ->
+                        mRealVM.setLoading(false)
+                    mRealVM.submitResumeUpload(
+                        successUrls.first(),fileInfo.fileName,mRealVM.resumeListData.value?.resumeTaskId) },
+                    onFailure = {
+                        mRealVM.setLoading(false)
+                        it.showToast()
+                    } )
             }
         }
     }

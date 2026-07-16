@@ -219,6 +219,21 @@ object ApiConstants {
     const val UPLOAD_RESUME = "app/resume/upload"
 
     /**
+     * 创建文件上传凭证
+     */
+    const val CREATE_FILE_UPLOAD_CREDENTIAL = "/api/file/upload/credential/create"
+
+    /**
+     * 确认文件上传完成
+     */
+    const val COMPLETE_FILE_UPLOAD = "/api/file/upload/complete"
+
+    /**
+     * 查询文件安全状态
+     */
+    const val QUERY_FILE_SECURITY_STATUS = "/api/file/security/status/query"
+
+    /**
      * 查询积分信息
      */
     const val GET_USER_POINTS = "api/candidate/points/info"

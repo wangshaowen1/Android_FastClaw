@@ -17,6 +17,7 @@ import com.shiyuan.fastclaw.common.ext.selectSinglePhotoFromAlbums
 import com.shiyuan.fastclaw.common.permissions.requestImages2VideosPermissions
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_AVATAR_UPLOAD
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
@@ -371,7 +372,10 @@ class PersonalInformationActivity :
             selectedAvatarUri = Matisse.obtainResult(data).firstOrNull()
             selectedAvatarUri?.let {
                 //binding.ivAvatar.setImageURI(it)
-                mRealVM.submitMultipleFiles(listOf(it)) { successUrls, _ ->
+                mRealVM.setLoading(true)
+
+                mRealVM.uploadFilesWithSecurityCheck(listOf(it),BIZ_TYPE_CANDIDATE_AVATAR_UPLOAD ,onSuccess ={ successUrls ->
+                    mRealVM.setLoading(false)
                     if (successUrls.isNotEmpty()) {
                         mRealVM.updateAvatar(successUrls.first()) { avatarUrl ->
                             binding.ivAvatar.load(avatarUrl, R.drawable.ic_home_header_avatar)
@@ -380,7 +384,10 @@ class PersonalInformationActivity :
                     } else {
                         "头像上传失败".showToast()
                     }
-                }
+                }  ,onFailure = {
+                    mRealVM.setLoading(false)
+                    it.showToast()
+                })
             }
         }
     }
