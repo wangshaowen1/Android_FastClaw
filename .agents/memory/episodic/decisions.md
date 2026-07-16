@@ -159,3 +159,25 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 静态检查确认 `fileRecordIds` 仅在确认与轮询内部流转，安全审核全部通过后调用 `onSuccess(successUrls)`，现有简历上传调用方继续使用 `successUrls.first()`；按项目规则未运行 Gradle。
+
+## v本轮 模拟面试目标岗位截图接入安全上传
+
+### 变更了什么
+`InterviewViewModel.uploadTarget` → 从旧的 `submitMultipleFiles` 切换为公共 `uploadFilesWithSecurityCheck`，每个文件使用 `MOCK_INTERVIEW_JD_UPLOAD` 业务类型。
+
+### 为什么
+模拟面试上传的目标岗位截图需要统一执行创建凭证、按服务端 objectKey 上传、确认完成和安全状态轮询，并将任一节点的失败原因透出。
+
+### 验证结论
+静态检查确认成功 URL 仍写入原有 `uploadList`，失败时关闭 loading、展示具体原因并切换为 `TARGET_JOB_PARSE_FAILED`；按项目规则未运行 Gradle。
+
+## v本轮 首页小虾对话简历接入安全上传
+
+### 变更了什么
+`ClawAgentMainFragment.showUploadResumeDialog` → 从旧的 `mRealVM.submitResume` 切换为 `uploadFilesWithSecurityCheck`，使用 `XIAOXIA_RESUME_UPLOAD` 业务类型。
+
+### 为什么
+首页小虾对话上传简历需要统一经过创建凭证、OSS 上传、确认完成和文件安全状态轮询，失败时向用户展示具体原因。
+
+### 验证结论
+静态检查确认安全审核通过后的首个成功 URL 继续作为 `resumeFileUrl` 发送 `RESUME_UPLOAD_SUBMIT`，原有 SSE 流式回复拦截保持不变；按项目规则未运行 Gradle。

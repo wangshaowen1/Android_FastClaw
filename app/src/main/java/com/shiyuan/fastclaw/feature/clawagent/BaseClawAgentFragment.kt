@@ -8,7 +8,9 @@ import android.view.View
 import androidx.databinding.ViewDataBinding
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.showAllowingStateLoss
 import com.nhsd.basic.viewmodel.BaseLayoutViewModel
+import com.nhsd.basic.viewmodel.UiState
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
@@ -23,7 +25,9 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.dialog.VoiceRecordingDialog
+import com.shiyuan.fastclaw.feature.login.dialog.LoginNewLoadingDialog
 import com.shiyuan.fastclaw.router.AppNavigator
+import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 
 /**
  * @desc：聊天基类
@@ -434,4 +438,21 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             }
         }
     }
+
+
+    private var commonLoadingDialog: CommonLoadingDialog? = null
+
+    fun showLoading(text: String? = null) {
+        if (commonLoadingDialog?.isAdded == true) return
+        commonLoadingDialog = CommonLoadingDialog.newInstance(text).apply {
+            show(this@BaseClawAgentFragment.childFragmentManager)
+        }
+    }
+
+
+     fun hideLoading() {
+        commonLoadingDialog?.dismissAllowingStateLoss()
+        commonLoadingDialog = null
+    }
+
 }

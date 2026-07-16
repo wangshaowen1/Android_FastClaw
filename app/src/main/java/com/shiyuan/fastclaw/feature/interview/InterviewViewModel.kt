@@ -11,6 +11,7 @@ import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
+import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_MOCK_INTERVIEW_JD_UPLOAD
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewAudioTokenBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewForceCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStreamBody
@@ -176,15 +177,24 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         if (uris.isEmpty()) return
         roomState.value = InterviewRoomState.TARGET_JOB_PARSING
         setLoading(true)
-        submitMultipleFiles(uris) { successUrls, _ ->
-            setLoading(false)
-            if (successUrls.isEmpty()) {
-                showToast(TEXT_JOB_UPLOAD_FAILED)
+        uploadFilesWithSecurityCheck(
+            uriList = uris,
+            bizType = BIZ_TYPE_MOCK_INTERVIEW_JD_UPLOAD,
+            onSuccess = { successUrls ->
+                setLoading(false)
+                if (successUrls.isEmpty()) {
+                    showToast(TEXT_JOB_UPLOAD_FAILED)
+                    roomState.value = InterviewRoomState.TARGET_JOB_PARSE_FAILED
+                    return@uploadFilesWithSecurityCheck
+                }
+                uploadList.value = successUrls
+            },
+            onFailure = { reason ->
+                setLoading(false)
+                showToast(reason)
                 roomState.value = InterviewRoomState.TARGET_JOB_PARSE_FAILED
-                return@submitMultipleFiles
-            }
-            uploadList.value = successUrls
-        }
+            },
+        )
     }
 
     /**

@@ -19,7 +19,9 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showAllowingStateLoss
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.viewmodel.UiState
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Config
@@ -32,6 +34,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBo
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
 import com.shiyuan.fastclaw.databinding.ActivityMyResumeBinding
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
+import com.shiyuan.fastclaw.feature.mine.dialog.AnalysisLoadingDialog
 import com.shiyuan.fastclaw.feature.mine.dialog.UploadCancelDialog
 import com.shiyuan.fastclaw.feature.report.ResumeListDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
@@ -41,6 +44,7 @@ import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Compani
 import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.RUNNING
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -110,6 +114,23 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             }
         }
     }
+
+    private var commonLoadingDialog: CommonLoadingDialog? = null
+
+    override fun onUiStateChanged(state: UiState) {
+        if (state.isLoading) {
+            if (commonLoadingDialog?.isAdded != true) {
+                commonLoadingDialog = CommonLoadingDialog.newInstance("上传中")
+                commonLoadingDialog?.showAllowingStateLoss(supportFragmentManager, "analysis_loading")
+            }
+        } else {
+            commonLoadingDialog?.dismissAllowingStateLoss()
+            commonLoadingDialog = null
+        }
+        state.pageError?.let { showPageError(it.message, it.retryAction) } ?: hidePageError()
+    }
+
+
 
     private fun initObservers() {
         mRealVM.resumeListData.observe(this) {
