@@ -135,13 +135,13 @@
 
         <ImageView
             android:id="@+id/iv_scroll_bottom"
+            singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="54dp"
             android:layout_height="54dp"
+            android:layout_marginBottom="-8dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_agent_scroll_bottom"
             android:visibility="gone"
-            android:layout_marginBottom="-8dp"
-            singleClick="@{layout.clickHandler::onClick}"
             app:layout_constraintBottom_toBottomOf="@id/srl_msg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -258,86 +258,135 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="0dp"
                 app:background_normalColor="@color/color_ffffff"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:super_corner="27dp">
+                app:super_corner="21dp">
 
-                <ImageView
-                    android:id="@+id/iv_icon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_agent_send_logo"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@id/et_send"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layout_reanswer"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:paddingHorizontal="14dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/et_send"
-                    tools:visibility="visible" />
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <EditText
-                    android:id="@+id/et_send"
-                    android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reanswer"
+                        android:textColor="@color/color_55_3c3c43"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_reanswer_close"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginEnd="3dp"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:src="@drawable/ic_agent_input_close"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/color_e9f0fe"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:hint="@string/str_agent_send_hint"
-                    android:maxLines="4"
                     android:paddingStart="8dp"
-                    android:paddingTop="12dp"
-                    android:paddingEnd="60dp"
-                    android:paddingBottom="12dp"
-                    android:textColor="@color/color_90_000000"
-                    android:textColorHighlight="@color/color_20_0099FF"
-                    android:textColorHint="@color/color_56_3c3c43"
-                    android:textCursorDrawable="@drawable/cursor_genner_edit"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/iv_icon"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="有什么求职问题，随时问小虾" />
-
-                <TextView
-                    android:id="@+id/tv_voice_press"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="按住说话"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="15sp"
-                    android:visibility="gone"
+                    android:paddingEnd="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/layout_reanswer">
 
-                <ImageView
-                    android:id="@+id/iv_send"
-                    singleClick="@{layout.clickHandler::onClick}"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_agent_send"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@id/et_send"
-                    app:layout_constraintEnd_toEndOf="@id/et_send"
-                    app:layout_constraintTop_toTopOf="@id/et_send"
-                    tools:visibility="visible" />
+                    <ImageView
+                        android:id="@+id/iv_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/ic_agent_send_logo"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@id/et_send"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/et_send"
+                        tools:visibility="visible" />
 
-                <ImageView
-                    android:id="@+id/iv_input_mode"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_agent_voice_mode"
-                    app:layout_constraintBottom_toBottomOf="@id/et_send"
-                    app:layout_constraintEnd_toEndOf="@id/et_send"
-                    app:layout_constraintTop_toTopOf="@id/et_send"
-                    tools:visibility="gone" />
+                    <EditText
+                        android:id="@+id/et_send"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:hint="@string/str_agent_send_hint"
+                        android:maxLines="4"
+                        android:paddingStart="8dp"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="60dp"
+                        android:paddingBottom="12dp"
+                        android:textColor="@color/color_90_000000"
+                        android:textColorHighlight="@color/color_20_0099FF"
+                        android:textColorHint="@color/color_56_3c3c43"
+                        android:textCursorDrawable="@drawable/cursor_genner_edit"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/iv_icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="有什么求职问题，随时问小虾" />
+
+                    <TextView
+                        android:id="@+id/tv_voice_press"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="按住说话"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="15sp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_send"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/ic_agent_send"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@id/et_send"
+                        app:layout_constraintEnd_toEndOf="@id/et_send"
+                        app:layout_constraintTop_toTopOf="@id/et_send"
+                        tools:visibility="visible" />
+
+                    <ImageView
+                        android:id="@+id/iv_input_mode"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/ic_agent_voice_mode"
+                        app:layout_constraintBottom_toBottomOf="@id/et_send"
+                        app:layout_constraintEnd_toEndOf="@id/et_send"
+                        app:layout_constraintTop_toTopOf="@id/et_send"
+                        tools:visibility="gone" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 

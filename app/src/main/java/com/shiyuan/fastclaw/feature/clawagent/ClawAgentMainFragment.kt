@@ -209,6 +209,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             R.id.iv_scroll_bottom -> { //滚动到底部
                 scrollToBottom(true, 0L)
             }
+            R.id.iv_reanswer_close -> { //重新回答关闭
+                binding.layoutReanswer.gone()
+                binding.layoutSend.setCorners(27.dp.toFloat())
+            }
         }
     }
 

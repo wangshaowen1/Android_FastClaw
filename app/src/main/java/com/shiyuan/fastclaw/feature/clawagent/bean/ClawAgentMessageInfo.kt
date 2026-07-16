@@ -47,4 +47,9 @@ data class ClawAgentMessageInfo(
     val displayPolicy: String? = null,
 
     val replaceTargetMessageId: String? = null,
+
+    /**
+     * 是否重新回答
+     */
+    var isReplyAnswer: Boolean = false
 ): Parcelable
