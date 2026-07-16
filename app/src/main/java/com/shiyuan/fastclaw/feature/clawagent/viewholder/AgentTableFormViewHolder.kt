@@ -98,10 +98,12 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_75_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_ripple)
             }
-            action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
             binding.flowOptions.isEnabled = payload.isDisabled() != true
             //binding.btnLayout.isEnabled = true
-            binding.flowOptions.setOnSingleClickListener { onActionClickListener(item, action, payload.questionQueueId) }
+            binding.flowOptions.setOnSingleClickListener {
+                action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
+                onActionClickListener(item, action, payload.questionQueueId)
+            }
         }
     }
 
@@ -121,10 +123,9 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
         binding.tvReanswer.text = action.text
         binding.tvReanswer.isEnabled = action.disabled != true
         binding.tvReanswer.setOnSingleClickListener {
+            item.isReplyAnswer = true
             binding.flowOptions.visible()
             binding.tvReanswer.gone()
-            item.isReplyAnswer = true
-            bindActionRows(item, payload)
         }
     }
 
