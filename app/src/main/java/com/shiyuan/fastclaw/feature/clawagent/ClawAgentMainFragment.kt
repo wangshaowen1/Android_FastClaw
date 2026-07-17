@@ -173,7 +173,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 forceScrollToBottom = true
                 binding.etSend.text = null
                 if (isReplyAnswer) {
-                    startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, content = content.toString().trim())
+                    startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, text = content.toString().trim())
                     binding.ivReanswerClose.performClick()
                 } else {
                     mRealVM.sendMessage(content.toString().trim())
@@ -875,12 +875,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         updateInputModeView()
     }
 
-    private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, content: String? = null, msgGson: String? = null) {
+    private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null, text: String? = null) {
         if (!interceptIfStreaming()) {
             forceScrollToBottom = true
-            action?.actionPayload?.selectedValue = msgGson
+            action?.actionPayload?.selectedValue = msgGson ?: action.actionPayload.selectedValue
+            action?.actionPayload?.selectedText = text ?: action.actionPayload.selectedText
             mRealVM.sendAction(
-                content = content ?: action?.text.orEmpty(),
+                content = action?.text.orEmpty(),
                 actionData = AgentMsgAction(
                     questionQueueId = queueId,
                     actionCode = action?.actionCode,

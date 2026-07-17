@@ -122,7 +122,7 @@ data class CardActionPayloadBean(
     val questionQueueId: String? = null,
     val attributeGroupCode: String? = null,
     val metaCode: String? = null,
-    val selectedText: String? = null,
+    var selectedText: String? = null,
 //    val value: String? = null,
 //    val candidateValue: String? = null,
 //    val newValue: String? = null,
