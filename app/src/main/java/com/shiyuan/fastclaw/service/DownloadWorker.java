@@ -219,6 +219,10 @@ public class DownloadWorker extends Worker {
             }
             ResponseBody body = response.body();
             if (!response.isSuccessful()) {
+                int statusCode = response.code();
+                if (statusCode == 408 || statusCode == 425 || statusCode == 429 || statusCode >= 500) {
+                    throw new IOException("Retryable HTTP status: " + statusCode);
+                }
                 throw new HttpStatusException();
             }
             if (body == null) {
@@ -340,7 +344,7 @@ public class DownloadWorker extends Worker {
     }
 
     private void notifyDownloadFailed(boolean downloadWithNotify, String fileName) {
-        FlowEventBus.postSync(new DownloadFailedEvent());
+        FlowEventBus.postSync(new DownloadFailedEvent(fileName));
         if (isStopped()) {
             return;
         }
@@ -497,12 +501,17 @@ public class DownloadWorker extends Worker {
         if (call != null) {
             call.cancel();
         }
-        FlowEventBus.postSync(new DownloadFailedEvent());
+        FlowEventBus.postSync(new DownloadFailedEvent(getInputData().getString(KEY_FILE_NAME)));
         mainHandler.removeCallbacksAndMessages(null);
         super.onStopped();
     }
 
     public static class DownloadFailedEvent implements AppEvent {
+        public final String fileName;
+
+        public DownloadFailedEvent(String fileName) {
+            this.fileName = fileName;
+        }
     }
 
     public static class DownloadApkEvent implements AppEvent {
