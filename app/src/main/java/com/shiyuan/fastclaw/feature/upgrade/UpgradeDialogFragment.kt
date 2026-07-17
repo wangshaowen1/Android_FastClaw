@@ -55,8 +55,10 @@ class UpgradeDialogFragment : BaseVMDialogFragment<DialogUpgradeBinding, EmptyVi
                     }
                 }
             }
-            on<DownloadWorker.DownloadFailedEvent> {
-                setDownloading(false)
+            on<DownloadWorker.DownloadFailedEvent> { event ->
+                if (event.fileName == DownloadWorker.UPDATE_FILE_NAME) {
+                    setDownloading(false)
+                }
             }
         }
         installPath?.let(::updateInstall)
