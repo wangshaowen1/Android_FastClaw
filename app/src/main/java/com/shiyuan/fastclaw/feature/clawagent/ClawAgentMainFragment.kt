@@ -719,8 +719,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
             val hadObservedNonEmptyMessageList = hasObservedNonEmptyMessageList
+            // 用户刚发送消息时强制跟随；否则仅在当前已经贴底时才继续跟随新消息。
             val scrollToLatest = forceScrollToBottom || !binding.rvMsg.canScrollVertically(1)
+            // 新增尾部消息才触发滚动；同一条流式内容增量更新不重复滚动。
             val hasNewTailMessage = list.size > msgAdapter.items.size || msgAdapter.items.lastOrNull()?.id != list.lastOrNull()?.id
+            // 用提交新列表前的可见位置估算距离底部还有多少个 item。距离底部不超过 5 个 item 时平滑滚动；更远时直接贴底，避免长距离慢慢滑。
+            val lastVisiblePosition = (binding.rvMsg.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition() ?: -1
+            val shouldSmoothScroll = hadObservedNonEmptyMessageList && list.lastIndex - lastVisiblePosition <= 5
             // 首次加载、主动发消息或新增尾部消息时才触发滚动；流式更新同一条消息时不重复滚动。
             val shouldRunScrollCommand = !hadObservedNonEmptyMessageList || forceScrollToBottom || hasNewTailMessage
             // 最终是否需要滚到最新：既要当前允许跟随底部，也要本次列表变化确实需要滚动。
@@ -736,7 +741,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             if (shouldScrollToLatest) {
                 // 首次加载直接贴底；新增消息用平滑滚动。流式内容更新不重复触发滚动，避免 srlMsg 抖动。
-                scrollToBottom(hadObservedNonEmptyMessageList)
+                scrollToBottom(shouldSmoothScroll)
             }
         }
         // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭
