@@ -57,14 +57,6 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
         }
 
         binding.checkForUpdates.setOnSingleClickListener {
-          /*  UpgradeDialogFragment.show(
-                this.supportFragmentManager,
-                "1.3.8",
-                "R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32R2R2R32",
-                false
-            )*/
-
-            //  val data = UpgradeData(appVersionDesc = "1.版本更新",upgradeUrl = "https://www.pgyer.com/kuailongxia",appVersion = "1.3.6",versionStatus = 0,md5Hash = "")
            checkUpgrade()
         }
     }

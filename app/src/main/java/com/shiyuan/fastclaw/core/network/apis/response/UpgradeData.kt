@@ -1,41 +1,47 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
 /**
- * {
- *     "upgradeDesc": "升级描叙",
- *     "upgradeUrl": "升级地址",
- *     "versionStatus": "版本状态：0-不升级 1-强制升级 2-建议升级",
- *     "versionDesc": "版本描叙",
- *     "md5Hash": "apk 校验码"
- * }
+ * APP版本检测结果
  */
 data class UpgradeData(
     /**
-     * 升级描叙
+     * 升级动作：0-无更新，1-推荐更新，2-强制更新
      */
-    val appVersionDesc: String?,
+    val upgradeAction: Int?,
+    /**
+     * 当前最新版本号
+     */
+    val latestVersion: String?,
+    /**
+     * 最低支持版本号
+     */
+    val minSupportedVersion: String?,
+    /**
+     * 升级目标版本号
+     */
+    val targetVersion: String?,
+    /**
+     * 更新说明
+     */
+    val releaseNote: String?,
     /**
      * 升级地址
      */
     val upgradeUrl: String?,
     /**
-     * 版本描叙
+     * APK MD5 校验码
      */
-    val appVersion: String?,
+    val md5Hash: String?,
     /**
-     * 版本状态：0-不升级 1-强制升级 2-建议升级
+     * 服务端时间（接口文档声明为 object）
      */
-    val versionStatus: Int?,
-    /**
-     * apk 校验码
-     */
-    val md5Hash:String?
-){
+    val serverTime: Any?
+) {
     fun isNeedUpdate(): Boolean {
-        return versionStatus == 1 || versionStatus == 2
+        return upgradeAction == 1 || upgradeAction == 2
     }
 
     fun isNeedForceUpdate(): Boolean {
-        return versionStatus == 1
+        return upgradeAction == 2
     }
 }

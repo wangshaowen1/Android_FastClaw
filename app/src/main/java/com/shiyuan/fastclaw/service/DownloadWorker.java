@@ -176,6 +176,10 @@ public class DownloadWorker extends Worker {
 
             notifyDownloadCompleted(url, targetFile, downloadWithNotify, downloadType);
             return Result.success(createOutputData(targetFile));
+        } catch (HttpStatusException e) {
+            deleteTempFile();
+            notifyDownloadFailed(downloadWithNotify, fileName);
+            return Result.failure();
         } catch (IOException e) {
             if (isStopped()) {
                 return Result.failure();
@@ -213,10 +217,14 @@ public class DownloadWorker extends Worker {
                 deleteTempFile();
                 throw new IOException("Requested range is not satisfiable");
             }
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected HTTP status: " + response.code());
-            }
             ResponseBody body = response.body();
+            if (!response.isSuccessful()) {
+                int statusCode = response.code();
+                if (statusCode == 408 || statusCode == 425 || statusCode == 429 || statusCode >= 500) {
+                    throw new IOException("Retryable HTTP status: " + statusCode);
+                }
+                throw new HttpStatusException();
+            }
             if (body == null) {
                 throw new IOException("Empty response body");
             }
@@ -336,6 +344,7 @@ public class DownloadWorker extends Worker {
     }
 
     private void notifyDownloadFailed(boolean downloadWithNotify, String fileName) {
+        FlowEventBus.postSync(new DownloadFailedEvent(fileName));
         if (isStopped()) {
             return;
         }
@@ -428,7 +437,7 @@ public class DownloadWorker extends Worker {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(fileName)
-                .setContentText(context.getString(R.string.downloading_please_wait))
+                .setContentText(context.getString(R.string.downloading_please_wait, progress))
                 .setOnlyAlertOnce(true)
                 .setOngoing(true)
                 .setProgress(100, progress, progress <= 0);
@@ -480,14 +489,29 @@ public class DownloadWorker extends Worker {
         }
     }
 
+    private static class HttpStatusException extends IOException {
+        HttpStatusException() {
+            super();
+        }
+    }
+
     @Override
     public void onStopped() {
         Call call = currentCall;
         if (call != null) {
             call.cancel();
         }
+        FlowEventBus.postSync(new DownloadFailedEvent(getInputData().getString(KEY_FILE_NAME)));
         mainHandler.removeCallbacksAndMessages(null);
         super.onStopped();
+    }
+
+    public static class DownloadFailedEvent implements AppEvent {
+        public final String fileName;
+
+        public DownloadFailedEvent(String fileName) {
+            this.fileName = fileName;
+        }
     }
 
     public static class DownloadApkEvent implements AppEvent {
