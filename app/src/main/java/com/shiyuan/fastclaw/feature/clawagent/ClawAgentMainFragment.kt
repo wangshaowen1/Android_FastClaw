@@ -210,7 +210,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             R.id.iv_reanswer_close -> { //重新回答关闭
                 binding.layoutReanswer.gone()
-                binding.layoutSend.setCorners(27.dp.toFloat())
+                binding.layoutSend.setCorners(27f)
+                hideKeyboard(binding.etSend)
             }
         }
     }
@@ -395,13 +396,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 onTrackingEvent(payload  = payload)
             }
         }
-        // 补问卡动作按钮：actionCode 取自 payload action
         // 文本补问卡点击“重新回答”时，聚焦底部输入框并拉起输入法
         msgAdapter.onQuestionInputClickAction = { _, _, _ ->
             if (!interceptIfStreaming()) {
                 isVoiceInputMode = false
                 binding.layoutReanswer.visible()
-                binding.layoutSend.setCorners(21.dp.toFloat())
+                binding.layoutSend.setCorners(20f)
                 updateInputModeView()
                 binding.etSend.post {
                     binding.etSend.requestFocus()
@@ -410,6 +410,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
         }
+        // 补问卡动作按钮：actionCode 取自 payload action
         msgAdapter.onQuestionActionClickAction = { item, action, queueId ->
             if (!interceptIfStreaming()) {
                 val payload = item.metaData?.let {
