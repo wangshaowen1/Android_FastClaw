@@ -69,7 +69,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
                 binding.tvReplied.gone()
                 bindActionRows(item, payload)
                 bindReAnswerAction(item, payload)
-                setButtonVisible(item, payload, payload.actions?.size?:0)
+                setButtonVisible(item, payload)
             }
             else -> { //单选/多选枚举、文本、通用问题等
                 /*if (payload?.options.isNullOrEmpty() && payload?.isAnswered() == true) {
@@ -82,7 +82,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
                 bindOptionRows(item, payload)
                 bindReAnswerAction(item, payload)
                 bindSkipAction(item, payload)
-                setButtonVisible(item, payload, payload?.options?.size?:0)
+                setButtonVisible(item, payload)
 
                 //binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
                 /*if (payload?.isAnswered() == true || payload?.isDisabled() == true) {
@@ -240,9 +240,9 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     /**
      * 设置卡片上控件的显示状态
      */
-    private fun setButtonVisible(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, actionCount: Int) {
+    private fun setButtonVisible(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }
-        if (actionCount > 0 && (payload?.isAnswered() == false || item.isReplyAnswer)) {
+        if (payload?.inputMode != MODE_TEXT && (payload?.isAnswered() == false || item.isReplyAnswer)) {
             binding.flowOptions.visible()
         } else {
             binding.flowOptions.gone()

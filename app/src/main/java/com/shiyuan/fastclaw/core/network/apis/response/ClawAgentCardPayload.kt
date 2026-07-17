@@ -128,6 +128,8 @@ data class CardActionPayloadBean(
 //    val newValue: String? = null,
     val rejectBehavior: String? = null,
     var selectedValue: String? = null,
+    /** 后台推送给用户自动发的文本 */
+    val skipBubbleText: String? = null,
 )
 
 /** CARD 公共：按钮（7.4.2） */

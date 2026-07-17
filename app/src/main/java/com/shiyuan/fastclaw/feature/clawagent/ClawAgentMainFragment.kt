@@ -116,6 +116,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
     private var mJobStatusSelected: String? = null
 
+    private var isReplyAnswer = false
+
     companion object {
         const val TAG = "ClawAgentMainFragment"
         /** 记忆卡片等待时长 */
@@ -168,8 +170,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 if (interceptIfStreaming()) return
                 // 主动发送:本条乐观插入及随后的流式回复都强制滚到最新
                 forceScrollToBottom = true
-                mRealVM.sendMessage(content.toString().trim())
                 binding.etSend.text = null
+                if (isReplyAnswer) {
+                    startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId)
+                    binding.ivReanswerClose.performClick()
+                } else {
+                    mRealVM.sendMessage(content.toString().trim())
+                }
             }
             R.id.iv_agent_memory -> { //对你的理解
                 if (!AppNavigator.checkLoginIntercepted(false)){
@@ -210,8 +217,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 scrollToBottom(true, 0L)
             }
             R.id.iv_reanswer_close -> { //重新回答关闭
+                isReplyAnswer = false
                 binding.layoutReanswer.gone()
                 binding.layoutSend.setCorners(27f)
+                binding.etSend.text = null
                 hideKeyboard(binding.etSend)
             }
         }
@@ -398,11 +407,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
         // 文本补问卡点击“重新回答”时，聚焦底部输入框并拉起输入法
-        msgAdapter.onQuestionInputClickAction = { _, _, _ ->
+        msgAdapter.onQuestionInputClickAction = { item, action, queueId ->
             if (!interceptIfStreaming()) {
+                mCurrentMessage = item
+                mCurrentAction = action
+                mCurrentQuestionId = queueId
+                isReplyAnswer = true
                 isVoiceInputMode = false
                 binding.layoutReanswer.visible()
                 binding.layoutSend.setCorners(20f)
+                binding.etSend.setText(action.actionPayload?.skipBubbleText?:"")
+                binding.etSend.setSelection(binding.etSend.text.length)
                 updateInputModeView()
                 binding.etSend.post {
                     binding.etSend.requestFocus()
@@ -633,7 +648,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
             override fun keyBoardShow(height: Int) {
                 isScrollBottomKeyboardShowing = true
-                binding.layoutAction.invisible()
+                binding.layoutAction.gone()
                 binding.ivScrollBottom.gone()
             }
 
