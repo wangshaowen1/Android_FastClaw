@@ -45,7 +45,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
     }
 
     private fun bindActionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
-        val action = payload?.actions?.firstOrNull()
+        val action = payload?.actions?.firstOrNull { it.actionCode != ACTION_SKIP_CURRENT_QUESTION }
         action?.let {
             val parent = binding.layoutTableCard
             if (payload.isAnswered()) { //已回答
@@ -54,14 +54,12 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_selected)
             } else if (action.disabled == true) { //置灰
-                //binding.tvContent.text = parent.context.getString(R.string.please_write)
-                binding.tvContent.text = action.text
+                binding.tvContent.text = action.text ?: parent.context.getString(R.string.please_write)
                 binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_unselected)
             } else { //未回答
-                //binding.tvContent.text = parent.context.getString(R.string.please_write)
-                binding.tvContent.text = action.text
+                binding.tvContent.text = action.text ?: parent.context.getString(R.string.please_write)
                 binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_75_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_ripple)

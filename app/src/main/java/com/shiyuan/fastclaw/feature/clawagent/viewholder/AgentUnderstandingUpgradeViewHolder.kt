@@ -34,7 +34,7 @@ class AgentUnderstandingUpgradeViewHolder(private val binding: ItemMsgAgentUnder
         binding.wpvAlignProgress.text = "$score%"
         // 标题：我与你对齐度达到 85%！
         binding.tvAlignTitle.text = context.getString(R.string.str_agent_understanding_align_title, "$score%")
-        binding.tvDetailEdit.setOnSingleClickListener {
+        binding.clUnderstandingDetail.setOnSingleClickListener {
             OnlineResumeActivity.start(context,0)
         }
         // 摘要主文案非空时覆盖副标题，否则保留布局默认文案
