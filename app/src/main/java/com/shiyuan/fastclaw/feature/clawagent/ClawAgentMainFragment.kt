@@ -231,7 +231,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 消息列表：聊天场景内容自底部对齐
         binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
         binding.rvMsg.itemAnimator = null
-        // 底部间距高点
+        // 列表 item 统一留 12dp 间距，首尾额外撑开顶部和输入框之间的距离。
         binding.rvMsg.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
                 outRect: android.graphics.Rect,
@@ -240,9 +240,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 state: RecyclerView.State
             ) {
                 val position = parent.getChildAdapterPosition(view)
-                if (position == 0) outRect.top = 12.dp
+                if (position == RecyclerView.NO_POSITION) return
                 val itemCount = state.itemCount
-                outRect.bottom = if (position == itemCount - 1) 21.dp else 12.dp
+                outRect.set(
+                    0,
+                    if (position == 0) 12.dp else 0,
+                    0,
+                    if (position == itemCount - 1) 21.dp else 12.dp
+                )
             }
         })
         binding.rvMsg.adapter = msgAdapter
@@ -751,6 +756,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 suppressScrollBottomButton()
             }
             msgAdapter.submitList(list)
+            // 新消息插入后原最后一条不再是尾项，主动刷新 ItemDecoration 避免保留 21dp 底部间距。
+            binding.rvMsg.invalidateItemDecorations()
             if (list.isNotEmpty()) {
                 hasObservedNonEmptyMessageList = true
             }
