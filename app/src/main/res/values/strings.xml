@@ -6,6 +6,7 @@
 
     <string name="page_load_error">加载失败，刷新试试</string>
     <string name="page_loading">正在为你全力加载中…</string>
+    <string name="common_loading">加载中</string>
     <string name="page_empty">暂无内容</string>
     <string name="no_more_data">已经到底了…</string>
     <string name="page_network_error">请检查网络连接后重试</string>

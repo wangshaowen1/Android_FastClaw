@@ -34,10 +34,8 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.UpgradeManager
 import com.shiyuan.fastclaw.databinding.ActivityMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentMainFragment
-import com.shiyuan.fastclaw.feature.home.HomeFragment
 import com.shiyuan.fastclaw.feature.mine.MineFragment
 import com.shiyuan.fastclaw.feature.report.HomeTreasuryFragment
-import com.shiyuan.fastclaw.feature.report.report.HomeReportFragment
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.router.AppRouter
 import kotlinx.coroutines.MainScope

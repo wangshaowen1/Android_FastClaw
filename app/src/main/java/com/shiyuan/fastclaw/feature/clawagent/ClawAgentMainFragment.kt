@@ -44,6 +44,7 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
+import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_XIAOXIA_RESUME_UPLOAD
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
@@ -917,23 +918,32 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
         UploadResumeDialog.show(manager = this.parentFragmentManager,false) { fileInfo ->
             if (fileInfo != null) {
-                mRealVM.submitResume(fileInfo.uri) { path ->
-                    // 文件上传完成回调里可能 AI 已开始回复，此时拦截避免新开 SSE 打断当前流
-                    if (interceptIfStreaming()) return@submitResume
-                    val map = mapOf<String, String>(
-                        "resumeFileUrl" to path,
-                        "fileName" to "${fileInfo.fileName}"
-                    )
-                    // sse 上传简历动作
-                    mRealVM.sendAction(
-                        desc = "这是我的简历",
-                        actionData = AgentMsgAction(
-                            actionCode = CandidateJobAgentClientActionEnum.RESUME_UPLOAD_SUBMIT.name,
-                            sourceMessageId = data.id,
-                            actionPayloadJson = GsonUtils.toJson(map)
+                showLoading("上传中")
+                mRealVM.uploadFilesWithSecurityCheck(
+                    uriList = listOf(fileInfo.uri),
+                    bizType = BIZ_TYPE_XIAOXIA_RESUME_UPLOAD,
+                    onSuccess = onSuccess@{ successUrls ->
+                        hideLoading()
+                        // 文件上传完成回调里可能 AI 已开始回复，此时拦截避免新开 SSE 打断当前流
+                        if (interceptIfStreaming()) return@onSuccess
+                        val map = mapOf<String, String>(
+                            "resumeFileUrl" to successUrls.first(),
+                            "fileName" to "${fileInfo.fileName}"
                         )
-                    )
-                }
+                        // sse 上传简历动作
+                        mRealVM.sendAction(
+                            desc = "这是我的简历",
+                            actionData = AgentMsgAction(
+                                actionCode = CandidateJobAgentClientActionEnum.RESUME_UPLOAD_SUBMIT.name,
+                                sourceMessageId = data.id,
+                                actionPayloadJson = GsonUtils.toJson(map)
+                            )
+                        )
+                    },
+                    onFailure = { reason ->
+                        hideLoading()
+                        reason.showToast() },
+                )
             }
         }
     }

@@ -28,8 +28,11 @@ import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundPreCheckS
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundRegenerateSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.FeedbackBody
+import com.shiyuan.fastclaw.core.network.apis.request.CompleteFileUploadBody
 import com.shiyuan.fastclaw.core.network.apis.request.ConversationQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.CreateFileUploadCredentialBody
 import com.shiyuan.fastclaw.core.network.apis.request.CurrentResumeQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.FileSecurityStatusQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImgUrlBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PassPackageRegenerateBody
@@ -88,6 +91,8 @@ import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyS
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundGenerateResultData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
+import com.shiyuan.fastclaw.core.network.apis.response.FileSecurityStatusData
+import com.shiyuan.fastclaw.core.network.apis.response.FileUploadCredentialData
 import com.shiyuan.fastclaw.core.network.apis.response.H5InterviewPassPackageRep
 import com.shiyuan.fastclaw.core.network.apis.response.IndustryDict
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
@@ -374,6 +379,30 @@ interface ApiService {
         @Part file: MultipartBody.Part,
         @Part("fileName") fileName: String
     ): ApiResponse<Any?>
+
+    /**
+     * 创建文件上传凭证
+     */
+    @POST(ApiConstants.CREATE_FILE_UPLOAD_CREDENTIAL)
+    suspend fun createFileUploadCredential(
+        @Body body: CreateFileUploadCredentialBody
+    ): ApiResponse<List<FileUploadCredentialData>?>
+
+    /**
+     * 确认文件上传完成
+     */
+    @POST(ApiConstants.COMPLETE_FILE_UPLOAD)
+    suspend fun completeFileUpload(
+        @Body body: CompleteFileUploadBody
+    ): ApiResponse<List<FileSecurityStatusData>?>
+
+    /**
+     * 查询文件安全状态
+     */
+    @POST(ApiConstants.QUERY_FILE_SECURITY_STATUS)
+    suspend fun queryFileSecurityStatus(
+        @Body body: FileSecurityStatusQueryBody
+    ): ApiResponse<List<FileSecurityStatusData>?>
 
     @POST(ApiConstants.GET_RESUME_LATEST)
     suspend fun queryLatestResume(): ApiResponse<ResumeData?>

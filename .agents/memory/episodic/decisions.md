@@ -115,3 +115,69 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 以后新增或修改 `request`、`requestWithLoading` 等扩展调用时，先对照同类 ViewModel 的 import，并用 `rg -n "^import .*requestWithLoading|requestWithLoading\\("` 静态确认定义与调用文件都已接入。
+
+## v本轮 文件安全预审上传与 OSS SDK 兼容边界
+
+### 变更了什么
+公共文件上传链路 → 在 `CommonRepositoryViewModel` 串行执行创建上传凭证、按服务端 `objectKey` 上传 OSS、确认上传完成和轮询安全状态；OSS 的 `Map<path, objectKey>` 上传重载通过单点反射适配，并在 `proguard-rules.pro` 保留该方法。
+
+### 为什么
+服务端确认上传完成时会按凭证中的 `objectKey` 校验 OSS 元数据，不能继续使用 SDK 自行生成的随机 Key。当前 `com.kuaige:oss:1.0.3` 只有 `List<String>` 批量上传重载，尚无用户约定的 `Map<String, String>` 重载；旧 SDK 下必须明确失败，不能静默降级到错误 Key。
+
+### 验证结论
+静态检查：本地 `oss-1.0.3-sources.jar` 确认只有 `uploadFile(List<String>?, ...)`；新流程已检查 Map 重载、混淆保留规则、`requestWithLoading` 导包及三条接口引用。PENDING：升级到提供 Map 重载的 OSS SDK 后进行真机上传与安全状态联调；按项目规则未运行 Gradle。
+
+## v本轮 OSS 1.0.4 objectKey 批量上传直连
+
+### 变更了什么
+文件安全预审 OSS 上传 → 使用 `OssClient.uploadFile(bucket, pathToObjectKeyMap, type, listener)` 直接调用，删除 1.0.3 的反射兼容与对应 ProGuard 保留规则。
+
+### 为什么
+`com.kuaige:oss:1.0.4` 已正式提供 bucket + `Map<path, objectKey>` 重载；同一次批量调用中的上传凭证必须返回一致的 bucket，全部为空时由 SDK 回退到全局配置。
+
+### 验证结论
+静态检查：本地 `oss-1.0.4-sources.jar` 已确认四参数方法签名；公共上传流程无反射及旧 keep 规则残留，`git diff --check` 无空白错误；按项目规则未运行 Gradle。
+
+## v本轮 上传凭证 bizType 字段层级修正
+
+### 变更了什么
+`/api/file/upload/credential/create` 请求中的 `bizType` 从顶层 `CreateFileUploadCredentialBody` 移入每个 `FileUploadCredentialItemBody`，公共上传流程为每个文件 item 写入调用方传入的业务类型。
+
+### 为什么
+后端契约规定 `bizType` 属于 `files` 数组元素，不是创建凭证请求体的顶层字段；多文件请求必须让每个文件分别携带该字段。
+
+### 验证结论
+静态检查确认顶层 body 只包含 `files`，item 包含 `bizType/fileName/fileType/fileSize`，且所有 item 都由公共 ViewModel 统一赋值；按项目规则未运行 Gradle。
+
+## v本轮 文件安全预审上传成功回调透传 OSS URL
+
+### 变更了什么
+`CommonRepositoryViewModel.uploadFilesWithSecurityCheck` → 保留 OSS 批量上传成功回调返回的 URL 列表，经过确认上传完成和安全状态轮询后，通过公共方法的 `onSuccess` 原样返回。
+
+### 为什么
+`fileRecordId` 只用于确认上传和查询安全状态，不能作为后续业务接口需要的文件 URL 使用；简历上传提交需要接收 OSS SDK 返回的成功 URL。
+
+### 验证结论
+静态检查确认 `fileRecordIds` 仅在确认与轮询内部流转，安全审核全部通过后调用 `onSuccess(successUrls)`，现有简历上传调用方继续使用 `successUrls.first()`；按项目规则未运行 Gradle。
+
+## v本轮 模拟面试目标岗位截图接入安全上传
+
+### 变更了什么
+`InterviewViewModel.uploadTarget` → 从旧的 `submitMultipleFiles` 切换为公共 `uploadFilesWithSecurityCheck`，每个文件使用 `MOCK_INTERVIEW_JD_UPLOAD` 业务类型。
+
+### 为什么
+模拟面试上传的目标岗位截图需要统一执行创建凭证、按服务端 objectKey 上传、确认完成和安全状态轮询，并将任一节点的失败原因透出。
+
+### 验证结论
+静态检查确认成功 URL 仍写入原有 `uploadList`，失败时关闭 loading、展示具体原因并切换为 `TARGET_JOB_PARSE_FAILED`；按项目规则未运行 Gradle。
+
+## v本轮 首页小虾对话简历接入安全上传
+
+### 变更了什么
+`ClawAgentMainFragment.showUploadResumeDialog` → 从旧的 `mRealVM.submitResume` 切换为 `uploadFilesWithSecurityCheck`，使用 `XIAOXIA_RESUME_UPLOAD` 业务类型。
+
+### 为什么
+首页小虾对话上传简历需要统一经过创建凭证、OSS 上传、确认完成和文件安全状态轮询，失败时向用户展示具体原因。
+
+### 验证结论
+静态检查确认安全审核通过后的首个成功 URL 继续作为 `resumeFileUrl` 发送 `RESUME_UPLOAD_SUBMIT`，原有 SSE 流式回复拦截保持不变；按项目规则未运行 Gradle。
