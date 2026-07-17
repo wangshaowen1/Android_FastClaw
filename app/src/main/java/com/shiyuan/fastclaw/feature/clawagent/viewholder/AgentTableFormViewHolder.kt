@@ -40,7 +40,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
             bindActionRows(item, payload)
             bindSkipAction(item, payload)
             bindReAnswerAction(item, payload)
-            setButtonVisible(item, payload, payload.actions?.size?:0)
+            bindButtonVisible(item, payload, payload.actions?.size?:0)
         }
     }
 
@@ -95,7 +95,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
     /**
      * 设置卡片上控件的显示状态
      */
-    private fun setButtonVisible(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, actionCount: Int) {
+    private fun bindButtonVisible(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, actionCount: Int) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }
         if (actionCount > 0 && (payload?.isAnswered() == false || item.isReplyAnswer)) {
             binding.flowOptions.visible()

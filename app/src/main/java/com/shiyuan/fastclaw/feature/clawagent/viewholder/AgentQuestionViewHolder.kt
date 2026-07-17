@@ -59,59 +59,17 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
         when (payload?.inputMode) {
             MODE_DICT_SINGLE, MODE_DICT_MULTI, MODE_DATE_MONTH, MODE_SALARY_RANGE -> { //单选/多选字典、表单问题等
-               /* binding.tvQuestion.text = payload.questionText ?: payload.question ?: item.content
-                binding.tvSkip.gone()
-                binding.tvReplied.gone()
-                bindActionRows(item, payload)
-                bindReAnswerAction(item, payload)*/
-
                 binding.tvSkip.gone()
                 binding.tvReplied.gone()
                 bindActionRows(item, payload)
                 bindReAnswerAction(item, payload)
-                setButtonVisible(item, payload)
+                bindButtonVisible(item, payload)
             }
             else -> { //单选/多选枚举、文本、通用问题等
-                /*if (payload?.options.isNullOrEmpty() && payload?.isAnswered() == true) {
-                    val repliedText = payload.answeredText ?: ""
-                    binding.tvReplied.text = "${repliedText}"
-                    binding.tvReplied.visible()
-                } else {
-                    binding.tvReplied.gone()
-                }*/
                 bindOptionRows(item, payload)
                 bindReAnswerAction(item, payload)
                 bindSkipAction(item, payload)
-                setButtonVisible(item, payload)
-
-                //binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
-                /*if (payload?.isAnswered() == true || payload?.isDisabled() == true) {
-                    // 已回复：隐藏跳过，展示选项/回显
-                    binding.tvSkip.gone()
-                    if (payload.options.isNullOrEmpty()) {
-                        val repliedText = payload.answeredText ?: ""
-                        binding.tvReplied.text = "${repliedText}"
-                        binding.tvReplied.visible()
-                        binding.flowOptions.gone()
-                    } else {
-                        binding.tvReplied.gone()
-                        binding.flowOptions.visible()
-                        bindOptionRows(item, payload)
-                        bindReAnswerAction(item, payload)
-                    }
-                } else {
-                    // 未回复：展示选项 + 独立跳过按钮
-                    binding.tvReplied.gone()
-                    if (payload?.options.isNullOrEmpty()) {
-                        binding.flowOptions.gone()
-                        bindSkipAction(item, payload, false)
-                    } else {
-                        binding.flowOptions.visible()
-                        bindOptionRows(item, payload)
-                        bindReAnswerAction(item, payload)
-                        bindSkipAction(item, payload, true)
-                    }
-                }*/
+                bindButtonVisible(item, payload)
             }
         }
     }
@@ -240,7 +198,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     /**
      * 设置卡片上控件的显示状态
      */
-    private fun setButtonVisible(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
+    private fun bindButtonVisible(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }
         if (payload?.inputMode != MODE_TEXT && (payload?.isAnswered() == false || item.isReplyAnswer)) {
             binding.flowOptions.visible()

@@ -351,6 +351,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             val oldLength = oldContentLengthMap[item.id]
             val currentDisplayedLength = typewriterDisplayedLengthMap[item.id]
             val displayedLength = when {
+                // 思考卡首次出现时从 0 开始打字，避免被首屏/历史规则直接显示完整。
+                oldLength == null && item.messageType == TYPE_AGENT_THINK -> currentDisplayedLength ?: 0
                 // 首屏/历史消息恢复不播放动画，直接完整显示。
                 !hadNonEmptyList -> contentLength
                 // 新增到列表尾部的消息才从 0 开始打字；中间插入的历史消息直接完整显示。
@@ -373,8 +375,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     private fun getTypewriterDisplayedLength(item: ClawAgentMessageInfo): Int {
         if (!item.isTypewriterItem()) return item.content.orEmpty().length
         val contentLength = item.content.orEmpty().length
-        // 没有缓存进度时默认完整显示，避免历史消息被误判为需要重新播放。
-        return (typewriterDisplayedLengthMap[item.id] ?: contentLength).coerceIn(0, contentLength)
+        // THINK 是实时占位消息，没有缓存进度时也从 0 开始，避免 SSE 新卡片直接显示完整。
+        val defaultLength = if (item.messageType == TYPE_AGENT_THINK) 0 else contentLength
+        return (typewriterDisplayedLengthMap[item.id] ?: defaultLength).coerceIn(0, contentLength)
     }
 
     /**

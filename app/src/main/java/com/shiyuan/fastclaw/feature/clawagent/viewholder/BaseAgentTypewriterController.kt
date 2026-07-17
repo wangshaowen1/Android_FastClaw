@@ -30,11 +30,7 @@ internal class BaseAgentTypewriterController(
         }
     }
 
-    fun bind(
-        text: String,
-        displayedLength: Int,
-        onDisplayedLengthChange: (Int) -> Unit,
-    ) {
+    fun bind(text: String, displayedLength: Int, onDisplayedLengthChange: (Int) -> Unit, ) {
         stop()
         targetText = text
         this.onDisplayedLengthChange = onDisplayedLengthChange
@@ -55,12 +51,7 @@ internal class BaseAgentTypewriterController(
 
     fun stop() {
         handler.removeCallbacks(typeRunnable)
-        if (pending) {
-            textView.text = targetText
-            onDisplayedLengthChange?.invoke(targetText.length)
-        }
         typing = false
-        pending = false
     }
 
     private companion object {
