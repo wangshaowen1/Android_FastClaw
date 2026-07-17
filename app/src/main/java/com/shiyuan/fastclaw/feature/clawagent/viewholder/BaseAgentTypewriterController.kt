@@ -4,10 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.TextView
 
-internal class BaseAgentTypewriterController(
-    private val textView: TextView,
-    private val intervalMs: Long = TYPE_INTERVAL_MS,
-) {
+internal class BaseAgentTypewriterController(private val textView: TextView, private val intervalMs: Long = TYPE_INTERVAL_MS) {
     private val handler = Handler(Looper.getMainLooper())
     private var targetText = ""
     private var typing = false
@@ -30,7 +27,7 @@ internal class BaseAgentTypewriterController(
         }
     }
 
-    fun bind(text: String, displayedLength: Int, onDisplayedLengthChange: (Int) -> Unit, ) {
+    fun bind(text: String, displayedLength: Int, onDisplayedLengthChange: (Int) -> Unit) {
         stop()
         targetText = text
         this.onDisplayedLengthChange = onDisplayedLengthChange
