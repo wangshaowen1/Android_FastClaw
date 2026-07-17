@@ -81,7 +81,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
                 }*/
                 bindOptionRows(item, payload)
                 bindReAnswerAction(item, payload)
-                bindSkipAction(item, payload, true)
+                bindSkipAction(item, payload)
                 setButtonVisible(item, payload, payload?.options?.size?:0)
 
                 //binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
@@ -220,9 +220,10 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     /**
      * 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏
      */
-    private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, center: Boolean = false) {
+    private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
 
+        val center = payload?.inputMode in setOf(MODE_SINGLE_CHOICE, MODE_MULTI_CHOICE)
         val layoutParams = binding.tvSkip.layoutParams as ConstraintLayout.LayoutParams
         layoutParams.horizontalBias = if (center) 0.5f else 1f
         binding.tvSkip.layoutParams = layoutParams
