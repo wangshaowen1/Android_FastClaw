@@ -116,6 +116,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
     private var mJobStatusSelected: String? = null
 
+    private var isReplyAnswer = false
+
     companion object {
         const val TAG = "ClawAgentMainFragment"
         /** 记忆卡片等待时长 */
@@ -168,8 +170,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 if (interceptIfStreaming()) return
                 // 主动发送:本条乐观插入及随后的流式回复都强制滚到最新
                 forceScrollToBottom = true
-                mRealVM.sendMessage(content.toString().trim())
                 binding.etSend.text = null
+                if (isReplyAnswer) {
+                    startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId)
+                    binding.ivReanswerClose.performClick()
+                } else {
+                    mRealVM.sendMessage(content.toString().trim())
+                }
             }
             R.id.iv_agent_memory -> { //对你的理解
                 if (!AppNavigator.checkLoginIntercepted(false)){
@@ -210,8 +217,11 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 scrollToBottom(true, 0L)
             }
             R.id.iv_reanswer_close -> { //重新回答关闭
+                isReplyAnswer = false
                 binding.layoutReanswer.gone()
-                binding.layoutSend.setCorners(27.dp.toFloat())
+                binding.layoutSend.setCorners(27f)
+                binding.etSend.text = null
+                hideKeyboard(binding.etSend)
             }
         }
     }
@@ -221,7 +231,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 消息列表：聊天场景内容自底部对齐
         binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
         binding.rvMsg.itemAnimator = null
-        // 底部间距高点
+        // 列表 item 统一留 12dp 间距，首尾额外撑开顶部和输入框之间的距离。
         binding.rvMsg.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
                 outRect: android.graphics.Rect,
@@ -230,9 +240,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 state: RecyclerView.State
             ) {
                 val position = parent.getChildAdapterPosition(view)
-                if (position == 0) outRect.top = 12.dp
+                if (position == RecyclerView.NO_POSITION) return
                 val itemCount = state.itemCount
-                outRect.bottom = if (position == itemCount - 1) 21.dp else 12.dp
+                outRect.set(
+                    0,
+                    if (position == 0) 12.dp else 0,
+                    0,
+                    if (position == itemCount - 1) 21.dp else 12.dp
+                )
             }
         })
         binding.rvMsg.adapter = msgAdapter
@@ -394,6 +409,26 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     mRealVM.queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
                 }
                 onTrackingEvent(payload  = payload)
+            }
+        }
+        // 文本补问卡点击“重新回答”时，聚焦底部输入框并拉起输入法
+        msgAdapter.onQuestionInputClickAction = { item, action, queueId ->
+            if (!interceptIfStreaming()) {
+                mCurrentMessage = item
+                mCurrentAction = action
+                mCurrentQuestionId = queueId
+                isReplyAnswer = true
+                isVoiceInputMode = false
+                binding.layoutReanswer.visible()
+                binding.layoutSend.setCorners(20f)
+                binding.etSend.setText(action.actionPayload?.skipBubbleText?:"")
+                binding.etSend.setSelection(binding.etSend.text.length)
+                updateInputModeView()
+                binding.etSend.post {
+                    binding.etSend.requestFocus()
+                    binding.etSend.setSelection(binding.etSend.text?.length ?: 0)
+                    KeyboardUtils.showKeyboard(binding.etSend)
+                }
             }
         }
         // 补问卡动作按钮：actionCode 取自 payload action
@@ -618,7 +653,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
             override fun keyBoardShow(height: Int) {
                 isScrollBottomKeyboardShowing = true
-                binding.layoutAction.invisible()
+                binding.layoutAction.gone()
                 binding.ivScrollBottom.gone()
             }
 
@@ -704,8 +739,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
             val hadObservedNonEmptyMessageList = hasObservedNonEmptyMessageList
+            // 用户刚发送消息时强制跟随；否则仅在当前已经贴底时才继续跟随新消息。
             val scrollToLatest = forceScrollToBottom || !binding.rvMsg.canScrollVertically(1)
+            // 新增尾部消息才触发滚动；同一条流式内容增量更新不重复滚动。
             val hasNewTailMessage = list.size > msgAdapter.items.size || msgAdapter.items.lastOrNull()?.id != list.lastOrNull()?.id
+            // 用提交新列表前的可见位置估算距离底部还有多少个 item。距离底部不超过 5 个 item 时平滑滚动；更远时直接贴底，避免长距离慢慢滑。
+            val lastVisiblePosition = (binding.rvMsg.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition() ?: -1
+            val shouldSmoothScroll = hadObservedNonEmptyMessageList && list.lastIndex - lastVisiblePosition <= 5
             // 首次加载、主动发消息或新增尾部消息时才触发滚动；流式更新同一条消息时不重复滚动。
             val shouldRunScrollCommand = !hadObservedNonEmptyMessageList || forceScrollToBottom || hasNewTailMessage
             // 最终是否需要滚到最新：既要当前允许跟随底部，也要本次列表变化确实需要滚动。
@@ -716,12 +756,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 suppressScrollBottomButton()
             }
             msgAdapter.submitList(list)
+            // 新消息插入后原最后一条不再是尾项，主动刷新 ItemDecoration 避免保留 21dp 底部间距。
+            binding.rvMsg.invalidateItemDecorations()
             if (list.isNotEmpty()) {
                 hasObservedNonEmptyMessageList = true
             }
             if (shouldScrollToLatest) {
                 // 首次加载直接贴底；新增消息用平滑滚动。流式内容更新不重复触发滚动，避免 srlMsg 抖动。
-                scrollToBottom(hadObservedNonEmptyMessageList)
+                scrollToBottom(shouldSmoothScroll)
             }
         }
         // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭

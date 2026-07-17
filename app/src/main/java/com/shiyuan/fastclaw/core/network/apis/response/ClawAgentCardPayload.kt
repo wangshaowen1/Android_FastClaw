@@ -128,6 +128,8 @@ data class CardActionPayloadBean(
 //    val newValue: String? = null,
     val rejectBehavior: String? = null,
     var selectedValue: String? = null,
+    /** 后台推送给用户自动发的文本 */
+    val skipBubbleText: String? = null,
 )
 
 /** CARD 公共：按钮（7.4.2） */
@@ -151,7 +153,7 @@ data class CardOption(
 //    val value: String? = null,
 //    val selectedValue: String? = null,
     /** 问题卡选项当前固定 QUESTION_OPTION_SUBMIT */
-    val actionCode: String? = null,
+    var actionCode: String? = null,
     val disabled: Boolean? = null,
     val selected: Boolean? = null,
     val actionPayload: Map<String, Any?>? = null,
@@ -201,11 +203,11 @@ data class CoreQuestionPayloadBean(
 
         /** 文本输入 */
         const val MODE_TEXT = "TEXT"
-        /** 字典单选 */
+        /** 枚举单选 */
         const val MODE_SINGLE_CHOICE = "SINGLE_CHOICE"
         /** 枚举多选 */
         const val MODE_MULTI_CHOICE = "MULTI_CHOICE"
-        /** 枚举单选 */
+        /** 字典单选 */
         const val MODE_DICT_SINGLE = "DICT_SINGLE"
         /** 字典多选 */
         const val MODE_DICT_MULTI = "DICT_MULTI"
@@ -217,9 +219,9 @@ data class CoreQuestionPayloadBean(
         const val MODE_ARRAY_FORM = "ARRAY_FORM"
     }
 
-    fun buildSubmitAction(): CardAction {
+    fun buildAction(enum: CandidateJobAgentClientActionEnum): CardAction {
         return CardAction(
-            actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name,
+            actionCode = enum.name,
             actionPayload = CardActionPayloadBean(
                 questionQueueId = questionQueueId,
                 attributeGroupCode = attributeGroupCode,
@@ -230,6 +232,7 @@ data class CoreQuestionPayloadBean(
 
     /** 整卡是否已回答：状态机终态或整卡禁用 */
     fun isAnswered(): Boolean {
+        //用户点了跳过按钮，也算回答了这个问题，所以问题的状态是“跳过状态”
         val state = interactionState ?: return false
         return state.status == STATUS_ANSWERED ||
                 state.status == STATUS_SUBMITTED ||

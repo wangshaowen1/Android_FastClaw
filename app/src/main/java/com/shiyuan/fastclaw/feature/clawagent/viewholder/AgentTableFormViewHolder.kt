@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
 import android.graphics.Typeface
+import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
@@ -35,71 +36,35 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
             runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
         }
         payload?.let {
-            // 本地验证用：服务端未下发时，临时补齐跳过/重新回答 action，方便验证重新回答按钮展示。
-            val verifyPayload = payload.buildVerifyReAnswerPayload()
-            binding.tvTitle.text = verifyPayload.questionText ?: verifyPayload.question ?: item.content
-            bindActionRows(item, verifyPayload)
-            bindSkipAction(item, verifyPayload)
-            bindReAnswerAction(item, verifyPayload)
+            binding.tvTitle.text = payload.questionText ?: payload.question ?: item.content
+            bindActionRows(item, payload)
+            bindSkipAction(item, payload)
+            bindReAnswerAction(item, payload)
+            bindButtonVisible(item, payload, payload.actions?.size?:0)
         }
-    }
-
-    private fun CoreQuestionPayloadBean.buildVerifyReAnswerPayload(): CoreQuestionPayloadBean {
-        val currentActions = actions.orEmpty()
-        val verifyActions = currentActions.toMutableList()
-        val commonPayload = CardActionPayloadBean(
-            questionQueueId = questionQueueId,
-            attributeGroupCode = attributeGroupCode,
-            metaCode = metaCode,
-        )
-        if (currentActions.none { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }) {
-            verifyActions.add(
-                CardAction(
-                    actionCode = ACTION_SKIP_CURRENT_QUESTION,
-                    text = itemView.context.getString(R.string.skip),
-                    disabled = false,
-                    actionPayload = commonPayload,
-                )
-            )
-        }
-        if (currentActions.none { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }) {
-            verifyActions.add(
-                CardAction(
-                    actionCode = ACTION_QUESTION_REANSWER_SUBMIT,
-                    text = itemView.context.getString(R.string.reanswer),
-                    disabled = false,
-                    actionPayload = commonPayload,
-                )
-            )
-        }
-        return copy(actions = verifyActions)
     }
 
     private fun bindActionRows(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
-        val action = payload?.actions?.firstOrNull()
+        val action = payload?.actions?.firstOrNull { it.actionCode != ACTION_SKIP_CURRENT_QUESTION }
         action?.let {
             val parent = binding.layoutTableCard
-            //binding.btnName.text = action.text
-            if (payload.isAnsweredV2()) { //已回答
+            if (payload.isAnswered()) { //已回答
                 binding.tvContent.text = parent.context.getString(R.string.already_write)
                 binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_selected)
             } else if (action.disabled == true) { //置灰
-                //binding.tvContent.text = parent.context.getString(R.string.please_write)
-                binding.tvContent.text = action.text
+                binding.tvContent.text = action.text ?: parent.context.getString(R.string.please_write)
                 binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_unselected)
             } else { //未回答
-                //binding.tvContent.text = parent.context.getString(R.string.please_write)
-                binding.tvContent.text = action.text
-                binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                binding.tvContent.text = action.text ?: parent.context.getString(R.string.please_write)
+                binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_75_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_ripple)
             }
             binding.flowOptions.isEnabled = payload.isDisabled() != true
-            //binding.btnLayout.isEnabled = true
             binding.flowOptions.setOnSingleClickListener {
                 action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
                 onActionClickListener(item, action, payload.questionQueueId)
@@ -112,27 +77,44 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
      */
     private fun bindReAnswerAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }
-        if (action == null || item.isReplyAnswer) {
-            binding.flowOptions.visible()
+        if (action == null) {
             binding.tvReanswer.gone()
             binding.tvReanswer.setOnClickListener(null)
             return
         }
-        binding.flowOptions.gone()
-        binding.tvReanswer.visible()
         binding.tvReanswer.text = action.text
         binding.tvReanswer.isEnabled = action.disabled != true
         binding.tvReanswer.setOnSingleClickListener {
-            item.isReplyAnswer = true
+            action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_REANSWER_SUBMIT.name
+            onActionClickListener(item, action, payload.questionQueueId)
+        }
+    }
+
+    /**
+     * 设置卡片上控件的显示状态
+     */
+    private fun bindButtonVisible(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, actionCount: Int) {
+        val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_QUESTION_REANSWER_SUBMIT }
+        if (actionCount > 0 && (payload?.isAnswered() == false || item.isReplyAnswer)) {
             binding.flowOptions.visible()
+        } else {
+            binding.flowOptions.gone()
+        }
+        if (action != null && payload.isAnswered() && action.disabled != true && !item.isReplyAnswer) {
+            binding.tvReanswer.visible()
+        } else {
+            binding.tvReanswer.setOnClickListener(null)
             binding.tvReanswer.gone()
+        }
+        if (payload?.isAnswered() == true || payload?.isDisabled() == true) {
+            binding.tvSkip.gone()
         }
     }
 
     /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */
     private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
-        if (action != null && !payload.isAnsweredV2() && !payload.isDisabled()) {
+        if (action != null && !payload.isAnswered() && !payload.isDisabled()) {
             binding.tvSkip.visible()
             binding.tvSkip.isEnabled = action.disabled != true
             binding.tvSkip.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }

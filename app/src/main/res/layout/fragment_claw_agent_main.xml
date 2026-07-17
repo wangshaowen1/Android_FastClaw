@@ -262,9 +262,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:super_corner="21dp">
+                app:super_corner="27dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:visibility="gone"
                     android:id="@+id/layout_reanswer"
                     android:layout_width="match_parent"
                     android:layout_height="46dp"

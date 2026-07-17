@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.clawagent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
+import com.blankj.utilcode.util.LogUtils
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.core.AppRepository
@@ -646,13 +647,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     // region 消息列表相关
     /** 按 sequenceNo 升序映射并回推渲染列表 */
     private fun refreshMessageList() {
-        messageList.value = messageStore.values
+        val rawMessages = messageStore.values
             .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
-            .map { it.toMessageInfo() }
+        val renderMessages = rawMessages.map { it.toMessageInfo() }
+        messageList.value = renderMessages
         if (BuildConfig.DEBUG) {
-            println("messageList---------------------------------------------------------")
-            messageStore.forEach { (key, msg) ->
-                println("messageList=$key, msg=$msg")
+            println("messageList=---------------------------------------------------------")
+            rawMessages.forEachIndexed { index, msg ->
+                println("messageList[$index]=${GsonUtils.toJson(msg)}")
             }
         }
     }
