@@ -60,7 +60,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_unselected)
             } else { //未回答
                 binding.tvContent.text = action.text ?: parent.context.getString(R.string.please_write)
-                binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_75_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_ripple)
             }

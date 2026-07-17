@@ -647,13 +647,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     // region 消息列表相关
     /** 按 sequenceNo 升序映射并回推渲染列表 */
     private fun refreshMessageList() {
-        val renderMessages = messageStore.values
+        val rawMessages = messageStore.values
             .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
-            .map { it.toMessageInfo() }
+        val renderMessages = rawMessages.map { it.toMessageInfo() }
         messageList.value = renderMessages
         if (BuildConfig.DEBUG) {
             println("messageList=---------------------------------------------------------")
-            renderMessages.forEachIndexed { index, msg ->
+            rawMessages.forEachIndexed { index, msg ->
                 println("messageList[$index]=${GsonUtils.toJson(msg)}")
             }
         }
