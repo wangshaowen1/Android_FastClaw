@@ -64,6 +64,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_75_3c3c43))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_ripple)
             }
+            binding.ivInto.visible()
             binding.flowOptions.isEnabled = payload.isDisabled() != true
             binding.flowOptions.setOnSingleClickListener {
                 action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name

@@ -892,7 +892,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /**
      * 卡片交互 - sse流式
      */
-    fun sendAction(desc: String, actionData: AgentMsgAction) {
+    fun sendAction(content: String, actionData: AgentMsgAction) {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
@@ -905,7 +905,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 sessionId = currentSessionId,
                 conversationId = currentConversationId,
                 clientMessageId = clientMessageId,
-                content = desc,
+                content = content,
                 interactionType = INTERACTION_TYPE_ACTION,
                 action = actionData
             )

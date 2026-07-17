@@ -80,6 +80,7 @@ import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
+import com.xiaomi.push.co
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -172,7 +173,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 forceScrollToBottom = true
                 binding.etSend.text = null
                 if (isReplyAnswer) {
-                    startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId)
+                    startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, content = content.toString().trim())
                     binding.ivReanswerClose.performClick()
                 } else {
                     mRealVM.sendMessage(content.toString().trim())
@@ -187,7 +188,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.sendAction(
-                        desc = getString(R.string.company_backcheck),
+                        content = getString(R.string.company_backcheck),
                         actionData = AgentMsgAction(
                             actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND.name,
                             actionPayloadJson = null,
@@ -199,7 +200,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.sendAction(
-                        desc = getString(R.string.mock_interview),
+                        content = getString(R.string.mock_interview),
                         actionData = AgentMsgAction(
                             actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
                             actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = QUICK_ENTRY))
@@ -284,7 +285,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     payload?.resumeTaskId?.let { put("resumeTaskId", it) }
                 }
                 mRealVM.sendAction(
-                    desc = getString(if (confirmed) R.string.confirm_my_resume else R.string.not_my_resume),
+                    content = getString(if (confirmed) R.string.confirm_my_resume else R.string.not_my_resume),
                     actionData = AgentMsgAction(
                         actionCode = (if (confirmed) CandidateJobAgentClientActionEnum.RESUME_CONFIRM_YES
                         else CandidateJobAgentClientActionEnum.RESUME_CONFIRM_NO).name,
@@ -330,7 +331,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.sendAction(
-                    desc = action?.text.orEmpty(),
+                    content = action?.text.orEmpty(),
                     actionData = AgentMsgAction(
                         actionCode = action?.actionCode,
                         sourceMessageId = item.id,
@@ -377,7 +378,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             if (!interceptIfStreaming()) {
                 forceScrollToBottom = true
                 mRealVM.sendAction(
-                    desc = action.text.orEmpty(),
+                    content = action.text.orEmpty(),
                     actionData = AgentMsgAction(
                         questionQueueId = queueId,
                         actionCode = action.actionCode,
@@ -396,7 +397,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
                 forceScrollToBottom = true
                 mRealVM.sendAction(
-                    desc = option.text ?: option.label.orEmpty(),
+                    content = option.text ?: option.label.orEmpty(),
                     actionData = AgentMsgAction(
                         questionQueueId = queueId,
                         actionCode = option.actionCode,
@@ -709,7 +710,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             on<Events.ClawAgentEvent> { event ->
                 onTrackingEvent(clawAgentEvent = event)
                 //聊天对话选择后回传
-                startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, event.msgGson)
+                startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, msgGson = event.msgGson)
             }
             /**
              * 接受消息，点击公司背调和模拟面试按钮
@@ -874,12 +875,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         updateInputModeView()
     }
 
-    private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null) {
+    private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, content: String? = null, msgGson: String? = null) {
         if (!interceptIfStreaming()) {
             forceScrollToBottom = true
             action?.actionPayload?.selectedValue = msgGson
             mRealVM.sendAction(
-                desc = action?.text.orEmpty(),
+                content = content ?: action?.text.orEmpty(),
                 actionData = AgentMsgAction(
                     questionQueueId = queueId,
                     actionCode = action?.actionCode,
@@ -959,7 +960,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         )
                         // sse 上传简历动作
                         mRealVM.sendAction(
-                            desc = "这是我的简历",
+                            content = "这是我的简历",
                             actionData = AgentMsgAction(
                                 actionCode = CandidateJobAgentClientActionEnum.RESUME_UPLOAD_SUBMIT.name,
                                 sourceMessageId = data.id,
@@ -1053,7 +1054,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             forceScrollToBottom = true
             val str = R.string.str_agent_memory_confirm.getResString()
             mRealVM.sendAction(
-                desc = str,
+                content = str,
                 actionData = AgentMsgAction(
                     actionCode = CandidateJobAgentClientActionEnum.ATTRIBUTE_CONFIRM.name,
                     sourceMessageId = item.id,
@@ -1068,7 +1069,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             forceScrollToBottom = true
             val str = R.string.str_agent_memory_negation.getResString()
             mRealVM.sendAction(
-                desc = str,
+                content = str,
                 actionData = AgentMsgAction(
                     actionCode = CandidateJobAgentClientActionEnum.ATTRIBUTE_REJECT.name,
                     sourceMessageId = item.id,
