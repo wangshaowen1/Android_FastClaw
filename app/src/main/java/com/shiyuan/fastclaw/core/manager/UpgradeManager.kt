@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.core.manager
 // TODO: Feature
 import android.app.ProgressDialog
 import android.text.TextUtils
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -11,8 +12,8 @@ import com.shiyuan.fastclaw.common.ext.ioScope
 import com.shiyuan.fastclaw.common.permissions.PermissionsUtils
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.utils.FileUtils
+import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
-import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.UpgradeData
 import com.shiyuan.fastclaw.feature.upgrade.UpgradeDialogFragment
 import com.shiyuan.fastclaw.service.DownloadWorker
@@ -93,7 +94,7 @@ class UpgradeManager(private val context: BaseActivity) {
             try {
                 // 1. 请求接口（IO 线程）
                 val data = withContext(Dispatchers.IO) {
-                    ApiFactory.apiService.upgrade(UserTokenBody()).data
+                    ApiFactory.apiService.checkAppVersion().data
                 }
 
                 // 切回主线程处理 UI 与逻辑
@@ -121,13 +122,21 @@ class UpgradeManager(private val context: BaseActivity) {
                     } else {
                         needForceUpdate = data.isNeedForceUpdate()
 
+                        val shouldShowUpgrade = needForceUpdate ||
+                                showProgress ||
+                                Config.get().shouldShowRecommendUpgrade(
+                                    RECOMMEND_UPGRADE_REMIND_INTERVAL_MILLIS
+                                )
+                        if (!shouldShowUpgrade) {
+                            onUpgradeListener?.onUpgrade(true)
+                            return@withContext
+                        }
+
                         val file = File(
                             FileManager.getInstance().apkFolder,
                             DownloadWorker.UPDATE_FILE_NAME
                         )
-
-                        // 本地 APK 存在且 MD5 符合 → 直接安装
-                        if (file.exists() && file.isFile && md5 != null) {
+                        if (file.exists() && file.isFile && !TextUtils.isEmpty(md5)) {
                             if (TextUtils.equals(md5, FileUtils.getFileMD5(file))) {
                                 showInstallDialog(file.path)
                                 onUpgradeListener?.onUpgrade(true)
@@ -135,7 +144,6 @@ class UpgradeManager(private val context: BaseActivity) {
                             }
                         }
 
-                        // 不符合或未下载 → 下载或显示升级提示
                         if (!TextUtils.isEmpty(url)) {
                             if (autoUpgrade && NetworkUtils.isWifiConnected()) {
                                 downApk(url, md5, true)
@@ -175,6 +183,8 @@ class UpgradeManager(private val context: BaseActivity) {
                     ("当前为WIFI环境,将自动为你下载更新" + Session.getInstance().appName + "。").showToast()
                 }
                 DownloadWorker.enqueue(context, url, md5, null, autoUpdate, null)
+            } else {
+                dialog?.setDownloading(false)
             }
         }
 
@@ -194,16 +204,16 @@ class UpgradeManager(private val context: BaseActivity) {
         }
         dialog = UpgradeDialogFragment.show(
             context.supportFragmentManager,
-            upgradeData.appVersion,
-            upgradeData.appVersionDesc,
+            upgradeData.targetVersion,
+            upgradeData.releaseNote,
             upgradeData.isNeedForceUpdate()
         )
         dialog?.onUpgradeClick = {
-            if (!needForceUpdate) {
-                dialog?.dismissAllowingStateLoss()
-            }
             downApk(upgradeData.upgradeUrl, upgradeData.md5Hash, false)
             null
+        }
+        dialog?.onRemindLater = {
+            Config.get().markRecommendUpgradeDismissed()
         }
     }
 
@@ -220,14 +230,13 @@ class UpgradeManager(private val context: BaseActivity) {
 
         dialog = UpgradeDialogFragment.show(
             context.supportFragmentManager,
-            data.appVersion,
-            data.appVersionDesc,
+            data.targetVersion,
+            data.releaseNote,
             data.isNeedForceUpdate()
         )
-        dialog?.onUpgradeClick = {
-            dialog?.dismissAllowingStateLoss()
-            FileUtils.openFile(context, File(path))
-            null
+        dialog?.updateInstall(path)
+        dialog?.onRemindLater = {
+            Config.get().markRecommendUpgradeDismissed()
         }
 
     }
@@ -237,5 +246,9 @@ class UpgradeManager(private val context: BaseActivity) {
         // EventBus.getDefault().unregister(this) // 不需要了，协程会自动取消
         mProgressDialog?.dismiss()
         mProgressDialog = null
+    }
+
+    companion object {
+        private const val RECOMMEND_UPGRADE_REMIND_INTERVAL_MILLIS = 60L  * 1000
     }
 }

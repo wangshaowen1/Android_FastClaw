@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.core
 
 import android.text.TextUtils
+import android.util.Log
 import com.blankj.utilcode.util.NetworkUtils
 import com.google.gson.Gson
 import com.shiyuan.fastclaw.App
@@ -376,6 +377,19 @@ class Config : NetworkChangedListener {
         return sp.getLong("activity_float_show_time_$id", 0L)
     }
 
+    fun shouldShowRecommendUpgrade(intervalMillis: Long): Boolean {
+        val lastDismissTime = sp.getLong(RECOMMEND_UPGRADE_DISMISS_TIME, 0L)
+        val currentTime = System.currentTimeMillis()
+        return lastDismissTime == 0L ||
+                currentTime < lastDismissTime ||
+                currentTime - lastDismissTime >= intervalMillis
+    }
+
+    fun markRecommendUpgradeDismissed() {
+        Log.d("onRemindLater",System.currentTimeMillis().toString())
+        sp.putLong(RECOMMEND_UPGRADE_DISMISS_TIME, System.currentTimeMillis())
+    }
+
     fun notifyPowerConsume(scene: Int): Boolean {
         return sp.getBoolean("notifyPowerConsume${User.get().userId}_$scene", true)
     }
@@ -433,6 +447,7 @@ class Config : NetworkChangedListener {
         private val DEFAULT_APP_CONFIG: AppConfigData = AppConfigData()
         private const val NOTIFICATION_ENABLE = "NOTIFICATION_ENABLE"
         private const val SHOW_JUMP_POP = "showJumpPop"
+        private const val RECOMMEND_UPGRADE_DISMISS_TIME = "recommend_upgrade_dismiss_time"
 
         private const val EYE_PROTECTION_ENABLE: String = "eyeProtectionEnable"
         const val DAILY: Int = 1

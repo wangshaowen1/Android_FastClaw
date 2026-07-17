@@ -439,7 +439,7 @@
     <string name="download_image_failed">下载图片失败</string>
     <string name="consumption_details">消耗明细</string>
     <string name="compute_details">算力明细</string>
-    <string name="downloading_please_wait">正在为你下载，请稍候</string>
+    <string name="downloading_please_wait">正在下载 %1$d%%</string>
     <string name="input_min_length">请输入至少%1$d个字</string>
     <string name="select_type_please">请选择类型</string>
     <string name="input_contract_info_please">请输入联系方式</string>

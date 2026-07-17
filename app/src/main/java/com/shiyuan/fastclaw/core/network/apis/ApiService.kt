@@ -197,10 +197,10 @@ interface ApiService {
     suspend fun updateUserAvatar(@Body body: UpdateAvatarBody): ApiResponse<UserHomeData?>
 
     /**
-     * 获取APP升级信息
+     * APP版本检测，请求参数复用全局请求头 mobileType 和 appVersion
      */
-    @POST(ApiConstants.GET_APP_UPGRADE_INFO)
-    suspend fun upgrade(@Body userTokenBody: UserTokenBody): ApiResponse<UpgradeData>
+    @POST(ApiConstants.CHECK_APP_VERSION)
+    suspend fun checkAppVersion(): ApiResponse<UpgradeData>
 
     /**
      * 注销账号

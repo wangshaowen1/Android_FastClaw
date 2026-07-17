@@ -30,9 +30,9 @@ object ApiConstants {
     const val UPDATE_USER_AVATAR = "api/candidate/user/avatar/update"
 
     /**
-     * 获取APP升级信息
+     * APP版本检测
      */
-    const val GET_APP_UPGRADE_INFO = "app/getAppUpgradeInfo"
+    const val CHECK_APP_VERSION = "api/candidate/app/version/check"
 
     /**
      * 第三方登录
