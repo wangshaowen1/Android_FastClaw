@@ -23,6 +23,7 @@
                 android:layout_centerVertical="true"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:maxEms="12"
                 android:textColor="@color/color_90_000000"
                 android:textSize="14sp"
                 android:textStyle="bold"
