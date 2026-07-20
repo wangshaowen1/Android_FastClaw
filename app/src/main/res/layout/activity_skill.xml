@@ -51,14 +51,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/skill_name"
-                    app:formPlaceholderText="@string/skill_name" />
+                    app:formPlaceholderText="@string/please_enter" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:id="@+id/v_form2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:formLabelText="@string/proficiency_level"
-                    app:formPlaceholderText="@string/proficiency_level" />
+                    app:formPlaceholderText="@string/please_selected" />
 
 
             </LinearLayout>
