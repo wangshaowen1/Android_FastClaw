@@ -56,22 +56,22 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
         }
+        var center : Boolean = false
         binding.tvQuestion.text = payload?.questionText ?: payload?.question ?: item.content
         when (payload?.inputMode) {
             MODE_DICT_SINGLE, MODE_DICT_MULTI, MODE_DATE_MONTH, MODE_SALARY_RANGE -> { //单选/多选字典、薪资、年月问题等
-                binding.tvSkip.gone()
                 binding.tvReplied.gone()
+                center = true
                 bindActionRows(item, payload)
-                bindReAnswerAction(item, payload)
-                bindButtonVisible(item, payload)
             }
             else -> { //单选/多选枚举、文本、通用问题等
+                center = payload?.inputMode in setOf(MODE_SINGLE_CHOICE, MODE_MULTI_CHOICE)
                 bindOptionRows(item, payload)
-                bindReAnswerAction(item, payload)
-                bindSkipAction(item, payload)
-                bindButtonVisible(item, payload)
             }
         }
+        bindReAnswerAction(item, payload)
+        bindSkipAction(item, payload, center)
+        bindButtonVisible(item, payload)
     }
 
     /**
@@ -179,10 +179,9 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     /**
      * 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏
      */
-    private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
+    private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?, center: Boolean = false) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
 
-        val center = payload?.inputMode in setOf(MODE_SINGLE_CHOICE, MODE_MULTI_CHOICE)
         val layoutParams = binding.tvSkip.layoutParams as ConstraintLayout.LayoutParams
         layoutParams.horizontalBias = if (center) 0.5f else 1f
         binding.tvSkip.layoutParams = layoutParams

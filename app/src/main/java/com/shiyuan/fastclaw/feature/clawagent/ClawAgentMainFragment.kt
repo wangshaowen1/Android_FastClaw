@@ -155,6 +155,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && !User.get().isVisitor && mRealVM.hasInitSession.value == true) {
+            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+        }
+    }
+
     override fun <Data> onClick(view: View, data: Data?) {
         super.onClick(view, data)
         when (view.id) {

@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
 import android.graphics.Typeface
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
@@ -14,9 +15,12 @@ import com.shiyuan.fastclaw.core.network.apis.response.CardActionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_QUESTION_REANSWER_SUBMIT
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_MULTI_CHOICE
+import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_SINGLE_CHOICE
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import kotlin.collections.contains
 
 /**
  * @desc：表单相关{ARRAY_FORM} - 如工作经历、教育经历、技能、项目经历、证书、奖项
@@ -112,15 +116,19 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
         }
     }
 
-    /** 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏 */
+    /**
+     * 绑定独立跳过按钮：优先匹配 SKIP_CURRENT_QUESTION，回退到第一个 action；无 action 则隐藏
+     */
     private fun bindSkipAction(item: ClawAgentMessageInfo, payload: CoreQuestionPayloadBean?) {
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_SKIP_CURRENT_QUESTION }
-        if (action != null && !payload.isAnswered() && !payload.isDisabled()) {
-            binding.tvSkip.visible()
-            binding.tvSkip.isEnabled = action.disabled != true
-            binding.tvSkip.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }
-        } else {
+
+        if (action == null) {
             binding.tvSkip.gone()
+            binding.tvSkip.setOnClickListener(null)
+            return
         }
+        binding.tvSkip.visible()
+        binding.tvSkip.isEnabled = action.disabled != true
+        binding.tvSkip.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }
     }
 }
