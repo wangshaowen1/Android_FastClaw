@@ -184,7 +184,10 @@ class EducationExperienceDialog : BaseBottomDialogVmFragment<DialogEducationExpe
             } else {
                 SupplementDialog.show(
                     manager = childFragmentManager,
-                    content = "还有教育经历未补充完整"
+                    content = "还有教育经历未补充完整",
+                    onLater = {
+                        dismiss()
+                    }
                 )
             }
         }
