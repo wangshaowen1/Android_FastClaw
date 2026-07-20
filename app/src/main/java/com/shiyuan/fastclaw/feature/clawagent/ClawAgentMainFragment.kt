@@ -129,7 +129,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         private const val PREFETCH_THRESHOLD = 5
         private const val KEYBOARD_BASE_BOTTOM_OFFSET = 95
         private const val RESUME_EVENT_POLL_INTERVAL = 10000L
-        private const val RESUME_EVENT_POLL_TIMEOUT = 60000L
+        private const val RESUME_EVENT_POLL_TIMEOUT = 100000L
 
         fun getInstance(): ClawAgentMainFragment {
             return ClawAgentMainFragment()
@@ -456,6 +456,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     BirthYearMonthPickerDialog.show(
                         manager = childFragmentManager,
                         maxTimestamp = 1767143497521,
+                        selectedYear = 2000,
+                        selectedMonth = 1,
                         title = "出生年月",
                         onConfirmWithTimestamp = { year, month, _ ->
                             FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
