@@ -63,6 +63,7 @@ android {
         buildConfigField "String", "DY_CLIENT_KEY", '"YOUR_DY_CLIENT_KEY"'
         buildConfigField "String", "WX_APP_ID", '"wx061b7b7333f2e4e7"' //微信AppKey
         buildConfigField "String", "WX_APP_SECRET", '"ef303720908c2565a7c0ebd3008c9c7e"'//微信Secret
+        buildConfigField "String", "UPLOAD_RESUME_WECHAT_MINIID", '"gh_e67f13187b26"'//上传简历小程序原始id
         def growingScheme = "2537e0c6ff0ab48e"
         buildConfigField "String", "GROWING_ACCOUNT_ID", '"2f313003f3995a31"'
         buildConfigField "String", "GROWING_DATA_SOURCE_ID", '"944875fb77487c3d"'

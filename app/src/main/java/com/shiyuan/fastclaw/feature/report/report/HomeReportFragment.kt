@@ -53,7 +53,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
 
     fun  uploadResume(){
         //上传简历
-        UploadResumeDialog.show(manager = this.parentFragmentManager,false) { fileInfo ->
+        UploadResumeDialog.show(manager = this.parentFragmentManager,false,{ fileInfo ->
             if (fileInfo != null) {
                 mRealVM.submitResume(fileInfo.uri) {
                     GenerateReportActivity.start(
@@ -66,7 +66,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
                         ))
                 }
             }
-        }
+        })
     }
 
     fun setView(index: Int) {

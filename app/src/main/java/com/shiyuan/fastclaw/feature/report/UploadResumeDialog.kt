@@ -12,7 +12,11 @@ import com.nhsd.basic.BaseBottomPushVMDialogFragment
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
+import com.shiyuan.fastclaw.feature.report.UploadResumeDialog.Companion.onWxSelected
+import com.shiyuan.fastclaw.router.AppRouter.startWechatMini
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
 
 /**
  * 上传简历dialog
@@ -23,15 +27,18 @@ class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding,
     companion object {
         const val TAG = "UploadResumeDialog"
         var onFileSelected: ((SelectedFileInfo?) -> Unit)? = null
+        var onWxSelected: ((code:String?) -> Unit)? = null
 
         fun show(
             manager: FragmentManager,
             canSelectImage: Boolean = true,
-            fileSelectedListener: ((SelectedFileInfo?) -> Unit)? = null
+            fileSelectedListener: ((SelectedFileInfo?) -> Unit)? = null,
+            wxSelected: ((code:String?) -> Unit)? = null
         ): UploadResumeDialog {
             val dialog = UploadResumeDialog()
             dialog.canSelectImage = canSelectImage
             onFileSelected = fileSelectedListener
+            onWxSelected = wxSelected
             dialog.show(manager)
             return dialog
         }
@@ -88,10 +95,9 @@ class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding,
 
     private fun dataUpdate() {
         mRealVM.schemeData.observe(this){
-            openInWeChat(it.scheme ?:"")
-         /*   //val intent = Intent(Intent.ACTION_VIEW, Uri.parse("weixin://dl/businessMiniProgram/?appid=" + "wx1234567890abcdef" + "&path=" + "pages/wx/resumeUpload/index?code=AUTH_0b4be6459e5441728acd845a611bdda4"))
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it.scheme))
-            startActivity(intent)*/
+            //wx5dafb966df52fc55
+             startWechatMini(BuildConfig.UPLOAD_RESUME_WECHAT_MINIID,it.url ,if(BuildConfig.DEBUG) WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW else  WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE  )
+            onWxSelected?.invoke(it.code)
         }
     }
 
