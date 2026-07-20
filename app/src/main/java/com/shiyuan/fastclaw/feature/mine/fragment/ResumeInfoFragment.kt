@@ -225,6 +225,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
         } else {
             bindFieldTreeList(itemBinding, position, item)
         }
+        itemBinding.viewDivider.visibility = if (position == resumeInfoAdapter.itemCount - 1) View.GONE else View.VISIBLE
     }
 
     private fun AttributeArrayQueryData.displayTitle(): String {
