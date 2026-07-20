@@ -22,8 +22,7 @@
             app:sCornersRadius="20dp"
             app:sSolidColor="#F9FAFE"
             app:sStrokeColor="@color/color_ffffff"
-            app:sStrokeWidth="1dp"
-            />
+            app:sStrokeWidth="1dp" />
 
         <ImageView
             android:id="@+id/iv_shrimp"
@@ -52,183 +51,42 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/home_welcome_intro"
+            android:text="@string/str_agent_welcome_subtitle"
             android:textColor="@color/color_76_3c3c43"
-            android:textSize="13sp"
+            android:textSize="14sp"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@id/iv_shrimp_tip1"
             app:layout_constraintTop_toBottomOf="@id/iv_shrimp_tip1"
-            tools:text="你的职业经纪人，我能帮你：" />
+            tools:text="你的AI求职经纪人" />
 
         <!-- 毛玻璃服务卡:垂直摆放 3 个白色胶囊 -->
         <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
             android:id="@+id/card_services"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="65dp"
             android:layout_marginTop="20dp"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="12dp"
-            app:background_startColor="#F9FAFE"
-            app:background_endColor="#FFFFFF"
             app:background_colorOrientation="top_bottom"
-            app:super_corner="20dp"
+            app:background_endColor="#FFFFFF"
+            app:background_startColor="#EEF5FE"
             app:border_color="@color/color_ffffff"
-            app:view_border_width="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_shrimp_tip2">
+            app:layout_constraintTop_toBottomOf="@id/tv_shrimp_tip2"
+            app:super_corner="20dp"
+            app:view_border_width="1dp">
 
-            <!-- 行1:24小时找工作 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/pill_find_job"
+            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/iv_find_job"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_service_find_job"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_job_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="@string/home_service_find_job_title"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintStart_toEndOf="@id/iv_find_job"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_service_find_job_desc"
-                    android:textColor="@color/color_56_3c3c43"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="10dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@id/tv_job_title"
-                    app:layout_constraintTop_toBottomOf="@id/tv_job_title"/>
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_service_ai_desc"
-                    android:textColor="@color/color_25_3c3c43"
-                    android:textSize="11sp"
-                    android:layout_marginRight="8dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintRight_toRightOf="parent" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- 行2:面试辅导 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/pill_interview"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:paddingHorizontal="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pill_find_job">
-
-                <ImageView
-                    android:id="@+id/iv_interview"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_service_interview"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_interview_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:text="@string/home_service_interview_title"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="10dp"
-                    app:layout_constraintStart_toEndOf="@id/iv_interview"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_service_interview_desc"
-                    android:textColor="@color/color_56_3c3c43"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="10dp"
-                    app:layout_constraintTop_toBottomOf="@id/tv_interview_title"
-                    app:layout_constraintStart_toStartOf="@id/tv_interview_title"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- 行3:简历优化 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/pill_resume"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:paddingHorizontal="12dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/str_agent_welcome_service_desc"
+                android:textColor="@color/color_76_3c3c43"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pill_interview">
-
-                <ImageView
-                    android:id="@+id/iv_resume"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_service_resume"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_resume_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/home_service_resume_title"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@id/iv_resume"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/home_service_resume_desc"
-                    android:textColor="@color/color_56_3c3c43"
-                    android:textSize="12sp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="10dp"
-                    app:layout_constraintTop_toBottomOf="@id/tv_resume_title"
-                    app:layout_constraintStart_toStartOf="@id/tv_resume_title"
-                    app:layout_constraintBottom_toBottomOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="我能帮你查公司、定制押题、提升面试通过率" />
 
         </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
