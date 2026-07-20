@@ -99,7 +99,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
 
     fun  uploadResume(){
         //上传简历
-        UploadResumeDialog.show(manager = this.supportFragmentManager,false) { fileInfo ->
+        UploadResumeDialog.show(manager = this.supportFragmentManager,false, { fileInfo ->
             if (fileInfo != null) {
                 showLoading("上传中")
                 mRealVM.uploadFilesWithSecurityCheck(listOf(fileInfo.uri) , BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
@@ -112,7 +112,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                         it.showToast()
                     } )
             }
-        }
+        })
     }
 
 /*

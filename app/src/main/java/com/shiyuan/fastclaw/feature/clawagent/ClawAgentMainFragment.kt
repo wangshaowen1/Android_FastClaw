@@ -963,7 +963,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     }
 
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
-        UploadResumeDialog.show(manager = this.parentFragmentManager,false) { fileInfo ->
+        UploadResumeDialog.show(manager = this.parentFragmentManager,false, { fileInfo ->
             if (fileInfo != null) {
                 showLoading("上传中")
                 mRealVM.uploadFilesWithSecurityCheck(
@@ -992,7 +992,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         reason.showToast() },
                 )
             }
-        }
+        })
     }
 
     /**
