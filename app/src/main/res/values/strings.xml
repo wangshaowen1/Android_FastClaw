@@ -592,7 +592,7 @@
     <string name="login_new_code_error">验证码错误，请重新输入</string>
     <string name="login_new_other_login_title">或通过其他方式登录</string>
     <string name="login_new_policy_title">用户协议及隐私保护</string>
-    <string name="login_new_policy_content">已阅读并同意 %1$s、%2$s 以及%3$s</string>
+    <string name="login_new_policy_content">已阅读并同意 %1$s、%2$s</string>
     <string name="login_new_policy_flash_content">已阅读并同意 %1$s、%2$s 以及%3$s</string>
     <string name="login_new_policy_user_service">服务协议</string>
     <string name="login_new_policy_privacy">隐私政策</string>

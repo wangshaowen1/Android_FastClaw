@@ -208,12 +208,10 @@ class PhoneNewPolicyDialog : BaseDialogFragment<DialogPhoneNewPolicyBinding>() {
         }
         val service = getString(R.string.login_new_policy_user_service)
         val privacy = getString(R.string.login_new_policy_privacy)
-        val terms = getString(R.string.login_new_policy_terms)
         val text =
-            SpannableString(getString(R.string.login_new_policy_content, service, privacy, terms))
+            SpannableString(getString(R.string.login_new_policy_content, service, privacy))
         addLink(text, service, Config.get().serviceUrl, R.string.login_new_policy_user_service)
         addLink(text, privacy, Config.get().privacyUrl, R.string.login_new_policy_privacy)
-        addLink(text, terms, Config.get().serviceUrl, R.string.login_new_policy_terms)
         return text
     }
 
