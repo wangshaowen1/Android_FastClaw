@@ -66,7 +66,8 @@ class MineShrimpRechargeActivity :
 
     private fun initView() {
         mRealVM.onMenuClick = {
-            MyShrimpChipsActivity.start(this)
+            //MyShrimpChipsActivity.start(this)
+            MyOrderActivity.start(this,0)
         }
 
         binding.rvRechargePackage.apply {
