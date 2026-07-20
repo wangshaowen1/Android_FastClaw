@@ -257,7 +257,7 @@ class ResumeInfoFragment : BaseViewModelFragment<FragmentResumeInfoBinding, Info
                 requireActivity(),
                 true,
                 item,
-                "介绍个人又是，突出你的亮点"
+                "介绍个人优势，突出你的亮点"
             )
             return
         }
