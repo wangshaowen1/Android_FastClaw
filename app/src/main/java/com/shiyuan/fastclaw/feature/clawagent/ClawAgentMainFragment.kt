@@ -129,7 +129,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         private const val PREFETCH_THRESHOLD = 5
         private const val KEYBOARD_BASE_BOTTOM_OFFSET = 95
         private const val RESUME_EVENT_POLL_INTERVAL = 10000L
-        private const val RESUME_EVENT_POLL_TIMEOUT = 100000L
+        private const val RESUME_EVENT_POLL_TIMEOUT = 60000L
 
         fun getInstance(): ClawAgentMainFragment {
             return ClawAgentMainFragment()
