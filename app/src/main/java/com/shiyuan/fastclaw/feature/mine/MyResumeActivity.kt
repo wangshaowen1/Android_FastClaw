@@ -101,20 +101,21 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         //上传简历
         UploadResumeDialog.show(manager = this.supportFragmentManager,false) { fileInfo ->
             if (fileInfo != null) {
-                mRealVM.setLoading(true)
+                showLoading("上传中")
                 mRealVM.uploadFilesWithSecurityCheck(listOf(fileInfo.uri) , BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
                     onSuccess ={ successUrls ->
-                        mRealVM.setLoading(false)
+                        hideLoading()
                     mRealVM.submitResumeUpload(
                         successUrls.first(),fileInfo.fileName,mRealVM.resumeListData.value?.resumeTaskId) },
                     onFailure = {
-                        mRealVM.setLoading(false)
+                        hideLoading()
                         it.showToast()
                     } )
             }
         }
     }
 
+/*
     private var commonLoadingDialog: CommonLoadingDialog? = null
 
     override fun onUiStateChanged(state: UiState) {
@@ -129,7 +130,23 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         }
         state.pageError?.let { showPageError(it.message, it.retryAction) } ?: hidePageError()
     }
+*/
 
+
+    private var commonLoadingDialog: CommonLoadingDialog? = null
+
+    fun showLoading(text: String? = null) {
+        if (commonLoadingDialog?.isAdded == true) return
+        commonLoadingDialog = CommonLoadingDialog.newInstance(text).apply {
+            show(this@MyResumeActivity.supportFragmentManager)
+        }
+    }
+
+
+    fun hideLoading() {
+        commonLoadingDialog?.dismissAllowingStateLoss()
+        commonLoadingDialog = null
+    }
 
 
     private fun initObservers() {
