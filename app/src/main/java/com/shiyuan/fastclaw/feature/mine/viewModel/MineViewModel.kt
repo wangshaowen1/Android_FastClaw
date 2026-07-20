@@ -155,6 +155,7 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
         // 获取虾条信息接口
         getUserPoints()
         understandingScore()
+        fetchUserInfo()
     }
 
     /**
@@ -179,6 +180,23 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
                     })
             }
         }
+    }
+
+    fun fetchUserInfo() {
+        if (User.get().isVisitor) return
+        launch(
+            block = {
+                response(
+                    bean = mRepo.api.getUserHomeInfo(UserTokenBody()),
+                    result = {
+                        User.get().updateFrom(data)
+                        refreshUserInfo()
+                    },
+                    error = {}
+                )
+            },
+            onError = {}
+        )
     }
 
     /**

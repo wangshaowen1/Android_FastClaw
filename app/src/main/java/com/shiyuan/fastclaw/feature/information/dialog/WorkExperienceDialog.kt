@@ -220,7 +220,10 @@ class WorkExperienceDialog :
             }else{
                 SupplementDialog.show(
                     manager = childFragmentManager,
-                    content = "还有工作经历未补充完整"
+                    content = "还有工作经历未补充完整",
+                    onLater = {
+                        dismiss()
+                    }
                 )
             }
         }

@@ -218,7 +218,10 @@ class CertificateSkillsAwardsDialog : BaseBottomDialogVmFragment<DialogCertifica
             } else {
                 SupplementDialog.show(
                     manager = childFragmentManager,
-                    content = "还有${getSupplementTitle()}未补充完整"
+                    content = "还有${getSupplementTitle()}未补充完整",
+                    onLater = {
+                        dismiss()
+                    }
                 )
             }
         }

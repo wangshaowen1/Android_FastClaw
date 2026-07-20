@@ -25,6 +25,7 @@
                 android:maxLines="1"
                 android:textColor="@color/color_90_000000"
                 android:textSize="14sp"
+                android:maxEms="12"
                 android:textStyle="bold"
                 tools:text="深圳市乘海科技有限公司" />
 

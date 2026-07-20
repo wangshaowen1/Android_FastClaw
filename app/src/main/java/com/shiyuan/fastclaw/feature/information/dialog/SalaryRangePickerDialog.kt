@@ -55,7 +55,7 @@ class SalaryRangePickerDialog : BaseWheelSoundBottomDialogFragment<DialogSalaryR
         fun show(
             manager: FragmentManager,
             minSalary: String? = "6K",
-            maxSalary: String? = "12K",
+            maxSalary: String? = "7K",
             title: String? = null,
             onConfirm: ((minSalary: String, maxSalary: String?) -> Unit)? = null,
         ): SalaryRangePickerDialog {

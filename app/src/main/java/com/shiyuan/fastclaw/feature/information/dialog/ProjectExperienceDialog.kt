@@ -196,7 +196,10 @@ class ProjectExperienceDialog : BaseBottomDialogVmFragment<DialogProjectExperien
             } else {
                 SupplementDialog.show(
                     manager = childFragmentManager,
-                    content = "还有项目经历未补充完整"
+                    content = "还有项目经历未补充完整",
+                    onLater = {
+                        dismiss()
+                    }
                 )
             }
         }
