@@ -17,12 +17,9 @@
         android:layout_marginTop="14dp"
         android:textColor="@color/color_90_000000"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@id/flow_options"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintVertical_chainStyle="packed"
         tools:text="你目前找工作的紧迫度怎么样？" />
 
     <!-- 选项容器（未回复状态可见）：Flow 为辅助布局，不增加 View 层级；
@@ -39,11 +36,9 @@
         app:flow_verticalGap="12dp"
         app:flow_verticalStyle="packed"
         app:flow_wrapMode="none"
-        app:layout_constraintBottom_toTopOf="@id/tv_skip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_question"
-        app:layout_constraintVertical_bias="0"
         tools:visibility="gone" />
 
     <!--  跳过按钮  -->
