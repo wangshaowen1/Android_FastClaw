@@ -209,6 +209,7 @@ class InterviewReportActivity :
         private var downY = 0f
         private var startTranslationX = 0f
         private var isDragging = false
+        private var isDeleteButtonPressed = false
         private var isPromptShowing = false
         private var activeHolder: RecyclerView.ViewHolder? = null
         private var openHolder: RecyclerView.ViewHolder? = null
@@ -243,6 +244,12 @@ class InterviewReportActivity :
                     downX = event.x
                     downY = event.y
                     isDragging = false
+                    openHolder?.takeIf { isTouchingDeleteButton(event, it) }?.let { holder ->
+                        activeHolder = holder
+                        isDeleteButtonPressed = true
+                        return true
+                    }
+                    isDeleteButtonPressed = false
                     activeHolder = rv.findChildViewUnder(event.x, event.y)?.let { child ->
                         openHolder?.takeIf { it.itemView != child }?.let { restoreOpenItem() }
                         rv.getChildViewHolder(child)
@@ -269,6 +276,28 @@ class InterviewReportActivity :
         }
 
         override fun onTouchEvent(rv: RecyclerView, event: MotionEvent) {
+            if (isDeleteButtonPressed) {
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_MOVE -> {
+                        if (abs(event.x - downX) > touchSlop || abs(event.y - downY) > touchSlop) {
+                            isDeleteButtonPressed = false
+                            activeHolder = null
+                        }
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        val holder = activeHolder
+                        isDeleteButtonPressed = false
+                        activeHolder = null
+                        isPromptShowing = true
+                        holder?.let { resolveReportInfo(it) }?.let(onDelete) ?: restoreOpenItem()
+                    }
+                    MotionEvent.ACTION_CANCEL -> {
+                        isDeleteButtonPressed = false
+                        activeHolder = null
+                    }
+                }
+                return
+            }
             if (!isDragging) return
             when (event.actionMasked) {
                 MotionEvent.ACTION_MOVE -> updateActiveItemTranslation(event.x)
@@ -285,6 +314,7 @@ class InterviewReportActivity :
             openHolder = null
             activeHolder = null
             isDragging = false
+            isDeleteButtonPressed = false
         }
 
         fun clearOpenItem() {
@@ -293,6 +323,7 @@ class InterviewReportActivity :
             openHolder = null
             activeHolder = null
             isDragging = false
+            isDeleteButtonPressed = false
             recyclerView.invalidateItemDecorations()
         }
 
@@ -318,9 +349,7 @@ class InterviewReportActivity :
                 openHolder = holder
                 activeHolder = null
                 isDragging = false
-                isPromptShowing = true
                 recyclerView.invalidateItemDecorations()
-                resolveReportInfo(holder)?.let(onDelete) ?: restoreOpenItem()
             } else {
                 restoreActiveItem()
             }
@@ -344,6 +373,19 @@ class InterviewReportActivity :
             val position = holder.bindingAdapterPosition
             if (position == RecyclerView.NO_POSITION) return null
             return adapter.peek(position)
+        }
+
+        private fun isTouchingDeleteButton(
+            event: MotionEvent,
+            holder: RecyclerView.ViewHolder
+        ): Boolean {
+            val itemView = holder.itemView
+            val deleteWidth = getDeleteWidth(itemView.height)
+            return deleteWidth > 0 &&
+                event.x >= itemView.right - deleteWidth &&
+                event.x <= itemView.right &&
+                event.y >= itemView.top &&
+                event.y <= itemView.bottom
         }
 
         private fun drawDeleteView(canvas: Canvas, itemView: View) {

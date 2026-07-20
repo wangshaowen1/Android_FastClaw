@@ -144,6 +144,14 @@
                     android:textSize="11sp" />
 
                 <com.shiyuan.fastclaw.widget.CommonFormFieldView
+                    android:id="@+id/v_form10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:formLabelText="@string/education_supplement_desc"
+                    app:formPlaceholderText="@string/please_input" />
+
+
+                <com.shiyuan.fastclaw.widget.CommonFormFieldView
                     android:visibility="gone"
                     android:id="@+id/v_form5"
                     android:layout_width="match_parent"
@@ -179,12 +187,6 @@
                     app:formLabelText="@string/main_courses"
                     app:formPlaceholderText="@string/please_input" />
 
-                <com.shiyuan.fastclaw.widget.CommonFormFieldView
-                    android:id="@+id/v_form10"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:formLabelText="@string/education_supplement_desc"
-                    app:formPlaceholderText="@string/please_input" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
