@@ -856,12 +856,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-    // endregion
-
-    // endregion
-
-    // region 对话SSE流相关
-
     /**
      * 流式发送用户消息：复用 enterSession 缓存的会话上下文，通过 SSE 接收增量回复。
      * 会话上下文未就绪时（未先调用 enterSession）直接抛错，不发起请求。
