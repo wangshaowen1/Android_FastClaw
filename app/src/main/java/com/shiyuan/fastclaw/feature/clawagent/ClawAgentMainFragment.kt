@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
@@ -578,7 +579,15 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
         })
-        binding.rvMsg.setOnTouchListener { _, _ ->
+        binding.rvMsg.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                // 点击当前卡片外部空白处，isReplyAnswer=true展开的卡片隐藏/收起来
+                val child = binding.rvMsg.findChildViewUnder(event.x, event.y)
+                val position = child?.let { binding.rvMsg.getChildAdapterPosition(it) } ?: RecyclerView.NO_POSITION
+                if (msgAdapter.items.getOrNull(position)?.isReplyAnswer != true) {
+                    msgAdapter.collapseExpandedItem()
+                }
+            }
             if (KeyboardUtils.isSoftInputShown(activity?.window)) {
                 hideKeyboard(binding.etSend)
             }
