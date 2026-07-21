@@ -139,7 +139,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
-        observeData()
+        initObserve()
+        initData()
     }
 
     // 调用拉取增量消息
@@ -673,7 +674,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         })
     }
 
-    private fun observeData() {
+    private fun initObserve() {
         observeEvents {
             on<Events.UserChangedEvent> { event ->
                 // 用户操作重置
@@ -731,13 +732,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mRealVM.updateJobStatus(event.code)
             }
         }
-
-        if (!User.get().isVisitor) {
-            mRealVM.enterSession()
-        } else {
-            mRealVM.hardPreMsgListCard(insertPreCard())
-        }
-
         mRealVM.messageList.observe(viewLifecycleOwner) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
@@ -845,6 +839,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${data?.resumeCheckId}"
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
+        }
+    }
+
+    private fun initData() {
+        if (!User.get().isVisitor) {
+            mRealVM.enterSession()
+        } else {
+            mRealVM.hardPreMsgListCard(insertPreCard())
         }
     }
 
