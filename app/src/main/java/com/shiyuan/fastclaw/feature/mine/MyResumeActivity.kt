@@ -14,9 +14,11 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.common.base.Joiner.on
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showAllowingStateLoss
@@ -26,6 +28,7 @@ import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.databinding.setLoadState
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
@@ -45,6 +48,7 @@ import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Compani
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -68,7 +72,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         }
     }
 
-
+    private var uploadResumeDialog: UploadResumeDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +90,15 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
     }
 
     private fun initView() {
+        observeEvents {
+            on<Events.ResumeEvent> { event ->
+                Log.d("uploadResumeDialog","312312312312312312")
+                uploadResumeDialog?.let {
+                    it.dismissAllowingStateLoss()
+                }
+                mRealVM.queryResumeList()
+            }
+        }
         binding.tvUpload.setOnSingleClickListener {
             UploadCancelDialog.show(this.supportFragmentManager,{
                 uploadResume()
@@ -99,7 +112,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
 
     fun  uploadResume(){
         //上传简历
-        UploadResumeDialog.show(manager = this.supportFragmentManager,false, { fileInfo ->
+       uploadResumeDialog = UploadResumeDialog.show(manager = this.supportFragmentManager,false, { fileInfo ->
             if (fileInfo != null) {
                 showLoading("上传中")
                 mRealVM.uploadFilesWithSecurityCheck(listOf(fileInfo.uri) , BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,

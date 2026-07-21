@@ -48,6 +48,7 @@ class JobSelectionActivity :
         private const val TYPE = "type"
         private const val JOB_RIGHT_SPAN_COUNT = 2
         private const val JOB_SECTION_HEADER_CODE = "__job_section_header__"
+        private const val DEFAULT_FIRST_CATEGORY_CODE = "PC_L1_4BE3D2DF0FD8"
 
         /**
          * 启动职位选择页。
@@ -400,9 +401,9 @@ class JobSelectionActivity :
             cyIyPnAdapter.submitList(jobData)
             submitRightJobList(jobData)
 
-            val targetPosition = (mRealVM.lastSelectedPosition2.value ?: 1)
-                .takeIf { position -> position in jobData.indices }
-                ?: 0
+            val targetPosition = jobData.indexOfFirst {
+                it.firstCategoryCode == DEFAULT_FIRST_CATEGORY_CODE
+            }.takeIf { position -> position >= 0 } ?: 0
             selectLeftJob(targetPosition, scrollLeft = false)
             binding.rcRight.post {
                 if (!isViewDestroyed) {

@@ -82,8 +82,8 @@ class JobPreferencesFragment :
         SingleBindingAdapter<ItemJobInfoBinding, OnlineResumeInfoSection>(
             R.layout.item_job_info,
             emptyList(),
-            onBind = { itemBinding, _, item ->
-                bindJobInfoItem(itemBinding, item)
+            onBind = { itemBinding, position, item ->
+                bindJobInfoItem(itemBinding,position, item)
             }
         )
     }
@@ -157,6 +157,7 @@ class JobPreferencesFragment :
 
     private fun bindJobInfoItem(
         itemBinding: ItemJobInfoBinding,
+        position: Int,
         item: OnlineResumeInfoSection
     ) {
         itemBinding.tvTitle.text = item.sectionName ?: ""
@@ -193,6 +194,7 @@ class JobPreferencesFragment :
             itemBinding.layoutMissing.visibility = View.INVISIBLE
             bindFieldTreeList(itemBinding, item.fields)
         }
+        itemBinding.viewDivider.visibility = if (position == preferenceAdapter.itemCount - 1) View.GONE else View.VISIBLE
     }
 
     private fun singleSelectDialog(item: AttributeArrayQueryData?, title: String,  onCallback: ((code: String) -> Unit)? = null) {
