@@ -86,6 +86,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.math.abs
 
 /** 
  * @createtime 2026年05月20日 10:25
@@ -119,6 +120,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private var mJobStatusSelected: String? = null
 
     private var isReplyAnswer = false
+
+    private var msgTouchDownX = 0f
+    private var msgTouchDownY = 0f
 
     companion object {
         const val TAG = "ClawAgentMainFragment"
@@ -582,6 +586,23 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         })
         binding.rvMsg.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // 记录按下位置，抬起时用来区分点击和列表滑动。
+                    msgTouchDownX = event.x
+                    msgTouchDownY = event.y
+                }
+                MotionEvent.ACTION_UP ->
+                    // 位移小于 8dp 才认为是点击，避免上下滑动时误收起重新回答选项。
+                    if (abs(event.x - msgTouchDownX) < 8.dp && abs(event.y - msgTouchDownY) < 8.dp) {
+                        val child = binding.rvMsg.findChildViewUnder(event.x, event.y)
+                        val position = child?.let { binding.rvMsg.getChildAdapterPosition(it) } ?: RecyclerView.NO_POSITION
+                        // 点击当前展开卡片内部不处理；点击空白或其它 item 时收起。
+                        if (msgAdapter.items.getOrNull(position)?.isReplyAnswer != true) {
+                            msgAdapter.collapseExpandedQuestionItem()
+                        }
+                    }
+            }
             if (KeyboardUtils.isSoftInputShown(activity?.window)) {
                 hideKeyboard(binding.etSend)
             }

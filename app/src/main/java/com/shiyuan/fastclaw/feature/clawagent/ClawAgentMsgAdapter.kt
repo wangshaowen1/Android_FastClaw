@@ -147,7 +147,10 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         register(TYPE_QUESTION,
             { i, p ->
                 AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
-                    onOptionClickListener = { item, option, queueId -> onQuestionOptionClickAction(item, option, queueId) }
+                    onOptionClickListener = { item, option, queueId ->
+                        collapseExpandedQuestionItem()
+                        onQuestionOptionClickAction(item, option, queueId)
+                    }
                     onActionClickListener = { item, action, queueId -> onQuestionActionClickAction(item, action, queueId) }
                     onInputClickListener = { item, action, queueId -> onQuestionInputClickAction(item, action, queueId) }
                     onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
@@ -324,6 +327,16 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         val result = DiffUtil.calculateDiff(MessageDiffCallback(items, newList))
         items = newList
         result.dispatchUpdatesTo(this)
+    }
+
+    /** 点击展开卡片外部时，收起当前“重新回答”问题卡。 */
+    fun collapseExpandedQuestionItem() {
+        items.forEachIndexed { index, item ->
+            if (item.messageType == TYPE_QUESTION) {
+                item.isReplyAnswer = false
+                notifyItemChanged(index)
+            }
+        }
     }
 
     /**
