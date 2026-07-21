@@ -101,41 +101,44 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
     private var forceScrollToBottom = false
 
+    /** 是否已经收到过非空消息列表，用于区分首次渲染和后续增量刷新。 */
     private var hasObservedNonEmptyMessageList = false
 
     /** IME 动画进行中flag */
     private var hasRunningImeAnimation = false
 
+    /** 当前正在重新回答的消息，文本输入提交时使用。 */
     private var mCurrentMessage: ClawAgentMessageInfo? = null
 
+    /** 当前正在执行的卡片动作，文本输入提交时使用。 */
     private var mCurrentAction: CardAction? = null
 
+    /** 当前问题队列 id，提交回答动作时回传服务端。 */
     private var mCurrentQuestionId: String? = null
 
+    /** 首页恢复时拉取消息的轮询任务，页面销毁或超时时取消。 */
     private var resumeEventPullJob: Job? = null
 
+    /** 是否处于语音输入模式，用于切换底部输入区展示。 */
     private var isVoiceInputMode = false
 
+    /** 小虾求职状态弹窗实例，避免重复创建和便于关闭。 */
     private var agentStatusPopup: ClawAgentStatusDialog? = null
 
+    /** 本地记录已选择的求职状态，用于弹窗状态回显。 */
     private var mJobStatusSelected: String? = null
 
-    private var isReplyAnswer = false
+    /** 底部输入框是否处于“重新回答”模式。 */
+    private var isReplyMode = false
 
+    /** 消息列表手指按下的 X 坐标，用于判断点击还是滑动。 */
     private var msgTouchDownX = 0f
+
+    /** 消息列表手指按下的 Y 坐标，用于判断点击还是滑动。 */
     private var msgTouchDownY = 0f
 
     companion object {
-        const val TAG = "ClawAgentMainFragment"
-        /** 记忆卡片等待时长 */
-        private const val MEMORY_CARD_WAIT_TIME = 5000L
-
-        /** 距顶部多少条时开始预取更早历史 */
-        private const val PREFETCH_THRESHOLD = 5
-        private const val KEYBOARD_BASE_BOTTOM_OFFSET = 95
-        private const val RESUME_EVENT_POLL_INTERVAL = 10000L
-        private const val RESUME_EVENT_POLL_TIMEOUT = 60000L
-
+        /** 创建小虾主页面实例。 */
         fun getInstance(): ClawAgentMainFragment {
             return ClawAgentMainFragment()
         }
@@ -186,7 +189,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 // 主动发送:本条乐观插入及随后的流式回复都强制滚到最新
                 forceScrollToBottom = true
                 binding.etSend.text = null
-                if (isReplyAnswer) {
+                if (isReplyMode) {
                     startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, text = content.toString().trim())
                     binding.ivReanswerClose.performClick()
                 } else {
@@ -232,7 +235,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 scrollToBottom(true, 0L)
             }
             R.id.iv_reanswer_close -> { //重新回答关闭
-                isReplyAnswer = false
+                isReplyMode = false
                 binding.layoutReanswer.gone()
                 binding.layoutSend.setCorners(27f)
                 binding.etSend.text = null
@@ -424,7 +427,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mCurrentMessage = item
                 mCurrentAction = action
                 mCurrentQuestionId = queueId
-                isReplyAnswer = true
+                isReplyMode = true
                 isVoiceInputMode = false
                 binding.layoutReanswer.visible()
                 binding.layoutSend.setCorners(20f)
@@ -581,7 +584,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 updateScrollBottomButton()
                 if (dy >= 0) return // 仅在向上滚动时预取
                 val lm = rv.layoutManager as? LinearLayoutManager ?: return
-                if (lm.findFirstVisibleItemPosition() <= PREFETCH_THRESHOLD) {
+                if (lm.findFirstVisibleItemPosition() <= BaseClawAgentFragment.PREFETCH_THRESHOLD) {
                     mRealVM.loadOlderHistory()
                 }
             }
@@ -728,9 +731,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         val startTime = System.currentTimeMillis()
                         while (!User.get().isVisitor
                             && mRealVM.hasInitSession.value == true
-                            && System.currentTimeMillis() - startTime < RESUME_EVENT_POLL_TIMEOUT
+                            && System.currentTimeMillis() - startTime < BaseClawAgentFragment.RESUME_EVENT_POLL_TIMEOUT
                         ) {
-                            delay(RESUME_EVENT_POLL_INTERVAL)
+                            delay(BaseClawAgentFragment.RESUME_EVENT_POLL_INTERVAL)
                             mRealVM.pullMessages(mRealVM.getLastMessageCursor())
                         }
                     }
@@ -1123,7 +1126,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 弹出 5s 后自动触发"确认"事件并关闭弹窗（随 view 生命周期取消）
         autoConfirmJob?.cancel()
         autoConfirmJob = viewLifecycleOwner.lifecycleScope.launch {
-            delay(MEMORY_CARD_WAIT_TIME)
+            delay(BaseClawAgentFragment.MEMORY_CARD_WAIT_TIME)
             confirmBtn.performClick()
         }
     }
@@ -1144,7 +1147,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     // 计算 layoutSend 相对父容器底部应有的 margin，兼容三键导航和全屏手势导航。
     private fun resolveBottomMargin(imeBottom: Int, navigationBottom: Int): Int {
         val gestureInsetOffset = (binding.layoutContainer.paddingBottom - navigationBottom).coerceAtLeast(0)
-        return maxOf(12.dp, imeBottom - KEYBOARD_BASE_BOTTOM_OFFSET.dp + gestureInsetOffset)
+        return maxOf(12.dp, imeBottom - BaseClawAgentFragment.KEYBOARD_BASE_BOTTOM_OFFSET.dp + gestureInsetOffset)
     }
 
     private fun dismissMemoryCard() {
