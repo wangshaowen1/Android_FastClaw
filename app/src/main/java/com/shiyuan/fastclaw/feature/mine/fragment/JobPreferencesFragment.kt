@@ -264,17 +264,27 @@ class JobPreferencesFragment :
         itemBinding.ll.setOnSingleClickListener {
             when (item.attributeGroupCode) {
                 CODE_EXPECTED_CITY -> {
-                    JobCitySelectorActivity.start(activity, JobCityQueryBody.EXPECTED_CITY)
+                    JobCitySelectorActivity.start(
+                        activity,
+                        JobCityQueryBody.EXPECTED_CITY,
+                        selectedValueJson = JsonUtil.toJson(item.value),
+                    )
                 }
 
                 CODE_JOB_INTENTION -> {
-                    JobSelectionActivity.start(activity, true,multipleNum = 10)
+                    JobSelectionActivity.start(
+                        activity,
+                        isMultiple = true,
+                        multipleNum = 10,
+                        selectedValueJson = JsonUtil.toJson(item.value),
+                    )
                 }
                 CODE_EXPECTED_INDUSTRY -> {
                     IndustrySelectionActivity.start(
                         activity,
                         isMultiple = true,
-                        resultEventType = EVENT_EXPECTED_INDUSTRY_COMPLETED
+                        resultEventType = EVENT_EXPECTED_INDUSTRY_COMPLETED,
+                        selectedValueJson = JsonUtil.toJson(item.value),
                     )
                 }
                 CODE_JOB_EXPECTED_SALARY -> {

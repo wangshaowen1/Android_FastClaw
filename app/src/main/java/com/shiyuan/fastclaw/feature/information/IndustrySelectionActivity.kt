@@ -17,6 +17,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
+import com.shiyuan.fastclaw.common.utils.JsonUtil
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
@@ -38,6 +39,7 @@ class IndustrySelectionActivity :
         // 是否多选模式参数 key
         private const val EXTRA_IS_MULTIPLE = "extra_is_multiple"
         private const val EXTRA_RESULT_EVENT_TYPE = "extra_result_event_type"
+        private const val EXTRA_SELECTED_VALUE_JSON = "extra_selected_value_json"
         // 会话 ID / 对话 ID
         private const val SESSIONID = "SESSIONID"
         private const val CONVERSATIONID = "CONVERSATIONID"
@@ -53,7 +55,8 @@ class IndustrySelectionActivity :
             isMultiple: Boolean = false,
             sessionId: String? = "",
             conversationId: String? = "",
-            resultEventType: String? = null
+            resultEventType: String? = null,
+            selectedValueJson: String? = null,
         ) {
             activity ?: return
             val intent = Intent(activity, IndustrySelectionActivity::class.java).apply {
@@ -61,6 +64,7 @@ class IndustrySelectionActivity :
                 putExtra(EXTRA_RESULT_EVENT_TYPE, resultEventType)
                 putExtra(SESSIONID, sessionId)
                 putExtra(CONVERSATIONID, conversationId)
+                putExtra(EXTRA_SELECTED_VALUE_JSON, selectedValueJson ?: "[]")
             }
             activity.startActivity(intent)
         }
@@ -73,6 +77,9 @@ class IndustrySelectionActivity :
         initView()
         // 监听 ViewModel 状态变化
         observeEvents()
+        if (initialSelectedIndustries.isNotEmpty()) {
+            mRealVM.selectData.value = initialSelectedIndustries
+        }
         // 首次进入请求行业字典
         mRealVM.queryDictIndustryQuery(sessionId, conversationId)
     }
@@ -84,6 +91,14 @@ class IndustrySelectionActivity :
     // 会话 ID / 对话 ID
     private val sessionId: String by lazy { intent.getStringExtra(SESSIONID) ?: "" }
     private val conversationId: String by lazy { intent.getStringExtra(CONVERSATIONID) ?: "" }
+    private val initialSelectedIndustries by lazy {
+        JsonUtil.fromJson<List<Map<String, String?>>>(
+            intent.getStringExtra(EXTRA_SELECTED_VALUE_JSON) ?: "[]",
+        ).orEmpty().mapNotNull { item ->
+            val code = item["code"]?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+            CommonEnumItem(code = code, name = item["name"])
+        }
+    }
     private val rightIndustryItems = mutableListOf<CommonEnumItem>()
     private val rightSections = mutableListOf<IndustrySection>()
     private val rightGroupDecoration by lazy {
@@ -306,8 +321,16 @@ class IndustrySelectionActivity :
 
     private fun observeIndustryData() {
         mRealVM.allData.observe(this) {
+            val selectedIndustries = restoreInitialSelectedIndustries(it)
             cyIyPnAdapter.submitList(it)
             submitRightIndustryList(it)
+            if (initialSelectedIndustries.isNotEmpty()) {
+                mRealVM.selectData.value = selectedIndustries
+            }
+            if (selectedIndustries.isNotEmpty()) {
+                locateSelectedIndustry(selectedIndustries.first())
+                return@observe
+            }
             val targetPosition = (mRealVM.lastSelectedPosition.value ?: 1)
                 .takeIf { position -> position in it.indices }
                 ?: 0
@@ -318,6 +341,19 @@ class IndustrySelectionActivity :
                 }
             }
         }
+    }
+
+    private fun restoreInitialSelectedIndustries(
+        industryData: List<CommonEnumItem>,
+    ): List<CommonEnumItem> {
+        if (initialSelectedIndustries.isEmpty()) return emptyList()
+        val allIndustries = industryData.flatMap { it.children.orEmpty() }
+        val selectedCodes = initialSelectedIndustries.mapNotNull { it.code }.toSet()
+        allIndustries.forEach { item -> item.isSelected = item.code in selectedCodes }
+        val industriesByCode = allIndustries.associateBy { it.code }
+        return initialSelectedIndustries
+            .mapNotNull { item -> industriesByCode[item.code] }
+            .distinctBy { it.code }
     }
 
     private fun showSearchEmpty(isEmpty: Boolean) {
