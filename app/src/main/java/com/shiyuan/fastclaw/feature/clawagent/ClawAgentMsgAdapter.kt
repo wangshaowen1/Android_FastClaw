@@ -331,8 +331,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     /** 点击展开卡片外部时，收起当前“重新回答”问题卡。 */
     fun collapseExpandedQuestionItem() {
-        items.forEachIndexed { index, item ->
-            if (item.messageType == TYPE_QUESTION) {
+        items.forEachIndexed { index, item -> if (item.messageType == TYPE_QUESTION) {
                 item.isReplyAnswer = false
                 notifyItemChanged(index)
             }
