@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.nhsd.basic.ext.showToast
 
 /**
  * 文件选择结果数据类
@@ -72,6 +73,8 @@ class FileChooser(
             } else {
                 onResult(null)
             }
+        } else if (result.data?.data == null) {
+            "文件选择取消".showToast()
         } else {
             onResult(null)
         }
