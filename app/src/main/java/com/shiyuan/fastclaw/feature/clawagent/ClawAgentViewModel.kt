@@ -3,9 +3,9 @@ package com.shiyuan.fastclaw.feature.clawagent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
-import com.blankj.utilcode.util.LogUtils
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.BuildConfig
+import com.shiyuan.fastclaw.common.utils.LogUtils
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.PollingState
@@ -871,15 +871,15 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // 乐观插入：先把用户消息加入列表立即反馈；服务端随后回显由 ingestMessages 插入服务端数据，
         // 但id用本地生成的，用服务端回显消息的话会因为id不同导致刷新两次体验不佳，(跟后端对齐过，这个消息的id只在sse流式中存在，拉历史数据影响不大)
         appendLocalUserMessage(clientMessageId, content)
-        val flow = mRepo.api.sendMsgToAgent(
-            JobAgentStreamBody(
-                sessionId = currentSessionId,
-                conversationId = currentConversationId,
-                clientMessageId = clientMessageId,
-                content = content,
-                interactionType = INTERACTION_TYPE_TEXT
-            )
+        val body = JobAgentStreamBody(
+            sessionId = currentSessionId,
+            conversationId = currentConversationId,
+            clientMessageId = clientMessageId,
+            content = content,
+            interactionType = INTERACTION_TYPE_TEXT
         )
+        val flow = mRepo.api.sendMsgToAgent(body)
+        LogUtils.i("sseHandler=${GsonUtils.toJson(body)}")
         sseHandler.start(flow)
     }
 
@@ -894,16 +894,16 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             return
         }
         val clientMessageId = generateClientMessageId()
-        val flow = mRepo.api.sendMsgToAgent(
-            JobAgentStreamBody(
-                sessionId = currentSessionId,
-                conversationId = currentConversationId,
-                clientMessageId = clientMessageId,
-                content = content,
-                interactionType = INTERACTION_TYPE_ACTION,
-                action = actionData
-            )
+        val body = JobAgentStreamBody(
+            sessionId = currentSessionId,
+            conversationId = currentConversationId,
+            clientMessageId = clientMessageId,
+            content = content,
+            interactionType = INTERACTION_TYPE_ACTION,
+            action = actionData
         )
+        val flow = mRepo.api.sendMsgToAgent(body)
+        LogUtils.i("sseHandler=${GsonUtils.toJson(body)}")
         sseHandler.start(flow)
     }
 
