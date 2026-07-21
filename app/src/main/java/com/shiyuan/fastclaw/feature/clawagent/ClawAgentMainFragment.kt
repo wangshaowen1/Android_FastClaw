@@ -584,7 +584,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 updateScrollBottomButton()
                 if (dy >= 0) return // 仅在向上滚动时预取
                 val lm = rv.layoutManager as? LinearLayoutManager ?: return
-                if (lm.findFirstVisibleItemPosition() <= BaseClawAgentFragment.PREFETCH_THRESHOLD) {
+                if (lm.findFirstVisibleItemPosition() <= PREFETCH_THRESHOLD) {
                     mRealVM.loadOlderHistory()
                 }
             }
@@ -731,9 +731,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         val startTime = System.currentTimeMillis()
                         while (!User.get().isVisitor
                             && mRealVM.hasInitSession.value == true
-                            && System.currentTimeMillis() - startTime < BaseClawAgentFragment.RESUME_EVENT_POLL_TIMEOUT
+                            && System.currentTimeMillis() - startTime < RESUME_EVENT_POLL_TIMEOUT
                         ) {
-                            delay(BaseClawAgentFragment.RESUME_EVENT_POLL_INTERVAL)
+                            delay(RESUME_EVENT_POLL_INTERVAL)
                             mRealVM.pullMessages(mRealVM.getLastMessageCursor())
                         }
                     }
@@ -1126,7 +1126,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 弹出 5s 后自动触发"确认"事件并关闭弹窗（随 view 生命周期取消）
         autoConfirmJob?.cancel()
         autoConfirmJob = viewLifecycleOwner.lifecycleScope.launch {
-            delay(BaseClawAgentFragment.MEMORY_CARD_WAIT_TIME)
+            delay(MEMORY_CARD_WAIT_TIME)
             confirmBtn.performClick()
         }
     }
@@ -1147,7 +1147,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     // 计算 layoutSend 相对父容器底部应有的 margin，兼容三键导航和全屏手势导航。
     private fun resolveBottomMargin(imeBottom: Int, navigationBottom: Int): Int {
         val gestureInsetOffset = (binding.layoutContainer.paddingBottom - navigationBottom).coerceAtLeast(0)
-        return maxOf(12.dp, imeBottom - BaseClawAgentFragment.KEYBOARD_BASE_BOTTOM_OFFSET.dp + gestureInsetOffset)
+        return maxOf(12.dp, imeBottom - KEYBOARD_BASE_BOTTOM_OFFSET.dp + gestureInsetOffset)
     }
 
     private fun dismissMemoryCard() {
