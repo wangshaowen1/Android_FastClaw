@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import kotlinx.serialization.json.Json;
 
 public class WXEntryActivity extends WXCallbackActivity {
-
+    public static  int resumeUploadSource = -1;  //0 是我的简历   1是首页的
     // 3. 核心回调方法
     @Override
     public void onResp(BaseResp resp) {
@@ -25,7 +25,7 @@ public class WXEntryActivity extends WXCallbackActivity {
             WXLaunchMiniProgram.Resp launchResp = (WXLaunchMiniProgram.Resp) resp;
             // 获取小程序返回的数据[reference:12][reference:13]
             String extraData = launchResp.extMsg;
-            FlowEventBus.postSync(new Events.ResumeEvent(true));
+            FlowEventBus.postSync(new Events.ResumeEvent(resumeUploadSource, extraData));
         }
         // 4. 处理完后必须关闭当前 Activity[reference:14][reference:15]
         finish();

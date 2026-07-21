@@ -280,6 +280,7 @@ object ApiConstants {
     const val MOCK_INTERVIEW_REPORT_RETRY = "/api/candidate/app/interviewReport/mockInterview/report/retry"
     const val INTERVIEW_PASS_PACKAGE_STATUS_QUERY = "/api/candidate/app/interviewPassPackage/status/query"
     const val INTERVIEW_PASS_PACKAGE_REGENERATE = "/api/candidate/app/interviewPassPackage/regenerate"
+    const val MINIPROGRAM_CODERESUMEBINDING_QUERY = "/api/candidate/miniProgram/codeResumeBinding/query"
 
     /**
      * 取消流式生成（求职 Agent）

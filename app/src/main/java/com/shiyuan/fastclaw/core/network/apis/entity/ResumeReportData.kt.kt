@@ -23,6 +23,7 @@ import kotlinx.parcelize.Parcelize
     var fileName: String ? = null,
     var resumeName: String ? = null,
     var updateTime: String ? = null,
+    var resumeUrl: String ? = null,
 ): Parcelable{
 
 
