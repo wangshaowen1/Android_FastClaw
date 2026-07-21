@@ -56,6 +56,20 @@
             app:layout_constraintTop_toBottomOf="@id/iv_shrimp_tip1"
             tools:text="你的AI求职经纪人" />
 
+        <TextView
+            android:id="@+id/tv_shrimp_ai"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@string/generated_by_ai"
+            android:textColor="@color/color_b4bfd7"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_shrimp_tip2"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/tv_shrimp_tip2"
+            app:layout_constraintTop_toTopOf="@id/tv_shrimp_tip2"
+            tools:text="AI生成" />
+
         <!-- 毛玻璃服务卡:垂直摆放 3 个白色胶囊 -->
         <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
             android:id="@+id/card_services"
