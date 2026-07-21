@@ -8,42 +8,39 @@
         android:layout_height="wrap_content"
         tools:background="@color/black">
 
-        <!-- ============ 欢迎气泡 ============ -->
-        <!-- 气泡底:小虾从顶部探出 26dp,故顶部下移 26dp,底边对齐毛玻璃卡底边 -->
-        <com.shiyuan.fastclaw.widget.super_button.SuperButton
-            android:id="@+id/sb_welcome_bg"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="26dp"
-            app:layout_constraintBottom_toBottomOf="@id/card_services"
+        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+            android:id="@+id/cl_company_background_outer"
+            android:layout_width="match_parent"
+            android:layout_height="155dp"
+            android:layout_marginTop="56dp"
+            app:background_normalColor="#F9FAFE"
+            app:border_color="@color/color_ffffff"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:sCornersRadius="20dp"
-            app:sSolidColor="#F9FAFE"
-            app:sStrokeColor="@color/color_ffffff"
-            app:sStrokeWidth="1dp" />
+            app:super_corner="20dp"
+            app:view_border_width="1dp" />
 
         <ImageView
             android:id="@+id/iv_shrimp"
             android:layout_width="162dp"
             android:layout_height="126dp"
+            android:layout_marginTop="30dp"
             android:src="@drawable/img_home_shrimp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
 
         <ImageView
             android:id="@+id/iv_shrimp_tip1"
             android:layout_width="139dp"
             android:layout_height="22dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="27dp"
             android:src="@drawable/ic_home_hello"
             app:layout_constraintEnd_toStartOf="@id/iv_shrimp"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/cl_company_background_outer"
             tools:text="你好，我是小虾" />
 
         <TextView
@@ -64,14 +61,13 @@
             android:id="@+id/card_services"
             android:layout_width="0dp"
             android:layout_height="65dp"
-            android:layout_marginTop="20dp"
             app:background_colorOrientation="top_bottom"
             app:background_endColor="#FFFFFF"
             app:background_startColor="#EEF5FE"
             app:border_color="@color/color_ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_shrimp_tip2"
             app:super_corner="20dp"
             app:view_border_width="1dp">
 
@@ -89,5 +85,6 @@
                 tools:text="我能帮你查公司、定制押题、提升面试通过率" />
 
         </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
