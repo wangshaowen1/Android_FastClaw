@@ -19,6 +19,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.toJsonString
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
+import com.shiyuan.fastclaw.common.utils.JsonUtil
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
@@ -38,6 +39,7 @@ class JobSelectionActivity :
     companion object {
         // 是否多选模式参数 key
         private const val EXTRA_IS_MULTIPLE = "extra_is_multiple"
+        private const val EXTRA_SELECTED_VALUE_JSON = "extra_selected_value_json"
 
         // 会话 ID / 对话 ID 参数 key，用于服务端反显
         private const val SESSIONID = "SESSIONID"
@@ -65,7 +67,8 @@ class JobSelectionActivity :
             conversationId: String? = "",
             title: String? = null,
             multipleNum: Int = 3,
-            type: String = "ClawAgent"
+            type: String = "ClawAgent",
+            selectedValueJson: String? = null,
         ) {
             activity ?: return
             val intent = Intent(activity, JobSelectionActivity::class.java).apply {
@@ -75,6 +78,7 @@ class JobSelectionActivity :
                 putExtra(TITLE, title)
                 putExtra(MULTIPLENUM, multipleNum)
                 putExtra(TYPE, type)
+                putExtra(EXTRA_SELECTED_VALUE_JSON, selectedValueJson ?: "[]")
             }
             activity.startActivity(intent)
         }
@@ -87,6 +91,9 @@ class JobSelectionActivity :
         initView()
         // 监听 ViewModel 状态变化
         observeEvents()
+        if (initialSelectedJobs.isNotEmpty()) {
+            mRealVM.selectPositionData.value = initialSelectedJobs
+        }
         // 首次进入请求职位字典
         mRealVM.queryDictPositionQuery(sessionId, conversationId)
     }
@@ -103,6 +110,14 @@ class JobSelectionActivity :
     // 当前会话 ID / 对话 ID
     private val sessionId: String by lazy { intent.getStringExtra(SESSIONID) ?: "" }
     private val conversationId: String by lazy { intent.getStringExtra(CONVERSATIONID) ?: "" }
+    private val initialSelectedJobs by lazy {
+        JsonUtil.fromJson<List<Map<String, String?>>>(
+            intent.getStringExtra(EXTRA_SELECTED_VALUE_JSON) ?: "[]",
+        ).orEmpty().mapNotNull { item ->
+            val code = item["code"]?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+            CommonEnumItem(positionCode = code, positionName = item["name"])
+        }
+    }
 
     private val rightJobCategoryItems = mutableListOf<CommonEnumItem>()
     private val rightJobSections = mutableListOf<JobSection>()
@@ -398,8 +413,17 @@ class JobSelectionActivity :
     private fun observeJobData() {
         mRealVM.allPositioData.observe(this) {
             val jobData = it.orEmpty()
+            val selectedJobs = restoreInitialSelectedJobs(jobData)
             cyIyPnAdapter.submitList(jobData)
             submitRightJobList(jobData)
+
+            if (initialSelectedJobs.isNotEmpty()) {
+                mRealVM.selectPositionData.value = selectedJobs
+            }
+            if (selectedJobs.isNotEmpty()) {
+                locateSelectedJob(selectedJobs.first())
+                return@observe
+            }
 
             val targetPosition = jobData.indexOfFirst {
                 it.firstCategoryCode == DEFAULT_FIRST_CATEGORY_CODE
@@ -411,6 +435,21 @@ class JobSelectionActivity :
                 }
             }
         }
+    }
+
+    private fun restoreInitialSelectedJobs(jobData: List<CommonEnumItem>): List<CommonEnumItem> {
+        if (initialSelectedJobs.isEmpty()) return emptyList()
+        val allPositions = jobData.flatMap { firstCategory ->
+            firstCategory.secondCategories.orEmpty().flatMap { secondCategory ->
+                secondCategory.positions.orEmpty()
+            }
+        }
+        val selectedCodes = initialSelectedJobs.mapNotNull { it.positionCode }.toSet()
+        allPositions.forEach { item -> item.isSelected = item.positionCode in selectedCodes }
+        val positionsByCode = allPositions.associateBy { it.positionCode }
+        return initialSelectedJobs
+            .mapNotNull { item -> positionsByCode[item.positionCode] }
+            .distinctBy { it.positionCode }
     }
 
     private fun showSearchEmpty(isEmpty: Boolean) {

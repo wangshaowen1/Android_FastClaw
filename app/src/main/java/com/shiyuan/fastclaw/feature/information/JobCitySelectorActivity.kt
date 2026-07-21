@@ -27,6 +27,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
+import com.shiyuan.fastclaw.common.utils.JsonUtil
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.core.manager.AppEvent
@@ -81,18 +82,33 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     private var mData: JobCityData? = null
     // 搜索输入的防抖时间
     private val mSearchDelayTime = 300L
+    private val initialSelectedLocations by lazy {
+        JsonUtil.fromJson<List<Map<String, String?>>>(
+            intent.getStringExtra(EXTRA_SELECTED_VALUE_JSON) ?: "[]",
+        ).orEmpty().mapNotNull { item ->
+            val code = item["code"]?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+            CityLocation(regionCode = code, regionName = item["name"])
+        }
+    }
 
     companion object {
+        private const val EXTRA_SELECTED_VALUE_JSON = "extra_selected_value_json"
+
         /**
          * 打开城市选择器页面。
          *
          * @param activity 当前页面 Activity。
          * @param sceneCode 城市字段场景编码，区分现居住城市和意向城市。
          */
-        fun start(activity: Activity?, sceneCode: String) {
+        fun start(
+            activity: Activity?,
+            sceneCode: String,
+            selectedValueJson: String? = null,
+        ) {
             activity ?: return
             val intent = Intent(activity, JobCitySelectorActivity::class.java)
             intent.putExtra("sceneCode", sceneCode)
+            intent.putExtra(EXTRA_SELECTED_VALUE_JSON, selectedValueJson ?: "[]")
             activity.startActivity(intent)
         }
     }
@@ -119,6 +135,9 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
      */
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
+        initialSelectedLocations.forEach { item ->
+            item.regionCode?.let { selectedLocations[it] = item }
+        }
         // 根据入口场景切换标题文案与最大可选数
         if (mType == JobCityQueryBody.EXPECTED_CITY) {
             binding.tvSubtitle.text = getString(R.string.city_selector_add_multiple)
@@ -192,6 +211,7 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
             itemAnimator = null
             adapter = selectedAdapter
         }
+        refreshSelectedState()
         // 首次进入加载默认城市列表
         mRealVM.getJobCityList(mCityParams)
     }
@@ -214,8 +234,10 @@ class JobCitySelectorActivity : BaseViewModelActivity<ActivityJobCitySelectorBin
     private fun renderCityData() {
         //maxSelectCount = mData?.maxSelectCount ?: maxSelectCount
         // 先把接口反显的已选城市合并到当前已选集合
-        mData?.selectedLocations.orEmpty().forEach { item ->
-            item.regionCode?.let { selectedLocations[it] = item }
+        if (initialSelectedLocations.isEmpty()) {
+            mData?.selectedLocations.orEmpty().forEach { item ->
+                item.regionCode?.let { selectedLocations[it] = item }
+            }
         }
         if (binding.etSearch.text.isBlank()) {
             // 非搜索状态：展示普通滚动列表 + A-Z 索引
