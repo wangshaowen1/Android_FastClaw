@@ -20,6 +20,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.fastjson.JSON
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SpanUtils
@@ -82,6 +83,7 @@ import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
+import com.shiyuan.fastclaw.wxapi.WXEntryActivity
 import com.xiaomi.push.co
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -584,7 +586,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 updateScrollBottomButton()
                 if (dy >= 0) return // 仅在向上滚动时预取
                 val lm = rv.layoutManager as? LinearLayoutManager ?: return
-                if (lm.findFirstVisibleItemPosition() <= PREFETCH_THRESHOLD) {
+                if (lm.findFirstVisibleItemPosition() <= BaseClawAgentFragment.PREFETCH_THRESHOLD) {
                     mRealVM.loadOlderHistory()
                 }
             }
@@ -718,25 +720,21 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             on<Events.ResumeEvent> { event ->
-                Log.d("Events.ResumeEvent","312312312312312312")
-                uploadResumeDialog?.let {
-                    it.dismissAllowingStateLoss()
-                }
-                // 上传简历通知拉取
-                if (User.get().isVisitor) return@on
-                if (mRealVM.hasInitSession.value == true) {
-                    mRealVM.pullMessages(mRealVM.getLastMessageCursor())
-                    resumeEventPullJob?.cancel()
-                    resumeEventPullJob = lifecycleScope.launch {
-                        val startTime = System.currentTimeMillis()
-                        while (!User.get().isVisitor
-                            && mRealVM.hasInitSession.value == true
-                            && System.currentTimeMillis() - startTime < RESUME_EVENT_POLL_TIMEOUT
-                        ) {
-                            delay(RESUME_EVENT_POLL_INTERVAL)
-                            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
-                        }
+                Log.d("Events.ResumeEvent", JSON.toJSONString(event))
+                if (event.tye == 1) {
+                    val code = event.code?.trim()
+                    if (code.isNullOrEmpty()) {
+                        "未获取到简历授权码".showToast()
+                        return@on
                     }
+                    mRealVM.queryCodeResumeBinding(code) { resume ->
+                        uploadResumePushMessages(
+                            resumeFileUrl = resume?.resumeUrl.orEmpty(),
+                            fileName = resume?.resumeFileName.orEmpty(),
+                        )
+                    }
+                } else {
+                    uploadResumePullMessages()
                 }
             }
             on<Events.ClawAgentEvent> { event ->
@@ -977,10 +975,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
     private var uploadResumeDialog: UploadResumeDialog? = null
+    private var resumeData: ClawAgentMessageInfo? = null //上传简历那一次的消息item
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
+        resumeData = data
         uploadResumeDialog = UploadResumeDialog.show(manager = this.parentFragmentManager,false, { fileInfo ->
             if (fileInfo != null) {
-                showLoading("上传中")
+                showLoading("上传中...")
                 mRealVM.uploadFilesWithSecurityCheck(
                     uriList = listOf(fileInfo.uri),
                     bizType = BIZ_TYPE_XIAOXIA_RESUME_UPLOAD,
@@ -988,27 +988,62 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         hideLoading()
                         // 文件上传完成回调里可能 AI 已开始回复，此时拦截避免新开 SSE 打断当前流
                         if (interceptIfStreaming()) return@onSuccess
-                        val map = mapOf<String, String>(
-                            "resumeFileUrl" to successUrls.first(),
-                            "fileName" to "${fileInfo.fileName}"
-                        )
-                        // sse 上传简历动作
-                        mRealVM.sendAction(
-                            content = "这是我的简历",
-                            actionData = AgentMsgAction(
-                                actionCode = CandidateJobAgentClientActionEnum.RESUME_UPLOAD_SUBMIT.name,
-                                sourceMessageId = data.id,
-                                actionPayloadJson = GsonUtils.toJson(map)
-                            )
-                        )
+                        uploadResumePushMessages(successUrls.first(),fileInfo.fileName ?:"")
                     },
                     onFailure = { reason ->
                         hideLoading()
                         reason.showToast() },
                 )
             }
+        },{
+            WXEntryActivity.resumeUploadSource = 1;
         })
     }
+
+
+    /**
+     * 上传简历成功主动推消息
+     */
+    private fun  uploadResumePushMessages(resumeFileUrl: String,fileName: String){
+        uploadResumeDialog?.dismissAllowingStateLoss()
+        val map = mapOf(
+            "resumeFileUrl" to resumeFileUrl,
+            "fileName" to fileName
+        )
+        // sse 上传简历动作
+        mRealVM.sendAction(
+            content = "这是我的简历",
+            actionData = AgentMsgAction(
+                actionCode = CandidateJobAgentClientActionEnum.RESUME_UPLOAD_SUBMIT.name,
+                sourceMessageId = resumeData?.id,
+                actionPayloadJson = GsonUtils.toJson(map)
+            )
+        )
+    }
+
+    /**
+     * 上传简历成功主动拉取消息
+     */
+    private fun  uploadResumePullMessages(){
+        // 上传简历通知拉取
+        if (User.get().isVisitor) return@uploadResumePullMessages
+        if (mRealVM.hasInitSession.value == true) {
+            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+            resumeEventPullJob?.cancel()
+            resumeEventPullJob = lifecycleScope.launch {
+                val startTime = System.currentTimeMillis()
+                while (!User.get().isVisitor
+                    && mRealVM.hasInitSession.value == true
+                    && System.currentTimeMillis() - startTime < BaseClawAgentFragment.RESUME_EVENT_POLL_TIMEOUT
+                ) {
+                    delay(BaseClawAgentFragment.RESUME_EVENT_POLL_INTERVAL)
+                    mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+                }
+            }
+        }
+    }
+
+
 
     /**
      * SSE 仍在 done / 断开 / 关闭之前（streaming=true）时拦截用户交互：
@@ -1126,7 +1161,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 弹出 5s 后自动触发"确认"事件并关闭弹窗（随 view 生命周期取消）
         autoConfirmJob?.cancel()
         autoConfirmJob = viewLifecycleOwner.lifecycleScope.launch {
-            delay(MEMORY_CARD_WAIT_TIME)
+            delay(BaseClawAgentFragment.MEMORY_CARD_WAIT_TIME)
             confirmBtn.performClick()
         }
     }
@@ -1147,7 +1182,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     // 计算 layoutSend 相对父容器底部应有的 margin，兼容三键导航和全屏手势导航。
     private fun resolveBottomMargin(imeBottom: Int, navigationBottom: Int): Int {
         val gestureInsetOffset = (binding.layoutContainer.paddingBottom - navigationBottom).coerceAtLeast(0)
-        return maxOf(12.dp, imeBottom - KEYBOARD_BASE_BOTTOM_OFFSET.dp + gestureInsetOffset)
+        return maxOf(12.dp, imeBottom - BaseClawAgentFragment.KEYBOARD_BASE_BOTTOM_OFFSET.dp + gestureInsetOffset)
     }
 
     private fun dismissMemoryCard() {

@@ -37,6 +37,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeQuery
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
+import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
@@ -1429,6 +1430,23 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             interviewUnfinishedResult.value = data
         }
     }
+
+
+    /**
+     * 根据授权码查询简历地址
+     */
+    fun queryCodeResumeBinding(code: String, onSuccess: (data: ResumeData?) -> Unit) {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.queryCodeResumeBinding(mapOf("code" to code))
+            },
+            showLoading = true,
+            showToastError = true,
+        ) {
+            onSuccess(data)
+        }
+    }
+
 
     /**
      * 退出登录 用来重置

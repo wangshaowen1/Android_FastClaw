@@ -48,6 +48,7 @@ import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Compani
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
+import com.shiyuan.fastclaw.wxapi.WXEntryActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -91,6 +92,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
 
     private fun initView() {
         observeEvents {
+            //微信回调过来的
             on<Events.ResumeEvent> { event ->
                 Log.d("uploadResumeDialog","312312312312312312")
                 uploadResumeDialog?.let {
@@ -125,25 +127,11 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                         it.showToast()
                     } )
             }
+        },{
+           WXEntryActivity.resumeUploadSource = 0;
         })
     }
 
-/*
-    private var commonLoadingDialog: CommonLoadingDialog? = null
-
-    override fun onUiStateChanged(state: UiState) {
-        if (state.isLoading) {
-            if (commonLoadingDialog?.isAdded != true) {
-                commonLoadingDialog = CommonLoadingDialog.newInstance("上传中")
-                commonLoadingDialog?.showAllowingStateLoss(supportFragmentManager, "analysis_loading")
-            }
-        } else {
-            commonLoadingDialog?.dismissAllowingStateLoss()
-            commonLoadingDialog = null
-        }
-        state.pageError?.let { showPageError(it.message, it.retryAction) } ?: hidePageError()
-    }
-*/
 
 
     private var commonLoadingDialog: CommonLoadingDialog? = null
@@ -181,7 +169,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         mRealVM.resumeUploadResult.observe(this) { data ->
             mRealVM.queryResumeList()
             //解析简成功发送消息
-            FlowEventBus.postSync(Events.ResumeEvent(true))
+            FlowEventBus.postSync(Events.ResumeEvent(0))
         }
     }
 

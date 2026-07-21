@@ -503,6 +503,10 @@ interface ApiService {
     @POST(ApiConstants.MOCK_INTERVIEW_UNFINISHED_QUERY)
     suspend fun queryMockInterviewUnfinished(): ApiResponse<MockInterviewUnfinishedData?>
 
+
+    @POST(ApiConstants.MINIPROGRAM_CODERESUMEBINDING_QUERY)
+    suspend fun queryCodeResumeBinding(@Body body: Map<String, String>): ApiResponse<ResumeData?>
+
     @Streaming
     @POST(ApiConstants.MOCK_INTERVIEW_STREAM)
     fun mockInterviewStream(@Body body: MockInterviewStreamBody): Flow<SSEvent>
