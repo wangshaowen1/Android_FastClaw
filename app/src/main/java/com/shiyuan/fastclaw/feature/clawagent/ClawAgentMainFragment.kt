@@ -242,21 +242,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.rvMsg.itemAnimator = null
         // 列表 item 统一留 12dp 间距，首尾额外撑开顶部和输入框之间的距离。
         binding.rvMsg.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: android.graphics.Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
+            override fun getItemOffsets(outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val position = parent.getChildAdapterPosition(view)
                 if (position == RecyclerView.NO_POSITION) return
                 val itemCount = state.itemCount
-                outRect.set(
-                    0,
-                    if (position == 0) 12.dp else 0,
-                    0,
-                    if (position == itemCount - 1) 21.dp else 12.dp
-                )
+                val top = if (position == 0) 12.dp else 0
+                val bottom = if (position == itemCount - 1) 21.dp else 12.dp
+                outRect.set(0, top, 0, bottom)
             }
         })
         binding.rvMsg.adapter = msgAdapter
