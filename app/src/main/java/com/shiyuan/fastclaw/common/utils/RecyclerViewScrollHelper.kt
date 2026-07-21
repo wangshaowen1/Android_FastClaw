@@ -36,16 +36,14 @@ object RecyclerViewScrollHelper {
                 // 获取最后一个 item 的位置
                 val lastPosition = layoutManager.itemCount - 1
                 if (lastPosition < 0) return@postDelayed
-// 创建自定义 SmoothScroller
-                val smoothScroller: RecyclerView.SmoothScroller =
-                    BottomSmoothScroller(recyclerView.context, speed)
+                // 创建自定义 SmoothScroller
+                val smoothScroller: RecyclerView.SmoothScroller = BottomSmoothScroller(recyclerView.context, speed)
                 smoothScroller.targetPosition = lastPosition
-// 触发滚动
-                recyclerView.layoutManager
-                    ?.startSmoothScroll(smoothScroller)
+                // 触发滚动
+                recyclerView.layoutManager?.startSmoothScroll(smoothScroller)
 
-//            binding.messageListView.recyclerView.scrollToPosition(aiChatComposerAdapter.itemCount - 1)
-//            computeScroll()
+                // binding.messageListView.recyclerView.scrollToPosition(aiChatComposerAdapter.itemCount - 1)
+                // computeScroll()
             }, delayTime)
         }
     }
