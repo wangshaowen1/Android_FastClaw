@@ -120,7 +120,7 @@ class PersonalInformationActivity :
     private fun initView() {
         mRealVM.mToolbarVM.mTitle.set(getString(R.string.personal_information_title))
         binding.ivAvatar.setOnSingleClickListener {
-            requestAvatarPermission()
+           // requestAvatarPermission()
         }
         binding.nameRow.setOnSingleClickListener {
             PersonaFreeFillInActivity.start(this, isEdit = true, findBaseInfoItem(FIELD_NAME) ?: AttributeArrayQueryData(attributeGroupCode = FIELD_NAME, attributeGroupName = "姓名"))

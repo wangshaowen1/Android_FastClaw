@@ -17,7 +17,7 @@
                 android:id="@+id/view_indicator"
                 android:layout_width="4dp"
                 android:layout_height="15dp"
-                android:background="@color/color_60_336fff"
+                android:background="@drawable/bg_60_336fff_r100"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
