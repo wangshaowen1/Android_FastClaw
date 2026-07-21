@@ -140,7 +140,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
-        observeData()
+        initObserve()
+        initData()
     }
 
     // 调用拉取增量消息
@@ -243,21 +244,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.rvMsg.itemAnimator = null
         // 列表 item 统一留 12dp 间距，首尾额外撑开顶部和输入框之间的距离。
         binding.rvMsg.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: android.graphics.Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ) {
+            override fun getItemOffsets(outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val position = parent.getChildAdapterPosition(view)
                 if (position == RecyclerView.NO_POSITION) return
                 val itemCount = state.itemCount
-                outRect.set(
-                    0,
-                    if (position == 0) 12.dp else 0,
-                    0,
-                    if (position == itemCount - 1) 21.dp else 12.dp
-                )
+                val top = if (position == 0) 12.dp else 0
+                val bottom = if (position == itemCount - 1) 21.dp else 12.dp
+                outRect.set(0, top, 0, bottom)
             }
         })
         binding.rvMsg.adapter = msgAdapter
@@ -590,14 +583,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         })
         binding.rvMsg.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                // 点击当前卡片外部空白处，isReplyAnswer=true展开的卡片隐藏/收起来
-                val child = binding.rvMsg.findChildViewUnder(event.x, event.y)
-                val position = child?.let { binding.rvMsg.getChildAdapterPosition(it) } ?: RecyclerView.NO_POSITION
-                if (msgAdapter.items.getOrNull(position)?.isReplyAnswer != true) {
-                    msgAdapter.collapseExpandedItem()
-                }
-            }
             if (KeyboardUtils.isSoftInputShown(activity?.window)) {
                 hideKeyboard(binding.etSend)
             }
@@ -690,7 +675,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         })
     }
 
-    private fun observeData() {
+    private fun initObserve() {
         observeEvents {
             on<Events.UserChangedEvent> { event ->
                 // 用户操作重置
@@ -752,13 +737,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mRealVM.updateJobStatus(event.code)
             }
         }
-
-        if (!User.get().isVisitor) {
-            mRealVM.enterSession()
-        } else {
-            mRealVM.hardPreMsgListCard(insertPreCard())
-        }
-
         mRealVM.messageList.observe(viewLifecycleOwner) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
@@ -866,6 +844,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${data?.resumeCheckId}"
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
+        }
+    }
+
+    private fun initData() {
+        if (!User.get().isVisitor) {
+            mRealVM.enterSession()
+        } else {
+            mRealVM.hardPreMsgListCard(insertPreCard())
         }
     }
 

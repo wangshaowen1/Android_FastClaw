@@ -326,16 +326,6 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         result.dispatchUpdatesTo(this)
     }
 
-    /** 点击问题卡片外部时收起已展开的内容。 */
-    fun collapseExpandedItem() {
-        items.forEachIndexed { index, item ->
-            if (item.messageType == TYPE_QUESTION && item.isReplyAnswer) {
-                item.isReplyAnswer = false
-                notifyItemChanged(index)
-            }
-        }
-    }
-
     /**
      * 提交新列表前，计算每条打字机消息本次应该展示到哪个字符位置。
      *

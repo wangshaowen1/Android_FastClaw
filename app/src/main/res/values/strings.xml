@@ -817,6 +817,8 @@
     <string name="str_agent_name">小虾</string>
     <string name="str_agent_desc">求职经纪人 · 我在听</string>
     <string name="str_agent_desc2">选择求职状态</string>
+    <string name="str_agent_welcome_subtitle">你的AI求职经纪人</string>
+    <string name="str_agent_welcome_service_desc">我能帮你查公司、定制押题、提升面试通过率</string>
     <string name="str_agent_memory">我对你的理解</string>
     <string name="str_agent_send_hint">有什么求职问题，随时问小虾</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>
