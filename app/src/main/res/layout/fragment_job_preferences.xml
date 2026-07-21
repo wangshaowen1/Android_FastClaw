@@ -20,12 +20,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <FrameLayout
+                android:layout_marginBottom="5dp"
                 android:id="@+id/ll"
                 android:background="@drawable/bg_ffffff_leftbot_rightbot_r20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="10dp"
-                android:paddingBottom="2dp">
+                android:paddingHorizontal="10dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_job_preferences"

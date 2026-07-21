@@ -335,9 +335,9 @@ open class CommonRepositoryViewModel<T : AppRepository> : AppRepositoryViewModel
                     .map { File(it).name.ifBlank { it } }
                     .distinct()
                 val reason = if (failedFiles.isEmpty()) {
-                    "OSS 文件上传失败"
+                    "文件上传失败"
                 } else {
-                    "OSS 文件上传失败：${failedFiles.joinToString()}"
+                    "文件上传失败：${failedFiles.joinToString()}"
                 }
                 finishSecureFileUploadFailure(reason, onFailure)
             }
@@ -352,7 +352,7 @@ open class CommonRepositoryViewModel<T : AppRepository> : AppRepositoryViewModel
                 listener,
             )
         } catch (throwable: Throwable) {
-            finishSecureFileUploadFailure(throwable.reasonOr("OSS 文件上传失败"), onFailure)
+            finishSecureFileUploadFailure(throwable.reasonOr("文件上传失败"), onFailure)
         }
     }
 
