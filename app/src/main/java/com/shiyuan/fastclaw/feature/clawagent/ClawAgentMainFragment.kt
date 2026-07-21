@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.clawagent
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -708,6 +709,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             on<Events.ResumeEvent> { event ->
+                Log.d("Events.ResumeEvent","312312312312312312")
+                uploadResumeDialog?.let {
+                    it.dismissAllowingStateLoss()
+                }
                 // 上传简历通知拉取
                 if (User.get().isVisitor) return@on
                 if (mRealVM.hasInitSession.value == true) {
@@ -961,9 +966,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
     }
-
+    private var uploadResumeDialog: UploadResumeDialog? = null
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
-        UploadResumeDialog.show(manager = this.parentFragmentManager,false, { fileInfo ->
+        uploadResumeDialog = UploadResumeDialog.show(manager = this.parentFragmentManager,false, { fileInfo ->
             if (fileInfo != null) {
                 showLoading("上传中")
                 mRealVM.uploadFilesWithSecurityCheck(
