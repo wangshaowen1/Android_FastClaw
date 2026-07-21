@@ -12,6 +12,7 @@ import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.utils.JsonUtil
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumItem
 import com.shiyuan.fastclaw.core.network.apis.response.CommonEnumTreeUtil
@@ -19,6 +20,7 @@ import com.shiyuan.fastclaw.databinding.ActivityJobWelfareSelectorBinding
 import com.shiyuan.fastclaw.feature.information.adapter.JobWelfareAdapter
 import com.shiyuan.fastclaw.feature.information.adapter.SelectedWelfareAdapter
 import com.shiyuan.fastclaw.feature.information.viewModel.JobWelfareSelectorModel
+import kotlinx.serialization.json.Json
 
 /**
  * @desc：福利偏好选择
@@ -47,11 +49,15 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
     // 会话 ID / 对话 ID
     private val sessionId by lazy { intent.getStringExtra(EXTRA_SESSION_ID).orEmpty() }
     private val conversationId by lazy { intent.getStringExtra(EXTRA_CONVERSATION_ID).orEmpty() }
+    private val initialSelectedWelfare by lazy {
+        Json.decodeFromString<List<CommonEnumItem>>(intent.getStringExtra(EXTRA_SELECTED_WELFARE) ?: "[]")
+    }
 
     companion object {
         // Intent 参数 key
         private const val EXTRA_SESSION_ID = "extra_session_id"
         private const val EXTRA_CONVERSATION_ID = "extra_conversation_id"
+        private const val EXTRA_SELECTED_WELFARE = "extra_selected_welfare"
 
         /**
          * 打开福利偏好选择器页面。
@@ -59,12 +65,19 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
          * @param activity 当前页面 Activity。
          * @param sessionId 求职 Agent 会话 ID，用于接口反显当前会话已选福利。
          * @param conversationId 对话 ID，用于校验当前会话归属。
+         * @param selectedValueJson 调用方传入的已选福利 JSON，非空时优先用于回显。
          */
-        fun start(activity: Activity?, sessionId: String? = null, conversationId: String? = null) {
+        fun start(
+            activity: Activity?,
+            sessionId: String? = null,
+            conversationId: String? = null,
+            selectedValueJson: String? = null,
+        ) {
             activity ?: return
             val intent = Intent(activity, JobWelfareSelectorActivity::class.java).apply {
                 putExtra(EXTRA_SESSION_ID, sessionId)
                 putExtra(EXTRA_CONVERSATION_ID, conversationId)
+                putExtra(EXTRA_SELECTED_WELFARE, selectedValueJson ?: "[]")
             }
             activity.startActivity(intent)
         }
@@ -91,6 +104,9 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
      * 初始化页面列表、点击事件、完成按钮状态，并请求福利偏好字典数据。
      */
     private fun initView() {
+        initialSelectedWelfare.forEach { item ->
+            item.code?.takeIf { it.isNotBlank() }?.let { selectedWelfare[it] = item }
+        }
         // 候选福利网格（三列）
         binding.rvWelfare.apply {
             layoutManager = GridLayoutManager(
@@ -135,9 +151,9 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
      */
     private fun initObserve() {
         mRealVM.welfareDict.observe(this) { data ->
-            // 每次刷新都重置已选集合，按接口返回的 selectedItems 回填
+            // 每次刷新都重置已选集合，优先按调用方传入数据回填，否则使用接口数据
             selectedWelfare.clear()
-            data.selectedItems.forEach { item ->
+            initialSelectedWelfare.ifEmpty { data.selectedItems }.forEach { item ->
                 item.code?.takeIf { it.isNotBlank() }?.let { selectedWelfare[it] = item }
             }
             welfareItems = data.items

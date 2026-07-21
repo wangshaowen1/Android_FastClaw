@@ -325,7 +325,10 @@ class JobPreferencesFragment :
                     singleSelectDialog(item, "求职身份")
                 }
                 CODE_JOB_WELFAREPREFERENCE ->{
-                    JobWelfareSelectorActivity.start(activity)
+                    JobWelfareSelectorActivity.start(
+                        activity,
+                        selectedValueJson = JsonUtil.toJson(item.value),
+                    )
                 }
             }
 
