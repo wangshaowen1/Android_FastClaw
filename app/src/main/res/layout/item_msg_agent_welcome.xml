@@ -8,18 +8,18 @@
         android:layout_height="wrap_content"
         tools:background="@color/black">
 
-        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
-            android:id="@+id/cl_company_background_outer"
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:id="@+id/sb_welcome_bg"
             android:layout_width="match_parent"
             android:layout_height="155dp"
             android:layout_marginTop="56dp"
-            app:background_normalColor="#F9FAFE"
-            app:border_color="@color/color_ffffff"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:super_corner="20dp"
-            app:view_border_width="1dp" />
+            app:sCornersRadius="20dp"
+            app:sSolidColor="#F9FAFE"
+            app:sStrokeColor="@color/color_ffffff"
+            app:sStrokeWidth="1dp" />
 
         <ImageView
             android:id="@+id/iv_shrimp"
@@ -40,7 +40,7 @@
             app:layout_constraintEnd_toStartOf="@id/iv_shrimp"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/cl_company_background_outer"
+            app:layout_constraintTop_toTopOf="@id/sb_welcome_bg"
             tools:text="你好，我是小虾" />
 
         <TextView
