@@ -249,7 +249,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     tabId = R.id.tabTreasury,
                     null
                 ) {
-                    binding.mrg.check(R.id.tabTreasury) // 真正执行切换
+                    binding.mrg.check(R.id.rbTreasury) // 真正执行切换
                 }
             }
         }
