@@ -1403,7 +1403,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-
     val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
     fun queryInterviewPassPackageResumeStatus() {
         requestWithLoading(
@@ -1446,7 +1445,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             onSuccess(data)
         }
     }
-
 
     /**
      * 退出登录 用来重置

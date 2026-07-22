@@ -1031,8 +1031,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
 
-
-
     /**
      * SSE 仍在 done / 断开 / 关闭之前（streaming=true）时拦截用户交互：
      * 弹 Toast 提示并返回 true 表示已拦截，调用方应直接结束本次操作。
