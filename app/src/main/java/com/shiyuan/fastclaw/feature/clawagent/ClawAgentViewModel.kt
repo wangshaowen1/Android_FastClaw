@@ -1431,7 +1431,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-
+    val code = MutableLiveData<String?>()
     /**
      * 根据授权码查询简历地址
      */

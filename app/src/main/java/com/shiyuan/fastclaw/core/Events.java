@@ -251,19 +251,8 @@ public class Events {
      */
     public static class ResumeEvent implements AppEvent {
         public  Boolean resumeUploadSuccess ;  //简历上传成功
-        public  int tye ;  //简历上传成功： 0 是拉消息 1是主动推消息
-        public  String code ;
         public ResumeEvent(Boolean resumeUploadSuccess) {
             this.resumeUploadSuccess = resumeUploadSuccess;
-        }
-
-        public ResumeEvent(int tye,String code) {
-            this.tye = tye;
-            this.code = code;
-        }
-
-        public ResumeEvent(int tye) {
-            this.tye = tye;
         }
     }
 

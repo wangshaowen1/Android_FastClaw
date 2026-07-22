@@ -53,6 +53,8 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
 
     val resumeUploadResult = MutableLiveData<ResumeUploadSubmitMyData?>()
 
+    val code = MutableLiveData<String?>()
+
     val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
 
     val selectIndex = MutableLiveData<Int>(0)
@@ -62,7 +64,17 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
         initBannerData()
     }
 
-
+    fun queryCodeResumeBinding(code: String, onSuccess: (data: ResumeData?) -> Unit) {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.queryCodeResumeBinding(mapOf("code" to code))
+            },
+            showLoading = true,
+            showToastError = true,
+        ) {
+            onSuccess(data)
+        }
+    }
     fun queryResumeList() {
         launchWithLoading(true, block = {
             response(ApiFactory.apiService.resumeQuery(PagedBody(1, 100)), result = {

@@ -164,6 +164,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         if (!User.get().isVisitor) {
             mRealVM.queryUnfinishedInterview()
         }
+        //微信检查上传返回后 通知后台解析 发送see消息
+        if (!mRealVM.code.value.isNullOrEmpty()) {
+            Log.d("uploadResumeDialog", "312312312312312312")
+            mRealVM.queryCodeResumeBinding(mRealVM.code.value ?:"") { resume ->
+                mRealVM.code.value = null
+                uploadResumePushMessages(
+                    resumeFileUrl = resume?.resumeUrl.orEmpty(),
+                    fileName = resume?.resumeFileName.orEmpty(),
+                )
+            }
+        }
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
@@ -720,22 +731,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             on<Events.ResumeEvent> { event ->
-                Log.d("Events.ResumeEvent", JSON.toJSONString(event))
-                if (event.tye == 1) {
-                    val code = event.code?.trim()
-                    if (code.isNullOrEmpty()) {
-                        "未获取到简历授权码".showToast()
-                        return@on
-                    }
-                    mRealVM.queryCodeResumeBinding(code) { resume ->
-                        uploadResumePushMessages(
-                            resumeFileUrl = resume?.resumeUrl.orEmpty(),
-                            fileName = resume?.resumeFileName.orEmpty(),
-                        )
-                    }
-                } else {
-                    uploadResumePullMessages()
-                }
+                uploadResumePullMessages()
             }
             on<Events.ClawAgentEvent> { event ->
                 onTrackingEvent(clawAgentEvent = event)
@@ -996,7 +992,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 )
             }
         },{
-            WXEntryActivity.resumeUploadSource = 1;
+           mRealVM.code.value = it
         })
     }
 

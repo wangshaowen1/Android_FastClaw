@@ -52,16 +52,17 @@ import com.shiyuan.fastclaw.wxapi.WXEntryActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.text.trim
 
 /**
  * @Introduce: 我的虾条
  */
 class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeReportViewModel>() {
 
-/*    private val handler = Handler(Looper.getMainLooper())
-    private val POLLING_INTERVAL = 2000L // 2秒
-    private var resumePollingRunnable: Runnable? = null
-    private var isResumePolling = false*/
+    /*    private val handler = Handler(Looper.getMainLooper())
+        private val POLLING_INTERVAL = 2000L // 2秒
+        private var resumePollingRunnable: Runnable? = null
+        private var isResumePolling = false*/
 
 
     companion object {
@@ -91,18 +92,14 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
     }
 
     private fun initView() {
-        observeEvents {
+        /*observeEvents {
             //微信回调过来的
             on<Events.ResumeEvent> { event ->
-                Log.d("uploadResumeDialog","312312312312312312")
-                uploadResumeDialog?.let {
-                    it.dismissAllowingStateLoss()
-                }
-                mRealVM.queryResumeList()
+
             }
-        }
+        }*/
         binding.tvUpload.setOnSingleClickListener {
-            UploadCancelDialog.show(this.supportFragmentManager,{
+            UploadCancelDialog.show(this.supportFragmentManager, {
                 uploadResume()
             })
         }
@@ -112,26 +109,48 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         }
     }
 
-    fun  uploadResume(){
+    fun uploadResume() {
         //上传简历
-       uploadResumeDialog = UploadResumeDialog.show(manager = this.supportFragmentManager,false, { fileInfo ->
-            if (fileInfo != null) {
-                showLoading("上传中")
-                mRealVM.uploadFilesWithSecurityCheck(listOf(fileInfo.uri) , BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
-                    onSuccess ={ successUrls ->
-                        hideLoading()
-                    mRealVM.submitResumeUpload(
-                        successUrls.first(),fileInfo.fileName,mRealVM.resumeListData.value?.resumeTaskId) },
-                    onFailure = {
-                        hideLoading()
-                        it.showToast()
-                    } )
-            }
-        },{
-           WXEntryActivity.resumeUploadSource = 0;
-        })
+        uploadResumeDialog =
+            UploadResumeDialog.show(manager = this.supportFragmentManager, false, { fileInfo ->
+                if (fileInfo != null) {
+                    showLoading("上传中")
+                    mRealVM.uploadFilesWithSecurityCheck(
+                        listOf(fileInfo.uri), BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
+                        onSuccess = { successUrls ->
+                            hideLoading()
+                            mRealVM.submitResumeUpload(
+                                successUrls.first(),
+                                fileInfo.fileName,
+                                mRealVM.resumeListData.value?.resumeTaskId
+                            )
+                        },
+                        onFailure = {
+                            hideLoading()
+                            it.showToast()
+                        })
+                }
+            }, {
+                mRealVM.code.value = it
+                //WXEntryActivity.resumeUploadSource = 0;
+            })
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (!mRealVM.code.value.isNullOrEmpty()) {
+            Log.d("uploadResumeDialog", mRealVM.code.value.toString())
+            uploadResumeDialog?.dismissAllowingStateLoss()
+            mRealVM.queryCodeResumeBinding(mRealVM.code.value ?:"") { resume ->
+                mRealVM.code.value = null
+                mRealVM.submitResumeUpload(
+                    resume?.resumeUrl,
+                    resume?.resumeFileName,
+                    resume?.resumeTaskBizId
+                )
+            }
+        }
+    }
 
 
     private var commonLoadingDialog: CommonLoadingDialog? = null
@@ -153,79 +172,79 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
     private fun initObservers() {
         mRealVM.resumeListData.observe(this) {
             it?.let {
-                    binding.tvTip.text =resources.getString(R.string.resume_tip)
-                    binding.cl.visibility= View.VISIBLE
-                    binding.btnUploadResume.visibility= View.GONE
+                binding.tvTip.text = resources.getString(R.string.resume_tip)
+                binding.cl.visibility = View.VISIBLE
+                binding.btnUploadResume.visibility = View.GONE
 
-                    binding.tvTime.text = "上传于 ${it.updateTime}"
-                    binding.tvName.text = it.resumeName ?:  it.fileName
-            } ?:run {
-                binding.tvTip.text =resources.getString(R.string.resume_tip2)
-                binding.cl.visibility= View.GONE
-                binding.btnUploadResume.visibility= View.VISIBLE
+                binding.tvTime.text = "上传于 ${it.updateTime}"
+                binding.tvName.text = it.resumeName ?: it.fileName
+            } ?: run {
+                binding.tvTip.text = resources.getString(R.string.resume_tip2)
+                binding.cl.visibility = View.GONE
+                binding.btnUploadResume.visibility = View.VISIBLE
             }
         }
 
         mRealVM.resumeUploadResult.observe(this) { data ->
             mRealVM.queryResumeList()
             //解析简成功发送消息
-            FlowEventBus.postSync(Events.ResumeEvent(0))
+            FlowEventBus.postSync(Events.ResumeEvent(true))
         }
     }
 
-/*        mRealVM.resumeDetectionData.observe(this) { data ->
-            Log.d("checkStatus", data.safeCheckStatus)
-            when (data.safeCheckStatus) {
-                PASS -> {
-                    mRealVM.queryResumeList()
-                    "简历上传成功".showToast()
-                    stopResumePolling()  // ✅ 停止轮询
-                }
+    /*        mRealVM.resumeDetectionData.observe(this) { data ->
+                Log.d("checkStatus", data.safeCheckStatus)
+                when (data.safeCheckStatus) {
+                    PASS -> {
+                        mRealVM.queryResumeList()
+                        "简历上传成功".showToast()
+                        stopResumePolling()  // ✅ 停止轮询
+                    }
 
-                RUNNING, PENDING -> {
-                    if (!isResumePolling) {
-                        startResumePolling()
+                    RUNNING, PENDING -> {
+                        if (!isResumePolling) {
+                            startResumePolling()
+                        }
+                    }
+                    else -> {
+                        mRealVM.setLoading(false)
+                        data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }?.showToast() ?: "简历解析失败".showToast()
+                        stopResumePolling()  // ✅ 停止轮询
                     }
                 }
-                else -> {
-                    mRealVM.setLoading(false)
-                    data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }?.showToast() ?: "简历解析失败".showToast()
-                    stopResumePolling()  // ✅ 停止轮询
+            }*/
+
+
+    /*    private fun startResumePolling() {
+            if (isResumePolling) return  // ✅ 防止重复启动
+
+            isResumePolling = true
+            resumePollingRunnable = object : Runnable {
+                override fun run() {
+                    if (!isFinishing && !isDestroyed && isResumePolling) {
+                        Log.d("Polling", "轮询检查状态...")
+                        mRealVM.resumeMaterialQualityr()
+                        handler.postDelayed(this, POLLING_INTERVAL)
+                    }
                 }
             }
+            handler.postDelayed(resumePollingRunnable!!, POLLING_INTERVAL)
+            Log.d("Polling", "开始轮询")
+        }
+
+        private fun stopResumePolling() {
+            if (!isResumePolling) return  // ✅ 停止前检查
+
+            isResumePolling = false
+            resumePollingRunnable?.let {
+                handler.removeCallbacks(it)
+                resumePollingRunnable = null
+            }
+            Log.d("Polling", "停止轮询")
         }*/
 
-
-/*    private fun startResumePolling() {
-        if (isResumePolling) return  // ✅ 防止重复启动
-
-        isResumePolling = true
-        resumePollingRunnable = object : Runnable {
-            override fun run() {
-                if (!isFinishing && !isDestroyed && isResumePolling) {
-                    Log.d("Polling", "轮询检查状态...")
-                    mRealVM.resumeMaterialQualityr()
-                    handler.postDelayed(this, POLLING_INTERVAL)
-                }
-            }
-        }
-        handler.postDelayed(resumePollingRunnable!!, POLLING_INTERVAL)
-        Log.d("Polling", "开始轮询")
-    }
-
-    private fun stopResumePolling() {
-        if (!isResumePolling) return  // ✅ 停止前检查
-
-        isResumePolling = false
-        resumePollingRunnable?.let {
-            handler.removeCallbacks(it)
-            resumePollingRunnable = null
-        }
-        Log.d("Polling", "停止轮询")
-    }*/
-
-  /*  override fun onDestroy() {
-        super.onDestroy()
-       // stopResumePolling()
-    }*/
+    /*  override fun onDestroy() {
+          super.onDestroy()
+         // stopResumePolling()
+      }*/
 }
