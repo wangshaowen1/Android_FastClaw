@@ -100,11 +100,11 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         /** 按住说话上滑取消的触发距离。 */
         private val VOICE_CANCEL_DISTANCE = 40.dp
 
-        /** 消息列表滚到底部前的默认延迟，等待列表布局完成。 */
-        private const val MESSAGE_SCROLL_DELAY = 100L
+        /** 消息列表滚到底部前的默认延迟，0ms 可减少新卡片出现瞬间的停顿感。 */
+        private const val MESSAGE_SCROLL_DELAY = 0L
 
         /** 消息列表平滑滚动速度。 */
-        private const val MESSAGE_SCROLL_SPEED = 0.08f
+        private const val MESSAGE_SCROLL_SPEED = 0.12f
 
         /** 底部按钮展示/隐藏时的纵向位移。 */
         private const val SCROLL_BOTTOM_BUTTON_ANIM_OFFSET = 30

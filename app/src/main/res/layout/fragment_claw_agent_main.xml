@@ -119,7 +119,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_msg"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingBottom="9dp" />
 
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
