@@ -591,7 +591,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 updateScrollBottomButton()
                 if (dy >= 0) return // 仅在向上滚动时预取
                 val lm = rv.layoutManager as? LinearLayoutManager ?: return
-                if (lm.findFirstVisibleItemPosition() <= BaseClawAgentFragment.PREFETCH_THRESHOLD) {
+                if (lm.findFirstVisibleItemPosition() <= PREFETCH_THRESHOLD) {
                     mRealVM.loadOlderHistory()
                 }
             }
