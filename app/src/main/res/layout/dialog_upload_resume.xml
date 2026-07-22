@@ -35,7 +35,7 @@
                 android:layout_centerVertical="true"
                 android:text="@string/upload_resume"
                 android:textColor="@color/color_90_000000"
-                android:textSize="18sp"></TextView>
+                android:textSize="18sp"/>
 
 
             <ImageView
