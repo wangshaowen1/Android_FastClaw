@@ -20,9 +20,14 @@ abstract class BaseBottomDialogVmFragment<V : ViewDataBinding, T : BaseLayoutVie
 
     override fun onStart() {
         super.onStart()
-        setupWindowStyle()
+
 
     }
+
+    override fun transparentNavBar(){
+        setupWindowStyle()
+    }
+
 
     private fun setupWindowStyle() {
         dialog?.window?.let { dialogWindow ->
@@ -40,8 +45,8 @@ abstract class BaseBottomDialogVmFragment<V : ViewDataBinding, T : BaseLayoutVie
             }
 
             var systemUiVisibility = dialogWindow.decorView.systemUiVisibility or
-                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION /*or
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE*/
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
             }
