@@ -8,7 +8,8 @@
     <LinearLayout
         android:id="@+id/ll_think"
         android:layout_width="wrap_content"
-        android:layout_height="51dp"
+        android:layout_height="wrap_content"
+        android:minHeight="49dp"
         android:background="@drawable/bg_msg_agent_left"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -26,6 +27,7 @@
 
         <TextView
             android:id="@+id/tv_think"
+            android:paddingVertical="14dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
