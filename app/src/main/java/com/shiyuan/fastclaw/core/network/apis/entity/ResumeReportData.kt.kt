@@ -24,6 +24,7 @@ import kotlinx.parcelize.Parcelize
     var resumeName: String ? = null,
     var updateTime: String ? = null,
     var resumeUrl: String ? = null,
+    var resumeTaskBizId: String ? = null,
 ): Parcelable{
 
 

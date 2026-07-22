@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import kotlinx.serialization.json.Json;
 
 public class WXEntryActivity extends WXCallbackActivity {
-    public static  int resumeUploadSource = -1;  //0 是我的简历   1是首页的
+/*    public static  int resumeUploadSource = -1;  //0 是我的简历   1是首页的
     // 3. 核心回调方法
     @Override
     public void onResp(BaseResp resp) {
@@ -29,5 +29,5 @@ public class WXEntryActivity extends WXCallbackActivity {
         }
         // 4. 处理完后必须关闭当前 Activity[reference:14][reference:15]
         finish();
-    }
+    }*/
 }
