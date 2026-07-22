@@ -164,16 +164,11 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         if (!User.get().isVisitor) {
             mRealVM.queryUnfinishedInterview()
         }
-        //微信检查上传返回后 通知后台解析 发送see消息
+        //微信检查拉取消息
         if (!mRealVM.code.value.isNullOrEmpty()) {
             Log.d("uploadResumeDialog", "312312312312312312")
-            mRealVM.queryCodeResumeBinding(mRealVM.code.value ?:"") { resume ->
-                mRealVM.code.value = null
-                uploadResumePushMessages(
-                    resumeFileUrl = resume?.resumeUrl.orEmpty(),
-                    fileName = resume?.resumeFileName.orEmpty(),
-                )
-            }
+            mRealVM.code.value = null
+            uploadResumePullMessages()
         }
     }
 
@@ -1021,6 +1016,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
      * 上传简历成功主动拉取消息
      */
     private fun  uploadResumePullMessages(){
+        uploadResumeDialog?.dismissAllowingStateLoss()
         // 上传简历通知拉取
         if (User.get().isVisitor) return@uploadResumePullMessages
         if (mRealVM.hasInitSession.value == true) {
