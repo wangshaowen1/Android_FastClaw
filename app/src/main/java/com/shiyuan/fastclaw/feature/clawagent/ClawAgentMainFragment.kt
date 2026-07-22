@@ -257,15 +257,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 消息列表：聊天场景内容自底部对齐
         binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
         binding.rvMsg.itemAnimator = null
-        // 列表 item 统一留 12dp 间距，首尾额外撑开顶部和输入框之间的距离。
+        // 列表 item 统一留 12dp 间距，首项额外撑开顶部距离。
         binding.rvMsg.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val position = parent.getChildAdapterPosition(view)
                 if (position == RecyclerView.NO_POSITION) return
-                val itemCount = state.itemCount
                 val top = if (position == 0) 12.dp else 0
-                val bottom = if (position == itemCount - 1) 21.dp else 12.dp
-                outRect.set(0, top, 0, bottom)
+                outRect.set(0, top, 0, 12.dp)
             }
         })
         binding.rvMsg.adapter = msgAdapter
@@ -756,8 +754,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             val hadObservedNonEmptyMessageList = hasObservedNonEmptyMessageList
             // 用户刚发送消息时强制跟随；否则仅在当前已经贴底时才继续跟随新消息。
             val scrollToLatest = forceScrollToBottom || !binding.rvMsg.canScrollVertically(1)
-            // 新增尾部消息才触发滚动；同一条流式内容增量更新不重复滚动。
-            val hasNewTailMessage = list.size > msgAdapter.items.size || msgAdapter.items.lastOrNull()?.id != list.lastOrNull()?.id
+            // 只有真正追加尾部消息才触发滚动；尾项替换不滚动，避免卡片刚出来时先顿一下。
+            val hasNewTailMessage = list.size > msgAdapter.items.size
             // 用提交新列表前的可见位置估算距离底部还有多少个 item。距离底部不超过 5 个 item 时平滑滚动；更远时直接贴底，避免长距离慢慢滑。
             val lastVisiblePosition = (binding.rvMsg.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition() ?: -1
             val shouldSmoothScroll = hadObservedNonEmptyMessageList && list.lastIndex - lastVisiblePosition <= 5
@@ -771,8 +769,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 suppressScrollBottomButton()
             }
             msgAdapter.submitList(list)
-            // 新消息插入后原最后一条不再是尾项，主动刷新 ItemDecoration 避免保留 21dp 底部间距。
-            binding.rvMsg.invalidateItemDecorations()
             if (list.isNotEmpty()) {
                 hasObservedNonEmptyMessageList = true
             }
