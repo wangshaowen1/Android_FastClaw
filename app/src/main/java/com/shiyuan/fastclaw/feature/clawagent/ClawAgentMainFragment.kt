@@ -101,6 +101,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
     private val msgAdapter by lazy { ClawAgentMsgAdapter() }
 
+    /** 消息 item 之间的基础底部间距，同时作为贴底判断的容差。 */
+    private val messageItemBottomSpace = 12.dp
+
     /** 用户主动发送后,强制把列表滚到最新一条(不受当前是否已在底部影响) */
     private var forceScrollToBottom = false
 
@@ -263,8 +266,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             override fun getItemOffsets(outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 val position = parent.getChildAdapterPosition(view)
                 if (position == RecyclerView.NO_POSITION) return
-                val top = if (position == 0) 12.dp else 0
-                outRect.set(0, top, 0, 12.dp)
+                val top = if (position == 0) messageItemBottomSpace else 0
+                outRect.set(0, top, 0, messageItemBottomSpace)
             }
         })
         binding.rvMsg.adapter = msgAdapter
@@ -754,7 +757,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
             val hadObservedNonEmptyMessageList = hasObservedNonEmptyMessageList
             // 用户刚发送消息时强制跟随；否则按最后一项是否贴底判断，canScrollVertically(1) 在部分机型会误判。
-            val scrollToLatest = forceScrollToBottom || RecyclerViewScrollHelper.isScrollBottom(binding.rvMsg, 12.dp)
+            val scrollToLatest = forceScrollToBottom || RecyclerViewScrollHelper.isScrollBottom(binding.rvMsg, messageItemBottomSpace)
             // 只有真正追加尾部消息才触发滚动；尾项替换不滚动，避免卡片刚出来时先顿一下。
             val hasNewTailMessage = list.size > msgAdapter.items.size || msgAdapter.items.lastOrNull()?.id != list.lastOrNull()?.id
             // 用提交新列表前的可见位置估算距离底部还有多少个 item。距离底部不超过 5 个 item 时平滑滚动；更远时直接贴底，避免长距离慢慢滑。
