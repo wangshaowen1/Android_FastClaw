@@ -755,7 +755,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             // 用户刚发送消息时强制跟随；否则仅在当前已经贴底时才继续跟随新消息。
             val scrollToLatest = forceScrollToBottom || !binding.rvMsg.canScrollVertically(1)
             // 只有真正追加尾部消息才触发滚动；尾项替换不滚动，避免卡片刚出来时先顿一下。
-            val hasNewTailMessage = list.size > msgAdapter.items.size
+            val hasNewTailMessage = list.size > msgAdapter.items.size || msgAdapter.items.lastOrNull()?.id != list.lastOrNull()?.id
             // 用提交新列表前的可见位置估算距离底部还有多少个 item。距离底部不超过 5 个 item 时平滑滚动；更远时直接贴底，避免长距离慢慢滑。
             val lastVisiblePosition = (binding.rvMsg.layoutManager as? LinearLayoutManager)?.findLastVisibleItemPosition() ?: -1
             val shouldSmoothScroll = hadObservedNonEmptyMessageList && list.lastIndex - lastVisiblePosition <= 5
