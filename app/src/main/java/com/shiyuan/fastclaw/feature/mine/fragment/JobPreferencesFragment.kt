@@ -257,7 +257,7 @@ class JobPreferencesFragment :
         itemBinding: ItemJobInfoReBinding,
         item: AttributeArrayQueryData
     ) {
-        itemBinding.layoutMissing.visibility = if (item.displayValue.isNullOrEmpty()) View.VISIBLE else View.GONE
+        itemBinding.layoutMissing.visibility = if (item.passable == true) View.INVISIBLE  else View.VISIBLE
         itemBinding.tvVale.visibility = if (item.displayValue.isNullOrEmpty()) View.GONE else View.VISIBLE
         itemBinding.tvName.text = item.attributeGroupName ?: ""
         itemBinding.tvVale.text = item.displayValue
