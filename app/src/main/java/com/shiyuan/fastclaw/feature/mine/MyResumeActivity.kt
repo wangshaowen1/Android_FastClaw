@@ -140,15 +140,11 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         super.onResume()
         if (!mRealVM.code.value.isNullOrEmpty()) {
             Log.d("uploadResumeDialog", mRealVM.code.value.toString())
+            mRealVM.code.value = null
             uploadResumeDialog?.dismissAllowingStateLoss()
-            mRealVM.queryCodeResumeBinding(mRealVM.code.value ?:"") { resume ->
-                mRealVM.code.value = null
-                mRealVM.submitResumeUpload(
-                    resume?.resumeUrl,
-                    resume?.resumeFileName,
-                    resume?.resumeTaskBizId
-                )
-            }
+            mRealVM.queryResumeList()
+            //解析简成功发送消息
+            FlowEventBus.postSync(Events.ResumeEvent(true))
         }
     }
 
