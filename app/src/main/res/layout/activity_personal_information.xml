@@ -130,6 +130,7 @@
                     app:formPlaceholderText="@string/personal_information_current_city_placeholder" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:visibility="gone"
                     android:id="@+id/political_status_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -137,6 +138,7 @@
                     app:formPlaceholderText="@string/personal_information_political_status_placeholder" />
 
                 <com.shiyuan.fastclaw.widget.PersonalInformationFieldView
+                    android:visibility="gone"
                     android:id="@+id/marital_status_row"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
