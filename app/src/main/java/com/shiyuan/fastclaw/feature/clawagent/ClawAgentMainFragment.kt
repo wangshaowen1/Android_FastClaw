@@ -41,6 +41,7 @@ import com.shiyuan.fastclaw.common.ext.invisible
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
+import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
@@ -752,8 +753,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
             val hadObservedNonEmptyMessageList = hasObservedNonEmptyMessageList
-            // 用户刚发送消息时强制跟随；否则仅在当前已经贴底时才继续跟随新消息。
-            val scrollToLatest = forceScrollToBottom || !binding.rvMsg.canScrollVertically(1)
+            // 用户刚发送消息时强制跟随；否则按最后一项是否贴底判断，canScrollVertically(1) 在部分机型会误判。
+            val scrollToLatest = forceScrollToBottom || RecyclerViewScrollHelper.isScrollBottom(binding.rvMsg, 12.dp)
             // 只有真正追加尾部消息才触发滚动；尾项替换不滚动，避免卡片刚出来时先顿一下。
             val hasNewTailMessage = list.size > msgAdapter.items.size || msgAdapter.items.lastOrNull()?.id != list.lastOrNull()?.id
             // 用提交新列表前的可见位置估算距离底部还有多少个 item。距离底部不超过 5 个 item 时平滑滚动；更远时直接贴底，避免长距离慢慢滑。

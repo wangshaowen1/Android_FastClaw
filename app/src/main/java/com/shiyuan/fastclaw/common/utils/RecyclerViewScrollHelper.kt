@@ -56,8 +56,8 @@ object RecyclerViewScrollHelper {
         return lastVisiblePosition >= totalItemCount - 2
     }
 
-    fun isScrollBottom(recyclerView: RecyclerView, offset:Int): Boolean {
-        val layoutManager: RecyclerView.LayoutManager? = recyclerView.layoutManager
+    fun isScrollBottom(recyclerView: RecyclerView, offset: Int): Boolean {
+        val layoutManager = recyclerView.layoutManager
         if (layoutManager?.itemCount == null || layoutManager.itemCount == 0) return true
         val itemCount = layoutManager.itemCount
         if (layoutManager is LinearLayoutManager) {
@@ -65,11 +65,9 @@ object RecyclerViewScrollHelper {
             if (lastVisiblePosition == itemCount - 1) {
                 val lastItem = layoutManager.findViewByPosition(lastVisiblePosition)
                 if (lastItem != null) {
-                    // 考虑RecyclerView的padding和Item的装饰（如分割线）
                     val bottomWithDecor = layoutManager.getDecoratedBottom(lastItem)
-                    val recyclerVisibleBottom: Int =
-                        recyclerView.height - recyclerView.paddingBottom
-                    return bottomWithDecor <= recyclerVisibleBottom+offset
+                    val recyclerVisibleBottom = recyclerView.height - recyclerView.paddingBottom
+                    return bottomWithDecor <= recyclerVisibleBottom + offset
                 }
             }
         }
