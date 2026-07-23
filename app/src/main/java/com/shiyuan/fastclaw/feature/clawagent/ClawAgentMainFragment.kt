@@ -122,6 +122,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     /** 当前问题队列 id，提交回答动作时回传服务端。 */
     private var mCurrentQuestionId: String? = null
 
+    /** 上传简历弹窗实例，上传完成或页面销毁时用于主动关闭。 */
+    private var uploadResumeDialog: UploadResumeDialog? = null
+
+    /** 触发上传简历的消息 item，提交上传结果时回传 sourceMessageId。 */
+    private var resumeData: ClawAgentMessageInfo? = null
+
     /** 首页恢复时拉取消息的轮询任务，页面销毁或超时时取消。 */
     private var resumeEventPullJob: Job? = null
 
@@ -919,30 +925,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         return isAdded && !isHidden && view != null
     }
 
-    private fun showInterviewRecoverDialog(interviewId: String?) {
-        InterviewRecoverDialog(requireContext()).showDialog().apply {
-            onContinueClickListener = {
-                InterviewActivity.start(requireActivity(), interviewId, true)
-            }
-            onFinishClickListener = {
-                mRealVM.forceFinish(interviewId ?: "") {
-                    it?.message?.showToast()
-                }
-            }
-        }
-    }
-
-    private fun showInsufficientShrimpDialog() {
-        ClawAgentInsufficientShrimpDialog.show(childFragmentManager).apply {
-            onInviteClick = {
-                InviteFriendsActivity.start(requireActivity())
-            }
-            onRechargeClick = {
-                MineShrimpRechargeActivity.start(requireActivity())
-            }
-        }
-    }
-
     /**
      * 插入初始状态
      */
@@ -953,45 +935,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         )
         return tempList
     }
-
-    private fun showNotificationSwitchDialog() {
-        if (Config.get().hasEnableNotification()) {
-            return
-        }
-        val dialog = NotificationsSwitchDialog.show(childFragmentManager)
-        dialog.clickListener = { flag ->
-            Config.get().switchNotification(flag)
-            if (flag) {
-                // todo: 检测通知权限
-            }
-        }
-    }
-    private var uploadResumeDialog: UploadResumeDialog? = null
-    private var resumeData: ClawAgentMessageInfo? = null //上传简历那一次的消息item
-    private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
-        resumeData = data
-        uploadResumeDialog = UploadResumeDialog.show(manager = this.parentFragmentManager,false, { fileInfo ->
-            if (fileInfo != null) {
-                showLoading("上传中...")
-                mRealVM.uploadFilesWithSecurityCheck(
-                    uriList = listOf(fileInfo.uri),
-                    bizType = BIZ_TYPE_XIAOXIA_RESUME_UPLOAD,
-                    onSuccess = onSuccess@{ successUrls ->
-                        hideLoading()
-                        // 文件上传完成回调里可能 AI 已开始回复，此时拦截避免新开 SSE 打断当前流
-                        if (interceptIfStreaming()) return@onSuccess
-                        uploadResumePushMessages(successUrls.first(),fileInfo.fileName ?:"")
-                    },
-                    onFailure = { reason ->
-                        hideLoading()
-                        reason.showToast() },
-                )
-            }
-        },{
-           mRealVM.code.value = it
-        })
-    }
-
 
     /**
      * 上传简历成功主动推消息
@@ -1046,6 +989,67 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             return true
         }
         return false
+    }
+
+    private fun showNotificationSwitchDialog() {
+        if (Config.get().hasEnableNotification()) {
+            return
+        }
+        val dialog = NotificationsSwitchDialog.show(childFragmentManager)
+        dialog.clickListener = { flag ->
+            Config.get().switchNotification(flag)
+            if (flag) {
+                // todo: 检测通知权限
+            }
+        }
+    }
+
+    private fun showInterviewRecoverDialog(interviewId: String?) {
+        InterviewRecoverDialog(requireContext()).showDialog().apply {
+            onContinueClickListener = {
+                InterviewActivity.start(requireActivity(), interviewId, true)
+            }
+            onFinishClickListener = {
+                mRealVM.forceFinish(interviewId ?: "") {
+                    it?.message?.showToast()
+                }
+            }
+        }
+    }
+
+    private fun showInsufficientShrimpDialog() {
+        ClawAgentInsufficientShrimpDialog.show(childFragmentManager).apply {
+            onInviteClick = {
+                InviteFriendsActivity.start(requireActivity())
+            }
+            onRechargeClick = {
+                MineShrimpRechargeActivity.start(requireActivity())
+            }
+        }
+    }
+
+    private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
+        resumeData = data
+        uploadResumeDialog = UploadResumeDialog.show(manager = this.parentFragmentManager,false, { fileInfo ->
+            if (fileInfo != null) {
+                showLoading("上传中...")
+                mRealVM.uploadFilesWithSecurityCheck(
+                    uriList = listOf(fileInfo.uri),
+                    bizType = BIZ_TYPE_XIAOXIA_RESUME_UPLOAD,
+                    onSuccess = onSuccess@{ successUrls ->
+                        hideLoading()
+                        // 文件上传完成回调里可能 AI 已开始回复，此时拦截避免新开 SSE 打断当前流
+                        if (interceptIfStreaming()) return@onSuccess
+                        uploadResumePushMessages(successUrls.first(),fileInfo.fileName ?:"")
+                    },
+                    onFailure = { reason ->
+                        hideLoading()
+                        reason.showToast() },
+                )
+            }
+        },{
+            mRealVM.code.value = it
+        })
     }
 
     // 记忆卡片
