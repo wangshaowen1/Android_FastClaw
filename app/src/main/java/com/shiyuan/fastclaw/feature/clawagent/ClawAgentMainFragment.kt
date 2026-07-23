@@ -154,6 +154,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         super.onPrepareView()
         initView()
         initObserve()
+        initEvents()
         initData()
     }
 
@@ -170,7 +171,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
         //微信检查拉取消息
         if (!mRealVM.code.value.isNullOrEmpty()) {
-            Log.d("uploadResumeDialog", "312312312312312312")
+            Log.d(TAG, "uploadResumeDialog")
             mRealVM.code.value = null
             uploadResumePullMessages()
         }
@@ -710,48 +711,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     }
 
     private fun initObserve() {
-        observeEvents {
-            on<Events.UserChangedEvent> { event ->
-                // 用户操作重置
-                mRealVM.reset()
-                when (event.eventType) {
-                    Events.UserChangedEvent.SIGN_IN -> {
-                        // 登录重新建立会话
-                        if (!User.get().isVisitor) {
-                            mRealVM.enterSession()
-                        }
-                    }
-                    Events.UserChangedEvent.SIGN_OUT -> {
-                        mRealVM.hardPreMsgListCard(insertPreCard())
-                        mRealVM.sessionData.value = mRealVM.sessionData.value?.copy(jobSearchStatus = null) //清除求职状态
-                    }
-                }
-            }
-            on<Events.ResumeEvent> { event ->
-                uploadResumePullMessages()
-            }
-            on<Events.ClawAgentEvent> { event ->
-                onTrackingEvent(clawAgentEvent = event)
-                //聊天对话选择后回传
-                startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, msgGson = event.msgGson)
-            }
-            /**
-             * 接受消息，点击公司背调和模拟面试按钮
-             */
-            on<Events.CompanyInterviewEvent> { event ->
-                when (event.type){
-                    0 ->  binding.layoutBackCheck.performClick()
-                    else ->  binding.layoutInterview.performClick()
-                }
-            }
-
-            /**
-             * 接受消息，求职状态
-             */
-            on<Events.JobSearchStatusEvent> { event ->
-                mRealVM.updateJobStatus(event.code)
-            }
-        }
         mRealVM.messageList.observe(viewLifecycleOwner) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
@@ -854,6 +813,51 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${data?.resumeCheckId}"
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
+        }
+    }
+
+    private fun initEvents() {
+        observeEvents {
+            on<Events.UserChangedEvent> { event ->
+                // 用户操作重置
+                mRealVM.reset()
+                when (event.eventType) {
+                    Events.UserChangedEvent.SIGN_IN -> {
+                        // 登录重新建立会话
+                        if (!User.get().isVisitor) {
+                            mRealVM.enterSession()
+                        }
+                    }
+                    Events.UserChangedEvent.SIGN_OUT -> {
+                        mRealVM.hardPreMsgListCard(insertPreCard())
+                        mRealVM.sessionData.value = mRealVM.sessionData.value?.copy(jobSearchStatus = null) //清除求职状态
+                    }
+                }
+            }
+            on<Events.ResumeEvent> { event ->
+                uploadResumePullMessages()
+            }
+            on<Events.ClawAgentEvent> { event ->
+                onTrackingEvent(clawAgentEvent = event)
+                //聊天对话选择后回传
+                startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, msgGson = event.msgGson)
+            }
+            /**
+             * 接受消息，点击公司背调和模拟面试按钮
+             */
+            on<Events.CompanyInterviewEvent> { event ->
+                when (event.type){
+                    0 ->  binding.layoutBackCheck.performClick()
+                    else ->  binding.layoutInterview.performClick()
+                }
+            }
+
+            /**
+             * 接受消息，求职状态
+             */
+            on<Events.JobSearchStatusEvent> { event ->
+                mRealVM.updateJobStatus(event.code)
+            }
         }
     }
 

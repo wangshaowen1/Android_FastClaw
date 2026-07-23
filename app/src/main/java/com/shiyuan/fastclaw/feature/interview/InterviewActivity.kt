@@ -144,8 +144,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initView()
-        observeData()
-        observeEvents()
+        initObserve()
+        initEvents()
     }
 
     /**
@@ -191,7 +191,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /**
      * 观察面试房间 ViewModel 数据，刷新消息、状态、语音播放和上传结果。
      */
-    private fun observeData() {
+    private fun initObserve() {
         mRealVM.roomState.observe(this) {
             updateRoomState(it)
         }
@@ -245,6 +245,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         mRealVM.messageList.observe(this) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息/流式增量，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
+            // 如果用户在底部，就跟随新消息滚到底；如果用户往上翻历史，就不打断。
             val scrollToLatest = forceScrollToBottom || !binding.rvMessage.canScrollVertically(1)
             forceScrollToBottom = false
             msgAdapter.submitList(list)
@@ -266,7 +267,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
     }
 
-    private fun observeEvents() {
+    private fun initEvents() {
         observeEvents {
             on<Events.InterviewEvent> { event ->
                 val dataList = JsonUtil.parseList(event.msgGson, InterviewJobData::class.java)
