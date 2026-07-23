@@ -185,6 +185,7 @@
 -keep class com.shiyuan.fastclaw.common.entity.**{*;}
 -keep class com.shiyuan.fastclaw.common.jsbridge.data.**{*;}
 -keep class com.shiyuan.fastclaw.core.network.apis.**{*;}
+-keep class com.shiyuan.fastclaw.core.network.sse.**{*;}
 -keep class com.shiyuan.fastclaw.core.db.**{*;}
 -keep class com.shiyuan.fastclaw.core.model.**{*;}
 #--------用户信息相关------

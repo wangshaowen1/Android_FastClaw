@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.clawagent
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
@@ -198,6 +199,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             },
             onPatch = { patch ->
                 // patch 也携带 seq，记录后可用于断线重连 lastSeq。
+                Log.d("sseProcessor_onPatch=","进入删除")
                 patch.seq?.let { lastSeq = it }
                 // 目前文档只要求处理 REMOVE：重新回答后移除旧答案气泡和旧下游问题卡。
                 if (patch.patchType == PATCH_TYPE_REMOVE) {
@@ -642,6 +644,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         serverUserMessageKeyToLocalKey.entries.removeAll { (serverKey, mappedLocalKey) ->
             serverKey == messageId || serverKey in keysToRemove || mappedLocalKey in keysToRemove
         }
+        Log.d("sseProcessor_onPatch=",messageId)
         refreshMessageList()
     }
 
@@ -651,6 +654,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val rawMessages = messageStore.values
             .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
         val renderMessages = rawMessages.map { it.toMessageInfo() }
+        // 列表内容没有变化时不重复派发，避免 Fragment 反复 submitList 打断滚动。
+        if (messageList.value == renderMessages) return
         messageList.value = renderMessages
         if (BuildConfig.DEBUG) {
             println("messageList=---------------------------------------------------------")
