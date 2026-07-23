@@ -249,6 +249,6 @@ class UpgradeManager(private val context: BaseActivity) {
     }
 
     companion object {
-        private const val RECOMMEND_UPGRADE_REMIND_INTERVAL_MILLIS = 60L * 60 * 24 * 1000
+        private const val RECOMMEND_UPGRADE_REMIND_INTERVAL_MILLIS = 60L  * 1000
     }
 }

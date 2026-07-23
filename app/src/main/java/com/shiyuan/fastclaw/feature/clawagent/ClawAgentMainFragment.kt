@@ -425,8 +425,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     )
                 )
                 if (payload?.isJobStatus() ?: false) {// 求职状态
-                    mJobStatusSelected = option.text
-                    mRealVM.queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
+                    mRealVM.jobStatusResult.value = mRealVM.jobStatusResult.value?.copy(displayValue = option.text) //先本来更新更新状态
+                   // mRealVM.queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS) //然后请求更新状态
                 }
                 onTrackingEvent(payload  = payload)
             }
@@ -838,11 +838,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
         // 监听求职状态属性，使用线上简历属性接口结果同步顶部状态展示
         mRealVM.jobStatusResult.observe(this) { data ->
-            if (data?.displayValue.isNullOrBlank()) data?.displayValue = mJobStatusSelected
             val statusCode = data?.options.orEmpty().firstOrNull { it.name == data?.displayValue }?.code
-            binding.tvAgentDesc.text = data?.displayValue
-                ?.takeIf { it.isNotBlank() }
-                ?: requireActivity().getString(R.string.str_agent_desc2)
+            binding.tvAgentDesc.text = data?.displayValue?.takeIf { it.isNotBlank() } ?: requireActivity().getString(R.string.str_agent_desc2)
             when (statusCode) {
                 "NOT_LOOKING" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff383c)).setUseShape()
                 "AVAILABLE_IMMEDIATELY", "AVAILABLE_WITHIN_MONTH", "OPEN_TO_OPPORTUNITY" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_15D173)).setUseShape()
