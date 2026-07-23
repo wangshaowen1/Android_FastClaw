@@ -158,105 +158,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         initData()
     }
 
-    // 调用拉取增量消息
-    override fun onResume() {
-        super.onResume()
-        if (!User.get().isVisitor) {
-            if (mRealVM.hasInitSession.value == true) {
-                mRealVM.pullMessages(mRealVM.getLastMessageCursor())
-            }
-        }
-        if (!User.get().isVisitor) {
-            mRealVM.queryUnfinishedInterview()
-        }
-        //微信检查拉取消息
-        if (!mRealVM.code.value.isNullOrEmpty()) {
-            Log.d(TAG, "uploadResumeDialog")
-            mRealVM.code.value = null
-            uploadResumePullMessages()
-        }
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden && !User.get().isVisitor && mRealVM.hasInitSession.value == true) {
-            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
-        }
-    }
-
-    override fun <Data> onClick(view: View, data: Data?) {
-        super.onClick(view, data)
-        when (view.id) {
-            R.id.iv_send -> { //发送消息
-                if (User.get().isVisitor) {
-                    showMessage("请先登录")
-                    return
-                }
-                val content = binding.etSend.text
-                if (content.isBlank()) {
-                    showMessage("发送内容不能为空")
-                    return
-                }
-                // SSE 仍在 done / 断开 / 关闭之前（streaming=true），拦截发送，不打断当前流
-                if (interceptIfStreaming()) return
-                // 主动发送:本条乐观插入及随后的流式回复都强制滚到最新
-                forceScrollToBottom = true
-                binding.etSend.text = null
-                if (isReplyMode) {
-                    startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, text = content.toString().trim())
-                    binding.ivReanswerClose.performClick()
-                } else {
-                    mRealVM.sendMessage(content.toString().trim())
-                }
-            }
-            R.id.iv_agent_memory -> { //对你的理解
-                if (!AppNavigator.checkLoginIntercepted(false)){
-                    OnlineResumeActivity.start(requireActivity(),0)
-                }
-            }
-            R.id.layout_back_check -> { //背景调查
-                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                    forceScrollToBottom = true
-                    mRealVM.sendAction(
-                        content = getString(R.string.company_backcheck),
-                        actionData = AgentMsgAction(
-                            actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND.name,
-                            actionPayloadJson = null,
-                        )
-                    )
-                }
-            }
-            R.id.layout_interview -> { //模拟面试
-                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                    forceScrollToBottom = true
-                    mRealVM.sendAction(
-                        content = getString(R.string.mock_interview),
-                        actionData = AgentMsgAction(
-                            actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
-                            actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = QUICK_ENTRY))
-                        )
-                    )
-                }
-            }
-            R.id.layout_pass -> { //面试通关包
-                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                    forceScrollToBottom = true
-                    mRealVM.queryInterviewPassPackageResumeStatus()
-                }
-             }
-            R.id.iv_scroll_bottom -> { //滚动到底部
-                scrollToBottom(true, 0L)
-            }
-            R.id.iv_reanswer_close -> { //重新回答关闭
-                isReplyMode = false
-                binding.layoutReanswer.gone()
-                binding.layoutSend.setCorners(27f)
-                binding.etSend.text = null
-                hideKeyboard(binding.etSend)
-            }
-        }
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         // 消息列表：聊天场景内容自底部对齐
@@ -861,11 +762,110 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
 
+    override fun <Data> onClick(view: View, data: Data?) {
+        super.onClick(view, data)
+        when (view.id) {
+            R.id.iv_send -> { //发送消息
+                if (User.get().isVisitor) {
+                    showMessage("请先登录")
+                    return
+                }
+                val content = binding.etSend.text
+                if (content.isBlank()) {
+                    showMessage("发送内容不能为空")
+                    return
+                }
+                // SSE 仍在 done / 断开 / 关闭之前（streaming=true），拦截发送，不打断当前流
+                if (interceptIfStreaming()) return
+                // 主动发送:本条乐观插入及随后的流式回复都强制滚到最新
+                forceScrollToBottom = true
+                binding.etSend.text = null
+                if (isReplyMode) {
+                    startMsgAction(mCurrentMessage, mCurrentAction, mCurrentQuestionId, text = content.toString().trim())
+                    binding.ivReanswerClose.performClick()
+                } else {
+                    mRealVM.sendMessage(content.toString().trim())
+                }
+            }
+            R.id.iv_agent_memory -> { //对你的理解
+                if (!AppNavigator.checkLoginIntercepted(false)){
+                    OnlineResumeActivity.start(requireActivity(),0)
+                }
+            }
+            R.id.layout_back_check -> { //背景调查
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.sendAction(
+                        content = getString(R.string.company_backcheck),
+                        actionData = AgentMsgAction(
+                            actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND.name,
+                            actionPayloadJson = null,
+                        )
+                    )
+                }
+            }
+            R.id.layout_interview -> { //模拟面试
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.sendAction(
+                        content = getString(R.string.mock_interview),
+                        actionData = AgentMsgAction(
+                            actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
+                            actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = QUICK_ENTRY))
+                        )
+                    )
+                }
+            }
+            R.id.layout_pass -> { //面试通关包
+                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.queryInterviewPassPackageResumeStatus()
+                }
+            }
+            R.id.iv_scroll_bottom -> { //滚动到底部
+                scrollToBottom(true, 0L)
+            }
+            R.id.iv_reanswer_close -> { //重新回答关闭
+                isReplyMode = false
+                binding.layoutReanswer.gone()
+                binding.layoutSend.setCorners(27f)
+                binding.etSend.text = null
+                hideKeyboard(binding.etSend)
+            }
+        }
+    }
+
     private fun initData() {
         if (!User.get().isVisitor) {
             mRealVM.enterSession()
         } else {
             mRealVM.hardPreMsgListCard(insertPreCard())
+        }
+    }
+
+    // 调用拉取增量消息
+    override fun onResume() {
+        super.onResume()
+        if (!User.get().isVisitor) {
+            if (mRealVM.hasInitSession.value == true) {
+                mRealVM.pullMessages(mRealVM.getLastMessageCursor())
+            }
+        }
+        if (!User.get().isVisitor) {
+            mRealVM.queryUnfinishedInterview()
+        }
+        //微信检查拉取消息
+        if (!mRealVM.code.value.isNullOrEmpty()) {
+            Log.d(TAG, "uploadResumeDialog")
+            mRealVM.code.value = null
+            uploadResumePullMessages()
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && !User.get().isVisitor && mRealVM.hasInitSession.value == true) {
+            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
         }
     }
 
