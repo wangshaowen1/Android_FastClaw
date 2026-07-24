@@ -1,7 +1,6 @@
 package com.shiyuan.fastclaw.router
 
 import androidx.appcompat.app.AppCompatActivity
-import com.blankj.utilcode.util.AppUtils
 import com.shiyuan.fastclaw.common.Constant
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.User
@@ -17,13 +16,13 @@ import com.shiyuan.fastclaw.kit.SignUtils
 object AppNavigator {
 
     /**
-     * 强制退出并重启
+     * 强制退出并打开登录
      */
     @JvmStatic
-    fun forceLogoutAndRestart() {
+    fun forceLogoutAndLogin() {
         if (!User.get().isVisitor) {
             SignUtils.signOut()
-            AppUtils.relaunchApp()
+            startLogin(showToast = false)
         }
     }
 

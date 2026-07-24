@@ -12,8 +12,10 @@ import com.google.gson.internal.LinkedTreeMap
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
+import com.nhsd.basic.bus.FlowEventBus
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.common.utils.EncryptUtils
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.ApiConstants
 import com.shiyuan.fastclaw.core.network.apis.AppHeader
@@ -115,6 +117,13 @@ object RetrofitClient {
 
                 val request = requestBuilder.build()
                 chain.proceed(request)
+            }
+            .addInterceptor { chain ->
+                chain.proceed(chain.request()).also { response ->
+                    if (response.code == 401 && !User.get().isVisitor) {
+                        FlowEventBus.postSync(Events.UserChangedEvent(Events.UserChangedEvent.TOKEN_EXPIRED))
+                    }
+                }
             }
             .apply {
                 // 调试模式下添加日志拦截器
