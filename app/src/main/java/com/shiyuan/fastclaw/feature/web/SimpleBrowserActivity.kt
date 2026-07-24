@@ -76,7 +76,9 @@ import com.nhsd.basic.utils.Logger
 import com.nhsd.mattise.Matisse
 import com.shiyuan.fastclaw.core.databinding.backgroundColor
 import com.shiyuan.fastclaw.feature.mine.InterviewReportActivity
+import com.shiyuan.fastclaw.router.AppRouter.startWechatMini
 import com.tencent.bugly.crashreport.CrashReport
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
 import com.umeng.analytics.MobclickAgent
 import org.json.JSONObject
 import java.net.URISyntaxException
@@ -667,6 +669,17 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
                 try {
                     val json = JSONObject(data)
                     WXUtils.customerServiceChat(this@SimpleBrowserActivity, json.optString("customerServiceJmpUrl"), json.optString("enterpriseId"))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            registerHandler("openWechatMini") { data, _ ->
+                try {
+                    val json = JSONObject(data)
+                    val type = json.optString("versionType")
+
+                    startWechatMini(json.optString("originallid"),json.optString("url"),if(type == "release") WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE else  WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
