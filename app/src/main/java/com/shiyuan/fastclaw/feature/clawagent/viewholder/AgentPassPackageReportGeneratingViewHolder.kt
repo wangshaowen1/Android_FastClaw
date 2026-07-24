@@ -20,15 +20,27 @@ import java.util.Locale
  */
 class AgentPassPackageReportGeneratingViewHolder(private val binding: ItemMsgAgentPassPackageReportGeneratingBinding) : RecyclerView.ViewHolder(binding.root) {
 
+    /** 主线程定时刷新步骤状态，报告生成阶段需要每秒推进一次。 */
     private val mainHandler = Handler(Looper.getMainLooper())
+
+    /** 服务端 createTime 解析器，用于计算通关包报告生成已耗时长。 */
     private val createTimeFormat = SimpleDateFormat(CREATE_TIME_FORMAT, Locale.CHINA).apply {
         isLenient = false
     }
+
+    /** 顶部“生成中”主图标旋转动画。 */
     private var rotateGenerateAnimator: ObjectAnimator? = null
+
+    /** 报告创建时间戳，解析失败时为空并按当前时间兜底。 */
     private var createTimeMs: Long? = null
+
+    /** 各步骤 loading 图标对应的旋转动画，按 ImageView 管理便于单独停止。 */
     private val rotateStepAnimators = mutableMapOf<ImageView, ObjectAnimator>()
+
+    /** 当前 item 是否处于可见旋转状态，离屏后会置为 false 并停止刷新。 */
     private var rotating = false
 
+    /** 绑定面试通关包报告生成中卡片，并根据 createTime 刷新步骤完成状态。 */
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
@@ -37,12 +49,14 @@ class AgentPassPackageReportGeneratingViewHolder(private val binding: ItemMsgAge
         refreshStepState()
     }
 
+    /** item 进入窗口时启动主图标和未完成步骤的旋转动画。 */
     fun startRotate() {
         rotating = true
         refreshStepState()
         mainHandler.removeCallbacks(refreshStepRunnable)
         mainHandler.postDelayed(refreshStepRunnable, STEP_REFRESH_INTERVAL_MS)
         if (rotateGenerateAnimator?.isStarted != true) {
+            // 主 loading 图标只保留一个动画实例，避免重复 start 叠加。
             rotateGenerateAnimator = ObjectAnimator.ofFloat(binding.ivGenerating, "rotation", 0f, 360f).apply {
                 duration = 1000L
                 interpolator = LinearInterpolator()
@@ -53,6 +67,7 @@ class AgentPassPackageReportGeneratingViewHolder(private val binding: ItemMsgAge
         }
     }
 
+    /** item 离屏或回收时停止所有旋转动画和定时刷新。 */
     fun stopRotate() {
         rotating = false
         mainHandler.removeCallbacks(refreshStepRunnable)
@@ -81,6 +96,7 @@ class AgentPassPackageReportGeneratingViewHolder(private val binding: ItemMsgAge
             add(binding.ivStep3Icon)
         }
         if (rotating) {
+            // 步骤完成后要移除对应 loading 动画，只保留未完成步骤继续旋转。
             syncStepRotates(unfinishedIcons)
         }
     }
@@ -136,6 +152,7 @@ class AgentPassPackageReportGeneratingViewHolder(private val binding: ItemMsgAge
             ?.let { runCatching { createTimeFormat.parse(it)?.time }.getOrNull() }
     }
 
+    /** 生成中状态的定时刷新任务，仅在 item 可见并旋转时继续自循环。 */
     private val refreshStepRunnable = object : Runnable {
         override fun run() {
             refreshStepState()
@@ -146,9 +163,16 @@ class AgentPassPackageReportGeneratingViewHolder(private val binding: ItemMsgAge
     }
 
     companion object {
+        /** 服务端报告创建时间格式。 */
         private const val CREATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss"
+
+        /** 步骤状态刷新间隔，单位毫秒。 */
         private const val STEP_REFRESH_INTERVAL_MS = 1000L
+
+        /** 第一步展示完成态所需的生成时长，单位秒。 */
         private const val STEP1_DONE_SECONDS = 30L
+
+        /** 第二步展示完成态所需的生成时长，单位秒。 */
         private const val STEP2_DONE_SECONDS = 60L
     }
 }

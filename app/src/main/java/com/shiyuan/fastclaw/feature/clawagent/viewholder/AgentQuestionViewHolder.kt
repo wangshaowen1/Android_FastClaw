@@ -220,6 +220,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
     /** 重新回答展开时用高度动画逐步撑开选项，并固定当前 item 顶部位置。 */
     private fun expandReAnswerOptions(item: ClawAgentMessageInfo) {
         val recyclerView = itemView.parent as? RecyclerView
+        // 记录当前 adapter 位置，动画过程中用它把当前卡片固定在原来的屏幕位置。
         val position = bindingAdapterPosition
         // 记录展开前 item 顶部位置，避免 RecyclerView 贴底时把卡片向上顶。
         val oldTop = itemView.top
@@ -238,6 +239,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         }
         binding.flowOptions.visible()
         binding.tvReanswer.gone()
+        // 标记当前问题卡已进入重新回答态，后续 bind 时直接展示选项而不是“重新回答”按钮。
         item.isReplyAnswer = true
         val layoutManager = recyclerView?.layoutManager as? LinearLayoutManager
         optionRows.forEach { row ->
@@ -245,6 +247,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
                 duration = 160L
                 interpolator = DecelerateInterpolator()
                 addUpdateListener { animator ->
+                    // 同步改变高度和透明度，形成从上往下撑开的展开效果。
                     row.layoutParams = row.layoutParams.apply { height = animator.animatedValue as Int }
                     row.alpha = animator.animatedFraction
                     if (position != RecyclerView.NO_POSITION && recyclerView != null) {

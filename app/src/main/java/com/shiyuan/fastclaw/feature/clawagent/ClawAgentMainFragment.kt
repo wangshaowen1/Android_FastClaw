@@ -562,11 +562,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
+            // IME 底部高度表示键盘占用区域，键盘未显示时通常为 0。
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            // 导航栏高度忽略可见性读取，兼容全屏手势和虚拟按键两种模式。
             val navigationBottom = insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars()).bottom
             // 动画期间不再改变margin，防多次分发触发动画
             if (!hasRunningImeAnimation) {
                 v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    // 根据键盘高度和导航栏高度统一计算输入栏底部间距。
                     bottomMargin = resolveBottomMargin(imeBottom, navigationBottom)
                 }
             }
@@ -576,11 +579,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         ViewCompat.setWindowInsetsAnimationCallback(binding.layoutSend, object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
                 override fun onPrepare(animation: WindowInsetsAnimationCompat) {
                     if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                        // 标记 IME 动画开始，避免普通 insets 回调和动画回调同时改 margin。
                         hasRunningImeAnimation = true
                     }
                 }
 
                 override fun onProgress(insets: WindowInsetsCompat, runningAnimations: MutableList<WindowInsetsAnimationCompat>): WindowInsetsCompat {
+                    // 动画进行中每一帧读取键盘和导航栏高度，让输入栏跟随键盘移动。
                     val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
                     val navigationBottom = insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars()).bottom
                     binding.layoutSend.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -591,6 +596,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
                 override fun onEnd(animation: WindowInsetsAnimationCompat) {
                     if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                        // IME 动画结束后释放锁，后续静态 insets 变化可以正常修正 margin。
                         hasRunningImeAnimation = false
                     }
                 }
@@ -600,12 +606,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
             override fun keyBoardShow(height: Int) {
                 isScrollBottomKeyboardShowing = true
+                // 键盘真正展开后隐藏快捷入口和贴底按钮，避免遮挡输入区域。
                 binding.layoutAction.gone()
                 binding.ivScrollBottom.gone()
             }
 
             override fun keyBoardHide(height: Int) {
                 isScrollBottomKeyboardShowing = false
+                // 键盘收起后恢复贴底按钮判断和快捷入口展示。
                 updateScrollBottomButton()
                 binding.layoutAction.visible()
                 // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
@@ -904,14 +912,19 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         updateInputModeView()
     }
 
+    /**
+     * 提交问题卡动作，统一处理选项、文本输入和弹窗回传的 actionPayload。
+     */
     private fun startMsgAction(item: ClawAgentMessageInfo?, action: CardAction?, queueId: String?, msgGson: String? = null, text: String? = null) {
         if (!interceptIfStreaming()) {
             forceScrollToBottom = true
+            // 外部传入 msgGson/text 时覆盖 actionPayload，用于重新回答、输入框提交等场景。
             action?.actionPayload?.selectedValue = msgGson ?: action.actionPayload.selectedValue
             action?.actionPayload?.selectedText = text ?: action.actionPayload.selectedText
             mRealVM.sendAction(
                 content = action?.text.orEmpty(),
                 actionData = AgentMsgAction(
+                    // 服务端依赖 questionQueueId 和 sourceMessageId 定位本次问题卡动作。
                     questionQueueId = queueId,
                     actionCode = action?.actionCode,
                     sourceMessageId = item?.id,
@@ -991,12 +1004,16 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         return false
     }
 
+    /**
+     * 展示消息通知开关弹窗；已开启通知时不再重复弹出。
+     */
     private fun showNotificationSwitchDialog() {
         if (Config.get().hasEnableNotification()) {
             return
         }
         val dialog = NotificationsSwitchDialog.show(childFragmentManager)
         dialog.clickListener = { flag ->
+            // 先记录用户选择，后续如果开启再接系统通知权限检测。
             Config.get().switchNotification(flag)
             if (flag) {
                 // todo: 检测通知权限
@@ -1004,12 +1021,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
 
+    /**
+     * 展示未完成模拟面试恢复弹窗，支持继续面试或强制结束。
+     */
     private fun showInterviewRecoverDialog(interviewId: String?) {
         InterviewRecoverDialog(requireContext()).showDialog().apply {
             onContinueClickListener = {
+                // 继续面试时携带 recover=true，进入恢复流程。
                 InterviewActivity.start(requireActivity(), interviewId, true)
             }
             onFinishClickListener = {
+                // 用户选择结束时通知服务端强制结束未完成面试。
                 mRealVM.forceFinish(interviewId ?: "") {
                     it?.message?.showToast()
                 }
@@ -1017,6 +1039,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
 
+    /**
+     * 展示虾条不足弹窗，提供邀请好友和充值两个入口。
+     */
     private fun showInsufficientShrimpDialog() {
         ClawAgentInsufficientShrimpDialog.show(childFragmentManager).apply {
             onInviteClick = {
@@ -1028,7 +1053,11 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
 
+    /**
+     * 展示上传简历弹窗，上传成功后把文件信息作为卡片动作提交给小虾。
+     */
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
+        // 记录触发上传的消息，提交成功动作时需要作为 sourceMessageId。
         resumeData = data
         uploadResumeDialog = UploadResumeDialog.show(manager = this.parentFragmentManager,false, { fileInfo ->
             if (fileInfo != null) {

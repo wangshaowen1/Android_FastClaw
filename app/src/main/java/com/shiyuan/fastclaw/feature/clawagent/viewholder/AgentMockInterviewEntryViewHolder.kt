@@ -18,14 +18,21 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  */
 class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInterviewEntryBinding) : RecyclerView.ViewHolder(binding.root) {
 
+    /** 点击“开始模拟面试/上传简历”时回调给 Fragment，由外层决定提交动作或打开上传流程。 */
     var onInterviewStartClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
+
+    /** 人物入场动画是否已播放，避免列表上下滑动复用时重复播放。 */
     private var hasPlayedPersonEnterAnim = false
+
+    /** 当前绑定的消息 ID，换成新卡片时重置入场动画状态。 */
     private var currentMessageId: String? = null
 
+    /** 绑定模拟面试入口卡，并根据简历状态切换按钮文案和可点击状态。 */
     fun bind(item: ClawAgentMessageInfo) {
         val isNewCard = currentMessageId != item.id
         if (isNewCard) {
             currentMessageId = item.id
+            // 新消息卡片首次出现前先放到动画起点，真正附着到窗口后再播放。
             preparePersonEnterAnim()
         }
         val payload = item.metaData?.let {
@@ -42,6 +49,7 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
         binding.tvAction.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
         binding.tvCost.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
         if (null == payload?.resumeId) {
+            // 没有可用简历时，入口按钮改成上传简历，不展示消耗次数。
             binding.tvAction.text = binding.root.context.getString(R.string.str_agent_mock_interview_action_upload)
             binding.tvCost.visibility = View.GONE
         }
@@ -49,10 +57,12 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
             if (enabled) onInterviewStartClickListener(item, action, payload)
         }
         if (isNewCard && binding.root.isAttachedToWindow) {
+            // 已经 attach 的新卡片，post 到下一帧确保起点状态先完成绘制。
             binding.ivPerson.post { startPersonEnterAnim() }
         }
     }
 
+    /** 播放人物从下方淡入的入场动画。 */
     fun startPersonEnterAnim() {
         if (hasPlayedPersonEnterAnim) return
         hasPlayedPersonEnterAnim = true
@@ -70,6 +80,7 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
         }
     }
 
+    /** item 离屏或回收时停止动画，并恢复最终显示状态。 */
     fun stopPersonEnterAnim() {
         binding.ivPerson.apply {
             clearAnimation()
@@ -79,6 +90,7 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
         }
     }
 
+    /** 新卡片绑定时重置人物图到动画起点。 */
     private fun preparePersonEnterAnim() {
         hasPlayedPersonEnterAnim = false
         binding.ivPerson.apply {
@@ -89,7 +101,10 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
     }
 
     companion object {
+        /** 人物入场动画时长，单位毫秒。 */
         private const val PERSON_ENTER_DURATION = 520L
+
+        /** 人物入场动画起始下移距离，单位 dp。 */
         private val PERSON_ENTER_TRANSLATION_Y = 64.dp.toFloat()
     }
 }
