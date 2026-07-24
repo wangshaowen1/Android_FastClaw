@@ -181,10 +181,15 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.rvMsg.adapter = msgAdapter
 
         binding.tvAgentDesc.setOnSingleClickListener {
-            showAgentStatusDialog()
+            if (!AppNavigator.checkLoginIntercepted(false)) {
+                showAgentStatusDialog()
+            }
+
         }
         binding.tvAgentIndex.setOnSingleClickListener {
-            showAgentStatusDialog()
+            if (!AppNavigator.checkLoginIntercepted(false)) {
+                showAgentStatusDialog()
+            }
         }
 
         msgAdapter.onUploadClickAction = { data,reUpload ->

@@ -356,7 +356,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
             on<Events.UserChangedEvent> { event ->
                 if (event.eventType == Events.UserChangedEvent.TOKEN_EXPIRED) {
-                    AppNavigator.forceLogoutAndRestart()
+                    AppNavigator.forceLogoutAndLogin()
                 } else {
                     mRealVM.fetchUserInfo()
                     if (User.get().isLogged) {
