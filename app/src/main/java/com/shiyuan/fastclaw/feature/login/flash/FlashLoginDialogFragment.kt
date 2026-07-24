@@ -35,6 +35,10 @@ import java.lang.ref.WeakReference
 class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, FlashLoginViewModel>(),
     FlashLoginManager.Listener, ShareManager.UmengLoginListener {
 
+    private val shareManager by lazy { activity?.let { ShareManager(it) } }
+
+    private var checkedPolicy = false
+
     companion object {
         private var dialogRef: WeakReference<FlashLoginDialogFragment>? = null
 
@@ -46,6 +50,8 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
          */
         fun show(showToast: Boolean = false, checkedPolicy: Boolean = false) {
             val manager = (topActivity as? FragmentActivity)?.supportFragmentManager ?: return
+            // 外部可能连续触发登录拦截；已有闪验承载弹框时直接复用，避免重复拉起一键登录页
+            dialogRef?.get()?.let { return }
             if (showToast) {
                 showToast(R.string.toast_login_please)
             }
@@ -66,10 +72,6 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
             ActivityUtils.finishActivity(LoginActivity::class.java)
         }
     }
-
-    private val shareManager by lazy { activity?.let { ShareManager(it) } }
-
-    private var checkedPolicy = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,7 +105,6 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
             },
             onOpenFail = { _, _ ->
                 loginByPhoneDialog(true)
-                shouldDismiss()
             },
             onLogin = { token ->
                 mRealVM.loginByFlashMobile(token) {
@@ -158,13 +159,14 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
      * 手机号登录
      */
     private fun loginByPhoneDialog(dismiss: Boolean) {
+        // 首次进入时 hasStartedPhoneLogin 为 false，会继续往下执行；置 true 后用于拦截重复回调
+        FlashLoginManager.finishAuthActivity()
         PhoneNewLoginActivity.start(checkedPolicy = checkedPolicy)
         if (dismiss) {
             isCancelable = true
             shouldDismiss()
         }
     }
-
 
     /**
      * 跳转闪验授权页中的运营商协议或平台协议。
