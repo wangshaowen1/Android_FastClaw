@@ -5,6 +5,7 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.databinding.ViewDataBinding
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
@@ -18,6 +19,8 @@ import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.permissions.PermissionsUtils
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils.showKeyboard
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.manager.AppEvent
@@ -56,6 +59,15 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
 
     /** 语音识别开始时间，用于过滤过短按压。 */
     private var voiceStartElapsedMs = 0L
+
+    /** et_send 是否已经长按进入语音录制。 */
+    private var isEtSendVoicePressing = false
+
+    /** et_send 按下事件副本，长按触发录音时补发 ACTION_DOWN。 */
+    private var etSendVoiceDownEvent: MotionEvent? = null
+
+    /** et_send 长按启动语音录制的延迟任务。 */
+    private var etSendVoiceLongPressRunnable: Runnable? = null
 
     /** 按住说话期间展示的录音底部 Dialog。 */
     private var voiceRecordingDialog: VoiceRecordingDialog? = null
@@ -146,9 +158,11 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
      */
     protected fun updateScrollBottomButton() {
         if (isScrollBottomButtonSuppressed) {
+            // 自动滚到底部期间强制隐藏按钮，避免新增消息时按钮闪一下又消失。
             suppressScrollBottomButton()
             return
         }
+        // 列表有内容、还能继续向下滚、且键盘未展示时，说明用户已经离开底部，需要露出回到底部按钮。
         if ((binding.rvMsg.adapter?.itemCount ?: 0) > 0 && binding.rvMsg.canScrollVertically(1) && !isScrollBottomKeyboardShowing) {
             showScrollBottomButton()
         } else {
@@ -160,10 +174,12 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
      * 从下往上展示“滚动到底部”按钮；已展示时不重复播放动画。
      */
     protected fun showScrollBottomButton() {
+        // 已经是展示态就不重复开启动画，避免滚动监听频繁回调造成抖动。
         if (isScrollBottomButtonShown) return
         isScrollBottomButtonShown = true
         binding.ivScrollBottom.animate().cancel()
         if (binding.ivScrollBottom.visibility != View.VISIBLE) {
+            // 首次展示前先放到下方偏移位置，后续动画再滑回原位。
             binding.ivScrollBottom.translationY = SCROLL_BOTTOM_BUTTON_ANIM_OFFSET.dp.toFloat()
             binding.ivScrollBottom.visible()
         }
@@ -180,6 +196,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     protected fun hideScrollBottomButton() {
         if (!isScrollBottomButtonShown) {
             if (binding.ivScrollBottom.visibility != View.VISIBLE) {
+                // 已经隐藏时兜底重置位移，避免下次显示从错误位置开始。
                 binding.ivScrollBottom.translationY = 0f
             }
             return
@@ -187,6 +204,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         isScrollBottomButtonShown = false
         binding.ivScrollBottom.animate().cancel()
         if (binding.ivScrollBottom.visibility != View.VISIBLE) {
+            // View 已不可见时只重置位移，不再播放隐藏动画。
             binding.ivScrollBottom.translationY = 0f
             return
         }
@@ -195,6 +213,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             .setDuration(SCROLL_BOTTOM_BUTTON_ANIM_DURATION)
             .withEndAction {
                 if (!isScrollBottomButtonShown) {
+                    // 动画结束时再次确认状态，避免显示动画中途切回展示态后被误隐藏。
                     binding.ivScrollBottom.gone()
                     binding.ivScrollBottom.translationY = 0f
                 }
@@ -233,9 +252,12 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     protected fun handleVoicePressTouch(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                // 录音入口需要先做登录拦截，避免未登录时启动语音 SDK。
                 if (AppNavigator.checkLoginIntercepted(false)) return true
+                // 记录按下位置，后续 MOVE 用它判断是否上滑取消。
                 voiceDownRawY = event.rawY
                 voiceCanceling = false
+                // 只有 SDK 启动成功才进入录音触摸态。
                 voiceTouchRecording = startVoiceRecognizing()
                 if (voiceTouchRecording) {
                     // 识别启动成功后再展示录音浮层，避免权限申请或启动失败时出现假录音态。
@@ -244,21 +266,79 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             }
             MotionEvent.ACTION_MOVE -> {
                 if (!voiceTouchRecording) return true
+                // 手指移动时实时更新“上滑取消/松开发送”的状态。
                 updateVoiceCancelState(event.rawY)
                 voiceRecordingDialog?.updateCanceling(voiceCanceling)
             }
             MotionEvent.ACTION_UP -> {
                 if (!voiceTouchRecording) return true
+                // 正常松手：关闭录音浮层，并按当前取消态决定发送或取消。
                 hideVoiceRecordingDialog()
                 finishVoiceRecognizing(canceled = voiceCanceling)
             }
             MotionEvent.ACTION_CANCEL -> {
                 if (!voiceTouchRecording) return true
+                // 系统取消触摸时强制取消本次录音，避免误发送。
                 hideVoiceRecordingDialog()
                 finishVoiceRecognizing(canceled = true)
             }
         }
         return true
+    }
+
+    /** et_send 短按保留输入能力；长按开始录音后，移动和松手交给语音逻辑处理。 */
+    protected fun handleEtSendVoiceTouch(event: MotionEvent): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                // 新一轮按下前先清掉上一次可能残留的延迟任务和事件副本。
+                clearEtSendVoicePress()
+                // 保存 DOWN 事件，长按成立后补发给语音逻辑作为录音起点。
+                etSendVoiceDownEvent = MotionEvent.obtain(event)
+                isEtSendVoicePressing = false
+                etSendVoiceLongPressRunnable = Runnable {
+                    isEtSendVoicePressing = true
+                    // 长按录音开始后输入框不再处理文本输入，先收起键盘并清除焦点。
+                    hideKeyboard(binding.etSend)
+                    binding.etSend.clearFocus()
+                    etSendVoiceDownEvent?.let { downEvent ->
+                        // 复用按住说话逻辑，保证 et_send 长按和语音按钮行为一致。
+                        handleVoicePressTouch(downEvent)
+                    }
+                }.also {
+                    // 使用系统长按时长，避免和普通点击抢事件。
+                    binding.etSend.postDelayed(it, ViewConfiguration.getLongPressTimeout().toLong())
+                }
+                return true
+            }
+            MotionEvent.ACTION_MOVE -> if (isEtSendVoicePressing) {
+                // 长按已经进入录音后，移动事件交给语音逻辑处理上滑取消。
+                return handleVoicePressTouch(event)
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                // 松手/取消时立即清理延迟任务，短按不会误触发录音。
+                clearEtSendVoicePress()
+                if (isEtSendVoicePressing) {
+                    isEtSendVoicePressing = false
+                    // 已经进入录音时，松手事件交给语音逻辑完成发送或取消。
+                    return handleVoicePressTouch(event)
+                }
+                if (event.actionMasked == MotionEvent.ACTION_UP) {
+                    // 未进入录音说明是普通点击，恢复输入框焦点并拉起键盘。
+                    binding.etSend.requestFocus()
+                    showKeyboard(binding.etSend)
+                }
+                return true
+            }
+        }
+        return true
+    }
+
+    /** 清理 et_send 长按录音的延迟任务和按下事件，避免松手后状态残留。 */
+    private fun clearEtSendVoicePress() {
+        etSendVoiceLongPressRunnable?.let { binding.etSend.removeCallbacks(it) }
+        etSendVoiceLongPressRunnable = null
+        etSendVoiceDownEvent?.recycle()
+        etSendVoiceDownEvent = null
     }
 
     /**
@@ -291,6 +371,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
      */
     private fun finishVoiceRecognizing(canceled: Boolean) {
         if (canceled) {
+            // 用户上滑取消时，不允许后续 final/stopped 回调再触发发送。
             shouldSendVoiceResult = false
             pendingVoiceText = null
             voiceStartElapsedMs = 0L
@@ -299,6 +380,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             return
         }
         if (SystemClock.elapsedRealtime() - voiceStartElapsedMs < MIN_VOICE_INPUT_DURATION_MS) {
+            // 录音时间过短按取消处理，避免误触产生空消息或无效请求。
             shouldSendVoiceResult = false
             pendingVoiceText = null
             voiceStartElapsedMs = 0L
@@ -309,8 +391,10 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         // 松开时如果已有 partial 结果先发送；否则等待最终结果或 stopped 回调再兜底处理。
         shouldSendVoiceResult = true
         if (sendVoiceMessage()) {
+            // 已经拿到可发送文本时直接取消识别，避免 final 回调重复发送。
             speechTranscriber?.cancel()
         } else {
+            // 暂无文本时停止识别，等待 SDK 返回 final 或 stopped 再做兜底。
             speechTranscriber?.stop()
         }
         resetVoiceTouchState()
@@ -321,18 +405,22 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
      */
     private fun startVoiceRecognizing(): Boolean {
         if (!PermissionsUtils.checkPermission(requireContext(), Manifest.permission.RECORD_AUDIO)) {
+            // 没有麦克风权限时先申请权限，本次触摸不进入录音态。
             requestRxPermissions(getString(R.string.toast_open_mike_permission), Manifest.permission.RECORD_AUDIO) { granted ->
                 if (!granted) showMessage(getString(R.string.toast_open_mike_permission))
             }
             return false
         }
+        // 开始新一轮识别前清空上一次缓存，避免旧文本被误发送。
         pendingVoiceText = null
         shouldSendVoiceResult = false
         return runCatching {
             val started = ensureSpeechTranscriber().start()
+            // 只在启动成功时记录开始时间，用于松手时判断是否过短。
             voiceStartElapsedMs = if (started) SystemClock.elapsedRealtime() else 0L
             started
         }.getOrElse { throwable ->
+            // 启动失败后清掉时间戳，下一次录音重新计算。
             voiceStartElapsedMs = 0L
             Log.d("startVoiceRecognizing", "start voice recognizing failed", throwable)
             showMessage("语音输入启动失败")
@@ -352,10 +440,12 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             ),
             callback = object : DashFunAsrSpeechTranscriber.Callback {
                 override fun onPartialResult(text: String) {
+                    // partial 先缓存，用户松手时可先用它兜底发送。
                     pendingVoiceText = text
                 }
 
                 override fun onFinalResult(text: String) {
+                    // final 覆盖 partial，保证最终发送优先使用更完整的识别结果。
                     pendingVoiceText = text
                     if (shouldSendVoiceResult) {
                         sendVoiceMessage()
@@ -363,10 +453,12 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
                 }
 
                 override fun onVolumeChanged(rmsDb: Float) {
+                    // 音量回调只驱动录音浮层动画，不参与发送状态判断。
                     voiceRecordingDialog?.updateVolume(rmsDb)
                 }
 
                 override fun onError(message: String) {
+                    // 松手后报错时先尝试发送已缓存文本，没有文本再展示错误。
                     if (shouldSendVoiceResult && !sendVoiceMessage()) {
                         showMessage(message)
                     } else if (!shouldSendVoiceResult) {
@@ -377,6 +469,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
                 }
 
                 override fun onStopped() {
+                    // stop 后仍没有识别文本时提示用户，本次发送流程结束。
                     if (shouldSendVoiceResult && !sendVoiceMessage()) {
                         showMessage("未识别到语音内容")
                     }
@@ -391,7 +484,9 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
      * 将已识别文本交给子类发送，发送成功后清空本次识别缓存。
      */
     private fun sendVoiceMessage(): Boolean {
+        // 空白识别结果不发送，交给 final/stopped 后续回调继续兜底。
         val text = pendingVoiceText?.trim()?.takeIf { it.isNotEmpty() } ?: return false
+        // 发送前清空本轮状态，避免 final/onStopped 再次命中同一段文本。
         pendingVoiceText = null
         shouldSendVoiceResult = false
         voiceStartElapsedMs = 0L
@@ -411,6 +506,8 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
 
     override fun onDestroyView() {
         binding.rvMsg.removeCallbacks(resumeScrollBottomButtonRunnable)
+        clearEtSendVoicePress()
+        isEtSendVoicePressing = false
         releaseVoiceRecognizing()
         super.onDestroyView()
     }
