@@ -6,126 +6,92 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
-import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
-import com.shiyuan.fastclaw.common.adapter.MultiTypeBindingAdapter
-import com.shiyuan.fastclaw.common.adapter.MultiTypeProvider
+import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.databinding.FragmentHomeTreasuryBinding
-import com.shiyuan.fastclaw.databinding.ItemHomeTreasuryCompanyBinding
-import com.shiyuan.fastclaw.databinding.ItemHomeTreasuryMeasureBinding
-import com.shiyuan.fastclaw.databinding.ItemHomeTreasuryPackageBinding
-import com.shiyuan.fastclaw.databinding.ItemHomeTreasurySalaryBinding
-import com.shiyuan.fastclaw.databinding.ItemHomeTreasuryStandardBinding
-import com.shiyuan.fastclaw.feature.report.ItemHomeTreasuryCardVM
+import com.shiyuan.fastclaw.databinding.ItemHomeTreasuryBinding
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 
 class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, HomeReportViewModel>() {
 
-    private val treasuryAdapter = MultiTypeBindingAdapter<ItemHomeTreasuryCardVM>(
-        emptyList(),
-        object : MultiTypeProvider<ItemHomeTreasuryCardVM> {
-            override fun getItemType(position: Int, item: ItemHomeTreasuryCardVM?): Int {
-                return requireNotNull(item).itemType
-            }
-
-            override fun getLayoutId(viewType: Int): Int {
-                return when (viewType) {
-                    ItemHomeTreasuryCardVM.TYPE_COMPANY -> R.layout.item_home_treasury_company
-                    ItemHomeTreasuryCardVM.TYPE_MEASURE -> R.layout.item_home_treasury_measure
-                    ItemHomeTreasuryCardVM.TYPE_SALARY -> R.layout.item_home_treasury_salary
-                    ItemHomeTreasuryCardVM.TYPE_INTERVIEW -> R.layout.item_home_treasury_standard
-                    ItemHomeTreasuryCardVM.TYPE_PACKAGE -> R.layout.item_home_treasury_package
-                    else -> error("Unsupported home treasury card type: $viewType")
+    private val treasuryAdapter =
+        SingleBindingAdapter<ItemHomeTreasuryBinding, JobAgentModuleData>(
+            R.layout.item_home_treasury,
+            emptyList()
+        ) { itemBinding, _, item ->
+            itemBinding.root.setBackgroundResource(item.localBackgroundRes())
+            itemBinding.ivIcon.setImageResource(item.localIconRes())
+            itemBinding.tvTitle.text = item.title
+            itemBinding.tvFree.visibility = if (item.free == true) View.VISIBLE else View.GONE
+            itemBinding.tvDescription.text = item.description
+            itemBinding.tvBenefit.text = buildBenefitText(item.benefit.orEmpty())
+            itemBinding.root.setOnClickListener {
+                when (item.reportType) {
+                    JobAgentModuleData.TYPE_COMPANY_RESEARCH -> onCompanyCardClick()
+                    JobAgentModuleData.TYPE_RESUME_REJECTION_ANALYSIS -> onMeasureCardClick()
+                    JobAgentModuleData.TYPE_SALARY_VALUATION -> onSalaryCardClick()
+                    JobAgentModuleData.TYPE_MOCK_INTERVIEW -> onInterviewCardClick()
+                    JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> onPackageCardClick()
                 }
             }
         }
-    ) { itemBinding, _, _ ->
-        when (itemBinding) {
-            is ItemHomeTreasuryCompanyBinding -> {
-                itemBinding.tvDaily.text = buildHighlightText(
-                    R.string.home_treasury_daily_free2,
-                    "3",
-                    "10"
-                )
-                itemBinding.root.setOnClickListener {
-                    onCompanyCardClick()
-                }
-            }
-            is ItemHomeTreasuryMeasureBinding -> {
-                itemBinding.tvDaily.text = buildHighlightText(
-                    R.string.home_treasury_daily_free3,
-                    "0.99"
-                )
-                itemBinding.root.setOnClickListener {
-                    onMeasureCardClick()
-                }
-            }
-            is ItemHomeTreasurySalaryBinding -> {
-                itemBinding.tvDaily.text = buildHighlightText(
-                    R.string.home_treasury_daily_free3,
-                    "0.99"
-                )
-                itemBinding.root.setOnClickListener {
-                    onSalaryCardClick()
-                }
-            }
-            is ItemHomeTreasuryStandardBinding -> {
-                itemBinding.tvDaily.text = buildHighlightText(
-                    R.string.home_treasury_shrimp_chip2,
-                    "40"
-                )
-                itemBinding.root.setOnClickListener {
-                    onInterviewCardClick()
-                }
-            }
-            is ItemHomeTreasuryPackageBinding -> {
-                itemBinding.root.setOnClickListener {
-                    onPackageCardClick()
-                }
-            }
-
-        }
-    }
 
     override fun onPrepareView() {
         super.onPrepareView()
         initTreasuryCards()
+        observeJobAgentModuleList()
         observePassPackageResumeStatus()
+        mRealVM.queryJobAgentModuleList()
     }
 
     private fun initTreasuryCards() {
         binding.rvTreasuryCards.adapter = treasuryAdapter
-        treasuryAdapter.submitList(createTreasuryCards())
     }
 
-    private fun createTreasuryCards(): List<ItemHomeTreasuryCardVM> {
-        return listOf(
-            ItemHomeTreasuryCardVM(ItemHomeTreasuryCardVM.TYPE_COMPANY),
-            ItemHomeTreasuryCardVM(ItemHomeTreasuryCardVM.TYPE_MEASURE),
-            ItemHomeTreasuryCardVM(ItemHomeTreasuryCardVM.TYPE_SALARY),
-            ItemHomeTreasuryCardVM(ItemHomeTreasuryCardVM.TYPE_INTERVIEW),
-            ItemHomeTreasuryCardVM(ItemHomeTreasuryCardVM.TYPE_PACKAGE))
+    private fun observeJobAgentModuleList() {
+        mRealVM.jobAgentModuleList.observe(this) { modules ->
+            treasuryAdapter.submitList(modules.filter { module -> module.isSupported() })
+        }
     }
 
-    private fun buildHighlightText(textRes: Int, vararg targets: String): CharSequence {
-        val text = getString(textRes)
+    private fun JobAgentModuleData.isSupported(): Boolean {
+        return reportType in SUPPORTED_REPORT_TYPES
+    }
+
+    private fun JobAgentModuleData.localIconRes(): Int {
+        return when (reportType) {
+            JobAgentModuleData.TYPE_COMPANY_RESEARCH -> R.drawable.img_home_treasury_company
+            JobAgentModuleData.TYPE_RESUME_REJECTION_ANALYSIS -> R.drawable.img_home_treasury_measure
+            JobAgentModuleData.TYPE_SALARY_VALUATION -> R.drawable.img_home_treasury_salary
+            JobAgentModuleData.TYPE_MOCK_INTERVIEW -> R.drawable.img_home_treasury_interview
+            JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> R.drawable.img_home_treasury_package
+            else -> 0
+        }
+    }
+
+    private fun JobAgentModuleData.localBackgroundRes(): Int {
+        return when (reportType) {
+            JobAgentModuleData.TYPE_MOCK_INTERVIEW,
+            JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> R.drawable.bg_home_treasury_card2
+            else -> R.drawable.bg_home_treasury_card
+        }
+    }
+
+    private fun buildBenefitText(text: String): CharSequence {
         val color = resources.getColor(R.color.color_2f6bff)
         return SpannableString(text).apply {
-            targets.forEach { target ->
-                val start = text.indexOf(target)
-                if (start >= 0) {
-                    setSpan(
-                        ForegroundColorSpan(color),
-                        start,
-                        start + target.length,
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                }
+            BENEFIT_NUMBER_REGEX.findAll(text).forEach { match ->
+                setSpan(
+                    ForegroundColorSpan(color),
+                    match.range.first,
+                    match.range.last + 1,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
             }
         }
     }
@@ -174,5 +140,16 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
         }
+    }
+
+    companion object {
+        private val BENEFIT_NUMBER_REGEX = Regex("""\d+(?:\.\d+)?""")
+        private val SUPPORTED_REPORT_TYPES = setOf(
+            JobAgentModuleData.TYPE_COMPANY_RESEARCH,
+            JobAgentModuleData.TYPE_RESUME_REJECTION_ANALYSIS,
+            JobAgentModuleData.TYPE_SALARY_VALUATION,
+            JobAgentModuleData.TYPE_MOCK_INTERVIEW,
+            JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT,
+        )
     }
 }

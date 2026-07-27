@@ -102,6 +102,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.InterviewReportListItem
 import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
 import com.shiyuan.fastclaw.core.network.apis.response.InviteStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
+import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
@@ -542,6 +543,9 @@ interface ApiService {
      */
     @POST(ApiConstants.JOB_AGENT_CONVERSATION_QUERY)
     suspend fun queryConversation(@Body body: ConversationQueryBody): ApiResponse<ConversationQueryData?>
+
+    @POST(ApiConstants.JOB_AGENT_MODULE_LIST_QUERY)
+    suspend fun queryJobAgentModuleList(): ApiResponse<List<JobAgentModuleData>?>
 
     /**
      * 提交卡片或按钮动作（求职 Agent）
