@@ -449,10 +449,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     /**
      * 结束或取消语音识别；正常结束时等待最终识别结果并提交。
      */
-    private fun finishVoiceRecognizing(
-        canceled: Boolean,
-        endReason: String = InterviewViewModel.ANSWER_END_USER_SUBMIT,
-    ) {
+    private fun finishVoiceRecognizing(canceled: Boolean, endReason: String = InterviewViewModel.ANSWER_END_USER_SUBMIT) {
         if (canceled) {
             shouldSendVoiceResult = false
             pendingVoiceText = null
