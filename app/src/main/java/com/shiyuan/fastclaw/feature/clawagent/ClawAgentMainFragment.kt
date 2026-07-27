@@ -20,7 +20,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.alibaba.fastjson.JSON
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ScreenUtils
 import com.blankj.utilcode.util.SpanUtils
@@ -37,7 +36,6 @@ import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
 import com.shiyuan.fastclaw.common.Constants.MOCK_INTERVIEW_RESULT_URL
 import com.shiyuan.fastclaw.common.Constants.MOCK_PASS_PACKET_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
-import com.shiyuan.fastclaw.common.ext.invisible
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
@@ -53,11 +51,11 @@ import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
+import com.shiyuan.fastclaw.core.network.apis.response.AgentQuickType
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
-import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ATTRIBUTE_GROUP_JOB_STATUS
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_MODEL_FAILED
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_NOT_COMPANY
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_POINTS_INSUFFICIENT
@@ -66,6 +64,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientAction
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentInsufficientShrimpDialog
 import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentStatusDialog
+import com.shiyuan.fastclaw.feature.clawagent.dialog.NotificationsSwitchDialog
 import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
 import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
 import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
@@ -84,8 +83,6 @@ import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
-import com.shiyuan.fastclaw.wxapi.WXEntryActivity
-import com.xiaomi.push.co
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -100,6 +97,8 @@ import kotlin.math.abs
 class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
 
     private val msgAdapter by lazy { ClawAgentMsgAdapter() }
+
+    private val actionAdapter by lazy { ClawQuickActionAdapter(::onQuickClick) }
 
     /** 消息 item 之间的基础底部间距，同时作为贴底判断的容差。 */
     private val messageItemBottomSpace = 12.dp
@@ -179,6 +178,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         })
         binding.rvMsg.adapter = msgAdapter
+        binding.rvAction.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        binding.rvAction.adapter = actionAdapter
+        actionAdapter.submitList(ClawQuickActionAdapter.defaultItems())
 
         binding.tvAgentDesc.setOnSingleClickListener {
             if (!AppNavigator.checkLoginIntercepted(false)) {
@@ -606,7 +608,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             override fun keyBoardShow(height: Int) {
                 isScrollBottomKeyboardShowing = true
                 // 键盘真正展开后隐藏快捷入口和贴底按钮，避免遮挡输入区域。
-                binding.layoutAction.gone()
+                binding.rvAction.gone()
                 binding.ivScrollBottom.gone()
             }
 
@@ -614,7 +616,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 isScrollBottomKeyboardShowing = false
                 // 键盘收起后恢复贴底按钮判断和快捷入口展示。
                 updateScrollBottomButton()
-                binding.layoutAction.visible()
+                binding.rvAction.visible()
                 // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
                 binding.layoutSend.postDelayed({
                     hasRunningImeAnimation = false
@@ -761,8 +763,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
              */
             on<Events.CompanyInterviewEvent> { event ->
                 when (event.type){
-                    0 ->  binding.layoutBackCheck.performClick()
-                    else ->  binding.layoutInterview.performClick()
+                    0 -> onQuickClick(AgentQuickType.COMPANY_BACKGROUND)
+                    else -> onQuickClick(AgentQuickType.MOCK_INTERVIEW)
                 }
             }
 
@@ -805,36 +807,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     OnlineResumeActivity.start(requireActivity(),0)
                 }
             }
-            R.id.layout_back_check -> { //背景调查
-                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                    forceScrollToBottom = true
-                    mRealVM.sendAction(
-                        content = getString(R.string.company_backcheck),
-                        actionData = AgentMsgAction(
-                            actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND.name,
-                            actionPayloadJson = null,
-                        )
-                    )
-                }
-            }
-            R.id.layout_interview -> { //模拟面试
-                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                    forceScrollToBottom = true
-                    mRealVM.sendAction(
-                        content = getString(R.string.mock_interview),
-                        actionData = AgentMsgAction(
-                            actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
-                            actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = QUICK_ENTRY))
-                        )
-                    )
-                }
-            }
-            R.id.layout_pass -> { //面试通关包
-                if(!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                    forceScrollToBottom = true
-                    mRealVM.queryInterviewPassPackageResumeStatus()
-                }
-            }
             R.id.iv_scroll_bottom -> { //滚动到底部
                 scrollToBottom(true, 0L)
             }
@@ -844,6 +816,45 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 binding.layoutSend.setCorners(27f)
                 binding.etSend.text = null
                 hideKeyboard(binding.etSend)
+            }
+        }
+    }
+
+    private fun onQuickClick(type: AgentQuickType) {
+        if (type == AgentQuickType.COMPANY_BACKGROUND) { //公司背调
+            if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.sendAction(
+                    content = getString(R.string.company_backcheck),
+                    actionData = AgentMsgAction(
+                        actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND.name,
+                        actionPayloadJson = null,
+                    )
+                )
+            }
+        } else if (type == AgentQuickType.MOCK_INTERVIEW) { //模拟面试
+            if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.sendAction(
+                    content = getString(R.string.mock_interview),
+                    actionData = AgentMsgAction(
+                        actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
+                        actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = QUICK_ENTRY))
+                    )
+                )
+            }
+        } else if (type == AgentQuickType.RESUME_CHECK) { //测简历
+            if (!AppNavigator.checkLoginIntercepted(false)) {
+                SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL, title = getString(R.string.home_treasury_resume_check))
+            }
+        } else if (type == AgentQuickType.SALARY_CHECK) { //测薪资
+            if (!AppNavigator.checkLoginIntercepted(false)) {
+                SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
+            }
+        } else if (type == AgentQuickType.PASS_PACKAGE) { //面试通关包
+            if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                forceScrollToBottom = true
+                mRealVM.queryInterviewPassPackageResumeStatus()
             }
         }
     }

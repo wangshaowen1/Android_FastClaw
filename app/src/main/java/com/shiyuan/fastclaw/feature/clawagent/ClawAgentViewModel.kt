@@ -129,6 +129,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 查询线上简历单个普通属性结果 */
     val jobStatusResult = MutableLiveData<OnlineResumeAttributeData?>()
 
+    /** 模拟面试启动结果，用于页面进入面试房间或处理启动失败状态。 */
     val interviewStartResult = MutableLiveData<MockInterviewStartData?>()
 
     /** 查询可恢复未结束模拟面试结果 */
