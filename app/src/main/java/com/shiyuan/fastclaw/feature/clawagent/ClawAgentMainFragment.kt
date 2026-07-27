@@ -320,7 +320,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 )
             }
         }
-
         // 补问卡选项点击：actionCode 取自 payload option（如 QUESTION_OPTION_SUBMIT），actionPayload 原样回传
         msgAdapter.onQuestionOptionClickAction = { item, option, queueId ->
             if (!interceptIfStreaming()) {
@@ -500,7 +499,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 onTrackingEvent(payload = payload)
             }
         }
-
         // 无感知加载：向上滚动到接近顶部时提前预取更早历史（DiffUtil 顶部静默插入，不出现下拉转圈）
         binding.rvMsg.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
@@ -535,7 +533,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             false // 不影响 RecyclerView 正常滑动
         }
-
         // 下拉加载更早历史消息（顶部下拉）
         binding.srlMsg.setOnRefreshListener {
             // 进入失败，下拉调用进入会话
@@ -543,17 +540,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 mRealVM.enterSession()
                 return@setOnRefreshListener
             }
-//            mRealVM.loadOlderHistory()
+            //mRealVM.loadOlderHistory()
         }
-
         binding.ivAgentAvatar.setOnClickListener {
-//            mRealVM.testPopupMsg()
+            //mRealVM.testPopupMsg()
         }
-
         binding.etSend.doAfterTextChanged {
             updateInputModeView()
         }
-
         binding.ivInputMode.setOnClickListener {
             isVoiceInputMode = !isVoiceInputMode
             if (isVoiceInputMode) {
@@ -561,11 +555,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             updateInputModeView()
         }
-
         binding.tvVoicePress.setOnTouchListener { _, event ->
             handleVoicePressTouch(event)
         }
-
+        binding.etSend.setOnTouchListener { _, event ->
+            handleEtSendVoiceTouch(event)
+        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
             // IME 底部高度表示键盘占用区域，键盘未显示时通常为 0。
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
@@ -607,7 +602,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
         )
-
         SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
             override fun keyBoardShow(height: Int) {
                 isScrollBottomKeyboardShowing = true

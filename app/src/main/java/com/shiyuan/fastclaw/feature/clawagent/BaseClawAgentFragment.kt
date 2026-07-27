@@ -5,6 +5,7 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.databinding.ViewDataBinding
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
@@ -18,6 +19,8 @@ import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.common.permissions.PermissionsUtils
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.common.speech.DashFunAsrSpeechTranscriber
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils.showKeyboard
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.manager.AppEvent
@@ -56,6 +59,15 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
 
     /** 语音识别开始时间，用于过滤过短按压。 */
     private var voiceStartElapsedMs = 0L
+
+    /** et_send 是否已经长按进入语音录制。 */
+    private var isEtSendVoicePressing = false
+
+    /** et_send 按下事件副本，长按触发录音时补发 ACTION_DOWN。 */
+    private var etSendVoiceDownEvent: MotionEvent? = null
+
+    /** et_send 长按启动语音录制的延迟任务。 */
+    private var etSendVoiceLongPressRunnable: Runnable? = null
 
     /** 按住说话期间展示的录音底部 Dialog。 */
     private var voiceRecordingDialog: VoiceRecordingDialog? = null
@@ -233,9 +245,12 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     protected fun handleVoicePressTouch(event: MotionEvent): Boolean {
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                // 录音入口需要先做登录拦截，避免未登录时启动语音 SDK。
                 if (AppNavigator.checkLoginIntercepted(false)) return true
+                // 记录按下位置，后续 MOVE 用它判断是否上滑取消。
                 voiceDownRawY = event.rawY
                 voiceCanceling = false
+                // 只有 SDK 启动成功才进入录音触摸态。
                 voiceTouchRecording = startVoiceRecognizing()
                 if (voiceTouchRecording) {
                     // 识别启动成功后再展示录音浮层，避免权限申请或启动失败时出现假录音态。
@@ -244,21 +259,79 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             }
             MotionEvent.ACTION_MOVE -> {
                 if (!voiceTouchRecording) return true
+                // 手指移动时实时更新“上滑取消/松开发送”的状态。
                 updateVoiceCancelState(event.rawY)
                 voiceRecordingDialog?.updateCanceling(voiceCanceling)
             }
             MotionEvent.ACTION_UP -> {
                 if (!voiceTouchRecording) return true
+                // 正常松手：关闭录音浮层，并按当前取消态决定发送或取消。
                 hideVoiceRecordingDialog()
                 finishVoiceRecognizing(canceled = voiceCanceling)
             }
             MotionEvent.ACTION_CANCEL -> {
                 if (!voiceTouchRecording) return true
+                // 系统取消触摸时强制取消本次录音，避免误发送。
                 hideVoiceRecordingDialog()
                 finishVoiceRecognizing(canceled = true)
             }
         }
         return true
+    }
+
+    /** et_send 短按保留输入能力；长按开始录音后，移动和松手交给语音逻辑处理。 */
+    protected fun handleEtSendVoiceTouch(event: MotionEvent): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                // 新一轮按下前先清掉上一次可能残留的延迟任务和事件副本。
+                clearEtSendVoicePress()
+                // 保存 DOWN 事件，长按成立后补发给语音逻辑作为录音起点。
+                etSendVoiceDownEvent = MotionEvent.obtain(event)
+                isEtSendVoicePressing = false
+                etSendVoiceLongPressRunnable = Runnable {
+                    isEtSendVoicePressing = true
+                    // 长按录音开始后输入框不再处理文本输入，先收起键盘并清除焦点。
+                    hideKeyboard(binding.etSend)
+                    binding.etSend.clearFocus()
+                    etSendVoiceDownEvent?.let { downEvent ->
+                        // 复用按住说话逻辑，保证 et_send 长按和语音按钮行为一致。
+                        handleVoicePressTouch(downEvent)
+                    }
+                }.also {
+                    // 使用系统长按时长，避免和普通点击抢事件。
+                    binding.etSend.postDelayed(it, ViewConfiguration.getLongPressTimeout().toLong())
+                }
+                return true
+            }
+            MotionEvent.ACTION_MOVE -> if (isEtSendVoicePressing) {
+                // 长按已经进入录音后，移动事件交给语音逻辑处理上滑取消。
+                return handleVoicePressTouch(event)
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                // 松手/取消时立即清理延迟任务，短按不会误触发录音。
+                clearEtSendVoicePress()
+                if (isEtSendVoicePressing) {
+                    isEtSendVoicePressing = false
+                    // 已经进入录音时，松手事件交给语音逻辑完成发送或取消。
+                    return handleVoicePressTouch(event)
+                }
+                if (event.actionMasked == MotionEvent.ACTION_UP) {
+                    // 未进入录音说明是普通点击，恢复输入框焦点并拉起键盘。
+                    binding.etSend.requestFocus()
+                    showKeyboard(binding.etSend)
+                }
+                return true
+            }
+        }
+        return true
+    }
+
+    /** 清理 et_send 长按录音的延迟任务和按下事件，避免松手后状态残留。 */
+    private fun clearEtSendVoicePress() {
+        etSendVoiceLongPressRunnable?.let { binding.etSend.removeCallbacks(it) }
+        etSendVoiceLongPressRunnable = null
+        etSendVoiceDownEvent?.recycle()
+        etSendVoiceDownEvent = null
     }
 
     /**
@@ -411,6 +484,8 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
 
     override fun onDestroyView() {
         binding.rvMsg.removeCallbacks(resumeScrollBottomButtonRunnable)
+        clearEtSendVoicePress()
+        isEtSendVoicePressing = false
         releaseVoiceRecognizing()
         super.onDestroyView()
     }
