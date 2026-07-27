@@ -21,7 +21,7 @@ class InterviewFinishDialog(context: Context) : CenterPopupView(context) {
 
     override fun onCreate() {
         mBinding = DialogInterviewFinishBinding.bind(popupImplView)
-        mBinding.sbBack.setOnSingleClickListener {
+        mBinding.sbContinue.setOnSingleClickListener {
             dismiss()
         }
         mBinding.tvFinish.setOnSingleClickListener {

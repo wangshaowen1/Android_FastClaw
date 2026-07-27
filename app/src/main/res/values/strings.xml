@@ -1157,8 +1157,8 @@
     <!-- 模拟面试 -->
     <string name="interview_finish_dialog_title">是否立即结束当前面试？</string>
     <string name="interview_finish_dialog_message">已消耗虾条不会退回</string>
-    <string name="interview_finish_dialog_back">回到面试</string>
-    <string name="interview_finish_dialog_finish_now">立即结束</string>
+    <string name="interview_finish_dialog_back">继续面试</string>
+    <string name="interview_finish_dialog_finish_now">退出</string>
     <string name="interview_recover_dialog_title">你有一场未完成的面试</string>
     <string name="interview_recover_dialog_message">是否继续？</string>
     <string name="interview_recover_dialog_continue">继续面试</string>
@@ -1184,6 +1184,7 @@
     <string name="interview_target_job_screenshot_step_2">直接截图，或点击右上角分享按钮</string>
     <string name="interview_target_job_screenshot_step_3_no">3</string>
     <string name="interview_target_job_screenshot_step_3">保存图片</string>
+    <string name="interview_finish">结束面试</string>
 
 </resources>
 

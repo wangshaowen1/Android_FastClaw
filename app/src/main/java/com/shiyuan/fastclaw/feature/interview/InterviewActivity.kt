@@ -159,6 +159,9 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         binding.ivBack.setOnSingleClickListener {
             showFinishDialog()
         }
+        binding.tvFinish.setOnSingleClickListener {
+            showFinishDialog()
+        }
         binding.btnTargetJob.setOnSingleClickListener {
             requestAlbumPermission()
         }
