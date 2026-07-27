@@ -878,11 +878,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         if (!User.get().isVisitor) {
             mRealVM.queryUnfinishedInterview()
         }
-        //微信检查拉取消息
         if (!mRealVM.code.value.isNullOrEmpty()) {
-            Log.d(TAG, "uploadResumeDialog")
-            mRealVM.code.value = null
-            uploadResumePullMessages()
+            Log.d("uploadResumeDialog", mRealVM.code.value.toString())
+            uploadResumeDialog?.dismissAllowingStateLoss()
+            mRealVM.queryCodeResumeBinding(mRealVM.code.value ?:"") { resume ->
+                uploadResumePushMessages(resume?.resumeUrl?:"",resume?.resumeFileName ?:"")
+            }
         }
     }
 
