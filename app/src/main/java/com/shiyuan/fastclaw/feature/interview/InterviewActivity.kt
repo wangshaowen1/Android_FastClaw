@@ -395,6 +395,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      * 切换作答录音状态：未录音时开始识别，录音中时结束并提交识别文本。
      */
     private fun toggleAnswerRecording() {
+        // 计划生成中或上一题已提交后等待新题时，不允许再次开始作答。
         if (mRealVM.roomState.value == InterviewRoomState.PLAN_GENERATING ||
             mRealVM.roomState.value == InterviewRoomState.ANSWER_SUBMITTED) return
         if (answerRecording) {
@@ -406,6 +407,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         }
         if (startVoiceRecognizing()) {
             if (!mRealVM.startAnswer()) {
+                // ViewModel 拒绝开始作答时同步取消 ASR，避免只录音不提交。
                 speechTranscriber?.cancel()
                 return
             }
@@ -427,6 +429,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             }
             return false
         }
+        // 开始用户作答前立即屏蔽并停止面试官播报，避免 TTS 声音被 ASR 收进去。
         suppressTtsForAnswer = true
         autoStartAnswerAfterTts = false
         ttsPlayer?.stopBlocking()
@@ -435,6 +438,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         pendingTtsStreamTexts.clear()
         pendingTtsStreamFinish = false
         pendingVoiceText = null
+        // 清空上一轮 ASR 缓冲和列表草稿，保证本次回答从空文本开始。
         resetVoiceTextBuffer()
         mRealVM.clearUserAnswerDraft()
         shouldSendVoiceResult = false
@@ -454,6 +458,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun finishVoiceRecognizing(canceled: Boolean, endReason: String = InterviewViewModel.ANSWER_END_USER_SUBMIT) {
         if (canceled) {
+            // 取消录音不提交任何已识别内容，同时清掉列表里的用户草稿。
             shouldSendVoiceResult = false
             pendingVoiceText = null
             resetVoiceTextBuffer()
@@ -463,11 +468,14 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             resetVoiceRecognizingState()
             return
         }
+        // 正常结束时允许 ASR final/stopped 回调补交最终文本。
         shouldSendVoiceResult = true
         pendingAnswerEndReason = endReason
         if (sendVoiceMessage(endReason)) {
+            // 已经有可提交文本时直接取消 ASR，避免后续回调重复提交。
             speechTranscriber?.cancel()
         } else {
+            // 当前还没有完整文本时停止识别，等待 onFinalResult/onStopped 返回最后结果。
             speechTranscriber?.stop()
         }
         resetVoiceRecognizingState()
@@ -490,6 +498,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
                 override fun onFinalResult(text: String) {
                     if (isDestroyed) return
+                    // final 片段可能和 partial 重叠，先合并去重再决定是否提交。
                     commitVoiceFinalText(text)
                     if (shouldSendVoiceResult) {
                         sendVoiceMessage(pendingAnswerEndReason)
@@ -498,6 +507,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
                 override fun onError(message: String) {
                     if (isDestroyed) return
+                    // 如果用户已点击结束，优先尝试提交已有文本；没有文本时再提示错误。
                     if (shouldSendVoiceResult && !sendVoiceMessage(pendingAnswerEndReason)) {
                         showMessage(message)
                     } else if (!shouldSendVoiceResult) {
@@ -510,6 +520,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
 
                 override fun onStopped() {
                     if (isDestroyed) return
+                    // stop 回调是正常结束兜底：仍没有识别文本时提示无内容。
                     if (shouldSendVoiceResult && !sendVoiceMessage(pendingAnswerEndReason)) {
                         showMessage(getString(R.string.interview_voice_no_content))
                     }
@@ -537,8 +548,10 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                 override fun onCompleted() {
                     ttsPlaying = false
                     ttsStreaming = false
+                    // 当前播报结束后优先续播排队文本，避免连续服务端消息被截断。
                     if (playPendingTtsStreamIfNeeded()) return
                     if (finishAfterTts) {
+                        // 面试结束语播完后再关闭页面。
                         finish()
                     } else {
                         startAnswerAfterTtsIfNeeded()
@@ -552,6 +565,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
                     pendingTtsStreamFinish = false
                     Log.d(TAG, "tts play failed: $message")
                     if (finishAfterTts) {
+                        // 结束流程里 TTS 失败也要退出，避免页面卡在结束等待态。
                         finish()
                     } else {
                         showMessage(message)
@@ -567,6 +581,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         if (!autoStartAnswerAfterTts) return
         autoStartAnswerAfterTts = false
         if (answerRecording) return
+        // 只有服务端已经切到等待作答时，才自动打开录音。
         if (mRealVM.roomState.value != InterviewRoomState.WAITING_USER_ANSWER) return
         toggleAnswerRecording()
     }
@@ -576,6 +591,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun handleTtsStreamDelta(text: String) {
         if (text.isBlank()) return
+        // TTS delta 先入队，再由 flush 统一写入当前 streaming 会话。
         pendingTtsStreamTexts.offer(text)
         flushPendingTtsStreamTexts()
     }
@@ -587,11 +603,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         if (pendingTtsStreamTexts.isEmpty()) return
         val player = ensureTtsPlayer()
         if (!ttsStreaming) {
+            // 没有流式会话时先启动，启动成功后才能追加文本。
             ttsPlaying = player.startStreaming()
             ttsStreaming = ttsPlaying
         }
         if (ttsStreaming) {
             while (pendingTtsStreamTexts.isNotEmpty()) {
+                // 一次性排空待播文本，减少多段服务端消息之间的播报断裂。
                 player.appendStreamingText(pendingTtsStreamTexts.poll())
             }
         }
@@ -602,11 +620,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun handleTtsStreamFinish() {
         if (ttsStreaming) {
+            // 当前流式会话正在写入时，直接通知播放器输入结束。
             ensureTtsPlayer().finishStreaming()
             ttsStreaming = false
             return
         }
         if (ttsPlaying || pendingTtsStreamTexts.isNotEmpty()) {
+            // 播放中收到 finish，等当前音频播完并续播排队文本后再结束流。
             pendingTtsStreamFinish = true
         }
     }
@@ -618,11 +638,13 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         if (pendingTtsStreamTexts.isEmpty()) return false
         flushPendingTtsStreamTexts()
         if (!ttsStreaming) {
+            // 启动流式失败时丢弃这批待播文本，避免下次完成回调反复重试。
             pendingTtsStreamTexts.clear()
             pendingTtsStreamFinish = false
             return false
         }
         if (pendingTtsStreamFinish) {
+            // 之前已收到 finish 信号，待播文本写完后立即关闭当前流输入。
             ensureTtsPlayer().finishStreaming()
             ttsStreaming = false
             pendingTtsStreamFinish = false
@@ -635,6 +657,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun sendVoiceMessage(endReason: String = pendingAnswerEndReason): Boolean {
         val text = buildVoiceText().ifBlank { pendingVoiceText.orEmpty() }.trim().takeIf { it.isNotEmpty() } ?: return false
+        // 提交成功前先清空端侧状态，避免 ASR 后续回调把同一段文本重复提交。
         pendingVoiceText = null
         resetVoiceTextBuffer()
         shouldSendVoiceResult = false
@@ -647,6 +670,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      * 更新 ASR 临时结果，并立即刷新用户作答草稿。
      */
     private fun updateVoicePartialText(text: String) {
+        // 非录音/非等待提交状态下忽略 ASR 回调，防止旧识别器回写列表。
         if (!answerRecording && !shouldSendVoiceResult) return
         voicePartialText = text.trim()
         updatePendingVoiceDraft()
@@ -656,9 +680,11 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      * 合并 ASR 最终片段，避免 partial 和 final 重复显示。
      */
     private fun commitVoiceFinalText(text: String) {
+        // 非录音/非等待提交状态下忽略 final，避免取消后又插入草稿。
         if (!answerRecording && !shouldSendVoiceResult) return
         val finalText = text.trim()
         if (finalText.isEmpty()) return
+        // final 与历史 final/partial 可能有重叠，按包含关系合并成一份完整文本。
         voiceFinalText = when {
             voiceFinalText.isEmpty() -> finalText
             finalText == voiceFinalText -> voiceFinalText
@@ -676,6 +702,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     private fun buildVoiceText(): String {
         if (voiceFinalText.isEmpty()) return voicePartialText
         if (voicePartialText.isEmpty()) return voiceFinalText
+        // partial 可能是 final 的延长或重复片段，优先保留更完整的一侧。
         return when {
             voicePartialText.startsWith(voiceFinalText) -> voicePartialText
             voiceFinalText.endsWith(voicePartialText) -> voiceFinalText
@@ -688,6 +715,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
      */
     private fun updatePendingVoiceDraft() {
         pendingVoiceText = buildVoiceText().takeIf { it.isNotBlank() }
+        // 录音过程中只更新本地草稿气泡，点击结束后才真正提交后台。
         pendingVoiceText?.let { mRealVM.updateUserAnswerDraft(it) } ?: mRealVM.clearUserAnswerDraft()
     }
 
