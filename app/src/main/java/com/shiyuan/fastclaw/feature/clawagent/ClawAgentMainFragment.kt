@@ -878,10 +878,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         if (!User.get().isVisitor) {
             mRealVM.queryUnfinishedInterview()
         }
-        if (!mRealVM.code.value.isNullOrEmpty()) {
-            Log.d("uploadResumeDialog", mRealVM.code.value.toString())
+        if (!mRealVM.resumeCode.value.isNullOrEmpty()) {
+            Log.d("uploadResumeDialog", mRealVM.resumeCode.value.toString())
             uploadResumeDialog?.dismissAllowingStateLoss()
-            mRealVM.queryCodeResumeBinding(mRealVM.code.value ?:"") { resume ->
+            mRealVM.queryCodeResumeBinding(mRealVM.resumeCode.value ?:"") { resume ->
                 uploadResumePushMessages(resume?.resumeUrl?:"",resume?.resumeFileName ?:"")
             }
         }
@@ -1088,7 +1088,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 )
             }
         },{
-            mRealVM.code.value = it
+            mRealVM.resumeCode.value = it
         })
     }
 

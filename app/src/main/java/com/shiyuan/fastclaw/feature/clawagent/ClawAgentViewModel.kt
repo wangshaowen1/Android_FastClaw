@@ -183,6 +183,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 面试通关包报告生成状态轮询任务，只保留最后一个轮询 */
     private var passPackageReportPollingJob: Job? = null
 
+    /** 简历上传绑定流程中的临时 code，请求完成后清空，避免重复绑定。 */
+    val resumeCode = MutableLiveData<String?>()
+
     private val sseProcessor by lazy {
         ClawAgentSseProcessor(
             onStart = {
@@ -1438,7 +1441,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-    val code = MutableLiveData<String?>()
     /**
      * 根据授权码查询简历地址
      */
@@ -1452,7 +1454,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
                 })
         }, onComplete = {
-            this.code.value = null
+            this.resumeCode.value = null
         })
     }
 
