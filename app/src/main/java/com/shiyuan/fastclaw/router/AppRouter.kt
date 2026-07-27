@@ -21,6 +21,8 @@ import com.shiyuan.fastclaw.common.utils.Utils
 import com.shiyuan.fastclaw.core.manager.IRouter
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity.Companion.launch
 import com.nhsd.basic.utils.Logger
+import com.shiyuan.fastclaw.feature.main.MainActivity
+import com.shiyuan.fastclaw.feature.mine.InterviewReportActivity
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 
@@ -45,6 +47,7 @@ object AppRouter : IRouter {
         }
     }
 
+/*
     @JvmStatic
     fun jump(schemeUri: String?) {
         if (TextUtils.isEmpty(schemeUri)) {
@@ -92,6 +95,51 @@ object AppRouter : IRouter {
             }
         }
     }
+*/
+
+
+    @JvmStatic
+    fun jump(schemeUri: String?) {
+        if (TextUtils.isEmpty(schemeUri)) {
+            return
+        }
+        val uri = schemeUri?.toUri()
+        if (uri != null) {
+            var activity: Activity? = ActivityUtils.getTopActivity()
+            if (activity == null) {
+                activity = ActivityUtils.getTopActivity()
+            }
+            if (Constants.APP_SCHEME == uri.scheme) {
+                jump(activity,uri)
+            }
+        }
+    }
+
+    @JvmStatic
+    fun jump(activity: Activity?,uri: Uri) {
+        val host = uri.host
+        Logger.i("host " + uri.host + ", uri=" + uri.toString())
+        if (TextUtils.isEmpty(host)) {
+            return
+        }
+        when (host) {
+            "wechatMini" -> {//fastfilm://wechatMini?wechatMiniId=%s&type=%s&path=%s
+                startWechatMini(uri.getQueryParameter("wechatMiniId"), uri.getQueryParameter("path"), uri.getQueryParameter("type")?.toIntOrNull())
+            }
+            "myReport" -> {//
+                InterviewReportActivity.start(activity)
+            }
+            "mainClawAgent" -> {
+                if (activity is MainActivity) {
+                    activity.toHome()
+                } else {
+                    MainActivity.start(activity, uri.toString(), Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                }
+            }
+
+            else -> {}
+        }
+    }
 
 
     @JvmStatic
@@ -101,7 +149,6 @@ object AppRouter : IRouter {
         if (TextUtils.isEmpty(host)) {
             return
         }
-
         when (host) {
             "wechatMini" -> {//fastfilm://wechatMini?wechatMiniId=%s&type=%s&path=%s
                 startWechatMini(uri.getQueryParameter("wechatMiniId"), uri.getQueryParameter("path"), uri.getQueryParameter("type")?.toIntOrNull())

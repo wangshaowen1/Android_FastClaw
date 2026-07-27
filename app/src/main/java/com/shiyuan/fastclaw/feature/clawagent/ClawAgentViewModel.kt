@@ -10,6 +10,7 @@ import com.shiyuan.fastclaw.common.utils.LogUtils
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.PollingState
+import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchPolling
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
@@ -67,6 +68,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.ClawAgentSseProcessor
+import com.shiyuan.fastclaw.core.response
 import kotlinx.coroutines.Job
 import java.util.UUID
 
@@ -1440,16 +1442,19 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 根据授权码查询简历地址
      */
     fun queryCodeResumeBinding(code: String, onSuccess: (data: ResumeData?) -> Unit) {
-        requestWithLoading(
-            apiBlock = {
-                mRepo.api.queryCodeResumeBinding(mapOf("code" to code))
-            },
-            showLoading = true,
-            showToastError = true,
-        ) {
-            onSuccess(data)
-        }
+        launch(block = {
+            response(
+                mRepo.api.queryCodeResumeBinding(mapOf("code" to code)),
+                result = {
+                    onSuccess(data)
+                }, error = {
+
+                })
+        }, onComplete = {
+            this.code.value = null
+        })
     }
+
 
     /**
      * 退出登录 用来重置

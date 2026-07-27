@@ -53,7 +53,7 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
 
     val resumeUploadResult = MutableLiveData<ResumeUploadSubmitMyData?>()
 
-    val code = MutableLiveData<String?>()
+    var code = MutableLiveData<String?>()
 
     val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
 
@@ -65,16 +65,19 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
     }
 
     fun queryCodeResumeBinding(code: String, onSuccess: (data: ResumeData?) -> Unit) {
-        requestWithLoading(
-            apiBlock = {
-                mRepo.api.queryCodeResumeBinding(mapOf("code" to code))
-            },
-            showLoading = true,
-            showToastError = true,
-        ) {
-            onSuccess(data)
-        }
+        launch(block = {
+            response(
+                mRepo.api.queryCodeResumeBinding(mapOf("code" to code)),
+                result = {
+                    onSuccess(data)
+                }, error = {
+
+                })
+        }, onComplete = {
+            this.code.value = null
+        })
     }
+
     fun queryResumeList() {
         launchWithLoading(true, block = {
             response(ApiFactory.apiService.resumeQuery(PagedBody(1, 100)), result = {
@@ -99,52 +102,52 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
 
     }
 
-/*
-    fun resumeMaterialQuality(resumeFileUrl: String, resumeFileName: String) {
-        launch(block = {
-            response(
-                mRepo.api.resumeMaterialQuality(
-                    ResumeMaterialQualityBody(
-                        resumeFileUrl = resumeFileUrl,
-                        resumeFileName = resumeFileName
-                    )
-                ), result = {
-                    resumeDetectionData.postValue(this.data)
-                }, error = {
-                    val errorData = resumeDetectionData.value?.copy(
-                        blockingIssuesMessage = "简历解析失败",
-                        checkStatus = FAILED
-                    )
-                    errorData?.let {
-                        resumeDetectionData.postValue(it)
-                    }
-                    this?.msg?.showToast()
-                })
-        }, onError = {
-            val errorData = resumeData.value?.copy(
-                blockingIssuesMessage = "简历解析失败",
-                checkStatus = FAILED
-            )
-            errorData?.let { it ->
-                resumeData.postValue(it)
-            }
-            it.message.toString().showToast()
-        })
-    }
+    /*
+        fun resumeMaterialQuality(resumeFileUrl: String, resumeFileName: String) {
+            launch(block = {
+                response(
+                    mRepo.api.resumeMaterialQuality(
+                        ResumeMaterialQualityBody(
+                            resumeFileUrl = resumeFileUrl,
+                            resumeFileName = resumeFileName
+                        )
+                    ), result = {
+                        resumeDetectionData.postValue(this.data)
+                    }, error = {
+                        val errorData = resumeDetectionData.value?.copy(
+                            blockingIssuesMessage = "简历解析失败",
+                            checkStatus = FAILED
+                        )
+                        errorData?.let {
+                            resumeDetectionData.postValue(it)
+                        }
+                        this?.msg?.showToast()
+                    })
+            }, onError = {
+                val errorData = resumeData.value?.copy(
+                    blockingIssuesMessage = "简历解析失败",
+                    checkStatus = FAILED
+                )
+                errorData?.let { it ->
+                    resumeData.postValue(it)
+                }
+                it.message.toString().showToast()
+            })
+        }
 
 
-    fun resumeMaterialQualityr() {
-        launch(block = {
-            response(
-                mRepo.api.resumeMaterialQualityResult(
-                    ResumeMaterialQualityBody(
-                        checkId = resumeDetectionData.value?.checkId
-                    )
-                ), result = {
-                    resumeDetectionData.postValue(this.data)
-                }, error = { this?.msg?.showToast() })
-        }, onError = { it.message.toString().showToast() })
-    }*/
+        fun resumeMaterialQualityr() {
+            launch(block = {
+                response(
+                    mRepo.api.resumeMaterialQualityResult(
+                        ResumeMaterialQualityBody(
+                            checkId = resumeDetectionData.value?.checkId
+                        )
+                    ), result = {
+                        resumeDetectionData.postValue(this.data)
+                    }, error = { this?.msg?.showToast() })
+            }, onError = { it.message.toString().showToast() })
+        }*/
 
 
     private fun initBannerData() {
@@ -161,29 +164,33 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
      * 提交简历上传结果
      * @param resumeFileUrl 简历文件地址或 OSS key
      */
-/*    fun submitResumeUpload( resumeFileUrl: String?,fileName: String?, replaceResumeTaskId: String?, replaceResumeId: String?) {
-        launchWithLoading(true, block = {
-            response(  mRepo.api.submitResumeMyUpload(
-                ResumeUploadSubmitMyBody(
-                    replaceResumeTaskId = replaceResumeTaskId,
-                    fileName = fileName,
-                    replaceResumeId = replaceResumeId,
-                    clientUploadId = UUID.randomUUID().toString(),
-                    resumeFileUrl = resumeFileUrl,
-                )
-            ), result = {
-                if (this.data?.accepted == true) {
-                    resumeUploadResult.postValue(this.data)
-                    "上传成功".showToast()
-                } else {
-                    "上传失败".showToast()
-                }
-            }, error = { this?.msg?.showToast() })
-        }, onError = { it.message.toString().showToast() })
+    /*    fun submitResumeUpload( resumeFileUrl: String?,fileName: String?, replaceResumeTaskId: String?, replaceResumeId: String?) {
+            launchWithLoading(true, block = {
+                response(  mRepo.api.submitResumeMyUpload(
+                    ResumeUploadSubmitMyBody(
+                        replaceResumeTaskId = replaceResumeTaskId,
+                        fileName = fileName,
+                        replaceResumeId = replaceResumeId,
+                        clientUploadId = UUID.randomUUID().toString(),
+                        resumeFileUrl = resumeFileUrl,
+                    )
+                ), result = {
+                    if (this.data?.accepted == true) {
+                        resumeUploadResult.postValue(this.data)
+                        "上传成功".showToast()
+                    } else {
+                        "上传失败".showToast()
+                    }
+                }, error = { this?.msg?.showToast() })
+            }, onError = { it.message.toString().showToast() })
 
-    }*/
+        }*/
 
-    fun submitResumeUpload( resumeFileUrl: String?,fileName: String?, replaceResumeTaskId: String?) {
+    fun submitResumeUpload(
+        resumeFileUrl: String?,
+        fileName: String?,
+        replaceResumeTaskId: String?
+    ) {
         requestWithLoading(
             apiBlock = {
                 mRepo.api.submitResumeMyUpload(
