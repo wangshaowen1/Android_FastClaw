@@ -503,6 +503,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
         when (message.senderType) {
             SENDER_AGENT -> {
+                // 有 TEXT_DELTA 流式消息时，TEXT_DONE 只做最终内容覆盖，避免列表出现两条同一问题。
                 val hasStreamingMessage = currentAiMessageId != null
                 val shouldAutoStartAfterTts = if (hasStreamingMessage) currentAiTtsEnabled else message.isTtsEnabled()
                 message.content?.takeIf { it.isNotEmpty() }?.let {
@@ -519,6 +520,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                     ttsStreamFinishEvent.value = Unit
                 }
                 if (message.payload?.roomState.isNullOrBlank()) {
+                    // 纯文本题目可能不带 roomState，端侧兜底切回等待作答态。
                     updateWaitingUserAnswerState(message.payload?.questionId)
                 }
             }
@@ -565,6 +567,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     private fun appendAiDelta(text: String, ttsEnabled: Boolean) {
         if (text.isEmpty()) return
+        // 服务端已开始真实流式输出，取消端侧完整文本模拟流式，防止两路内容交叉。
         localAiStreamJob?.cancel()
         localAiStreamJob = null
         localAiStreamQueue.clear()
@@ -575,6 +578,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         val targetId = currentAiMessageId
         val old = targetId?.let { messageStore[it] }
         if (old != null) {
+            // 同一条 Agent 消息持续追加，做到边接收边显示。
             ingestMessages(listOf(old.copy(content = old.content.orEmpty() + text)))
         } else {
             val item = InterviewMessageInfo(UUID.randomUUID().toString(), SENDER_AGENT, text)
@@ -589,6 +593,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun streamFullAiMessage(text: String, ttsEnabled: Boolean) {
         val chunks = text.chunked(LOCAL_AI_STREAM_CHUNK_SIZE)
         if (chunks.isEmpty()) return
+        // 完整文本也进入队列顺序播放，避免连续多条 Agent 文本互相抢 TTS。
         localAiStreamQueue.offer(LocalAiStreamMessage(UUID.randomUUID().toString(), chunks, ttsEnabled))
         if (localAiStreamJob?.isActive == true) return
         startLocalAiStreamQueue()
@@ -599,31 +604,38 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     private fun startLocalAiStreamQueue() {
         localAiStreamJob = viewModelScope.launch {
+            // 队列逐条消费，保证完整文本消息按服务端到达顺序展示和播报。
             while (isActive && localAiStreamQueue.isNotEmpty()) {
                 val streamMessage = localAiStreamQueue.poll() ?: continue
                 val ttsBuilder = StringBuilder()
                 streamMessage.chunks.forEachIndexed { index, chunk ->
                     if (index == 0) {
+                        // 第一块创建消息，后续块只追加内容，列表里始终保持同一条气泡。
                         val item = InterviewMessageInfo(streamMessage.id, SENDER_AGENT, chunk)
                         ingestMessages(listOf(item))
                     } else {
+                        // 后续分片延迟追加，模拟后端流式输出的打字效果。
                         delay(LOCAL_AI_STREAM_DELAY_MS)
                         appendLocalAiStreamChunk(streamMessage.id, chunk)
                     }
                     if (streamMessage.ttsEnabled) {
                         ttsBuilder.append(chunk)
                         if (shouldFlushTtsChunk(ttsBuilder)) {
+                            // TTS 按短句分批发送，比逐字发送更稳定。
                             flushTtsChunk(ttsBuilder)
                         }
                     }
                 }
                 if (streamMessage.ttsEnabled) {
+                    // 当前消息结束时把未达到阈值的剩余文本也送入 TTS。
                     flushTtsChunk(ttsBuilder)
                 }
             }
+            // 整个 Agent 文本队列播报输入结束后再通知 finish，避免连续消息间提前结束 TTS 流。
             ttsStreamFinishEvent.value = Unit
             localAiStreamJob = null
             if (localAiStreamQueue.isNotEmpty()) {
+                // 任务结束瞬间如果又有新文本入队，继续启动下一轮消费。
                 startLocalAiStreamQueue()
             } else {
                 notifyFinishAfterTtsIfReady()
@@ -636,6 +648,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     private fun notifyFinishAfterTtsIfReady() {
         val conversationId = pendingFinishAfterTtsConversationId ?: return
+        // 等本地流式展示和待播队列都清空后，再让页面等待 TTS 播完并关闭。
         if (localAiStreamJob?.isActive == true || localAiStreamQueue.isNotEmpty()) return
         pendingFinishAfterTtsConversationId = null
         finishAfterTtsEvent.value = conversationId
@@ -653,7 +666,9 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * TTS 输入不能按单字过碎发送，积累到短句或标点后再交给播放器。
      */
     private fun shouldFlushTtsChunk(builder: StringBuilder): Boolean {
+        // 文本达到阈值时强制发送，避免 TTS 缓冲过长导致播报延迟。
         if (builder.length >= LOCAL_AI_TTS_CHUNK_SIZE) return true
+        // 遇到句读符号时提前发送，让播报节奏更接近自然短句。
         return builder.lastOrNull() in LOCAL_AI_TTS_FLUSH_CHARS
     }
 
@@ -663,6 +678,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun flushTtsChunk(builder: StringBuilder) {
         val text = builder.toString()
         if (text.isNotEmpty()) {
+            // 通过事件把本批文本交给页面播放器，并立即清空缓冲准备下一批。
             ttsStreamDeltaEvent.value = text
             builder.clear()
         }
@@ -696,10 +712,12 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 进入等待用户作答前先校验是否已经回答过当前题；未拿到新题时继续展示等待态。
      */
     private fun updateWaitingUserAnswerState(questionId: String?) {
+        // 服务端带 questionId 时先刷新当前题；如果是新题，会在 updateQuestionId 内清掉已提交标记。
         questionId?.takeIf { it.isNotBlank() }?.let { updateQuestionId(it) }
         roomState.value = if (submittedQuestionId == null) {
             InterviewRoomState.WAITING_USER_ANSWER
         } else {
+            // 当前题已经提交过，继续保持等待后台返回下一题，避免用户重复作答。
             InterviewRoomState.ANSWER_SUBMITTED
         }
     }
@@ -711,8 +729,10 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
         val targetId = currentAiMessageId
         val old = targetId?.let { messageStore[it] }
         if (old != null) {
+            // TEXT_DONE 到达后覆盖 TEXT_DELTA 累积内容，保证最终展示以服务端完整文本为准。
             ingestMessages(listOf(old.copy(content = text)))
         } else {
+            // 没有流式气泡时按普通 Agent 消息补插，兼容服务端只返回 TEXT_DONE 的场景。
             appendMessage(
                 InterviewMessageInfo(
                     id = UUID.randomUUID().toString(),
@@ -734,11 +754,15 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 服务端返回 TEXT_BLOCKED 时，按 answerSubmitId 替换对应的本地用户回答内容。
      */
     private fun replaceBlockedAnswerMessage(message: InterviewAgentMessage): Boolean {
+        // TEXT_BLOCKED 必须带拦截文案，否则没有可替换内容。
         val blockedText = message.content?.takeIf { it.isNotBlank() } ?: return false
+        // answerSubmitId 用来定位本次提交的本地回答，避免误替换其它历史回答。
         val answerSubmitId = message.payload?.answerSubmitId?.takeIf { it.isNotBlank() } ?: return false
         val blockedRoomState = message.payload.roomState ?: message.roomState
+        // 只有服务端允许回到等待作答态时才替换，用户才能继续重新回答当前题。
         if (blockedRoomState != ROOM_STATE_WAITING_USER_ANSWER) return false
         val target = messageStore.entries.firstOrNull { it.value.answerSubmitId == answerSubmitId } ?: return false
+        // 复用原消息位置展示拦截文案，避免列表新增一条重复的用户回答。
         target.setValue(target.value.copy(content = blockedText))
         refreshMessageList()
         return true

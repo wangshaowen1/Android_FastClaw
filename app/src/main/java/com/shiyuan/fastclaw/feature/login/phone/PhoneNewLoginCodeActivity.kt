@@ -1,7 +1,9 @@
 package com.shiyuan.fastclaw.feature.login.phone
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
@@ -147,10 +149,16 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
     /**
      * 绑定返回、验证码区域唤起键盘和重新获取验证码事件。
      */
+    @SuppressLint("ClickableViewAccessibility")
     private fun initClicks() {
         binding.ivBack.setOnClickListener { finish() }
         binding.llCodeBoxes.setOnClickListener { showCodeKeyboard() }
-        binding.etCode.setOnClickListener { showCodeKeyboard() }
+        binding.etCode.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                showCodeKeyboard()
+            }
+            true
+        }
         binding.tvResend.setOnClickListener {
             if (mRealVM.codeCounting.value == true) return@setOnClickListener
             resendSmsCode()
