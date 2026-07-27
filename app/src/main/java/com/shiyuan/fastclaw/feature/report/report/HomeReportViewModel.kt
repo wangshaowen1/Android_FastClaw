@@ -22,6 +22,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
+import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
@@ -56,6 +57,8 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
     var code = MutableLiveData<String?>()
 
     val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
+
+    val jobAgentModuleList = MutableLiveData<List<JobAgentModuleData>>()
 
     val selectIndex = MutableLiveData<Int>(0)
 
@@ -224,6 +227,15 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
             showToastError = true,
         ) {
             interviewPassPackageResumeStatus.postValue(this.data)
+        }
+    }
+
+    fun queryJobAgentModuleList() {
+        request(
+            apiBlock = { mRepo.api.queryJobAgentModuleList() },
+            showToast = false,
+        ) {
+            jobAgentModuleList.postValue(this.data.orEmpty())
         }
     }
 
