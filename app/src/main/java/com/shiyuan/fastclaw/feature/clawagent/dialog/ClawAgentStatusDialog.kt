@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.AttachPopupView
 import com.lxj.xpopup.core.BasePopupView
+import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.interfaces.SimpleCallback
 import com.nhsd.basic.ext.dp
@@ -63,6 +64,7 @@ class ClawAgentStatusDialog(context: Context, private val attributeData: OnlineR
             .isViewMode(true)
             .atView(anchorView)
             .popupPosition(PopupPosition.Bottom)
+            .popupAnimation(PopupAnimation.ScrollAlphaFromTop)
             .popupWidth(151.dp)
             .borderRadius(20.dp.toFloat())
             .offsetY(4.dp)
