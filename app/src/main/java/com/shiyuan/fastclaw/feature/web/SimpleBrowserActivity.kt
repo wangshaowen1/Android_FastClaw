@@ -784,11 +784,11 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
         super.onResume()
         binding.webview.apply {
             onResume()
-            resumeTimers()
+          /*  resumeTimers()
             settings.apply {
                 mediaPlaybackRequiresUserGesture = false // 允许在非用户手势下播放媒体
                 blockNetworkImage = false // 恢复图片加载
-            }
+            }*/
         }
         MobclickAgent.onResume(this)
     }
@@ -797,12 +797,12 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
         super.onPause()
         binding.webview.apply {
             onPause()
-            pauseTimers()
+       /*     pauseTimers()
             // 仅禁用非必要的JS功能
             settings.apply {
                 mediaPlaybackRequiresUserGesture = true // 恢复需要用户手势播放媒体
                 blockNetworkImage = true // 暂停时阻止图片加载
-            }
+            }*/
         }
         MobclickAgent.onPause(this)
     }
