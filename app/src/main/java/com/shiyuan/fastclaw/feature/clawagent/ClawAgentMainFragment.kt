@@ -51,9 +51,9 @@ import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
-import com.shiyuan.fastclaw.core.network.apis.response.AgentQuickType
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_MODEL_FAILED
@@ -180,7 +180,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.rvMsg.adapter = msgAdapter
         binding.rvAction.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         binding.rvAction.adapter = actionAdapter
-        actionAdapter.submitList(ClawQuickActionAdapter.defaultItems())
 
         binding.tvAgentDesc.setOnSingleClickListener {
             if (!AppNavigator.checkLoginIntercepted(false)) {
@@ -661,6 +660,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             binding.srlMsg.finishRefresh()
             binding.srlMsg.setEnableRefresh(hasMore)
         }
+        mRealVM.jobAgentModuleList.observe(viewLifecycleOwner) { modules ->
+            actionAdapter.submitList(modules.filter { item -> ClawQuickActionAdapter.isSupported(item.reportType) })
+        }
         mRealVM.streamError.observe(viewLifecycleOwner) { e ->
             e ?: return@observe
             if (!canShowStreamErrorToast()) {
@@ -763,8 +765,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
              */
             on<Events.CompanyInterviewEvent> { event ->
                 when (event.type){
-                    0 -> onQuickClick(AgentQuickType.COMPANY_BACKGROUND)
-                    else -> onQuickClick(AgentQuickType.MOCK_INTERVIEW)
+                    0 -> onQuickClick(JobAgentModuleData.TYPE_COMPANY_RESEARCH)
+                    else -> onQuickClick(JobAgentModuleData.TYPE_MOCK_INTERVIEW)
                 }
             }
 
@@ -820,46 +822,53 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
 
-    private fun onQuickClick(type: AgentQuickType) {
-        if (type == AgentQuickType.COMPANY_BACKGROUND) { //公司背调
-            if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.sendAction(
-                    content = getString(R.string.company_backcheck),
-                    actionData = AgentMsgAction(
-                        actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND.name,
-                        actionPayloadJson = null,
+    private fun onQuickClick(type: String?) {
+        when (type) {
+            JobAgentModuleData.TYPE_COMPANY_RESEARCH -> {
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.sendAction(
+                        content = getString(R.string.company_backcheck),
+                        actionData = AgentMsgAction(
+                            actionCode = CandidateJobAgentClientActionEnum.OPEN_COMPANY_BACKGROUND.name,
+                            actionPayloadJson = null,
+                        )
                     )
-                )
+                }
             }
-        } else if (type == AgentQuickType.MOCK_INTERVIEW) { //模拟面试
-            if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.sendAction(
-                    content = getString(R.string.mock_interview),
-                    actionData = AgentMsgAction(
-                        actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
-                        actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = QUICK_ENTRY))
+            JobAgentModuleData.TYPE_MOCK_INTERVIEW -> {
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.sendAction(
+                        content = getString(R.string.mock_interview),
+                        actionData = AgentMsgAction(
+                            actionCode = CandidateJobAgentClientActionEnum.MOCK_INTERVIEW_QUICK_ENTRY.name,
+                            actionPayloadJson = GsonUtils.toJson(MockInterviewStartBody(entrySource = QUICK_ENTRY))
+                        )
                     )
-                )
+                }
             }
-        } else if (type == AgentQuickType.RESUME_CHECK) { //测简历
-            if (!AppNavigator.checkLoginIntercepted(false)) {
-                SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL, title = getString(R.string.home_treasury_resume_check))
+            JobAgentModuleData.TYPE_RESUME_REJECTION_ANALYSIS -> {
+                if (!AppNavigator.checkLoginIntercepted(false)) {
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL, title = getString(R.string.home_treasury_resume_check))
+                }
             }
-        } else if (type == AgentQuickType.SALARY_CHECK) { //测薪资
-            if (!AppNavigator.checkLoginIntercepted(false)) {
-                SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
+            JobAgentModuleData.TYPE_SALARY_VALUATION -> {
+                if (!AppNavigator.checkLoginIntercepted(false)) {
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
+                }
             }
-        } else if (type == AgentQuickType.PASS_PACKAGE) { //面试通关包
-            if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.queryInterviewPassPackageResumeStatus()
+            JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> {
+                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.queryInterviewPassPackageResumeStatus()
+                }
             }
         }
     }
 
     private fun initData() {
+        mRealVM.getAgentModuleList()
         if (!User.get().isVisitor) {
             mRealVM.enterSession()
         } else {

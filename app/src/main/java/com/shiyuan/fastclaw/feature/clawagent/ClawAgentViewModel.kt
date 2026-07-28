@@ -53,6 +53,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPaylo
 import com.shiyuan.fastclaw.core.network.apis.response.PassPackageReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
+import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
@@ -185,6 +186,12 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 简历上传绑定流程中的临时 code，请求完成后清空，避免重复绑定。 */
     val resumeCode = MutableLiveData<String?>()
+
+    /** 面试通关包开始前的简历状态，用于判断是否已有可用简历或需要先上传简历。 */
+    val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
+
+    /** 宝典页业务模块列表，按服务端返回顺序展示底部快捷入口。 */
+    val jobAgentModuleList = MutableLiveData<List<JobAgentModuleData>>()
 
     private val sseProcessor by lazy {
         ClawAgentSseProcessor(
@@ -1414,7 +1421,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
-    val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
     fun queryInterviewPassPackageResumeStatus() {
         requestWithLoading(
             apiBlock = {
@@ -1456,6 +1462,16 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }, onComplete = {
             this.resumeCode.value = null
         })
+    }
+
+    /** 获取宝典页业务模块列表，用于动态渲染首页底部快捷入口。 */
+    fun getAgentModuleList() {
+        request(
+            apiBlock = { mRepo.api.queryJobAgentModuleList() },
+            showToast = false,
+        ) {
+            jobAgentModuleList.postValue(this.data.orEmpty())
+        }
     }
 
 
