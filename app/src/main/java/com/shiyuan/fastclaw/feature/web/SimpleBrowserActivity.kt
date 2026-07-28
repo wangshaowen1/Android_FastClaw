@@ -674,12 +674,11 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
                 }
             }
 
-            registerHandler("openWechatMini") { data, _ ->
+            registerHandler("openWeChat") { data, _ ->
                 try {
                     val json = JSONObject(data)
                     val type = json.optString("versionType")
-
-                    startWechatMini(json.optString("originallid"),json.optString("url"),if(type == "release") WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE else  WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW)
+                    startWechatMini(json.optString("originalId"),json.optString("url"),if(type == "release") WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE else  WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -790,8 +789,6 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
                 mediaPlaybackRequiresUserGesture = false // 允许在非用户手势下播放媒体
                 blockNetworkImage = false // 恢复图片加载
             }
-            isVisible = false
-            post { isVisible = true }
         }
         MobclickAgent.onResume(this)
     }
