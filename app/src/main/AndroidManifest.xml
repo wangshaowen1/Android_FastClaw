@@ -78,7 +78,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:scheme="wx1c98457e17ef2524" />
+                <data android:scheme="wx061b7b7333f2e4e7" />
             </intent-filter>
         </activity>
         <!-- wxpay sdk end -->
