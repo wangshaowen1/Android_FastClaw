@@ -860,6 +860,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     }
 
     private fun initData() {
+        mRealVM.queryJobAgentModuleList()
         if (!User.get().isVisitor) {
             mRealVM.enterSession()
         } else {

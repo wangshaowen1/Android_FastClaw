@@ -267,7 +267,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/iv_icon"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="有什么求职问题，随时问小虾" />
+                        tools:text="发消息或者按住说话..." />
 
                     <TextView
                         android:id="@+id/tv_voice_press"

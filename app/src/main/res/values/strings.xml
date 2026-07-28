@@ -822,7 +822,7 @@
     <string name="str_agent_welcome_subtitle">你的AI求职经纪人</string>
     <string name="str_agent_welcome_service_desc">我能帮你查公司、定制押题、提升面试通过率</string>
     <string name="str_agent_memory">我对你的理解</string>
-    <string name="str_agent_send_hint">有什么求职问题，随时问小虾</string>
+    <string name="str_agent_send_hint">发消息或者按住说话...</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>
     <string name="str_agent_understanding_upgrade_title">理解升级</string>
     <string name="str_agent_understanding_align_title">我与你对齐度达到%1$s！</string>
