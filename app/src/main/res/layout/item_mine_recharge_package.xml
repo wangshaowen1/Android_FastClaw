@@ -36,6 +36,7 @@
                 tools:text="300" />
 
             <ImageView
+                android:layout_gravity="center_vertical"
                 android:layout_width="21dp"
                 android:layout_height="21dp"
                 android:layout_marginStart="3dp"
