@@ -1464,7 +1464,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         })
     }
 
-    fun queryJobAgentModuleList() {
+    /** 获取宝典页业务模块列表，用于动态渲染首页底部快捷入口。 */
+    fun getAgentModuleList() {
         request(
             apiBlock = { mRepo.api.queryJobAgentModuleList() },
             showToast = false,
