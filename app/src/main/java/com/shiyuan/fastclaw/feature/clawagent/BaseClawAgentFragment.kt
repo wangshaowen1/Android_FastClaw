@@ -1,7 +1,12 @@
 package com.shiyuan.fastclaw.feature.clawagent
 
 import android.Manifest
+import android.content.Context
+import android.os.Build
 import android.os.SystemClock
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -108,6 +113,12 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
 
         /** 语音输入最短有效按压时长。 */
         private const val MIN_VOICE_INPUT_DURATION_MS = 1000L
+
+        /** 录音开始时的轻震时长。 */
+        private const val VOICE_START_VIBRATE_MS = 35L
+
+        /** 录音开始时的轻震强度。 */
+        private const val VOICE_START_VIBRATE_AMPLITUDE = 100
 
         /** 按住说话上滑取消的触发距离。 */
         private val VOICE_CANCEL_DISTANCE = 40.dp
@@ -260,6 +271,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
                 // 只有 SDK 启动成功才进入录音触摸态。
                 voiceTouchRecording = startVoiceRecognizing()
                 if (voiceTouchRecording) {
+                    vibrateVoiceStart()
                     // 识别启动成功后再展示录音浮层，避免权限申请或启动失败时出现假录音态。
                     voiceRecordingDialog = VoiceRecordingDialog.show(parentFragmentManager)
                 }
@@ -331,6 +343,31 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             }
         }
         return true
+    }
+
+    /** 录音真正开始时轻震一次，给用户一个明确的按住反馈。 */
+    private fun vibrateVoiceStart() {
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val manager = requireContext().getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+            manager?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            requireContext().getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        } ?: return
+        if (!vibrator.hasVibrator()) return
+        runCatching {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        VOICE_START_VIBRATE_MS,
+                        VOICE_START_VIBRATE_AMPLITUDE
+                    )
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator.vibrate(VOICE_START_VIBRATE_MS)
+            }
+        }
     }
 
     /** 清理 et_send 长按录音的延迟任务和按下事件，避免松手后状态残留。 */
