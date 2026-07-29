@@ -267,7 +267,7 @@ class JobPreferencesFragment :
                     JobCitySelectorActivity.start(
                         activity,
                         JobCityQueryBody.EXPECTED_CITY,
-                        selectedValueJson = JsonUtil.toJson(item.value),
+                        selectedValueJson = item.value?.let(JsonUtil::toJson),
                     )
                 }
 
@@ -276,7 +276,7 @@ class JobPreferencesFragment :
                         activity,
                         isMultiple = true,
                         multipleNum = 10,
-                        selectedValueJson = JsonUtil.toJson(item.value),
+                        selectedValueJson = item.value?.let(JsonUtil::toJson),
                     )
                 }
                 CODE_EXPECTED_INDUSTRY -> {
@@ -284,7 +284,7 @@ class JobPreferencesFragment :
                         activity,
                         isMultiple = true,
                         resultEventType = EVENT_EXPECTED_INDUSTRY_COMPLETED,
-                        selectedValueJson = JsonUtil.toJson(item.value),
+                        selectedValueJson = item.value?.let(JsonUtil::toJson),
                     )
                 }
                 CODE_JOB_EXPECTED_SALARY -> {
@@ -337,7 +337,7 @@ class JobPreferencesFragment :
                 CODE_JOB_WELFAREPREFERENCE ->{
                     JobWelfareSelectorActivity.start(
                         activity,
-                        selectedValueJson = JsonUtil.toJson(item.value),
+                        selectedValueJson = item.value?.let(JsonUtil::toJson),
                     )
                 }
             }

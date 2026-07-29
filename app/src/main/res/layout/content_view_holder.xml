@@ -58,28 +58,28 @@
 
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="77dp"
+            android:layout_height="70dp"
             android:importantForAccessibility="no"
             android:src="@drawable/empty_network" />
 
         <TextView
-            style="@style/Text16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
+            android:textSize="13sp"
             android:text="@string/network_error"
-            android:textColor="?attr/textColor2" />
+            android:textColor="@color/color_85_3c3c43" />
 
         <TextView
             android:id="@+id/error_prompt_view"
-            style="@style/Text14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textSize="13sp"
             android:lineSpacingExtra="@dimen/lineSpacingExtra"
             android:text="@string/page_network_error"
-            android:textColor="?attr/textColor4" />
+            android:textColor="@color/color_85_3c3c43"/>
 
         <TextView
             android:id="@+id/retry_btn"
