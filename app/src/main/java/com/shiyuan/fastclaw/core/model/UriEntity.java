@@ -1,13 +1,13 @@
 package com.shiyuan.fastclaw.core.model;
 
 public class UriEntity {
-    private String uri;//scheme 跳转地址
+    private String url;//scheme 跳转地址
 
     public String getUri() {
-        return uri;
+        return url;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setUri(String url) {
+        this.url = url;
     }
 }

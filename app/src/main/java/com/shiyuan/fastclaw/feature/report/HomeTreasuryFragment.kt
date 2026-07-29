@@ -109,6 +109,10 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
             Constants.DIAGNOSIS_URL,
             title = getString(R.string.home_treasury_resume_check)
         )
+   /*     SimpleBrowserActivity.launch(
+            context,
+            "file:///android_asset/wechat-return-test.html"
+        )*/
     }
 
     private fun onSalaryCardClick() {
