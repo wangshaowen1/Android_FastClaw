@@ -542,25 +542,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                     return@forEach
                 }
             }
-            // 是否模拟面试报告生成中，启动面试报告轮询接口
-            if (newMsg.isMockInterviewReportCard()) {
-                val payload = newMsg.payloadJson?.let {
-                    runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
-                }
-                if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
-                    pollMockInterviewReportProgress(payload.mockReportId, payload.interviewId)
-                }
-            }
-            // 是否面试通关包报告生成中，启动通关包报告轮询接口
-            if (newMsg.isPassPackageReportCard()) {
-                val payload = newMsg.payloadJson?.let {
-                    runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
-                }
-                if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
-                    pollPassPackageReportProgress(payload.packageId)
-                }
-            }
-
             val rawKey = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString() ?: return@forEach
             // 自我介绍卡是端侧补充卡，折叠屏重建或会话恢复可能重复补充，这里只保留最新一张
             if (newMsg.isIntroduceYourselfCard()) {
@@ -610,6 +591,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
             // 同一响应组内，REPLACE_ON_TERMINAL 的中间态消息由后续终态/结果消息替换。
+            // 移除需要替换的消息
             newMsg.responseGroupId?.takeIf { it.isNotBlank() }?.let { groupId ->
                     messageStore.filterValues { it.responseGroupId == groupId && (it.displayPolicy == POLICY_REPLACE_ON_TERMINAL
                             || it.displayPolicy == POLICY_DISMISS_ON_TERMINAL) }
@@ -619,15 +601,40 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             // 最后如果是Toast消息，将被丢弃不插入处理
             if (!newMsg.isToastCard()) {
+                // 插入或替换消息，显示位置最终会按[sequenceNo]排序
                 messageStore[key] = newMsg
             }
         }
+        startPollingIfVisible()
         refreshMessageList()
+    }
+
+    /** 对本批消息中最终仍展示在 messageStore 里的生成中报告卡启动轮询。 */
+    private fun startPollingIfVisible() {
+        messageStore.values.forEach { msg ->
+            // 是否模拟面试报告生成中，启动面试报告轮询接口
+            if (msg.isMockInterviewReportCard()) {
+                val payload = msg.payloadJson?.let {
+                    runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
+                }
+                if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
+                    pollMockInterviewReportProgress(payload.mockReportId, payload.interviewId)
+                }
+            }
+            // 是否面试通关包报告生成中，启动通关包报告轮询接口
+            if (msg.isPassPackageReportCard()) {
+                val payload = msg.payloadJson?.let {
+                    runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
+                }
+                if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
+                    pollPassPackageReportProgress(payload.packageId)
+                }
+            }
+        }
     }
 
     /**
      * 处理 SSE patch REMOVE：按服务端 messageId 从当前内存列表移除消息。
-     *
      * 用户消息可能已合并到本地乐观占位 key，这里同时通过 serverUserMessageKeyToLocalKey 找到本地 key 删除。
      */
     private fun removeMessageById(messageId: String?) {
@@ -661,8 +668,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         refreshMessageList()
     }
 
-    // region 消息列表相关
-    /** 按 sequenceNo 升序映射并回推渲染列表 */
+    /** 按 sequenceNo 升序映射并回推渲染列表。 */
     private fun refreshMessageList() {
         val rawMessages = messageStore.values
             .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
