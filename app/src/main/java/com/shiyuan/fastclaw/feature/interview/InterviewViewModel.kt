@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.NetworkUtils
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
@@ -411,10 +412,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     private fun restoreRoom(message: InterviewAgentMessage) {
         val payload = message.payload
-        payload?.messages.orEmpty().forEachIndexed { index, item ->
-            LogUtils.d("restoreRoom_$item")
-        }
-        Log.d(TAG, "restoreRoom_---------------------------------------")
         payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
         payload?.latestMessageSeq?.let { updateLastMessageSeq(it) }
         currentQuestionId = payload?.messages?.lastQuestionId()
@@ -458,6 +455,12 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 )
             )
         }
+        if (BuildConfig.DEBUG) {
+            payload?.messages.orEmpty().forEachIndexed { index, item ->
+                LogUtils.d("restoreRoom_$item")
+            }
+            Log.d(TAG, "restoreRoom_---------------------------------------")
+        }
 
         handleRoomState(message)
     }
@@ -496,8 +499,11 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 处理完整文本消息，Agent 文本用于展示和 TTS，User 文本由本地提交时已插入。
      */
     private fun handleTextDone(message: InterviewAgentMessage) {
+        // 某些房间状态消息只用于驱动状态，不应该当作文本气泡展示。
         if (message.isIgnoredTextState()) return
+        // 服务端可能在 TEXT_DONE 中带上最新 sessionStatus，端侧同步保存。
         message.payload?.sessionStatus?.takeIf { it.isNotBlank() }?.let { sessionStatus.value = it }
+        // TEXT_DONE 带 questionId 时，说明这段文本归属当前新题，需要更新当前题目 ID。
         message.payload?.questionId?.takeIf { it.isNotEmpty() }?.let {
             updateQuestionId(it)
         }
@@ -505,18 +511,23 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
             SENDER_AGENT -> {
                 // 有 TEXT_DELTA 流式消息时，TEXT_DONE 只做最终内容覆盖，避免列表出现两条同一问题。
                 val hasStreamingMessage = currentAiMessageId != null
+                // 流式场景沿用 TEXT_DELTA 记录的播报开关；非流式场景直接读取当前消息的 ttsEnabled。
                 val shouldAutoStartAfterTts = if (hasStreamingMessage) currentAiTtsEnabled else message.isTtsEnabled()
                 message.content?.takeIf { it.isNotEmpty() }?.let {
                     if (hasStreamingMessage) {
+                        // 已有流式气泡时，用最终完整内容覆盖，修正流式过程中的分段或缺字。
                         replaceCurrentAiMessage(it)
                     } else {
+                        // 没有 TEXT_DELTA 时，将完整文本按端侧流式效果插入，保持展示体验一致。
                         streamFullAiMessage(it, message.isTtsEnabled())
                     }
                     if (shouldAutoStartAfterTts) {
+                        // 需要播报的题目等 TTS 播完后再自动打开作答，避免录到面试官声音。
                         autoStartAnswerAfterTtsEvent.value = Unit
                     }
                 }
                 if (hasStreamingMessage && currentAiTtsEnabled) {
+                    // TEXT_DELTA 已经边播边写入 TTS，TEXT_DONE 到达后只通知本轮流输入结束。
                     ttsStreamFinishEvent.value = Unit
                 }
                 if (message.payload?.roomState.isNullOrBlank()) {
@@ -528,6 +539,7 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
                 // User answer has already been inserted locally.
             }
         }
+        // 本轮 Agent 流式消息已经收尾，清掉临时 ID 和播报开关，避免影响下一条消息。
         currentAiMessageId = null
         currentAiTtsEnabled = false
     }
@@ -536,19 +548,24 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      * 处理内容安全拦截文本；优先按 answerSubmitId 替换本地用户回答。
      */
     private fun handleTextBlocked(message: InterviewAgentMessage) {
+        // TEXT_BLOCKED 的 content 是服务端返回的违规提示或替换后的展示文案。
         val blockedText = message.content?.takeIf { it.isNotEmpty() }
+        // 优先按 answerSubmitId 找到本地用户回答并替换，避免额外插入一条重复气泡。
         val replaced = replaceBlockedAnswerMessage(message)
         if (!replaced) {
             blockedText?.let {
+                // 找不到本地回答时兜底插入为面试官提示，保证违规原因能展示出来。
                 appendMessage(InterviewMessageInfo(id = UUID.randomUUID().toString(), senderType = SENDER_AGENT, content = it))
             }
         }
         blockedText?.let {
             if (message.isTtsEnabled()) {
+                // 违规提示同样遵循 ttsEnabled 开关，允许后端控制是否播报。
                 ttsSpeakEvent.value = it
             }
         }
         if (replaced || (message.payload?.roomState ?: message.roomState) == ROOM_STATE_WAITING_USER_ANSWER) {
+            // 违规回答处理完后允许用户继续重答当前题。
             submittedQuestionId = null
             updateWaitingUserAnswerState(message.payload?.questionId ?: currentQuestionId)
         }
