@@ -67,6 +67,7 @@ import com.shiyuan.fastclaw.router.AppRouter
 import com.shiyuan.fastclaw.widget.AndroidBug5497Workaround
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.Session
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.paddingStatusBar
@@ -74,6 +75,7 @@ import com.nhsd.basic.ext.showToast
 import com.nhsd.basic.ext.statusBarHeight
 import com.nhsd.basic.utils.Logger
 import com.nhsd.mattise.Matisse
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.databinding.backgroundColor
 import com.shiyuan.fastclaw.feature.mine.InterviewReportActivity
 import com.shiyuan.fastclaw.router.AppRouter.startWechatMini
@@ -679,6 +681,15 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
                     val json = JSONObject(data)
                     val type = json.optString("versionType")
                     startWechatMini(json.optString("originalId"),json.optString("url"),if(type == "release") WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE else  WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            registerHandler("resumeUploadSuccess") { data, _ ->
+                try {
+                    //解析简成功发送消息
+                    FlowEventBus.postSync(Events.ResumeEvent(true))
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
