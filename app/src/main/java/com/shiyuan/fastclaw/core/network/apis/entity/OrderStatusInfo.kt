@@ -6,4 +6,6 @@ data class OrderStatusInfo(
     val orderNo: String? = null,
     //订单状态 0-支付中 1-支付成功
     val status: Int? = null,
+    //订单状态 0-支付中 1-支付成功
+    val tradeStatus: Int? = null,
 )

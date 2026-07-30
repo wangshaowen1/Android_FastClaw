@@ -17,14 +17,23 @@ import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.ext.PollingState
+import com.shiyuan.fastclaw.core.ext.launchPolling
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.toPaymentParams
 import com.shiyuan.fastclaw.core.model.H5PayInfo
 import com.shiyuan.fastclaw.core.model.H5PayStatusInfo
+import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.response.H5InterviewPassPackageRep
 import com.shiyuan.fastclaw.feature.web.data.BrowserRepository
+import kotlinx.coroutines.Job
 
 class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
+
+    companion object {
+        private const val PAYMENT_STATUS_MAX_RETRY = 5
+        private const val PAYMENT_STATUS_POLL_INTERVAL_MS = 500L
+    }
 
     val title by lazy { mBundle.getString(Constants.Extra.TITLE) }
     val url by lazy { mBundle.getString(Constants.Extra.URL) }
@@ -48,7 +57,12 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
     val openWebUrl = MutableLiveData<String?>(null)
     val payStatusCallback = MutableLiveData<H5PayStatusInfo?>(null)
     var data: H5InterviewPassPackageRep? = null
+    private var paymentStatusPollingJob: Job? = null
+
     fun startPay(info: H5PayInfo) {
+        paymentStatusPollingJob?.cancel()
+        paymentStatusPollingJob = null
+        setLoading(false)
         val launchPay = {
             val isZfb = "zfb".equals(info.payWay, true)
             val payment = if (isZfb) PaymentClient.PaymentMethod.Alipay
@@ -74,7 +88,14 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
             }
             paymentClient.setResultStrategy(object : PaymentResultStrategy() {
                 override fun doWithSuccess(context: Activity?, method: PaymentClient.PaymentMethod?, paymentParams: PaymentParams?) {
-                    payStatusCallback.value = H5PayStatusInfo(200, data?.packageId)
+                    if (data?.goodsCode == H5InterviewPassPackageRep.CLEARANCE_PACKAGE) {
+                        payStatusCallback.value = H5PayStatusInfo(200, data?.packageId)
+                    } else  if (data?.goodsCode == H5InterviewPassPackageRep.SALARY_IS_UNDERESTIMATED || data?.goodsCode == H5InterviewPassPackageRep.ONE_REPLIED_RESUME) {
+                        // pollPaymentStatus()
+                        payStatusCallback.value = H5PayStatusInfo(200, data?.orderNo)
+                    }else {
+                        payStatusCallback.value = H5PayStatusInfo(200, data?.orderNo)
+                    }
                    // payStatusCallback.value = H5PayStatusInfo(200, User.get().userInfoStr)
                    // payStatusCallback.value = H5PayStatusInfo(200, "{\"goodsName\":\"面试通关包\",\"orderNo\":\"2026070317454005114103344\",\"packageId\":\"66580780191911\"}")
                 }
@@ -113,5 +134,50 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
 //                launchPay.invoke()
 //            }
 //        )
+    }
+
+    private fun pollPaymentStatus() {
+        val currentOrderNo = data?.orderNo
+        if (currentOrderNo.isNullOrBlank()) {
+            payStatusCallback.value = H5PayStatusInfo(400, currentOrderNo)
+            return
+        }
+
+        var retryCount = 0
+        paymentStatusPollingJob?.cancel()
+        setLoading(true)
+        paymentStatusPollingJob = launchPolling(
+            intervalMs = PAYMENT_STATUS_POLL_INTERVAL_MS,
+            retryOnNetworkError = false,
+            showToastError = false,
+            apiBlock = {
+                mRepo.api.getOrderStatus(OrderStatusBody(orderNo = currentOrderNo))
+            },
+            checkState = { response ->
+                retryCount++
+                when {
+                    response?.data?.tradeStatus == 1 -> PollingState.SUCCESS
+                    retryCount >= PAYMENT_STATUS_MAX_RETRY -> PollingState.FAIL
+                    else -> PollingState.CONTINUE
+                }
+            },
+            onSuccess = {
+                paymentStatusPollingJob = null
+                setLoading(false)
+                payStatusCallback.value = H5PayStatusInfo(200, currentOrderNo)
+            },
+            onFail = { _, _ ->
+                paymentStatusPollingJob = null
+                setLoading(false)
+                payStatusCallback.value = H5PayStatusInfo(400, currentOrderNo)
+            }
+        )
+    }
+
+    override fun onCleared() {
+        paymentStatusPollingJob?.cancel()
+        paymentStatusPollingJob = null
+        setLoading(false)
+        super.onCleared()
     }
 }
