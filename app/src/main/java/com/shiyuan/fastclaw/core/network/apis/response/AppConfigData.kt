@@ -38,7 +38,7 @@ class AppConfigData {
      * 合法域名集合
      */
     // AppConfigData.kt
-    var clientLegalH5Domain: List<String> = listOf("kuailongxia-h5-dev.kwaige.cn","192.168.10.23:5555","m.aishiyuan.cn")
+    var clientLegalH5Domain: List<String> = listOf("kuailongxia-h5-dev.kwaige.cn","192.168.10.128:5555","m.aishiyuan.cn")
 
     /**
      * 用户端-APP存储TOS域名集合
