@@ -204,13 +204,13 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
             binding.progressbar.isVisible = false
         }
 
-        /*override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             return handleUrlJump(url)
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             return handleUrlJump(request?.url?.toString())
-        }*/
+        }
 
         override fun onReceivedError(view: WebView?, errorCode: Int, description: String?, failingUrl: String?) {
             mRealVM.isLoadError.value = true
