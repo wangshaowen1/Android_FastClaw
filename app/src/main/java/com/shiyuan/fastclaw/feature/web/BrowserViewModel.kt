@@ -149,7 +149,7 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
         paymentStatusPollingJob = launchPolling(
             intervalMs = PAYMENT_STATUS_POLL_INTERVAL_MS,
             retryOnNetworkError = false,
-            showToastError = false,
+            showToastError = true,
             apiBlock = {
                 mRepo.api.getOrderStatus(OrderStatusBody(orderNo = currentOrderNo))
             },
