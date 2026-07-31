@@ -72,6 +72,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_agent_name" />
 
         <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:layout_marginTop="1dp"
             android:id="@+id/tv_agent_status"
             android:layout_width="6dp"
             android:layout_height="6dp"
@@ -83,6 +84,7 @@
 
 
         <View
+            android:layout_marginTop="1dp"
             android:id="@+id/tv_agent_index"
             android:layout_width="12dp"
             android:layout_height="12dp"

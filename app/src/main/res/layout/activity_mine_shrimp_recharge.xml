@@ -88,6 +88,7 @@
                                     tools:text="10" />
 
                                 <ImageView
+                                    android:layout_marginTop="1dp"
                                     android:layout_width="26dp"
                                     android:layout_height="26dp"
                                     android:layout_marginStart="4dp"
