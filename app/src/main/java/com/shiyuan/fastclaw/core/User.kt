@@ -168,6 +168,8 @@ class User : IUser {
         wechatNickName = null
         wechatBindStatus = WECHAT_BIND_STATUS_UNBOUND
         requestNotificationsPermissionEnable = true
+        Config.get().clearBaseUrlCustom()
+        clearLegacyUserData()
     }
 
     fun notifyChange(vararg keys: String?) {
@@ -320,6 +322,27 @@ class User : IUser {
         val targetKey = mmkvKey(key)
         if (mmkv.containsKey(targetKey)) return
         mmkv.encode(targetKey, legacySp.getBoolean(key, default))
+    }
+
+    private fun clearLegacyUserData() {
+        legacySp.remove(USER_ID)
+        legacySp.remove(PHONE_NUM)
+        legacySp.remove(U_ID)
+        legacySp.remove(INVITE_CODE)
+        legacySp.remove(NICK_NAME)
+        legacySp.remove(GENDER)
+        legacySp.remove(AVATAR_URL)
+        legacySp.remove(USER_SOURCE)
+        legacySp.remove(REGISTER_WAY)
+        legacySp.remove(LAST_LOGIN_TIME)
+        legacySp.remove(REGISTER_STATUS)
+        legacySp.remove(TOKEN)
+        legacySp.remove(COMPUTING_POWER)
+        legacySp.remove(PURCHASE_COURSE_STATUS)
+        legacySp.remove(IS_PAID)
+        legacySp.remove(WECHAT_NICK_NAME)
+        legacySp.remove(WECHAT_BIND_STATUS)
+        legacySp.remove(REQUEST_NOTIFICATIONS_PERMISSION)
     }
 
     companion object {

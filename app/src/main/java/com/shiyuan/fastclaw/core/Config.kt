@@ -287,6 +287,7 @@ class Config : NetworkChangedListener {
         removeValue(ENVIRONMENT)
         this.isDevelopmentMode = false
         removeValue(DEVELOPMENT_MODE)
+        removeValue(Constants.BASE_URL_CUSTOM)
         this.inviteAttribution = null
         removeValue(INVITE_CODE)
         removeValue(INVITE_SCENE)
@@ -318,6 +319,10 @@ class Config : NetworkChangedListener {
 
     fun storeBaseUrlCustom(baseUrlCustom: String?) {
         this.baseUrlCustom = baseUrlCustom
+    }
+
+    fun clearBaseUrlCustom() {
+        removeValue(Constants.BASE_URL_CUSTOM)
     }
 
     fun storeEyeProtectionEnabled(eyeProtectionEnabled: Boolean) {
