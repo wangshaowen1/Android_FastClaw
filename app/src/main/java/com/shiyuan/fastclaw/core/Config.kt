@@ -56,7 +56,7 @@ class Config : NetworkChangedListener {
         private set
 
     /** 设备对象 id。 */
-    var objectId: String? by MmkvDelegate(mmkvKey(OBJECT_ID), null as String?) { mmkv }
+    var objectId: String? by MmkvDelegate(mmkvKey(OBJECT_ID), "1") { mmkv }
         private set
 
     /** 审核状态当前进程内存值。 */
@@ -94,7 +94,7 @@ class Config : NetworkChangedListener {
     /**
      * 测试环境下自己输入的 ip，供后台测试用
      */
-    var baseUrlCustom: String? by MmkvDelegate(mmkvKey(Constants.BASE_URL_CUSTOM), null as String?) { mmkv }
+    var baseUrlCustom: String? by MmkvDelegate(mmkvKey(Constants.BASE_URL_CUSTOM), BuildConfig.SERVER_URL) { mmkv }
         private set
 
     /** 设备推送 token。 */
@@ -114,7 +114,6 @@ class Config : NetworkChangedListener {
 
     init {
         migrateLegacyConfigIfNeeded()
-        this.objectId = objectId ?: "1"
         this.isInReview =
             if (ifInReviewStatus()) {
                 getBooleanValue(IN_REVIEW, ifInitialStatusInReview())
@@ -122,7 +121,6 @@ class Config : NetworkChangedListener {
                 false
             }
         this.environment = getIntValue(ENVIRONMENT, initialState)
-        this.baseUrlCustom = baseUrlCustom ?: BuildConfig.SERVER_URL
         this.inviteAttribution = InviteAttribution(
             inviteCode = getStringValue(INVITE_CODE, null),
             inviteScene = getStringValue(INVITE_SCENE, null)
