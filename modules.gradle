@@ -24,8 +24,8 @@ ext {
             payment    : [
                     groupId   : 'com.kuaige',
                     artifactId: 'payment',
-                    version   : '1.0.3',
-                    gav       : 'com.kuaige:payment:1.0.3'
+                    version   : '1.0.5',
+                    gav       : 'com.kuaige:payment:1.0.5'
             ],
             videoedit  : [
                     groupId   : 'com.kuaige',
