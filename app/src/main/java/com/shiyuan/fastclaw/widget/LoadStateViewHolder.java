@@ -110,10 +110,10 @@ public class LoadStateViewHolder extends ViewAnimator {
         //请求异常提示图片，服务器异常
         requestExceptionSrc = typedArray.getResourceId(
                 R.styleable.LoadStateViewHolder_requestExceptionSrc,
-                R.drawable.ic_not_song
+                R.drawable.empty_network
         );
         //无数据提示图片
-        noDataSrc = typedArray.getResourceId(R.styleable.LoadStateViewHolder_noDataSrc, R.drawable.ic_not_song);
+        noDataSrc = typedArray.getResourceId(R.styleable.LoadStateViewHolder_noDataSrc, R.drawable.empty_network);
         if (noDataSrc > 0) {
             binding.noDataIcon.setImageResource(noDataSrc);
         }

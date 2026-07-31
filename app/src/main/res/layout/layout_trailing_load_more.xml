@@ -101,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="128dp"
-            android:src="@drawable/ic_not_song" />
+            android:src="@drawable/empty_network" />
 
         <TextView
             android:id="@+id/load_more_load_empty_view_text"

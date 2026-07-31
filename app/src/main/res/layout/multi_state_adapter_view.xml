@@ -83,7 +83,7 @@
             android:layout_marginHorizontal="50dp"
             android:adjustViewBounds="true"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_not_song" />
+            android:src="@drawable/empty_network" />
 
         <TextView
             android:id="@+id/tv_network_anomaly"
