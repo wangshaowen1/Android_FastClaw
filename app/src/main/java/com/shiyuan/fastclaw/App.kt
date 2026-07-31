@@ -45,6 +45,7 @@ import com.nhsd.permisson.PermissionX
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.tencent.bugly.crashreport.CrashReport
+import com.tencent.mmkv.MMKV
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Random
@@ -159,6 +160,7 @@ class App : BaseApp() {
         Logger.setDebug(isDebug)
 
         SP.init(this)
+        MMKV.initialize(this)
         config = Config()
         user = User()
         appStatusTracker = AppStatusTracker()

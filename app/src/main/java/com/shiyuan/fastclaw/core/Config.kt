@@ -4,109 +4,137 @@ import android.text.TextUtils
 import android.util.Log
 import com.blankj.utilcode.util.NetworkUtils
 import com.google.gson.Gson
+import com.nhsd.basic.Session
+import com.nhsd.basic.Session.NetworkChangedListener
+import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.ext.launchNoCrash
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.SP
 import com.shiyuan.fastclaw.common.ext.ioScope
 import com.shiyuan.fastclaw.common.utils.DateUtil
+import com.shiyuan.fastclaw.common.utils.MmkvDelegate
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory.apiService
+import com.shiyuan.fastclaw.core.network.apis.request.InviteAttribution
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
 import com.shiyuan.fastclaw.core.network.apis.response.TotalComposeConfigData
-import com.nhsd.basic.Session
-import com.nhsd.basic.Session.NetworkChangedListener
-import com.nhsd.basic.bus.FlowEventBus
-import com.nhsd.basic.ext.launchNoCrash
-import com.shiyuan.fastclaw.core.network.apis.request.InviteAttribution
+import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 
 /**
  * App配置信息与角色是否登录或切换无关
  */
 class Config : NetworkChangedListener {
-    private val sp: SP
-    var isFirstOpenApp: Boolean
-        private set
+    private val legacySp = SP(CONFIG_DATA_MMKV_ID)
+    private val mmkv by lazy { MMKV.mmkvWithID(CONFIG_DATA_MMKV_ID) ?: MMKV.defaultMMKV() }
 
-    var isFirstSetBookVoice: Boolean
-        private set
-
-    var isFirstEyeProtectionSetting: Boolean = false
-        private set
-    var objectId: String?
-        private set
-    var isInReview: Boolean
-        private set
-    var environment: Int
-        private set
-    var isDevelopmentMode: Boolean = false
-        private set
-
-
+    /** 是否正在请求 App 配置，避免重复请求。 */
     private var isRequesting = false
+
+    /** JSON 序列化工具。 */
     private val gson: Gson
 
+    /** App 配置接口缓存数据。 */
     private var appConfigData: AppConfigData? = null
 
-
-    var isNotificationEnable: Boolean
+    /** 是否首次打开 App。 */
+    var isFirstOpenApp: Boolean by MmkvDelegate(mmkvKey(FIRST_OPEN_APP), true) { mmkv }
         private set
 
-    var isShowJumpPop: Boolean
+    /** 是否首次设置书籍音色。 */
+    var isFirstSetBookVoice: Boolean by MmkvDelegate(mmkvKey(FIRST_SET_BOOK_VOICE), true) { mmkv }
+        private set
+
+    /** 是否首次设置护眼模式。 */
+    var isFirstEyeProtectionSetting: Boolean by MmkvDelegate(
+        mmkvKey(FIRST_EYE_PROTECTION_SETTING),
+        true
+    ) { mmkv }
+        private set
+
+    /** 设备对象 id。 */
+    var objectId: String? by MmkvDelegate(mmkvKey(OBJECT_ID), null as String?) { mmkv }
+        private set
+
+    /** 审核状态当前进程内存值。 */
+    private var isInReviewMemory = false
+
+    /** 当前是否处于审核状态。 */
+    var isInReview: Boolean
+        get() = isInReviewMemory
+        private set(value) {
+            isInReviewMemory = value
+        }
+
+    /** 接口环境当前进程内存值。 */
+    private var environmentMemory = 0
+
+    /** 当前接口环境。 */
+    var environment: Int
+        get() = environmentMemory
+        private set(value) {
+            environmentMemory = value
+        }
+
+    /** 是否开启开发模式。 */
+    var isDevelopmentMode: Boolean by MmkvDelegate(mmkvKey(DEVELOPMENT_MODE), false) { mmkv }
+        private set
+
+    /** 是否允许通知。 */
+    var isNotificationEnable: Boolean by MmkvDelegate(mmkvKey(NOTIFICATION_ENABLE), true) { mmkv }
+        private set
+
+    /** 是否展示跳转弹窗。 */
+    var isShowJumpPop: Boolean by MmkvDelegate(mmkvKey(SHOW_JUMP_POP), true) { mmkv }
         private set
 
     /**
-     * 测试环境下 自己输入的ip，供后台测试用
+     * 测试环境下自己输入的 ip，供后台测试用
      */
-    var baseUrlCustom: String?
+    var baseUrlCustom: String? by MmkvDelegate(mmkvKey(Constants.BASE_URL_CUSTOM), null as String?) { mmkv }
         private set
 
-    private var deviceToken: String? = null
+    /** 设备推送 token。 */
+    private var deviceToken: String? by MmkvDelegate(mmkvKey(DEVICE_TOKEN), null as String?) { mmkv }
 
+    /** 邀请归因信息。 */
     var inviteAttribution: InviteAttribution? = null
         private set
 
-    var opid: String?
+    /** 外部渠道 open id。 */
+    var opid: String? by MmkvDelegate(mmkvKey(OPID), null as String?) { mmkv }
         private set
 
-    var eyeProtectionEnabled: Boolean? = false
+    /** 护眼模式是否开启。 */
+    var eyeProtectionEnabled: Boolean? by MmkvDelegate(mmkvKey(EYE_PROTECTION_ENABLE), false) { mmkv }
         private set
+
+    init {
+        migrateLegacyConfigIfNeeded()
+        this.objectId = objectId ?: "1"
+        this.isInReview =
+            if (ifInReviewStatus()) {
+                getBooleanValue(IN_REVIEW, ifInitialStatusInReview())
+            } else {
+                false
+            }
+        this.environment = getIntValue(ENVIRONMENT, initialState)
+        this.baseUrlCustom = baseUrlCustom ?: BuildConfig.SERVER_URL
+        this.inviteAttribution = InviteAttribution(
+            inviteCode = getStringValue(INVITE_CODE, null),
+            inviteScene = getStringValue(INVITE_SCENE, null)
+        ).takeIf { !it.inviteCode.isNullOrBlank() || !it.inviteScene.isNullOrBlank() }
+        gson = Gson()
+    }
 
     private fun ifInitialStatusInReview(): Boolean {
         when (Session.getInstance().channel) {
-            "huawei" ->
-                return true
+            "huawei" -> return true
         }
         return false
-    }
-
-    init {
-        sp = SP("CONFIG_DATA")
-        this.isFirstOpenApp = sp.getBoolean(FIRST_OPEN_APP, true)
-        this.isFirstSetBookVoice = sp.getBoolean(FIRST_SET_BOOK_VOICE, true)
-        this.isFirstEyeProtectionSetting = sp.getBoolean(FIRST_EYE_PROTECTION_SETTING, true)
-        objectId = sp.getString(OBJECT_ID, "1")
-        this.isInReview =
-            if (ifInReviewStatus()) sp.getBoolean(IN_REVIEW, ifInitialStatusInReview()) else false
-        environment = sp.getInt(
-            ENVIRONMENT,
-            this.initialState
-        )
-        this.isDevelopmentMode = sp.getBoolean(DEVELOPMENT_MODE, false)
-        this.isNotificationEnable = sp.getBoolean(NOTIFICATION_ENABLE, true)
-        this.isShowJumpPop = sp.getBoolean(SHOW_JUMP_POP, true)
-        baseUrlCustom = sp.getString(Constants.BASE_URL_CUSTOM, BuildConfig.SERVER_URL)
-        deviceToken = sp.getString(DEVICE_TOKEN, deviceToken)
-        inviteAttribution = InviteAttribution(
-            inviteCode = sp.getString(INVITE_CODE, null),
-            inviteScene = sp.getString(INVITE_SCENE, null)
-        ).takeIf { !it.inviteCode.isNullOrBlank() || !it.inviteScene.isNullOrBlank() }
-        opid = sp.getString(OPID, null)
-        eyeProtectionEnabled = sp.getBoolean(EYE_PROTECTION_ENABLE, false)
-        gson = Gson()
     }
 
     private fun ifInReviewStatus(): Boolean {
@@ -140,7 +168,6 @@ class Config : NetworkChangedListener {
         }
     }
 
-
     override fun onNetworkStateChanged(networkAvailable: Boolean) {
         updateConfig()
     }
@@ -152,30 +179,27 @@ class Config : NetworkChangedListener {
         get() {
             if (appConfigData == null) {
                 updateConfig()
-                val json =
-                    sp.getString(APP_CONFIG, "")
+                val json = getStringValue(APP_CONFIG, "")
                 appConfigData = gson.fromJson(json, AppConfigData::class.java)
             }
             if (appConfigData == null) {
-                appConfigData =
-                    DEFAULT_APP_CONFIG
+                appConfigData = DEFAULT_APP_CONFIG
             }
-            return this.appConfigData!!
+            return appConfigData!!
         }
 
     fun storeAppConfig(data: AppConfigData?) {
         this.appConfigData = data
-        sp.putString(APP_CONFIG, gson.toJson(data))
+        putStringValue(APP_CONFIG, gson.toJson(data))
     }
 
     fun storeComposeConfig(data: TotalComposeConfigData?) {
-        sp.putString(COMPOSE_CONFIG, gson.toJson(data))
+        putStringValue(COMPOSE_CONFIG, gson.toJson(data))
     }
 
     val totalComposeConfig: TotalComposeConfigData?
         get() {
-            val json =
-                sp.getString(COMPOSE_CONFIG, "")
+            val json = getStringValue(COMPOSE_CONFIG, "")
             return gson.fromJson(json, TotalComposeConfigData::class.java)
         }
 
@@ -199,18 +223,14 @@ class Config : NetworkChangedListener {
         get() = appConfigData?.userVipProtocolUrl ?: Constants.DEFAULT_USER_VIP_PROTOCOL_URL
 
     val algorithmUrl: String?
-        get() {
-            return appConfigData?.algorithmUrl ?: Constants.DEFAULT_ALGORITHM_ANNOUNCEMENT
-        }
+        get() = appConfigData?.algorithmUrl ?: Constants.DEFAULT_ALGORITHM_ANNOUNCEMENT
 
     fun notifyChange(vararg keys: String?) {
         FlowEventBus.postSync(Events.ConfigChangeEvent(keys))
     }
 
-
     fun storeObjectId(objectId: String?) {
         this.objectId = objectId
-        sp.putString(OBJECT_ID, objectId)
     }
 
     private fun storeInReviewWithNotify(inReview: Boolean) {
@@ -222,31 +242,26 @@ class Config : NetworkChangedListener {
 
     fun storeInReview(inReview: Boolean) {
         this.isInReview = inReview
-        sp.putBoolean(IN_REVIEW, inReview)
+        putBooleanValue(IN_REVIEW, inReview)
     }
 
-
     fun markAppOpenedWithNotify() {
-        sp.putBoolean(FIRST_OPEN_APP, false)
         this.isFirstOpenApp = false
         notifyChange(FIRST_OPEN_APP)
     }
 
     fun markFirstSetBookVoiceWithNotify() {
-        sp.putBoolean(FIRST_SET_BOOK_VOICE, false)
         this.isFirstSetBookVoice = false
         notifyChange(FIRST_SET_BOOK_VOICE)
     }
 
     fun markFirstProtectionSettingWithNotify() {
-        sp.putBoolean(FIRST_EYE_PROTECTION_SETTING, false)
         this.isFirstEyeProtectionSetting = false
         notifyChange(FIRST_EYE_PROTECTION_SETTING)
     }
 
     fun storeDeviceToken(deviceToken: String?) {
         this.deviceToken = deviceToken
-        sp.putString(DEVICE_TOKEN, deviceToken)
     }
 
     fun storeInviteAttribution(inviteCode: String?, inviteScene: String?) {
@@ -259,76 +274,65 @@ class Config : NetworkChangedListener {
             inviteCode = validInviteCode,
             inviteScene = validInviteScene
         )
-        sp.putString(INVITE_CODE, validInviteCode)
-        sp.putString(INVITE_SCENE, validInviteScene)
+        putStringValue(INVITE_CODE, validInviteCode)
+        putStringValue(INVITE_SCENE, validInviteScene)
     }
 
     fun clear() {
         this.isFirstOpenApp = true
-        sp.remove(FIRST_OPEN_APP)
-
+        removeValue(FIRST_OPEN_APP)
 
         this.isInReview = true
-        sp.remove(IN_REVIEW)
+        removeValue(IN_REVIEW)
 
-        environment = this.initialState
-        sp.remove(ENVIRONMENT)
+        this.environment = this.initialState
+        removeValue(ENVIRONMENT)
         this.isDevelopmentMode = false
-        sp.remove(DEVELOPMENT_MODE)
-        inviteAttribution = null
-        sp.remove(INVITE_CODE)
-        sp.remove(INVITE_SCENE)
-        sp.remove(OPID)
+        removeValue(DEVELOPMENT_MODE)
+        this.inviteAttribution = null
+        removeValue(INVITE_CODE)
+        removeValue(INVITE_SCENE)
+        removeValue(OPID)
         this.isShowJumpPop = true
-        sp.remove(SHOW_JUMP_POP)
+        removeValue(SHOW_JUMP_POP)
         this.eyeProtectionEnabled = false
-        sp.remove(EYE_PROTECTION_ENABLE)
+        removeValue(EYE_PROTECTION_ENABLE)
     }
 
     fun storeOpid(opid: String?) {
         this.opid = opid
-        sp.putString(OPID, opid)
     }
-
 
     fun storeDevelopmentMode(developMode: Boolean) {
         this.isDevelopmentMode = developMode
-        sp.putBoolean(DEVELOPMENT_MODE, developMode)
     }
-
 
     val isDebug: Boolean
         get() = if (this.isDevelopmentMode) true else BuildConfig.DEBUG_MODEL
 
     fun storeNotificationEnable(notificationEnable: Boolean) {
         this.isNotificationEnable = notificationEnable
-        sp.putBoolean(NOTIFICATION_ENABLE, notificationEnable)
     }
 
     fun markJumpPopShown() {
         this.isShowJumpPop = false
-        sp.putBoolean(SHOW_JUMP_POP, false)
     }
 
     fun storeBaseUrlCustom(baseUrlCustom: String?) {
         this.baseUrlCustom = baseUrlCustom
-        sp.putString(Constants.BASE_URL_CUSTOM, baseUrlCustom)
     }
 
     fun storeEyeProtectionEnabled(eyeProtectionEnabled: Boolean) {
         if (this.eyeProtectionEnabled != eyeProtectionEnabled) {
             this.eyeProtectionEnabled = eyeProtectionEnabled
-            sp.putBoolean(EYE_PROTECTION_ENABLE, eyeProtectionEnabled)
         }
     }
 
     fun activityPopupShowCount(id: String?): Int {
         if (id.isNullOrEmpty()) return 0
-
-        val lastShowTime = sp.getLong("activity_popup_show_time_$id", 0L)
-        // 关键点：如果上次展示时间不是今天，之前的计数就没意义了，直接返回 0
+        val lastShowTime = getLongValue("activity_popup_show_time_$id", 0L)
         return if (DateUtil.isToday(lastShowTime)) {
-            sp.getInt("activity_popup_show_count_$id", 0)
+            getIntValue("activity_popup_show_count_$id", 0)
         } else {
             0
         }
@@ -336,26 +340,25 @@ class Config : NetworkChangedListener {
 
     fun activityPopupShowMark(id: String?) {
         if (id.isNullOrEmpty()) return
-
-        val lastShowTime = sp.getLong("activity_popup_show_time_$id", 0L)
+        val lastShowTime = getLongValue("activity_popup_show_time_$id", 0L)
         val currentCount = if (DateUtil.isToday(lastShowTime)) {
-            sp.getInt("activity_popup_show_count_$id", 0)
+            getIntValue("activity_popup_show_count_$id", 0)
         } else {
-            0 // 如果是跨天后的第一次展示，重置计数
+            0
         }
-        sp.putInt("activity_popup_show_count_$id", currentCount + 1)
-        sp.putLong("activity_popup_show_time_$id", System.currentTimeMillis())
+        putIntValue("activity_popup_show_count_$id", currentCount + 1)
+        putLongValue("activity_popup_show_time_$id", System.currentTimeMillis())
     }
 
     fun activityPopupShowTime(id: String?): Long {
-        return sp.getLong("activity_popup_show_time_$id", 0L)
+        return getLongValue("activity_popup_show_time_$id", 0L)
     }
 
     fun activityFloatShowCount(id: String?): Int {
         if (id.isNullOrEmpty()) return 0
-        val lastShowTime = sp.getLong("activity_float_show_time_$id", 0L)
+        val lastShowTime = getLongValue("activity_float_show_time_$id", 0L)
         return if (DateUtil.isToday(lastShowTime)) {
-            sp.getInt("activity_float_show_count_$id", 0)
+            getIntValue("activity_float_show_count_$id", 0)
         } else {
             0
         }
@@ -363,103 +366,260 @@ class Config : NetworkChangedListener {
 
     fun activityFloatShowMark(id: String?) {
         if (id.isNullOrEmpty()) return
-        val lastShowTime = sp.getLong("activity_float_show_time_$id", 0L)
+        val lastShowTime = getLongValue("activity_float_show_time_$id", 0L)
         val currentCount = if (DateUtil.isToday(lastShowTime)) {
-            sp.getInt("activity_float_show_count_$id", 0)
+            getIntValue("activity_float_show_count_$id", 0)
         } else {
             0
         }
-        sp.putInt("activity_float_show_count_$id", currentCount + 1)
-        sp.putLong("activity_float_show_time_$id", System.currentTimeMillis())
+        putIntValue("activity_float_show_count_$id", currentCount + 1)
+        putLongValue("activity_float_show_time_$id", System.currentTimeMillis())
     }
 
     fun activityFloatShowTime(id: String?): Long {
-        return sp.getLong("activity_float_show_time_$id", 0L)
+        return getLongValue("activity_float_show_time_$id", 0L)
     }
 
     fun shouldShowRecommendUpgrade(intervalMillis: Long): Boolean {
-        val lastDismissTime = sp.getLong(RECOMMEND_UPGRADE_DISMISS_TIME, 0L)
+        val lastDismissTime = getLongValue(RECOMMEND_UPGRADE_DISMISS_TIME, 0L)
         val currentTime = System.currentTimeMillis()
         return lastDismissTime == 0L ||
-                currentTime < lastDismissTime ||
-                currentTime - lastDismissTime >= intervalMillis
+            currentTime < lastDismissTime ||
+            currentTime - lastDismissTime >= intervalMillis
     }
 
     fun markRecommendUpgradeDismissed() {
-        Log.d("onRemindLater",System.currentTimeMillis().toString())
-        sp.putLong(RECOMMEND_UPGRADE_DISMISS_TIME, System.currentTimeMillis())
+        Log.d("onRemindLater", System.currentTimeMillis().toString())
+        putLongValue(RECOMMEND_UPGRADE_DISMISS_TIME, System.currentTimeMillis())
     }
 
     fun notifyPowerConsume(scene: Int): Boolean {
-        return sp.getBoolean("notifyPowerConsume${User.get().userId}_$scene", true)
+        return getBooleanValue("notifyPowerConsume${User.get().userId}_$scene", true)
     }
 
     fun notifyPowerConsumeClose(scene: Int) {
-        sp.putBoolean("notifyPowerConsume${User.get().userId}_$scene", false)
+        putBooleanValue("notifyPowerConsume${User.get().userId}_$scene", false)
     }
 
     fun isFirstRechargeShown(scene: Int): Boolean {
-        return sp.getBoolean("firstRechargeShown${User.get().userId}_$scene", false)
+        return getBooleanValue("firstRechargeShown${User.get().userId}_$scene", false)
     }
 
     fun markFirstRechargeShown(scene: Int) {
-        sp.putBoolean("firstRechargeShown${User.get().userId}_$scene", true)
+        putBooleanValue("firstRechargeShown${User.get().userId}_$scene", true)
     }
 
     /**
      * 用户id作为key存储，记录用户是否第一次登录
      */
     fun recordFirstLogin(key: String) {
-        sp.putBoolean(key, false)
+        putBooleanValue(key, false)
     }
 
     fun hasEnableNotification(): Boolean {
-        return sp.getBoolean(NOTIFICATION_SWITCH_KEY, false)
+        return getBooleanValue(NOTIFICATION_SWITCH_KEY, false)
     }
 
     fun switchNotification(flag: Boolean) {
-        sp.putBoolean(NOTIFICATION_SWITCH_KEY, flag)
+        putBooleanValue(NOTIFICATION_SWITCH_KEY, flag)
     }
 
     /**
      * 用户是否第一次登录
      */
     fun isFirstLogin(key: String): Boolean {
-        return sp.getBoolean(key, true)
+        return getBooleanValue(key, true)
     }
 
+    private fun getStringValue(key: String, defaultValue: String?): String? {
+        val realKey = mmkvKey(key)
+        return if (mmkv.containsKey(realKey)) {
+            mmkv.decodeString(realKey, defaultValue)
+        } else {
+            legacySp.getString(key, defaultValue)
+        }
+    }
+
+    private fun putStringValue(key: String, value: String?) {
+        val realKey = mmkvKey(key)
+        if (value == null) {
+            mmkv.removeValueForKey(realKey)
+            legacySp.remove(key)
+        } else {
+            mmkv.encode(realKey, value)
+        }
+    }
+
+    private fun getBooleanValue(key: String, defaultValue: Boolean): Boolean {
+        val realKey = mmkvKey(key)
+        return if (mmkv.containsKey(realKey)) {
+            mmkv.decodeBool(realKey, defaultValue)
+        } else {
+            legacySp.getBoolean(key, defaultValue)
+        }
+    }
+
+    private fun putBooleanValue(key: String, value: Boolean) {
+        mmkv.encode(mmkvKey(key), value)
+    }
+
+    private fun getIntValue(key: String, defaultValue: Int): Int {
+        val realKey = mmkvKey(key)
+        return if (mmkv.containsKey(realKey)) {
+            mmkv.decodeInt(realKey, defaultValue)
+        } else {
+            legacySp.getInt(key, defaultValue)
+        }
+    }
+
+    private fun putIntValue(key: String, value: Int) {
+        mmkv.encode(mmkvKey(key), value)
+    }
+
+    private fun getLongValue(key: String, defaultValue: Long): Long {
+        val realKey = mmkvKey(key)
+        return if (mmkv.containsKey(realKey)) {
+            mmkv.decodeLong(realKey, defaultValue)
+        } else {
+            legacySp.getLong(key, defaultValue)
+        }
+    }
+
+    private fun putLongValue(key: String, value: Long) {
+        mmkv.encode(mmkvKey(key), value)
+    }
+
+    private fun removeValue(key: String) {
+        mmkv.removeValueForKey(mmkvKey(key))
+        legacySp.remove(key)
+    }
+
+    /** 首次初始化时迁移旧 SharedPreferences 配置数据。 */
+    private fun migrateLegacyConfigIfNeeded() {
+        if (mmkv.decodeBool(mmkvKey(CONFIG_DATA_MIGRATED), false)) {
+            return
+        }
+        migrateLegacyBoolean(FIRST_OPEN_APP, true)
+        migrateLegacyBoolean(FIRST_SET_BOOK_VOICE, true)
+        migrateLegacyBoolean(FIRST_EYE_PROTECTION_SETTING, true)
+        migrateLegacyString(OBJECT_ID)
+        migrateLegacyBoolean(IN_REVIEW, ifInitialStatusInReview())
+        migrateLegacyInt(ENVIRONMENT, initialState)
+        migrateLegacyBoolean(DEVELOPMENT_MODE, false)
+        migrateLegacyBoolean(NOTIFICATION_ENABLE, true)
+        migrateLegacyBoolean(SHOW_JUMP_POP, true)
+        migrateLegacyString(Constants.BASE_URL_CUSTOM, BuildConfig.SERVER_URL)
+        migrateLegacyString(DEVICE_TOKEN)
+        migrateLegacyString(INVITE_CODE)
+        migrateLegacyString(INVITE_SCENE)
+        migrateLegacyString(OPID)
+        migrateLegacyBoolean(EYE_PROTECTION_ENABLE, false)
+        mmkv.encode(mmkvKey(CONFIG_DATA_MIGRATED), true)
+    }
+
+    /** 迁移旧字符串配置项。 */
+    private fun migrateLegacyString(key: String, default: String? = null) {
+        val targetKey = mmkvKey(key)
+        if (mmkv.containsKey(targetKey)) return
+        legacySp.getString(key, default)?.let { mmkv.encode(targetKey, it) }
+    }
+
+    /** 迁移旧整型配置项。 */
+    private fun migrateLegacyInt(key: String, default: Int) {
+        val targetKey = mmkvKey(key)
+        if (mmkv.containsKey(targetKey)) return
+        mmkv.encode(targetKey, legacySp.getInt(key, default))
+    }
+
+    /** 迁移旧布尔配置项。 */
+    private fun migrateLegacyBoolean(key: String, default: Boolean) {
+        val targetKey = mmkvKey(key)
+        if (mmkv.containsKey(targetKey)) return
+        mmkv.encode(targetKey, legacySp.getBoolean(key, default))
+    }
 
     companion object {
+        /** Config MMKV 实例 id。 */
+        private const val CONFIG_DATA_MMKV_ID = "CONFIG_DATA"
+
+        /** Config 旧数据迁移完成标记。 */
+        private const val CONFIG_DATA_MIGRATED = "CONFIG_DATA_MIGRATED"
+
+        /** 首次打开 App 存储 key。 */
         const val FIRST_OPEN_APP: String = "firstOpenApp"
+
+        /** 首次设置书籍音色存储 key。 */
         const val FIRST_SET_BOOK_VOICE: String = "firstSetBookVoice"
+
+        /** 通知总开关存储 key。 */
         private const val NOTIFICATION_SWITCH_KEY = "notification_switch_key"
 
+        /** 首次设置护眼模式存储 key。 */
         const val FIRST_EYE_PROTECTION_SETTING: String = "firstEyeProtectionSetting"
+
+        /** 设备对象 id 存储 key。 */
         private const val OBJECT_ID = "objectId"
+
+        /** 审核状态存储 key。 */
         const val IN_REVIEW: String = "inReview"
+
+        /** 开发模式存储 key。 */
         private const val DEVELOPMENT_MODE = "developmentMode"
+
+        /** 接口环境存储 key。 */
         private const val ENVIRONMENT: String = "environment"
+
+        /** App 配置接口缓存 key。 */
         private const val APP_CONFIG = "app_config"
+
+        /** 合成配置缓存 key。 */
         private const val COMPOSE_CONFIG: String = "COMPOSE_CONFIG"
+
+        /** 邀请码归因存储 key。 */
         private const val INVITE_CODE = "invite_code"
+
+        /** 邀请场景归因存储 key。 */
         private const val INVITE_SCENE = "invite_scene"
+
+        /** 外部渠道 open id 存储 key。 */
         private const val OPID = "opid"
+
+        /** 默认 App 配置。 */
         private val DEFAULT_APP_CONFIG: AppConfigData = AppConfigData()
+
+        /** 通知权限状态存储 key。 */
         private const val NOTIFICATION_ENABLE = "NOTIFICATION_ENABLE"
+
+        /** 跳转弹窗展示状态存储 key。 */
         private const val SHOW_JUMP_POP = "showJumpPop"
+
+        /** 推荐升级弹窗稍后提醒时间存储 key。 */
         private const val RECOMMEND_UPGRADE_DISMISS_TIME = "recommend_upgrade_dismiss_time"
 
+        /** 护眼模式开关存储 key。 */
         private const val EYE_PROTECTION_ENABLE: String = "eyeProtectionEnable"
+
+        /** 日常环境值。 */
         const val DAILY: Int = 1
+
+        /** UAT 环境值。 */
         const val UAT: Int = 2
+
+        /** 线上环境值。 */
         const val ONLINE: Int = 3
+
+        /** 设备推送 token 存储 key。 */
         const val DEVICE_TOKEN = "DEVICE_TOKEN"
 
+        /** 审核态启动保护时长。 */
         private const val REVIEW_OUT_TIME = (5 * 24 * 60 * 60 * 1000).toLong()
 
         @JvmStatic
         fun get(): Config {
             return App.instance.config
         }
+
+        /** 生成 Config 下统一前缀的 MMKV key。 */
+        private fun mmkvKey(key: String): String = "${CONFIG_DATA_MMKV_ID}_$key"
     }
 }

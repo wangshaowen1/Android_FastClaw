@@ -3,126 +3,112 @@ package com.shiyuan.fastclaw.core
 import android.text.TextUtils
 import com.google.gson.Gson
 import com.growingio.android.sdk.autotrack.GrowingAutotracker
+import com.nhsd.basic.Session
+import com.nhsd.basic.bus.FlowEventBus
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.common.SP
+import com.shiyuan.fastclaw.common.utils.MmkvDelegate
 import com.shiyuan.fastclaw.core.network.apis.entity.CookieUserInfo
 import com.shiyuan.fastclaw.core.network.apis.request.CompleteUserDataInfoBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
-import com.nhsd.basic.Session
-import com.nhsd.basic.bus.FlowEventBus
-import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.DataNexusManager
-import com.shiyuan.fastclaw.core.manager.EventManager
+import com.tencent.mmkv.MMKV
 
 /**
- * 当前登录角色信息
+ * 当前登录用户信息。
  */
 class User : IUser {
-    val sp: SP
+    private val legacySp = SP(USER_DATA_MMKV_ID)
+    private val mmkv by lazy { MMKV.mmkvWithID(USER_DATA_MMKV_ID) ?: MMKV.defaultMMKV() }
 
-    //用户ID
-    var userId: String?
-
-    //手机号
-    var phoneNum: String?
-
-    //uid
-    var userUid: String?
-
-    var inviteCode: String?
-
-    //用户昵称
-    var nickName: String?
-
-    //性别 0-未知 1-男 2-女
-    var gender: Int?
-
-    //用户头像URL
-    var avatarUrl: String?
-
-    //用户来源 1-用户自己注册 2-平台直接生成 3-平台通过app注册的假用户 4-平台测试用户 5-小程序注册
-    var userSource: Int?
+    /** 后端用户信息接口返回的账户 id。 */
+    var userId: String? by MmkvDelegate(mmkvKey(USER_ID), null as String?) { mmkv }
         private set
 
-    //注册方式 1-短信验证码 2-闪验 3-微信登录 4-qq登录 5-苹果登录 6-微信小程序 7-账号密码
-    var registerWay: Int?
+    /** 用户绑定的手机号。 */
+    var phoneNum: String? by MmkvDelegate(mmkvKey(PHONE_NUM), null as String?) { mmkv }
         private set
 
-    //最后登录时间
-    var lastLoginTime: String?
+    /** 候选人/业务侧 uid。 */
+    var userUid: String? by MmkvDelegate(mmkvKey(U_ID), null as String?) { mmkv }
         private set
 
-    //是否是注册，0-登录，1-是注册
-    var registerStatus: Int?
+    /** 当前用户的邀请码。 */
+    var inviteCode: String? by MmkvDelegate(mmkvKey(INVITE_CODE), null as String?) { mmkv }
         private set
 
-    //访问令牌
-    var token: String?
+    /** 应用内展示昵称。 */
+    var nickName: String? by MmkvDelegate(mmkvKey(NICK_NAME), null as String?) { mmkv }
         private set
 
-    /**算力余额*/
-    var computingPower: Int
+    /** 性别：0 未知，1 男，2 女。 */
+    var gender: Int? by MmkvDelegate(mmkvKey(GENDER), 0) { mmkv }
         private set
 
-    /**课程购买状态*/
-    var purchaseCourseStatus: Int?
+    /** 用户头像地址。 */
+    var avatarUrl: String? by MmkvDelegate(mmkvKey(AVATAR_URL), null as String?) { mmkv }
         private set
 
-    /**
-     * 1-新客（未购买过用户）2-老客（已购买过用户）
-     */
-    var isPaid: Int?
+    /** 后端返回的用户来源类型。 */
+    var userSource: Int? by MmkvDelegate(mmkvKey(USER_SOURCE), 0) { mmkv }
         private set
 
-    /**
-     * 微信昵称
-     */
-    var wechatNickName: String?
+    /** 后端返回的注册方式类型。 */
+    var registerWay: Int? by MmkvDelegate(mmkvKey(REGISTER_WAY), 0) { mmkv }
         private set
 
-    /**
-     * 微信绑定状态 0-未绑定 1-已绑定
-     */
-    var wechatBindStatus: Int?
+    /** 后端返回的最后登录时间。 */
+    var lastLoginTime: String? by MmkvDelegate(mmkvKey(LAST_LOGIN_TIME), null as String?) { mmkv }
         private set
 
-    var requestNotificationsPermissionEnable = true
+    /** 后端返回的注册状态。 */
+    var registerStatus: Int? by MmkvDelegate(mmkvKey(REGISTER_STATUS), 0) { mmkv }
+        private set
 
+    /** 当前登录 token。 */
+    var token: String? by MmkvDelegate(mmkvKey(TOKEN), null as String?) { mmkv }
+        private set
+
+    /** 当前用户算力余额。 */
+    var computingPower: Int by MmkvDelegate(mmkvKey(COMPUTING_POWER), 0) { mmkv }
+        private set
+
+    /** 课程购买状态。 */
+    var purchaseCourseStatus: Int? by MmkvDelegate(mmkvKey(PURCHASE_COURSE_STATUS), 0) { mmkv }
+        private set
+
+    /** 是否为付费用户标记。 */
+    var isPaid: Int? by MmkvDelegate(mmkvKey(IS_PAID), 0) { mmkv }
+        private set
+
+    /** 已绑定的微信昵称。 */
+    var wechatNickName: String? by MmkvDelegate(mmkvKey(WECHAT_NICK_NAME), null as String?) { mmkv }
+        private set
+
+    /** 微信绑定状态。 */
+    var wechatBindStatus: Int? by MmkvDelegate(mmkvKey(WECHAT_BIND_STATUS), WECHAT_BIND_STATUS_UNBOUND) { mmkv }
+        private set
+
+    /** 是否允许继续弹出通知权限提示。 */
+    var requestNotificationsPermissionEnable: Boolean by MmkvDelegate(
+        mmkvKey(REQUEST_NOTIFICATIONS_PERMISSION),
+        true
+    ) { mmkv }
+        private set
+
+    /** 同步给 H5 的用户信息字符串。 */
     val userInfoStr: String?
         get() {
             val userBasicInfo = CookieUserInfo(id, Session.getInstance().versionName)
             return Gson().toJson(userBasicInfo)
         }
 
+    /** 当前是否为已登录状态。 */
     val isLogged: Boolean
-        /**
-         * 检查登录状态
-         *
-         * @return true:已登录 false:未登录
-         */
         get() = !TextUtils.isEmpty(id)
 
-
     init {
-        sp = SP("USER_DATA")
-        userId = sp.getString(USER_ID, null)
-        phoneNum = sp.getString(PHONE_NUM, null)
-        userUid = sp.getString(U_ID, null)
-        inviteCode = sp.getString(INVITE_CODE, null)
-        nickName = sp.getString(NICK_NAME, null)
-        gender = sp.getInt(GENDER, 0)
-        avatarUrl = sp.getString(AVATAR_URL, null)
-        userSource = sp.getInt(USER_SOURCE, 0)
-        registerWay = sp.getInt(REGISTER_WAY, 0)
-        lastLoginTime = sp.getString(LAST_LOGIN_TIME, null)
-        registerStatus = sp.getInt(REGISTER_STATUS, 0)
-        token = sp.getString(TOKEN, null)
-        computingPower = sp.getInt(COMPUTING_POWER, 0)
-        purchaseCourseStatus = sp.getInt(PURCHASE_COURSE_STATUS, 0)
-        isPaid = sp.getInt(IS_PAID, 0)
-        wechatNickName = sp.getString(WECHAT_NICK_NAME, null)
-        wechatBindStatus = sp.getInt(WECHAT_BIND_STATUS, WECHAT_BIND_STATUS_UNBOUND)
-        requestNotificationsPermissionEnable = sp.getBoolean(REQUEST_NOTIFICATIONS_PERMISSION, true)
+        migrateLegacyUserDataIfNeeded()
     }
 
     fun updateFrom(userData: UserHomeData?) {
@@ -154,209 +140,108 @@ class User : IUser {
         }
         GrowingAutotracker.get().setLoginUserId(userData.accountId)
         DataNexusManager.setUserUniqueId(userData.accountId)
-       /* val mutableMap = mutableMapOf(
-            "jg_user_jinguo_id" to get().userId,//用户金果唯一 Id，用户成功注册时更新，或用户登录到新版本后上初始化上传数据时候更新
-            "\$basic_mobile" to get().phoneNum,//手机号
-            "\$basic_gender" to if (gender == FEMALE) "FEMALE" else "MALE",//性别
-            "\$basic_name" to nickName,//姓名
-        ).filterValues { !it.isNullOrBlank() }
-        //GrowingAutotracker.get().setLoginUserAttributes(mutableMap)*/
-
-     /*   val mutableMap = mutableMapOf(
-            "klx_pipe_source" to "APP",
-        ).filterValues { !it.isNullOrBlank() }
-
-        EventManager.onAppTrack(AppEvent.KLX_C_LOGIN_SUCCESS,mutableMap)*/
     }
-
 
     fun updateFromCompleteUserBody(body: CompleteUserDataInfoBody) {
         body.avatarUrl?.let { storeAvatar(it) }
-        body.nickName?.let {
-            storeNickname(it)
-        }
+        body.nickName?.let { storeNickname(it) }
         body.gender?.let { storeNickname(it) }
         notifyChange()
     }
 
-
     private fun clear() {
         userId = null
-        sp.remove(USER_ID)
-        inviteCode = null
-        sp.remove(INVITE_CODE)
         phoneNum = null
-        sp.remove(PHONE_NUM)
+        userUid = null
+        inviteCode = null
         nickName = null
-        sp.remove(NICK_NAME)
         gender = null
-        sp.remove(GENDER)
         avatarUrl = null
-        sp.remove(AVATAR_URL)
         userSource = null
-        sp.remove(USER_SOURCE)
         registerWay = null
-        sp.remove(REGISTER_WAY)
         lastLoginTime = null
-        sp.remove(LAST_LOGIN_TIME)
         registerStatus = null
-        sp.remove(REGISTER_STATUS)
-        purchaseCourseStatus = 0
-        sp.remove(PURCHASE_COURSE_STATUS)
-        isPaid = null
-        sp.remove(IS_PAID)
-        wechatNickName = null
-        sp.remove(WECHAT_NICK_NAME)
-        wechatBindStatus = WECHAT_BIND_STATUS_UNBOUND
-        sp.remove(WECHAT_BIND_STATUS)
         token = null
-        sp.remove(TOKEN)
         computingPower = 0
-        sp.remove(COMPUTING_POWER)
+        purchaseCourseStatus = 0
+        isPaid = null
+        wechatNickName = null
+        wechatBindStatus = WECHAT_BIND_STATUS_UNBOUND
+        requestNotificationsPermissionEnable = true
     }
-
 
     fun notifyChange(vararg keys: String?) {
         FlowEventBus.postSync(Events.UserDataEvent(*keys))
     }
-
 
     fun loginOut() {
         clear()
         notifyChange()
     }
 
+    /** 当前是否为游客状态。 */
     val isVisitor: Boolean
-        /**
-         * 检查登录状态
-         *
-         * @return true:未登录 false:已登录
-         */
         get() = TextUtils.isEmpty(id)
-
 
     override fun getId(): String? {
         return token
     }
 
-    /**
-     * 用户ID
-     * @param userId 用户ID
-     */
     fun storeUserId(userId: String?) {
         this.userId = userId
-        sp.putString(USER_ID, userId)
     }
 
-    /**
-     * 手机号
-     * @param phoneNum 手机号
-     */
     fun storePhoneNum(phoneNum: String?) {
         this.phoneNum = phoneNum
-        sp.putString(PHONE_NUM, phoneNum)
     }
 
-    /**
-     * 用户名
-     * @param userName 用户名
-     */
     fun storeUid(uid: String?) {
         this.userUid = uid
-        sp.putString(U_ID, uid)
     }
 
     fun storeInviteCode(inviteCode: String?) {
         this.inviteCode = inviteCode
-        sp.putString(INVITE_CODE, inviteCode)
     }
 
-
-    /**
-     * 用户昵称
-     * @param nickName 用户昵称
-     */
     fun storeNickname(nickName: String?) {
         this.nickName = nickName
-        sp.putString(NICK_NAME, nickName)
     }
 
-    /**
-     * 性别
-     * @param gender  0-未知 1-男 2-女
-     */
     fun storeNickname(gender: Int?) {
         this.gender = gender ?: 0
-        sp.putInt(GENDER, gender ?: 0)
     }
 
-
-    /**
-     * 存储头像
-     * @param avatar 头像地址
-     */
     fun storeAvatar(avatar: String?) {
         this.avatarUrl = avatar
-        sp.putString(AVATAR_URL, avatar)
     }
 
-    /**
-     * 用户来源
-     * @param userSource 1-用户自己注册 2-平台直接生成 3-平台通过app注册的假用户 4-平台测试用户 5-小程序注册
-     */
     fun storeUserSource(userSource: Int?) {
         this.userSource = userSource ?: 0
-        sp.putInt(USER_SOURCE, userSource ?: 0)
     }
 
-    /**
-     * 注册方式
-     * @param registerWay 1-短信验证码 2-闪验 3-微信登录 4-qq登录 5-苹果登录 6-微信小程序 7-账号密码
-     */
     fun storeRegisterWay(registerWay: Int?) {
         this.registerWay = registerWay ?: 0
-        sp.putInt(REGISTER_WAY, registerWay ?: 0)
     }
 
-    /**
-     * 最后登录时间
-     * @param lastLoginTime 最后登录时间
-     */
     fun storeLastLoginTime(lastLoginTime: String?) {
         this.lastLoginTime = lastLoginTime
-        sp.putString(LAST_LOGIN_TIME, lastLoginTime)
     }
 
-    /**
-     * 是否是注册，0-登录，1-是注册
-     * @param registerStatus 0-登录，1-是注册
-     */
     fun storeRegisterStatus(registerStatus: Int?) {
         this.registerStatus = registerStatus ?: 0
-        sp.putInt(REGISTER_STATUS, registerStatus ?: 0)
     }
 
-    /**
-     * 访问令牌
-     * @param token 访问令牌
-     */
     fun storeToken(token: String?) {
         this.token = token
-        sp.putString(TOKEN, token)
     }
 
-    /**
-     * 算力余额
-     */
     fun storeComputingPower(computingPower: Int) {
         this.computingPower = computingPower
-        sp.putInt(COMPUTING_POWER, this.computingPower)
         notifyChange(COMPUTING_POWER)
     }
 
     fun storePurchaseCourseStatus(purchaseCourseStatus: Int?) {
         this.purchaseCourseStatus = purchaseCourseStatus
-        sp.putInt(PURCHASE_COURSE_STATUS, this.purchaseCourseStatus ?: 0)
     }
 
     fun hasPaid(): Boolean {
@@ -365,21 +250,14 @@ class User : IUser {
 
     fun storePaid(isPaid: Int?) {
         this.isPaid = isPaid
-        sp.putInt(IS_PAID, this.isPaid ?: 0)
     }
 
     fun storeWechatNickName(wechatNickName: String?) {
         this.wechatNickName = wechatNickName
-        sp.putString(WECHAT_NICK_NAME, wechatNickName)
     }
 
-    /**
-     * 保存微信绑定状态
-     */
     fun storeWechatBindStatus(wechatBindStatus: Int?) {
-        val status = wechatBindStatus ?: WECHAT_BIND_STATUS_UNBOUND
-        this.wechatBindStatus = status
-        sp.putInt(WECHAT_BIND_STATUS, status)
+        this.wechatBindStatus = wechatBindStatus ?: WECHAT_BIND_STATUS_UNBOUND
     }
 
     fun isFemale(): Boolean {
@@ -387,7 +265,7 @@ class User : IUser {
     }
 
     fun isSameId(userId: String?): Boolean {
-        if (this.isVisitor) {
+        if (isVisitor) {
             return false
         }
         return TextUtils.equals(userId, this.userId)
@@ -399,68 +277,126 @@ class User : IUser {
 
     fun setRequestNotificationsPermissionDisable() {
         requestNotificationsPermissionEnable = false
-        sp.putBoolean(REQUEST_NOTIFICATIONS_PERMISSION, false)
+    }
+
+    private fun migrateLegacyUserDataIfNeeded() {
+        if (mmkv.decodeBool(mmkvKey(USER_DATA_MIGRATED), false)) {
+            return
+        }
+        migrateLegacyString(USER_ID)
+        migrateLegacyString(PHONE_NUM)
+        migrateLegacyString(U_ID)
+        migrateLegacyString(INVITE_CODE)
+        migrateLegacyString(NICK_NAME)
+        migrateLegacyInt(GENDER, 0)
+        migrateLegacyString(AVATAR_URL)
+        migrateLegacyInt(USER_SOURCE, 0)
+        migrateLegacyInt(REGISTER_WAY, 0)
+        migrateLegacyString(LAST_LOGIN_TIME)
+        migrateLegacyInt(REGISTER_STATUS, 0)
+        migrateLegacyString(TOKEN)
+        migrateLegacyInt(COMPUTING_POWER, 0)
+        migrateLegacyInt(PURCHASE_COURSE_STATUS, 0)
+        migrateLegacyInt(IS_PAID, 0)
+        migrateLegacyString(WECHAT_NICK_NAME)
+        migrateLegacyInt(WECHAT_BIND_STATUS, WECHAT_BIND_STATUS_UNBOUND)
+        migrateLegacyBoolean(REQUEST_NOTIFICATIONS_PERMISSION, true)
+        mmkv.encode(mmkvKey(USER_DATA_MIGRATED), true)
+    }
+
+    private fun migrateLegacyString(key: String) {
+        val targetKey = mmkvKey(key)
+        if (mmkv.containsKey(targetKey)) return
+        legacySp.getString(key, null)?.let { mmkv.encode(targetKey, it) }
+    }
+
+    private fun migrateLegacyInt(key: String, default: Int) {
+        val targetKey = mmkvKey(key)
+        if (mmkv.containsKey(targetKey)) return
+        mmkv.encode(targetKey, legacySp.getInt(key, default))
+    }
+
+    private fun migrateLegacyBoolean(key: String, default: Boolean) {
+        val targetKey = mmkvKey(key)
+        if (mmkv.containsKey(targetKey)) return
+        mmkv.encode(targetKey, legacySp.getBoolean(key, default))
     }
 
     companion object {
-        //用户ID
+        private const val USER_DATA_MMKV_ID = "USER_DATA"
+        private const val USER_DATA_MIGRATED = "USER_DATA_MIGRATED"
+
+        /** 后端账户 id 存储 key。 */
         val USER_ID = "userId"
 
-        //手机号
+        /** 绑定手机号存储 key。 */
         const val PHONE_NUM = "phoneNum"
 
-        //用户名
+        /** 候选人/业务 uid 存储 key。 */
         const val U_ID = "uid"
+
+        /** 邀请码存储 key。 */
         const val INVITE_CODE = "inviteCode"
 
-        //用户昵称
+        /** 昵称存储 key。 */
         const val NICK_NAME = "nickName"
 
-        //性别 0-未知 1-男 2-女
+        /** 性别存储 key。 */
         const val GENDER = "gender"
 
-        //用户头像URL
+        /** 头像地址存储 key。 */
         const val AVATAR_URL = "avatarUrl"
 
-        //用户来源 1-用户自己注册 2-平台直接生成 3-平台通过app注册的假用户 4-平台测试用户 5-小程序注册
+        /** 用户来源存储 key。 */
         const val USER_SOURCE = "userSource"
 
-        //注册方式 1-短信验证码 2-闪验 3-微信登录 4-qq登录 5-苹果登录 6-微信小程序 7-账号密码
+        /** 注册方式存储 key。 */
         const val REGISTER_WAY = "registerWay"
 
-        //最后登录时间
+        /** 最后登录时间存储 key。 */
         const val LAST_LOGIN_TIME = "lastLoginTime"
 
-        //是否是注册，0-登录，1-是注册
+        /** 注册状态存储 key。 */
         const val REGISTER_STATUS = "registerStatus"
 
-        //访问令牌
+        /** 登录 token 存储 key。 */
         const val TOKEN = "token"
 
+        /** 算力余额存储 key。 */
         const val COMPUTING_POWER = "computingPower"
 
+        /** 课程购买状态存储 key。 */
         const val PURCHASE_COURSE_STATUS = "purchaseCourseStatus"
 
+        /** 付费用户标记存储 key。 */
         const val IS_PAID = "IS_PAID"
 
-        //微信昵称
+        /** 微信昵称存储 key。 */
         const val WECHAT_NICK_NAME = "wechatNickName"
+
+        /** 微信绑定状态存储 key。 */
         const val WECHAT_BIND_STATUS = "wechatBindStatus"
+
+        /** 微信未绑定。 */
         const val WECHAT_BIND_STATUS_UNBOUND = 0
+
+        /** 微信已绑定。 */
         const val WECHAT_BIND_STATUS_BOUND = 1
 
-        //性别-男
+        /** 男性性别值。 */
         const val MALE = 1
 
-        //性别-女
+        /** 女性性别值。 */
         const val FEMALE = 2
 
-        private const val REQUEST_NOTIFICATIONS_PERMISSION: String =
-            "REQUEST_NOTIFICATIONS_PERMISSION"
+        /** 通知权限弹窗标记存储 key。 */
+        private const val REQUEST_NOTIFICATIONS_PERMISSION = "REQUEST_NOTIFICATIONS_PERMISSION"
 
         @JvmStatic
         fun get(): User {
             return App.instance.user
         }
+
+        private fun mmkvKey(key: String): String = "${USER_DATA_MMKV_ID}_$key"
     }
 }
