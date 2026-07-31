@@ -87,7 +87,7 @@ class AgentMockInterviewReportGeneratingViewHolder(private val binding: ItemMsgA
         val step1Done = elapsedSeconds >= STEP1_DONE_SECONDS
         val step2Done = elapsedSeconds >= STEP2_DONE_SECONDS
         binding.tvStep1Icon.setImageResource(if (step1Done) R.drawable.ic_company_background_report_check else R.drawable.ic_company_background_report_loading)
-        binding.tvStep2Icon.setImageResource(if (step2Done) R.drawable.ic_company_background_report_check_2 else R.drawable.ic_company_background_report_loading)
+        binding.tvStep2Icon.setImageResource(if (step2Done) R.drawable.ic_company_background_report_check else R.drawable.ic_company_background_report_loading)
         binding.tvStep3Icon.setImageResource(R.drawable.ic_company_background_report_loading)
         refreshStepTextColor(step1Done, step2Done)
         val unfinishedIcons = buildList {

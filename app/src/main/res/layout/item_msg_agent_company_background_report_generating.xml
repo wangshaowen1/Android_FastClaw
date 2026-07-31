@@ -106,7 +106,7 @@
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:layout_marginTop="14dp"
-        android:src="@drawable/ic_company_background_report_check_2"
+        android:src="@drawable/ic_company_background_report_check"
         app:layout_constraintStart_toStartOf="@id/tv_step1_icon"
         app:layout_constraintTop_toBottomOf="@id/tv_step1_icon" />
 
