@@ -15,7 +15,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/white"
+        android:background="@color/color_f6f9ff"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -30,7 +30,7 @@
 
 
         <com.shiyuan.fastclaw.widget.MultRadioGroup
-            android:background="@color/white"
+            android:background="@color/color_f6f9ff"
             android:id="@+id/mrg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
