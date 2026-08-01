@@ -14,17 +14,28 @@
         android:id="@+id/layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_e9f0fe"
+        android:background="@color/color_f6f9ff"
         android:paddingBottom="52dp">
 
-        <ImageView
+        <!--<ImageView
             android:layout_width="match_parent"
             android:layout_height="108dp"
             android:scaleType="fitXY"
             android:src="@drawable/ic_main_top_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
+
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:sGradientStartColor="@color/color_e7eeff"
+            app:sGradientEndColor="@color/color_00_f3f6fd"
+            app:sGradientAngle="270"
+            android:layout_width="match_parent"
+            android:layout_height="153dp"
+            />
 
         <com.shiyuan.fastclaw.widget.StatusBarView
             android:id="@+id/sbv"
@@ -134,8 +145,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:sGradientAngle="90"
-            app:sGradientEndColor="#00E9F0FE"
-            app:sGradientStartColor="#FFE9F0FE" />
+            app:sGradientEndColor="#00F6F9FF"
+            app:sGradientStartColor="#FFF6F9FF" />
 
         <ImageView
             android:id="@+id/iv_scroll_bottom"
