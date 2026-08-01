@@ -11,48 +11,21 @@
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp"
         android:paddingBottom="20dp"
-        app:background_startColor="#F9FAFE"
-        app:background_endColor="#FFFFFF"
-        app:background_colorOrientation="top_bottom"
+        app:background_normalColor="#FFFFFF"
         app:super_corner="20dp"
-        app:border_color="@color/color_ffffff"
-        app:view_border_width="1dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/tv_upload_title"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/tv_upload_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/home_upload_resume_title"
+            android:text="@string/agent_resume_no_conversation_tip"
             android:textColor="@color/color_90_000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_upload_subtitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/home_upload_resume_subtitle"
-            android:textColor="@color/color_76_3c3c43"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/tv_upload_title"
-            app:layout_constraintStart_toStartOf="@id/tv_upload_title"
-            app:layout_constraintTop_toBottomOf="@id/tv_upload_title" />
-
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_upload_folder"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_upload_title"
-            app:layout_constraintBottom_toBottomOf="@id/tv_upload_subtitle"
-            android:layout_marginEnd="2dp"
-            />
+            android:textSize="15sp" />
 
         <!-- 上传按钮:沿用 id btn_upload_resume,图标+文案水平居中(packed 链) -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -66,7 +39,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_upload_subtitle">
+            app:layout_constraintTop_toBottomOf="@id/tv_upload_title">
 
             <ImageView
                 android:id="@+id/iv_upload_icon"
@@ -102,6 +75,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
             android:paddingTop="12dp"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:text="@string/home_upload_resume_not"
             android:textColor="@color/color_75_3c3c43"

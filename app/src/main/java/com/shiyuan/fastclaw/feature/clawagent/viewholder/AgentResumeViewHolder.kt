@@ -48,24 +48,17 @@ class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : Re
 //            !uploadActionText.isNullOrBlank() -> uploadActionText
 //            else -> binding.root.context.getString(R.string.home_upload_resume_btn)
 //        }
-        if (action != null || User.get().isVisitor) {
-            binding.tvUploadTitle.text = binding.root.context.getString(R.string.home_upload_resume_title)
-            binding.tvUploadSubtitle.text = binding.root.context.getString(R.string.home_upload_resume_subtitle)
-        } else {
-            binding.tvUploadTitle.text = binding.root.context.getString(R.string.home_upload_please_resume)
-            binding.tvUploadSubtitle.text = binding.root.context.getString(R.string.home_upload_please_subtitle)
-        }
         binding.btnUploadResume.isEnabled = enabled
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
-        binding.tvNotResume.visibility = if (User.get().isVisitor || action != null && !payload.isDisabled()) VISIBLE else GONE
+
+        binding.btnUploadResume.setOnSingleClickListener {
+            if (enabled) onUploadClickListener(item)
+        }
         binding.tvNotResume.setOnSingleClickListener {
             showToast(R.string.toast_resume_not_conversation)
             if (!AppNavigator.checkLoginIntercepted(false)) {
                 action?.let { onDefaultClickListener(item, action, null) }
             }
-        }
-        binding.btnUploadResume.setOnSingleClickListener {
-            if (enabled) onUploadClickListener(item)
         }
     }
 

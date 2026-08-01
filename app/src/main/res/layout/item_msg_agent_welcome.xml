@@ -4,99 +4,168 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="88dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:background="@color/black">
-
-        <com.shiyuan.fastclaw.widget.super_button.SuperButton
-            android:id="@+id/sb_welcome_bg"
-            android:layout_width="match_parent"
-            android:layout_height="155dp"
-            android:layout_marginTop="56dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:sCornersRadius="20dp"
-            app:sSolidColor="#F9FAFE"
-            app:sStrokeColor="@color/color_ffffff"
-            app:sStrokeWidth="1dp" />
+        tools:background="@color/color_f6f9ff">
 
         <ImageView
             android:id="@+id/iv_shrimp"
             android:layout_width="162dp"
-            android:layout_height="126dp"
-            android:layout_marginTop="30dp"
+            android:layout_height="148dp"
+            android:layout_marginStart="5dp"
             android:src="@drawable/img_home_shrimp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/iv_shrimp_tip1"
-            android:layout_width="139dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="27dp"
-            android:src="@drawable/ic_home_hello"
-            app:layout_constraintEnd_toStartOf="@id/iv_shrimp"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/sb_welcome_bg"
-            tools:text="你好，我是小虾" />
+        <TextView
+            android:id="@+id/tv_welcome_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="60dp"
+            android:includeFontPadding="false"
+            android:text="@string/home_welcome_greeting"
+            android:textColor="@color/color_000000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_shrimp"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_shrimp_tip2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="6dp"
+            android:includeFontPadding="false"
             android:text="@string/str_agent_welcome_subtitle"
             android:textColor="@color/color_76_3c3c43"
-            android:textSize="14sp"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="@id/iv_shrimp_tip1"
-            app:layout_constraintTop_toBottomOf="@id/iv_shrimp_tip1"
-            tools:text="你的AI求职经纪人" />
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="@id/tv_welcome_title"
+            app:layout_constraintStart_toStartOf="@id/tv_welcome_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_welcome_title" />
 
-        <TextView
-            android:id="@+id/tv_shrimp_ai"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:text="@string/generated_by_ai"
-            android:textColor="@color/color_b4bfd7"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_shrimp_tip2"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/tv_shrimp_tip2"
-            app:layout_constraintTop_toTopOf="@id/tv_shrimp_tip2"
-            tools:text="AI生成" />
-
-        <!-- 毛玻璃服务卡:垂直摆放 3 个白色胶囊 -->
         <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
             android:id="@+id/card_services"
             android:layout_width="0dp"
-            android:layout_height="65dp"
-            app:background_colorOrientation="top_bottom"
-            app:background_endColor="#FFFFFF"
-            app:background_startColor="#EEF5FE"
-            app:border_color="@color/color_ffffff"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="123dp"
+            android:paddingBottom="16dp"
+            app:background_normalColor="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:super_corner="20dp"
-            app:view_border_width="1dp">
+            app:layout_constraintTop_toTopOf="parent"
+            app:super_corner="20dp">
 
             <TextView
+                android:id="@+id/tv_service_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginHorizontal="26dp"
+                android:layout_marginTop="16dp"
+                android:includeFontPadding="false"
+                android:text="@string/inaccurate"
+                android:textColor="@color/color_000000"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_service_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="26dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="6dp"
+                android:includeFontPadding="false"
                 android:text="@string/str_agent_welcome_service_desc"
                 android:textColor="@color/color_76_3c3c43"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="我能帮你查公司、定制押题、提升面试通过率" />
+                app:layout_constraintTop_toBottomOf="@id/tv_service_title" />
+
+            <TextView
+                android:id="@+id/tv_shrimp_ai"
+                android:layout_width="40dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="12dp"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/generated_by_ai"
+                android:textColor="@color/color_25_3c3c43"
+                android:textSize="11sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/layout_welcome_actions"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_service_desc"
+                tools:visibility="visible">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/btn_upload_resume"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_upload_resume_btn">
+
+                    <ImageView
+                        android:id="@+id/iv_upload_icon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_upload_resume"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/tv_upload_btn"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tv_upload_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/home_upload_resume_btn"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/iv_upload_icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/tv_not_resume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="12dp"
+                    android:paddingTop="12dp"
+                    android:layout_gravity="center_horizontal"
+                    android:includeFontPadding="false"
+                    android:text="@string/home_upload_resume_not"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_2f6bff"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium" />
+
+            </LinearLayout>
 
         </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 
