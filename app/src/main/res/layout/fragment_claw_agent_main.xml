@@ -17,15 +17,6 @@
         android:background="@color/color_f6f9ff"
         android:paddingBottom="52dp">
 
-        <!--<ImageView
-            android:layout_width="match_parent"
-            android:layout_height="108dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_main_top_bg"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />-->
-
         <com.shiyuan.fastclaw.widget.super_button.SuperButton
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +83,6 @@
             app:layout_constraintTop_toTopOf="@id/tv_agent_desc"
             app:sCornersRadius="45dp"
             app:sSolidColor="@color/color_ff8D28" />
-
 
         <View
             android:layout_marginTop="1dp"
