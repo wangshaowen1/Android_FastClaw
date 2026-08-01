@@ -901,9 +901,10 @@
     <string name="str_agent_interview_pass_package_score_title">面试通过率</string>
     <string name="str_agent_interview_pass_package_score_unit">分</string>
     <string name="str_agent_interview_pass_package_report_time">报告时间：%1$s</string>
-    <string name="str_agent_insufficient_shrimp_title">虾条不足%1$s</string>
-    <string name="str_agent_insufficient_shrimp_remaining">（剩余:%1$d）</string>
-    <string name="str_agent_insufficient_shrimp_invite">邀请好友免费赚\n邀请1人送100虾条</string>
+    <string name="str_agent_insufficient_shrimp_heading">虾条不足啦</string>
+    <string name="str_agent_insufficient_shrimp_title">当前剩余虾条：%1$s</string>
+    <string name="str_agent_insufficient_shrimp_remaining">%1$d</string>
+    <string name="str_agent_insufficient_shrimp_invite"><![CDATA[邀请好友可<span style="color:#2F6BFF;font-size:17px;font-weight:bold">免费</span>获得虾条！<br>每邀请<span style="color:#2F6BFF;font-size:19px;font-weight:bold">1</span>个好友，<br>即可获得的<span style="color:#2F6BFF;font-size:19px;font-weight:bold">100</span>虾条！]]></string>
     <string name="str_agent_insufficient">邀请好友免费赚</string>
     <string name="shrimp_invite">邀请1人送</string>
     <string name="str_agent_insufficient_shrimp_recharge">充值虾条</string>

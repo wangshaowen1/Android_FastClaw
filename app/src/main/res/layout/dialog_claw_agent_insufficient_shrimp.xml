@@ -2,129 +2,125 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
-        app:background_normalColor="@color/color_f5f6fa"
-        android:background="@drawable/bg_f5f6fa_tr20"
+    <data />
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="385dp"
+        android:background="@drawable/bg_claw_agent_insufficient_sheet"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_f5f6fa_tr20"
-            android:paddingTop="@dimen/spacing_s"
-            android:paddingBottom="10dp">
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="0dp"
-                android:layout_height="38dp"
+                android:id="@+id/tv_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="46dp"
                 android:gravity="center_vertical"
-                android:paddingStart="20dp"
-                android:paddingEnd="@dimen/spacing_s"
-                android:textColor="@color/color_90_000000"
-                android:textSize="18sp"
+                android:text="@string/str_agent_insufficient_shrimp_heading"
+                android:textColor="@color/color_000000"
+                android:textSize="26sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/iv_close"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="@id/tv_heading"
+                app:layout_constraintStart_toStartOf="@id/tv_heading"
+                app:layout_constraintTop_toBottomOf="@id/tv_heading"
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="19dp"
+                android:background="@drawable/bg_40_ffffff_r8"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textColor="@color/color_000000"
+                android:textSize="12sp" />
+
+
             <ImageView
+                android:layout_marginTop="10dp"
                 android:id="@+id/iv_close"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
-                android:layout_marginEnd="14dp"
+                android:layout_marginEnd="12dp"
                 android:contentDescription="@string/str_agent_insufficient_shrimp_close"
-                android:src="@drawable/ic_claw_agent_popup_close"
-                app:layout_constraintBottom_toBottomOf="@id/tv_title"
+                android:src="@drawable/ic_claw_agent_insufficient_close"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_title" />
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="@dimen/spacing_l"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/bg_2f6bff_r100"
-                android:id="@+id/cn_invite"
+            <ImageView
+                android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
-                android:layout_width="0dp"
-                android:layout_height="52dp">
-
-                <TextView
-                    app:layout_constraintVertical_chainStyle="packed"
-                    app:layout_constraintVertical_bias="0.5"
-                    android:id="@+id/tv"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/ll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/str_agent_insufficient"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:id="@+id/ll"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv"
-                    app:layout_constraintStart_toStartOf="@id/tv"
-                    app:layout_constraintEnd_toEndOf="@id/tv"
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:text="@string/shrimp_invite"
-                        android:textSize="12sp"
-                        android:textColor="@color/color_70_ffffff"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <TextView
-                        android:text="100"
-                        android:textSize="12sp"
-                        android:textColor="#ffb300"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <TextView
-                        android:text="@string/home_treasury_shrimp_chip"
-                        android:textSize="12sp"
-                        android:textColor="@color/color_70_ffffff"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                </LinearLayout>
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+                android:id="@+id/iv_invite_card"
+                android:layout_width="287dp"
+                android:layout_height="156dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_claw_agent_insufficient_invite_card" />
 
             <TextView
+                android:layout_marginTop="50dp"
+                android:id="@+id/tv_invite_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:lineSpacingExtra="5dp"
+                android:textColor="@color/color_000000"
+                android:textSize="14sp"
+                app:layout_constraintTop_toTopOf="@id/iv_invite_card"
+                app:layout_constraintStart_toStartOf="@id/iv_invite_card"
+                app:layout_constraintEnd_toEndOf="@id/iv_invite_card"
+                app:setHtmlText="@{@string/str_agent_insufficient_shrimp_invite}" />
+
+            <TextView
+                android:layout_marginTop="-7dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_invite_card"
                 android:id="@+id/tv_recharge"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/bg_e8f1ff_stroke_2f6bff_r100"
+                android:layout_height="52dp"
+                android:layout_marginStart="23dp"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/bg_ecf3ff_r50"
                 android:gravity="center"
                 android:text="@string/str_agent_insufficient_shrimp_recharge"
                 android:textColor="@color/color_2f6bff"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/cn_invite" />
+
+            <TextView
+                android:id="@+id/cn_invite"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/gradient_top_2f6bff_bottom_8b7bff_r50"
+                android:gravity="center"
+                android:text="@string/invite_friends_title"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/tv_recharge"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/cn_invite" />
+                app:layout_constraintStart_toEndOf="@id/tv_recharge"
+                app:layout_constraintTop_toTopOf="@id/tv_recharge" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </RelativeLayout>
-
+    </FrameLayout>
 
 </layout>
