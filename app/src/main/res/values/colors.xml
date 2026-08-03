@@ -510,7 +510,7 @@
     <color name="color_2a2a2b">#2a2a2b</color>
 
     <!-- Phone Login 页面专用色值 -->
-    <color name="login_bg">#F5F8FC</color>
+    <color name="login_bg">#F7FAFF</color>
     <color name="color_f7faff">#F7FAFF</color>
     <color name="login_input_bg">#FFFFFF</color>
     <color name="login_input_hint">#999999</color>
