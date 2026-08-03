@@ -50,7 +50,7 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
     val resumeDetectionData = MutableLiveData<ResumeData>()
 
 
-    val resumeListData = MutableLiveData<ResumeListData?>()
+    val resumeListData = MutableLiveData<List<ResumeListData>>(emptyList())
 
     val resumeUploadResult = MutableLiveData<ResumeUploadSubmitMyData?>()
 
@@ -84,11 +84,7 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
     fun queryResumeList() {
         launchWithLoading(true, block = {
             response(ApiFactory.apiService.resumeQuery(PagedBody(1, 100)), result = {
-                if (this.data?.items.isNullOrEmpty()) {
-                    resumeListData.postValue(null)
-                } else {
-                    resumeListData.postValue(this.data?.items?.first())
-                }
+                resumeListData.postValue(this.data?.items.orEmpty())
 
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
