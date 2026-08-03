@@ -36,12 +36,12 @@ class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgent
         // 服务端置为 DISABLED 时，主按钮置灰且隐藏跳过入口，避免继续提交动作。
         val enabled = payload?.buttonStatus != BUTTON_STATUS_DISABLED
         binding.tvCost.text = context.getString(R.string.str_agent_mock_interview_action_cost, payload?.chargeAmount?:0)
-        binding.layoutAction.setBackgroundResource(if (enabled) R.drawable.bg_mock_interview_entry_action else R.drawable.bg_mock_interview_entry_action_disabled)
+        binding.btnAction.setBackgroundResource(if (enabled) R.drawable.bg_mock_interview_entry_action else R.drawable.bg_mock_interview_entry_action_disabled)
         binding.tvAction.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
         binding.tvCost.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
         binding.tvSkip.visibility = if (enabled) View.VISIBLE else View.GONE
-        binding.layoutAction.isEnabled = enabled
-        binding.layoutAction.setOnSingleClickListener {
+        binding.btnAction.isEnabled = enabled
+        binding.btnAction.setOnSingleClickListener {
             onInterviewStartClickListener(item, action, payload)
         }
         bindSkipAction(item, payload)

@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
-import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundStartBody
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportDoneBinding
@@ -57,7 +56,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewRepor
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPendingConfirmViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
-import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentResumeViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadResumeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentSearchingJobsViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTableFormViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentTextTipViewHolder
@@ -68,8 +67,6 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadSuccessViewH
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentWelcomeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
-import kotlin.collections.component1
-import kotlin.collections.component2
 
 /**
  * agent对话消息适配器
@@ -160,7 +157,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         // 简历上传指引
         register(TYPE_UPLOAD_WAIT,
             { i, p ->
-                AgentResumeViewHolder(ItemMsgAgentResumeBinding.inflate(i, p, false)).apply {
+                AgentUploadResumeViewHolder(ItemMsgAgentResumeBinding.inflate(i, p, false)).apply {
                     onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
                     onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }

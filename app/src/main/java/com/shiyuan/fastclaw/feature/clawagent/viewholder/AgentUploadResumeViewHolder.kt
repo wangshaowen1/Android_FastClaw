@@ -1,13 +1,10 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_NO_RESUME_START_QUESTIONING
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
@@ -21,7 +18,7 @@ import com.shiyuan.fastclaw.router.AppNavigator
  * @author TooWhiteT
  */
 
-class AgentResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : RecyclerView.ViewHolder(binding.root) {
+class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : RecyclerView.ViewHolder(binding.root) {
 
     var onUploadClickListener: (itemData: ClawAgentMessageInfo) -> Unit = {}
 
