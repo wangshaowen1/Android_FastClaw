@@ -140,7 +140,12 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             }
         }
         // 欢迎引导卡
-        register(TYPE_WELCOME, { i, p -> AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_WELCOME,
+            { i, p ->
+                AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)).apply {
+                    onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
+                }
+            }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
         // 文本居中卡
         register(TYPE_TEXT_TIP, { i, p -> AgentTextTipViewHolder(ItemMsgAgentTextTipBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 核心补问卡
@@ -431,8 +436,16 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
             oldList[oldItemPosition].id == newList[newItemPosition].id
 
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-            oldList[oldItemPosition] == newList[newItemPosition]
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldItem = oldList[oldItemPosition]
+            val newItem = newList[newItemPosition]
+            if (oldItem.messageType == TYPE_WELCOME || newItem.messageType == TYPE_WELCOME) {
+                val wasLastItem = oldItemPosition == oldList.lastIndex
+                val isLastItem = newItemPosition == newList.lastIndex
+                if (wasLastItem != isLastItem) return false
+            }
+            return oldItem == newItem
+        }
     }
 
     companion object {

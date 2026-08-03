@@ -16,15 +16,12 @@
         android:background="@color/login_bg">
 
         <ImageView
-            android:id="@+id/ivLoginBg"
-            android:layout_width="320dp"
-            android:layout_height="488dp"
-            android:layout_marginStart="-3dp"
-            android:layout_marginTop="26dp"
+            android:id="@+id/ivTopShadow"
+            android:layout_width="match_parent"
+            android:layout_height="187dp"
             android:importantForAccessibility="no"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_phone_new_login_top"
-            app:layout_constraintStart_toStartOf="parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_phone_new_login_top_shadow"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.shiyuan.fastclaw.widget.StatusBarView
