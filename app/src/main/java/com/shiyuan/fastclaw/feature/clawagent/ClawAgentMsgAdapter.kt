@@ -144,8 +144,36 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             { i, p ->
                 AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)).apply {
                     onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
+                    onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
+        // 历史简历确认卡
+        register(TYPE_PENDING_CONFIRM,
+            { i, p ->
+                AgentPendingConfirmViewHolder(ItemMsgAgentPendingConfirmBinding.inflate(i, p, false)).apply {
+                    onConfirmClickListener = { onResumeConfirmClickAction(it, true, ) }
+                    onRejectClickListener = { onResumeConfirmClickAction(it, false) }
+                }
+            }) { h, item -> h.bind(item) }
+        // 简历上传成功
+        register(TYPE_UPLOAD_SUCCESS, { i, p -> AgentUploadSuccessViewHolder(ItemMsgAgentUploadSuccessBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 简历上传指引
+        register(TYPE_UPLOAD_WAIT,
+            { i, p ->
+                AgentResumeViewHolder(ItemMsgAgentResumeBinding.inflate(i, p, false)).apply {
+                    onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
+                    onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
+                }
+            }) { h, item ->
+            h.bind(item)
+        }
+        // 简历上传失败
+        register(TYPE_UPLOAD_FAILED,
+            { i, p ->
+                AgentUploadFailedViewHolder(ItemMsgAgentUploadFailedBinding.inflate(i, p, false)).apply {
+                    onReUploadClickListener = { onUploadClickAction(it,true) }
+                }
+            }) { h, item -> h.bind(item) }
         // 文本居中卡
         register(TYPE_TEXT_TIP, { i, p -> AgentTextTipViewHolder(ItemMsgAgentTextTipBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 核心补问卡
@@ -240,33 +268,6 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             { i, p ->
                 AgentPassPackageReportDoneViewHolder(ItemMsgAgentPassPackageReportDoneBinding.inflate(i, p, false)).apply {
                     onPassPackageDoneClickListener = { item, action, data -> onPassPackageDoneClickAction(item, action, data) }
-                }
-            }) { h, item -> h.bind(item) }
-        // 历史简历确认卡
-        register(TYPE_PENDING_CONFIRM,
-            { i, p ->
-                AgentPendingConfirmViewHolder(ItemMsgAgentPendingConfirmBinding.inflate(i, p, false)).apply {
-                    onConfirmClickListener = { onResumeConfirmClickAction(it, true, ) }
-                    onRejectClickListener = { onResumeConfirmClickAction(it, false) }
-                }
-            }) { h, item -> h.bind(item) }
-        // 简历上传成功
-        register(TYPE_UPLOAD_SUCCESS, { i, p -> AgentUploadSuccessViewHolder(ItemMsgAgentUploadSuccessBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
-        // 简历上传指引
-        register(TYPE_UPLOAD_WAIT,
-            { i, p ->
-                AgentResumeViewHolder(ItemMsgAgentResumeBinding.inflate(i, p, false)).apply {
-                    onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
-                    onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
-                }
-            }) { h, item ->
-            h.bind(item)
-        }
-        // 简历上传失败
-        register(TYPE_UPLOAD_FAILED,
-            { i, p ->
-                AgentUploadFailedViewHolder(ItemMsgAgentUploadFailedBinding.inflate(i, p, false)).apply {
-                    onReUploadClickListener = { onUploadClickAction(it,true) }
                 }
             }) { h, item -> h.bind(item) }
         // 正在寻找岗位

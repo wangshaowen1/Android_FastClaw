@@ -9,6 +9,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -22,13 +23,15 @@ class AgentWelcomeViewHolder(private val binding: ItemMsgAgentWelcomeBinding) : 
 
     var onUploadClickListener: (item: ClawAgentMessageInfo) -> Unit = {}
 
-    fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
+    /** 我没有简历 */
+    var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
 
-        /*if (isLastItem) {
+    fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
+        if (isLastItem) {
             binding.layoutWelcomeActions.visible()
         } else {
             binding.layoutWelcomeActions.gone()
-        }*/
+        }
         binding.btnUploadResume.setOnSingleClickListener {
             onUploadClickListener(item)
         }
