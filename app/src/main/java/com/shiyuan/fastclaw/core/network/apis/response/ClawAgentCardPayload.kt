@@ -240,12 +240,6 @@ data class CoreQuestionPayloadBean(
                 state.status == STATUS_REASKED
     }
 
-    fun isAnsweredV2(): Boolean {
-        val state = interactionState ?: return false
-        return state.status == STATUS_ANSWERED ||
-                state.status == STATUS_SUBMITTED
-    }
-
     fun isDisabled(): Boolean {
         val state = interactionState ?: return true
         return state.disabled == true

@@ -26,7 +26,7 @@ class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgent
     var onInterviewNotNeedClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
 
     /** 绑定模拟面试理解升级入口卡内容和按钮状态。 */
-    fun bind(item: ClawAgentMessageInfo) {
+    fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java) }.getOrNull()
         }
@@ -39,7 +39,9 @@ class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgent
         binding.btnAction.setBackgroundResource(if (enabled) R.drawable.bg_mock_interview_entry_action else R.drawable.bg_mock_interview_entry_action_disabled)
         binding.tvAction.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
         binding.tvCost.setTextColor(ContextCompat.getColor(context, if (enabled) R.color.color_ffffff else R.color.color_55_3c3c43))
-        binding.tvSkip.visibility = if (enabled) View.VISIBLE else View.GONE
+        // 只有列表最后一条入口卡展示操作区，历史入口卡隐藏按钮避免重复触发。
+        binding.layoutAction.visibility = if (isLastItem) View.VISIBLE else View.GONE
+        binding.tvSkip.visibility = if (isLastItem && enabled) View.VISIBLE else View.GONE
         binding.btnAction.isEnabled = enabled
         binding.btnAction.setOnSingleClickListener {
             onInterviewStartClickListener(item, action, payload)

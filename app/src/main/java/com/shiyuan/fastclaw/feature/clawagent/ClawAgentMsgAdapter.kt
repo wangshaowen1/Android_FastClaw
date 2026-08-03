@@ -232,7 +232,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                     onInterviewStartClickListener = { item, action, data -> onInterviewStartClickAction(item, action, data) }
                     onInterviewNotNeedClickListener = { item, action, data -> onInterviewNotNeedClickAction(item, action, data) }
                 }
-            }) { h, item -> h.bind(item) }
+            }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
         // 面试复盘报告卡：生成中
         register(TYPE_MOCK_INTERVIEW_REPORT_GENERATING,
             { i, p -> AgentMockInterviewReportGeneratingViewHolder(ItemMsgAgentMockInterviewReportGeneratingBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
@@ -423,26 +423,31 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         })
     }
 
-    private class MessageDiffCallback(
-        private val oldList: List<ClawAgentMessageInfo>,
-        private val newList: List<ClawAgentMessageInfo>,
-    ) : DiffUtil.Callback() {
+    private class MessageDiffCallback(private val oldList: List<ClawAgentMessageInfo>, private val newList: List<ClawAgentMessageInfo>, ) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = oldList.size
 
         override fun getNewListSize(): Int = newList.size
 
+        /** 只判断是不是同一条消息；id 一样时，DiffUtil 会复用同一个 item 做内容比较。 */
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
             oldList[oldItemPosition].id == newList[newItemPosition].id
 
+        /** 判断同一条消息内容是否变化；返回 false 时会重新 bind 对应 ViewHolder。 */
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldList[oldItemPosition]
             val newItem = newList[newItemPosition]
-            if (oldItem.messageType == TYPE_WELCOME || newItem.messageType == TYPE_WELCOME) {
+            if (oldItem.hasLastItemState()) {
+                // 部分卡片的按钮显示依赖“是否列表最后一条”，位置变化时内容没变也要刷新。
                 val wasLastItem = oldItemPosition == oldList.lastIndex
                 val isLastItem = newItemPosition == newList.lastIndex
                 if (wasLastItem != isLastItem) return false
             }
             return oldItem == newItem
+        }
+
+        /** 这些卡片的展示依赖“是否列表最后一条”，位置变化时也需要重新 bind。 */
+        private fun ClawAgentMessageInfo.hasLastItemState(): Boolean {
+            return messageType == TYPE_WELCOME || messageType == TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
         }
     }
 

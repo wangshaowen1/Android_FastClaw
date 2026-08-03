@@ -62,4 +62,9 @@ enum class CandidateJobAgentClientActionEnum {
      */
     MOCK_INTERVIEW_QUICK_ENTRY,
 
+    /**
+     * 没有简历
+     */
+    NO_RESUME_START_QUESTIONING,
+
 }

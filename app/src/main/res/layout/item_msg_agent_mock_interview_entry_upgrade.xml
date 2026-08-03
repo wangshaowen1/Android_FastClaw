@@ -7,7 +7,7 @@
     android:paddingStart="13dp"
     android:paddingTop="16dp"
     android:paddingEnd="16dp"
-    android:paddingBottom="21dp"
+    android:paddingBottom="14dp"
     app:background_normalColor="@color/color_70_ffffff"
     app:super_corner="16dp">
 
@@ -59,51 +59,62 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/v_divider" />
 
-    <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
-        android:id="@+id/btn_action"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="14dp"
-        android:gravity="center"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:background_normalColor="@color/color_2f6bff"
-        app:super_corner="24dp"
+        android:layout_marginTop="14dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_mock_interview_desc">
 
+        <com.shiyuan.fastclaw.widget.shape.SuperLinearLayout
+            android:id="@+id/btn_action"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:background_normalColor="@color/color_2f6bff"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:super_corner="24dp">
+
+            <TextView
+                android:id="@+id/tv_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/str_agent_mock_interview_upgrade_action"
+                android:textColor="@color/color_ffffff"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_cost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:gravity="center"
+                android:text="@string/str_agent_mock_interview_action_cost"
+                android:textColor="@color/color_ffffff"
+                android:textSize="13sp" />
+        </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
+
         <TextView
-            android:id="@+id/tv_action"
+            android:id="@+id/tv_skip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/str_agent_mock_interview_upgrade_action"
-            android:textColor="@color/color_ffffff"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:paddingHorizontal="12dp"
+            android:paddingTop="12dp"
+            android:text="@string/str_agent_mock_interview_skip"
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_action" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/tv_cost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginStart="3dp"
-            android:text="@string/str_agent_mock_interview_action_cost"
-            android:textColor="@color/color_ffffff"
-            android:textSize="13sp" />
-    </com.shiyuan.fastclaw.widget.shape.SuperLinearLayout>
-
-    <TextView
-        android:id="@+id/tv_skip"
-        android:layout_width="0dp"
-        android:layout_height="21dp"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="12dp"
-        android:gravity="center"
-        android:text="@string/str_agent_mock_interview_skip"
-        android:textColor="@color/color_75_3c3c43"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_action" />
 </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
