@@ -24,7 +24,6 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
             R.layout.item_home_treasury,
             emptyList()
         ) { itemBinding, _, item ->
-            itemBinding.root.setBackgroundResource(item.localBackgroundRes())
             itemBinding.ivIcon.setImageResource(item.localIconRes())
             itemBinding.tvTitle.text = item.title
             itemBinding.tvFree.visibility = if (item.free == true) View.VISIBLE else View.GONE
@@ -74,13 +73,6 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         }
     }
 
-    private fun JobAgentModuleData.localBackgroundRes(): Int {
-        return when (reportType) {
-            JobAgentModuleData.TYPE_MOCK_INTERVIEW,
-            JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> R.drawable.bg_home_treasury_card2
-            else -> R.drawable.bg_home_treasury_card
-        }
-    }
 
     private fun buildBenefitText(text: String): CharSequence {
         val color = resources.getColor(R.color.color_2f6bff)
