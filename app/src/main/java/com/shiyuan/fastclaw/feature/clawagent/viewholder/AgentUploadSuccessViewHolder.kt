@@ -2,9 +2,12 @@ package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
+import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadSuccessBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 
 /** agent简历上传成功卡（UPLOAD_RESUME 的 PARSE_SUCCESS 态）
  * @createtime 2026年05月25日 15:05
@@ -17,18 +20,16 @@ class AgentUploadSuccessViewHolder(private val binding: ItemMsgAgentUploadSucces
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java) }.getOrNull()
         }
-        // 标题：statusText（如「已上传」），兜底保留布局默认「简历上传成功」
-//        payload?.title?.takeIf { it.isNotBlank() }?.let { binding.tvTitle.text = it }
-//        payload?.description?.takeIf { it.isNotBlank() }?.let { binding.tvTitle.text = it }
-        payload?.alignmentScore?.let {
-            binding.wpvAlignProgress.progress = it
-            binding.wpvAlignProgress.text = "${it}%"
-        } ?: run {
-            binding.wpvAlignProgress.progress = 0
-            binding.wpvAlignProgress.text = "0%"
-        }
-        payload?.scoreChangeText?.takeIf { it.isNotBlank() }?.let { binding.tvProgressDesc.text = it }
-//        payload?.nextStepText?.takeIf { it.isNotBlank() }?.let { binding.tvHelping.text = it }
-    }
+        val context = binding.root.context
+        binding.tvTitle.text = payload?.title?.takeIf { it.isNotBlank() }
+            ?: binding.root.context.getString(R.string.upload_success_title)
+        val alignmentScore = payload?.alignmentScore?:0
+        binding.wpvAlignProgress.progress = alignmentScore
+        binding.wpvAlignProgress.text = "${alignmentScore}%"
+        binding.tvProgressDesc.text = payload?.scoreChangeText.orEmpty()
 
+        binding.root.setOnSingleClickListener {
+            OnlineResumeActivity.start(context,0)
+        }
+    }
 }

@@ -5,47 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_msg_agent_left"
-    android:padding="16dp">
-
-    <ImageView
-        android:id="@+id/iv_tick"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_tick_green_filled"
-        app:layout_constraintBottom_toBottomOf="@id/tv_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_title" />
-
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/upload_success_title"
-        android:textColor="@color/color_90_000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/iv_tick"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/color_10_000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="14dp">
 
     <FrameLayout
         android:id="@+id/fl_bubble"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.shiyuan.fastclaw.widget.progress.WaveProgressView
             android:id="@+id/wpv_align_progress"
@@ -67,49 +36,45 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/tv_progress_title"
+        android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:text="@string/understanding_upgraded_title"
+        android:layout_marginEnd="12dp"
+        android:includeFontPadding="false"
+        android:text="@string/upload_success_title"
         android:textColor="@color/color_90_000000"
         android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintBottom_toTopOf="@id/tv_progress_desc"
+        app:layout_constraintEnd_toStartOf="@id/iv_arrow"
         app:layout_constraintStart_toEndOf="@id/fl_bubble"
-        app:layout_constraintTop_toTopOf="@id/fl_bubble" />
+        app:layout_constraintTop_toTopOf="@id/fl_bubble"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/tv_progress_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="@color/color_76_3c3c43"
+        android:layout_marginEnd="12dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/color_75_3c3c43"
         android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/tv_progress_title"
-        app:layout_constraintTop_toBottomOf="@id/tv_progress_title"
-        tools:text="对齐度飙升！从0%到45%" />
+        app:layout_constraintBottom_toBottomOf="@id/fl_bubble"
+        app:layout_constraintEnd_toStartOf="@id/iv_arrow"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        tools:text="对齐度飙升！从0%到20%" />
 
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/barrier_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="fl_bubble,tv_progress_desc" />
-
-    <TextView
-        android:id="@+id/tv_helping"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_ffffff_r12"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:text="@string/upload_success_helping_text"
-        android:textColor="@color/color_90_000000"
-        android:textSize="13sp"
+    <ImageView
+        android:id="@+id/iv_arrow"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/icon_agent_into2"
+        app:layout_constraintBottom_toBottomOf="@id/fl_bubble"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier_progress" />
+        app:layout_constraintTop_toTopOf="@id/fl_bubble" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -51,8 +51,8 @@
 
         <ImageView
             android:id="@+id/iv_into"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_marginEnd="12dp"
             android:src="@drawable/icon_agent_into2"
             android:visibility="gone"
