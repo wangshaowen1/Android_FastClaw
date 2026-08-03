@@ -237,13 +237,13 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                 binding.btnUploadResume.visibility = View.VISIBLE
             }
             resumeAdapter.submitList(resumeList)
-            val isParseStatus2Exists = resumeList.any { it.parseStatus == 2 }
+            val isParseStatus2Exists = resumeList.any { it.parseStatus == 0 ||  it.parseStatus == 1 }
             if (isParseStatus2Exists) {
-                stopResumePolling()  // ✅ 停止轮询
-            } else {
                 if (!isResumePolling) {
                     startResumePolling()
                 }
+            } else {
+                stopResumePolling()  // ✅ 停止轮询
             }
         }
 
