@@ -27,6 +27,7 @@
     <string name="upload_resume_format_tip">支持PDF、Word、图片格式，大小不超过10M</string>
     <string name="upload_success_title">小虾收到了你的简历！</string>
     <string name="understanding_upgraded_title">小虾对你的理解升级啦</string>
+    <string name="upload_success_alignment_desc">对你的理解飙升，对齐度到达%1$d%%</string>
     <string name="alignment_progress">对齐度飙升！从%1$s到%2$s</string>
     <string name="upload_success_helping_text">现在，小虾可以为你做面试准备了</string>
     <string name="pending_confirmation">待确认</string>
@@ -829,9 +830,9 @@
     <string name="str_agent_memory">我对你的理解</string>
     <string name="str_agent_send_hint">发消息或者按住说话...</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>
-    <string name="str_agent_understanding_upgrade_title">理解升级</string>
+    <string name="str_agent_understanding_upgrade_title">理解升级！</string>
     <string name="str_agent_understanding_align_title">我与你对齐度达到%1$s！</string>
-    <string name="str_agent_understanding_align_subtitle">小虾对你有了更充分的理解！</string>
+    <string name="str_agent_understanding_align_subtitle">对你的理解飙升，对齐度到达%1$d%%</string>
     <string name="str_agent_understanding_section_title">小虾对你的理解</string>
     <string name="str_agent_understanding_bottom_tip">现在，小虾可以帮你定制分析，精准押题了！</string>
     <string name="str_agent_understanding_field_unaligned">待补齐</string>

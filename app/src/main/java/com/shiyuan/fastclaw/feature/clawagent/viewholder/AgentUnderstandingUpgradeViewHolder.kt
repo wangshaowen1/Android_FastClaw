@@ -32,13 +32,15 @@ class AgentUnderstandingUpgradeViewHolder(private val binding: ItemMsgAgentUnder
         val score = (payload?.understandingScore ?: 0).coerceIn(0, 100)
         binding.wpvAlignProgress.progress = score
         binding.wpvAlignProgress.text = "$score%"
-        // 标题：我与你对齐度达到 85%！
-        binding.tvAlignTitle.text = context.getString(R.string.str_agent_understanding_align_title, "$score%")
+        binding.tvAlignTitle.text = context.getString(R.string.str_agent_understanding_upgrade_title)
+        binding.tvAlignSubtitle.text = payload?.description?.takeIf { it.isNotBlank() }
+            ?: context.getString(R.string.str_agent_understanding_align_subtitle, score)
+        binding.clBubbleLayout.setOnSingleClickListener {
+            OnlineResumeActivity.start(context,1)
+        }
         binding.clUnderstandingDetail.setOnSingleClickListener {
             OnlineResumeActivity.start(context,0)
         }
-        // 摘要主文案非空时覆盖副标题，否则保留布局默认文案
-//        payload?.summary?.text?.takeIf { it.isNotBlank() }?.let { binding.tvAlignSubtitle.text = it }
         // 理解明细行
         bindDetailRows(payload?.summary?.fields)
     }
