@@ -63,6 +63,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.PlayEventBody
 import com.shiyuan.fastclaw.core.network.apis.request.ReportSubmissionBody
 import com.shiyuan.fastclaw.core.network.apis.request.RegionDictQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
@@ -664,6 +665,12 @@ interface ApiService {
 
     @POST(ApiConstants.RESUME_QUERY)
     suspend fun resumeQuery(@Body body: PagedBody): ApiResponse<PagedList<ResumeListData>?>
+
+    /**
+     * 删除我的简历列表项
+     */
+    @POST(ApiConstants.RESUME_LIST_DELETE)
+    suspend fun deleteResume(@Body body: ResumeListDeleteBody): ApiResponse<Any?>
 
     @POST(ApiConstants.JOB_AGENT_RESUME_UPLOAD_MY_SUBMIT)
     suspend fun submitResumeMyUpload(@Body body: ResumeUploadSubmitMyBody): ApiResponse<ResumeUploadSubmitMyData?>

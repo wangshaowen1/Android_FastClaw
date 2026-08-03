@@ -19,6 +19,7 @@ import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
@@ -89,6 +90,17 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
 
+    }
+
+    fun deleteResume(resumeTaskId: String?) {
+        val taskId = resumeTaskId?.toLongOrNull() ?: return
+        requestWithLoading(
+            apiBlock = { mRepo.api.deleteResume(ResumeListDeleteBody(taskId)) },
+            showLoading = true,
+            showToastError = true,
+        ) {
+            queryResumeList()
+        }
     }
 
 

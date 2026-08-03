@@ -162,6 +162,11 @@ object ApiConstants {
     const val UNDERSTANDING_DETAIL = "/api/candidate/app/jobAgent/understanding/detail/query"
 
     const val RESUME_QUERY = "/api/candidate/app/jobAgent/resume/list/query"
+
+    /**
+     * 删除我的简历列表项
+     */
+    const val RESUME_LIST_DELETE = "/api/candidate/app/jobAgent/resume/list/delete"
     const val QUERY_REGION_DICT = "/api/candidate/app/jobAgent/dict/region/query"
 
     /**

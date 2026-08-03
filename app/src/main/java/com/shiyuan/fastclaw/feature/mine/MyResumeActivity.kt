@@ -114,7 +114,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                     itemBinding.tvUpload.visibility = View.VISIBLE
                     itemBinding.tvUpload.setImageResource(R.drawable.ic_close4)
                     itemBinding.tvUpload.setOnSingleClickListener {
-
+                        mRealVM.deleteResume(item.resumeTaskId)
                     }
                     itemBinding.tvTime.visibility = View.VISIBLE
                     itemBinding.tvTime.text =
