@@ -43,4 +43,7 @@ data class ResumeListData(
     val fileName: String? = null,
     val resumeId: String? = null,
     val resumeTaskId: String? = null,
+    val parseStatusText: String? = null,
+    val parseStatus: Int? = null,
+    val canRetry: Boolean? = null,
 )

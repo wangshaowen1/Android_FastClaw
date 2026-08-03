@@ -718,6 +718,7 @@
     <string name="generate_report">生成面试报告</string>
     <string name="my_resume">我的简历</string>
     <string name="resume_up_success">简历上传成功</string>
+    <string name="resume_up_ing">小虾理解中，稍后在对话中同步</string>
     <string name="add_position_info">添加目标岗位信息</string>
     <string name="screenshot_up">截图上传</string>
     <string name="paste_string">粘贴文本</string>
@@ -933,6 +934,7 @@
     <string name="resume_attachment">附件简历</string>
     <string name="resume_tip">你的简历是小虾理解你的关键信息，如重新上传将覆盖现有简历信息（不影响求职偏好)</string>
     <string name="resume_tip2">你的简历是小虾理解你的关键信息，请务必上传本人真实简历。</string>
+    <string name="resume_upload_time">上传于 %1$s</string>
     <string name="resume_understanding">小虾理解度</string>
     <string name="resume_dn">对齐度越高我越懂你</string>
     <string name="online_resume_understand_title">让小虾更懂你</string>
