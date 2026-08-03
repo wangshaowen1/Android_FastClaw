@@ -88,7 +88,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="28dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -102,13 +102,14 @@
                 tools:text="@string/home_treasury_daily_free2" />
 
             <LinearLayout
-                android:layout_width="102dp"
-                android:layout_height="36dp"
+                android:layout_width="86dp"
+                android:layout_height="28dp"
                 android:background="@drawable/bg_home_treasury_blue_btn"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
+                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
@@ -117,6 +118,7 @@
                     android:textSize="15sp" />
 
                 <ImageView
+                    android:visibility="gone"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:importantForAccessibility="no"

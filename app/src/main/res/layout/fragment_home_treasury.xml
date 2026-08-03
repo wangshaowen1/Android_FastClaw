@@ -12,77 +12,68 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_E9F0FE"
+        android:background="@color/color_f6f9ff"
         android:clipToPadding="false"
         android:fillViewport="true"
         android:paddingBottom="76dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="162dp">
+                android:layout_height="251dp">
 
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="162dp"
+                    android:layout_height="251dp"
                     android:importantForAccessibility="no"
                     android:scaleType="centerCrop"
                     android:src="@drawable/img_home_treasury_top_bg" />
 
                 <ImageView
-                    android:layout_marginRight="31dp"
-                    android:layout_marginLeft="18dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_marginTop="63dp"
+                    android:id="@+id/iv_bd"
+                    android:layout_width="148dp"
+                    android:layout_height="140dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="34dp"
+                    android:layout_marginTop="67dp"
                     android:importantForAccessibility="no"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/img_home_treasury_top_bg2" />
+                    android:src="@drawable/img_home_treasury_hero" />
 
 
                 <ImageView
                     android:id="@+id/iv_qz"
-                    android:layout_width="113dp"
-                    android:layout_height="31dp"
+                    android:layout_width="119dp"
+                    android:layout_height="32dp"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="28dp"
-                    android:layout_marginTop="82dp"
+                    android:layout_marginStart="41dp"
+                    android:layout_marginTop="91dp"
                     android:importantForAccessibility="no"
                     android:scaleType="fitCenter"
                     android:src="@drawable/img_home_treasury_title" />
 
-                <ImageView
-                    android:id="@+id/iv_bd"
-                    android:layout_width="110dp"
-                    android:layout_height="90dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="31dp"
-                    android:layout_marginTop="65dp"
-                    android:importantForAccessibility="no"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/img_home_treasury_hero" />
 
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="29dp"
-                    android:layout_marginTop="119dp"
+                    android:layout_marginStart="42dp"
+                    android:layout_marginTop="130dp"
                     android:includeFontPadding="false"
                     android:maxLines="1"
                     android:text="@string/home_treasury_slogan"
-                    android:textColor="@color/color_96_000000"
-                    android:textSize="12sp" />
+                    android:textColor="@color/color_000000"
+                    android:textSize="14sp" />
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginTop="-22dp"
+                android:layout_marginTop="155dp"
                 android:id="@+id/rv_treasury_cards"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,6 +81,6 @@
                 android:overScrollMode="never"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        </LinearLayout>
+        </RelativeLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>

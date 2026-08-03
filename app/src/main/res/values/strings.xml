@@ -1097,7 +1097,7 @@
     <string name="educational_responsibilities">描述教育背景，负责的内容、克服的困难、取得的成果，便于了解您丰富的经验</string>
     <string name="project_responsibilities">描述项目内容，展示您丰富的经验</string>
 
-    <string name="home_treasury_slogan">专业工具助你求职路上快人一步！</string>
+    <string name="home_treasury_slogan">助你<font color="#2F6BFF"><b>求职</b></font>快人一步！</string>
     <string name="home_treasury_company_desc">摸清公司底细，详解公司核心业务。</string>
     <string name="home_treasury_measure_desc">你的简历为什么没人回？获取毒舌诊断！</string>
     <string name="home_treasury_salary_desc">你的薪资被低估了吗？摸清真实市场行情！</string>
