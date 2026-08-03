@@ -8,7 +8,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_NO_RESUME_START_QUESTIONING
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
-import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadResumeBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.router.AppNavigator
 
@@ -18,7 +18,7 @@ import com.shiyuan.fastclaw.router.AppNavigator
  * @author TooWhiteT
  */
 
-class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : RecyclerView.ViewHolder(binding.root) {
+class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentUploadResumeBinding) : RecyclerView.ViewHolder(binding.root) {
 
     var onUploadClickListener: (itemData: ClawAgentMessageInfo) -> Unit = {}
 

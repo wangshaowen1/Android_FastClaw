@@ -18,7 +18,6 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportDoneBindi
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportFailedBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportGeneratingBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentNoJobsFoundBinding
-import com.shiyuan.fastclaw.databinding.ItemMsgAgentPendingConfirmBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentQuestionBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentSearchingJobsBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentThinkBinding
@@ -37,9 +36,10 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloa
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentPassPackageReportDoneBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentPassPackageReportFailedBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentPassPackageReportGeneratingBinding
-import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTextTipBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadConfirmBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadResumeBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundEntryViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportDoneViewHolder
@@ -54,7 +54,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewRepor
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportFailedViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentMockInterviewReportGeneratingViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentNoJobsFoundViewHolder
-import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentPendingConfirmViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadConfirmViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentQuestionViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadResumeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentSearchingJobsViewHolder
@@ -147,7 +147,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         // 历史简历确认卡
         register(TYPE_PENDING_CONFIRM,
             { i, p ->
-                AgentPendingConfirmViewHolder(ItemMsgAgentPendingConfirmBinding.inflate(i, p, false)).apply {
+                AgentUploadConfirmViewHolder(ItemMsgAgentUploadConfirmBinding.inflate(i, p, false)).apply {
                     onConfirmClickListener = { onResumeConfirmClickAction(it, true, ) }
                     onRejectClickListener = { onResumeConfirmClickAction(it, false) }
                 }
@@ -157,7 +157,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         // 简历上传指引
         register(TYPE_UPLOAD_WAIT,
             { i, p ->
-                AgentUploadResumeViewHolder(ItemMsgAgentResumeBinding.inflate(i, p, false)).apply {
+                AgentUploadResumeViewHolder(ItemMsgAgentUploadResumeBinding.inflate(i, p, false)).apply {
                     onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
                     onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
