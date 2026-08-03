@@ -159,9 +159,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 }
             }
             R.id.ll_hr -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
-                    MyOrderActivity.start(requireActivity(),1)
-                }
+                HrActivity.start(requireActivity())
             }
           /*  R.id.layout_mine_bj -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){

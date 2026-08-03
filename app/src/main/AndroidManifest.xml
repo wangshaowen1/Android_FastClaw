@@ -296,6 +296,11 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
+            android:name=".feature.mine.HrActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
             android:name=".feature.invite.InviteFriendsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
