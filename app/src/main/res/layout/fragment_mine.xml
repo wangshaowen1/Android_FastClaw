@@ -17,20 +17,20 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_f5f6fa"
+        android:background="@color/color_f6f9ff"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingBottom="76dp">>
+        android:paddingBottom="76dp">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/color_f5f6fa">
+            android:background="@color/color_f6f9ff">
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="287dp"
+                android:layout_height="187dp"
                 android:importantForAccessibility="no"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_mine_top_bg2"
@@ -45,16 +45,16 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                singleClick="@{layout.clickHandler::onClick}"
                 android:id="@+id/iv_setting"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="20dp"
                 android:importantForAccessibility="no"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sbv"
                 android:src="@drawable/ic_mine_setting3"
-                android:layout_width="34dp"
-                android:layout_height="34dp"/>
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sbv" />
 
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -90,30 +90,30 @@
                 tools:text="虾米虾虾米虾" />
 
             <ImageView
-                singleClick="@{layout.clickHandler::onClick}"
                 android:id="@+id/iv_name"
+                singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="19dp"
+                android:layout_height="19dp"
                 android:layout_marginEnd="26dp"
                 android:importantForAccessibility="no"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/tv_name"
-                app:layout_constraintTop_toTopOf="@id/tv_name"
                 android:src="@drawable/ic_arrow_right3"
-                android:layout_width="19dp"
-                android:layout_height="19dp"/>
+                app:layout_constraintBottom_toBottomOf="@id/tv_name"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_name" />
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/layout_mine_point"
                 singleClick="@{layout.clickHandler::onClick}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="20dp"
-                android:id="@+id/layout_mine_point"
-                app:cardElevation="0dp"
                 app:cardCornerRadius="@dimen/dp20"
+                app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/siv_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                app:layout_constraintTop_toBottomOf="@id/siv_avatar">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -179,24 +179,24 @@
                             android:src="@drawable/ic_pack" />
 
                         <TextView
-                            android:layout_gravity="center_vertical"
                             android:id="@+id/tv_mine_points_tip"
                             singleClick="@{layout.clickHandler::onClick}"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
                             android:layout_marginLeft="4dp"
+                            android:layout_weight="1"
                             android:text="@string/mine_tip"
                             android:textColor="@color/white"
                             android:textSize="12sp" />
 
 
                         <TextView
-                            android:layout_gravity="center_vertical"
                             android:id="@+id/tv_mine_tip_btn"
                             singleClick="@{layout.clickHandler::onClick}"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
                             android:background="@drawable/bg_ffffff_r45"
                             android:fontFamily="sans-serif-medium"
                             android:paddingHorizontal="10dp"
@@ -214,32 +214,31 @@
             </androidx.cardview.widget.CardView>
 
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/view_mine_resume_banner"
                 singleClick="@{layout.clickHandler::onClick}"
                 android:layout_width="0dp"
                 android:layout_height="78dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/bg_mine_resume_banner"
                 app:layout_constraintEnd_toEndOf="@id/layout_mine_point"
                 app:layout_constraintStart_toStartOf="@id/layout_mine_point"
                 app:layout_constraintTop_toBottomOf="@id/layout_mine_point">
 
 
-                <TextView
+                <ImageView
                     android:id="@+id/tv_mine_invite_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16.5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="19dp"
                     android:layout_marginEnd="10dp"
                     android:fontFamily="sans-serif-medium"
                     android:includeFontPadding="false"
+                    android:src="@drawable/ic_resume_banner_zt"
                     android:text="@string/mine_invite_title"
                     android:textColor="@color/color_90_000000"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toTopOf="@id/tv_mine_invite_subtitle"
-                    app:layout_constraintEnd_toStartOf="@id/tv_mine_invite_action"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed"
@@ -253,26 +252,25 @@
                     android:fontFamily="sans-serif"
                     android:includeFontPadding="false"
                     android:text="@string/mine_invite_subtitle"
-                    android:textColor="@color/color_75_3c3c43"
+                    android:textColor="@color/color_85_3c3c43"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/tv_mine_invite_title"
                     app:layout_constraintStart_toStartOf="@id/tv_mine_invite_title"
                     app:layout_constraintTop_toBottomOf="@id/tv_mine_invite_title"
-                    tools:text="好友注册成功，你们都能获得奖励" />
+                    tools:text="好友注册成功，你们都能获得奖励哦" />
 
                 <TextView
                     android:id="@+id/tv_mine_invite_action"
                     singleClick="@{layout.clickHandler::onClick}"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:layout_marginEnd="15dp"
+                    android:layout_marginEnd="16dp"
                     android:background="@drawable/bg_336fff_r100"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
                     android:includeFontPadding="false"
                     android:minWidth="57dp"
-                    android:paddingHorizontal="8dp"
+                    android:paddingHorizontal="12.5dp"
                     android:text="@string/mine_invite_action"
                     android:textColor="@color/white"
                     android:textSize="13sp"
@@ -287,8 +285,8 @@
                 android:id="@+id/ll_understanding_xt"
                 android:layout_width="0dp"
                 android:layout_height="68dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_ffffff_r20"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_ffffff_r16"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="19dp"
@@ -341,9 +339,8 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_marginRight="4dp"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
                             android:src="@drawable/ic_mine_resume_info" />
 
                         <TextView
@@ -373,9 +370,8 @@
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_marginRight="4dp"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
                             android:src="@drawable/ic_mine_job_preference" />
 
                         <TextView
@@ -394,93 +390,134 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/ll_interview_report"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="match_parent"
-                android:layout_height="66dp"
-                android:layout_marginHorizontal="16dp"
-                android:paddingHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_ffffff_r18"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintLeft_toLeftOf="@id/ll_understanding_xt"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layout_mine_other_functions"
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_ffffff_r16"
+                app:layout_constraintEnd_toEndOf="@id/ll_understanding_xt"
+                app:layout_constraintStart_toStartOf="@id/ll_understanding_xt"
                 app:layout_constraintTop_toBottomOf="@id/ll_understanding_xt">
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_interview_report" />
-
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="12dp"
+                    android:layout_height="21dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="9dp"
                     android:fontFamily="sans-serif-medium"
-                    android:text="@string/report_my_name"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="15sp"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:text="@string/mine_other_functions"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <View
-                    android:layout_width="@dimen/dp_0"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="21dp"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_item_arrow_right2" />
+                    <LinearLayout
+                        android:id="@+id/ll_interview_report"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="65dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:paddingTop="12dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_mine_other_report" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="21dp"
+                            android:layout_marginTop="4dp"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/report_my_name"
+                            android:textColor="@color/color_90_000000"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_my_order"
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:layout_width="65dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:paddingTop="12dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_mine_other_order" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="21dp"
+                            android:layout_marginTop="4dp"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/my_order"
+                            android:textColor="@color/color_90_000000"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        singleClick="@{layout.clickHandler::onClick}"
+                        android:id="@+id/ll_hr"
+                        android:layout_width="65dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:paddingTop="12dp">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_mine_hr" />
 
 
-            </LinearLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="21dp"
+                            android:layout_marginTop="4dp"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="@string/mine_hr"
+                            android:textColor="@color/color_90_000000"
+                            android:textSize="14sp" />
 
-            <LinearLayout
-                android:id="@+id/ll_my_order"
-                singleClick="@{layout.clickHandler::onClick}"
-                android:layout_width="match_parent"
-                android:layout_height="66dp"
-                android:layout_marginHorizontal="16dp"
-                android:paddingHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/bg_ffffff_r18"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintLeft_toLeftOf="@id/ll_interview_report"
-                app:layout_constraintTop_toBottomOf="@id/ll_interview_report">
+                    </LinearLayout>
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_my_order"/>
+                </LinearLayout>
 
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="12dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/my_order"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="15sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <View
-                    android:layout_width="@dimen/dp_0"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_item_arrow_right2" />
-
-
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

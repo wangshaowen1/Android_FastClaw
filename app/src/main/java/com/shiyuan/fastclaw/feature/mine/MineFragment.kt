@@ -158,6 +158,11 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     binding.llMinePointsTip.visibility = View.GONE
                 }
             }
+            R.id.ll_hr -> {
+                if(!AppNavigator.checkLoginIntercepted(false)){
+                    MyOrderActivity.start(requireActivity(),1)
+                }
+            }
           /*  R.id.layout_mine_bj -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
                    MyResumeActivity.start(requireActivity())
