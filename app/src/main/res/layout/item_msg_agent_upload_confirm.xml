@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="小虾看到你之前传过一份简历，请确认这是你本人的简历吗，我会根据这份文件来了解你～" />
+        tools:text="小虾看到你上传过一份文件，请确认这是你本人的简历吗，我会根据它来了解你～" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_file_card"

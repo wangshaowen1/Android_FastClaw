@@ -7,14 +7,12 @@
 
     </data>
     <!-- ============ 上传气泡 ============ -->
-    <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_msg_agent_left"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="14dp"
-        app:background_normalColor="#FFFFFF"
-        app:super_corner="20dp">
+        android:paddingVertical="14dp">
 
         <TextView
             android:id="@+id/tv_upload_title"
@@ -94,5 +92,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

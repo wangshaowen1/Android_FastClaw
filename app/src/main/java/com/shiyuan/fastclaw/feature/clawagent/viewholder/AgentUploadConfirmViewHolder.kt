@@ -26,7 +26,7 @@ class AgentUploadConfirmViewHolder(private val binding: ItemMsgAgentUploadConfir
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
         }
-        // 文件名：payload 非空时覆盖布局默认文案
+        binding.tvDescTitle.text = payload?.description?:binding.root.context.getString(R.string.resume_confirm_card_title)
         payload?.resumeName?.takeIf { it.isNotBlank() }?.let { binding.tvFileName.text = it }
         payload?.resumeTime?.takeIf { it.isNotBlank() }?.let { binding.tvFileTime.text = binding.root.context.getString(R.string.resume_confirm_upload_time, it) }
         // 整卡禁用时两个按钮置灰

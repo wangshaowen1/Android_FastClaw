@@ -4,6 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadFailedBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
@@ -22,7 +23,7 @@ class AgentUploadFailedViewHolder(private val binding: ItemMsgAgentUploadFailedB
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java) }.getOrNull()
         }
-        // 是否可以点击
+        binding.tvDesc.text = payload?.description?:binding.root.context.getString(R.string.upload_failed_detail)
         val enabled = payload?.interactionState?.disabled != true
         // 上传失败卡只有在列表最后一条时展示重新上传按钮，历史失败卡只保留失败说明。
         binding.btnReUpload.visibility = if (isLastItem) View.VISIBLE else View.GONE

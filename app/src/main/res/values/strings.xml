@@ -33,7 +33,7 @@
     <string name="upload_success_helping_text">现在，小虾可以为你做面试准备了</string>
     <string name="pending_confirmation">待确认</string>
     <string name="resume_recognized_confirm">识别到简历文件，请确认这是你的简历吗</string>
-    <string name="resume_confirm_card_title">小虾看到你之前传过一份简历，请确认这是你本人的简历吗，我会根据这份文件来了解你～</string>
+    <string name="resume_confirm_card_title">小虾看到你上传过一份文件，请确认这是你本人的简历吗，我会根据它来了解你～</string>
     <string name="resume_confirm_upload_time">上传于%1$s</string>
     <string name="resume_recognized_desc">这会非常重要，我会根据简历来了解你。</string>
     <string name="not_my_resume">不是，重新上传</string>

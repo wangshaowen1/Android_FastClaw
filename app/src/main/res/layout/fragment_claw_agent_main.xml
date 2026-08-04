@@ -84,12 +84,13 @@
             app:sCornersRadius="45dp"
             app:sSolidColor="@color/color_ff8D28" />
 
-        <View
+        <ImageView
             android:layout_marginTop="1dp"
             android:id="@+id/tv_agent_index"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:background="@drawable/ic_arrow_right_gray_12"
+            android:layout_width="9dp"
+            android:layout_height="9dp"
+            android:layout_marginStart="2dp"
+            android:src="@drawable/ic_arrow_right_gray_12"
             app:layout_constraintBottom_toBottomOf="@id/tv_agent_desc"
             app:layout_constraintLeft_toRightOf="@id/tv_agent_desc"
             app:layout_constraintTop_toTopOf="@id/tv_agent_desc" />

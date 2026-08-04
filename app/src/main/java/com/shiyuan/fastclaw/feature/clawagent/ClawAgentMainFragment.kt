@@ -1101,6 +1101,24 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         })
     }
 
+    /**
+     * 展示顶部求职状态弹窗：使用线上简历属性接口返回的 options 渲染列表，
+     * displayValue 与 option.name 相等时为选中项。
+     */
+    private fun showAgentStatusDialog() {
+        agentStatusPopup?.dismiss()
+        val attributeData = mRealVM.jobStatusResult.value ?: return
+        binding.tvAgentIndex.setImageResource(R.drawable.ic_arrow_down_gray_12)
+        agentStatusPopup = ClawAgentStatusDialog(requireContext(), attributeData).apply {
+            onDismissListener = {
+                binding.tvAgentIndex.setImageResource(R.drawable.ic_arrow_right_gray_12)
+            }
+            onItemClickListener = { item ->
+                mRealVM.updateJobStatus(item.code)
+            }
+        }.showDialog(binding.tvAgentDesc)
+    }
+
     // 记忆卡片
     private var popup: PopupWindow? = null
 
@@ -1234,24 +1252,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         autoConfirmJob = null
         popup?.dismiss()
         popup = null
-    }
-
-    /**
-     * 展示顶部求职状态弹窗：使用线上简历属性接口返回的 options 渲染列表，
-     * displayValue 与 option.name 相等时为选中项。
-     */
-    private fun showAgentStatusDialog() {
-        agentStatusPopup?.dismiss()
-        val attributeData = mRealVM.jobStatusResult.value ?: return
-        binding.tvAgentIndex.setBackgroundResource(R.drawable.ic_arrow_down_gray_12)
-        agentStatusPopup = ClawAgentStatusDialog(requireContext(), attributeData).apply {
-            onDismissListener = {
-                binding.tvAgentIndex.setBackgroundResource(R.drawable.ic_arrow_right_gray_12)
-            }
-            onItemClickListener = { item ->
-                mRealVM.updateJobStatus(item.code)
-            }
-        }.showDialog(binding.tvAgentDesc)
     }
 
     override fun onDestroyView() {
