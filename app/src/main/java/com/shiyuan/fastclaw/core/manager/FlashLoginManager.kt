@@ -55,6 +55,17 @@ object FlashLoginManager {
     val checkedPolicy
         get() = OneKeyLoginManager.getInstance().privacyCheckBox?.isChecked == true
 
+    /**
+     * 初始化
+     */
+    fun init() {
+        OneKeyLoginManager.getInstance().setDebug(BuildConfig.DEBUG)
+        OneKeyLoginManager.getInstance().setTimeOutForPreLogin(3)
+        OneKeyLoginManager.getInstance().init(App.instance, BuildConfig.SHANYAN_APPID) { code, result ->
+            Logger.i(TAG, "init code=$code,result=$result")
+        }
+    }
+
     fun checkPolicy(checked: Boolean) {
         OneKeyLoginManager.getInstance().setCheckBoxValue(checked)
         updateCustomPolicyCheckView()
@@ -226,17 +237,6 @@ object FlashLoginManager {
                 R.drawable.icon_checkbox_unchecked
             }
         )
-    }
-
-    /**
-     * 初始化
-     */
-    fun init() {
-        OneKeyLoginManager.getInstance().setDebug(BuildConfig.DEBUG)
-        OneKeyLoginManager.getInstance().setTimeOutForPreLogin(3)
-        OneKeyLoginManager.getInstance().init(App.instance, BuildConfig.SHANYAN_APPID) { code, result ->
-            Logger.i(TAG, "init code=$code,result=$result")
-        }
     }
 
     /**
