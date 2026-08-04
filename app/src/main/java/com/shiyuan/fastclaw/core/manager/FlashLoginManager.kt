@@ -6,6 +6,11 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
@@ -52,6 +57,7 @@ object FlashLoginManager {
 
     fun checkPolicy(checked: Boolean) {
         OneKeyLoginManager.getInstance().setCheckBoxValue(checked)
+        updateCustomPolicyCheckView()
     }
 
     fun setListener(listener: Listener) {
@@ -94,6 +100,7 @@ object FlashLoginManager {
         //手机号登录
         singleClick(customView.ivLoginMobilePhoneNumber) { onOtherLogin.invoke(1) }
         singleClick(customView.ivLoginWx) { onOtherLogin.invoke(3) }
+        setupCustomPolicyView(customView)
         ShanYanUIConfig.Builder()
             .setTextSizeIsdp(true)
             //背景
@@ -126,18 +133,21 @@ object FlashLoginManager {
             .setAppPrivacyOne(R.string.tvSYUserService.getResString(), Config.get().serviceUrl)
             .setAppPrivacyTwo(R.string.tvSYPrivateService.getResString(), Config.get().privacyUrl)
             .setPrivacySmhHidden(false)
-            .setPrivacyTextSize(11)
-            .setAppPrivacyColor(R.color.color_90_000000.getResColor(), R.color.color_2f6bff.getResColor())
-            .setPrivacyOffsetX(24)
-            .setPrivacyOffsetY(185)
+            .setPrivacyTextSize(1)
+            .setAppPrivacyColor(R.color.transparent.getResColor(), R.color.transparent.getResColor())
+            //隐藏了自带的隐私协议，原因是协议在部分手机显示不全，使用布局xml的隐私协议
+            .setPrivacyWidth(1)
+            .setPrivacyOffsetX(0)
+            .setPrivacyOffsetY(1000)
             .setPrivacyState(false)
             .setCheckedImgPath(R.drawable.ic_flash_new_check_checked.getResDrawable())
             .setUncheckedImgPath(R.drawable.ic_flash_new_check_normal.getResDrawable())
             .setCheckBoxWH(14, 14)
             .setcheckBoxOffsetXY(0, 6)
             .setCheckBoxMargin(0, 0, 0, 0)
+            .setCheckBoxHidden(true)
             .setCheckBoxTipDisable(true)
-            .setPrivacyText("已阅读并同意 ", "、", "、", " 以及", "")
+            .setPrivacyText("", "", "", "", "")
             .setPrivacyGravityHorizontalCenter(false)
             .setPrivacyOffsetGravityLeft(true)
             .setPrivacyActivityEnabled(false)
@@ -148,6 +158,74 @@ object FlashLoginManager {
             //底部弹窗
             .setDialogTheme(true, width, height.toInt(), 0, 0, true)
             .build()
+    }
+
+    /**
+     * 初始化自定义协议栏，负责勾选状态切换、协议富文本展示和链接点击。
+     */
+    private fun setupCustomPolicyView(customView: LayoutShanyanCustomBinding) {
+        updateCustomPolicyCheckView()
+        singleClick(customView.layoutPolicy) {
+            checkPolicy(!checkedPolicy)
+        }
+        singleClick(customView.ivPolicyCheck) {
+            checkPolicy(!checkedPolicy)
+        }
+        customView.tvPolicyText.text = buildPolicyText()
+        customView.tvPolicyText.movementMethod = LinkMovementMethod.getInstance()
+        customView.tvPolicyText.highlightColor = Color.TRANSPARENT
+    }
+
+    /**
+     * 组装一键登录协议文案，并为平台协议、隐私政策和运营商协议添加点击区域。
+     */
+    private fun buildPolicyText(): SpannableString {
+        val serviceName = R.string.tvSYUserService.getResString()
+        val privacyName = R.string.tvSYPrivateService.getResString()
+        val operatorName = operatorPolicyName.takeUnless { it.isNullOrBlank() }
+            ?: R.string.flash_new_account_terms.getResString()
+        val text = SpannableString("已阅读并同意《$serviceName》、《$privacyName》以及《$operatorName》")
+        addPolicySpan(text, serviceName, Config.get().serviceUrl)
+        addPolicySpan(text, privacyName, Config.get().privacyUrl)
+        addPolicySpan(text, operatorName, operatorPolicyUrl)
+        return text
+    }
+
+    /**
+     * 给协议文案中的指定协议名称添加蓝色点击样式和跳转事件。
+     */
+    private fun addPolicySpan(text: SpannableString, name: String, url: String?) {
+        val start = text.indexOf(name)
+        if (start < 0) return
+        text.setSpan(
+            object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    listener?.get()?.toPolicy(url, name)
+                }
+
+                override fun updateDrawState(ds: TextPaint) {
+                    super.updateDrawState(ds)
+                    ds.color = R.color.color_2f6bff.getResColor()
+                    ds.isUnderlineText = false
+                }
+            },
+            start,
+            start + name.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+    }
+
+    /**
+     * 根据闪验 SDK 当前协议勾选状态刷新自定义勾选图标。
+     */
+    private fun updateCustomPolicyCheckView() {
+        binding?.ivPolicyCheck?.setImageResource(
+            if (checkedPolicy) {
+                R.drawable.ic_checkbox_checked
+            } else {
+                R.drawable.icon_checkbox_unchecked
+            }
+        )
     }
 
     /**
@@ -282,6 +360,7 @@ object FlashLoginManager {
     @JvmStatic
     fun agreePolicy() {
         OneKeyLoginManager.getInstance().setCheckBoxValue(true)
+        updateCustomPolicyCheckView()
     }
 
     /**
@@ -290,6 +369,7 @@ object FlashLoginManager {
     @JvmStatic
     fun agreePolicyAndLogin() {
         OneKeyLoginManager.getInstance().setCheckBoxValue(true)
+        updateCustomPolicyCheckView()
         OneKeyLoginManager.getInstance().performLoginClick()
     }
 
