@@ -8,7 +8,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_NO_RESUME_START_QUESTIONING
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
-import com.shiyuan.fastclaw.databinding.ItemMsgAgentResumeBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadResumeBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.router.AppNavigator
 
@@ -18,7 +18,7 @@ import com.shiyuan.fastclaw.router.AppNavigator
  * @author TooWhiteT
  */
 
-class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentResumeBinding) : RecyclerView.ViewHolder(binding.root) {
+class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentUploadResumeBinding) : RecyclerView.ViewHolder(binding.root) {
 
     var onUploadClickListener: (itemData: ClawAgentMessageInfo) -> Unit = {}
 
@@ -31,31 +31,17 @@ class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentResumeBinding
         }
         val action = payload?.actions?.firstOrNull { it.actionCode == ACTION_NO_RESUME_START_QUESTIONING }
         // 标题/说明：payload 非空时覆盖布局默认引导文案
-//        payload?.title?.takeIf { it.isNotBlank() }?.let { binding.tvUploadTitle.text = it }
-//        payload?.description?.takeIf { it.isNotBlank() }?.let { binding.tvUploadSubtitle.text = it }
+        binding.tvUploadTitle.text = payload?.description?:binding.root.context.getString(R.string.agent_resume_no_conversation_tip)
         // 仅 WAITING_UPLOAD（或无状态）且整卡未禁用时可点上传；解析中等态置灰防重复提交
         val status = payload?.resumeUploadStatus
         val isWaiting = status.isNullOrBlank() || status == STATUS_WAITING_UPLOAD
         val enabled = payload?.interactionState?.disabled != true && isWaiting
-        // 按钮文案：非等待态优先 statusText（如「简历解析中」），否则上传按钮 action.text / 默认
-        val statusText = payload?.statusText
-        val uploadActionText = payload?.actions?.firstOrNull()?.text
-//        binding.tvUploadBtn.text = when {
-//            !isWaiting && !statusText.isNullOrBlank() -> statusText
-//            !uploadActionText.isNullOrBlank() -> uploadActionText
-//            else -> binding.root.context.getString(R.string.home_upload_resume_btn)
-//        }
+
         binding.btnUploadResume.isEnabled = enabled
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
 
         binding.btnUploadResume.setOnSingleClickListener {
             if (enabled) onUploadClickListener(item)
-        }
-        binding.tvNotResume.setOnSingleClickListener {
-            showToast(R.string.toast_resume_not_conversation)
-            if (!AppNavigator.checkLoginIntercepted(false)) {
-                action?.let { onDefaultClickListener(item, action, null) }
-            }
         }
     }
 

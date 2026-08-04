@@ -11,6 +11,7 @@ import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
+import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.router.AppNavigator
 
@@ -38,7 +39,7 @@ class AgentWelcomeViewHolder(private val binding: ItemMsgAgentWelcomeBinding) : 
         binding.tvNotResume.setOnSingleClickListener {
             showToast(R.string.toast_resume_not_conversation)
             if (!AppNavigator.checkLoginIntercepted(false)) {
-                //action?.let { onDefaultClickListener(item, action, null) }
+                onDefaultClickListener(item, CardAction(CandidateJobAgentClientActionEnum.NO_RESUME_START_QUESTIONING.name), null)
             }
         }
     }

@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
-import com.shiyuan.fastclaw.databinding.ItemMsgAgentPendingConfirmBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadConfirmBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 /** agent历史简历确认卡（HISTORY_RESUME_CONFIRM）
@@ -12,7 +12,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  * @author TooWhiteT
  */
 
-class AgentPendingConfirmViewHolder(private val binding: ItemMsgAgentPendingConfirmBinding) : RecyclerView.ViewHolder(binding.root) {
+class AgentUploadConfirmViewHolder(private val binding: ItemMsgAgentUploadConfirmBinding) : RecyclerView.ViewHolder(binding.root) {
 
     /** 确认是本人简历点击（B 方案：仅暴露，提交后续统一接 sendAction(RESUME_CONFIRM_YES)） */
     var onConfirmClickListener: (item: ClawAgentMessageInfo) -> Unit = {}
