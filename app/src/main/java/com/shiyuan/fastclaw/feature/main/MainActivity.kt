@@ -158,6 +158,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     EventManager.onAppTrack(AppEvent.KLX_CAPP_XIAOXIA_PAGE,mutableMapOf("klx_is_login" to if(User.get().isVisitor) "否" else "是"))
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(0)
+                    binding.vLine.visibility = View.GONE
                     supportFragmentManager.switchFragment(
                         R.id.fragment,
                         ClawAgentMainFragment::class.java
@@ -167,6 +168,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     EventManager.onAppTrack(AppEvent.KLX_CAPP_INTERVIEWREPORT_LANDING_PAGE)
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(1)
+                    binding.vLine.visibility = View.VISIBLE
                     supportFragmentManager.switchFragment(
                         R.id.fragment,
                         HomeTreasuryFragment::class.java
@@ -177,6 +179,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_PAGE,mutableMapOf("klx_is_login" to if(User.get().isVisitor) "否" else "是"))
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(2)
+                    binding.vLine.visibility = View.VISIBLE
                     supportFragmentManager.switchFragment(R.id.fragment, MineFragment::class.java)
                 }
             }
