@@ -1,6 +1,6 @@
 # .agents 目录（Agent 工作流）
 
-本目录是模板工程的 Android 规则细则、场景 skill 和项目记忆的存放处。**它只是导航索引,不承载调度逻辑。**
+本目录是 FastClaw 的 Android 规则细则、场景 skill 和项目记忆的存放处。**它只是导航索引,不承载调度逻辑。**
 
 调度入口、读取优先级、执行档位和**红线禁令**统一在根目录 `AGENTS.md`(Claude Code 经 `CLAUDE.md` import 读同一份)。本文件只回答"哪个文件管什么",不重复规则正文。
 
@@ -33,6 +33,7 @@
 | `android-navigation-events` | AppRouter、scheme/deep link、FlowEventBus、登录态 |
 | `android-figma-xml-ui` | Figma/截图到 XML 的完整精确还原 |
 | `android-naming` | 包名、类名、资源、id、常量、layout、drawable 命名 |
+| `write-project-docs` | 项目文档：docs 导览、架构、复杂功能、公共契约、审计与收敛 |
 
 每个 skill 文件夹的构成:`SKILL.md`(主体,所有工具都读)、`references/`(项目示例,命中后按需读)、`agents/openai.yaml`(**仅 Codex/OpenAI 用的 agent 配置;Claude Code 与 Android Studio 跳过,不读**)。
 

@@ -13,6 +13,7 @@ Gradle 规则：默认不运行 Gradle，不申请 Gradle/网络权限做验证�
 - 场景路由与高风险：`.agents/android-codegen-scenarios.md`
 - 完整 Checklist：`.agents/android-codegen-checklist.md`
 - 场景 skill：`.agents/skills/*/SKILL.md`（每个 skill 只读 `SKILL.md` 与按需 `references/`；`agents/openai.yaml` 仅 Codex 用，Claude/Android Studio 跳过不读）
+- 项目文档治理：创建、重构、审计或更新 `docs/` 时，必须先完整读取 `.agents/skills/write-project-docs/SKILL.md`。
 - 项目记忆：`.agents/memory/MEMORY.md`（语义/情节记忆索引，Codex 与 Claude Code 共享）。
   会话结束前，若本轮产生值得留存的判断或决策，主动写入对应记忆文件：
   语义记忆（稳定约定）更新 `.agents/memory/semantic/*.md`；
@@ -29,7 +30,7 @@ Gradle 规则：默认不运行 Gradle，不申请 Gradle/网络权限做验证�
 - 默认最小改动：只改用户本次指向的地方，不顺手改同名旧入口、其它页面或历史布局；不做无关重构，不回退用户已有改动。
 - 一个小改若需新增超过 1 个辅助类或改动超过 3 个文件，先停下来向用户确认是否扩大范围。
 - 不确定的风险点直接标明，不用猜测填平。
-- 当前仓库为模板工程（Template），主包、namespace、applicationId 以当前分支 `build.gradle` / `AndroidManifest.xml` 为准；遇到复制来源项目的旧项目名、旧包名或旧业务词时，必须回到当前分支搜索确认。
+- 遇到复制来源项目的旧项目名、旧包名或旧业务词时，必须以当前分支的 `settings.gradle`、`config.gradle`、`app/build.gradle` 和 `AndroidManifest.xml` 为准。
 
 ## 执行档位
 
@@ -43,7 +44,7 @@ Gradle 规则：默认不运行 Gradle，不申请 Gradle/网络权限做验证�
 
 ## 项目基线
 
-- 主工程默认 `app`；namespace、包名、flavor、依赖、Manifest 以当前分支文件为准。**新建项目时替换为真实包名和业务域。**
+- 工程名为 FastClaw，主工程为 `app`，当前 namespace 与 applicationId 为 `com.shiyuan.fastclaw`；flavor、依赖和 Manifest 以当前分支文件为准。
 - 技术栈：Kotlin、MVVM + Repository、XML + DataBinding/ViewBinding，基于 `nhsd.basic`；已预置 Room、Paging3、SSE 与支付/登录/推送/统计接入点（实际能力以当前分支为准）。
 - 页面 ViewModel 变量名默认 `layout`，列表 item 变量名默认 `item`。
 - Activity/Fragment 优先继承项目已有 `BaseViewModelActivity` / `BaseViewModelFragment`；ViewModel 优先继承 `AppViewModel` / `AppRepositoryViewModel`。

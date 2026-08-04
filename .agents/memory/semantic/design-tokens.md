@@ -5,9 +5,9 @@ metadata:
   type: reference
 ---
 
-模板工程颜色采用两层结构:`attrs.xml` 语义主题属性 + `colors.xml` 实际色值。
+FastClaw 颜色采用两层结构:`attrs.xml` 语义主题属性 + `colors.xml` 实际色值。
 
-**新建项目时:保留语义命名,按设计稿替换 `colors.xml` 实际色值,不沿用模板示例值。**
+**新增或调整 UI 时:保留语义命名,按设计稿维护 `colors.xml` 实际色值。**
 
 - 语义 attr 命名的**权威清单**以 `app/src/main/res/values/attrs.xml` 为准(品牌色 `colorBrand*`、文字色 `textColorPrimary/Title/Secondary/Hint/Disabled`、背景 `bgPrimary` 系、填充 `fillPrimary` 系、边框 `outline*`、功能色 `funcColor*`)。
 - Figma→token 的**映射规则**见 `.agents/android-codegen-xml-resource-rules.md`《Resource Token》,本文件不重复。
