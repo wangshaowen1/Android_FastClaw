@@ -5,17 +5,7 @@ description: "Android 非分页 DataBinding 列表实现规范。仅在本次实
 
 # Android 非分页 DataBinding 列表
 
-## 触发条件
-
-当任务实际新增、重构或审查 Android 项目的普通非分页 RecyclerView 列表实现时使用本 skill：
-
-- 用户明确要求新增、重构或审查非分页列表、普通列表、DataBinding 列表、QuickAdapter、AppItemViewModel、ItemXxxVM、MultiTypeAdapter、submitList、RecyclerViewVM、item XML、item 变量、点击事件转发、多类型列表、混排列表或静态选项列表。
-- 生成或审查 `QuickAdapter<ItemXxxVM>`、`AppItemViewModel<T>`、`MultiTypeAdapter<AppItemViewModel<*>>`、item layout、列表 VM、列表点击事件、`submitList(...)` 更新。
-- 页面列表来自一次性接口、内存数据、配置选项、搜索结果、详情页子列表或表单选项。
-
-只排查列表 bug、只改 item 文案/样式、只改刷新逻辑的一小段、只调整 BottomSpace/Decoration/间距时，优先读目标代码和 `android-check-quick.md`，不使用完整列表 skill。
-
-如果列表是分页加载、下拉刷新/上拉加载或 `PagingDataAdapter`，且本次实际修改分页链路，再读取 `android-paging-state-ui`。如果本次实际新增页面骨架，再读取 `android-feature-scaffold`。只有命名不确定、批量新增资源或用户要求命名审查时，才读取 `android-naming`。
+实际涉及分页链路时改读 `android-paging-state-ui`；本次还新增页面骨架时再追加 `android-feature-scaffold`。
 
 ## 核心规则
 
@@ -26,11 +16,13 @@ description: "Android 非分页 DataBinding 列表实现规范。仅在本次实
 - item XML：使用 `<layout>`，DataBinding 变量名固定为 `item`，类型优先绑定 `ItemXxxVM`。
 - 列表更新：优先 `adapter.submitList(newItems)`。
 - 自定义 Adapter 或 PagingDataAdapter 的 ViewHolder 优先继承 `BindingViewHolder<VB>`，并通过 `binding.getVm(...)` 获取或复用 item VM。
+- `binding.getVm(...)` 必须传稳定、非空、唯一的业务 key；不要使用 position、可变展示字段或可能为 null 的 id。项目已废弃 position 重载，新代码不得继续调用。
+- item VM 只承载实体、本地 UI 状态和点击回调。XML 可以直接写 `item.data.xxx` 的简单字段、颜色或可见性表达式，不要再包一层无意义的 `getXxxText()`、`isXxxVisible()` 或同名透传属性。
 - 复杂列表、多选、批量操作、跨页面刷新或需要统一收敛的 item 点击/选择/操作，优先查当前 feature 是否已有事件 VM 或 callback 模式；简单选择、弹窗列表、静态配置项、局部 item 操作可以使用 item VM callback、`onItemClick.value`、ViewModel 方法或同类 `setOnItemClickListener`。
 - 多类型列表：当前工程有通用 `common/adapter/MultiTypeAdapter.kt`，业务侧未发现稳定混排模板；只有真实混排需求且附近已有同类时才采用，不作为普通列表默认方案。
 - 静态/配置型列表可以使用 `RecyclerViewVM().Builder().setQuickAdapter(...)`。
 
-不要为了普通列表引入 `PagingSource`、`PagingDataAdapter`、`RemoteMediator`、Hilt、UseCase、完整 MVI 或新的 BaseAdapter；除非当前代码已有同类模式或用户明确要求，不手写原生 `ListAdapter`、`DiffUtil`、`ItemDecoration` 或额外宽度计算。Adapter 只负责渲染和转发事件，不直接请求网络或访问数据库。
+不要为了普通列表引入 `PagingSource`、`PagingDataAdapter`、`RemoteMediator` 或新的 BaseAdapter；除非当前代码已有同类模式或用户明确要求，不手写原生 `ListAdapter`、`DiffUtil`、`ItemDecoration` 或额外宽度计算。Adapter 只负责渲染和转发事件，不直接请求网络或访问数据库。
 
 ## 单类型列表
 
@@ -62,6 +54,8 @@ class ItemPaymentMethodVm(data: PaymentMethod?) : AppItemViewModel<PaymentMethod
     val select = ObservableField(false)
 }
 ```
+
+`AppItemViewModel.id()` 返回的是 DataBinding 变量 id，不是列表项业务唯一键；复用 item VM 时仍需显式传入实体的稳定业务 id。
 
 item XML 变量固定为 `item`：
 
@@ -164,8 +158,10 @@ val mStyleAdapterVm = RecyclerViewVM()
 - item VM 继承 `AppItemViewModel<T>`，命名符合 `ItemXxxVM`。
 - item XML 使用 `<layout>`，变量名是 `item`，类型是 `ItemXxxVM`。
 - 自定义 Adapter / PagingDataAdapter 的 ViewHolder 使用 `BindingViewHolder`，并通过 `binding.getVm(...)` 复用 item VM。
+- `binding.getVm(...)` 使用稳定、非空、唯一的业务 key，没有使用 position、可变字段或已废弃重载。
+- item VM 没有为 XML 可直接读取的实体字段增加无意义透传 getter / Observable 属性。
 - 列表更新优先使用 `submitList(newItems)`。
 - Adapter 没有网络、数据库、跳转和复杂业务逻辑。
 - 复杂列表、多选、批量操作、跨页面刷新或分页列表操作优先通过当前 feature 已有事件 VM 或 callback 转发；简单选择、弹窗列表、静态配置项、局部 item 操作可以使用 item VM callback、`onItemClick`、ViewModel 方法或同类 `setOnItemClickListener`。
 - 用户可见文案使用 string 资源，文本样式和颜色优先使用项目 style/attr。
-- 普通列表没有误引入 Paging3、RemoteMediator、UseCase、Hilt 或新 Base 类。
+- 普通列表没有误引入 Paging3、RemoteMediator 或新 Base 类。

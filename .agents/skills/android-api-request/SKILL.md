@@ -1,25 +1,20 @@
 ---
 name: android-api-request
-description: "Android Retrofit 接口请求接入规范。仅在本次实际新增或修改 ApiConstants、ApiService、request body、response/entity model、Repository 方法、ViewModel 接口调用链路、response/request/requestWithLoading 错误处理时使用。只加 Toast、只改 loading 文案、只改普通 UI 状态或不触达接口链路时不要使用。"
+description: "Android Retrofit 接口链路接入规范。仅在新增接口，或本次新增、修改、审查 ApiService、request/response model、Repository、ViewModel 中至少两层，或调整 response/request/requestWithLoading 错误语义时使用。当前分支已有完整同类链路且只补明确字段、参数或单一调用点时走 quick rules 局部接口快路径；只改 Toast、loading 文案或普通 UI 状态时不要使用。"
 ---
 
 # Android 接口请求
 
-## 触发条件
+分页、新页面或长任务只在本次确实修改对应领域时追加相应 skill，不因接口词出现在上下文中连锁加载。
 
-以下场景使用本 skill：
+## 契约证据
 
-- 本次实际新增或修改 API、接口、请求、网络请求、接口接入、接口调用、Retrofit、ApiService、ApiConstants、请求体、响应模型或接口错误处理链路。
-- 新增或审查 `ApiConstants`、`ApiService`、`request/*Body`、`response/*Data`、`entity/*Info`。
-- 新增、重构或调整 ViewModel 中的 `mRepo.api.xxx(...)`、`response(...)`、`request(...)`、`requestWithLoading(...)`、`launchWithLoading(...)` 接口调用链路。
-- 决定接口是否需要封装到 feature Repository。
-- 普通非分页接口接入、详情接口、提交接口、删除接口、状态查询接口。
+接口路径、方法、字段、类型、是否可空和枚举值必须来自可追溯证据，不能从 UI 文案或相似旧接口猜测：
 
-只加 Toast、只改 loading 文案、只改普通 UI 状态、只调整按钮状态或不触达接口链路时，不使用本 skill。
-
-如果同时涉及分页、新页面骨架或命名判断，只有本次实际新增或修改对应领域代码，且 quick rules 无法覆盖时，才读取对应 skill。
-
-如果用户已给接口截图、字段表或明确路径，且任务只是给现有页面、列表或点击流程补一个局部接口，优先按 `.agents/android-codegen-quick-rules.md` 的“局部接口快路径”执行；不要为了这类小改动读取完整 API skill、分页 skill 或外部接口工具，除非 quick rules 无法覆盖。
+- 用户本次提供的接口截图、字段表、OpenAPI 或明确路径是目标契约；当前代码用于判断兼容现状和改动范围，两者冲突时明确指出，不静默覆盖。
+- 本地证据已经足够时直接实现。证据不完整且当前项目已配置接口文档查询工具时，只查询目标接口，不全量扫描接口平台。
+- 工具不可用或目标接口不存在时，只落地已确认字段，并把缺口列为待确认；不要借用相似业务模型补齐未知字段。
+- 不读取、输出或写回接口平台凭据、token、secret；日志也不得打印完整请求、响应或敏感参数。
 
 ## 核心原则
 
@@ -35,7 +30,7 @@ description: "Android Retrofit 接口请求接入规范。仅在本次实际新�
 - 错误处理优先使用 `response(...)`、`request(...)`、`requestWithLoading(...)`。
 - 新增完整接口、请求体、响应模型或实体模型时，按接口文档补中文业务注释。局部调用已有接口、只补字段或只接已有 body 时，优先沿用当前文件风格；缺少接口文档时不要编造注释。
 
-不要新增 `AppResult`、`AppError`、Hilt、AppContainer、ViewModelFactory、UseCase 或新的网络封装层。不要修改 `ApiResponse.java`、`ApiException.java`、`ApiFactory.kt`，除非用户明确要求改全局网络层。
+不要修改 `ApiResponse.java`、`ApiException.java`、`ApiFactory.kt`，除非用户明确要求改全局网络层。
 
 ## 接入流程
 
@@ -225,11 +220,12 @@ SSE 接口在 `ApiService` 中返回 `Flow<SSEvent>`，并需要 `@Headers("Acce
 完成前检查：
 
 - 是否先搜索并复用了已有接口、请求体、响应模型。
+- 接口路径、方法、字段、类型、可空性和枚举值是否都有用户资料、接口文档或当前代码证据；冲突和缺口是否已明确说明。
 - `ApiConstants` 常量名和路径放在业务相近位置。
 - `ApiService` 方法名是业务动作，不是泛名。
 - 新增完整接口、request/response/entity 模型时有来自接口文档或业务说明的中文注释；局部小改沿用当前文件风格，没有编造注释。
 - 请求体放在 `request/`，响应聚合放在 `response/`，接口实体放在 `entity/`。
-- 返回类型是 `ApiResponse<T>`，没有引入 `AppResult/AppError`。
+- 返回类型保持当前项目的 `ApiResponse<T>`。
 - ViewModel 通过 `mRepo.api` 或 feature Repository 调用，不在 Activity/Fragment 请求网络。
 - 用户触发操作使用 `requestWithLoading(...)`，后台刷新使用 `request(...)` 或已有 `response(...)` 风格。
 - API 失败没有被随意吞掉。
