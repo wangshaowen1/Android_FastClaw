@@ -18,7 +18,7 @@ last_verified: 2026-08-04
 | 小虾对话 | 会话恢复、SSE 消息、卡片动作、历史合并与报告状态 | `app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [聊天对话](features/chat-conversation.md) |
 | 在线简历 | 结构化简历、求职偏好、理解度与附件解析任务 | `app/src/main/java/com/shiyuan/fastclaw/feature/mine/`、`app/src/main/java/com/shiyuan/fastclaw/feature/information/` | [在线简历](features/online-resume.md) |
 | 网络与流式传输 | Retrofit 接口、统一响应处理与原始 SSE 分发 | `app/src/main/java/com/shiyuan/fastclaw/core/network/` | 按任务读取代码；当前没有独立架构文档 |
-| 公共应用基础 | Base 类、事件、导航、资源与通用组件 | `app/src/main/java/com/shiyuan/fastclaw/` | 以 `AGENTS.md` 和当前同类实现为准 |
+| 公共应用基础 | Base 类、事件、导航、资源与通用组件 | `app/src/main/java/com/shiyuan/fastclaw/` | [App 分层架构](architecture/app-layering.md) |
 
 ## 关键流程
 
@@ -37,6 +37,7 @@ last_verified: 2026-08-04
 
 | 文档 | 用途 | 状态 | 实现状态或适用范围 |
 | --- | --- | --- | --- |
+| [App 分层架构](architecture/app-layering.md) | 指导 `baselibrary` 与 App 内共享代码的职责、依赖和渐进治理 | active | Android `app` 模块 |
 | [聊天对话](features/chat-conversation.md) | 解释会话、消息合并、SSE 和列表状态边界 | active | in-progress；Android `app` 模块 |
 | [在线简历](features/online-resume.md) | 解释三类简历数据、编辑刷新和附件解析边界 | active | in-progress；Android `app` 模块 |
 
