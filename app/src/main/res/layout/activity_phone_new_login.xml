@@ -160,7 +160,7 @@
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:importantForAccessibility="no"
-                android:src="@{layout.checkedPolicy?@drawable/ic_checkbox_checked:@drawable/icon_checkbox_unchecked}" />
+                android:src="@{layout.checkedPolicy?@drawable/ic_checkbox_checked:@drawable/ic_checkbox_unchecked}" />
 
             <TextView
                 android:id="@+id/tvAgreement"

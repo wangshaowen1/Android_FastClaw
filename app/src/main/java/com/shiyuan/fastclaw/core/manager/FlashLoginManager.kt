@@ -234,7 +234,7 @@ object FlashLoginManager {
             if (checkedPolicy) {
                 R.drawable.ic_checkbox_checked
             } else {
-                R.drawable.icon_checkbox_unchecked
+                R.drawable.ic_checkbox_unchecked
             }
         )
     }
