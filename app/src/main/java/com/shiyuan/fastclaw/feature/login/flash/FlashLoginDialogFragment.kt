@@ -27,7 +27,8 @@ import com.nhsd.basic.utils.Logger
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
 import java.lang.ref.WeakReference
-
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.EventManager
 /**
  * 闪验登录入口
  * @author xiaoowuu
@@ -38,17 +39,23 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
     private val shareManager by lazy { activity?.let { ShareManager(it) } }
 
     private var checkedPolicy = false
+    private var loginSource: String? = null
 
     companion object {
         private var dialogRef: WeakReference<FlashLoginDialogFragment>? = null
 
         //是否选中了隐私政策
         const val CHECKED_POLICY = "checkedPolicy"
+        private const val LOGIN_SOURCE = "loginSource"
 
         /**
          * 闪验登录
          */
-        fun show(showToast: Boolean = false, checkedPolicy: Boolean = false) {
+        fun show(
+            showToast: Boolean = false,
+            checkedPolicy: Boolean = false,
+            loginSource: String? = null
+        ) {
             val manager = (topActivity as? FragmentActivity)?.supportFragmentManager ?: return
             // 外部可能连续触发登录拦截；已有闪验承载弹框时直接复用，避免重复拉起一键登录页
             dialogRef?.get()?.let { return }
@@ -58,6 +65,7 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
             val dialog = FlashLoginDialogFragment()
             dialog.arguments = Bundle().apply {
                 putBoolean(CHECKED_POLICY, checkedPolicy)
+                putString(LOGIN_SOURCE, loginSource)
             }
             dialog.show(manager)
             dialogRef = WeakReference(dialog)
@@ -77,6 +85,7 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
         super.onCreate(savedInstanceState)
         FlashLoginManager.setListener(this)
         checkedPolicy = arguments?.getBoolean(CHECKED_POLICY) ?: false
+        loginSource = arguments?.getString(LOGIN_SOURCE)
     }
 
     override fun onStart() {
@@ -140,6 +149,7 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
     }
 
     private fun loginByThird(platform: SHARE_MEDIA) {
+        EventManager.onAppTrack(AppEvent.KLX_CLICK_LOGIN_BTN, "klx_click_login_btn" to "wechat")
         if (FlashLoginManager.checkedPolicy) {
             shareManager?.login(platform, this)
         } else {
@@ -160,6 +170,7 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
      */
     private fun loginByPhoneDialog(dismiss: Boolean) {
         // 首次进入时 hasStartedPhoneLogin 为 false，会继续往下执行；置 true 后用于拦截重复回调
+        EventManager.onAppTrack(AppEvent.KLX_VIEW_LOGIN, "klx_login_trigger_source" to loginSource)
         FlashLoginManager.finishAuthActivity()
         PhoneNewLoginActivity.start(checkedPolicy = checkedPolicy)
         if (dismiss) {

@@ -139,9 +139,11 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
             mRealVM.checkedPolicy.set(!mRealVM.checkedPolicy.get())
         }
         binding.btnGetCode.setOnClickListener {
+            EventManager.onAppTrack(AppEvent.KLX_CLICK_LOGIN_BTN, "klx_click_login_btn" to "phone")
             requestCodeWithPolicy()
         }
         binding.btnWechat.setOnClickListener {
+            EventManager.onAppTrack(AppEvent.KLX_CLICK_LOGIN_BTN, "klx_click_login_btn" to "wechat")
             loginByWechatWithPolicy()
         }
     }

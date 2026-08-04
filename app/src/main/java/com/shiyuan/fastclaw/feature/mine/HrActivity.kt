@@ -9,6 +9,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.core.ext.openWithBrowser
 import com.shiyuan.fastclaw.databinding.ActivityHrBinding
 import com.shiyuan.fastclaw.feature.mine.viewModel.HrViewModel
 
@@ -29,6 +30,7 @@ class HrActivity : BaseViewModelActivity<ActivityHrBinding, HrViewModel>() {
         binding.viewCopyLink.setOnSingleClickListener {
             ClipboardUtils.copyText(HR_URL)
             getString(R.string.copy_success).showToast()
+            //HR_URL.openWithBrowser()
         }
     }
 

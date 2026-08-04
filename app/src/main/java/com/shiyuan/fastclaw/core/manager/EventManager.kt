@@ -180,6 +180,18 @@ object AppEvent {
      */
     const val KLX_C_JOBSEEKING_STATUS_COMPLETED = "klx_c_jobseeking_status_completed"
 
+    /**
+     * 进入登录页展示
+     *
+     */
+    const val KLX_VIEW_LOGIN = "klx_view_login"
+
+    /**
+     * 点击登录按钮触发登录请求 比如微信或者手机号
+     *
+     */
+    const val KLX_CLICK_LOGIN_BTN = "klx_click_login_btn"
+
 }
 
 

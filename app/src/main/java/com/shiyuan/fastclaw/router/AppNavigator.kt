@@ -19,10 +19,10 @@ object AppNavigator {
      * 强制退出并打开登录
      */
     @JvmStatic
-    fun forceLogoutAndLogin() {
+    fun forceLogoutAndLogin(loginSource: String? = null) {
         if (!User.get().isVisitor) {
             SignUtils.signOut()
-            startLogin(showToast = false)
+            startLogin(showToast = false, loginSource = loginSource)
         }
     }
 
@@ -34,10 +34,11 @@ object AppNavigator {
     @JvmStatic
     fun checkLoginIntercepted(
         showToast: Boolean = true,
-        isFullScreen: Boolean = false
+        isFullScreen: Boolean = false,
+        loginSource: String? = null
     ): Boolean {
         if (User.get().isVisitor) {
-            startLogin(showToast, isFullScreen)
+            startLogin(showToast, isFullScreen, loginSource)
             return true
         }
         return false
@@ -45,11 +46,14 @@ object AppNavigator {
 
     fun startLogin(
         showToast: Boolean,
-        isFullScreen: Boolean = false
+        isFullScreen: Boolean = false,
+        loginSource: String? = null
     ) {
         FlashLoginDialogFragment.show(
-            showToast,
-            checkedPolicy = false)
+            showToast = showToast,
+            checkedPolicy = false,
+            loginSource = loginSource
+        )
 
         //PhoneLoginActivity.start(showToast = showToast, checkedPolicy = false)
 /*        if (Constant.SDKConfiguration.IS_SHOW_WE_CHAT.not()) {
