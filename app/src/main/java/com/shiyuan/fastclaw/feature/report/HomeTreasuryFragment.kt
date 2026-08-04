@@ -101,10 +101,6 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
             Constants.DIAGNOSIS_URL,
             title = getString(R.string.home_treasury_resume_check)
         )
-   /*     SimpleBrowserActivity.launch(
-            context,
-            "file:///android_asset/wechat-return-test.html"
-        )*/
     }
 
     private fun onSalaryCardClick() {
@@ -132,7 +128,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
             val url = if (data?.resumeCheckId == null) {
                 Constants.PASS_PACKAGE_INDEX_URL
             } else {
-                "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${data?.resumeCheckId}"
+                "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${data.resumeCheckId}"
             }
             SimpleBrowserActivity.launch(requireActivity(), url)
         }
