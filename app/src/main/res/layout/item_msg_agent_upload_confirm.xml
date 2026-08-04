@@ -1,87 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_msg_agent_left"
     android:paddingHorizontal="16dp"
-    android:paddingTop="16dp"
-    android:paddingBottom="20dp">
-
-    <ImageView
-        android:id="@+id/iv_caution"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_agent_upload_confirm"
-        app:layout_constraintBottom_toBottomOf="@id/tv_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_title" />
-
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/pending_confirmation"
-        android:textColor="@color/color_90_000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/iv_caution"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="0dp"
-        android:layout_height="0.5dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/color_10_000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp">
 
     <TextView
         android:id="@+id/tv_desc_title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/resume_recognized_confirm"
+        android:lineSpacingExtra="0dp"
+        android:text="@string/resume_confirm_card_title"
         android:textColor="@color/color_90_000000"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider" />
-
-    <TextView
-        android:id="@+id/tv_desc_subtitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="@string/resume_recognized_desc"
-        android:textColor="@color/color_76_3c3c43"
-        android:textSize="13sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_desc_title" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="小虾看到你之前传过一份简历，请确认这是你本人的简历吗，我会根据这份文件来了解你～" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_file_card"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_ffffff_r12"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="14dp"
+        android:layout_width="match_parent"
+        android:layout_height="59dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_f7f7f7_r12"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_desc_subtitle">
+        app:layout_constraintTop_toBottomOf="@id/tv_desc_title">
 
         <ImageView
             android:id="@+id/iv_file_icon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_resume"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -92,66 +48,81 @@
             android:id="@+id/tv_file_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="6dp"
             android:ellipsize="middle"
             android:singleLine="true"
             android:textColor="@color/color_90_000000"
-            android:textSize="14sp"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/tv_file_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_file_icon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="莫莫咖_简历.word" />
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="小虾-10293873-AI训练师.pdf" />
 
         <TextView
             android:id="@+id/tv_file_time"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/color_56_3c3c43"
+            android:layout_marginTop="1dp"
+            android:textColor="@color/color_55_3c3c43"
             android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_file_name"
             app:layout_constraintTop_toBottomOf="@id/tv_file_name"
-            tools:text="上传于2026.05.15" />
+            tools:text="上传于2026.06.01" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.shiyuan.fastclaw.widget.super_button.SuperButton
-        app:sSolidColor="@android:color/white"
-        app:sCornersRadius="22dp"
-        app:sStrokeWidth="1dp"
-        app:sStrokeColor="@color/color_2f6bff"
-        android:id="@+id/btn_re_upload"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="11dp"
-        android:gravity="center"
-        android:paddingHorizontal="16dp"
-        android:text="@string/not_my_resume"
-        android:textColor="@color/color_90_000000"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toStartOf="@id/btn_confirm"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cl_file_card" />
-
-    <com.shiyuan.fastclaw.widget.super_button.SuperButton
-        android:id="@+id/btn_confirm"
-        app:sSolidColor="@color/color_2f6bff"
-        app:sCornersRadius="22dp"
-        app:sStrokeWidth="1dp"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:gravity="center"
-        android:paddingHorizontal="16dp"
-        android:text="@string/confirm_my_resume"
-        android:textColor="@color/white"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/btn_re_upload"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btn_re_upload"
-        app:layout_constraintTop_toTopOf="@id/btn_re_upload" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_file_card">
+
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:id="@+id/btn_re_upload"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="@string/not_my_resume"
+            android:textColor="@color/color_90_000000"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/btn_confirm"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:sCornersRadius="20dp"
+            app:sSolidColor="@android:color/white"
+            app:sStrokeColor="@color/color_60_336fff"
+            app:sStrokeWidth="1dp" />
+
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:id="@+id/btn_confirm"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:paddingHorizontal="12dp"
+            android:text="@string/confirm_my_resume"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/btn_re_upload"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_re_upload"
+            app:layout_constraintTop_toTopOf="@id/btn_re_upload"
+            app:sCornersRadius="20dp"
+            app:sSolidColor="@color/color_2f6bff"
+            app:sStrokeWidth="0dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

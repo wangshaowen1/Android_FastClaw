@@ -151,7 +151,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                     onConfirmClickListener = { onResumeConfirmClickAction(it, true, ) }
                     onRejectClickListener = { onResumeConfirmClickAction(it, false) }
                 }
-            }) { h, item -> h.bind(item) }
+            }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
         // 简历上传成功
         register(TYPE_UPLOAD_SUCCESS, { i, p -> AgentUploadSuccessViewHolder(ItemMsgAgentUploadSuccessBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 简历上传指引
@@ -447,7 +447,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 这些卡片的展示依赖“是否列表最后一条”，位置变化时也需要重新 bind。 */
         private fun ClawAgentMessageInfo.hasLastItemState(): Boolean {
-            return messageType == TYPE_WELCOME || messageType == TYPE_UPLOAD_WAIT
+            return messageType == TYPE_WELCOME || messageType == TYPE_PENDING_CONFIRM || messageType == TYPE_UPLOAD_WAIT
                     || messageType == TYPE_UPLOAD_FAILED || messageType == TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
         }
     }
