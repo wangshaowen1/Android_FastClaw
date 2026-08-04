@@ -5,19 +5,6 @@ description: "Android 页面骨架生成规范。仅在本次实际新增页面�
 
 # Android 页面骨架
 
-## 触发条件
-
-创建或审查 Android 功能页面基础结构时使用本 skill：
-
-- 用户明确要求 scaffold、feature scaffold、page scaffold、页面骨架、新页面、新建页面、生成页面、新 Activity、新 Fragment 或基础页面结构。
-- 生成或审查 `Activity + ViewModel + XML`、`Fragment + ViewModel + XML`、`ToolbarViewModel`、`companion object start(...)`、`newInstance(...)`、`mBundle` 参数读取或页面初始化方法。
-- 新增可见 Android 页面、Tab 页面、嵌套 Fragment、表单页、详情页、选择页或简单设置/账号页面。
-- 判断应使用的 Base 类、包路径、XML layout 变量、点击绑定或页面初始化模式。
-
-只修改已有页面的局部逻辑、局部 XML、字段绑定、Toast、点击事件、状态同步或资源引用时，不使用本 skill。
-
-如果本次实际新增或修改分页链路，再读取 `android-paging-state-ui`。只有命名不确定、批量新增资源或用户要求命名审查时，才读取 `android-naming`。
-
 ## 核心规则
 
 生成能满足当前功能的最小项目原生 MVVM 页面骨架。
@@ -31,8 +18,6 @@ description: "Android 页面骨架生成规范。仅在本次实际新增页面�
 - XML 使用 `<layout>` 根节点，页面变量名为 `layout`。
 - 页面需要标准标题/返回栏时，Toolbar 使用 `ToolbarViewModel` 和 `@layout/view_model_toolbar`。
 
-普通页面骨架不要引入 Hilt、AppContainer、ViewModelFactory、AppResult/AppError、UseCase、完整 MVI 或新的 Base 类。
-
 ## 生成前判断
 
 1. 先在相同 `feature/<domain>` 包下搜索附近已有页面。
@@ -41,8 +26,8 @@ description: "Android 页面骨架生成规范。仅在本次实际新增页面�
    - Fragment：Tab 页、子页面、ViewPager 页面或由现有 Activity 承载的页面。
    - Dialog：弹窗 UI，使用项目弹窗专项规则，不使用本页面骨架规则。
 3. 判断页面是否需要仓库访问。需要时使用 `AppRepositoryViewModel<AppRepository>` 或已有 feature Repository；仅有 `mBundle` 参数不算仓库访问。
-4. 只新增当前确实需要的文件。除非功能已经需要，否则不要创建 Repository、UseCase、Adapter、UiState 或 mapper。
-5. 命名优先沿用当前 feature 和同类文件；只有命名冲突、不确定命名、批量新增资源或用户要求命名审查时，才读取 `android-naming`。
+4. 只新增当前确实需要的文件。除非功能已经需要，否则不要创建 Repository、Adapter、UiState 或 mapper。
+5. 只为真实初始化职责生成 `onCreate()`、`onPrepareView()` 和 `init*()`；不生成空函数，也不把一两行代码机械拆成形式包装。
 
 ## 文件放置
 
@@ -78,25 +63,10 @@ class XxxActivity : BaseViewModelActivity<ActivityXxxBinding, XxxViewModel>() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initView()
-        initListener()
-        dataUpdate()
-    }
-
-    private fun initView() {
-    }
-
-    private fun initListener() {
-    }
-
-    private fun dataUpdate() {
-    }
 }
 ```
 
-如果需要返回结果，参考附近选择页补充 `getIntent(...)` 和 `setResult(...)`。网络和业务逻辑仍放在 ViewModel。
+只有确实需要初始化 View、监听或观察时才重写 `onCreate()`；简单代码直接写清楚，监听、观察、列表等职责独立时再拆函数。如果需要返回结果，参考附近选择页补充 `getIntent(...)` 和 `setResult(...)`。网络和业务逻辑仍放在 ViewModel。
 
 ## Fragment 模式
 
@@ -115,27 +85,12 @@ class XxxFragment : BaseViewModelFragment<FragmentXxxBinding, XxxViewModel>() {
         }
     }
 
-    override fun onPrepareView() {
-        super.onPrepareView()
-        initView()
-        initListener()
-        dataUpdate()
-    }
-
-    private fun initView() {
-    }
-
-    private fun initListener() {
-    }
-
-    private fun dataUpdate() {
-    }
 }
 ```
 
-本项目 `onPrepareView()` 不是普通模板里的 `onViewCreated()`。在 `onPrepareView()` 中注册 ViewPager2 callback、AdapterDataObserver、键盘监听、事件监听等手动回调时，默认在 `onDestroy()` 中解除并清空引用，优先参考当前存在的 `HomeFragment`、`BrowserFragment`、`MineFragment` 等同类写法；不要默认生成 `onDestroyView()`，除非正在修改的同类页面或基类已经这样做。
+只有需要初始化时才重写 `onPrepareView()`，不要生成空实现。本项目 `onPrepareView()` 不是普通模板里的 `onViewCreated()`；在其中注册 ViewPager2 callback、AdapterDataObserver、键盘监听或事件监听时，先检查当前 baselibrary 版本、基类是否缓存 View，以及附近同类页面的配对清理点，再在真实生命周期解除并清空引用。FastClaw 不少页面使用 `onDestroy()`，但不要把这个结论硬套到其他基线。
 
-Fragment 收集协程数据时，可以使用 `viewLifecycleOwner.lifecycleScope` 和 `viewLifecycleOwner.repeatOnLifecycle(...)`，除非附近代码已有更强的局部模式。这个规则只约束 LiveData/Flow 观察，不改变 `onPrepareView()` 手动注册回调与 `onDestroy()` 的配对。
+Fragment 收集协程数据时，可以使用 `viewLifecycleOwner.lifecycleScope` 和 `viewLifecycleOwner.repeatOnLifecycle(...)`，除非附近代码已有更强的局部模式。这个规则只约束 LiveData/Flow 观察，不自动决定手动回调的清理点。
 
 ## ViewModel 模式
 
@@ -163,18 +118,12 @@ class XxxViewModel : AppRepositoryViewModel<AppRepository>() {
         title = R.string.xxx_title.getResString()
     )
 
-    override fun onCreate() {
-        super.onCreate()
-        loadData()
-    }
-
-    private fun loadData() {}
 }
 ```
 
-使用与附近代码一致的项目状态类型：`MutableLiveData`、`ObservableField`、`ObservableBoolean`、`ObservableInt`。只有功能已经需要分页、SSE、轮询或连续流时，才使用 `Flow`。
+使用与附近代码一致的项目状态类型：只有 XML 或观察者需要自动刷新时，才使用 `MutableLiveData`、`ObservableField`、`ObservableBoolean`、`ObservableInt`；仅供内部计算、临时缓存或选中判断的状态使用普通字段。只有功能已经需要分页、SSE、轮询或连续流时，才使用 `Flow`。
 
-轮询、SSE handler、下载、媒体等长任务必须保存引用，并在 `onCleared()` 中取消。
+轮询、SSE handler、临时下载、媒体等由页面 ViewModel 创建和拥有的长任务必须保存引用，并在 `onCleared()` 中取消。由 Service、系统下载或应用级 Manager 拥有的后台任务遵循自身生命周期，页面只解绑观察，不得在 `onCleared()` 误取消。
 
 ## XML 模式
 
@@ -224,7 +173,7 @@ mRealVM.xxxData.observe(viewLifecycleOwner) { data ->
 }
 ```
 
-不要因为使用 `viewLifecycleOwner` 观察数据，就把 `onPrepareView()` 中的手动注册清理挪到 `onDestroyView()`；本项目默认仍按 `onDestroy()` 清理。
+不要因为使用 `viewLifecycleOwner` 观察数据，就猜测 `onPrepareView()` 中手动注册的清理点；以当前 baselibrary、基类 View 缓存行为和附近同类实现为准。
 
 `observeEvents { ... }` 和 `FlowEventBus` 仅用于跨页面应用事件。父子页面通信如果可以用直接回调或附近已有 shared ViewModel 处理，不要使用事件总线。
 
@@ -233,12 +182,12 @@ mRealVM.xxxData.observe(viewLifecycleOwner) { data ->
 页面骨架完成前检查：
 
 - 文件位于最接近的现有 `feature/<domain>` 包下。
-- 类名和 XML 命名符合 `android-naming`。
 - Activity 继承 `BaseViewModelActivity<VB, VM>`，Fragment 继承 `BaseViewModelFragment<VB, VM>`。
 - XML 根节点是 `<layout>`，页面变量名是 `layout`。
 - 标准 toolbar 使用 `ToolbarViewModel` 和 `view_model_toolbar`。
 - 跨页面参数优先用 `Constants.Extra.*` 或局部 `private const val KEY_XXX`，在 ViewModel 中从 `mBundle` 读取；不要为风格重构无关的历史 key。
 - Activity/Fragment 只初始化 View、监听、观察者、导航、Toast/Dialog/loading，不直接请求网络或访问数据库。
 - ViewModel 负责页面状态和请求调用。
-- 没有在缺乏真实需要时新增 Base 类、Hilt、AppContainer、ViewModelFactory、UseCase、AppResult/AppError 或完整 MVI。
-- 长任务在 `onCleared()` 中取消。
+- 没有空 `onCreate()`、`onPrepareView()`、`init*()`，简单初始化没有被过度拆分。
+- 只有 UI/观察者消费的状态使用可观察类型，内部临时状态保持普通字段。
+- 长任务所有者明确；页面 ViewModel 拥有的任务在 `onCleared()` 取消，Service/系统/应用级任务只解绑页面观察。

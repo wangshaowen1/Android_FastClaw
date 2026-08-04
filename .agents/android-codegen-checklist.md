@@ -17,14 +17,14 @@ Checklist 按任务范围裁剪执行，不要求每次全量跑完；只有完�
 开始写代码前先判断：
 
 1. 这个功能已有相似页面、仓库、Adapter、Dialog、BindingAdapter 或 manager 吗？优先复用同类写法。
-2. 完整生成或复杂审查时，当前任务是否命中项目 skill：页面骨架、API 请求、命名、分页、非分页列表、弹窗、导航事件、Figma UI、异步任务；局部小改只读目标代码和 quick check。
+2. 完整生成或复杂审查时，当前任务是否命中项目 skill：页面骨架、页面状态 DataBinding、API 请求、分页、非分页列表、Tab/ViewPager2、弹窗、导航事件、Figma UI、异步任务；局部小改只读目标代码和 quick check。
 3. 当前分支的主业务工程、namespace、源码根包、语言目录和 SDK 依赖是否已经确认？
 4. 新页面是否应该继承 `BaseViewModelActivity` / `BaseViewModelFragment`？
 5. XML 是否需要 `<layout>`，变量名是否为 `layout` 或 `item`？
 6. API 是否应加到 `ApiService.kt`，路径常量是否应加到 `ApiConstants.kt`，请求体是否放在 `request/`？
 7. 是否真的需要新 Repository，还是 `AppRepository` / `CommonRepository` 已足够？
 8. 是否真的需要 UiModel、UseCase、UiState？
-9. 是否有长任务需要保存 `Job` 或 handler，并在 `onCleared()` 取消？
+9. 长任务所有者是否明确：ViewModel 页面任务保存 `Job`/handler 并在 `onCleared()` 取消；Service、系统下载或应用级 Manager 任务由页面解绑观察者而不是误取消？
 10. 是否新增了字符串资源，并同步当前分支需要覆盖的 `values*/strings.xml`？
 11. 是否涉及 Room version、Migration 或 AutoMigration？
 12. 是否涉及支付、登录、授权、广告奖励、统计、归因、推送、设备标识等需要 SDK 隔离和安全校验的能力？
@@ -35,18 +35,18 @@ Checklist 按任务范围裁剪执行，不要求每次全量跑完；只有完�
 
 完成代码后检查：
 
-1. Activity/Fragment 只做 View 初始化、事件绑定、观察 ViewModel、跳转、Toast/Dialog/Loading 展示；Fragment 中 `onPrepareView()` 注册的 ViewPager/adapter/键盘/事件等手动回调默认在 `onDestroy()` 解除，不套用 `onDestroyView()`，除非同类或基类已有明确模式。
+1. Activity/Fragment 只做 View 初始化、事件绑定、观察 ViewModel、跳转、Toast/Dialog/Loading 展示；Fragment 中手动注册回调的清理点按当前 baselibrary、基类 View 缓存策略和同类页面确定，没有跨版本套用固定生命周期方法。
 2. ViewModel 不直接依赖 Activity、Fragment、View，不直接创建 `ApiService` 或 `AppDatabase`。
 3. Repository 不随意吞异常，不把 Retrofit `Response` 暴露给 UI。
-4. XML 只写简单 DataBinding 表达式，复杂判断已放到 ViewModel 或 BindingAdapter。
+4. XML 只写简单 DataBinding 表达式，复杂判断已放到 ViewModel 或 BindingAdapter；稳定页面状态没有继续由多个 Observer/方法重复写 View，瞬时手势和动画状态也没有被机械搬进 XML。
 5. Adapter 只负责展示和转发点击，没有直接发网络请求。
 6. 新增 API、request、response、entity、dao、mapper 的目录符合总规范。
 7. 新增完整接口、request/response/entity 模型时已有来自接口文档或业务说明的中文注释；局部小改沿用当前文件风格，没有编造注释。
-8. 列表 item 的 UI 临时状态没有写进接口实体；DataBinding item XML 优先绑定 `ItemXxxVM`，自定义 Adapter/PagingDataAdapter 优先使用 `BindingViewHolder` 和 `binding.getVm(...)`。复杂列表、多选、批量操作、跨页面刷新或分页业务动作优先查当前 feature 是否已有事件 VM、callback 或 ViewModel 方法；简单选择、弹窗列表、静态配置项、局部 item 操作可沿用 item VM callback / `onItemClick` / 同类 `setOnItemClickListener`。
-9. 长任务有重复启动保护，并在成功、失败、异常、取消后复位 UI 状态。
+8. 列表 item 的 UI 临时状态没有写进接口实体；DataBinding item XML 优先绑定 `ItemXxxVM`，自定义 Adapter/PagingDataAdapter 优先使用 `BindingViewHolder` 和带稳定业务 key 的 `binding.getVm(...)`，没有使用 position 或可变字段缓存 ItemVM。复杂列表、多选、批量操作、跨页面刷新或分页业务动作优先查当前 feature 是否已有事件 VM、callback 或 ViewModel 方法；简单选择、弹窗列表、静态配置项、局部 item 操作可沿用 item VM callback / `onItemClick` / 同类 `setOnItemClickListener`。多个 Tab 各自独立分页时，容器不持有各 Tab 列表数据，各子页持有独立分页链路，Fragment 列表不在 Tab 点击或刷新时重建。
+9. 长任务有明确所有者和重复启动保护；页面级任务在成功、失败、异常、取消后复位 UI 状态，持久任务保留任务 id/真实状态供页面重新绑定。
 10. `CancellationException` 没有被当成普通异常吞掉。
 11. 特殊渠道/审核模式/SDK 差异、登录/支付/授权/广告奖励、轮询/SSE/下载/生成状态映射、历史兼容和 UI 避让等非显而易见逻辑已有 1-2 行中文原因注释；没有为简单赋值、普通点击、显而易见代码堆模板注释。
-12. 新增资源命名符合命名 skill，尤其是不透明纯色 `bg_颜色值_r/tr/br_radius值`、透明色 `bg_透明百分比_颜色值_r/tr/br_radius值`、描边和渐变命名。
+12. 新增 drawable 符合 XML 资源规则中的数值命名，尤其是不透明纯色 `bg_颜色值_r/tr/br_radius值`、透明色 `bg_透明百分比_颜色值_r/tr/br_radius值`、描边和渐变命名。
 13. 新增 drawable 前已查询本地是否有同色值、同圆角、同描边资源；纯色/圆角/描边背景已复用已有资源或按颜色值命名，没有使用 `bg_<页面>_<模块>.xml` 这类页面语义命名。
 14. 新增文案已同步当前分支实际维护的 `values*/strings.xml`，没有照搬不存在或不需要的语言目录。
 15. Figma/截图 UI 已优先映射项目 `style`、`theme`、`attr`、`color`、`dimen`、`drawable`、`selector`。
@@ -58,33 +58,9 @@ Checklist 按任务范围裁剪执行，不要求每次全量跑完；只有完�
 21. SDK 差异按当前分支实现隔离，没有把海外版/大陆版专属 SDK 调用散落到业务页面。
 22. 未查看或修改 `OssManager.kt`，除非用户明确要求。
 
-## 禁止误引入项（AGENTS 红线的审查视图）
+## 红线检查
 
-本节是 `AGENTS.md`《关键禁令》在审查时的逐项核对清单,**红线定义以 `AGENTS.md` 为准**。发现以下内容必须回退或明确说明原因：
-
-- `@Inject`
-- `@HiltViewModel`
-- `@AndroidEntryPoint`
-- `@Module`
-- `@InstallIn`
-- `@Provides`
-- `@Binds`
-- 新增 `AppContainer`
-- 新增 `ViewModelProvider.Factory`
-- 新增 `di` 包
-- 新增 `AppResult`
-- 新增 `AppError`
-- 为单行调用新增 UseCase
-- 为简单页面新增完整 MVI Store/Reducer/Intent/Effect
-- 为普通分页默认新增 `RemoteMediator`
-- Activity/Fragment 直接请求网络或访问数据库
-- Adapter 直接请求网络
-- 接口实体中新增 UI 临时状态字段
-- 业务代码直接 import 第三方 SDK 类
-- `fallbackToDestructiveMigration`
-- 硬编码 token、secret、api key、私钥
-- 线上日志输出敏感信息
-- 固定使用另一个版本的项目名、包名、scheme、语言目录或 SDK
+逐项核对根目录 `AGENTS.md`《关键禁令》；本文件不复制红线内容，避免两处定义漂移。
 
 ## 风险提示格式
 
@@ -111,42 +87,3 @@ Checklist 按任务范围裁剪执行，不要求每次全量跑完；只有完�
 - `高`：会导致崩溃、数据丢失、安全问题、支付/登录/广告奖励错误、数据库破坏性迁移。
 - `中`：会导致业务流程错误、状态不同步、重复请求、分页错乱、UI 明显异常。
 - `低`：命名、组织、重复代码、轻微可维护性问题。
-
-## 输出清单
-
-生成代码后按任务规模说明。快速局部修改不使用完整清单，只说明改动、验证和风险；以下条目只在实际触及时说明：
-
-1. 新增/修改文件列表。
-2. 复用了哪些项目已有类、方法、BindingAdapter、style、drawable。
-3. 是否新增 API、request、response、entity、dao、mapper。
-4. 是否新增 Repository，以及原因。
-5. 是否新增 UiModel、UiState、UseCase，以及原因。
-6. 是否涉及 Room version 或 Migration。
-7. 是否涉及多语言 string。
-8. 是否涉及长任务，以及在哪里取消。
-9. 是否涉及 SDK 差异或版本差异处理。
-10. 是否存在需要人工确认的点。
-
-## 推荐生成模式
-
-简单页面：
-
-- `FeatureActivity/Fragment`
-- `FeatureViewModel : AppRepositoryViewModel<AppRepository>()`
-- XML `<layout>` + `layout` 变量
-- 必要时新增 request body / response model / entity
-
-中等复杂页面：
-
-- `FeatureActivity/Fragment`
-- `FeatureViewModel : AppRepositoryViewModel<FeatureRepository>()`
-- `FeatureRepository : AppRepository()` 或 `CommonRepository()`
-- ItemVM + QuickAdapter 或 Paging3
-- 必要时增加轻量 UiState
-
-复杂异步页面：
-
-- 保持 MVVM
-- 明确拆分 Repository、状态对象、轮询/SSE handler、进度模拟器
-- Job 和 handler 在 `onCleared()` 统一释放
-- 只在复用或业务规则复杂时增加 UseCase

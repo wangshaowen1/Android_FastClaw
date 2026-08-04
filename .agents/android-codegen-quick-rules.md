@@ -24,14 +24,16 @@
 只按本次实际触达范围读取对应 skill,不因为相关词出现在上下文里就连锁读取。完整路由表与组合场景见 `android-codegen-scenarios.md`。最常用:
 
 - 新页面骨架 → `skills/android-feature-scaffold`
-- 接口链路新增/改 → `skills/android-api-request`
+- 页面稳定状态、互斥区域、Observer 批量写 View → `skills/android-databinding-ui`
+- 新增接口、接口链路至少两层的新增/修改/审查，或调整请求封装/错误语义 → `skills/android-api-request`
 - 轮询/SSE/下载等长任务 → `skills/android-async-task`
 - 非分页列表 → `skills/android-databinding-list`;分页 → `skills/android-paging-state-ui`
+- 多 Tab + ViewPager2 Fragment 容器 → `skills/android-tab-viewpager`；每个 Tab 独立分页时再读 `skills/android-paging-state-ui`
 - 弹窗 → `skills/android-dialog`;导航/事件 → `skills/android-navigation-events`
-- XML token/drawable 命名 → `android-codegen-xml-resource-rules.md`,命名仍不定再读 `skills/android-naming`
+- XML token/drawable 命名 → `android-codegen-xml-resource-rules.md`
 ## 局部接口快路径
 
-用户已给接口截图/字段表/明确路径,且只是给现有页面、列表或点击流程补一个局部接口时,走快路径,不升级到完整 API/分页 skill,也不等外部接口工具:
+当前分支已有完整同类接口链路、字段和调用位置明确，且只补一个字段、参数或单一调用点时，走快路径，不升级到完整 API/分页 skill，也不等外部接口工具。新增接口，或同时触达 `ApiService`、request/response model、Repository、ViewModel 中至少两层时，读取 `android-api-request`：
 
 - 只读目标 `ApiConstants`、`ApiService`、request/entity、目标 VM/Repo/Fragment/Adapter/XML 和必要同类写法。
 - 优先复用项目已有 `UserTokenBody`、`PagedBody`、`ApiResponse`、`PagedList`、`PagingSource`、`request/requestWithLoading` 链路;字段确实无法覆盖或语义需隔离时才新增专用 Body/模型。

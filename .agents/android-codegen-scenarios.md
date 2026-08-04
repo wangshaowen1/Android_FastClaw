@@ -9,7 +9,7 @@
 - 能通过目标文件、同类实现和 quick rules 完成的小改，不读取本文件。
 - 命中单一场景时，只读取对应 skill，不连锁读取其他 skill。
 - 场景之间有交叉时，先按本次实际修改范围选择最小必要 skill。
-- Figma、列表、弹窗、分页、异步、命名等详细规则在对应 skill 中维护，不在本文件重复展开。
+- Figma、列表、弹窗、分页、异步等详细规则在对应 skill 中维护，不在本文件重复展开。
 - 完整 Checklist 只用于整页生成、复杂改动、用户要求全量审查或发布前审查。
 
 ## 组合场景最小读取
@@ -20,7 +20,10 @@
 | --- | --- | --- |
 | 新页面 + API | `android-codegen-quick-rules.md` -> `android-feature-scaffold` -> `android-api-request` | 只有接口链路实际新增/修改时读 API skill。 |
 | 新页面 + 普通列表 | `android-codegen-quick-rules.md` -> `android-feature-scaffold` -> `android-databinding-list` | 列表非分页时不要读分页 skill。 |
+| 页面 + 多状态区域 | `android-codegen-quick-rules.md` -> `android-databinding-ui` | 稳定页面状态用 ViewModel + XML 绑定；手势和动画过程保留命令式更新。 |
 | 新页面 + 分页 | `android-codegen-quick-rules.md` -> `android-feature-scaffold` -> `android-paging-state-ui` | 不为普通分页默认新增 `RemoteMediator`。 |
+| 多 Tab + 非分页子页 | `android-codegen-quick-rules.md` -> `android-tab-viewpager` | 新增整个页面骨架时才补读 `android-feature-scaffold`。 |
+| 多 Tab + 独立分页 | `android-codegen-quick-rules.md` -> `android-tab-viewpager` -> `android-paging-state-ui` | 容器规则归 Tab skill；各子页的 Pager/Adapter/LoadState 归分页 skill。 |
 | API + 长任务 | `android-codegen-quick-rules.md` -> `android-api-request` -> 必要时 `android-async-task` | 一次性请求不触发异步长任务 skill；轮询、SSE、下载才触发。 |
 | Figma 普通区域 | 目标 Figma 节点 -> `android-figma-xml-quick.md` | 信息足够时不读完整 Figma skill，不全量扫 `res`。 |
 | Figma 弹窗 | 目标 Figma 节点 -> `android-figma-xml-quick.md` -> `android-dialog` | 只有完整精确还原、复杂资产或信息不足时再读 `android-figma-xml-ui`。 |
@@ -38,9 +41,9 @@
 
 ### API 与一次性接口
 
-新增或修改 `ApiConstants`、`ApiService`、request/response/entity、Repository 方法、ViewModel 请求链路或错误处理时，读取 [android-api-request](skills/android-api-request/SKILL.md)。
+新增接口，或本次新增、修改、审查 `ApiService`、request/response model、Repository、ViewModel 中至少两层，或调整 `response/request/requestWithLoading` 的错误语义时，读取 [android-api-request](skills/android-api-request/SKILL.md)。
 
-用户已经给出接口字段，且只是给现有页面补一次性接口调用时，优先按 quick rules 查目标 `ApiService`、request/entity、VM/Repo 和附近同类写法；不自动升级到完整 API skill。
+当前分支已有完整同类链路，且只补明确字段、参数或单一调用点时，按 quick rules 的局部接口快路径执行。
 
 ### 异步长任务
 
@@ -54,11 +57,25 @@
 
 只排查列表 bug、只改 item 文案/样式、只调 BottomSpace/Decoration/间距或刷新逻辑的一小段时，优先读目标代码和 quick check。
 
+### 页面状态 DataBinding
+
+新增、重构或审查 Activity/Fragment/Dialog/XML 的稳定页面状态绑定、多个互斥区域、Observer 中批量写 View、`ViewAnimator/ViewSwitcher` 或 `Observable/LiveData` 到 View 属性映射时，读取 [android-databinding-ui](skills/android-databinding-ui/SKILL.md)。
+
+手势逐帧、动画过程、录音按压、播放器进度、ViewPager 当前下标或一次性简单 View 赋值，不触发页面状态 DataBinding skill。
+
 ### 分页与状态 UI
 
 涉及 Paging3、PagingSource、PagingDataAdapter、LoadState/footer、分页刷新/重试、分页 empty/error/loading、SmartRefreshLayout 分页链路或 Room 缓存分页时，读取 [android-paging-state-ui](skills/android-paging-state-ui/SKILL.md)。
 
 普通非分页列表状态 UI 不触发分页 skill。`RemoteMediator` 只在明确需要 Room 数据库缓存、离线缓存、本地优先展示或跨会话列表持久化时使用。
+
+多个 Tab 通过 ViewPager2 展示且每个 Tab 都独立分页时，同时读取 `android-tab-viewpager`；分页 skill 只处理各子 Fragment 的分页链路。
+
+### Tab 与 ViewPager2
+
+新增、重构或审查多 Tab + ViewPager2 Fragment 容器、FragmentStateAdapter、Tab/页面双向同步、Fragment 列表更新或手动页面回调生命周期时，读取 [android-tab-viewpager](skills/android-tab-viewpager/SKILL.md)。
+
+Banner/轮播 ViewPager、只改 Tab 文案或样式、只设置 `currentItem`、只修一个已有回调时，优先读取目标代码和同类实现。
 
 ### 弹窗
 
@@ -78,16 +95,11 @@
 
 逻辑搬迁、事件绑定、ViewModel 状态同步、修引用、静态检查，即使上下文中有 Figma/XML，也不启用完整 Figma UI 流程。
 
-### XML 资源与命名
+### XML 资源
 
-涉及 XML token、Figma 值映射、drawable 命名、资源命名冲突或批量新增资源时，读取 [android-codegen-xml-resource-rules.md](android-codegen-xml-resource-rules.md)；命名仍不确定、批量新增资源或用户要求命名审查时，再读取 [android-naming](skills/android-naming/SKILL.md)。
+涉及 XML token、Figma 值映射、drawable 命名、资源命名冲突或批量新增资源时，读取 [android-codegen-xml-resource-rules.md](android-codegen-xml-resource-rules.md)。
 
 普通局部 XML 小改只检查本次触达行的资源引用、token、字体、行高、字距和 drawable 命名。
-
-不触发：
-- 纯样式修改、XML 资源调整、drawable 命名
-- 骨架生成、Base 类选择、目录结构判断
-- 静态检查、Gradle 构建验证
 
 ## 高风险补充
 

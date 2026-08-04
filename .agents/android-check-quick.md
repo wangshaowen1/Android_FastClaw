@@ -13,12 +13,15 @@
 ## Kotlin/逻辑
 
 - 新状态字段、方法、点击分支是否接上。
+- `binding.xxx` 只代表安全访问 View；稳定的 `text/visibility/enabled/selected` 是否应由 ViewModel + DataBinding 驱动。
+- 同一 View 被两个以上方法修改、一个方法连续修改三个以上稳定 View 状态、多个 Observer 决定同一区域时，是否应先收敛单一 UI 状态。
+- 三个以上同位置互斥布局是否使用 `ViewAnimator` 等状态容器，并由单一状态绑定 `displayedChild`。
 - 旧手动逻辑是否残留。
 - 关键 import、常量、BindingAdapter、回调方法是否存在。
 - 是否误引入 Hilt、UseCase、AppResult/AppError、完整 MVI。
 - 是否直接在 Activity/Fragment 发网络请求或在 Adapter 写业务请求。
 - 新增复杂/风险逻辑是否有必要中文原因注释，且没有堆模板化废话注释。
-- Fragment 中 `onPrepareView()` 注册的手动回调是否在 `onDestroy()` 解除；除非同类或基类明确如此，不要用 `onDestroyView()` 清理。
+- Fragment 中 `onPrepareView()` 注册的手动回调是否按当前 baselibrary、基类 View 缓存策略和附近同类页面选择清理点；FastClaw 当前常见写法是 `onDestroy()`，但不要固化成跨版本规则。
 
 ## XML/资源
 

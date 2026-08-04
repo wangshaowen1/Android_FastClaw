@@ -124,7 +124,7 @@ Figma 标注为 `Text1`、`Text2`、`Text3`、`Text4`、`Text5` 时，优先映�
 
 ## Drawable 与资源命名
 
-新增资源先查是否已有可复用文件。确实需要新增时，遵守项目命名 skill：`android-naming`。
+新增资源先查是否已有可复用文件；确实需要新增 drawable 或 token 时，按 `android-codegen-xml-resource-rules.md` 的项目值命名和 token 映射处理。
 
 - 不透明纯色背景：`bg_颜色值_r/tr/br_radius值.xml`，例如 `bg_242435_r16.xml`、`bg_ffffff_r8.xml`。
 - 透明色背景：`bg_透明百分比_颜色值_r/tr/br_radius值.xml`，例如 `bg_08_ffffff_r20.xml`；透明百分比沿用项目已有口径。
@@ -149,12 +149,19 @@ Figma 标注为 `Text1`、`Text2`、`Text3`、`Text4`、`Text5` 时，优先映�
 - 不用临时占位图替代明确资产；缺资产时在输出中说明。
 - 矢量图标能复用项目已有 drawable 时优先复用；多色复杂图、照片、插画优先使用 PNG/WebP。
 
+### 位图密度与清晰度
+
+- Android 密度倍率按 `mdpi/hdpi/xhdpi/xxhdpi/xxxhdpi = 1/1.5/2/3/4×` 计算。导出位图时明确目标资源目录和倍率，例如 `98dp` 放 `drawable-xxhdpi` 时导出约 `294px`。
+- 不要把 1× 位图放进 `drawable-nodpi` 再依赖运行时放大；这会规避密度换算并造成模糊。
+- 只提供一份资源时，放入与导出倍率一致的密度目录；只有实际导出了完整多密度版本，才同时维护多个同名文件。
+- 保存前验证真实文件格式、像素尺寸、透明通道和目标目录，不能只看扩展名或 Figma 节点名判断。
+
 ## 不要做
 
 - 不用 CSS/SCSS/Web token 术语实现 Android XML；遇到类似 CSS token 的设计变量，要翻译成项目 `style/theme/attr/color/dimen/drawable`。
 - 不把设计说明、标注文案、开发备注写进页面 UI。
 - 不为了像素值完全一致而绕开项目 style/theme，除非项目没有对应资源。
-- 不在 XML 中写复杂业务判断；复杂逻辑放 ViewModel 或 BindingAdapter。
+- 不在 XML 中写复杂业务判断；复杂逻辑放 ViewModel 或 BindingAdapter。简单的实体字段读取、空值兜底、颜色/可见性三元表达式可以直接绑定，不要为此制造 `getXxxText()`、`isXxxVisible()`、`titleText` 等透传状态。
 - 不因为截图里文字短就写死文案控件宽度，多语言会放大这个问题。
 
 ## 完成前检查
@@ -168,4 +175,5 @@ Figma 标注为 `Text1`、`Text2`、`Text3`、`Text4`、`Text5` 时，优先映�
 - 本次新增/修改的 XML 行是否避免了非必要的裸 `dp`、裸 `#`、`android:fontFamily`、`android:textStyle`、`android:letterSpacing`、`android:lineHeight`。
 - 本次新增 drawable 是否已按候选值查过等价资源，并符合值命名规则。
 - 本次触达的图片/图标是否使用设计资产或项目已有资产。
+- 新增位图的导出像素、资源密度目录和真实文件格式是否匹配，没有把低倍图放进 `drawable-nodpi` 放大。
 - 目标 XML 是否符合 DataBinding/ViewBinding、`layout`/`item` 变量和已有 BindingAdapter 习惯。
