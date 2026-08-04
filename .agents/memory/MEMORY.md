@@ -1,7 +1,6 @@
 # Memory Index
 
-模板工程的智能体记忆索引，遵循 CoALA 记忆分层（procedural / semantic / episodic）。
-**新建项目从模板派生后**：语义记忆按真实工程核对更新，情节记忆清空重记，用户偏好按团队成员调整。
+FastClaw 的智能体记忆索引，遵循 CoALA 记忆分层（procedural / semantic / episodic）。
 
 ## 语义记忆 semantic/（稳定事实与约定，按条目更新、去重纠错优先）
 

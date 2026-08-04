@@ -5,7 +5,7 @@ metadata:
   type: reference
 ---
 
-本工程的 agent 工作流(`.agents/` + `AGENTS.md` / `CLAUDE.md`)刻意保持轻量,目标是"AI 帮写代码",不是流程仪式。新建项目沿用这些取舍原则。
+FastClaw 的 agent 工作流(`.agents/` + `AGENTS.md` / `CLAUDE.md`)刻意保持轻量,目标是"AI 帮写代码",不是流程仪式。后续迭代沿用这些取舍原则。
 
 - **单一来源**:红线禁令只在 `AGENTS.md`《关键禁令》;规则按单一职责分文件,不重复。
 - **渐进披露**:按档位 / 场景按需加载,薄入口 + 细则外链(对应 Anthropic Skills 官方原则)。

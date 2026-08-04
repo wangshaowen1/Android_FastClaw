@@ -17,7 +17,6 @@ local.properties
 /.claude
 /.cursor/
 /.codegraph/
-/docs/
 /.codex/
 /AGENTS.md
 /.agents/
