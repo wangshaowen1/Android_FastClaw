@@ -19,5 +19,4 @@ local.properties
 /.codegraph/
 /.codex/
 /AGENTS.md
-/.agents/
 app/productionArch64/
