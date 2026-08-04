@@ -557,11 +557,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
      * - [trackingType]：UI 层的离散动作（点击上传/重传/确认简历/否认简历）
      * - [payload] / [clawAgentEvent]：与原有 CoreQuestionPayloadBean / ClawAgentEvent 联动触发的埋点保持不变
      */
-    protected fun onTrackingEvent(
-        trackingType: TrackingType? = null,
-        payload: CoreQuestionPayloadBean? = null,
-        clawAgentEvent: Events.ClawAgentEvent? = null,
-    ) {
+    protected fun onTrackingEvent(trackingType: TrackingType? = null, payload: CoreQuestionPayloadBean? = null, clawAgentEvent: Events.ClawAgentEvent? = null, ) {
         when (trackingType) {
             TrackingType.UPLOAD_RESUME ->
                 EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME, mutableMapOf("klx_pipe_source" to "APP"))
