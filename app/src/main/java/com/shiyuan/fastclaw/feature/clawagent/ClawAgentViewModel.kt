@@ -711,11 +711,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 依据 senderType / messageType / messagePhase / cardType 解析端侧 itemType */
     private fun resolveItemType(msg: JobAgentMessage): Int {
         // 用户消息
-        if (msg.senderType == SENDER_USER) return ClawAgentMsgAdapter.TYPE_USER_TEXT
+        if (msg.senderType == SENDER_USER) {
+            return ClawAgentMsgAdapter.TYPE_USER_TEXT
+        }
         // 非卡片的处理中/流式消息按思考态展示
-        if (msg.messageType != MSG_CARD &&
-            (msg.messagePhase == PHASE_PROCESSING || msg.messageStatus == STATUS_STREAMING)
-        ) {
+        if (msg.messageType != MSG_CARD && (msg.messagePhase == PHASE_PROCESSING || msg.messageStatus == STATUS_STREAMING)) {
             return ClawAgentMsgAdapter.TYPE_AGENT_THINK
         }
         if (msg.messageType == MSG_TEXT_TIP) {
