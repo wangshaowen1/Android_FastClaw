@@ -23,6 +23,7 @@ Figma 节点数据和资源统一通过 Figma API 读取；不走 MCP。
 ## Android 映射
 
 - 页面 XML 默认 `<layout>`，ViewModel 变量名 `layout`，item 变量名 `item`。
+- 页面有标准标题/返回栏时，**优先**用 `ToolbarViewModel` + `<include layout="@layout/view_model_toolbar" app:toolbar="@{layout.toolbar}" />`；非标准设计除外。
 - 点击优先用项目已有 click binding 或 `setOnSingleClickListener`。
 - Figma 数值优先映射项目资源:`style/theme/attr/color/dimen/drawable/selector/BindingAdapter`,不裸写值。
 

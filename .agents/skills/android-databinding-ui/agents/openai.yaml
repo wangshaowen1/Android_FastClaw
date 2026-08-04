@@ -1,4 +1,4 @@
 interface:
-  display_name: "Android DataBinding 页面状态"
-  short_description: "规范稳定页面状态、互斥区域与 XML DataBinding 映射"
-  default_prompt: "使用 $android-databinding-ui 规范页面稳定状态与 XML DataBinding 映射。"
+  display_name: "Android 页面 DataBinding"
+  short_description: "用单一 ViewModel 状态驱动页面 XML 与互斥区域。"
+  default_prompt: "使用 $android-databinding-ui 将稳定页面状态收敛到 ViewModel，并由 XML DataBinding 驱动展示。"

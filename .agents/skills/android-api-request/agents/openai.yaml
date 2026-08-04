@@ -1,4 +1,4 @@
 interface:
   display_name: "Android 接口请求"
   short_description: "按当前项目规范接入 Retrofit API 和 ViewModel 请求。"
-  default_prompt: "使用 $android-api-request 接入或审查当前项目的 Retrofit 接口链路与错误处理。"
+  default_prompt: "使用 $android-api-request 接入或审查跨层 Retrofit 接口链路；已有完整同类链路中的单字段、参数或调用点修改走 quick rules。"

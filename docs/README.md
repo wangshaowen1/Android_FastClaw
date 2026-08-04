@@ -37,6 +37,7 @@ last_verified: 2026-08-04
 
 | 文档 | 用途 | 状态 | 实现状态或适用范围 |
 | --- | --- | --- | --- |
+| [AI Skill 与规则治理架构](architecture/ai-skill-governance.md) | 说明 AGENTS、quick rules、scenarios、skills 与 references 的职责和维护不变量 | active | AI 规则与项目文档治理 |
 | [App 分层架构](architecture/app-layering.md) | 指导 `baselibrary` 与 App 内共享代码的职责、依赖和渐进治理 | active | Android `app` 模块 |
 | [聊天对话](features/chat-conversation.md) | 解释会话、消息合并、SSE 和列表状态边界 | active | in-progress；Android `app` 模块 |
 | [在线简历](features/online-resume.md) | 解释三类简历数据、编辑刷新和附件解析边界 | active | in-progress；Android `app` 模块 |
@@ -44,4 +45,4 @@ last_verified: 2026-08-04
 ## 推荐阅读路径
 
 - 新开发者：先读根 `README.md` 与 `AGENTS.md`，再按负责领域选择一篇功能文档，最后进入对应稳定代码锚点。
-- 任务型 AI：聊天、卡片、SSE 或消息列表任务只加载[聊天对话](features/chat-conversation.md)；简历、求职偏好、理解度或附件上传任务只加载[在线简历](features/online-resume.md)。局部修改仍以目标代码和 `AGENTS.md` 路由的快速规则为准。
+- 任务型 AI：规则/Skill 维护读取 [AI Skill 与规则治理架构](architecture/ai-skill-governance.md)；聊天、卡片、SSE 或消息列表任务只加载[聊天对话](features/chat-conversation.md)；简历、求职偏好、理解度或附件上传任务只加载[在线简历](features/online-resume.md)。局部修改仍以目标代码和 `AGENTS.md` 路由的快速规则为准。

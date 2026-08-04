@@ -1,4 +1,4 @@
 interface:
   display_name: "Android 弹窗"
   short_description: "按当前项目规范新增、重构或审查 Dialog / DialogFragment。"
-  default_prompt: "使用 $android-dialog 实现或审查符合当前项目基类与生命周期的弹窗。"
+  default_prompt: "使用 $android-dialog 新增、重构或审查项目内 Dialog/DialogFragment 的结构与生命周期。"

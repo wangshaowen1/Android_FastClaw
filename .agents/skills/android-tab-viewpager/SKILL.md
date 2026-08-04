@@ -5,7 +5,7 @@ description: "Android 多 Tab + ViewPager2 Fragment 容器规范。仅在本次�
 
 # Android Tab 与 ViewPager2
 
-先搜索当前分支的容器、Adapter 和 Tab 实现，区分 Fragment 容器与 Banner/轮播控件。需要选择现有 Adapter、指示器接法或判断回调风险时，再读[项目索引](references/project-index.md)。
+先搜索当前分支的容器、Adapter 和 Tab 实现，区分 Fragment 容器与 Banner/轮播控件。需要选择现有 Adapter、指示器接法或判断回调风险时，再读 [项目索引](references/project-index.md)。
 
 ## 容器与子页边界
 
@@ -20,7 +20,7 @@ FastClaw 的 `FragmentStateCacheAdapter` 保存预创建 Fragment，并以实例
 
 - 在容器初始化时构造稳定 Fragment 列表，调用一次 `setFragments(...)`，然后再设置给 ViewPager2。
 - Tab 点击只切换 `currentItem`，不要重新创建 Fragment 或再次调用 `setFragments(...)`。
-- 如果需求确实包含动态增删 Tab，不能假设现有 `setFragments()` 已支持。必须连同稳定业务 ID、`getItemId()`、`containsItem()` 和通知时机一起设计并验证。
+- 如果需求确实包含动态增删 Tab，不能假设现有 `setFragments()` 已支持。必须连同稳定业务 ID、`getItemId()`、`containsItem()` 和通知时机一起设计并验证；否则先说明现有 Adapter 的能力边界。
 
 ## Tab 与页面同步
 

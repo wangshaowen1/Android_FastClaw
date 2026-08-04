@@ -52,3 +52,4 @@
 - `AppViewModel.id()` 和 `AppRepositoryViewModel.id()` 已固定返回 `BR.layout`，不要重复实现。
 - 列表 item VM 继承 `AppItemViewModel<T>`，其 DataBinding 变量名固定为 `item`。
 - 页面中直接使用基类注入对象：`binding`、`mRealVM`、`mRepo`、`mBundle`。
+- 页面需要标准标题/返回栏时，**优先**使用 `ToolbarViewModel` + XML `<include layout="@layout/view_model_toolbar" app:toolbar="@{layout.toolbar}" />`；非标准设计（自定义返回按钮、沉浸式 header 等）除外。

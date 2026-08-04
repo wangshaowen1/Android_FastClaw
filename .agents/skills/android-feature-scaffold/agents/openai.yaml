@@ -1,4 +1,4 @@
 interface:
   display_name: "Android 页面骨架"
-  short_description: "按当前项目基类、包路径与 DataBinding 规范创建或审查新页面骨架。"
-  default_prompt: "使用 $android-feature-scaffold 创建或审查当前项目原生的 Android 页面骨架。"
+  short_description: "按当前项目 Base 类、注入与参数模式创建或审查新页面骨架。"
+  default_prompt: "使用 $android-feature-scaffold 创建或审查项目原生 Activity/Fragment/ViewModel/XML 页面骨架。"

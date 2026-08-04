@@ -36,7 +36,7 @@
 | `android-figma-xml-ui` | Figma/截图到 XML 的完整精确还原 |
 | `write-project-docs` | 项目文档：docs 导览、架构、复杂功能、公共契约、审计与收敛 |
 
-每个 skill 文件夹的构成:`SKILL.md`(主体,所有工具都读)、`references/`(项目示例,命中后按需读)、`agents/openai.yaml`(**仅 Codex/OpenAI 用的 agent 配置;Claude Code 与 Android Studio 跳过,不读**)。
+每个 skill 文件夹的构成:`SKILL.md`(主体,所有工具都读)、`references/`(项目搜索索引/模板,命中且正文指向时按需读)、`agents/openai.yaml`(**仅 Codex/OpenAI 用的 agent 配置;Claude Code 与 Android Studio 跳过,不读**)。
 
 ## 项目记忆(`memory/`)
 
@@ -49,5 +49,7 @@
 - skill 只收录 AI 容易重复犯错的项目约束、可直接定位的真实实现索引，或出错代价高且仅靠通用知识无法判断的决策点。
 - 通用语言规范、行业既定事实和“跟随最佳实践”之类无项目判别力的内容不做 skill；能由当前代码同类实现直接得出的写法也不重复展开。
 - 触发边界写在 `SKILL.md` 的 `description`；正文只保留执行时会改变实现选择的规则，详细项目索引按需放入 `references/`。
+- 每个 `references/` 文件必须由同目录 `SKILL.md` 直接链接并注明读取条件，避免二级跳转和默认全量读取。
+- 修改规则或 Skill 后运行 `powershell -ExecutionPolicy Bypass -File .agents/scripts/validate-agent-docs.ps1`，检查 `SKILL.md` BOM/frontmatter、元数据、reference 直链、注册表与本地 Markdown 链接。
 - 任何文档与当前分支代码不一致时,以当前代码同类实现为准。
 - 不写死复制来源项目的项目名、包名、scheme、语言目录或 SDK 名称。
