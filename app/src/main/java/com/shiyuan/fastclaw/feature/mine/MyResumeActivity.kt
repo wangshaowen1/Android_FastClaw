@@ -91,19 +91,19 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                     itemBinding.tvTime.visibility = View.VISIBLE
                     itemBinding.tvTime.text =
                         getString(R.string.resume_upload_time, item.updateTime)
-                    stopRotation(itemBinding.tvUpload)
+                    stopRotation(itemBinding.ivState)
 
                     itemBinding.llUploading.visibility = View.GONE
                 }
 
                 0, 1 -> {
                     itemBinding.tvName.setTextColor(resources.getColor(R.color.color_90_000000))
-                    itemBinding.iv.setImageResource(R.drawable.ic_resume2)
+                    itemBinding.iv.setImageResource(R.drawable.ic_resume)
                     itemBinding.tvUpload.visibility = View.GONE
 
                     itemBinding.llUploading.visibility = View.VISIBLE
                     itemBinding.tvState.text = item.parseStatusText
-                    startRotation(itemBinding.tvUpload)
+                    startRotation(itemBinding.ivState)
 
                     itemBinding.tvTime.visibility = View.GONE
                 }
@@ -121,7 +121,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                         getString(R.string.resume_upload_time, item.parseStatusText)
 
                     itemBinding.llUploading.visibility = View.GONE
-                    stopRotation(itemBinding.tvUpload)
+                    stopRotation(itemBinding.ivState)
                 }
             }
         }

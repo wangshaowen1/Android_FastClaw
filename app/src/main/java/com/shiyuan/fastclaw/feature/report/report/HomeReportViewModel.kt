@@ -83,7 +83,7 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
     }
 
     fun queryResumeList() {
-        launchWithLoading(true, block = {
+        launchWithLoading(false, block = {
             response(ApiFactory.apiService.resumeQuery(PagedBody(1, 100)), result = {
                 resumeListData.postValue(this.data?.items.orEmpty())
 
