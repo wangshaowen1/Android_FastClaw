@@ -162,7 +162,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                     onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item ->
-            h.bind(item)
+            h.bind(item, items.lastOrNull()?.id == item.id)
         }
         // 简历上传失败
         register(TYPE_UPLOAD_FAILED,
@@ -170,7 +170,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                 AgentUploadFailedViewHolder(ItemMsgAgentUploadFailedBinding.inflate(i, p, false)).apply {
                     onReUploadClickListener = { onUploadClickAction(it,true) }
                 }
-            }) { h, item -> h.bind(item) }
+            }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
         // 文本居中卡
         register(TYPE_TEXT_TIP, { i, p -> AgentTextTipViewHolder(ItemMsgAgentTextTipBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 核心补问卡
@@ -447,7 +447,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 这些卡片的展示依赖“是否列表最后一条”，位置变化时也需要重新 bind。 */
         private fun ClawAgentMessageInfo.hasLastItemState(): Boolean {
-            return messageType == TYPE_WELCOME || messageType == TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
+            return messageType == TYPE_WELCOME || messageType == TYPE_UPLOAD_WAIT
+                    || messageType == TYPE_UPLOAD_FAILED || messageType == TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
         }
     }
 
