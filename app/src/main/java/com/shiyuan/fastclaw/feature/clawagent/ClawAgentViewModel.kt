@@ -1524,20 +1524,28 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         /** 公司背调前置校验/报告生成轮询间隔 */
         private const val COMPANY_BACKGROUND_POLL_INTERVAL_MS = 3000L
         // actionType
+        /** 文本交互类型 */
         private const val INTERACTION_TYPE_TEXT = "TEXT"
+        /** 操作交互类型 */
         private const val INTERACTION_TYPE_ACTION = "ACTION"
 
         // 显示开启消息通知弹窗分值
         const val SHOW_DIALOG_SCORE = 85
 
         // senderType
+        /** 用户发送方 */
         const val SENDER_USER = "USER"
+        /** 智能体发送方 */
         const val SENDER_AGENT = "AGENT"
 
         // messageType
+        /** 普通文本消息 */
         private const val MSG_TEXT = "TEXT"
+        /** 卡片消息 */
         private const val MSG_CARD = "CARD"
+        /** Toast 提示消息 */
         private const val MSG_TOAST = "TOAST"
+        /** 文本提示消息 */
         private const val MSG_TEXT_TIP = "TEXT_TIP"
 
         // messagePhase / messageStatus（思考态判定）
