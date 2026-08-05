@@ -67,7 +67,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadFailedViewHo
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadSuccessViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentWelcomeViewHolder
-import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.UserViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.UserFileViewHolder
 
 /**
@@ -125,7 +125,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
     init {
         // 用户消息（靠右气泡）
-        register(TYPE_USER_TEXT, { i, p -> SendViewHolder(ItemMsgUserRightBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        register(TYPE_USER_TEXT, { i, p -> UserViewHolder(ItemMsgUserRightBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 用户文件卡片（靠右）
         register(TYPE_USER_FILE, { i, p -> UserFileViewHolder(ItemMsgUserFileBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // agent 普通文本（靠左气泡）

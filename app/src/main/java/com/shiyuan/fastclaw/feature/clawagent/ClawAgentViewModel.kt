@@ -722,6 +722,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         if (msg.messageType != MSG_CARD && (msg.messagePhase == PHASE_PROCESSING || msg.messageStatus == STATUS_STREAMING)) {
             return ClawAgentMsgAdapter.TYPE_AGENT_THINK
         }
+        // 展示文本居中显示
         if (msg.messageType == MSG_TEXT_TIP) {
             return ClawAgentMsgAdapter.TYPE_TEXT_TIP
         }

@@ -26,7 +26,9 @@ class UserFileViewHolder(private val binding: ItemMsgUserFileBinding) : Recycler
     private fun resolveFileTypeIcon(fileType: String): Int {
         return when (fileType) {
             "PDF" -> R.drawable.ic_resume
-            else -> R.drawable.ic_resume_attachment
+            "DOC",
+            "DOCX" -> R.drawable.ic_resume_attachment
+            else -> R.drawable.ic_folder
         }
     }
 }

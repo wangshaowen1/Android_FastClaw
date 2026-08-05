@@ -13,7 +13,7 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  * @author TooWhiteT
  */
 
-class SendViewHolder(private val binding: ItemMsgUserRightBinding) : RecyclerView.ViewHolder(binding.root) {
+class UserViewHolder(private val binding: ItemMsgUserRightBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo) {
         binding.tvMsgContent.text = item.content
