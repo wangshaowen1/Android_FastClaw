@@ -265,7 +265,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 // 录音入口需要先做登录拦截，避免未登录时启动语音 SDK。
-                if (AppNavigator.checkLoginIntercepted(false)) return true
+                if (AppNavigator.checkLoginIntercepted(false,loginSource =AppEventParam.XIAOXIA_CHAT)) return true
                 // 记录按下位置，后续 MOVE 用它判断是否上滑取消。
                 voiceDownRawY = event.rawY
                 voiceCanceling = false
