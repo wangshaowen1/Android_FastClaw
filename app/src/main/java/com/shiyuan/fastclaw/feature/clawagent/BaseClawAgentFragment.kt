@@ -128,7 +128,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         private const val MESSAGE_SCROLL_DELAY = 0L
 
         /** 消息列表平滑滚动速度。 */
-        private const val MESSAGE_SCROLL_SPEED = 0.12f
+        private const val MESSAGE_SCROLL_SPEED = 0.10f
 
         /** 底部按钮展示/隐藏时的纵向位移。 */
         private const val SCROLL_BOTTOM_BUTTON_ANIM_OFFSET = 30
@@ -301,6 +301,8 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
 
     /** et_send 短按保留输入能力；长按开始录音后，移动和松手交给语音逻辑处理。 */
     protected fun handleEtSendVoiceTouch(event: MotionEvent): Boolean {
+        // 输入框已有内容时不接管按下事件，保留 EditText 原生点击、选中文本和键盘行为。
+        if (binding.etSend.text?.isNotBlank() == true) return false
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 // 新一轮按下前先清掉上一次可能残留的延迟任务和事件副本。
