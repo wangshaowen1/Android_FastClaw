@@ -1,5 +1,8 @@
 package com.shiyuan.fastclaw.core.network.apis.request
 
+/** 进入会话时默认恢复的消息条数。 */
+const val SESSION_MESSAGE_LIMIT = 50
+
 /**
  * 进入或恢复会话请求体
  *
@@ -14,5 +17,5 @@ data class SessionEnterBody(
     val conversationId: String? = null,
     val clientRequestId: String? = null,
     val latestCursor: String? = null,
-    val messageLimit: Int? = null,
+    val messageLimit: Int? = SESSION_MESSAGE_LIMIT,
 )

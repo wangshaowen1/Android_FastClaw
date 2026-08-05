@@ -882,8 +882,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
     private fun initData() {
         mRealVM.getAgentModuleList()
-        mRealVM.hardPreMsgListCard(insertPreCard())
-        if (!User.get().isVisitor) {
+        if (User.get().isVisitor) {
+            mRealVM.hardPreMsgListCard(insertPreCard())
+        } else {
             mRealVM.enterSession()
         }
     }

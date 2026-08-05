@@ -38,6 +38,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
+import com.shiyuan.fastclaw.core.network.apis.request.SESSION_MESSAGE_LIMIT
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
@@ -255,6 +256,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                         conversationId = conversationId,
                         clientRequestId =currentRequestId,
                         latestCursor = latestCursor,
+                        messageLimit = SESSION_MESSAGE_LIMIT,
                     )
                 )
             },
@@ -270,11 +272,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             conversationId = result.conversationId
             latestCursor = result.latestCursor
             sessionData.value = result
+            val hashMore = result.messages.orEmpty().size >= SESSION_MESSAGE_LIMIT
             queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
 
             hasCanRefresh.value = result.sessionId.isNullOrBlank() || result.conversationId.isNullOrBlank()
             // 恢复的最近消息为终态数据，过滤掉残留的思考态(think)中间态消息；并在 UPLOAD_RESUME 卡前补自我介绍卡
-            ingestMessages(expandIntroduceBeforeUploadResume(result.messages?.filterNot { it.isThinkMessage() }))
+            val messages = result.messages?.filterNot { it.isThinkMessage() }
+            ingestMessages(expandIntroduceBeforeUploadResume(messages, !hashMore))
         }
     }
 
@@ -391,9 +395,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             historyMessages.value = result
             result?.nextBeforeCursor?.let { historyBeforeCursor = it }
             hasMoreHistory = result?.hasMore ?: false
+            LogUtils.d("hasMore_${result?.hasMore}")
             // 更早消息 sequenceNo 更小，ingest 后按序排到列表顶部（DiffUtil 在 0 位插入，不跳动）
             // 历史分页为终态数据，过滤掉残留的思考态(think)中间态消息；并在 UPLOAD_RESUME 卡前补自我介绍卡
-            ingestMessages(expandIntroduceBeforeUploadResume(result?.messages?.filterNot { it.isThinkMessage() }))
+            val messages = result?.messages?.filterNot { it.isThinkMessage() }
+            ingestMessages(expandIntroduceBeforeUploadResume(messages, result?.hasMore == false))
             // 已加载到最早一页时给一次轻提示
 //            if (!hasMoreHistory) R.string.no_more_data_pull.getResString().showToast()
         }.invokeOnCompletion {
@@ -826,6 +832,22 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
     }
 
+    /**
+     * shouldInsertIntroduce=true 时说明当前已经包含所有消息，需要把自我介绍卡插入到列表第一条。
+     */
+    private fun expandIntroduceBeforeUploadResume(messages: List<JobAgentMessage>?, shouldInsertIntroduce: Boolean): List<JobAgentMessage> {
+        // 还有更早历史时先不补首卡，等加载到最早一页再展示。
+        return if (shouldInsertIntroduce) listOf(
+            JobAgentMessage(
+                messageId = LOCAL_INTRODUCE_MESSAGE_ID,
+                senderType = SENDER_AGENT,
+                messageType = MSG_CARD,
+                cardType = CARD_INTRODUCE_YOURSELF,
+                sequenceNo = 0L
+            )
+        ) + messages.orEmpty() else messages.orEmpty()
+    }
+
     /** 是否思考态（think）中间态消息：enterSession / 历史分页等终态数据里的此类残留不再展示 */
     private fun JobAgentMessage.isThinkMessage(): Boolean =
         resolveItemType(this) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
@@ -866,25 +888,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否面试通关包报告生成中（CARD_INTERVIEW_PASS_PACKAGE_REPORT） */
     private fun JobAgentMessage.isPassPackageReportCard(): Boolean =
         messageType == MSG_CARD && cardType == CARD_INTERVIEW_PASS_PACKAGE_REPORT
-
-    /**
-     * 始终第一条插入自我介绍卡片
-     */
-    private fun expandIntroduceBeforeUploadResume(messages: List<JobAgentMessage>?): List<JobAgentMessage>? {
-        if (messages.isNullOrEmpty()) return messages
-        return messages.flatMap { msg ->
-            if (msg.sequenceNo == 1L) {
-                val introduce = msg.copy(
-                    messageId = generateClientMessageId(),
-                    cardType = CARD_INTRODUCE_YOURSELF,
-                    sequenceNo = 0L
-                )
-                listOf(introduce, msg)
-            } else {
-                listOf(msg)
-            }
-        }
-    }
 
     /**
      * 流式发送用户消息：复用 enterSession 缓存的会话上下文，通过 SSE 接收增量回复。
@@ -1627,6 +1630,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_UNDERSTANDING_SUMMARY = "UNDERSTANDING_SUMMARY"
         // 自我介绍
         private const val CARD_INTRODUCE_YOURSELF = "CARD_INTRODUCE_YOURSELF"
+        /** 端侧固定自我介绍卡 ID，用于稳定 DiffUtil 判断首卡身份。 */
+        private const val LOCAL_INTRODUCE_MESSAGE_ID = "-1"
         // 公司背调卡片
         private const val CARD_COMPANY_BACKGROUND_ENTRY = "COMPANY_BACKGROUND_ENTRY"
         // 公司背调报告卡片
