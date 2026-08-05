@@ -38,7 +38,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
-import com.shiyuan.fastclaw.core.network.apis.request.SESSION_MESSAGE_LIMIT
+import com.shiyuan.fastclaw.core.network.apis.request.SESSION_PAGE_SIZE
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
@@ -256,7 +256,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                         conversationId = conversationId,
                         clientRequestId =currentRequestId,
                         latestCursor = latestCursor,
-                        messageLimit = SESSION_MESSAGE_LIMIT,
+                        messageLimit = SESSION_PAGE_SIZE,
                     )
                 )
             },
@@ -272,7 +272,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             conversationId = result.conversationId
             latestCursor = result.latestCursor
             sessionData.value = result
-            val hashMore = result.messages.orEmpty().size >= SESSION_MESSAGE_LIMIT
+            val hashMore = result.messages.orEmpty().size >= SESSION_PAGE_SIZE
             queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
 
             hasCanRefresh.value = result.sessionId.isNullOrBlank() || result.conversationId.isNullOrBlank()
