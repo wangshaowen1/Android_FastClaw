@@ -4,6 +4,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEventParam.JOB_PREFERENCE
+import com.shiyuan.fastclaw.core.manager.AppEventParam.KLX_VIEW_SHRIMP_UNDERSTANDS
+import com.shiyuan.fastclaw.core.manager.AppEventParam.UPGRADE_EDIT
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadSuccessBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
@@ -29,6 +34,7 @@ class AgentUploadSuccessViewHolder(private val binding: ItemMsgAgentUploadSucces
         binding.tvProgressDesc.text = payload?.scoreChangeText.orEmpty()
 
         binding.root.setOnSingleClickListener {
+            EventManager.onAppTrack(AppEvent.KLX_VIEW_SHRIMP_UNDERSTANDS, mutableMapOf(KLX_VIEW_SHRIMP_UNDERSTANDS to UPGRADE_EDIT))
             OnlineResumeActivity.start(context,0)
         }
     }

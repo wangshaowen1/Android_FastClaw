@@ -28,7 +28,10 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_CONTACT_SERVICE
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_INVITE_RULES
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_LOGOUT
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_VIEW_SETTINGS
 import com.shiyuan.fastclaw.core.manager.EventManager
 
 /**
@@ -99,6 +102,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
         super.onClick(view, data)
         when (view?.id) {
             R.id.rlAccount -> {
+                EventManager.onAppTrack(KLX_VIEW_SETTINGS)
                 AccountSettingsActivity.start(this)
             }
             R.id.rl1 -> {
@@ -130,6 +134,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
                 }
             }
             R.id.rl5 -> {
+                EventManager.onAppTrack(KLX_CLICK_CONTACT_SERVICE)
                 customerServiceTransfer()
             }
         }

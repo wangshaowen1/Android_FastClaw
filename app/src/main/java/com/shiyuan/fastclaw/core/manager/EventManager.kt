@@ -230,6 +230,73 @@ object AppEvent {
      */
     const val KLX_CLICK_INTERVIEW_PASS = "klx_click_interview_pass"
 
+
+    /**
+     * 点击选择求职状态
+     *
+     */
+    const val KLX_CLICK_SELECT_JOB_STATUS = "klx_click_select_job_status"
+
+    /**
+     * 让小虾更懂你页面展示
+     *
+     */
+    const val KLX_VIEW_SHRIMP_UNDERSTANDS = "klx_view_shrimp_understands"
+
+    /**
+     * 点击我的报告进入我的报告页面
+     *
+     */
+    const val KLX_VIEW_MY_REPORTS = "klx_view_my_reports"
+
+    /**
+     * 点击我的订单进入我的订单页面
+     *
+     */
+    const val KLX_VIEW_MY_ORDERS = "klx_view_my_orders"
+
+    /**
+     * 点击虾条进入小虾币页面
+     */
+    const val KLX_VIEW_SHRIMP_CHIPS = "klx_view_shrimp_chips"
+
+    /**
+     * 进入邀请好友页面展示
+     */
+    const val KLX_VIEW_INVITE_FRIENDS = "klx_view_invite_friends"
+
+    /**
+     * 点击立即邀请按钮
+     */
+    const val KLX_CLICK_INVITE_NOW = "klx_click_invite_now"
+
+
+    /**
+     * 点击分享按钮
+     */
+    const val KLX_CLICK_SHARE = "klx_click_share"
+
+    /**
+     * 点击邀请规则
+     */
+    const val KLX_CLICK_INVITE_RULES = "klx_click_invite_rules"
+
+    /**
+     * 点击设置进入设置页面-修改手机号、解绑微信
+     */
+    const val KLX_VIEW_SETTINGS = "klx_view_settings"
+
+    /**
+     * 点击联系客服
+     */
+    const val KLX_CLICK_CONTACT_SERVICE = "klx_click_contact_service"
+
+    /**
+     * 点击检查更新
+     */
+    const val KLX_CLICK_CHECK_UPDATE = "klx_click_check_update"
+
+
 }
 
 /**
@@ -422,6 +489,33 @@ object AppEventParam {
      * 宝典Tab
      */
     const val BAODIAN_TAB = "baodian_tab"
+
+
+    /**
+     * 用户从哪个入口进入让小虾更懂你页面
+     */
+    const val KLX_VIEW_SHRIMP_UNDERSTANDS = "klx_view_shrimp_understands"
+    /**
+     * 我的Tab-头像
+     */
+    const val AVATAR = "avatar"
+    /**
+     * 我的Tab-理解度球
+     */
+    const val UNDERSTANDING_BALL = "understanding_ball"
+    /**
+     * 我的Tab-简历信息
+     */
+    const val RESUME_INFO = "resume_info"
+    /**
+     * 我的Tab-求职偏好
+     */
+    const val JOB_PREFERENCE = "job_preference"
+    /**
+     * 小虾Tab-理解度升级编辑
+     */
+    const val UPGRADE_EDIT = "upgrade_edit"
+
 
 }
 

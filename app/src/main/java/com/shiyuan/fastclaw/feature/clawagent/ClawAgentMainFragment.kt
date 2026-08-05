@@ -46,8 +46,10 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_INTERVIEW_PASS
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_LOGOUT
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_RESUME_TEST
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_SALARY_TEST
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_SELECT_JOB_STATUS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB
 import com.shiyuan.fastclaw.core.manager.AppEventParam.KLX_ENTRY_SOURCE
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB
@@ -1124,6 +1126,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 binding.tvAgentIndex.setImageResource(R.drawable.ic_arrow_right_gray_12)
             }
             onItemClickListener = { item ->
+                EventManager.onAppTrack(KLX_CLICK_SELECT_JOB_STATUS)
                 mRealVM.updateJobStatus(item.code)
             }
         }.showDialog(binding.tvAgentDesc)

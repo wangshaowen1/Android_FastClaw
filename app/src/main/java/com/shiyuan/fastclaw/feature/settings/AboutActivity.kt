@@ -12,6 +12,9 @@ import com.nhsd.basic.ext.launchNoCrash
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Config
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_CHECK_UPDATE
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_CONTACT_SERVICE
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.UpgradeManager
 import com.shiyuan.fastclaw.databinding.ActivityAboutBinding
 import com.shiyuan.fastclaw.feature.PhotoPagerActivity
@@ -57,6 +60,7 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
         }
 
         binding.checkForUpdates.setOnSingleClickListener {
+            EventManager.onAppTrack(KLX_CLICK_CHECK_UPDATE)
            checkUpgrade()
         }
     }

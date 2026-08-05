@@ -13,6 +13,10 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_INVITE_NOW
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_INVITE_RULES
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_SHARE
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.databinding.ActivityInviteFriendsBinding
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 
@@ -40,6 +44,7 @@ class InviteFriendsActivity :
 
     private fun initView() {
         mRealVM.mToolbarVM.menuAction = {
+            EventManager.onAppTrack(KLX_CLICK_SHARE )
             showInviteShareDialog()
         }
         binding.rvInviteRecords.apply {
@@ -53,9 +58,11 @@ class InviteFriendsActivity :
         mRealVM.loadInviteStats()
         mRealVM.loadInviteRecords()
         binding.tvInviteNow.setOnSingleClickListener {
+            EventManager.onAppTrack(KLX_CLICK_INVITE_NOW)
             showInviteShareDialog()
         }
         binding.tvInviteRule.setOnSingleClickListener {
+            EventManager.onAppTrack(KLX_CLICK_INVITE_RULES)
             SimpleBrowserActivity.launch(this, Constants.INVITEFRIEND_RULES_URL)
         }
         setupToolbarBackgroundAnimation()

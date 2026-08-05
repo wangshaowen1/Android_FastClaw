@@ -19,6 +19,16 @@ import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_LOGOUT
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_VIEW_INVITE_FRIENDS
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_VIEW_MY_ORDERS
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_VIEW_MY_REPORTS
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_VIEW_SHRIMP_CHIPS
+import com.shiyuan.fastclaw.core.manager.AppEventParam
+import com.shiyuan.fastclaw.core.manager.AppEventParam.AVATAR
+import com.shiyuan.fastclaw.core.manager.AppEventParam.JOB_PREFERENCE
+import com.shiyuan.fastclaw.core.manager.AppEventParam.KLX_VIEW_SHRIMP_UNDERSTANDS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_AVATAR
 import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_JOB_PREFERENCE
 import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_LOGIN_BTN
@@ -27,6 +37,9 @@ import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_MY_REPORTS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_RESUME_INFO
 import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_SETTINGS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_UNDERSTANDING_BALL
+import com.shiyuan.fastclaw.core.manager.AppEventParam.RESUME_INFO
+import com.shiyuan.fastclaw.core.manager.AppEventParam.UNDERSTANDING_BALL
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
@@ -144,6 +157,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }*/
             R.id.layout_mine_point -> {
                 if(!AppNavigator.checkLoginIntercepted(false)){
+                    EventManager.onAppTrack(KLX_VIEW_SHRIMP_CHIPS)
                     MineShrimpRechargeActivity.start(requireActivity())
                 }
             }
@@ -152,11 +166,13 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
             R.id.ll_interview_report -> {
                 if(!AppNavigator.checkLoginIntercepted(false,loginSource = ME_TAB_MY_REPORTS)){
+                    EventManager.onAppTrack(KLX_VIEW_MY_REPORTS)
                     InterviewReportActivity.start(requireActivity())
                 }
             }
             R.id.ll_my_order -> {
                 if(!AppNavigator.checkLoginIntercepted(false,loginSource = ME_TAB_MY_ORDERS)){
+                    EventManager.onAppTrack(KLX_VIEW_MY_ORDERS)
                     MyOrderActivity.start(requireActivity(),1)
                 }
             }
@@ -183,21 +199,25 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             R.id.view_mine_resume_banner,
             R.id.tv_mine_invite_action -> {
                 if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_SETTINGS)){
+                    EventManager.onAppTrack(KLX_VIEW_INVITE_FRIENDS)
                     InviteFriendsActivity.start(requireActivity())
                 }
             }
              R.id.siv_avatar-> {
                  if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_AVATAR)){
+                     EventManager.onAppTrack(AppEvent.KLX_VIEW_SHRIMP_UNDERSTANDS, mutableMapOf(KLX_VIEW_SHRIMP_UNDERSTANDS to AVATAR))
                      OnlineResumeActivity.start(requireActivity(),0)
                  }
              }
              R.id.layout_mine_lj-> {
                  if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_UNDERSTANDING_BALL)){
+                     EventManager.onAppTrack(AppEvent.KLX_VIEW_SHRIMP_UNDERSTANDS, mutableMapOf(KLX_VIEW_SHRIMP_UNDERSTANDS to UNDERSTANDING_BALL))
                      OnlineResumeActivity.start(requireActivity(),0)
                  }
              }
              R.id.layout_mine_bj-> {
                  if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_RESUME_INFO)){
+                     EventManager.onAppTrack(AppEvent.KLX_VIEW_SHRIMP_UNDERSTANDS, mutableMapOf(KLX_VIEW_SHRIMP_UNDERSTANDS to RESUME_INFO))
                      OnlineResumeActivity.start(requireActivity(),0)
                  }
              }
@@ -209,6 +229,7 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }
             R.id.layout_mine_ph -> {
                 if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_JOB_PREFERENCE)){
+                    EventManager.onAppTrack(AppEvent.KLX_VIEW_SHRIMP_UNDERSTANDS, mutableMapOf(KLX_VIEW_SHRIMP_UNDERSTANDS to JOB_PREFERENCE))
                     OnlineResumeActivity.start(requireActivity(),1)
                 }
             }
