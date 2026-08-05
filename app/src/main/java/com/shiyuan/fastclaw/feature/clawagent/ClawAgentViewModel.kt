@@ -615,7 +615,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         refreshMessageList()
     }
 
-    /** 对本批消息中最终仍展示在 messageStore 里的生成中报告卡启动轮询。 */
+    /** 对本批消息中最终仍展示在 messageStore 里的生成中报告卡启动轮询 */
     private fun startPollingIfVisible() {
         messageStore.values.forEach { msg ->
             // 是否模拟面试报告生成中，启动面试报告轮询接口
