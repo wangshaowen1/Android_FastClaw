@@ -22,6 +22,7 @@ import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.ext.getBundleValue
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEventParam
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
@@ -139,11 +140,11 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
             mRealVM.checkedPolicy.set(!mRealVM.checkedPolicy.get())
         }
         binding.btnGetCode.setOnClickListener {
-            EventManager.onAppTrack(AppEvent.KLX_CLICK_LOGIN_BTN, "klx_click_login_btn" to "phone")
+            EventManager.onAppTrack(AppEvent.KLX_CLICK_LOGIN_BTN, mutableMapOf(AppEventParam.KEY_LOGIN_TYPE to AppEventParam.VALUE_LOGIN_TYPE_PHONE))
             requestCodeWithPolicy()
         }
         binding.btnWechat.setOnClickListener {
-            EventManager.onAppTrack(AppEvent.KLX_CLICK_LOGIN_BTN, "klx_click_login_btn" to "wechat")
+            EventManager.onAppTrack(AppEvent.KLX_CLICK_LOGIN_BTN, mutableMapOf(AppEventParam.KEY_LOGIN_TYPE to AppEventParam.VALUE_LOGIN_TYPE_WECHAT))
             loginByWechatWithPolicy()
         }
     }

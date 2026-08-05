@@ -30,6 +30,7 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AdsManager
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEventParam
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.UpgradeManager
 import com.shiyuan.fastclaw.databinding.ActivityMainBinding
@@ -155,7 +156,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             when (checkedId) {
                 R.id.rbHome -> {
                     //首页
-                    EventManager.onAppTrack(AppEvent.KLX_CAPP_XIAOXIA_PAGE,mutableMapOf("klx_is_login" to if(User.get().isVisitor) "否" else "是"))
+                    EventManager.onAppTrack(AppEvent.KLX_CAPP_XIAOXIA_PAGE, mutableMapOf(AppEventParam.KEY_IS_LOGIN to if (User.get().isVisitor) "否" else "是"))
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(0)
                     binding.vLine.visibility = View.GONE
@@ -176,7 +177,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 }
                 R.id.rbMine -> {
                     //我的
-                    EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_PAGE,mutableMapOf("klx_is_login" to if(User.get().isVisitor) "否" else "是"))
+                    EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_PAGE, mutableMapOf(AppEventParam.KEY_IS_LOGIN to if (User.get().isVisitor) "否" else "是"))
                     setKeepScreenOn(false)
                     mRealVM.showTab.set(2)
                     binding.vLine.visibility = View.VISIBLE

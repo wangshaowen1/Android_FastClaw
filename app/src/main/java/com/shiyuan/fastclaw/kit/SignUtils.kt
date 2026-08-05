@@ -11,6 +11,7 @@ import com.shiyuan.fastclaw.feature.login.LoginActivity
 import com.shiyuan.fastclaw.feature.login.flash.PhoneLoginDialogActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEventParam
 import com.shiyuan.fastclaw.core.manager.EventManager
 
 object SignUtils {
@@ -32,9 +33,9 @@ object SignUtils {
         ActivityUtils.finishActivity(PhoneLoginDialogActivity::class.java)
         FlowEventBus.postSync(Events.UserChangedEvent(Events.UserChangedEvent.SIGN_IN))
         val mutableMap = mutableMapOf(
-            "klx_pipe_source" to "APP",
+            AppEventParam.KEY_PIPE_SOURCE to AppEventParam.VALUE_PIPE_SOURCE_APP,
         ).filterValues { !it.isNullOrBlank() }
 
-        EventManager.onAppTrack(AppEvent.KLX_C_LOGIN_SUCCESS,mutableMap)
+        EventManager.onAppTrack(AppEvent.KLX_C_LOGIN_SUCCESS, mutableMap)
     }
 }

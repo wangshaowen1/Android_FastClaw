@@ -11,6 +11,9 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEventParam
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.databinding.DialogFlashLoginBinding
@@ -27,8 +30,7 @@ import com.nhsd.basic.utils.Logger
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
 import com.umeng.socialize.bean.SHARE_MEDIA
 import java.lang.ref.WeakReference
-import com.shiyuan.fastclaw.core.manager.AppEvent
-import com.shiyuan.fastclaw.core.manager.EventManager
+
 /**
  * 闪验登录入口
  * @author xiaoowuu
@@ -149,7 +151,8 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
     }
 
     private fun loginByThird(platform: SHARE_MEDIA) {
-        EventManager.onAppTrack(AppEvent.KLX_CLICK_LOGIN_BTN, "klx_click_login_btn" to "wechat")
+        EventManager.onAppTrack(
+            AppEvent.KLX_CLICK_LOGIN_BTN, mutableMapOf(AppEventParam.KEY_LOGIN_TYPE to AppEventParam.VALUE_LOGIN_TYPE_WECHAT))
         if (FlashLoginManager.checkedPolicy) {
             shareManager?.login(platform, this)
         } else {
@@ -170,7 +173,7 @@ class FlashLoginDialogFragment : BaseVMDialogFragment<DialogFlashLoginBinding, F
      */
     private fun loginByPhoneDialog(dismiss: Boolean) {
         // 首次进入时 hasStartedPhoneLogin 为 false，会继续往下执行；置 true 后用于拦截重复回调
-        EventManager.onAppTrack(AppEvent.KLX_VIEW_LOGIN, "klx_login_trigger_source" to loginSource)
+        EventManager.onAppTrack(AppEvent.KLX_VIEW_LOGIN, mutableMapOf(AppEventParam.KEY_LOGIN_TRIGGER_SOURCE to loginSource))
         FlashLoginManager.finishAuthActivity()
         PhoneNewLoginActivity.start(checkedPolicy = checkedPolicy)
         if (dismiss) {

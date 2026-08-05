@@ -29,6 +29,7 @@ import com.shiyuan.fastclaw.common.utils.KeyboardUtils.showKeyboard
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEventParam
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
@@ -560,7 +561,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     protected fun onTrackingEvent(trackingType: TrackingType? = null, payload: CoreQuestionPayloadBean? = null, clawAgentEvent: Events.ClawAgentEvent? = null, ) {
         when (trackingType) {
             TrackingType.UPLOAD_RESUME ->
-                EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME, mutableMapOf("klx_pipe_source" to "APP"))
+                EventManager.onAppTrack(AppEvent.KLX_C_UPLOAD_RESUME, mutableMapOf(AppEventParam.KEY_PIPE_SOURCE to AppEventParam.VALUE_PIPE_SOURCE_APP))
             TrackingType.UPLOAD_RESUME_RETRY ->
                 EventManager.onAppTrack(AppEvent.KLX_CAPP_UPLOAD_FAILED_RE_RESUME)
             TrackingType.RESUME_CONFIRM ->
@@ -572,17 +573,17 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
 
         payload?.let {
             if (it.attributeGroupCode == "jobStatus") {
-                EventManager.onAppTrack(AppEvent.KLX_C_JOBSEEKING_STATUS_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
+                EventManager.onAppTrack(AppEvent.KLX_C_JOBSEEKING_STATUS_COMPLETED, mutableMapOf(AppEventParam.KEY_PIPE_SOURCE to AppEventParam.VALUE_PIPE_SOURCE_APP))
             }
         }
 
         clawAgentEvent?.let {
             if (it.type == AppEvent.KLX_C_EXPECTED_JOB_COMPLETED) {
-                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_JOB_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
+                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_JOB_COMPLETED, mutableMapOf(AppEventParam.KEY_PIPE_SOURCE to AppEventParam.VALUE_PIPE_SOURCE_APP))
             } else if (it.type == AppEvent.KLX_C_EXPECTED_CITY_COMPLETED) {
-                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_CITY_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
+                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_CITY_COMPLETED, mutableMapOf(AppEventParam.KEY_PIPE_SOURCE to AppEventParam.VALUE_PIPE_SOURCE_APP))
             } else if (it.type == AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED) {
-                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED, mutableMapOf("klx_pipe_source" to "APP"))
+                EventManager.onAppTrack(AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED, mutableMapOf(AppEventParam.KEY_PIPE_SOURCE to AppEventParam.VALUE_PIPE_SOURCE_APP))
             }
         }
     }

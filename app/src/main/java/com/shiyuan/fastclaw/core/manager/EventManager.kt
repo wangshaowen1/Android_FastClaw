@@ -194,6 +194,57 @@ object AppEvent {
 
 }
 
+/**
+ * App功能使用数据参数
+ */
+object AppEventParam {
+
+    /**
+     * 埋点来源渠道属性
+     */
+    const val KEY_PIPE_SOURCE = "klx_pipe_source"
+
+    /**
+     * App渠道
+     */
+    const val VALUE_PIPE_SOURCE_APP = "APP"
+
+    /**
+     * 用户登录状态属性
+     */
+    const val KEY_IS_LOGIN = "klx_is_login"
+
+    /**
+     * 已登录
+     */
+    const val VALUE_IS_LOGIN_YES = "是"
+
+    /**
+     * 未登录
+     */
+    const val VALUE_IS_LOGIN_NO = "否"
+
+    /**
+     * 登录页触发来源属性
+     */
+    const val KEY_LOGIN_TRIGGER_SOURCE = "klx_login_trigger_source"
+
+    /**
+     * 登录按钮对应的登录方式属性
+     */
+    const val KEY_LOGIN_TYPE = "klx_click_login_btn"
+
+    /**
+     * 手机号登录
+     */
+    const val VALUE_LOGIN_TYPE_PHONE = "phone"
+
+    /**
+     * 微信登录
+     */
+    const val VALUE_LOGIN_TYPE_WECHAT = "wechat"
+}
+
 
 object GrowingIO {
 
