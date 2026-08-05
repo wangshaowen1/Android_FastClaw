@@ -8,6 +8,7 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_NO_RESUME
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_NO_RESUME_START_QUESTIONING
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
@@ -61,7 +62,7 @@ class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentUploadResumeB
         binding.tvNotResume.isEnabled = action.disabled != true
         binding.tvNotResume.setOnSingleClickListener {
             showToast(R.string.toast_resume_not_conversation)
-            if (!AppNavigator.checkLoginIntercepted(false)) {
+            if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_NO_RESUME)) {
                 onDefaultClickListener(item, action, null)
             }
         }

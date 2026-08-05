@@ -230,6 +230,131 @@ object AppEventParam {
     const val KEY_LOGIN_TRIGGER_SOURCE = "klx_login_trigger_source"
 
     /**
+     * 小虾Tab-聊天输入
+     */
+    const val XIAOXIA_CHAT = "xiaoxia_chat"
+
+    /**
+     * 小虾Tab-公司背调
+     */
+    const val XIAOXIA_TAB_COMPANY_CHECK = "xiaoxia_tab_company_check"
+
+    /**
+     * 小虾Tab-测简历
+     */
+    const val XIAOXIA_TAB_RESUME_TEST = "xiaoxia_tab_resume_test"
+
+    /**
+     * 小虾Tab-测薪资
+     */
+    const val XIAOXIA_TAB_SALARY_TEST = "xiaoxia_tab_salary_test"
+
+    /**
+     * 小虾Tab-模拟面试
+     */
+    const val XIAOXIA_TAB_MOCK_INTERVIEW = "xiaoxia_tab_mock_interview"
+
+    /**
+     * 小虾Tab-面试通关包
+     */
+    const val XIAOXIA_TAB_INTERVIEW_PASS = "xiaoxia_tab_interview_pass"
+
+    /**
+     * 小虾Tab-上传简历
+     */
+    const val XIAOXIA_TAB_UPLOAD_RESUME = "xiaoxia_tab_upload_resume"
+
+    /**
+     * 小虾Tab-暂无简历
+     */
+    const val XIAOXIA_TAB_NO_RESUME = "xiaoxia_tab_no_resume"
+
+    /**
+     * 小虾Tab-选择求职状态
+     */
+    const val XIAOXIA_TAB_SELECT_JOB_STATUS = "xiaoxia_tab_select_job_status"
+
+    /**
+     * 小虾Tab-理解度升级编辑
+     */
+    const val XIAOXIA_TAB_SHRIMP_UNDERSTANDS = "xiaoxia_tab_shrimp_understands"
+
+    /**
+     * 宝典Tab-公司背调
+     */
+    const val BAODIAN_TAB_COMPANY_CHECK = "baodian_tab_company_check"
+
+    /**
+     * 宝典Tab-测简历
+     */
+    const val BAODIAN_TAB_RESUME_TEST = "baodian_tab_resume_test"
+
+    /**
+     * 宝典Tab-测薪资
+     */
+    const val BAODIAN_TAB_SALARY_TEST = "baodian_tab_salary_test"
+
+    /**
+     * 宝典Tab-模拟面试
+     */
+    const val BAODIAN_TAB_MOCK_INTERVIEW = "baodian_tab_mock_interview"
+
+    /**
+     * 宝典Tab-面试通关包
+     */
+    const val BAODIAN_TAB_INTERVIEW_PASS = "baodian_tab_interview_pass"
+
+    /**
+     * 宝典Tab-理解度
+     */
+    const val BAODIAN_TAB_SHRIMP_UNDERSTANDS = "baodian_tab_shrimp_understands"
+
+    /**
+     * 我的Tab-点击登录
+     */
+    const val ME_TAB_LOGIN_BTN = "me_tab_login_btn"
+
+    /**
+     * 我的Tab-设置
+     */
+    const val ME_TAB_SETTINGS = "me_tab_settings"
+
+    /**
+     * 我的Tab-邀请好友
+     */
+    const val ME_TAB_INVITE_FRIEND = "me_tab_invite_friend"
+
+    /**
+     * 我的Tab-头像
+     */
+    const val ME_TAB_AVATAR = "me_tab_avatar"
+
+    /**
+     * 我的Tab-理解度球
+     */
+    const val ME_TAB_UNDERSTANDING_BALL = "me_tab_understanding_ball"
+
+    /**
+     * 我的Tab-简历信息
+     */
+    const val ME_TAB_RESUME_INFO = "me_tab_resume_info"
+
+    /**
+     * 我的Tab-求职偏好
+     */
+    const val ME_TAB_JOB_PREFERENCE = "me_tab_job_preference"
+
+    /**
+     * 我的Tab-我的报告
+     */
+    const val ME_TAB_MY_REPORTS = "me_tab_my_reports"
+
+    /**
+     * 我的Tab-我的订单
+     */
+    const val ME_TAB_MY_ORDERS = "me_tab_my_orders"
+
+    /**
      * 登录按钮对应的登录方式属性
      */
     const val KEY_LOGIN_TYPE = "klx_click_login_btn"

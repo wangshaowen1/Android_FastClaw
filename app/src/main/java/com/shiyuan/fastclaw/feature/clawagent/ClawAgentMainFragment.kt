@@ -45,6 +45,11 @@ import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_COMPANY_CHECK
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_INTERVIEW_PASS
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_MOCK_INTERVIEW
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_RESUME_TEST
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_SALARY_TEST
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_XIAOXIA_RESUME_UPLOAD
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
@@ -88,6 +93,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.math.abs
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_SELECT_JOB_STATUS
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_UPLOAD_RESUME
 
 /** 
  * @createtime 2026年05月20日 10:25
@@ -181,20 +188,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.rvAction.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         binding.rvAction.adapter = actionAdapter
 
-        binding.tvAgentDesc.setOnSingleClickListener {
-            if (!AppNavigator.checkLoginIntercepted(false)) {
-                showAgentStatusDialog()
-            }
-
-        }
-        binding.tvAgentIndex.setOnSingleClickListener {
-            if (!AppNavigator.checkLoginIntercepted(false)) {
-                showAgentStatusDialog()
-            }
-        }
-
         msgAdapter.onUploadClickAction = { data,reUpload ->
-            if (!AppNavigator.checkLoginIntercepted(false)) {
+            if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_UPLOAD_RESUME)) {
                 // 上传/重传埋点统一收敛到 onTrackingEvent
                 onTrackingEvent(trackingType = if (reUpload) TrackingType.UPLOAD_RESUME_RETRY else TrackingType.UPLOAD_RESUME)
                 showUploadResumeDialog(data)
@@ -809,6 +804,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     OnlineResumeActivity.start(requireActivity(),0)
                 }
             }
+            R.id.tv_agent_index,
+            R.id.tv_agent_desc -> {
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource =  XIAOXIA_TAB_SELECT_JOB_STATUS)) {
+                    showAgentStatusDialog()
+                }
+            }
             R.id.iv_scroll_bottom -> { //滚动到底部
                 scrollToBottom(true, 0L)
             }
@@ -825,7 +826,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private fun onQuickClick(type: String?) {
         when (type) {
             JobAgentModuleData.TYPE_COMPANY_RESEARCH -> {
-                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_COMPANY_CHECK) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.sendAction(
                         content = getString(R.string.company_backcheck),
@@ -837,7 +838,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             JobAgentModuleData.TYPE_MOCK_INTERVIEW -> {
-                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_MOCK_INTERVIEW) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.sendAction(
                         content = getString(R.string.mock_interview),
@@ -849,17 +850,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             JobAgentModuleData.TYPE_RESUME_REJECTION_ANALYSIS -> {
-                if (!AppNavigator.checkLoginIntercepted(false)) {
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_RESUME_TEST)) {
                     SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL, title = getString(R.string.home_treasury_resume_check))
                 }
             }
             JobAgentModuleData.TYPE_SALARY_VALUATION -> {
-                if (!AppNavigator.checkLoginIntercepted(false)) {
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
                     SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
                 }
             }
             JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> {
-                if (!AppNavigator.checkLoginIntercepted(false) && !interceptIfStreaming()) {
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_INTERVIEW_PASS) && !interceptIfStreaming()) {
                     forceScrollToBottom = true
                     mRealVM.queryInterviewPassPackageResumeStatus()
                 }

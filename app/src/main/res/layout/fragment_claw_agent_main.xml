@@ -61,6 +61,7 @@
             app:layout_constraintTop_toTopOf="@id/iv_agent_avatar" />
 
         <TextView
+            singleClick="@{layout.clickHandler::onClick}"
             android:id="@+id/tv_agent_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,6 +86,7 @@
             app:sSolidColor="@color/color_ff8D28" />
 
         <ImageView
+            singleClick="@{layout.clickHandler::onClick}"
             android:layout_marginTop="1dp"
             android:id="@+id/tv_agent_index"
             android:layout_width="9dp"
