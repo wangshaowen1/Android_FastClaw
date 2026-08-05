@@ -45,6 +45,12 @@ import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_INTERVIEW_PASS
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_RESUME_TEST
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_SALARY_TEST
+import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB
+import com.shiyuan.fastclaw.core.manager.AppEventParam.KLX_ENTRY_SOURCE
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_COMPANY_CHECK
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_INTERVIEW_PASS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_MOCK_INTERVIEW
@@ -95,6 +101,7 @@ import java.util.UUID
 import kotlin.math.abs
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_SELECT_JOB_STATUS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_UPLOAD_RESUME
+import com.shiyuan.fastclaw.core.manager.EventManager
 
 /** 
  * @createtime 2026年05月20日 10:25
@@ -851,16 +858,19 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
             JobAgentModuleData.TYPE_RESUME_REJECTION_ANALYSIS -> {
                 if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_RESUME_TEST)) {
+                    EventManager.onAppTrack(KLX_CLICK_RESUME_TEST,mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
                     SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL, title = getString(R.string.home_treasury_resume_check))
                 }
             }
             JobAgentModuleData.TYPE_SALARY_VALUATION -> {
                 if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
+                    EventManager.onAppTrack(KLX_CLICK_SALARY_TEST,mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
                     SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
                 }
             }
             JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> {
                 if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_INTERVIEW_PASS) && !interceptIfStreaming()) {
+                    EventManager.onAppTrack(KLX_CLICK_INTERVIEW_PASS,mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
                     forceScrollToBottom = true
                     mRealVM.queryInterviewPassPackageResumeStatus()
                 }

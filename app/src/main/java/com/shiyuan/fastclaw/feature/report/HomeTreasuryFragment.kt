@@ -10,11 +10,19 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_INTERVIEW_PASS
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_LOGOUT
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_RESUME_TEST
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_SALARY_TEST
+import com.shiyuan.fastclaw.core.manager.AppEventParam
+import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB
 import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB_COMPANY_CHECK
 import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB_INTERVIEW_PASS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB_MOCK_INTERVIEW
 import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB_RESUME_TEST
 import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB_SALARY_TEST
+import com.shiyuan.fastclaw.core.manager.AppEventParam.KLX_ENTRY_SOURCE
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.databinding.FragmentHomeTreasuryBinding
 import com.shiyuan.fastclaw.databinding.ItemHomeTreasuryBinding
@@ -101,6 +109,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
 
     private fun onMeasureCardClick() {
         if (AppNavigator.checkLoginIntercepted(true,loginSource = BAODIAN_TAB_RESUME_TEST)) return
+        EventManager.onAppTrack(KLX_CLICK_RESUME_TEST,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
         SimpleBrowserActivity.launch(
             requireActivity(),
             Constants.DIAGNOSIS_URL,
@@ -110,6 +119,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
 
     private fun onSalaryCardClick() {
         if (AppNavigator.checkLoginIntercepted(true,loginSource = BAODIAN_TAB_SALARY_TEST)) return
+        EventManager.onAppTrack(KLX_CLICK_SALARY_TEST,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
         SimpleBrowserActivity.launch(
             requireActivity(),
             Constants.SALARY_URL,
@@ -125,7 +135,8 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
 
     private fun onPackageCardClick() {
         if (AppNavigator.checkLoginIntercepted(true,loginSource = BAODIAN_TAB_INTERVIEW_PASS)) return
-        mRealVM.queryInterviewPassPackageResumeStatus()
+          EventManager.onAppTrack(KLX_CLICK_INTERVIEW_PASS,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
+          mRealVM.queryInterviewPassPackageResumeStatus()
     }
 
     private fun observePassPackageResumeStatus() {

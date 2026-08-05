@@ -20,3 +20,4 @@ local.properties
 /.codex/
 /AGENTS.md
 app/productionArch64/
+/build_channel_apks.bat

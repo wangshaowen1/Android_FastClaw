@@ -27,6 +27,9 @@ import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
+import com.shiyuan.fastclaw.core.manager.AppEvent
+import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_LOGOUT
+import com.shiyuan.fastclaw.core.manager.EventManager
 
 /**
  * *****************************************
@@ -137,6 +140,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
         confirmDialog.clickListener = {
             if (it) {
                 //退出登录
+                EventManager.onAppTrack(KLX_CLICK_LOGOUT)
                 mRealVM.logoutApp()
             }
         }

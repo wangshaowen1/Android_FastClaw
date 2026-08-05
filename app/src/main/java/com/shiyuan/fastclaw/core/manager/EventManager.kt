@@ -192,6 +192,44 @@ object AppEvent {
      */
     const val KLX_CLICK_LOGIN_BTN = "klx_click_login_btn"
 
+    /**
+     * 点击退出登录
+     *
+     */
+    const val KLX_CLICK_LOGOUT = "klx_click_logout"
+
+    /**
+     * 登录后进入公司背调
+     *
+     */
+    const val KLX_CLICK_COMPANY_CHECK = "klx_click_company_check"
+
+    /**
+     * 登录后进入测简历
+     *
+     */
+    const val KLX_CLICK_RESUME_TEST = "klx_click_resume_test"
+
+
+    /**
+     * 登录后进入测薪资
+     *
+     */
+    const val KLX_CLICK_SALARY_TEST = "klx_click_salary_test"
+
+    /**
+     * 登录后进入模拟面试
+     *
+     */
+    const val KLX_CLICK_MOCK_INTERVIEW = "klx_click_mock_interview"
+
+
+    /**
+     * 登录后进入面试通关包
+     *
+     */
+    const val KLX_CLICK_INTERVIEW_PASS = "klx_click_interview_pass"
+
 }
 
 /**
@@ -368,6 +406,23 @@ object AppEventParam {
      * 微信登录
      */
     const val VALUE_LOGIN_TYPE_WECHAT = "wechat"
+
+    /**
+     * 功能入口来源  公司背调点击.....
+     */
+    const val KLX_ENTRY_SOURCE = "klx_entry_source"
+
+
+    /**
+     * 小虾Tab
+     */
+    const val XIAOXIA_TAB = "xiaoxia_tab"
+
+    /**
+     * 宝典Tab
+     */
+    const val BAODIAN_TAB = "baodian_tab"
+
 }
 
 
