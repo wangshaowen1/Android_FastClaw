@@ -40,6 +40,7 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTextTipBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadConfirmBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadResumeBinding
+import com.shiyuan.fastclaw.databinding.ItemMsgUserFileBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundEntryViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportDoneViewHolder
@@ -67,6 +68,7 @@ import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentUploadSuccessViewH
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentWelcomeViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.SendViewHolder
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.UserFileViewHolder
 
 /**
  * agent对话消息适配器
@@ -124,6 +126,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     init {
         // 用户消息（靠右气泡）
         register(TYPE_USER_TEXT, { i, p -> SendViewHolder(ItemMsgUserRightBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
+        // 用户文件卡片（靠右）
+        register(TYPE_USER_FILE, { i, p -> UserFileViewHolder(ItemMsgUserFileBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // agent 普通文本（靠左气泡）
         register(TYPE_AGENT_TEXT, { i, p -> AgentViewHolder(ItemMsgAgentLeftBinding.inflate(i, p, false)) }) { h, item ->
             h.bind(item, getTypewriterDisplayedLength(item)) { length ->
@@ -537,6 +541,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 面试通关包报告 - 生成成功 */
         const val TYPE_PASS_PACKAGE_REPORT_DONE = 27
+
+        /** 用户文件卡片 */
+        const val TYPE_USER_FILE = 28
     }
 
 }

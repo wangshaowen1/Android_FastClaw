@@ -362,6 +362,23 @@ data class HistoryResumeConfirmPayloadBean(
     val actions: List<CardAction>? = null,
 )
 
+/** FILE_CARD 用户侧文件卡片。 */
+data class UserFilePayloadBean(
+    /** 文件名 */
+    val fileName: String? = null,
+    /** 文件大小，单位 byte */
+    val fileSize: Long? = null,
+    /** 文件类型，如 pdf/doc/docx */
+    val fileType: String? = null,
+    /** 简历业务 ID */
+    val resumeId: String? = null,
+    /** 简历名称 */
+    val resumeName: String? = null,
+    /** 简历上传时间 */
+    val resumeTime: String? = null,
+    val interactionState: CardInteractionState? = null,
+)
+
 data class CompanyBackgroundEntryPayloadBean(
     /** 卡片交互状态，用于控制入口卡是否禁用 */
     val interactionState: CardInteractionState? = null,

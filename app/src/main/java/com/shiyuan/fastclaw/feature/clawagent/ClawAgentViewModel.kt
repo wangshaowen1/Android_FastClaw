@@ -712,7 +712,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun resolveItemType(msg: JobAgentMessage): Int {
         // 用户消息
         if (msg.senderType == SENDER_USER) {
-            return ClawAgentMsgAdapter.TYPE_USER_TEXT
+            return if (msg.messageType == MSG_CARD && msg.cardType == CARD_FILE_CARD) {
+                ClawAgentMsgAdapter.TYPE_USER_FILE
+            } else {
+                ClawAgentMsgAdapter.TYPE_USER_TEXT
+            }
         }
         // 非卡片的处理中/流式消息按思考态展示
         if (msg.messageType != MSG_CARD && (msg.messagePhase == PHASE_PROCESSING || msg.messageStatus == STATUS_STREAMING)) {
@@ -1632,6 +1636,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_MOCK_INTERVIEW_REPORT = "MOCK_INTERVIEW_REPORT"
         //面试通关报告卡片
         private const val CARD_INTERVIEW_PASS_PACKAGE_REPORT = "INTERVIEW_PASS_PACKAGE_REPORT"
+        // 用户侧文件卡片
+        private const val CARD_FILE_CARD = "FILE_CARD"
         //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
 
         // 寻找岗位中
