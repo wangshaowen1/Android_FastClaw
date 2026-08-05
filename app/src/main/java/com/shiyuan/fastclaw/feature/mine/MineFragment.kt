@@ -19,6 +19,14 @@ import com.nhsd.basic.ext.getViewModelOfActivity
 import com.nhsd.basic.ext.isNull
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_AVATAR
+import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_JOB_PREFERENCE
+import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_LOGIN_BTN
+import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_MY_ORDERS
+import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_MY_REPORTS
+import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_RESUME_INFO
+import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_SETTINGS
+import com.shiyuan.fastclaw.core.manager.AppEventParam.ME_TAB_UNDERSTANDING_BALL
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
@@ -143,12 +151,12 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                 SettingsActivity.start(requireActivity())
             }
             R.id.ll_interview_report -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
+                if(!AppNavigator.checkLoginIntercepted(false,loginSource = ME_TAB_MY_REPORTS)){
                     InterviewReportActivity.start(requireActivity())
                 }
             }
             R.id.ll_my_order -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
+                if(!AppNavigator.checkLoginIntercepted(false,loginSource = ME_TAB_MY_ORDERS)){
                     MyOrderActivity.start(requireActivity(),1)
                 }
             }
@@ -174,21 +182,33 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             }*/
             R.id.view_mine_resume_banner,
             R.id.tv_mine_invite_action -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
+                if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_SETTINGS)){
                     InviteFriendsActivity.start(requireActivity())
                 }
             }
-             R.id.siv_avatar,
-             R.id.iv_name,
-             R.id.layout_mine_lj,
-             R.id.layout_mine_bj,
+             R.id.siv_avatar-> {
+                 if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_AVATAR)){
+                     OnlineResumeActivity.start(requireActivity(),0)
+                 }
+             }
+             R.id.layout_mine_lj-> {
+                 if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_UNDERSTANDING_BALL)){
+                     OnlineResumeActivity.start(requireActivity(),0)
+                 }
+             }
+             R.id.layout_mine_bj-> {
+                 if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_RESUME_INFO)){
+                     OnlineResumeActivity.start(requireActivity(),0)
+                 }
+             }
+              R.id.iv_name,
               R.id.tv_name -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
+                if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_LOGIN_BTN)){
                    OnlineResumeActivity.start(requireActivity(),0)
                 }
             }
             R.id.layout_mine_ph -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
+                if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_JOB_PREFERENCE)){
                     OnlineResumeActivity.start(requireActivity(),1)
                 }
             }
