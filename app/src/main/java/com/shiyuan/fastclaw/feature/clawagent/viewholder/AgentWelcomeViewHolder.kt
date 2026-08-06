@@ -37,7 +37,7 @@ class AgentWelcomeViewHolder(private val binding: ItemMsgAgentWelcomeBinding) : 
             onUploadClickListener(item)
         }
         binding.tvNotResume.setOnSingleClickListener {
-            showToast(R.string.toast_resume_not_conversation)
+            //showToast(R.string.toast_resume_not_conversation)
             if (!AppNavigator.checkLoginIntercepted(false)) {
                 onDefaultClickListener(item, CardAction(CandidateJobAgentClientActionEnum.NO_RESUME_START_QUESTIONING.name), null)
             }

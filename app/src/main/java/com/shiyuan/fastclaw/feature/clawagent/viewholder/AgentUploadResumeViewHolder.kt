@@ -61,7 +61,7 @@ class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentUploadResumeB
         binding.tvNotResume.visible()
         binding.tvNotResume.isEnabled = action.disabled != true
         binding.tvNotResume.setOnSingleClickListener {
-            showToast(R.string.toast_resume_not_conversation)
+            //showToast(R.string.toast_resume_not_conversation)
             if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_NO_RESUME)) {
                 onDefaultClickListener(item, action, null)
             }
