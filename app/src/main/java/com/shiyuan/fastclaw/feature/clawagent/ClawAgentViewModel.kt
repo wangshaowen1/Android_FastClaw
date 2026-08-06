@@ -519,10 +519,11 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
             if (newMsg.isAttributeConfirm()) return@forEach
             if (newMsg.isNotificationSwitch()) return@forEach
+            val rawKey = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString() ?: return@forEach
             // HISTORY_RESUME_CONFIRM 已操作过（interactionState.disabled=true）的不展示：
             // 覆盖 SSE 实时操作后服务端回写禁用态 与 enterSession / 历史分页里已操作过的残留两种场景；
             // 同时把 messageStore 里已渲染的同 id 旧卡移除，避免之前的可点击态滞留在列表
-            if (newMsg.isHistoryResumeConfirmCard()) {
+            /*if (newMsg.isHistoryResumeConfirmCard()) {
                 val disabled = newMsg.payloadJson?.let {
                     runCatching {
                         GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java)?.interactionState?.disabled
@@ -533,9 +534,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                     key?.let { messageStore.remove(it) }
                     return@forEach
                 }
-            }
+            }*/
             // 待上传和上传失败 在历史消息中已操作过的不展示，在实时sse的消息中要进行更新展示
-            if (newMsg.isUploadResumeCard()) {
+            /*if (newMsg.isUploadResumeCard()) {
                 val interactionState = newMsg.payloadJson?.let {
                     runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
                 }
@@ -547,17 +548,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                     }
                     return@forEach
                 }
-            }
-            val rawKey = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString() ?: return@forEach
-            // 自我介绍卡是端侧补充卡，折叠屏重建或会话恢复可能重复补充，这里只保留最新一张
-            if (newMsg.isIntroduceYourselfCard()) {
-                messageStore.filterValues { it.isIntroduceYourselfCard() }
-                    .keys
-                    .filter { it != rawKey }
-                    .forEach { messageStore.remove(it) }
-            }
+            }*/
             // 简历待上传/失败/确认流程卡类型合并只展示最新一张
-            if (newMsg.isLatestOnlyResumeCard()) {
+            /*if (newMsg.isLatestOnlyResumeCard()) {
                 val msgSeq = newMsg.sequenceNo ?: Long.MIN_VALUE
                 // 筛选出所有关于“简历流程卡”类型的消息列表
                 val resumeCards = messageStore.filterValues { it.isLatestOnlyResumeCard() }
@@ -568,6 +561,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
                 // 当前卡将要入库，先移除其它简历流程卡，保证列表只展示最新一张
                 resumeCards.keys
+                    .filter { it != rawKey }
+                    .forEach { messageStore.remove(it) }
+            }*/
+            // 自我介绍卡是端侧补充卡，折叠屏重建或会话恢复可能重复补充，这里只保留最新一张
+            if (newMsg.isIntroduceYourselfCard()) {
+                messageStore.filterValues { it.isIntroduceYourselfCard() }
+                    .keys
                     .filter { it != rawKey }
                     .forEach { messageStore.remove(it) }
             }
