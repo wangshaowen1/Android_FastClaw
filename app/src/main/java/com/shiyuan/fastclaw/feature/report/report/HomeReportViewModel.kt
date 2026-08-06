@@ -70,7 +70,10 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
             response(
                 mRepo.api.queryCodeResumeBinding(mapOf("code" to code)),
                 result = {
-                    onSuccess(data)
+                    //data 可能为null
+                    data?.let {
+                        onSuccess(data)
+                    }
                 }, error = {
 
                 })
