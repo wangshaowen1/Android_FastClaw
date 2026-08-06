@@ -16,7 +16,7 @@ import com.shiyuan.fastclaw.feature.mine.viewModel.HrViewModel
 class HrActivity : BaseViewModelActivity<ActivityHrBinding, HrViewModel>() {
 
     companion object {
-        private const val HR_URL = "http://kuailongxia.com"
+        private const val HR_URL = "https://hr.seekgood.cn"
 
         fun start(activity: Activity?) {
             activity ?: return
