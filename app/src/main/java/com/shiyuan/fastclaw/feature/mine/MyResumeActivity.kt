@@ -77,10 +77,13 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             emptyList()
         ) { itemBinding, _, item ->
             itemBinding.tvName.text = item.resumeName ?: item.fileName
+            val isPdf = item.fileName?.endsWith(".pdf", ignoreCase = true) == true
             when (item.parseStatus) {
                 2 -> {
                     itemBinding.tvName.setTextColor(resources.getColor(R.color.color_90_000000))
-                    itemBinding.iv.setImageResource(R.drawable.ic_resume)
+                    itemBinding.iv.setImageResource(
+                        if (isPdf) R.drawable.ic_resume  else R.drawable.ic_file_word
+                    )
                     itemBinding.tvUpload.visibility = View.VISIBLE
                     itemBinding.tvUpload.setImageResource(R.drawable.ic_more)
                     itemBinding.tvUpload.setOnSingleClickListener {
@@ -98,7 +101,9 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
 
                 0, 1 -> {
                     itemBinding.tvName.setTextColor(resources.getColor(R.color.color_90_000000))
-                    itemBinding.iv.setImageResource(R.drawable.ic_resume)
+                    itemBinding.iv.setImageResource(
+                        if (isPdf) R.drawable.ic_resume  else R.drawable.ic_file_word
+                    )
                     itemBinding.tvUpload.visibility = View.GONE
 
                     itemBinding.llUploading.visibility = View.VISIBLE
@@ -110,7 +115,9 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
 
                 else -> {
                     itemBinding.tvName.setTextColor(resources.getColor(R.color.color_56_3c3c43))
-                    itemBinding.iv.setImageResource(R.drawable.ic_resume2)
+                    itemBinding.iv.setImageResource(
+                        if (isPdf) R.drawable.ic_resume2 else R.drawable.ic_file_word2
+                    )
                     itemBinding.tvUpload.visibility = View.VISIBLE
                     itemBinding.tvUpload.setImageResource(R.drawable.ic_close4)
                     itemBinding.tvUpload.setOnSingleClickListener {
