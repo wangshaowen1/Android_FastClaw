@@ -787,7 +787,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         super.onClick(view, data)
         when (view.id) {
             R.id.iv_send -> { //发送消息
-                if (User.get().isVisitor) {
+                if (AppNavigator.checkLoginIntercepted(true)) {
                     showMessage("请先登录")
                     return
                 }
@@ -809,7 +809,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             R.id.iv_agent_memory -> { //对你的理解
-                if (!AppNavigator.checkLoginIntercepted(false)){
+                if (!AppNavigator.checkLoginIntercepted(false)) {
                     OnlineResumeActivity.start(requireActivity(),0)
                 }
             }
