@@ -178,8 +178,11 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                             mRealVM.submitResumeUpload(
                                 successUrls.first(),
                                 fileInfo.fileName,
-                                replaceResumeTaskId
-                            )
+                                replaceResumeTaskId,
+                                false
+                            ) {
+                                hideLoading()
+                            }
                         },
                         onFailure = {
                             hideLoading()
@@ -230,14 +233,18 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             if (hasResume) {
                 binding.tvTip.text = resources.getString(R.string.resume_tip)
                 binding.rvResumeList.visibility = View.VISIBLE
-                binding.btnUploadResume.visibility = View.GONE
+                if (resumeList.none { it.parseStatus == 2 || it.parseStatus == 0 || it.parseStatus == 1 }) {
+                    binding.btnUploadResume.visibility = View.VISIBLE
+                } else {
+                    binding.btnUploadResume.visibility = View.GONE
+                }
             } else {
                 binding.tvTip.text = resources.getString(R.string.resume_tip2)
                 binding.rvResumeList.visibility = View.GONE
                 binding.btnUploadResume.visibility = View.VISIBLE
             }
             resumeAdapter.submitList(resumeList)
-            val isParseStatus2Exists = resumeList.any { it.parseStatus == 0 ||  it.parseStatus == 1 }
+            val isParseStatus2Exists = resumeList.any { it.parseStatus == 0 || it.parseStatus == 1 }
             if (isParseStatus2Exists) {
                 if (!isResumePolling) {
                     startResumePolling()

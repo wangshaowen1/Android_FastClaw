@@ -124,7 +124,9 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
     fun submitResumeUpload(
         resumeFileUrl: String?,
         fileName: String?,
-        replaceResumeTaskId: String?
+        replaceResumeTaskId: String?,
+        isShowLoading: Boolean = true,
+        onComplete: () -> Unit? = {}
     ) {
         requestWithLoading(
             apiBlock = {
@@ -136,7 +138,7 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
                     )
                 )
             },
-            showLoading = true,
+            showLoading = isShowLoading,
             showToastError = true,
         ) {
             if (this.data?.accepted == true) {
@@ -145,6 +147,7 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
             } else {
                 "上传失败".showToast()
             }
+            onComplete.invoke()
         }
     }
 
