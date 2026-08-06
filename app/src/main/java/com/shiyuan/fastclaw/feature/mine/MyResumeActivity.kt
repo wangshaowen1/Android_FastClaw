@@ -117,8 +117,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                         mRealVM.deleteResume(item.resumeTaskId)
                     }
                     itemBinding.tvTime.visibility = View.VISIBLE
-                    itemBinding.tvTime.text =
-                        getString(R.string.resume_upload_time, item.parseStatusText)
+                    itemBinding.tvTime.text = item.parseStatusText
 
                     itemBinding.llUploading.visibility = View.GONE
                     stopRotation(itemBinding.ivState)
@@ -239,7 +238,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                     binding.btnUploadResume.visibility = View.GONE
                 }
             } else {
-                binding.tvTip.text = resources.getString(R.string.resume_tip2)
+                binding.tvTip.text = resources.getString(R.string.resume_tip)
                 binding.rvResumeList.visibility = View.GONE
                 binding.btnUploadResume.visibility = View.VISIBLE
             }

@@ -244,14 +244,14 @@ android {
         develop {
             dimension 'env'
             buildConfigField 'String', 'SERVER_URL', '"http://39.108.76.7:8088"'
-            buildConfigField 'String', 'H5_SERVER_URL', '"http://kuailongxia-h5-dev.kwaige.cn"'
+            buildConfigField 'String', 'H5_SERVER_URL', '"http://m-test.aishiyuan.cn"'
            /* buildConfigField 'String', 'H5_SERVER_URL', '"http://192.168.10.128:5555"'*/
         }
         //预发布
         preview {
             dimension 'env'
             buildConfigField 'String', 'SERVER_URL', '"http://39.108.76.7:8088"'
-            buildConfigField 'String', 'H5_SERVER_URL', '"http://kuailongxia-h5-dev.kwaige.cn"'
+            buildConfigField 'String', 'H5_SERVER_URL', '"http://m-test.aishiyuan.cn"'
           /*  buildConfigField 'String', 'H5_SERVER_URL', '"http://192.168.10.128:5555"'*/
         }
         //生产环境
