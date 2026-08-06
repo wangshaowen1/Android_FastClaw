@@ -921,7 +921,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         if (isVoiceInputMode) {
             binding.etSend.visibility = View.INVISIBLE
             binding.tvVoicePress.visible()
-            binding.ivIcon.gone()
             binding.ivSend.gone()
             binding.ivInputMode.visible()
             binding.ivInputMode.setImageResource(R.drawable.ic_agent_keyboard_mode)
@@ -930,7 +929,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             binding.tvVoicePress.gone()
             binding.ivSend.visibility = if (hasText) View.VISIBLE else View.GONE
             binding.ivInputMode.visibility = if (hasText) View.GONE else View.VISIBLE
-            binding.ivIcon.visibility = if (hasText) View.GONE else View.VISIBLE
             binding.ivInputMode.setImageResource(R.drawable.ic_agent_voice_mode)
         }
     }
