@@ -23,7 +23,8 @@
     <string name="more">更多</string>
     <string name="upload_failed">简历上传失败</string>
     <string name="upload_failed_desc">请检查文件是否完整或者格式是否正确</string>
-    <string name="upload_failed_detail">⚠️ 解析失败，小虾没有识别到有效的简历信息，请检查文件后重新上传~</string>
+    ⚠解析失败，小虾没有识别到有效的简历信息，请重新上传~
+    <string name="upload_failed_detail">⚠️解析失败，小虾没有识别到有效的简历信息，请检查文件后重新上传~</string>
     <string name="re_upload_resume">重新上传简历</string>
     <string name="upload_resume_format_tip">支持PDF、Word、图片格式，大小不超过10M</string>
     <string name="upload_success_title">小虾收到了你的简历！</string>

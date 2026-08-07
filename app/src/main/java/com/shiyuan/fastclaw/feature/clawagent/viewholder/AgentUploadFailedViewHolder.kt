@@ -23,7 +23,8 @@ class AgentUploadFailedViewHolder(private val binding: ItemMsgAgentUploadFailedB
         val payload = item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java) }.getOrNull()
         }
-        binding.tvDesc.text = payload?.description?:binding.root.context.getString(R.string.upload_failed_detail)
+        val description = payload?.description?.replace("⚠", "⚠\uFE0F")
+        binding.tvDesc.text = description?:binding.root.context.getString(R.string.upload_failed_detail)
         val enabled = payload?.interactionState?.disabled != true
         // 上传失败卡只有在列表最后一条时展示重新上传按钮，历史失败卡只保留失败说明。
         binding.btnReUpload.visibility = if (isLastItem) View.VISIBLE else View.GONE
