@@ -175,7 +175,8 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             return
         }
         // 列表有内容、还能继续向下滚、且键盘未展示时，说明用户已经离开底部，需要露出回到底部按钮。
-        if ((binding.rvMsg.adapter?.itemCount ?: 0) > 0 && binding.rvMsg.canScrollVertically(1) && !isScrollBottomKeyboardShowing) {
+        val itemCount = binding.rvMsg.adapter?.itemCount ?: 0
+        if (itemCount > 1 && binding.rvMsg.canScrollVertically(1) && !isScrollBottomKeyboardShowing) {
             showScrollBottomButton()
         } else {
             hideScrollBottomButton()
