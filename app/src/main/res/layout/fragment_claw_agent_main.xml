@@ -232,26 +232,13 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="54dp"
                     android:paddingStart="8dp"
                     android:paddingEnd="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layout_reanswer">
-
-                    <ImageView
-                        android:id="@+id/iv_icon"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="16dp"
-                        android:src="@drawable/ic_agent_send_logo"
-                        android:visibility="visible"
-                        app:layout_constraintBottom_toBottomOf="@id/et_send"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/et_send"
-                        tools:visibility="visible" />
 
                     <EditText
                         android:id="@+id/et_send"
@@ -271,7 +258,7 @@
                         android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/iv_icon"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="发消息或者按住说话..." />
 
@@ -294,7 +281,7 @@
                         singleClick="@{layout.clickHandler::onClick}"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_agent_send"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@id/et_send"
@@ -306,7 +293,7 @@
                         android:id="@+id/iv_input_mode"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="12dp"
                         android:src="@drawable/ic_agent_voice_mode"
                         app:layout_constraintBottom_toBottomOf="@id/et_send"
                         app:layout_constraintEnd_toEndOf="@id/et_send"

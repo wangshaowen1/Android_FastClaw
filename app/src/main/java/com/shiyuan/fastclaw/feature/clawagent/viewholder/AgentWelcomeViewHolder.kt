@@ -1,12 +1,11 @@
 package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
-import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
@@ -42,5 +41,24 @@ class AgentWelcomeViewHolder(private val binding: ItemMsgAgentWelcomeBinding) : 
                 onDefaultClickListener(item, CardAction(CandidateJobAgentClientActionEnum.NO_RESUME_START_QUESTIONING.name), null)
             }
         }
+        updateContainerMargin()
+    }
+
+    private fun updateContainerMargin() {
+        itemView.post {
+            val recyclerView = itemView.parent as? RecyclerView ?: return@post
+            val itemHeight = itemView.height.takeIf { it > 0 } ?: return@post
+            val bottomMargin = WELCOME_BOTTOM_SPACE.dp
+            val parentHeight = (recyclerView.parent as? View)?.height?.takeIf { it > 0 } ?: recyclerView.height
+            val topMargin = (parentHeight - itemHeight - bottomMargin).coerceAtLeast(0)
+            binding.layoutContainer.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                this.topMargin = topMargin
+            }
+        }
+    }
+
+    companion object {
+        /** 欢迎卡片底部距离列表底部的固定间距。 */
+        private const val WELCOME_BOTTOM_SPACE = 60
     }
 }
