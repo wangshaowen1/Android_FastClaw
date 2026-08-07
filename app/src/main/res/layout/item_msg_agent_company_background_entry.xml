@@ -40,7 +40,7 @@
             android:text="@string/str_agent_company_background_title"
             android:textColor="@color/color_96_000000"
             android:textSize="16sp"
-            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_company_background_icon"
             app:layout_constraintTop_toTopOf="@id/iv_company_background_icon"

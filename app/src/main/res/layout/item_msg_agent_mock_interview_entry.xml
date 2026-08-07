@@ -60,7 +60,7 @@
             android:text="@string/str_agent_mock_interview_title"
             android:textColor="@color/color_ffffff"
             android:textSize="16sp"
-            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
