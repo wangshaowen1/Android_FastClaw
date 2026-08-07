@@ -31,13 +31,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:layout_width="408dp"
-                android:layout_height="525dp"
+                android:layout_marginBottom="230dp"
+                android:layout_marginLeft="-23dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:contentDescription="@string/hr_page_content_description"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="58dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/img_hr_hero"
-                android:translationX="-23dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,33 +64,30 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <FrameLayout
+            <ImageView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginBottom="49dp"
+                android:layout_marginBottom="47dp"
+                android:contentDescription="@string/hr_usage_content_description"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_hr_usage"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="H,756:515"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintStart_toStartOf="parent" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/hr_usage_content_description"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/img_hr_usage" />
-
-                <View
-                    android:id="@+id/viewCopyLink"
-                    android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:layout_gravity="bottom"
-                    android:layout_marginStart="39dp"
-                    android:layout_marginEnd="39dp"
-                    android:layout_marginBottom="46dp"
-                    android:contentDescription="@string/hr_copy_link"
-                    android:focusable="true" />
-            </FrameLayout>
+            <View
+                android:id="@+id/viewCopyLink"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="37dp"
+                android:layout_marginEnd="37dp"
+                android:layout_marginBottom="91dp"
+                android:contentDescription="@string/hr_copy_link"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>
