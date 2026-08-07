@@ -55,6 +55,7 @@ import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 import com.shiyuan.fastclaw.wxapi.WXEntryActivity
+import com.tencent.turingfd.sdk.ams.ad.`return`
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -197,6 +198,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                 }
             }, {
                 mRealVM.code.value = it
+                BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
             })
     }
 

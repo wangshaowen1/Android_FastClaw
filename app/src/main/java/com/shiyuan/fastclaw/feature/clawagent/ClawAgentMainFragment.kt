@@ -1109,6 +1109,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         },{
             mRealVM.resumeCode.value = it
+            BIZ_TYPE_XIAOXIA_RESUME_UPLOAD
         })
     }
 

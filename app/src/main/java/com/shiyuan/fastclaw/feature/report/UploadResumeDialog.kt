@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.report
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
@@ -27,13 +28,13 @@ class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding,
     companion object {
         const val TAG = "UploadResumeDialog"
         var onFileSelected: ((SelectedFileInfo?) -> Unit)? = null
-        var onWxSelected: ((code:String?) -> Unit)? = null
+        var onWxSelected: ((code:String?) -> String)? = null
 
         fun show(
             manager: FragmentManager,
             canSelectImage: Boolean = true,
             fileSelectedListener: ((SelectedFileInfo?) -> Unit)? = null,
-            wxSelected: ((code:String?) -> Unit)? = null
+            wxSelected: ((code:String?) -> String)? = null
         ): UploadResumeDialog {
             val dialog = UploadResumeDialog()
             dialog.canSelectImage = canSelectImage
@@ -96,8 +97,12 @@ class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding,
     private fun dataUpdate() {
         mRealVM.schemeData.observe(this){
             //wx5dafb966df52fc55
-             startWechatMini(BuildConfig.UPLOAD_RESUME_WECHAT_MINIID,it.url ,if(BuildConfig.DEBUG) WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW else  WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE  )
-            onWxSelected?.invoke(it.code)
+            //拼接业务参数
+            val  bizType =  onWxSelected?.invoke(it.code) //返回业务参数然后拼接给 小程序
+            val path = it.url +"&bizType="+bizType
+            Log.d("dataUpdate",path+"")
+            startWechatMini(BuildConfig.UPLOAD_RESUME_WECHAT_MINIID,path ,if(BuildConfig.DEBUG) WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW else  WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE  )
+
         }
     }
 
