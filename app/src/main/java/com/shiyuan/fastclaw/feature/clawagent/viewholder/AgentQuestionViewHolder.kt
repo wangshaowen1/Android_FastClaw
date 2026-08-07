@@ -90,7 +90,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             val tvContent = view.findViewById<TextView>(R.id.tv_content)
             if (payload.isAnswered() && option.selected == true) { //已回答 & 已选择
                 tvContent.setBackgroundResource(R.drawable.bg_option_selected)
-                tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                tvContent.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
                 tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
             } else if (option.disabled == true) { //置灰
                 tvContent.setBackgroundResource(R.drawable.bg_option_unselected)
@@ -98,7 +98,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
                 tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_55_3c3c43))
             } else {
                 tvContent.setBackgroundResource(R.drawable.bg_option_ripple)
-                tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                tvContent.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
                 tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_90_000000))
             }
             tvContent.text = option.text ?: option.label.orEmpty()
@@ -127,7 +127,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             val ivInto = view.findViewById<ImageView>(R.id.iv_into)
             if (payload.isAnswered()) { //已回答
                 tvContent.text = parent.context.getString(R.string.already_selected)
-                tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                tvContent.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
                 tvContent.setBackgroundResource(R.drawable.bg_option_selected)
                 tvContent.setTextColor(ContextCompat.getColor(binding.root.context,R.color.color_2f6bff))
             } else if (payload.isDisabled()) { //置灰

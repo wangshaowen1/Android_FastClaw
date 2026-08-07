@@ -75,7 +75,7 @@
                 android:text="@string/inaccurate"
                 android:textColor="@color/color_000000"
                 android:textSize="16sp"
-                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -149,7 +149,7 @@
                         android:text="@string/home_upload_resume_btn"
                         android:textColor="@color/white"
                         android:textSize="15sp"
-                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/iv_upload_icon"

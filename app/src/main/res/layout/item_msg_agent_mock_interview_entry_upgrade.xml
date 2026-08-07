@@ -89,7 +89,7 @@
                 android:text="@string/str_agent_mock_interview_upgrade_action"
                 android:textColor="@color/color_ffffff"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:fontFamily="sans-serif-medium" />
 
             <TextView
                 android:id="@+id/tv_cost"

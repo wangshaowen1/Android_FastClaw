@@ -48,7 +48,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
             val parent = binding.layoutTableCard
             if (payload.isAnswered()) { //已回答
                 binding.tvContent.text = parent.context.getString(R.string.already_write)
-                binding.tvContent.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD))
+                binding.tvContent.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
                 binding.tvContent.setTextColor(ContextCompat.getColor(binding.root.context, R.color.color_2f6bff))
                 binding.flowOptions.setBackgroundResource(R.drawable.bg_option_selected)
             } else if (action.disabled == true) { //置灰
