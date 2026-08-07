@@ -302,7 +302,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     /** et_send 短按保留输入能力；长按开始录音后，移动和松手交给语音逻辑处理。 */
     protected fun handleEtSendVoiceTouch(event: MotionEvent): Boolean {
         // 输入框已有内容时不接管按下事件，保留 EditText 原生点击、选中文本和键盘行为。
-        if (binding.etSend.text?.isNotBlank() == true) return false
+        if (binding.etSend.text?.isNotBlank() == true || isScrollBottomKeyboardShowing) return false
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 // 新一轮按下前先清掉上一次可能残留的延迟任务和事件副本。
