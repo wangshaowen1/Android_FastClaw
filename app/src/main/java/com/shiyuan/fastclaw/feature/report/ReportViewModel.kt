@@ -33,6 +33,7 @@ import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.MultipartBody
+import java.util.UUID
 
 /**
  * @Introduce: 历史报告列表 ViewModel
@@ -56,11 +57,11 @@ class ReportViewModel : AppRepositoryViewModel<AppRepository>() {
 
      var schemeData = MutableLiveData<SchemeData>()
 
-    fun getScheme(){
+    fun getScheme(bizType: String? = null){
         setLoading(true)
         launch(block = {
             response(
-                ApiFactory.apiService.getScheme(),
+                ApiFactory.apiService.getScheme(mapOf("bizType" to bizType)),
                 result = {
                     schemeData.postValue(this.data)
                 },

@@ -1090,7 +1090,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private fun showUploadResumeDialog(data: ClawAgentMessageInfo) {
         // 记录触发上传的消息，提交成功动作时需要作为 sourceMessageId。
         resumeData = data
-        uploadResumeDialog = UploadResumeDialog.show(manager = this.parentFragmentManager,false, { fileInfo ->
+        uploadResumeDialog = UploadResumeDialog.show(manager = this.parentFragmentManager,false, bizType =BIZ_TYPE_XIAOXIA_RESUME_UPLOAD, { fileInfo ->
             if (fileInfo != null) {
                 showLoading("上传中...")
                 mRealVM.uploadFilesWithSecurityCheck(
@@ -1109,7 +1109,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         },{
             mRealVM.resumeCode.value = it
-            BIZ_TYPE_XIAOXIA_RESUME_UPLOAD
         })
     }
 

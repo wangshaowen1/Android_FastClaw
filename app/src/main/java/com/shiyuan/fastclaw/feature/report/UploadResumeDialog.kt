@@ -23,21 +23,26 @@ import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
  * 上传简历dialog
  * 新增：通过 tvTrue 选择本地文件（PDF/Word/图片）并回调
  */
-class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding, ReportViewModel>() {
+class UploadResumeDialog :
+    BaseBottomDialogVmFragment<DialogUploadResumeBinding, ReportViewModel>() {
 
     companion object {
         const val TAG = "UploadResumeDialog"
         var onFileSelected: ((SelectedFileInfo?) -> Unit)? = null
-        var onWxSelected: ((code:String?) -> String)? = null
+        var onWxSelected: ((code: String?) -> Unit)? = null
+
+        var bizType: String? = null
 
         fun show(
             manager: FragmentManager,
             canSelectImage: Boolean = true,
+            bizType: String? = null,
             fileSelectedListener: ((SelectedFileInfo?) -> Unit)? = null,
-            wxSelected: ((code:String?) -> String)? = null
+            wxSelected: ((code: String?) -> Unit)? = null
         ): UploadResumeDialog {
             val dialog = UploadResumeDialog()
             dialog.canSelectImage = canSelectImage
+            this.bizType = bizType
             onFileSelected = fileSelectedListener
             onWxSelected = wxSelected
             dialog.show(manager)
@@ -63,7 +68,7 @@ class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding,
         }
         binding.ivClose.setOnSingleClickListener { dismiss() }
         binding.llWx.setOnSingleClickListener { performWxUpload() }
-        binding.llFolder.setOnSingleClickListener {  fileChooser.openFileChooser()}
+        binding.llFolder.setOnSingleClickListener { fileChooser.openFileChooser() }
     }
 
     private fun initFileChooser() {
@@ -74,7 +79,7 @@ class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding,
             onResult = { fileInfo ->
                 if (fileInfo != null) {
                     onFileSelected?.invoke(fileInfo)
-                  // "已选择: ${fileInfo.fileName}".showToast()
+                    // "已选择: ${fileInfo.fileName}".showToast()
                     dismiss()
                 } else {
                     // 这里只处理非大小超限的错误（例如无法读取文件）
@@ -89,19 +94,20 @@ class UploadResumeDialog : BaseBottomDialogVmFragment<DialogUploadResumeBinding,
 
     private fun performWxUpload() {
 
-        mRealVM.getScheme()
-      //  onWxSelected?.invoke()
-       // R.string.wx_upload_developing.getResString().showToast()
+        mRealVM.getScheme(bizType)
+        //  onWxSelected?.invoke()
+        // R.string.wx_upload_developing.getResString().showToast()
     }
 
     private fun dataUpdate() {
-        mRealVM.schemeData.observe(this){
+        mRealVM.schemeData.observe(this) {
             //wx5dafb966df52fc55
-            //拼接业务参数
-            val  bizType =  onWxSelected?.invoke(it.code) //返回业务参数然后拼接给 小程序
-            val path = it.url +"&bizType="+bizType
-            Log.d("dataUpdate",path+"")
-            startWechatMini(BuildConfig.UPLOAD_RESUME_WECHAT_MINIID,path ,if(BuildConfig.DEBUG) WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW else  WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE  )
+            onWxSelected?.invoke(it.code) //返回业务参数然后拼接给 小程序
+            startWechatMini(
+                BuildConfig.UPLOAD_RESUME_WECHAT_MINIID,
+                it.url,
+                if (BuildConfig.DEBUG) WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW else WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE
+            )
 
         }
     }

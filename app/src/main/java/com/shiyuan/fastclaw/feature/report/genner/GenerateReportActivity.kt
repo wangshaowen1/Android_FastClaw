@@ -120,7 +120,7 @@ class GenerateReportActivity :
         }
         binding.tvUpload.setOnSingleClickListener {
             //上传简历
-            UploadResumeDialog.show(manager = supportFragmentManager,false, { fileInfo ->
+            UploadResumeDialog.show(manager = supportFragmentManager,false, fileSelectedListener ={ fileInfo ->
                 if (fileInfo != null) {
                     mRealVM.submitResume(fileInfo.uri) {
                         binding.tvResumeName.text = fileInfo.fileName

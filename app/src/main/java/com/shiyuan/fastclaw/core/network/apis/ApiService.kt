@@ -482,7 +482,7 @@ interface ApiService {
     suspend fun signOut(): ApiResponse<Any>
 
     @POST(ApiConstants.GET_SCHEME)
-    suspend fun getScheme(): ApiResponse<SchemeData?>
+    suspend fun getScheme(@Body data: Any): ApiResponse<SchemeData?>
 
     /**
      * 进入或恢复会话

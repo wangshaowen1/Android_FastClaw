@@ -39,6 +39,7 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
+import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_XIAOXIA_RESUME_UPLOAD
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.databinding.ActivityMyResumeBinding
 import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
@@ -175,7 +176,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
     fun uploadResume(replaceResumeTaskId: String? = null) {
         //上传简历
         uploadResumeDialog =
-            UploadResumeDialog.show(manager = this.supportFragmentManager, false, { fileInfo ->
+            UploadResumeDialog.show(manager = this.supportFragmentManager, false,  bizType =BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,{ fileInfo ->
                 if (fileInfo != null) {
                     showLoading("上传中")
                     mRealVM.uploadFilesWithSecurityCheck(
@@ -198,7 +199,6 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                 }
             }, {
                 mRealVM.code.value = it
-                BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
             })
     }
 
