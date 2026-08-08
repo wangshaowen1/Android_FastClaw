@@ -112,6 +112,7 @@ fun Activity.selectMultPhotoFromAlbums(
 ) {
     Matisse.from(this)
         .choose(MimeType.ofImage(), false)
+        .theme(R.style.Theme_FastClaw_Matisse)
         .countable(countable)
         .capture(capture)
         .spanCount(4)
@@ -174,6 +175,7 @@ fun selectSinglePhotoFromAlbums(
     } ?: return
     matisse
         .choose(MimeType.ofImage(), false)
+        .theme(R.style.Theme_FastClaw_Matisse)
         .countable(countable)
         .capture(capture)
         .useEmbeddedCamera(useEmbeddedCamera)
@@ -206,6 +208,7 @@ fun Activity.selectMultPhotoFromAlbums(
 ) {
     Matisse.from(this)
         .choose(MimeType.ofImage(), false)
+        .theme(R.style.Theme_FastClaw_Matisse)
         .countable(false)
         .capture(true)
         .useEmbeddedCamera(false)

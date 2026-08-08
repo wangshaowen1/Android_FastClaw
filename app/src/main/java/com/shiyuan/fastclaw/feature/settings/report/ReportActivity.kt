@@ -134,6 +134,7 @@ class ReportActivity :
     fun requestAlbums() {
         Matisse.from(this)
             .choose(MimeType.ofImage(), false)
+            .theme(R.style.Theme_FastClaw_Matisse)
             .countable(false)
             .capture(true)
             .captureStrategy(
