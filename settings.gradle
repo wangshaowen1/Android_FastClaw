@@ -1,6 +1,5 @@
 rootProject.name = "FastClaw"
 include ':app'
-include ':matisse'
 include ':magicindicator'
 //include ':apisecurity'
 include ':datepicker'

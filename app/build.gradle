@@ -74,6 +74,16 @@ android {
         if (localPropsFile.exists()) {
             localPropsFile.withInputStream { localProps.load(it) }
         }
+        def channelPushEnabled = false
+        def channelPushConfig = { String key ->
+            def value = localProps.getProperty(key)
+                    ?: providers.gradleProperty(key).orNull
+                    ?: System.getenv(key)
+            if (channelPushEnabled && !value?.trim()) {
+                throw new GradleException("Missing required channel push config: ${key}")
+            }
+            return value?.trim() ?: ""
+        }
         // DataNexus/广点通转化 SDK ，避免写入仓库。
         buildConfigField "String", "DATANEXUS_USER_ACTION_SET_ID", '""'
         buildConfigField "String", "DATANEXUS_APP_SECRET_KEY", '""'
@@ -82,13 +92,17 @@ android {
         buildConfigField "boolean", "DATANEXUS_ANID_ENABLE", "true"
         buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-b4c3df125fee41c6a83135074b12a8b6"'
         buildConfigField "String", "DASHSCOPE_SPEECH_URL", '"wss://dashscope.aliyuncs.com/api-ws/v1/inference"'
-        buildConfigField "boolean", "ENABLE_CHANNEL_PUSH", "false"
+        buildConfigField "boolean", "ENABLE_CHANNEL_PUSH", channelPushEnabled.toString()
         buildConfigField "String", "WX_KF_URL", '"https://work.weixin.qq.com/kfid/kfc40a9a48f69a47f52"'
         buildConfigField "String", "WX_KF_CORPID", '"wwc3993f67fa68ae04"'
         manifestPlaceholders = [
-                "GROWING_URL_SCHEME": growingScheme, // 埋点库GROWINGIO的Urlscheme
-                "KWAI_APP_ID": "YOUR_KWAI_APP_ID", // 快手申请分配的appId
-                "KWAI_SCOPE" : "user_info" // 账号授权需要申请的scope权限，多个scope可以使用","分割。user_info：用户信息授权，user_phone：用户手机号授权。
+                "UMENG_HUAWEI_APP_ID": channelPushConfig("FASTCLAW_UMENG_HUAWEI_APP_ID"),
+                "UMENG_VIVO_API_KEY" : channelPushConfig("FASTCLAW_UMENG_VIVO_API_KEY"),
+                "UMENG_VIVO_APP_ID"  : channelPushConfig("FASTCLAW_UMENG_VIVO_APP_ID"),
+                "UMENG_HONOR_APP_ID" : channelPushConfig("FASTCLAW_UMENG_HONOR_APP_ID"),
+                "GROWING_URL_SCHEME" : growingScheme, // 埋点库GROWINGIO的Urlscheme
+                "KWAI_APP_ID"        : "YOUR_KWAI_APP_ID", // 快手申请分配的appId
+                "KWAI_SCOPE"         : "user_info" // 账号授权需要申请的scope权限，多个scope可以使用","分割。user_info：用户信息授权，user_phone：用户手机号授权。
         ]
     }
 
@@ -285,7 +299,7 @@ dependencies {
 //        debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.14'
     implementation project(':magicindicator')
     implementation project(':datepicker')
-    implementation project(':matisse')
+    implementation rootProject.ext.modules.matisse.gav
 //    implementation project(':audioprocessing')
     //公共依赖
     implementation libs.kotlinx.serialization.json

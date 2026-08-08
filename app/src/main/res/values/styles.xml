@@ -822,4 +822,17 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- Matisse 视觉由宿主主题统一覆盖，避免依赖源码 Module 承载项目定制。 -->
+    <style name="Theme.FastClaw.Matisse" parent="Matisse.Kuaige">
+        <item name="android:windowBackground">@color/color_121212</item>
+        <item name="page.bg">@color/color_121212</item>
+        <item name="bottomToolbar.bg">@color/color_121212</item>
+        <item name="android:listPopupWindowStyle">@style/Popup.FastClaw.Matisse</item>
+        <item name="listPopupWindowStyle">@style/Popup.FastClaw.Matisse</item>
+    </style>
+
+    <style name="Popup.FastClaw.Matisse" parent="Popup.Kuaige">
+        <item name="android:popupBackground">@color/color_121212</item>
+    </style>
+
 </resources>
