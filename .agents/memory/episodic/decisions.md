@@ -180,3 +180,14 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 静态检查确认安全审核通过后的首个成功 URL 继续作为 `resumeFileUrl` 发送 `RESUME_UPLOAD_SUBMIT`，原有 SSE 流式回复拦截保持不变；按项目规则未运行 Gradle。
+
+## v本轮 移除 WorkManager 开机重调度组件
+
+### 变更了什么
+主工程 `AndroidManifest.xml` 通过 `tools:node="remove"` 移除 WorkManager 合入的 `RECEIVE_BOOT_COMPLETED` 权限和 `RescheduleReceiver`，保留 `work-runtime` 依赖、`SystemForegroundService` 与现有 `DownloadWorker` 下载流程。
+
+### 为什么
+164 号文检测报告将 `RescheduleReceiver` 的 `BOOT_COMPLETED` 声明判定为自启动风险；当前项目只使用用户主动触发的一次性下载，没有周期 WorkManager 任务，因此接受设备重启后不立即恢复未完成下载的取舍。
+
+### 验证结论
+`git diff --check` 通过，静态确认删除标记位于正确的 Manifest 父节点且前台下载服务仍保留；按项目规则未运行 Gradle，最终 release 合并 Manifest 与重启场景仍需验证。

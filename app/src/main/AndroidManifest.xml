@@ -33,6 +33,9 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED"
+        tools:node="remove" />
     <!--    <uses-permission android:name="android.permission.GET_TASKS" /> &lt;!&ndash; 如果有视频相关的广告且使用textureView播放，请务必添加，否则黑屏 &ndash;&gt;-->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- // 在应用的AndroidManifest.xml添加如下标签  // 指定微信包名  兼容android11 -->
@@ -117,6 +120,11 @@
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync"
             tools:node="merge" />
+
+        <!-- 移除 WorkManager 自动合入的开机重调度组件 -->
+        <receiver
+            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+            tools:node="remove" />
 
  <!--       <receiver
             android:name="androidx.media.session.MediaButtonReceiver"
