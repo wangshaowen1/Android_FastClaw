@@ -27,7 +27,7 @@ class UserFileViewHolder(private val binding: ItemMsgUserFileBinding) : Recycler
         return when (fileType) {
             "PDF" -> R.drawable.ic_resume
             "DOC",
-            "DOCX" -> R.drawable.ic_resume_attachment
+            "DOCX" -> R.drawable.ic_file_word
             else -> R.drawable.ic_folder
         }
     }
