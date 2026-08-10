@@ -15,7 +15,6 @@ import com.shiyuan.fastclaw.core.ext.openTheCustomerServiceChat
 import com.shiyuan.fastclaw.databinding.ActivitySettingsBinding
 import com.shiyuan.fastclaw.feature.login.flash.PhoneLoginDialogActivity
 import com.shiyuan.fastclaw.feature.mine.PhoneShowActivity
-import com.shiyuan.fastclaw.feature.settings.about.AboutUsActivity
 import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity
 import com.shiyuan.fastclaw.feature.settings.logoff.LogoffActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity

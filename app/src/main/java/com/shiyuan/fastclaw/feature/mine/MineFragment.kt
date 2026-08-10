@@ -62,13 +62,9 @@ import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 
 /**
- * *****************************************
- * 项目名称: KidsTales
- * @Author: SZYMN
+ *
  * @Introduce:我的
- * @Data: 2025/4/18  14:08
- * @Version: 1.0
- * *****************************************
+ *
  */
 class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>() {
 
@@ -185,17 +181,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
             R.id.ll_hr -> {
                 HrActivity.start(requireActivity())
             }
-          /*  R.id.layout_mine_bj -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
-                   MyResumeActivity.start(requireActivity())
-                }
-            }*/
-
-          /*  R.id.layout_mine_lj  -> {
-                if(!AppNavigator.checkLoginIntercepted(false)){
-                    ShrimpUnderstandsActivity.start(requireActivity(),mRealVM.underStandingScore.value?.understandingScore ?: 0)
-                }
-            }*/
             R.id.view_mine_resume_banner,
             R.id.tv_mine_invite_action -> {
                 if(!AppNavigator.checkLoginIntercepted(false, loginSource = ME_TAB_SETTINGS)){
@@ -233,48 +218,6 @@ class MineFragment : BaseViewModelFragment<FragmentMineBinding, MineViewModel>()
                     OnlineResumeActivity.start(requireActivity(),1)
                 }
             }
-
-
-   /*         R.id.siv_avatar,
-            R.id.tv_login,
-            R.id.tv_name -> {
-                //个人资料
-                AppNavigator.checkLoginIntercepted(false)
-            }
-
-            R.id.ll_qa -> {
-                SimpleBrowserActivity.launch(activity, Config.get().appConfig.appHelpCenterUrl)
-            }
-
-            R.id.ll_settings -> {
-                //设置
-                if (AppNavigator.checkLoginIntercepted(false)) {
-                    return
-                }
-                SettingsActivity.start(requireActivity())
-            }
-
-            R.id.tv_id, R.id.iv_copy -> {
-                //复制
-                User.get().userUid?.let {
-                    ClipboardUtils.copyText(it)
-                    getString(R.string.copy_success).showToast()
-                }
-            }
-
-            R.id.suggestions_feedback -> {
-                if (AppNavigator.checkLoginIntercepted(false)) {
-                    return
-                }
-                //建议与反馈
-                FeedbackActivity.start(topActivity)
-            }
-
-            R.id.btnMyBalance -> {
-                if (AppNavigator.checkLoginIntercepted(false)) {
-                    return
-                }
-            }*/
         }
     }
 }
