@@ -307,11 +307,6 @@
         <activity
             android:name=".feature.mine.MineShrimpRechargeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <!--关于我们-->
-        <activity
-            android:name=".feature.settings.about.AboutUsActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <!--建议-->
         <activity
             android:name=".feature.settings.feedback.FeedbackActivity"
