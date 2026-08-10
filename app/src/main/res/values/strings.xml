@@ -1002,7 +1002,7 @@
     <string name="job_title">职位名称</string>
     <string name="employment_period">在职时间</string>
     <string name="entry_time">入职时间</string>
-    <string name="end_time">截至时间</string>
+    <string name="end_time">离职时间</string>
     <string name="job_content">工作内容</string>
     <string name="industry">所属行业</string>
     <string name="company_size">公司规模</string>

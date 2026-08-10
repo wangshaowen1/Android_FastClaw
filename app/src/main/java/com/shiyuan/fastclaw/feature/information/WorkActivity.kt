@@ -201,7 +201,7 @@ class WorkActivity : BaseViewModelActivity<ActivityWorkBinding, InformationViewM
             val selectedDate = getFieldDate(FIELD_END_DATE)
             BirthYearMonthPickerDialog.show(
                 manager = this.supportFragmentManager,
-                title = "截至时间",
+                title = getString(R.string.end_time),
                 selectedYear = selectedDate?.first,
                 selectedMonth = selectedDate?.second,
                 includePresentOption = true,

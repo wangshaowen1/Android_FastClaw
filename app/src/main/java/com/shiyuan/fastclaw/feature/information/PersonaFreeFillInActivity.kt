@@ -83,14 +83,15 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
         mRealVM.mToolbarVM.mMenuText.set(getString(R.string.confirm))
         binding.et.hint = data.attributeGroupName.toString()
         binding.et.setText(data.displayValue ?: "")
-        binding.tvWordCount.text = "${binding.et.text?.length ?: 0}/$MAX_LENGTH"
+        binding.tvWordCount.text = (binding.et.text?.length ?: 0).toString()
       /*  // 有初始值时显示清空图标
         if (!data.displayValue.isNullOrEmpty())  binding.ivClear.visibility = View.VISIBLE else binding.ivClear.visibility = View.GONE*/
         // 文本变化：清空图标显隐 + 同步到 data
         binding.et.doAfterTextChanged { editable ->
             val showIcon = !editable.isNullOrEmpty()
           /*  if (showIcon)  binding.ivClear.visibility = View.VISIBLE else binding.ivClear.visibility = View.GONE*/
-            binding.tvWordCount.text = "${editable?.length ?: 0}/$MAX_LENGTH"
+          /*  binding.tvWordCount.text = "${editable?.length ?: 0}/$MAX_LENGTH"*/
+            binding.tvWordCount.text = (editable?.length ?: 0).toString()
           /*  data.displayValue = editable.toString()
             data.fieldValue =  mapOf(
                 "value" to editable.toString() ,

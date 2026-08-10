@@ -73,11 +73,14 @@
             android:paddingVertical="18dp">
 
             <EditText
+                android:maxLength="50"
+                android:fontFamily="sans-serif-medium"
                 android:id="@+id/et"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
+                android:textColor="@color/color_90_000000"
                 android:textColorHint="@color/color_55_3c3c43"
                 android:textSize="15sp" />
 
@@ -97,6 +100,31 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:background="@color/color_2f6bff" />
+
+        <LinearLayout
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="7dp"
+            android:gravity="end"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_word_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="@color/color_3C74FF"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/50"
+                android:textColor="@color/color_75_3c3c43"
+                android:textSize="14sp" />
+
+        </LinearLayout>
 
 
     </LinearLayout>
