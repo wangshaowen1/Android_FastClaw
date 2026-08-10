@@ -65,6 +65,7 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
                 supportFragmentManager,
                 getString(R.string.app_agree)
             )
+            pendingDialog?.isCancelable = false
             pendingDialog?.callback = { agreed ->
                 if (agreed) {
                    onPolicyAgreed()
