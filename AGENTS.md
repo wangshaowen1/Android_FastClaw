@@ -61,7 +61,7 @@ Gradle 规则：默认不运行 Gradle，不申请 Gradle/网络权限做验证�
 - 不新增多 Gradle Module，不修改 `ApiResponse.java`，除非用户明确要求工程结构或全局网络层重构。
 - Activity/Fragment 不直接请求网络或访问数据库；Adapter 不写业务请求；第三方 SDK 调用必须隔离在 `core/manager/` 或平台包，不散落到业务页面。
 - 接口实体不加 `isSelected`、`isExpanded`、`isEditing`、`localProgress`、`displayText` 等 UI 状态字段；列表本地状态用 `ItemXxxVM` 或新增 `XxxUiModel`。
-- 不硬编码 token、secret、api key、私钥，不在日志输出 token、手机号、邮箱、用户 ID、订单号、支付参数、授权 code，不打印完整 request/response 到线上日志。
+- 不硬编码或提交 token、secret、服务端 api key、私钥。必须随 Android 客户端发布、可从安装包获取且经团队确认不承担鉴权保密职责的 App ID/客户端 API Key，可作为产品配置提交；此例外不适用于服务端凭据。不在日志输出 token、手机号、邮箱、用户 ID、订单号、支付参数、授权 code，不打印完整 request/response 到线上日志。
 - 数据库不使用 `fallbackToDestructiveMigration`，不生成破坏性迁移，除非用户明确允许清空本地数据。
 - 除非用户明确要求，不查看或编辑 `OssManager.kt`。
 
