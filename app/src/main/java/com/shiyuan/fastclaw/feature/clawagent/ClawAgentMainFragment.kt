@@ -310,6 +310,11 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             }
         }
 
+        // 活动卡片当前承接“测薪资”入口，点击后复用底部快捷入口的跳转和埋点。
+        msgAdapter.onActivityClickAction = {
+            openSalaryValuation()
+        }
+
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
         msgAdapter.onDefaultActionClickAction = { item, action, queueId ->
             if (!interceptIfStreaming()) {
@@ -865,10 +870,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             JobAgentModuleData.TYPE_SALARY_VALUATION -> {
-                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
-                    EventManager.onAppTrack(KLX_CLICK_SALARY_TEST,mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
-                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
-                }
+                openSalaryValuation()
             }
             JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> {
                 if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_INTERVIEW_PASS) && !interceptIfStreaming()) {
@@ -877,6 +879,14 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                     mRealVM.queryInterviewPassPackageResumeStatus()
                 }
             }
+        }
+    }
+
+    /** 打开测薪资页面，活动卡片和底部快捷入口共用同一套跳转与埋点。 */
+    private fun openSalaryValuation() {
+        if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
+            EventManager.onAppTrack(KLX_CLICK_SALARY_TEST, mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
+            SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
         }
     }
 

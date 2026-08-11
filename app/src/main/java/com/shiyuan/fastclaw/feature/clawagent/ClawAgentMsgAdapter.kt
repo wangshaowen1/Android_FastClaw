@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundStartBody
+import com.shiyuan.fastclaw.databinding.ItemMsgAgentActivityBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportDoneBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportFailedBinding
@@ -42,6 +43,7 @@ import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadConfirmBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadResumeBinding
 import com.shiyuan.fastclaw.databinding.ItemMsgUserFileBinding
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentActivitySalaryViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundEntryViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportDoneViewHolder
 import com.shiyuan.fastclaw.feature.clawagent.viewholder.AgentCompanyBackgroundReportFailedViewHolder
@@ -122,6 +124,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
     var onPassPackageDoneClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: PassPackageReportPayloadBean?) -> Unit = { _, _, _ -> }
     /** 面试通关包 - 重新生成 */
     var onPassPackageRetryClickAction: (item: ClawAgentMessageInfo, action: CardAction?, data: PassPackageReportPayloadBean?) -> Unit = { _, _, _ -> }
+    /** 活动卡片点击。 */
+    var onActivityClickAction: (item: ClawAgentMessageInfo) -> Unit = {}
 
     init {
         // 用户消息（靠右气泡）
@@ -148,6 +152,13 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                     onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
             }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
+        // 活动测薪资卡片
+        register(TYPE_ACTIVITY_SALARY,
+            { i, p ->
+                AgentActivitySalaryViewHolder(ItemMsgAgentActivityBinding.inflate(i, p, false)).apply {
+                    onActivityClickListener = { itemData -> onActivityClickAction(itemData) }
+                }
+            }) { h, item -> h.bind(item) }
         // 历史简历确认卡
         register(TYPE_PENDING_CONFIRM,
             { i, p ->
@@ -544,6 +555,9 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
 
         /** 用户文件卡片 */
         const val TYPE_USER_FILE = 28
+
+        /** 活动卡片 - 测薪资 */
+        const val TYPE_ACTIVITY_SALARY = 29
     }
 
 }

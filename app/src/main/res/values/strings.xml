@@ -838,6 +838,9 @@
     <string name="str_agent_welcome_service_desc_line1">你安心工作，我替你留意更好的机会～</string>
     <string name="str_agent_welcome_service_desc_line2">24小时帮你关注全网岗位，只有薪资、职位和发展机会符合你的期待，才通知你。</string>
     <string name="str_agent_welcome_upload_remind">上传简历，开启机会提醒</string>
+    <string name="str_agent_activity_salary_title">你的薪资，被低估了吗？</string>
+    <string name="str_agent_activity_salary_subtitle">测测现在跳槽能涨多少</string>
+    <string name="str_agent_activity_test_now">立即测试</string>
     <string name="str_agent_memory">我对你的理解</string>
     <string name="str_agent_send_hint">发消息或者按住说话...</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>
