@@ -29,21 +29,10 @@ class AgentWelcomeViewHolder(private val binding: ItemMsgAgentWelcomeBinding) : 
 
     fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
         if (isLastItem) {
-            binding.tvBriefDesc.gone()
-            binding.tvOpportunityTitle.visible()
-            binding.tvOpportunityDesc.visible()
             binding.layoutAction.visible()
         } else {
-            binding.tvBriefDesc.visible()
-            binding.tvOpportunityTitle.gone()
-            binding.tvOpportunityDesc.gone()
             binding.layoutAction.gone()
         }
-        val layoutParams = binding.tvAiTag.layoutParams as ConstraintLayout.LayoutParams
-        layoutParams.verticalBias = if (isLastItem) 0f else 0.5f
-        layoutParams.topMargin = if (isLastItem) 8.dp else 0.dp
-        binding.tvAiTag.layoutParams = layoutParams
-
         binding.btnUploadResume.setOnSingleClickListener {
             onUploadClickListener(item)
         }

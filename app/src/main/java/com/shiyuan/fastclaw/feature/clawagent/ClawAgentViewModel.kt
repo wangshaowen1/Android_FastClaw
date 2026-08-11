@@ -43,6 +43,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.ActivityPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.ActivityStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyInfo
@@ -193,6 +194,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 宝典页业务模块列表，按服务端返回顺序展示底部快捷入口。 */
     val jobAgentModuleList = MutableLiveData<List<JobAgentModuleData>>()
+
+    /** 首页测薪资活动状态，用于游客欢迎卡后是否追加活动卡片。 */
+    val activityStatus = MutableLiveData<ActivityStatusData?>()
 
     private val sseProcessor by lazy {
         ClawAgentSseProcessor(
@@ -1500,6 +1504,16 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             showToast = false,
         ) {
             jobAgentModuleList.postValue(this.data.orEmpty())
+        }
+    }
+
+    /** 查询首页测薪资活动状态；异常时按不展示处理。 */
+    fun queryActivityStatus() {
+        request(
+            apiBlock = { mRepo.api.queryActivityStatus() },
+            showToast = false,
+        ) {
+            activityStatus.postValue(data)
         }
     }
 

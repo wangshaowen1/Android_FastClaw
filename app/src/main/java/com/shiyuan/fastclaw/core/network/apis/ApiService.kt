@@ -80,6 +80,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.DictWelfareQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import kotlinx.coroutines.flow.Flow
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
+import com.shiyuan.fastclaw.core.network.apis.response.ActivityStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.AppConfigData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeSave
@@ -547,6 +548,9 @@ interface ApiService {
 
     @POST(ApiConstants.JOB_AGENT_MODULE_LIST_QUERY)
     suspend fun queryJobAgentModuleList(): ApiResponse<List<JobAgentModuleData>?>
+
+    @POST(ApiConstants.ACTIVITY_STATUS_QUERY)
+    suspend fun queryActivityStatus(): ApiResponse<ActivityStatusData?>
 
     /**
      * 提交卡片或按钮动作（求职 Agent）

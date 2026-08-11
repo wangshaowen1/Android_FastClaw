@@ -54,22 +54,6 @@
             tools:targetApi="p">
 
             <TextView
-                android:id="@+id/tv_brief_desc"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                android:gravity="center_vertical"
-                android:text="@string/str_agent_welcome_service_desc_collapsed"
-                android:textColor="@color/color_90_000000"
-                android:textSize="15sp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone" />
-
-            <TextView
                 android:id="@+id/tv_opportunity_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -83,7 +67,7 @@
                 android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_brief_desc"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
 
             <TextView
@@ -95,7 +79,7 @@
                 android:text="@string/str_agent_welcome_service_desc_line2"
                 android:textColor="@color/color_85_3c3c43"
                 android:textSize="14sp"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="6dp"
                 android:lineSpacingMultiplier="1.1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

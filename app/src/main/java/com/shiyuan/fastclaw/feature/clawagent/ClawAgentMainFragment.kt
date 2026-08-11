@@ -62,6 +62,8 @@ import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_XIAOXIA_RESUME_UPLOAD
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
+import com.shiyuan.fastclaw.core.network.apis.response.ActivityPayloadBean
+import com.shiyuan.fastclaw.core.network.apis.response.ActivityStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
@@ -312,7 +314,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
         // 活动卡片当前承接“测薪资”入口，点击后复用底部快捷入口的跳转和埋点。
         msgAdapter.onActivityClickAction = {
-            openSalaryValuation()
+            if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
+                EventManager.onAppTrack(KLX_CLICK_SALARY_TEST, mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
+                SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
+            }
         }
 
         // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
@@ -663,6 +668,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 // 首次加载直接贴底；新增消息用平滑滚动。流式内容更新不重复触发滚动，避免 srlMsg 抖动。
                 scrollToBottom(shouldSmoothScroll)
             }
+            refreshPresetActivityCard()
         }
         // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭
         mRealVM.hasCanRefresh.observe(viewLifecycleOwner) { hasMore ->
@@ -671,6 +677,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
         mRealVM.jobAgentModuleList.observe(viewLifecycleOwner) { modules ->
             actionAdapter.submitList(modules.filter { item -> ClawQuickActionAdapter.isSupported(item.reportType) })
+        }
+        mRealVM.activityStatus.observe(viewLifecycleOwner) {
+            refreshPresetActivityCard()
         }
         mRealVM.streamError.observe(viewLifecycleOwner) { e ->
             e ?: return@observe
@@ -870,7 +879,10 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 }
             }
             JobAgentModuleData.TYPE_SALARY_VALUATION -> {
-                openSalaryValuation()
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
+                    EventManager.onAppTrack(KLX_CLICK_SALARY_TEST, mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
+                }
             }
             JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> {
                 if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_INTERVIEW_PASS) && !interceptIfStreaming()) {
@@ -882,16 +894,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }
     }
 
-    /** 打开测薪资页面，活动卡片和底部快捷入口共用同一套跳转与埋点。 */
-    private fun openSalaryValuation() {
-        if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
-            EventManager.onAppTrack(KLX_CLICK_SALARY_TEST, mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
-            SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
-        }
-    }
-
     private fun initData() {
         mRealVM.getAgentModuleList()
+        mRealVM.queryActivityStatus()
         if (User.get().isVisitor) {
             mRealVM.hardPreMsgListCard(insertPreCard())
         } else {
@@ -983,11 +988,30 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
      * 插入初始状态
      */
     private fun insertPreCard(): List<ClawAgentMessageInfo> {
-        val tempList = listOf<ClawAgentMessageInfo>(
+        return listOf(
             ClawAgentMessageInfo(id = "-1", messageType = ClawAgentMsgAdapter.TYPE_WELCOME, sendObj = ClawAgentViewModel.SENDER_AGENT, receiveObj = ClawAgentViewModel.SENDER_USER),
             /*ClawAgentMessageInfo(id = "-2", messageType = ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT, sendObj = ClawAgentViewModel.SENDER_AGENT, receiveObj = ClawAgentViewModel.SENDER_USER),*/
         )
-        return tempList
+    }
+
+    /** 活动状态返回后，只刷新“欢迎卡/活动卡”这类本地预置列表，避免覆盖真实聊天消息。 */
+    private fun refreshPresetActivityCard() {
+        val currentList = mRealVM.messageList.value.orEmpty()
+        val canUpdate = currentList.firstOrNull()?.messageType == ClawAgentMsgAdapter.TYPE_WELCOME &&
+                currentList.all { it.messageType in listOf(ClawAgentMsgAdapter.TYPE_WELCOME, ClawAgentMsgAdapter.TYPE_ACTIVITY_SALARY) }
+        if (!canUpdate) return
+        val status = mRealVM.activityStatus.value
+        val targetList = insertPreCard().toMutableList()
+        if (status?.enabled == true && status.reportType == ActivityStatusData.REPORT_TYPE_SALARY_VALUATION) {
+            targetList.add(ClawAgentMessageInfo(
+                id = "-activity-salary",
+                messageType = ClawAgentMsgAdapter.TYPE_ACTIVITY_SALARY,
+                sendObj = ClawAgentViewModel.SENDER_AGENT,
+                receiveObj = ClawAgentViewModel.SENDER_USER,
+                metaData = GsonUtils.toJson(ActivityPayloadBean(activityType = ActivityPayloadBean.TYPE_SALARY)),
+            ))
+        }
+        if (currentList != targetList) mRealVM.hardPreMsgListCard(targetList)
     }
 
     /**

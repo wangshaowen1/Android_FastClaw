@@ -151,7 +151,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                     onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
                     onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
-            }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
+            }) { h, item -> h.bind(item, items.lastOrNull { it.messageType != TYPE_ACTIVITY_SALARY }?.id == item.id) }
         // 活动测薪资卡片
         register(TYPE_ACTIVITY_SALARY,
             { i, p ->
@@ -451,8 +451,8 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
             val newItem = newList[newItemPosition]
             if (oldItem.hasLastItemState()) {
                 // 部分卡片的按钮显示依赖“是否列表最后一条”，位置变化时内容没变也要刷新。
-                val wasLastItem = oldItemPosition == oldList.lastIndex
-                val isLastItem = newItemPosition == newList.lastIndex
+                val wasLastItem = oldList.lastOrNull { it.messageType != TYPE_ACTIVITY_SALARY }?.id == oldItem.id
+                val isLastItem = newList.lastOrNull { it.messageType != TYPE_ACTIVITY_SALARY }?.id == newItem.id
                 if (wasLastItem != isLastItem) return false
             }
             return oldItem == newItem

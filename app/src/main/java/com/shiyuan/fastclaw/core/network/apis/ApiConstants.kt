@@ -297,6 +297,7 @@ object ApiConstants {
      */
     const val JOB_AGENT_CONVERSATION_QUERY = "/api/candidate/app/jobAgent/conversation/query"
     const val JOB_AGENT_MODULE_LIST_QUERY = "/api/candidate/app/jobAgent/module/list/query"
+    const val ACTIVITY_STATUS_QUERY = "/api/candidate/app/config/activity/status/query"
 
     /**
      * 提交卡片或按钮动作（求职 Agent）
