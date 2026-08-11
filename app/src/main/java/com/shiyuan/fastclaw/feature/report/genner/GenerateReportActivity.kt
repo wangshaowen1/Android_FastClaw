@@ -42,7 +42,6 @@ import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.ActivityGennerReportBinding
 import com.shiyuan.fastclaw.feature.mine.dialog.AnalysisLoadingDialog
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
-import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.widget.PhotoGridView
 import com.umeng.socialize.utils.UmengText
 
@@ -63,6 +62,8 @@ class GenerateReportActivity :
         const val TEXT = "TEXT"
 
         private val MAX_LENGTH = 2000
+
+        const val REQUEST_CODE_CHOOSE: Int = 0x110
 
         fun start(activity: Activity?, data: ResumeData) {
             activity ?: return

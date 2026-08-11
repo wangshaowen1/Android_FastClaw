@@ -15,7 +15,6 @@ import com.shiyuan.fastclaw.core.ext.openTheCustomerServiceChat
 import com.shiyuan.fastclaw.databinding.ActivitySettingsBinding
 import com.shiyuan.fastclaw.feature.login.flash.PhoneLoginDialogActivity
 import com.shiyuan.fastclaw.feature.mine.PhoneShowActivity
-import com.shiyuan.fastclaw.feature.settings.feedback.FeedbackActivity
 import com.shiyuan.fastclaw.feature.settings.logoff.LogoffActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.kit.SignUtils
@@ -32,15 +31,11 @@ import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_INVITE_RULES
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_LOGOUT
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_VIEW_SETTINGS
 import com.shiyuan.fastclaw.core.manager.EventManager
+import com.shiyuan.fastclaw.feature.settings.dialog.LogoutConfirmDialog
 
 /**
  * *****************************************
- * 项目名称: KidsTales
- * @Author: SZYMN
  * @Introduce:设置
- * @Data: 2025/4/18  16:03
- * @Version: 1.0
- * *****************************************
  */
 class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, SettingsViewModel>() {
     companion object {

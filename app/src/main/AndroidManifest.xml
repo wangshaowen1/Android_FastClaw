@@ -315,10 +315,6 @@
         <activity
             android:name=".feature.mine.MineShrimpRechargeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--建议-->
-        <activity
-            android:name=".feature.settings.feedback.FeedbackActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <!--举报-->
         <activity
             android:name=".feature.settings.report.ReportActivity"

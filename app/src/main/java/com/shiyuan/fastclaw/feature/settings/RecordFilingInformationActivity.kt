@@ -15,6 +15,8 @@ import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 class RecordFilingInformationActivity :
     BaseViewModelActivity<ActivityRecordFilingInfomationBinding, SettingsViewModel>() {
     companion object {
+        private const val RECORD_FILING_URL = "https://beian.miit.gov.cn"
+
         fun start(activity: Activity?) {
             activity ?: return
             val intent = Intent(activity, RecordFilingInformationActivity::class.java)
@@ -31,7 +33,7 @@ class RecordFilingInformationActivity :
         binding.tvRecordName.setOnSingleClickListener {
             SimpleBrowserActivity.launch(
                 this,
-                "https://beian.miit.gov.cn",
+                RECORD_FILING_URL,
                 getString(R.string.record_filing_information)
             )
         }
