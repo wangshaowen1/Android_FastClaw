@@ -179,18 +179,21 @@ signingConfigs {
 
 ### 2. 更新第三方 SDK 密钥
 
-初始化脚本已将所有第三方 SDK 密钥替换为 `YOUR_XXX` 占位符。在 `app\build.gradle` 中搜索 `YOUR_` 并替换为真实值：
+初始化脚本会将 `app\build.gradle` 中的第三方 SDK 密钥替换为 `YOUR_XXX`，并清空 `gradle.properties` 中的友盟与厂商推送产品配置。按下表填写当前项目的真实值：
 
 | 占位符 | SDK | 位置 |
 |--------|-----|------|
 | `YOUR_WX_APP_ID`、`YOUR_WX_APP_SECRET` | 微信 | defaultConfig |
 | `YOUR_QQ_APP_ID`、`YOUR_QQ_APP_KEY` | QQ | buildTypes + manifestPlaceholders |
 | `YOUR_WB_APP_KEY`、`YOUR_WB_APP_SECRET` | 微博 | buildTypes |
-| `YOUR_UMENG_APP_KEY`、`YOUR_UMENG_SECRET` | 友盟 | buildTypes + manifestPlaceholders |
+| `UMENG_APP_KEY`、`UMENG_MESSAGE_SECRET` | 友盟 | `gradle.properties` |
+| `PUSH_ENABLE_CHANNEL_PUSH`、`PUSH_XIAOMI_*`、`PUSH_HUAWEI_APP_ID`、`PUSH_OPPO_*`、`PUSH_VIVO_*`、`PUSH_HONOR_APP_ID` | 厂商推送 | `gradle.properties` |
 | `YOUR_SHANYAN_APPID`、`YOUR_SHANYAN_APP_KEY` | 闪验 | buildTypes |
 | `YOUR_DY_CLIENT_KEY` | 抖音 | defaultConfig |
 | `YOUR_GROWING_SCHEME` | GrowingIO | defaultConfig + manifestPlaceholders |
 | `YOUR_KWAI_APP_ID` | 快手 | manifestPlaceholders |
+
+厂商推送默认通过 `PUSH_ENABLE_CHANNEL_PUSH=false` 关闭，此时厂商 Key 可以为空；启用后必须填写全部 `PUSH_*`。这些配置会同时注入 `BuildConfig` 和友盟 `1.0.2` AAR 的 Manifest Placeholder，禁止再在 `AndroidManifest.xml` 或 `PushManager` 中重复维护。
 
 ### 3. 更新服务器地址
 

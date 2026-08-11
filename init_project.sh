@@ -88,6 +88,16 @@ sedi() {
     fi
 }
 
+set_gradle_property() {
+    local file="$1"
+    local key="$2"
+    local value="$3"
+    if ! grep -q "^${key}=" "$file"; then
+        error "Gradle property not found: $key"
+    fi
+    sedi "s|^${key}=.*$|${key}=${value}|g" "$file"
+}
+
 # ============================== 1. config.gradle ==============================
 info "更新 config.gradle ..."
 sedi "s|$OLD_PACKAGE|$NEW_PACKAGE|g" config.gradle
@@ -130,10 +140,6 @@ sedi "s|https://m.helloaa.cn/|https://example.com|g" "$BG"
 sedi "s|https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E7%94%A8%E6%88%B7%E6%9C%8D%E5%8A%A1%E5%8D%8F%E8%AE%AE.html|https://example.com/service|g" "$BG"
 sedi "s|https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96.html|https://example.com/privacy|g" "$BG"
 sedi "s|http://rmgf.wechatrenmai.cn|https://example.com|g" "$BG"
-# Umeng
-sedi "s|a0d38408ddaceb5c935d511e71f1ac36|YOUR_UMENG_SECRET|g" "$BG"
-sedi "s|698d31b96f259537c758f5a2|YOUR_UMENG_APP_KEY|g" "$BG"
-sedi "s|69005d13644c9e2c20677a21|YOUR_UMENG_APP_KEY|g" "$BG"
 # Shanyan
 sedi "s|KfNYHDRd|YOUR_SHANYAN_APPID|g" "$BG"
 sedi "s|VDE8Q8TY|YOUR_SHANYAN_APP_KEY|g" "$BG"
@@ -142,6 +148,21 @@ sedi "s|https://kcp-test.kwaige.cn|https://your-dev-server.com|g" "$BG"
 sedi "s|http://120.24.240.28:9010|https://your-preview-server.com|g" "$BG"
 sedi "s|https://kuaichupianjk.kuaigeai.cn|https://your-production-server.com|g" "$BG"
 ok "app/build.gradle (第三方SDK密钥已清理)"
+
+info "清理 gradle.properties 友盟与厂商推送配置 ..."
+GP="gradle.properties"
+set_gradle_property "$GP" "UMENG_APP_KEY" ""
+set_gradle_property "$GP" "UMENG_MESSAGE_SECRET" ""
+set_gradle_property "$GP" "PUSH_ENABLE_CHANNEL_PUSH" "false"
+set_gradle_property "$GP" "PUSH_XIAOMI_APP_ID" ""
+set_gradle_property "$GP" "PUSH_XIAOMI_APP_KEY" ""
+set_gradle_property "$GP" "PUSH_HUAWEI_APP_ID" ""
+set_gradle_property "$GP" "PUSH_OPPO_APP_KEY" ""
+set_gradle_property "$GP" "PUSH_OPPO_APP_SECRET" ""
+set_gradle_property "$GP" "PUSH_VIVO_API_KEY" ""
+set_gradle_property "$GP" "PUSH_VIVO_APP_ID" ""
+set_gradle_property "$GP" "PUSH_HONOR_APP_ID" ""
+ok "gradle.properties (友盟与厂商推送配置已清理)"
 
 # ============================== 5. AndroidManifest.xml ==============================
 info "更新 AndroidManifest.xml ..."

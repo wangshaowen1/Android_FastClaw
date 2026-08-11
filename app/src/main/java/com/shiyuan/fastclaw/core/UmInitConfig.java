@@ -29,7 +29,7 @@ public class UmInitConfig {
     }
 
     public void init(Application application, IRouter router) {
-        UMConfigure.init(context, BuildConfig.UMENG_APP_KEY, Session.getInstance().getChannel(), UMConfigure.DEVICE_TYPE_PHONE, BuildConfig.UMENG_SECRET);
+        UMConfigure.init(context, BuildConfig.UMENG_APP_KEY, Session.getInstance().getChannel(), UMConfigure.DEVICE_TYPE_PHONE, BuildConfig.UMENG_MESSAGE_SECRET);
         PushAgent.getInstance(context).setPackageListenerEnable(false);
         String fileProvider = BuildConfig.APPLICATION_ID + ".fileprovider";
         PlatformConfig.setFileProvider(fileProvider);

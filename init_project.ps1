@@ -119,6 +119,22 @@ function ReplaceInFile {
     [IO.File]::WriteAllText($fullPath, $content, $script:UTF8NoBOM)
 }
 
+function SetGradleProperty {
+    param(
+        [string]$FilePath,
+        [string]$Key,
+        [string]$Value
+    )
+    $fullPath = (Resolve-Path $FilePath).Path
+    $content  = [IO.File]::ReadAllText($fullPath, $script:UTF8NoBOM)
+    $pattern  = '(?m)^' + [Regex]::Escape($Key) + '=[^\r\n]*'
+    if (-not [Regex]::IsMatch($content, $pattern)) {
+        throw "Gradle property not found: $Key"
+    }
+    $content = [Regex]::Replace($content, $pattern, "$Key=$Value")
+    [IO.File]::WriteAllText($fullPath, $content, $script:UTF8NoBOM)
+}
+
 function ReplaceInDir {
     param(
         [string]$DirPath,
@@ -211,10 +227,6 @@ ReplaceInFile $buildGradle 'https://m.helloaa.cn/' 'https://example.com'
 ReplaceInFile $buildGradle 'https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E7%94%A8%E6%88%B7%E6%9C%8D%E5%8A%A1%E5%8D%8F%E8%AE%AE.html' 'https://example.com/service'
 ReplaceInFile $buildGradle 'https://makemoneyoss.yiduizf.cn/data/front/taskdesc/%E8%B5%9A%E9%92%B1%E7%8C%AB%E9%9A%90%E7%A7%81%E6%94%BF%E7%AD%96.html' 'https://example.com/privacy'
 ReplaceInFile $buildGradle 'http://rmgf.wechatrenmai.cn' 'https://example.com'
-# Umeng
-ReplaceInFile $buildGradle 'a0d38408ddaceb5c935d511e71f1ac36' 'YOUR_UMENG_SECRET'
-ReplaceInFile $buildGradle '698d31b96f259537c758f5a2' 'YOUR_UMENG_APP_KEY'
-ReplaceInFile $buildGradle '69005d13644c9e2c20677a21' 'YOUR_UMENG_APP_KEY'
 # Shanyan
 ReplaceInFile $buildGradle 'KfNYHDRd' 'YOUR_SHANYAN_APPID'
 ReplaceInFile $buildGradle 'VDE8Q8TY' 'YOUR_SHANYAN_APP_KEY'
@@ -223,6 +235,21 @@ ReplaceInFile $buildGradle 'https://kcp-test.kwaige.cn' 'https://your-dev-server
 ReplaceInFile $buildGradle 'http://120.24.240.28:9010' 'https://your-preview-server.com'
 ReplaceInFile $buildGradle 'https://kuaichupianjk.kuaigeai.cn' 'https://your-production-server.com'
 Write-Ok "app\build.gradle (第三方SDK密钥已清理)"
+
+Write-Info "清理 gradle.properties 友盟与厂商推送配置 ..."
+$gradleProperties = 'gradle.properties'
+SetGradleProperty $gradleProperties 'UMENG_APP_KEY' ''
+SetGradleProperty $gradleProperties 'UMENG_MESSAGE_SECRET' ''
+SetGradleProperty $gradleProperties 'PUSH_ENABLE_CHANNEL_PUSH' 'false'
+SetGradleProperty $gradleProperties 'PUSH_XIAOMI_APP_ID' ''
+SetGradleProperty $gradleProperties 'PUSH_XIAOMI_APP_KEY' ''
+SetGradleProperty $gradleProperties 'PUSH_HUAWEI_APP_ID' ''
+SetGradleProperty $gradleProperties 'PUSH_OPPO_APP_KEY' ''
+SetGradleProperty $gradleProperties 'PUSH_OPPO_APP_SECRET' ''
+SetGradleProperty $gradleProperties 'PUSH_VIVO_API_KEY' ''
+SetGradleProperty $gradleProperties 'PUSH_VIVO_APP_ID' ''
+SetGradleProperty $gradleProperties 'PUSH_HONOR_APP_ID' ''
+Write-Ok "gradle.properties (友盟与厂商推送配置已清理)"
 
 # ============================== 5. AndroidManifest.xml ==============================
 Write-Info "更新 AndroidManifest.xml ..."

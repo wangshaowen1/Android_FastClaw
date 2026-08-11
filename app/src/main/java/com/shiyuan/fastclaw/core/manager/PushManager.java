@@ -75,7 +75,7 @@ public class PushManager {
 
             @Override
             public void onSuccess(String deviceToken) {
-                Logger.e(TAG, "注册deviceToken：-------->  " + ",deviceToken:" + deviceToken);
+                Logger.i(TAG, "友盟推送注册成功");
                 Config.get().storeDeviceToken(deviceToken);
                 //注册成功会返回deviceToken deviceToken是推送消息的唯一标志
                 if (!User.get().isVisitor()) {
@@ -98,12 +98,12 @@ public class PushManager {
         mPushAgent.setNotificationClickHandler(notificationClickHandler);
         mPushAgent.setDisplayNotificationNumber(5);
         mPushAgent.setNotificationOnForeground(false);
-        mPushAgent.setThirdTokenCallback((type, token) -> Logger.e(TAG, "厂商token：-------->  " + ",token:" + token));
+        mPushAgent.setThirdTokenCallback((type, token) -> Logger.i(TAG, "厂商推送注册回调: type=" + type));
         UPushNotificationChannel.getDefaultMode(mContext);
-        if (BuildConfig.ENABLE_CHANNEL_PUSH) {
-            MiPushRegistar.register(mContext, "2882303761520335315", "5282033524315", false);
+        if (BuildConfig.PUSH_ENABLE_CHANNEL_PUSH) {
+            MiPushRegistar.register(mContext, BuildConfig.PUSH_XIAOMI_APP_ID, BuildConfig.PUSH_XIAOMI_APP_KEY, false);
             HuaWeiRegister.register(mContext);
-            OppoRegister.register(mContext, "63c2404b8ef9487aa86c6a6d196635c0", "4e2460ea3a574abcb122f81c88289f7a");
+            OppoRegister.register(mContext, BuildConfig.PUSH_OPPO_APP_KEY, BuildConfig.PUSH_OPPO_APP_SECRET);
             VivoRegister.register(mContext);
             HonorRegister.register(mContext);
         }

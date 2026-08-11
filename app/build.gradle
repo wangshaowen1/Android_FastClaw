@@ -36,6 +36,39 @@ void genProguardDict() {
 }
 
 genProguardDict()
+
+def hostConfig = { String key ->
+    providers.gradleProperty(key).orNull
+            ?: System.getenv(key)
+}
+def umengAppKey = hostConfig("UMENG_APP_KEY")?.toString()?.trim() ?: ""
+def umengMessageSecret = hostConfig("UMENG_MESSAGE_SECRET")?.toString()?.trim() ?: ""
+def channelPushEnabled = hostConfig("PUSH_ENABLE_CHANNEL_PUSH")
+        ?.toString()
+        ?.trim()
+        ?.toBoolean() ?: false
+if (channelPushEnabled && !umengAppKey) {
+    throw new GradleException("Missing required channel push config: UMENG_APP_KEY")
+}
+if (channelPushEnabled && !umengMessageSecret) {
+    throw new GradleException("Missing required channel push config: UMENG_MESSAGE_SECRET")
+}
+def channelPushConfig = { String key ->
+    def value = hostConfig(key)?.toString()?.trim()
+    if (channelPushEnabled && !value) {
+        throw new GradleException("Missing required channel push config: ${key}")
+    }
+    value ?: ""
+}
+def pushXiaomiAppId = channelPushConfig("PUSH_XIAOMI_APP_ID")
+def pushXiaomiAppKey = channelPushConfig("PUSH_XIAOMI_APP_KEY")
+def pushHuaweiAppId = channelPushConfig("PUSH_HUAWEI_APP_ID")
+def pushOppoAppKey = channelPushConfig("PUSH_OPPO_APP_KEY")
+def pushOppoAppSecret = channelPushConfig("PUSH_OPPO_APP_SECRET")
+def pushVivoApiKey = channelPushConfig("PUSH_VIVO_API_KEY")
+def pushVivoAppId = channelPushConfig("PUSH_VIVO_APP_ID")
+def pushHonorAppId = channelPushConfig("PUSH_HONOR_APP_ID")
+
 android {
     compileSdk rootProject.ext.android.compileSdkVersion
 
@@ -63,27 +96,23 @@ android {
         buildConfigField "String", "DY_CLIENT_KEY", '"YOUR_DY_CLIENT_KEY"'
         buildConfigField "String", "WX_APP_ID", '"wx061b7b7333f2e4e7"' //微信AppKey
         buildConfigField "String", "WX_APP_SECRET", '"ef303720908c2565a7c0ebd3008c9c7e"'//微信Secret
+        buildConfigField "String", "UMENG_APP_KEY", "\"${umengAppKey}\""
+        buildConfigField "String", "UMENG_MESSAGE_SECRET", "\"${umengMessageSecret}\""
+        buildConfigField "boolean", "PUSH_ENABLE_CHANNEL_PUSH", channelPushEnabled.toString()
+        buildConfigField "String", "PUSH_XIAOMI_APP_ID", "\"${pushXiaomiAppId}\""
+        buildConfigField "String", "PUSH_XIAOMI_APP_KEY", "\"${pushXiaomiAppKey}\""
+        buildConfigField "String", "PUSH_HUAWEI_APP_ID", "\"${pushHuaweiAppId}\""
+        buildConfigField "String", "PUSH_OPPO_APP_KEY", "\"${pushOppoAppKey}\""
+        buildConfigField "String", "PUSH_OPPO_APP_SECRET", "\"${pushOppoAppSecret}\""
+        buildConfigField "String", "PUSH_VIVO_API_KEY", "\"${pushVivoApiKey}\""
+        buildConfigField "String", "PUSH_VIVO_APP_ID", "\"${pushVivoAppId}\""
+        buildConfigField "String", "PUSH_HONOR_APP_ID", "\"${pushHonorAppId}\""
         buildConfigField "String", "UPLOAD_RESUME_WECHAT_MINIID", '"gh_e67f13187b26"'//上传简历小程序原始id
         def growingScheme = "2537e0c6ff0ab48e"
         buildConfigField "String", "GROWING_ACCOUNT_ID", '"2f313003f3995a31"'
         buildConfigField "String", "GROWING_DATA_SOURCE_ID", '"944875fb77487c3d"'
         buildConfigField "String", "GROWING_SERVER_HOST", '"https://napi.growingio.com"'
         buildConfigField "String", "GROWING_URL_SCHEME", '\"' + growingScheme + '\"' //埋点库GROWINGIO的Urlscheme
-        def localProps = new Properties()
-        def localPropsFile = rootProject.file("local.properties")
-        if (localPropsFile.exists()) {
-            localPropsFile.withInputStream { localProps.load(it) }
-        }
-        def channelPushEnabled = false
-        def channelPushConfig = { String key ->
-            def value = localProps.getProperty(key)
-                    ?: providers.gradleProperty(key).orNull
-                    ?: System.getenv(key)
-            if (channelPushEnabled && !value?.trim()) {
-                throw new GradleException("Missing required channel push config: ${key}")
-            }
-            return value?.trim() ?: ""
-        }
         // DataNexus/广点通转化 SDK ，避免写入仓库。
         buildConfigField "String", "DATANEXUS_USER_ACTION_SET_ID", '""'
         buildConfigField "String", "DATANEXUS_APP_SECRET_KEY", '""'
@@ -92,14 +121,14 @@ android {
         buildConfigField "boolean", "DATANEXUS_ANID_ENABLE", "true"
         buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-b4c3df125fee41c6a83135074b12a8b6"'
         buildConfigField "String", "DASHSCOPE_SPEECH_URL", '"wss://dashscope.aliyuncs.com/api-ws/v1/inference"'
-        buildConfigField "boolean", "ENABLE_CHANNEL_PUSH", channelPushEnabled.toString()
         buildConfigField "String", "WX_KF_URL", '"https://work.weixin.qq.com/kfid/kfc40a9a48f69a47f52"'
         buildConfigField "String", "WX_KF_CORPID", '"wwc3993f67fa68ae04"'
         manifestPlaceholders = [
-                "UMENG_HUAWEI_APP_ID": channelPushConfig("FASTCLAW_UMENG_HUAWEI_APP_ID"),
-                "UMENG_VIVO_API_KEY" : channelPushConfig("FASTCLAW_UMENG_VIVO_API_KEY"),
-                "UMENG_VIVO_APP_ID"  : channelPushConfig("FASTCLAW_UMENG_VIVO_APP_ID"),
-                "UMENG_HONOR_APP_ID" : channelPushConfig("FASTCLAW_UMENG_HONOR_APP_ID"),
+                "UMENG_APP_KEY"      : umengAppKey,
+                "PUSH_HUAWEI_APP_ID" : pushHuaweiAppId,
+                "PUSH_VIVO_API_KEY"  : pushVivoApiKey,
+                "PUSH_VIVO_APP_ID"   : pushVivoAppId,
+                "PUSH_HONOR_APP_ID"  : pushHonorAppId,
                 "GROWING_URL_SCHEME" : growingScheme, // 埋点库GROWINGIO的Urlscheme
                 "KWAI_APP_ID"        : "YOUR_KWAI_APP_ID", // 快手申请分配的appId
                 "KWAI_SCOPE"         : "user_info" // 账号授权需要申请的scope权限，多个scope可以使用","分割。user_info：用户信息授权，user_phone：用户手机号授权。
@@ -155,14 +184,10 @@ android {
             buildConfigField "String", "PRIVACY_URL", '"https://example.com/privacy"'
             //隐私政策
             buildConfigField "String", "OFFICIAL_URL", '"https://example.com"' //官方网站
-            //友盟SECRET
-            buildConfigField "String", "UMENG_SECRET", '"909431f07f43700ef0a147f5e33fef4f"'//填写Umeng Message Secret对应信息
-            buildConfigField "String", "UMENG_APP_KEY", '"6a39fd806f259537c7bd163e"'
             buildConfigField "String", "SHANYAN_APPID", '"pUH247TE"' //闪验APPID
             buildConfigField "String", "SHANYAN_APP_KEY", '"BjfmxHIp"' //闪验APPKEY
 
             manifestPlaceholders = [
-                    UMENG_APP_KEY      : "6a39fd806f259537c7bd163e",
                     qqappid            : "YOUR_QQ_APP_ID",
             ]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -191,16 +216,12 @@ android {
             buildConfigField "String", "PRIVACY_URL", '"https://example.com/privacy"'
             //隐私政策
             buildConfigField "String", "OFFICIAL_URL", '"https://example.com"' //官方网站
-            buildConfigField "String", "UMENG_SECRET", '"909431f07f43700ef0a147f5e33fef4f"'//填写Umeng Message Secret对应信息
-            buildConfigField "String", "UMENG_APP_KEY", '"6a39fd806f259537c7bd163e"'
-            //友盟SECRET
             buildConfigField "String", "SHANYAN_APPID", '"pUH247TE"' //闪验APPID
             buildConfigField "String", "SHANYAN_APP_KEY", '"BjfmxHIp"' //闪验APPKEY
 
             versionNameSuffix ""
             signingConfig signingConfigs.debug
             manifestPlaceholders = [
-                    UMENG_APP_KEY      : "6a39fd806f259537c7bd163e",
                     qqappid            : "YOUR_QQ_APP_ID",
             ]
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
