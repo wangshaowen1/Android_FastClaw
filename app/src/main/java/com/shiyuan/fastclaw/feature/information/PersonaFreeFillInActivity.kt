@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doAfterTextChanged
+import com.blankj.utilcode.util.RegexUtils
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
@@ -37,7 +38,13 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
         private const val MAX_LENGTH = 50
 
         private const val FIELD_NAME = "name"
+        private const val FIELD_WECHAT_ID = "wechatId"
+        private const val FIELD_EMAIL = "email"
         private const val TEXT = "TEXT"
+
+        private const val REGEX_WECHAT_ID = "^[A-Za-z][-_A-Za-z0-9]{5,19}$"
+
+        private const val EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
 
         /**
          * 启动自由填写页。
@@ -104,17 +111,30 @@ class PersonaFreeFillInActivity : BaseViewModelActivity<ActivityPersonaFreeFillI
         }*/
         // 确认按钮：空内容提示，否则通过事件总线回传
         mRealVM.mToolbarVM.menuAction = menuAction@{
-            val inputLength = binding.et.text?.length ?: 0
-            if (inputLength < MIN_LENGTH) {
+            val input = binding.et.text.toString()
+            if (input.length < MIN_LENGTH) {
                 "至少输入1个字".showToast()
                 return@menuAction
+            }
+            when (data.attributeGroupCode ?: data.metaCode) {
+                FIELD_WECHAT_ID -> if (!RegexUtils.isMatch(REGEX_WECHAT_ID, input) &&
+                    !RegexUtils.isMobileSimple(input)
+                ) {
+                    "请输入正确的微信号".showToast()
+                    return@menuAction
+                }
+
+                FIELD_EMAIL -> if (!RegexUtils.isMatch(EMAIL_REGEX,input)) {
+                    "请输入正确的邮箱".showToast()
+                    return@menuAction
+                }
             }
             mRealVM.updateOnlineResumeAttribute(
                 attributeGroupCode = data.attributeGroupCode ?: data.metaCode,
                 inputMode = data.inputMode ?: TEXT,
-                value =  binding.et.text.toString()
+                value = input
             ) {
-                syncUserNameIfNeeded(binding.et.text.toString())
+                syncUserNameIfNeeded(input)
                 FlowEventBus.postSticky(Events.CommonAttributeArrayQueryData())
                 finish()
             }
