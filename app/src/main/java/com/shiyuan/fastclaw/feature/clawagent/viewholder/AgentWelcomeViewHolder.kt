@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.clawagent.viewholder
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.ext.dp
@@ -28,20 +29,30 @@ class AgentWelcomeViewHolder(private val binding: ItemMsgAgentWelcomeBinding) : 
 
     fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
         if (isLastItem) {
-            binding.layoutWelcomeActions.visible()
+            binding.tvBriefDesc.gone()
+            binding.tvOpportunityTitle.visible()
+            binding.tvOpportunityDesc.visible()
+            binding.layoutAction.visible()
         } else {
-            binding.layoutWelcomeActions.gone()
+            binding.tvBriefDesc.visible()
+            binding.tvOpportunityTitle.gone()
+            binding.tvOpportunityDesc.gone()
+            binding.layoutAction.gone()
         }
+        val layoutParams = binding.tvAiTag.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.verticalBias = if (isLastItem) 0f else 0.5f
+        layoutParams.topMargin = if (isLastItem) 8.dp else 0.dp
+        binding.tvAiTag.layoutParams = layoutParams
+
         binding.btnUploadResume.setOnSingleClickListener {
             onUploadClickListener(item)
         }
         binding.tvNotResume.setOnSingleClickListener {
-            //showToast(R.string.toast_resume_not_conversation)
             if (!AppNavigator.checkLoginIntercepted(false)) {
                 onDefaultClickListener(item, CardAction(CandidateJobAgentClientActionEnum.NO_RESUME_START_QUESTIONING.name), null)
             }
         }
-        updateContainerMargin()
+        //updateContainerMargin()
     }
 
     private fun updateContainerMargin() {
