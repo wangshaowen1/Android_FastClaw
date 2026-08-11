@@ -49,7 +49,7 @@ import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewFinishDialog
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewJobDialog
 import com.shiyuan.fastclaw.feature.interview.viewholder.decoration.InterviewMessageDecoration
-import com.shiyuan.fastclaw.feature.settings.report.ReportActivity.Companion.REQUEST_CODE_CHOOSE
+import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.router.AppNavigator
 import java.util.ArrayDeque
 import java.util.UUID

@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.settings.logoff
+package com.shiyuan.fastclaw.feature.settings
 
 import android.app.Activity
 import android.content.Intent
@@ -8,6 +8,7 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.databinding.ActivityLogoffNewBinding
+import com.shiyuan.fastclaw.feature.settings.vm.LogoffViewModel
 
 /**
  * @desc：新版注销页面

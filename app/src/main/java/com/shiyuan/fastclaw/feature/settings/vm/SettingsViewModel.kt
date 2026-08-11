@@ -1,11 +1,10 @@
-package com.shiyuan.fastclaw.feature.settings
+package com.shiyuan.fastclaw.feature.settings.vm
 
 import android.graphics.Color
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import com.nhsd.basic.Session
 import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
@@ -56,11 +55,11 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
         background = Color.TRANSPARENT,
     )
 
-    val appVersion: String by lazy { "快龙虾 Version " + Session.getInstance().versionName }
+    val appVersion: String by lazy { "快龙虾 Version " + Session.Companion.getInstance().versionName }
 
-    val beiAn by lazy { Config.get().appConfig.beianNo }
+    val beiAn by lazy { Config.Companion.get().appConfig.beianNo }
 
-    val phone = ObservableField(maskPhone(User.get().phoneNum))
+    val phone = ObservableField(maskPhone(User.Companion.get().phoneNum))
 
     /** 微信绑定状态 */
     val isWechatBound = ObservableBoolean(false)
@@ -74,9 +73,9 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     fun refreshUserInfo() {
-        phone.set(maskPhone(User.get().phoneNum))
-        val bound = User.get().wechatBindStatus == User.WECHAT_BIND_STATUS_BOUND
-        wechatName.set(if (bound) User.get().wechatNickName else R.string.unbound.getResString())
+        phone.set(maskPhone(User.Companion.get().phoneNum))
+        val bound = User.Companion.get().wechatBindStatus == User.Companion.WECHAT_BIND_STATUS_BOUND
+        wechatName.set(if (bound) User.Companion.get().wechatNickName else R.string.unbound.getResString())
         isWechatBound.set(bound)
     }
 
@@ -84,13 +83,13 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
      * 拉取账号详情，保存本地用户信息后刷新账号设置展示。
      */
     fun fetchUserInfo() {
-        if (User.get().isVisitor) return
+        if (User.Companion.get().isVisitor) return
         launch(
             block = {
                 response(
                     bean = mRepo.api.getUserHomeInfo(UserTokenBody()),
                     result = {
-                        User.get().updateFrom(data)
+                        User.Companion.get().updateFrom(data)
                         refreshUserInfo()
                     },
                     error = {}
@@ -105,7 +104,7 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     private fun createWechatBindBody(authData: MutableMap<String, String>?): BindThirdPartyBody {
         return BindThirdPartyBody(
-            providerType = BindThirdPartyBody.PROVIDER_TYPE_WECHAT,
+            providerType = BindThirdPartyBody.Companion.PROVIDER_TYPE_WECHAT,
             thirdPartyOpenId = authData?.get("openid"),
             thirdPartyUnionId = authData?.get("unionid"),
             thirdPartyNickName = authData?.get("name"),
@@ -158,7 +157,7 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
     fun unbindWechat(onSuccess: (() -> Unit)? = null) {
         requestWithLoading(
             apiBlock = {
-                mRepo.api.unbindThirdParty(UnbindThirdPartyBody(UnbindThirdPartyBody.PROVIDER_TYPE_WECHAT))
+                mRepo.api.unbindThirdParty(UnbindThirdPartyBody(UnbindThirdPartyBody.Companion.PROVIDER_TYPE_WECHAT))
             }
         ) {
             clearWechatBound()
@@ -194,8 +193,8 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
      * 更新微信绑定展示状态。
      */
     fun updateWechatBound(name: String?) {
-        User.get().storeWechatBindStatus(User.WECHAT_BIND_STATUS_BOUND)
-        User.get().storeWechatNickName(name?.takeIf { it.isNotBlank() } ?: R.string.wechat_binding.getResString())
+        User.Companion.get().storeWechatBindStatus(User.Companion.WECHAT_BIND_STATUS_BOUND)
+        User.Companion.get().storeWechatNickName(name?.takeIf { it.isNotBlank() } ?: R.string.wechat_binding.getResString())
         refreshUserInfo()
     }
 
@@ -203,8 +202,8 @@ class SettingsViewModel : AppRepositoryViewModel<AppRepository>() {
      * 清空当前页面的微信绑定展示状态。
      */
     fun clearWechatBound() {
-        User.get().storeWechatBindStatus(User.WECHAT_BIND_STATUS_UNBOUND)
-        User.get().storeWechatNickName(null)
+        User.Companion.get().storeWechatBindStatus(User.Companion.WECHAT_BIND_STATUS_UNBOUND)
+        User.Companion.get().storeWechatNickName(null)
         refreshUserInfo()
     }
 }

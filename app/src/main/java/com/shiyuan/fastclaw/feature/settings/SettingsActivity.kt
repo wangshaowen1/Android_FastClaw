@@ -15,7 +15,6 @@ import com.shiyuan.fastclaw.core.ext.openTheCustomerServiceChat
 import com.shiyuan.fastclaw.databinding.ActivitySettingsBinding
 import com.shiyuan.fastclaw.feature.login.flash.PhoneLoginDialogActivity
 import com.shiyuan.fastclaw.feature.mine.PhoneShowActivity
-import com.shiyuan.fastclaw.feature.settings.logoff.LogoffActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.kit.SignUtils
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -32,6 +31,7 @@ import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_LOGOUT
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_VIEW_SETTINGS
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.feature.settings.dialog.LogoutConfirmDialog
+import com.shiyuan.fastclaw.feature.settings.vm.SettingsViewModel
 
 /**
  * *****************************************

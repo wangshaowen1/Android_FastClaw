@@ -315,15 +315,8 @@
         <activity
             android:name=".feature.mine.MineShrimpRechargeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--举报-->
-        <activity
-            android:name=".feature.settings.report.ReportActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <!--注销-->
-        <activity android:name=".feature.settings.logoff.LogoffActivity" />
-        <activity android:name=".feature.settings.logoff.LogoffNewActivity" />
-        <!--申请注销-->
-        <activity android:name=".feature.settings.logoff.ApplyLogOffActivity" />
+        <activity android:name=".feature.settings.LogoffNewActivity" />
         <!--绑定手机号-->
         <activity
             android:name=".feature.login.bind.BindPhoneActivity"

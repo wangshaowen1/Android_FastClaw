@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.settings.logoff.LogoffViewModel" />
+            type="com.shiyuan.fastclaw.feature.settings.vm.LogoffViewModel" />
     </data>
 
     <LinearLayout

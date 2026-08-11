@@ -18,6 +18,7 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.UpgradeManager
 import com.shiyuan.fastclaw.databinding.ActivityAboutBinding
 import com.shiyuan.fastclaw.feature.PhotoPagerActivity
+import com.shiyuan.fastclaw.feature.settings.vm.SettingsViewModel
 import com.shiyuan.fastclaw.feature.upgrade.UpgradeDialogFragment
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import kotlinx.coroutines.delay
