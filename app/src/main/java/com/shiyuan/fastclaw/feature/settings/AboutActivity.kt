@@ -25,14 +25,9 @@ import kotlinx.coroutines.delay
 
 /**
  * *****************************************
- * 项目名称: KidsTales
- * @Author: SZYMN
  * @Introduce:设置
- * @Data: 2025/4/18  16:03
- * @Version: 1.0
- * *****************************************
  */
-class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewModel>() {
+class AboutActivity : BaseViewModelActivity<ActivityAboutBinding, SettingsViewModel>() {
     companion object {
         fun start(activity: Activity?) {
             activity ?: return
@@ -40,6 +35,7 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
             activity.startActivity(intent)
         }
     }
+
     private val upgradeManager by lazy { UpgradeManager(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,20 +44,18 @@ class AboutActivity : BaseViewModelActivity< ActivityAboutBinding, SettingsViewM
     }
 
     private fun initView() {
-     binding.recordFilingInformation.setOnSingleClickListener {
-         RecordFilingInformationActivity.start(this)
-     }
+        binding.recordFilingInformation.setOnSingleClickListener {
+            RecordFilingInformationActivity.start(this)
+        }
 
         binding.businessLicense.setOnSingleClickListener {
             val uri = "android.resource://" + getPackageName() + "/" + R.mipmap.business_license
-            val uris = ArrayList<String?>()
-            uris.add(uri)
-            PhotoPagerActivity. launch(this, uris) // 复用现有的 launch 方法
+            PhotoPagerActivity.launch(this, uri) // 复用现有的 launch 方法
         }
 
         binding.checkForUpdates.setOnSingleClickListener {
             EventManager.onAppTrack(KLX_CLICK_CHECK_UPDATE)
-           checkUpgrade()
+            checkUpgrade()
         }
     }
 
