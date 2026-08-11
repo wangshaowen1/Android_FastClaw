@@ -132,10 +132,7 @@ class InterviewReportActivity :
         val detailUrl = info.detailUrl?.takeIf { it.isNotBlank() } ?: return
         if (info.status != ReportStatus.OTHER || !info.canViewReport) return
         EventManager.onAppTrack(AppEvent.KLX_CAPP_INTERVIEWREPORT_REPORT_PAGE)
-        SimpleBrowserActivity.launch(
-            this,
-            detailUrl,
-        )
+        SimpleBrowserActivity.launch(this, detailUrl,false,true)
     }
 
     private fun initObservers() {
