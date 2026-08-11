@@ -42,6 +42,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.SESSION_PAGE_SIZE
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
+import com.shiyuan.fastclaw.core.network.apis.response.ActivityPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyInfo
@@ -50,7 +51,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPa
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
-import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.PassPackageReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
@@ -737,6 +737,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             return when (msg.cardType) {
                 // 引导上传、上传状态
                 CARD_INTRODUCE_YOURSELF -> ClawAgentMsgAdapter.TYPE_WELCOME
+                CARD_ACTIVITY -> resolveActivityItemType(msg)
                 CARD_UPLOAD_RESUME -> resolveUploadResumeItemType(msg)
                 CARD_HISTORY_RESUME_CONFIRM -> ClawAgentMsgAdapter.TYPE_PENDING_CONFIRM
                 CARD_CORE_QUESTION -> resolveQuestionItemType(msg)
@@ -768,6 +769,17 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             UPLOAD_STATUS_PARSE_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
             UPLOAD_STATUS_WAITING_UPLOAD -> ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT
             else -> ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT // WAITING_UPLOAD / PARSING / null
+        }
+    }
+
+    /** CARD_ACTIVITY 大类下，再按 activityType 细分具体活动卡片。 */
+    private fun resolveActivityItemType(msg: JobAgentMessage): Int {
+        val activityType = msg.payloadJson?.let {
+            runCatching { GsonUtils.fromJson(it, ActivityPayloadBean::class.java)?.activityType }.getOrNull()
+        }
+        return when (activityType) {
+            ActivityPayloadBean.TYPE_SALARY -> ClawAgentMsgAdapter.TYPE_ACTIVITY_SALARY
+            else -> ClawAgentMsgAdapter.TYPE_AGENT_TEXT
         }
     }
 
@@ -1633,6 +1645,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         private const val CARD_UNDERSTANDING_SUMMARY = "UNDERSTANDING_SUMMARY"
         // 自我介绍
         private const val CARD_INTRODUCE_YOURSELF = "CARD_INTRODUCE_YOURSELF"
+        // 活动卡片
+        private const val CARD_ACTIVITY = "ACTIVITY"
         /** 端侧固定自我介绍卡 ID，用于稳定 DiffUtil 判断首卡身份。 */
         private const val LOCAL_INTRODUCE_MESSAGE_ID = "-1"
         // 公司背调卡片

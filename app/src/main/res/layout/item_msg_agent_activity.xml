@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="83dp"
+        android:background="@drawable/img_agent_activity_salary_bg"
+        android:paddingStart="15dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="14dp"
+        tools:background="@drawable/img_agent_activity_salary_bg">
+
+        <TextView
+            android:id="@+id/tv_activity_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:text="@string/str_agent_activity_salary_title"
+            android:textColor="@color/color_000000"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_activity_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:text="@string/str_agent_activity_salary_subtitle"
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/tv_activity_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_activity_title" />
+
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:id="@+id/btn_activity_action"
+            android:layout_width="88dp"
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="@string/str_agent_activity_test_now"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:sCornersRadius="18dp"
+            app:sSolidColor="#2F6BFF"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
