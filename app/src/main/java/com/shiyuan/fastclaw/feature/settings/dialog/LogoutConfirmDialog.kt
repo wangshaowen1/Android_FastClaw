@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.settings
+package com.shiyuan.fastclaw.feature.settings.dialog
 
 import android.view.Gravity
 import androidx.fragment.app.FragmentManager
