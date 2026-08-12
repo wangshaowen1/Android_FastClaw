@@ -47,6 +47,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         switch (resp.getType()) {
             case ConstantsAPI.COMMAND_PAY_BY_WX:
                 Intent intent = new Intent(WXPay.WX_PAY_RESULT_RECEIVER_ACTION);
+                intent.setPackage(getPackageName());
                 intent.putExtra("result", resp.errCode);
                 sendBroadcast(intent);
                 finish();
