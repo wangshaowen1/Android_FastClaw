@@ -122,7 +122,7 @@ class SettingsActivity : BaseViewModelActivity<ActivitySettingsBinding, Settings
             R.id.rlLogOut -> {
                 if( User.get().isVisitor){
                     // 登录
-                    AppNavigator.checkLoginIntercepted(true)
+                    AppNavigator.checkLoginIntercepted(false)
                 }else{
                     showConfirmLogoutDialog()
                 }

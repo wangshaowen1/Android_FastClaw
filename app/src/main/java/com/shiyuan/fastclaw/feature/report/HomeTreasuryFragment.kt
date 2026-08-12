@@ -102,13 +102,13 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
     }
 
     private fun onCompanyCardClick() {
-        if (AppNavigator.checkLoginIntercepted(true,loginSource = BAODIAN_TAB_COMPANY_CHECK)) return
+        if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_COMPANY_CHECK)) return
         FlowEventBus.postSync(Events.CompanyInterviewEvent(0))
         FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
     }
 
     private fun onMeasureCardClick() {
-        if (AppNavigator.checkLoginIntercepted(true,loginSource = BAODIAN_TAB_RESUME_TEST)) return
+        if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_RESUME_TEST)) return
         EventManager.onAppTrack(KLX_CLICK_RESUME_TEST,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
         SimpleBrowserActivity.launch(
             requireActivity(),
@@ -118,7 +118,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
     }
 
     private fun onSalaryCardClick() {
-        if (AppNavigator.checkLoginIntercepted(true,loginSource = BAODIAN_TAB_SALARY_TEST)) return
+        if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_SALARY_TEST)) return
         EventManager.onAppTrack(KLX_CLICK_SALARY_TEST,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
         SimpleBrowserActivity.launch(
             requireActivity(),
@@ -128,13 +128,13 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
     }
 
     private fun onInterviewCardClick() {
-        if (AppNavigator.checkLoginIntercepted(true,loginSource = BAODIAN_TAB_MOCK_INTERVIEW)) return
+        if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_MOCK_INTERVIEW)) return
         FlowEventBus.postSync(Events.CompanyInterviewEvent(1))
         FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
     }
 
     private fun onPackageCardClick() {
-        if (AppNavigator.checkLoginIntercepted(true,loginSource = BAODIAN_TAB_INTERVIEW_PASS)) return
+        if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_INTERVIEW_PASS)) return
           EventManager.onAppTrack(KLX_CLICK_INTERVIEW_PASS,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
           mRealVM.queryInterviewPassPackageResumeStatus()
     }

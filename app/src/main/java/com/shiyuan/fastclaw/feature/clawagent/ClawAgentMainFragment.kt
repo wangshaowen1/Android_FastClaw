@@ -801,7 +801,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         super.onClick(view, data)
         when (view.id) {
             R.id.iv_send -> { //发送消息
-                if (AppNavigator.checkLoginIntercepted(true)) {
+                if (AppNavigator.checkLoginIntercepted(false)) {
                     showMessage("请先登录")
                     return
                 }

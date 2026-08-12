@@ -79,7 +79,7 @@ class HomeFragment :
         super.onClick(view, data)
         when (view.id) {
             R.id.btnUploadResume -> {
-               if(!AppNavigator.checkLoginIntercepted(true)){
+               if(!AppNavigator.checkLoginIntercepted(false)){
                    val mainActivity = activity as? MainActivity
                    mainActivity?.switchToTab(1)
                }

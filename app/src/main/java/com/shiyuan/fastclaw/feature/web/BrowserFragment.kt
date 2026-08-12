@@ -387,7 +387,7 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
 
     private fun registerHandle() {
         bridge?.apply {
-            registerHandler("login") { _, _ -> AppNavigator.checkLoginIntercepted(true) }
+            registerHandler("login") { _, _ -> AppNavigator.checkLoginIntercepted(false) }
             registerHandler("city") { _, jsCallback ->
                 if (!IntentUtils.isLocationServiceEnable(mActivity)) {
                     IntentUtils.startOpenGPSSetting(mActivity)

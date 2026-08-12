@@ -181,7 +181,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
             binding.bannerView.create(imageList)
         }
         binding.llViewReport.setOnSingleClickListener {
-            if (!AppNavigator.checkLoginIntercepted(true)) {
+            if (!AppNavigator.checkLoginIntercepted(false)) {
                 //跳转
                 InterviewReportActivity.start(requireActivity())
             }
@@ -207,7 +207,7 @@ class HomeReportFragment : BaseViewModelFragment<FragmentHomeReportBinding, Home
         super.onClick(view, data)
         when (view.id) {
             R.id.rl_generate -> {
-                if (!AppNavigator.checkLoginIntercepted(true)) {
+                if (!AppNavigator.checkLoginIntercepted(false)) {
                     //跳转
                     mRealVM.queryLatestResume()
                 }

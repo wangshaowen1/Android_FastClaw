@@ -513,7 +513,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
                     super.onBackPressed()
                 }
             }
-            registerHandler("login") { _, _ -> AppNavigator.checkLoginIntercepted(true) }
+            registerHandler("login") { _, _ -> AppNavigator.checkLoginIntercepted(false) }
             registerHandler("city") { _, jsCallback ->
                 if (!IntentUtils.isLocationServiceEnable(this@SimpleBrowserActivity)) {
                     IntentUtils.startOpenGPSSetting(this@SimpleBrowserActivity)
