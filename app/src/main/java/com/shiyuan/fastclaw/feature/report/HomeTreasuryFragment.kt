@@ -112,8 +112,8 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         EventManager.onAppTrack(KLX_CLICK_RESUME_TEST,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
         SimpleBrowserActivity.launch(
             requireActivity(),
-            Constants.DIAGNOSIS_URL,
-            title = getString(R.string.home_treasury_resume_check)
+            Constants.DIAGNOSIS_URL/*,
+            title = getString(R.string.home_treasury_resume_check)*/
         )
     }
 

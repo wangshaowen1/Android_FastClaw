@@ -875,7 +875,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             JobAgentModuleData.TYPE_RESUME_REJECTION_ANALYSIS -> {
                 if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_RESUME_TEST)) {
                     EventManager.onAppTrack(KLX_CLICK_RESUME_TEST,mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
-                    SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL, title = getString(R.string.home_treasury_resume_check))
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.DIAGNOSIS_URL/*, title = getString(R.string.home_treasury_resume_check)*/)
                 }
             }
             JobAgentModuleData.TYPE_SALARY_VALUATION -> {

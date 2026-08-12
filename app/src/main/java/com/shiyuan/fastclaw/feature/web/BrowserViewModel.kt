@@ -48,7 +48,7 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
     val mToolbarVM by lazy {
         ToolbarViewModel(
             navigationAction = { back() },
-            navigationDrawable = if (darkStyle) R.drawable.icon_back_left.getDrawable() else R.drawable.ic_nav_back_black.getDrawable(),
+            navigationDrawable = if (darkStyle) R.drawable.icon_back_left.getDrawable() else R.drawable.icon_back_left.getDrawable(),
             title = title,
             titleColor = if (darkStyle) R.color.color_1a1a1a.getResColor() else R.color.color_121212.getResColor(),
             background = if (darkStyle) Color.TRANSPARENT else Color.WHITE
