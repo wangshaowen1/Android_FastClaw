@@ -151,7 +151,7 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
                     onUploadClickListener = { itemData -> onUploadClickAction(itemData, false) }
                     onDefaultClickListener = { item, action, queueId -> onDefaultActionClickAction(item, action, queueId) }
                 }
-            }) { h, item -> h.bind(item, items.lastOrNull { it.messageType != TYPE_ACTIVITY_SALARY }?.id == item.id) }
+            }) { h, item -> h.bind(item, items.lastOrNull { !it.isLastIgnoreItem() }?.id == item.id) }
         // 活动测薪资卡片
         register(TYPE_ACTIVITY_SALARY,
             { i, p ->
@@ -418,9 +418,6 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         typewriterDisplayedLengthMap[item.id] = length.coerceIn(0, contentLength)
     }
 
-    private fun ClawAgentMessageInfo.isTypewriterItem(): Boolean =
-        messageType == TYPE_AGENT_TEXT || messageType == TYPE_AGENT_THINK
-
     private inline fun <VH : RecyclerView.ViewHolder> register(
         itemType: Int,
         crossinline create: (inflater: LayoutInflater, parent: ViewGroup) -> VH,
@@ -436,7 +433,25 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         })
     }
 
-    private class MessageDiffCallback(private val oldList: List<ClawAgentMessageInfo>, private val newList: List<ClawAgentMessageInfo>, ) : DiffUtil.Callback() {
+    /** 只有 Agent 普通文本和思考中文案需要记录打字机进度，其他卡片直接完整展示。 */
+    private fun ClawAgentMessageInfo.isTypewriterItem(): Boolean =
+        messageType == TYPE_AGENT_TEXT || messageType == TYPE_AGENT_THINK
+
+    /** 这些卡片的展示依赖“是否列表最后一条”，位置变化时也需要重新 bind。 */
+    private fun ClawAgentMessageInfo.hasLastStateItem(): Boolean {
+        return messageType == TYPE_WELCOME
+                || messageType == TYPE_PENDING_CONFIRM
+                || messageType == TYPE_UPLOAD_WAIT
+                || messageType == TYPE_UPLOAD_FAILED
+                || messageType == TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
+    }
+
+    /** 这些类型不参与“是否最后一条业务卡”的判断。 */
+    private fun ClawAgentMessageInfo.isLastIgnoreItem(): Boolean {
+        return messageType == TYPE_ACTIVITY_SALARY
+    }
+
+    private inner class MessageDiffCallback(private val oldList: List<ClawAgentMessageInfo>, private val newList: List<ClawAgentMessageInfo>, ) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = oldList.size
 
         override fun getNewListSize(): Int = newList.size
@@ -449,22 +464,13 @@ class ClawAgentMsgAdapter : BaseMultiItemAdapter<ClawAgentMessageInfo>() {
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             val oldItem = oldList[oldItemPosition]
             val newItem = newList[newItemPosition]
-            if (oldItem.hasLastItemState()) {
+            if (oldItem.hasLastStateItem()) {
                 // 部分卡片的按钮显示依赖“是否列表最后一条”，位置变化时内容没变也要刷新。
-                val wasLastItem = oldList.lastOrNull { it.messageType != TYPE_ACTIVITY_SALARY }?.id == oldItem.id
-                val isLastItem = newList.lastOrNull { it.messageType != TYPE_ACTIVITY_SALARY }?.id == newItem.id
+                val wasLastItem = oldList.lastOrNull { !it.isLastIgnoreItem() }?.id == oldItem.id
+                val isLastItem = newList.lastOrNull { !it.isLastIgnoreItem() }?.id == newItem.id
                 if (wasLastItem != isLastItem) return false
             }
             return oldItem == newItem
-        }
-
-        /** 这些卡片的展示依赖“是否列表最后一条”，位置变化时也需要重新 bind。 */
-        private fun ClawAgentMessageInfo.hasLastItemState(): Boolean {
-            return messageType == TYPE_WELCOME
-                    || messageType == TYPE_PENDING_CONFIRM
-                    || messageType == TYPE_UPLOAD_WAIT
-                    || messageType == TYPE_UPLOAD_FAILED
-                    || messageType == TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
         }
     }
 

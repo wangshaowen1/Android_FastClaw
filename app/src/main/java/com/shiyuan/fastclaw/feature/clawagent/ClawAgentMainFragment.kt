@@ -668,7 +668,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 // 首次加载直接贴底；新增消息用平滑滚动。流式内容更新不重复触发滚动，避免 srlMsg 抖动。
                 scrollToBottom(shouldSmoothScroll)
             }
-            refreshPresetActivityCard()
+            refreshActivityCard()
         }
         // 控制下拉刷新，enterSession请求错误 or 数据有误开启下拉刷新，否则关闭
         mRealVM.hasCanRefresh.observe(viewLifecycleOwner) { hasMore ->
@@ -679,7 +679,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             actionAdapter.submitList(modules.filter { item -> ClawQuickActionAdapter.isSupported(item.reportType) })
         }
         mRealVM.activityStatus.observe(viewLifecycleOwner) {
-            refreshPresetActivityCard()
+            refreshActivityCard()
         }
         mRealVM.streamError.observe(viewLifecycleOwner) { e ->
             e ?: return@observe
@@ -995,14 +995,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     }
 
     /** 活动状态返回后，只刷新“欢迎卡/活动卡”这类本地预置列表，避免覆盖真实聊天消息。 */
-    private fun refreshPresetActivityCard() {
+    private fun refreshActivityCard() {
         val currentList = mRealVM.messageList.value.orEmpty()
-        val canUpdate = currentList.firstOrNull()?.messageType == ClawAgentMsgAdapter.TYPE_WELCOME &&
-                currentList.all { it.messageType in listOf(ClawAgentMsgAdapter.TYPE_WELCOME, ClawAgentMsgAdapter.TYPE_ACTIVITY_SALARY) }
-        if (!canUpdate) return
+        // 只有当前列表还停留在纯欢迎卡状态时，才允许追加本地活动卡；已有真实聊天消息时不改列表。
+        if (currentList.size != 1 || currentList.firstOrNull()?.messageType != ClawAgentMsgAdapter.TYPE_WELCOME) return
+
         val status = mRealVM.activityStatus.value
+        // 目前接口只下发测薪资活动，必须同时满足开关开启和活动类型匹配才展示。
+        val showActivityCard = status?.enabled == true && status.reportType == ActivityStatusData.REPORT_TYPE_SALARY_VALUATION
         val targetList = insertPreCard().toMutableList()
-        if (status?.enabled == true && status.reportType == ActivityStatusData.REPORT_TYPE_SALARY_VALUATION) {
+        if (showActivityCard) {
+            // 活动卡是本地预置卡，用固定 id 避免重复刷新时生成多张相同卡片。
             targetList.add(ClawAgentMessageInfo(
                 id = "-activity-salary",
                 messageType = ClawAgentMsgAdapter.TYPE_ACTIVITY_SALARY,
@@ -1011,6 +1014,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 metaData = GsonUtils.toJson(ActivityPayloadBean(activityType = ActivityPayloadBean.TYPE_SALARY)),
             ))
         }
+        // 目标列表没变化时不重复提交，避免 RecyclerView 做无意义刷新。
         if (currentList != targetList) mRealVM.hardPreMsgListCard(targetList)
     }
 
