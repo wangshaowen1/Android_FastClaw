@@ -104,8 +104,9 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
         }
         userId = User.get().id
-        //初始化
-        onAgreePolicy()
+        //初始化  调用init方法，要求传入当前前台的Activity 所以放到 MainActivity (已经同意过隐私协议)
+        AdsManager.initAdsReporter(this, BuildConfig.DEBUG)
+        waitApiSecurityInit()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (User.get().requestNotificationsPermissionEnable) {
                 binding.root.postDelayed({
@@ -418,14 +419,5 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             return true
         }
         return super.onKeyDown(keyCode, event)
-    }
-
-
-    fun onAgreePolicy() {
-        Config.get().markAppOpenedWithNotify()
-        AdsManager.initAdsReporter(this,BuildConfig.DEBUG)
-        App.instance.initSdkAfterAgreeLicense()
-        //遍历查询是否初始化完成
-        waitApiSecurityInit()
     }
 }

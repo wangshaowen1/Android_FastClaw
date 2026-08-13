@@ -117,6 +117,8 @@ android {
         buildConfigField "String", "DATANEXUS_USER_ACTION_SET_ID", '""'
         buildConfigField "String", "DATANEXUS_APP_SECRET_KEY", '""'
         buildConfigField "boolean", "ENABLE_DATANEXUS", "false"
+        // imkey
+        buildConfigField "String", "NIM_APP_KEY", '""'
 
         buildConfigField "boolean", "DATANEXUS_ANID_ENABLE", "true"
         buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-b4c3df125fee41c6a83135074b12a8b6"'
@@ -349,7 +351,7 @@ dependencies {
     implementation rootProject.ext.modules.ucrop.gav
     implementation rootProject.ext.modules.mvchelper.gav
     implementation rootProject.ext.modules.umeng.gav
-   /* implementation rootProject.ext.modules.imsdk.gav*/
+    implementation rootProject.ext.modules.imsdk.gav
     implementation 'com.tencent.bugly:crashreport:latest.release'
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
     implementation 'com.github.gzu-liyujiang:Android_CN_OAID:4.2.4'

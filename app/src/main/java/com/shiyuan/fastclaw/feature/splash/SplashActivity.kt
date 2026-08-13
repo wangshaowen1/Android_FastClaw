@@ -9,10 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
 import com.shiyuan.fastclaw.App
-import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Config
-import com.shiyuan.fastclaw.core.manager.AdsManager
 import com.shiyuan.fastclaw.core.manager.ULinkManager
 import com.shiyuan.fastclaw.databinding.ActivitySplashBinding
 import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
@@ -85,8 +83,7 @@ class SplashActivity : BaseViewModelActivity<ActivitySplashBinding, SplashViewMo
     fun onPolicyAgreed() {
         if (Config.get().isFirstOpenApp) {
             Config.get().markAppOpenedWithNotify()
-            AdsManager.initAdsReporter(this,BuildConfig.DEBUG)
-           App.instance.initSdkAfterAgreeLicense()
+            App.instance.initSdkAfterAgreeLicense()
         }
         mRealVM.onPolicyAgreed()
     }
