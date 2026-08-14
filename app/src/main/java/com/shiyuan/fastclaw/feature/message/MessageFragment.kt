@@ -3,7 +3,6 @@ package com.shiyuan.fastclaw.feature.message
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelFragment
 import com.shiyuan.fastclaw.databinding.FragmentMessageBinding
-import com.shiyuan.fastclaw.feature.clawagent.ClawAgentMsgAdapter
 
 class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageViewModel>() {
 
@@ -49,14 +48,14 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
      */
     override fun onResume() {
         super.onResume()
-        mRealVM.setPageActive(true)
+        mRealVM.setPageState(true)
     }
 
     /**
      * 页面不可见时取消消息刷新，避免后台任务继续回写页面。
      */
     override fun onPause() {
-        mRealVM.setPageActive(false)
+        mRealVM.setPageState(false)
         super.onPause()
     }
 }

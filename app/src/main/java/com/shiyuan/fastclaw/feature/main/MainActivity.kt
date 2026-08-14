@@ -24,6 +24,7 @@ import com.nhsd.basic.ext.switchFragment
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.ext.formatMessageNum
 import com.shiyuan.fastclaw.common.permissions.requestRxPermissions
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
@@ -144,6 +145,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     private fun initialization() {
         observeEvents()
         initView()
+        initObserve()
         //App检测更新
         checkUpgrade()
         //添加虾分等等
@@ -203,6 +205,23 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             3 -> binding.mrg.check(R.id.rbMine)
             else -> binding.mrg.check(R.id.rbHome)
         }
+    }
+
+    /**
+     * 订阅主界面状态变化，保持底部消息 Tab 红点与 IM 未读总数同步。
+     */
+    private fun initObserve() {
+        mRealVM.imUnreadCount.observe(this) { count ->
+            updateMessageCount(count)
+        }
+    }
+
+    /**
+     * 更新消息 Tab 未读红点，0 条时隐藏，超过 99 条按公共消息数量格式展示。
+     */
+    private fun updateMessageCount(count: Int) {
+        binding.sbMessageCount.text = count.formatMessageNum()
+        binding.sbMessageCount.visibility = if (count > 0) View.VISIBLE else View.GONE
     }
 
 
@@ -389,12 +408,15 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
             }
             on<Events.UserChangedEvent> { event ->
                 if (event.eventType == Events.UserChangedEvent.TOKEN_EXPIRED) {
+                    mRealVM.clearImUnreadCount()
                     AppNavigator.forceLogoutAndLogin()
                 } else {
                     mRealVM.fetchUserInfo()
                     if (User.get().isLogged) {
+                        mRealVM.refreshImData()
                         //displayPopUpBox(type = MainBulletFrameEnum.COMPLETE_PERSONAL_INFO)
                     } else {
+                        mRealVM.clearImUnreadCount()
                         lifecycleScope.launch {
                             delay(100)
                             if (isActive) {

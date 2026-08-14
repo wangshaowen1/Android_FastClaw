@@ -8,6 +8,8 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.tulele.im.ImSession
+import com.tulele.im.conversation.ConversationListener
+import com.tulele.im.conversation.IConversationManager
 import com.tulele.im.entity.Conversation
 import com.tulele.im.entity.ConversationType
 import com.tulele.im.entity.MessageType
@@ -16,7 +18,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
+class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListener {
 
     val messageList = MutableLiveData<List<MessageListItem>>(emptyList())
     val isEmpty = ObservableBoolean(true)
@@ -25,26 +27,35 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
     private val conversationManager get() = ImSession.get().getConversationManager()
     private val userManager get() = ImSession.get().getUserManager()
     private var loadJob: Job? = null
-    private var pageActive = false
+    private var pageState = false
+    private var registerConversationManager: IConversationManager? = null
 
     /**
      * 同步页面可见状态，页面不可见时取消本轮会话加载，避免后台继续刷新 UI。
      */
-    fun setPageActive(active: Boolean) {
-        pageActive = active
+    fun setPageState(active: Boolean) {
+        if (pageState == active) return
+        pageState = active
         if (active) {
-            refreshMessages()
+            registerConversationListener()
+            refreshVisibleData()
         } else {
-            loadJob?.cancel()
-            loadJob = null
+            cancelLoadJob()
         }
+    }
+
+    /**
+     * 刷新当前消息页的 IM 会话与后端互动数据。
+     */
+    fun refreshVisibleData() {
+        getConversations()
     }
 
     /**
      * 拉取 IM 本地会话并映射为消息列表 UI 数据，SDK 未就绪或资料失败时降级为空态。
      */
-    fun refreshMessages() {
-        if (!pageActive) return
+    fun getConversations() {
+        if (!pageState) return
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             isLoading.set(true)
@@ -70,11 +81,11 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
                         unreadCount = conversation.unreadCount,
                     )
                 }
-                publishItems(items)
+                updateMessageList(items)
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
-                publishItems(emptyList())
+                updateMessageList(emptyList())
             } finally {
                 isLoading.set(false)
             }
@@ -99,7 +110,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
      * 查询 IM SDK 的本地会话，未登录或 SDK 查询失败都按空列表处理，避免消息 Tab 崩溃。
      */
     private suspend fun queryImConversations(): List<Conversation>? {
-        if (!runCatching { AccountHelper.isLogged() }.getOrDefault(false)) return emptyList()
+        if (!AccountHelper.isLogged()) return emptyList()
         return try {
             conversationManager.queryConversations(listOf(MessageType.notification))
         } catch (exception: CancellationException) {
@@ -123,7 +134,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 合并普通会话与预留入口类型，并同步空态开关。
      */
-    private fun publishItems(conversations: List<MessageConversationItem>) {
+    private fun updateMessageList(conversations: List<MessageConversationItem>) {
         val markedUnsuitable = queryMarkedUnsuitableEntry()
         val items = buildList {
             addAll(conversations)
@@ -158,11 +169,66 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * 绑定 IM 会话列表监听，manager 未变化时跳过，避免页面恢复时重复注册。
+     */
+    private fun registerConversationListener() {
+        val manager = conversationManager
+        if (registerConversationManager === manager) return
+        registerConversationManager?.removeConversationListener(this)
+        manager.addConversationListener(this)
+        registerConversationManager = manager
+    }
+
+    /**
+     * 移除已绑定的 IM 会话监听，避免 ViewModel 销毁后继续持有回调。
+     */
+    private fun removeConversationListener() {
+        registerConversationManager?.removeConversationListener(this)
+        registerConversationManager = null
+    }
+
+    /**
+     * IM 首次加载会话列表后刷新消息 Tab，确保登录后会话回填到页面。
+     */
+    override fun onConversationsLoaded(conversations: List<Conversation>?) {
+        refreshVisibleData()
+    }
+
+    /**
+     * 会话列表新增或更新时刷新消息 Tab，覆盖新消息、撤回和最近会话排序变化。
+     */
+    override fun onConversationsChanged(conversations: List<Conversation>) {
+        refreshVisibleData()
+    }
+
+    /**
+     * 会话被删除时刷新消息 Tab，避免已删除会话继续停留在列表中。
+     */
+    override fun onConversationDeleted(conversation: Conversation) {
+        refreshVisibleData()
+    }
+
+    /**
+     * 会话状态变化时刷新消息 Tab，覆盖未读数、发送状态等局部状态变化。
+     */
+    override fun onConversationStateChanged(conversation: Conversation) {
+        refreshVisibleData()
+    }
+
+    /**
+     * 取消当前会话加载任务并清空引用，避免旧任务回填列表。
+     */
+    private fun cancelLoadJob() {
+        loadJob?.cancel()
+        loadJob = null
+    }
+
+    /**
      * ViewModel 销毁时取消未完成的会话加载任务。
      */
     override fun onDestroy() {
-        loadJob?.cancel()
-        loadJob = null
+        removeConversationListener()
+        cancelLoadJob()
         super.onDestroy()
     }
 }

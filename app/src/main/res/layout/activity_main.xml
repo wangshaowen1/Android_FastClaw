@@ -184,7 +184,8 @@
                     app:sSolidColor="@color/color_fb415e"
                     app:sStrokeColor="@color/white"
                     app:sStrokeWidth="1dp"
-                    android:text="99"
+                    android:visibility="gone"
+                    tools:text="99"
                     tools:visibility="visible" />
 
 
