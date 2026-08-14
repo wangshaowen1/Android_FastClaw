@@ -1,0 +1,4 @@
+interface:
+  display_name: "MasterGo 原型读取"
+  short_description: "安全读取 MasterGo 原型并整理真实产品需求与页面状态"
+  default_prompt: "使用 $mastergo-prototype-docs 读取 MasterGo 原型事实；需要写项目文档时再交给 $write-project-docs。"

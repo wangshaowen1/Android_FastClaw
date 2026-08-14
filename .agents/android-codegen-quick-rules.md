@@ -23,7 +23,7 @@
 
 ## 场景路由(命中才读,不连锁)
 
-只按本次实际触达范围读取对应 skill,不因为相关词出现在上下文里就连锁读取。用户已明确目标页面、接口或弹窗且只是局部修改时，即使同时出现多个场景词，也优先走目标代码 + quick rules 的轻量路径。完整路由表与组合场景见 `android-codegen-scenarios.md`。最常用:
+只按本次实际触达范围读取对应 skill,不因为相关词出现在上下文里就连锁读取。用户已明确目标页面、接口或弹窗且只是局部修改时，即使同时出现多个场景词，也优先走目标代码 + quick rules 的轻量路径。单个 skill 的准确触发与排除条件只以其 `SKILL.md` description 为准；组合场景和高风险补充见 `android-codegen-scenarios.md`。最常用:
 
 - 新页面骨架 → `skills/android-feature-scaffold`
 - 页面稳定状态、互斥区域、Observer 批量写 View → `skills/android-databinding-ui`

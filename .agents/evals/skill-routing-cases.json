@@ -1,0 +1,321 @@
+{
+  "version": 1,
+  "purpose": "验证任务档位与 Skill 触发边界。普通开发任务不读取本文件。",
+  "cases": [
+    {
+      "id": "api-add-full-chain",
+      "category": "positive",
+      "prompt": "新增作品详情接口，并完成 ApiService、响应模型、Repository 和 ViewModel 调用链路。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-api-request"],
+      "forbidden_skills": [],
+      "reason": "新增接口且跨越两层以上。"
+    },
+    {
+      "id": "async-polling-task",
+      "category": "positive",
+      "prompt": "创建生成任务后轮询状态，页面销毁时取消，并防止重复启动轮询。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-async-task"],
+      "forbidden_skills": [],
+      "reason": "涉及轮询、取消和重复启动保护。"
+    },
+    {
+      "id": "list-create-databinding",
+      "category": "positive",
+      "prompt": "新增一个非分页 RecyclerView 列表，包括 DataBinding item、ItemVM、Adapter 和点击转发。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-databinding-list"],
+      "forbidden_skills": [],
+      "reason": "新增完整非分页 DataBinding 列表链路。"
+    },
+    {
+      "id": "databinding-page-states",
+      "category": "positive",
+      "prompt": "把页面的加载、空数据、错误和内容四个互斥区域改成由 ViewModel 状态和 XML DataBinding 驱动。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-databinding-ui"],
+      "forbidden_skills": [],
+      "reason": "涉及多个稳定互斥区域和页面状态绑定。"
+    },
+    {
+      "id": "dialog-create-result",
+      "category": "positive",
+      "prompt": "新增一个 DialogFragment，处理 arguments、键盘、确认结果回调和关闭时机。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-dialog"],
+      "forbidden_skills": [],
+      "reason": "新增弹窗并涉及参数、结果和生命周期。"
+    },
+    {
+      "id": "scaffold-new-page",
+      "category": "positive",
+      "prompt": "新增账号安全页，需要 Activity、ViewModel、XML、启动入口和参数读取骨架。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-feature-scaffold"],
+      "forbidden_skills": [],
+      "reason": "新增完整页面骨架。"
+    },
+    {
+      "id": "figma-full-page",
+      "category": "positive",
+      "prompt": "按 Figma 完整还原一个 Android XML 页面，包含复杂图片资产和整页视觉校准，快速规则不够用。",
+      "expected_tier": "figma",
+      "expected_skills": ["android-figma-xml-ui"],
+      "forbidden_skills": [],
+      "reason": "明确要求整页精确还原且快速规则无法覆盖。"
+    },
+    {
+      "id": "navigation-add-deep-link",
+      "category": "positive",
+      "prompt": "新增一个 deep link host，接入 AppRouter 分发，并在进入目标页前增加登录拦截。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-navigation-events"],
+      "forbidden_skills": [],
+      "reason": "修改公共路由分发和登录拦截。"
+    },
+    {
+      "id": "paging-create-chain",
+      "category": "positive",
+      "prompt": "新增 Paging3 列表，包括 PagingSource、PagingDataAdapter、LoadState、空状态和 retry。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-paging-state-ui"],
+      "forbidden_skills": [],
+      "reason": "新增完整分页链路和分页状态。"
+    },
+    {
+      "id": "tab-create-viewpager",
+      "category": "positive",
+      "prompt": "新增多 Tab + ViewPager2 Fragment 容器，并处理 Tab 与页面双向同步和 Fragment 列表稳定性。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-tab-viewpager"],
+      "forbidden_skills": [],
+      "reason": "新增完整多 Tab Fragment 容器。"
+    },
+    {
+      "id": "docs-update-overview",
+      "category": "positive",
+      "prompt": "整理 docs/README.md 开发者导览，并核对架构文档与当前代码是否一致。",
+      "expected_tier": "docs",
+      "expected_skills": ["write-project-docs"],
+      "forbidden_skills": [],
+      "reason": "属于项目导览和文档一致性检查。"
+    },
+    {
+      "id": "api-field-only",
+      "category": "negative",
+      "prompt": "已有完整接口链路，只给现有响应模型补一个服务端已经返回的可空字段。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-api-request"],
+      "reason": "明确字段和调用位置的单点修改走接口快路径。"
+    },
+    {
+      "id": "async-one-shot-request",
+      "category": "negative",
+      "prompt": "把一次性接口请求的 loading 文案改得更清楚。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-async-task"],
+      "reason": "不涉及长任务或取消逻辑。"
+    },
+    {
+      "id": "list-item-copy",
+      "category": "negative",
+      "prompt": "只修改现有列表 item 的标题文案和文字颜色。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-databinding-list"],
+      "reason": "已有列表的局部文案和样式不加载完整列表 Skill。"
+    },
+    {
+      "id": "databinding-playback-progress",
+      "category": "negative",
+      "prompt": "修复播放器进度条逐帧更新不流畅的问题。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-databinding-ui"],
+      "reason": "播放器即时进度不属于稳定页面状态绑定。"
+    },
+    {
+      "id": "dialog-button-copy",
+      "category": "negative",
+      "prompt": "把现有确认弹窗的按钮文案从“确定”改成“继续”。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-dialog"],
+      "reason": "已有弹窗的单一文案修改走轻量路径。"
+    },
+    {
+      "id": "scaffold-existing-click",
+      "category": "negative",
+      "prompt": "在已有页面给一个按钮补上现成的点击事件。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-feature-scaffold"],
+      "reason": "已有页面的局部事件绑定不需要页面骨架。"
+    },
+    {
+      "id": "figma-screenshot-bug",
+      "category": "negative",
+      "prompt": "我附了一张截图说明按钮错位，只排查原因并检查现有 XML，不要重做页面。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-figma-xml-ui"],
+      "reason": "截图只是问题证据，不是完整 UI 还原需求。"
+    },
+    {
+      "id": "navigation-known-start",
+      "category": "negative",
+      "prompt": "在已有点击事件里调用目标 Activity 现成的 start 方法，并补一个明确参数。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-navigation-events"],
+      "reason": "单个已知目标跳转和补参只查同类代码。"
+    },
+    {
+      "id": "paging-plain-list",
+      "category": "negative",
+      "prompt": "新增一个数据一次性返回、不需要翻页的普通列表。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-databinding-list"],
+      "forbidden_skills": ["android-paging-state-ui"],
+      "reason": "非分页列表不得因为出现列表状态而加载 Paging Skill。"
+    },
+    {
+      "id": "tab-label-only",
+      "category": "negative",
+      "prompt": "只修改现有 Tab 的两个标题，并把默认 currentItem 改为 1。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-tab-viewpager"],
+      "reason": "文案和单次 currentItem 修改不加载完整 Tab Skill。"
+    },
+    {
+      "id": "docs-code-comment",
+      "category": "negative",
+      "prompt": "给这个 Kotlin 方法补一行解释参数含义的代码注释。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["write-project-docs"],
+      "reason": "代码注释不属于项目文档治理。"
+    },
+    {
+      "id": "combo-new-page-api",
+      "category": "combination",
+      "prompt": "新增反馈页面骨架，并为它新增一个贯穿 ApiService、Repository 和 ViewModel 的提交接口。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-feature-scaffold", "android-api-request"],
+      "forbidden_skills": [],
+      "reason": "同时新增页面骨架和跨层接口链路。"
+    },
+    {
+      "id": "combo-tab-paging",
+      "category": "combination",
+      "prompt": "新增多 Tab + ViewPager2 页面，每个 Fragment 都有独立 Paging3 数据和 LoadState。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-tab-viewpager", "android-paging-state-ui"],
+      "forbidden_skills": ["android-databinding-list"],
+      "reason": "容器与分页子页职责分开，分页列表不再加载普通列表 Skill。"
+    },
+    {
+      "id": "combo-api-async",
+      "category": "combination",
+      "prompt": "新增任务创建和状态查询两个接口，接入 Repository 与 ViewModel，并轮询到成功、失败或超时。",
+      "expected_tier": "standard",
+      "expected_skills": ["android-api-request", "android-async-task"],
+      "forbidden_skills": [],
+      "reason": "同时新增跨层接口和有退出条件的长任务。"
+    },
+    {
+      "id": "combo-figma-dialog",
+      "category": "combination",
+      "prompt": "按 Figma 精确实现一个全新的复杂 DialogFragment，包括资产导出、参数传递、键盘和结果回调。",
+      "expected_tier": "figma",
+      "expected_skills": ["android-figma-xml-ui", "android-dialog"],
+      "forbidden_skills": [],
+      "reason": "复杂视觉还原与弹窗生命周期都实际发生。"
+    },
+    {
+      "id": "ambiguous-list-refresh-bug",
+      "category": "ambiguous",
+      "prompt": "这个列表偶尔不刷新，先定位原因，不要重构。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-databinding-list", "android-paging-state-ui"],
+      "reason": "信息不足且只要求诊断，先读目标代码，不按关键词加载完整列表 Skill。"
+    },
+    {
+      "id": "ambiguous-interface-error",
+      "category": "ambiguous",
+      "prompt": "这个接口报错了，先帮我查一下原因。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["android-api-request", "android-async-task"],
+      "reason": "只要求诊断且没有跨层修改范围，先取证和定位。"
+    },
+    {
+      "id": "ambiguous-record-change",
+      "category": "ambiguous",
+      "prompt": "把这次按钮颜色调整简单记录一下。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["write-project-docs"],
+      "reason": "简单改动记录不进入长期项目文档。"
+    },
+    {
+      "id": "mastergo-read-only",
+      "category": "positive",
+      "prompt": "读取这个 MasterGo 原型链接，只整理目标页面、状态、文案和跳转，不修改代码或项目文档。",
+      "expected_tier": "review",
+      "expected_skills": ["mastergo-prototype-docs"],
+      "forbidden_skills": ["write-project-docs"],
+      "reason": "需要读取真实 MasterGo 原型，但本次只分析，不进入长期文档治理。"
+    },
+    {
+      "id": "mastergo-screenshot-only",
+      "category": "negative",
+      "prompt": "我只提供了一张普通页面截图，请检查现有按钮为什么错位，没有 MasterGo 链接。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["mastergo-prototype-docs", "android-figma-xml-ui"],
+      "reason": "截图只是局部问题证据，既不读取 MasterGo，也不触发完整视觉还原。"
+    },
+    {
+      "id": "combo-mastergo-project-docs",
+      "category": "combination",
+      "prompt": "读取这个 MasterGo 原型，把确认后的需求基线和复杂解决方案整理到当前 feature 文档；不要直接放进版本归档。",
+      "expected_tier": "docs",
+      "expected_skills": ["mastergo-prototype-docs", "write-project-docs"],
+      "forbidden_skills": [],
+      "reason": "MasterGo Skill 提供原型事实，项目文档 Skill 负责当前需求、解决方案和版本归档的正确落点。"
+    },
+    {
+      "id": "version-archive-lasting-decisions",
+      "category": "positive",
+      "prompt": "整理 V2.6.0 开发中无法从 Git 直接看懂的兼容、迁移和回滚决定，形成精简版本归档并更新文档索引。",
+      "expected_tier": "docs",
+      "expected_skills": ["write-project-docs"],
+      "forbidden_skills": [],
+      "reason": "明确要求把有长期维护价值的版本决定归档，属于项目文档治理。"
+    },
+    {
+      "id": "project-docs-not-preloaded",
+      "category": "ambiguous",
+      "prompt": "实现现有页面的按钮逻辑。项目中虽然已有架构和功能文档，但本次不需要项目背景，也不修改文档。",
+      "expected_tier": "quick",
+      "expected_skills": [],
+      "forbidden_skills": ["write-project-docs"],
+      "reason": "普通局部实现不因仓库存在项目文档而触发文档治理或预读 docs。"
+    },
+    {
+      "id": "combo-version-mastergo-api-docs",
+      "category": "combination",
+      "prompt": "读取 V2.6.0 的 MasterGo 原型，更新长期功能文档，并新增 ApiService、Repository 和 ViewModel 接口链路。",
+      "expected_tier": "standard",
+      "expected_skills": ["mastergo-prototype-docs", "write-project-docs", "android-api-request"],
+      "forbidden_skills": [],
+      "reason": "原型事实、长期文档和跨层接口实现由三个边界清晰的 Skill 分别负责，不需要版本总控 Skill。"
+    }
+  ]
+}

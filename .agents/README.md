@@ -16,7 +16,7 @@
 | `android-codegen-project-rules.md` | 项目识别、技术基线、目录结构、Base 类使用 |
 | `android-codegen-architecture-rules.md` | ViewModel、Repository、API 与模型、异步错误处理、业务注释 |
 | `android-codegen-xml-resource-rules.md` | XML/UI 写法、Resource Token 映射、资源与 drawable 命名 |
-| `android-codegen-scenarios.md` | 场景→skill 路由表、Room/SDK/多语言等高风险补充 |
+| `android-codegen-scenarios.md` | 多 Skill 组合，以及 Room、SDK、多语言等高风险补充 |
 | `android-codegen-checklist.md` | 完整审查 Checklist(仅整页生成/复杂改动/发布前用) |
 | `code-interface-directory.md` | 代码接口目录的重新扫描说明 |
 
@@ -34,9 +34,18 @@
 | `android-dialog` | 中心/底部弹窗、参数传递、结果回调 |
 | `android-navigation-events` | AppRouter、scheme/deep link、FlowEventBus、登录态 |
 | `android-figma-xml-ui` | Figma/截图到 XML 的完整精确还原 |
-| `write-project-docs` | 项目文档：docs 导览、架构、复杂功能、公共契约、审计与收敛 |
+| `mastergo-prototype-docs` | MasterGo 原型读取、本地 Cookie Jar 快速链路与需求提取 |
+| `write-project-docs` | 项目导览、架构/功能文档、版本归档、AI 读取规则与文档收敛 |
 
 每个 skill 文件夹的构成:`SKILL.md`(主体,所有工具都读)、`references/`(项目搜索索引/模板,命中且正文指向时按需读)、`agents/openai.yaml`(**仅 Codex/OpenAI 用的 agent 配置;Claude Code 与 Android Studio 跳过,不读**)。
+
+## 路由校验
+
+- `evals/skill-routing-cases.json` 保存应触发、不应触发、组合和模糊任务样例；普通开发任务不读取。
+- 修改任务档位、场景路由或 Skill description 后，用无历史上下文的新会话核对这些样例，再把实际误判补成回归样例。
+- `scripts/validate_agent_docs.py` 只检查确定性的文件结构、链接和样例覆盖，不代替真实 AI 路由验证。
+
+项目文档什么时候读取见 [`docs/README.md`](../docs/README.md)；本索引不复制那套规则。
 
 ## 项目记忆(`memory/`)
 
@@ -50,6 +59,6 @@
 - 通用语言规范、行业既定事实和“跟随最佳实践”之类无项目判别力的内容不做 skill；能由当前代码同类实现直接得出的写法也不重复展开。
 - 触发边界写在 `SKILL.md` 的 `description`；正文只保留执行时会改变实现选择的规则，详细项目索引按需放入 `references/`。
 - 每个 `references/` 文件必须由同目录 `SKILL.md` 直接链接并注明读取条件，避免二级跳转和默认全量读取。
-- 修改规则或 Skill 后运行 `powershell -ExecutionPolicy Bypass -File .agents/scripts/validate-agent-docs.ps1`，检查 `SKILL.md` BOM/frontmatter、元数据、reference 直链、注册表与本地 Markdown 链接。
+- 修改规则或 Skill 后，用 Python 3.9+ 运行 `.agents/scripts/validate_agent_docs.py`，检查 `SKILL.md` BOM/frontmatter、元数据、reference 直链、注册表、本地 Markdown 链接和路由样例覆盖。macOS/Linux 可用 `python3`，Windows 可用 `py -3` 或兼容入口 `powershell -ExecutionPolicy Bypass -File .agents/scripts/validate-agent-docs.ps1`。
 - 任何文档与当前分支代码不一致时,以当前代码同类实现为准。
 - 不写死复制来源项目的项目名、包名、scheme、语言目录或 SDK 名称。

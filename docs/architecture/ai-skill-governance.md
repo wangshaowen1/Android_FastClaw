@@ -2,7 +2,7 @@
 title: AI Skill 与规则治理架构
 type: architecture
 status: active
-last_verified: 2026-08-04
+last_verified: 2026-08-14
 ---
 
 # AI Skill 与规则治理架构
@@ -13,32 +13,23 @@ last_verified: 2026-08-04
 
 治理目标不是增加 Skill 数量，而是让 AI 用最少的读取成本命中足以正确完成任务的事实和决策。
 
-## 范围与非目标
+## 本文说明什么
 
-本文覆盖：
-
-- `AGENTS.md`、`.agents` 规则文档与场景 Skill 的职责分层。
-- Skill 的准入、触发颗粒度、正文和 references 边界。
-- API、Tab/ViewPager2、Paging 等本轮关键路由决策。
-- 团队维护这些规则时应保持的不变量。
-
-本文不负责：
-
-- 逐项解释所有 Android 类、页面、接口和资源。
-- 替代各 Skill 的具体实现规则。
-- 记录每次规则修改的版本流水账。
-- 教 AI 通用 Kotlin、Android 或软件工程常识。
+本文说明 `AGENTS.md`、`.agents` 规则和场景 Skill 如何分工，什么内容值得成为 Skill，以及团队怎样修改和验证路由。具体 Android 类、页面、接口和资源仍以当前代码和对应 Skill 为准；修改历史交给 Git，不在本文重复记录。
 
 ## 当前模型
 
-规则采用渐进披露模型：
+规则按任务需要逐层读取：
 
 ```text
 AGENTS.md 红线与任务档位
   → android-codegen-quick-rules.md 一级路由
-    → android-codegen-scenarios.md 组合场景
-      → 命中的 SKILL.md
-        → 必要时读取 references/
+    ├─ 局部任务 → 目标代码和必要资源
+    ├─ 单一标准场景 → 命中的 SKILL.md → 必要时读取 references/
+    └─ 组合或高风险场景 → android-codegen-scenarios.md → 命中的 SKILL.md
+
+需要项目背景时另走文档路由：
+docs/README.md → 首轮一份当前任务需要的文档 → 证据不足时再扩展
 ```
 
 | 层级 | 负责 | 不负责 |
@@ -46,10 +37,13 @@ AGENTS.md 红线与任务档位
 | `AGENTS.md` | 常驻红线、执行档位、读取优先级和输出边界 | 展开场景实现细节 |
 | `.agents/README.md` | 文件与 Skill 导航、维护原则 | 调度逻辑和重复规则正文 |
 | quick rules | 标准任务的一级分流和局部快路径 | 完整场景说明 |
-| scenarios | 多 Skill 组合和跨领域高风险补充 | 复制 Skill 正文 |
-| `SKILL.md` description | 判断何时触发、何时不触发 | 展开实现步骤 |
+| scenarios | 多 Skill 组合和跨领域高风险补充 | 维护单个 Skill 的完整触发边界 |
+| `SKILL.md` description | 单个 Skill 何时触发、何时不触发 | 展开实现步骤 |
 | `SKILL.md` 正文 | 会改变项目实现选择的规则 | 重复触发说明和行业常识 |
 | `references/` | 真实符号、能力边界和按需代码索引 | 默认加载的完整代码清单 |
+| `docs/README.md` | 开发者导览、项目文档索引和 AI 读取入口 | 普通代码任务的默认上下文 |
+| 文档读取规则 | 当前文档按任务选择，版本归档只在追溯历史时读取 | 替代任务路由或证明当前代码行为 |
+| `evals/skill-routing-cases.json` | 保存路由回归样例 | 普通开发任务的必读规则 |
 | `agents/openai.yaml` | Codex 展示信息和明确的 `$skill-name` 调用入口 | 通用规则正文 |
 
 ## Skill 准入标准
@@ -70,20 +64,22 @@ AGENTS.md 红线与任务档位
 
 准入判断的核心问题是：这条规则能否阻止一个具体且现实的错误。如果不能，优先不写。
 
-## 触发颗粒度
+## 如何判断是否加载 Skill
 
-触发范围必须同时写清正向场景和排除场景，避免关键词误触发完整 Skill。
+单个 Skill 的触发范围只写在其 description，同时写清应触发和不应触发的任务。quick rules 只保留档位、轻量路径和常用指针；scenarios 只说明多个 Skill 怎样组合，以及没有独立 Skill 的高风险场景。
 
-| 任务 | 读取策略 |
-| --- | --- |
-| 只改 Tab 文案、样式或一次 `currentItem` | 读取目标代码，不触发 Tab Skill |
-| 新增或重构多 Tab + ViewPager2 Fragment 容器 | 读取 `android-tab-viewpager` |
-| 多 Tab 且每个子页独立分页 | 读取 `android-tab-viewpager` 和 `android-paging-state-ui` |
-| 已有完整接口链路，只补字段、参数或单一调用点 | 走 quick rules 局部接口快路径 |
-| 新增接口、跨至少两层修改或调整错误语义 | 读取 `android-api-request` |
-| 只改弹窗文案、Toast 或局部样式 | 读取目标弹窗，不触发完整 Dialog Skill |
+修改任务档位、场景组合或 description 时，把正向、排除、组合和容易误判的任务写入 [`skill-routing-cases.json`](../../.agents/evals/skill-routing-cases.json)。普通开发任务不读取这些样例。多个 Skill 组合时，每个 Skill 只负责自己的状态所有权和风险边界，不因标题中出现相关词而连锁加载。
 
-多个 Skill 组合时，每个 Skill 只负责自己的状态所有权和风险边界，不因标题中出现相关词而连锁加载。
+## AI 什么时候读取项目文档
+
+Skill 负责“怎样做某类任务”，项目文档负责“当前项目已经确认了什么”。普通代码任务先看目标代码和命中的规则，不把 docs 全量装入上下文；只有任务需要项目背景、跨模块决定或稳定业务规则时，才从 [`docs/README.md`](../README.md) 选择首轮一份文档。
+
+- 当前文档：由导览或当前任务选中后读取，不填写 `ai_read`。
+- `history-only`：只用于版本比较、回归、迁移、回滚或追溯决定，不参与普通实现路由。
+
+会议纪要、团队复盘、经验分享和纯协作说明不属于项目文档，不进入 `docs`。尚未确认但会影响实现的内容放在对应功能文档的待确认事项中，并保持 `draft` 或未完成状态。
+
+链接只表示可以继续查找，不表示必须继续读取。版本归档只记录 Git 难以解释、又会影响后续维护的差异和原因；当前代码与 `active` 文档始终优先于归档。
 
 ## 关键决策
 
@@ -123,9 +119,7 @@ Tab 容器和分页子页具有不同的状态所有权：
 
 ### 收紧 API Skill
 
-完整 API Skill 只在以下场景触发：新增接口；新增、修改或审查 `ApiService`、model、Repository、ViewModel 中至少两层；调整 `response/request/requestWithLoading` 的错误语义。
-
-当前分支已有完整同类链路，且只补一个明确字段、参数或调用点时走局部快路径。这样保留跨层接口的完整约束，同时避免局部改动加载整份 API 手册。
+API Skill 区分跨层接口接入和已有链路中的局部修改，准确触发条件只以其 description 为准。这个边界让新增接口保留完整约束，同时避免单字段、参数或调用点修改加载整份 API 手册。
 
 ## 不变量与失败行为
 
@@ -143,11 +137,12 @@ Tab 容器和分页子页具有不同的状态所有权：
 | 常驻红线与档位 | [`AGENTS.md`](../../AGENTS.md) | 检查其他文档没有复制红线正文 |
 | 一级路由与接口快路径 | [`.agents/android-codegen-quick-rules.md`](../../.agents/android-codegen-quick-rules.md) | 用局部任务和标准任务分别检查命中集合 |
 | 组合场景 | [`.agents/android-codegen-scenarios.md`](../../.agents/android-codegen-scenarios.md) | 检查组合顺序和 Skill 职责没有重叠 |
+| 路由回归样例 | [`.agents/evals/skill-routing-cases.json`](../../.agents/evals/skill-routing-cases.json) | 用无历史上下文的新会话核对档位、应加载和不应加载的 Skill |
 | Skill 清单与维护原则 | [`.agents/README.md`](../../.agents/README.md) | 检查新增 Skill 是否通过准入标准 |
 | Tab/ViewPager2 | [`.agents/skills/android-tab-viewpager/`](../../.agents/skills/android-tab-viewpager/) | 对照 Adapter、指示器和 callback 的当前实现 |
 | Paging 边界 | [`.agents/skills/android-paging-state-ui/`](../../.agents/skills/android-paging-state-ui/) | 确认容器不持有子页分页状态 |
 | API 边界 | [`.agents/skills/android-api-request/`](../../.agents/skills/android-api-request/) | 对照 quick path 与跨层触发条件 |
-| 结构校验 | [`.agents/scripts/validate-agent-docs.ps1`](../../.agents/scripts/validate-agent-docs.ps1) | 修改规则或 Skill 后运行，无错误再提交 |
+| 结构校验 | [`.agents/scripts/validate_agent_docs.py`](../../.agents/scripts/validate_agent_docs.py) | 修改规则或 Skill 后用 Python 3.9+ 运行，无错误再提交 |
 
 ## 维护与验证
 
@@ -157,14 +152,17 @@ Tab 容器和分页子页具有不同的状态所有权：
 - 正文没有复制 `description` 的触发清单。
 - `agents/openai.yaml` 的 `default_prompt` 明确引用 `$skill-name`。
 - references 中的符号在当前分支真实存在，且没有机器绝对路径或来源项目业务路径。
-- quick rules、scenarios 和 Skill 之间没有互相矛盾的触发条件。
-- 运行 `powershell -ExecutionPolicy Bypass -File .agents/scripts/validate-agent-docs.ps1`，确认：
+- quick rules 只保留轻量路径和常用指针，scenarios 不再维护单个 Skill 的完整触发边界。
+- 路由样例覆盖每个 Skill 的应触发和不应触发任务，并至少包含组合与模糊任务。
+- 用 Python 3.9+ 运行 `.agents/scripts/validate_agent_docs.py`，确认：
   - `SKILL.md` 从首字节 `---` 开始，不含会导致发现失败的 UTF-8 BOM。
   - frontmatter 的 name/description、目录名和 `agents/openai.yaml` 一致，`default_prompt` 显式引用 `$skill-name`。
   - 每个 reference 由同目录 `SKILL.md` 直接链接，Skill 注册表与目录一致。
   - 本地 Markdown 链接有效，没有机器绝对路径。
+  - 路由样例格式有效，引用的 Skill 存在，每个 Skill 同时有正向和排除覆盖。
 
-校验脚本只验证确定性结构，不判断规则是否有业务价值。新增或保留规则仍需回答“能否阻止已知错误或提供当前项目无法从通用知识推出的索引”。
+校验脚本只验证确定性结构和样例覆盖，不判断 AI 是否真的路由正确。修改任务档位、场景组合或 description 后，还要用无历史上下文的新会话逐项或抽样执行路由样例；发现误判时先补回归样例，再调整规则。
+
+新增或保留规则仍需回答“能否阻止已知错误或提供当前项目无法从通用知识推出的索引”。
 
 Gradle 不用于验证文档结构；涉及真实代码行为时，只在用户明确要求后运行对应构建或测试。
-

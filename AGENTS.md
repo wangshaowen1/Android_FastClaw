@@ -10,10 +10,12 @@ Gradle 规则：默认不运行 Gradle，不申请 Gradle/网络权限做验证�
 - 项目基础/目录/Base 类：`.agents/android-codegen-project-rules.md`
 - 架构/API/异步：`.agents/android-codegen-architecture-rules.md`
 - XML/资源/命名：`.agents/android-codegen-xml-resource-rules.md`
-- 场景路由与高风险：`.agents/android-codegen-scenarios.md`
+- 组合场景与高风险：`.agents/android-codegen-scenarios.md`
 - 完整 Checklist：`.agents/android-codegen-checklist.md`
 - 场景 skill：`.agents/skills/*/SKILL.md`（每个 skill 只读 `SKILL.md` 与按需 `references/`；`agents/openai.yaml` 仅 Codex 用，Claude/Android Studio 跳过不读）
-- 项目文档治理：创建、重构、审计或更新 `docs/` 时，必须先完整读取 `.agents/skills/write-project-docs/SKILL.md`。
+- 项目文档治理：创建、更新、审计或收敛 `docs` 时，必须先完整读取 `.agents/skills/write-project-docs/SKILL.md`；新建或大幅重写时，只按 Skill 路由读取一个对应的 `references/` 模板，规范正文不在本文件重复维护。
+- 项目文档读取：普通代码任务不预读 `docs`；确需项目背景时，先从 `docs/README.md` 选中一份直接相关文档，再按证据扩展。`history-only` 归档只用于版本比较、回归、迁移、回滚或追溯决策。
+- 公共导航说明同步：`docs/README.md` 已介绍公共导航时，修改公共路由或 URL、推送跳转、入口拦截、主 Tab 或主要页面职责，应在同一次变更中更新该导览或其索引到的对应文档；普通页面内部跳转不触发。
 - 项目记忆：`.agents/memory/MEMORY.md`（语义/情节记忆索引，Codex 与 Claude Code 共享）。
   会话结束前，若本轮产生值得留存的判断或决策，主动写入对应记忆文件：
   语义记忆（稳定约定）更新 `.agents/memory/semantic/*.md`；

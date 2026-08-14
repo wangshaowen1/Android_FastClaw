@@ -1,4 +1,4 @@
-# Android 场景路由与高风险补充
+# Android 组合场景与高风险补充
 
 标准任务先读 [快速规则](android-codegen-quick-rules.md)，局部检查先读 [快速检查](android-check-quick.md)。只有 quick rules 无法判断、任务跨场景，或涉及 Room、SDK、多语言等高风险能力时读取本文件。
 
@@ -24,22 +24,8 @@
 | 弹窗 + API | quick → `android-dialog` → 必要时 API skill | 文案、字段、局部绑定不触发完整 Dialog。 |
 | 分页 + item 操作 | quick → `android-paging-state-ui` | 不再加载普通列表 skill。 |
 | 导航 + 全局刷新 | quick → `android-navigation-events` | 单个明确 start/newInstance 只查目标入口。 |
-
-## 单场景路由
-
-| 实际修改范围 | 读取 | 轻量路径 |
-| --- | --- | --- |
-| 新建/重构页面骨架、Base 类、start/newInstance/mBundle | [页面骨架](skills/android-feature-scaffold/SKILL.md) | 已有页面局部逻辑、绑定、点击不读。 |
-| 新接口、跨 API/model/Repo/VM 至少两层、错误 helper 语义 | [API](skills/android-api-request/SKILL.md) | 完整链路只补字段/参数/调用点走 quick。 |
-| 轮询、SSE、下载、任务状态与取消 | [异步](skills/android-async-task/SKILL.md) | 一次性请求或普通 loading 不读。 |
-| 新增/重构非分页 RecyclerView + DataBinding 链路 | [普通列表](skills/android-databinding-list/SKILL.md) | 文案、样式、单点刷新只读目标代码。 |
-| 稳定状态绑定、互斥区域、Observer 批量写 View | [页面 DataBinding](skills/android-databinding-ui/SKILL.md) | 即时手势/动画/播放器/单次赋值不读。 |
-| PagingSource、PagingDataAdapter、LoadState、分页缓存 | [分页](skills/android-paging-state-ui/SKILL.md) | 普通列表不读；RemoteMediator 只在真实缓存需求下启用。 |
-| Tab + ViewPager2 Fragment 容器和同步/生命周期 | [Tab/ViewPager2](skills/android-tab-viewpager/SKILL.md) | Banner、文案样式、单次 currentItem 不读。 |
-| Dialog 基类、参数、结果、生命周期、IME、关闭 | [弹窗](skills/android-dialog/SKILL.md) | 已有弹窗文案、样式、局部绑定/回调不读。 |
-| AppRouter、deep link、登录拦截、全局事件、主 Tab | [导航与事件](skills/android-navigation-events/SKILL.md) | 单个已知目标跳转或补参数只查目标代码。 |
-| 完整 Figma/截图精确还原且 quick 不足 | [Figma XML](skills/android-figma-xml-ui/SKILL.md) | 逻辑搬迁、修引用、静态检查不触发。 |
-| XML token、drawable 值命名、资源冲突 | [XML 资源规则](android-codegen-xml-resource-rules.md) | 局部 XML 只检查触达行和直接资源。 |
+| MasterGo 原型 + 项目文档 | `mastergo-prototype-docs` → `write-project-docs` | 前者提取原型事实，后者判断长期文档落点；只有明确要求实现时才加载代码 Skill。 |
+| 版本开发 + 项目文档 | 实际代码 Skill → `write-project-docs` | 当前文档随行为更新；只在形成长期兼容、迁移或回滚决定时增加一份版本归档。 |
 
 ## 高风险补充
 

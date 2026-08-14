@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""按 write-project-docs 规范审计仓库 Markdown 文档。"""
+"""按 write-project-docs 规范检查仓库 Markdown 文档。"""
 
 from __future__ import annotations
 
@@ -10,10 +10,10 @@ from pathlib import Path
 
 
 REQUIRED = {"title", "type", "status", "last_verified"}
-ALLOWED_TYPES = {"overview", "architecture", "feature", "contract"}
-ALLOWED_STATUS = {"draft", "active", "deprecated"}
+ALLOWED_TYPES = {"overview", "architecture", "feature", "contract", "archive"}
+ALLOWED_STATUS = {"draft", "active", "deprecated", "archived"}
 ALLOWED_IMPLEMENTATION = {"planned", "in-progress", "complete"}
-BUDGETS = {"overview": 180, "architecture": 350, "feature": 250, "contract": 400}
+BUDGETS = {"overview": 180, "architecture": 350, "feature": 250, "contract": 400, "archive": 80}
 ABSOLUTE_PATH = re.compile(
     r"(?<![A-Za-z0-9_])(?:[A-Za-z]:[\\/]|file://|/(?:Users|home)/[^\s)`]+)"
 )
@@ -46,6 +46,17 @@ def discover_markdown(target: Path) -> list[Path]:
     return sorted(path for path in docs.rglob("*.md") if ".git" not in path.parts)
 
 
+def audit_feature_directories(docs_root: Path) -> list[tuple[Path, str]]:
+    errors: list[tuple[Path, str]] = []
+    features_root = docs_root / "features"
+    if not features_root.is_dir():
+        return errors
+    for topic_dir in sorted(path for path in features_root.iterdir() if path.is_dir()):
+        if any(topic_dir.rglob("*.md")) and not (topic_dir / "README.md").is_file():
+            errors.append((topic_dir, "复杂功能目录必须使用 README.md 作为需求基线和入口"))
+    return errors
+
+
 def audit_file(path: Path, root: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
@@ -57,16 +68,16 @@ def audit_file(path: Path, root: Path) -> tuple[list[str], list[str]]:
     doc_type = metadata.get("type")
 
     if not metadata:
-        if not in_archive:
-            errors.append("缺少 YAML frontmatter")
+        errors.append("缺少 YAML frontmatter")
     elif not closed:
         errors.append("frontmatter 缺少结束标记 ---")
     else:
         missing = sorted(REQUIRED - metadata.keys())
-        if missing and not in_archive:
+        if missing:
             errors.append(f"缺少元数据：{', '.join(missing)}")
 
         status = metadata.get("status")
+        ai_read = metadata.get("ai_read")
         if doc_type and doc_type not in ALLOWED_TYPES:
             errors.append(f"不支持的 type：{doc_type}")
         if status and status not in ALLOWED_STATUS:
@@ -78,15 +89,26 @@ def audit_file(path: Path, root: Path) -> tuple[list[str], list[str]]:
             implementation = metadata.get("implementation")
             if implementation not in ALLOWED_IMPLEMENTATION:
                 errors.append("feature 必须声明 implementation: planned|in-progress|complete")
+        if in_archive:
+            if doc_type != "archive":
+                errors.append("archive 目录中的文档必须使用 type: archive")
+            if status != "archived":
+                errors.append("archive 目录中的文档必须使用 status: archived")
+            if ai_read != "history-only":
+                errors.append("archive 目录中的文档必须声明 ai_read: history-only")
+        else:
+            if doc_type == "archive" or status == "archived":
+                errors.append("archive 类型和 archived 状态只能用于 archive 目录")
+            if ai_read:
+                errors.append("当前文档不填写 ai_read；只按任务需要读取")
 
-    if not in_archive:
-        inferred_budget = BUDGETS.get(doc_type)
-        if inferred_budget is None:
-            inferred_budget = 180 if path.name == "README.md" else 350
-            if "features" in {part.lower() for part in path.parts}:
-                inferred_budget = 250
-        if len(lines) > inferred_budget:
-            warnings.append(f"共 {len(lines)} 行，超过 {inferred_budget} 行软预算")
+    inferred_budget = BUDGETS.get(doc_type)
+    if inferred_budget is None:
+        inferred_budget = 180 if path.name == "README.md" else 350
+        if "features" in {part.lower() for part in path.parts}:
+            inferred_budget = 250
+    if len(lines) > inferred_budget:
+        warnings.append(f"共 {len(lines)} 行，超过 {inferred_budget} 行软预算")
 
     for line_number, line in enumerate(lines, start=1):
         if ABSOLUTE_PATH.search(line):
@@ -103,7 +125,12 @@ def audit_file(path: Path, root: Path) -> tuple[list[str], list[str]]:
     for segment in relative.parts[:-1]:
         if SEMVER_SEGMENT.fullmatch(segment):
             warnings.append(f"使用版本目录层级：{segment}")
-    if path.stem != "README" and not in_archive and not KEBAB_NAME.fullmatch(path.stem):
+    is_version_archive = (
+        in_archive
+        and "versions" in {part.lower() for part in path.parts}
+        and SEMVER_SEGMENT.fullmatch(path.stem)
+    )
+    if path.stem != "README" and not is_version_archive and not KEBAB_NAME.fullmatch(path.stem):
         warnings.append("文件名不是 lower-kebab-case")
 
     return errors, warnings
@@ -127,6 +154,12 @@ def run_audit(target: Path, strict: bool = False) -> int:
         warning_count += 1
         print(f"警告 {docs_root}：缺少文档索引 README.md")
 
+    if docs_root.is_dir():
+        for path, message in audit_feature_directories(docs_root):
+            error_count += 1
+            label = path.relative_to(root) if path.is_relative_to(root) else path
+            print(f"错误 {label}：{message}")
+
     for path in files:
         errors, warnings = audit_file(path, root)
         label = path.relative_to(root) if path.is_relative_to(root) else path
@@ -137,7 +170,7 @@ def run_audit(target: Path, strict: bool = False) -> int:
             warning_count += 1
             print(f"警告 {label}：{message}")
 
-    print(f"已审计 {len(files)} 份 Markdown：{error_count} 个错误，{warning_count} 个警告")
+    print(f"已检查 {len(files)} 份 Markdown：{error_count} 个错误，{warning_count} 个警告")
     return 1 if error_count or (strict and warning_count) else 0
 
 
@@ -168,17 +201,81 @@ def self_test() -> int:
         contract.parent.mkdir(parents=True)
         contract.write_text(
             "---\n"
-            "title: 示例契约\n"
+            "title: 示例接口规则\n"
             "type: contract\n"
             "status: active\n"
             "last_verified: 2026-08-04\n"
             "---\n\n"
-            "# 示例契约\n",
+            "# 示例接口规则\n",
             encoding="utf-8",
         )
         errors, warnings = audit_file(contract, root)
         if errors or warnings:
-            print(f"自测失败（契约样例）：{errors=} {warnings=}")
+            print(f"自测失败（接口规则样例）：{errors=} {warnings=}")
+            return 1
+
+        complex_feature = root / "docs" / "features" / "sample-complex"
+        complex_feature.mkdir(parents=True)
+        for filename, title in (("README.md", "复杂功能需求"), ("solution.md", "复杂功能方案")):
+            path = complex_feature / filename
+            path.write_text(
+                "---\n"
+                f"title: {title}\n"
+                "type: feature\n"
+                "status: active\n"
+                "last_verified: 2026-08-14\n"
+                "implementation: in-progress\n"
+                "---\n\n"
+                f"# {title}\n",
+                encoding="utf-8",
+            )
+            errors, warnings = audit_file(path, root)
+            if errors or warnings:
+                print(f"自测失败（复杂功能目录样例）：{errors=} {warnings=}")
+                return 1
+        if audit_feature_directories(root / "docs"):
+            print("自测失败（复杂功能目录入口）")
+            return 1
+
+        missing_index = root / "docs" / "features" / "missing-index"
+        missing_index.mkdir()
+        (missing_index / "solution.md").write_text("# 缺少入口\n", encoding="utf-8")
+        if not audit_feature_directories(root / "docs"):
+            print("自测失败（缺少复杂功能入口）")
+            return 1
+
+        archive = root / "docs" / "archive" / "versions" / "v2.6.0.md"
+        archive.parent.mkdir(parents=True)
+        archive.write_text(
+            "---\n"
+            "title: 2.6.0 开发归档\n"
+            "type: archive\n"
+            "status: archived\n"
+            "last_verified: 2026-08-14\n"
+            "ai_read: history-only\n"
+            "---\n\n"
+            "# 2.6.0 开发归档\n",
+            encoding="utf-8",
+        )
+        errors, warnings = audit_file(archive, root)
+        if errors or warnings:
+            print(f"自测失败（版本归档样例）：{errors=} {warnings=}")
+            return 1
+
+        invalid_archive = root / "docs" / "archive" / "bad-archive.md"
+        invalid_archive.write_text(
+            "---\n"
+            "title: 错误归档\n"
+            "type: archive\n"
+            "status: archived\n"
+            "last_verified: 2026-08-14\n"
+            "---\n\n"
+            "# 错误归档\n",
+            encoding="utf-8",
+        )
+        errors, _ = audit_file(invalid_archive, root)
+        if not any("ai_read" in error for error in errors):
+            print(f"自测失败（归档读取标记）：{errors=}")
             return 1
 
         invalid = root / "docs" / "features" / "bad.md"
