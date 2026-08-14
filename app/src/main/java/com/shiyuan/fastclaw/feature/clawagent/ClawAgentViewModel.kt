@@ -126,6 +126,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 开启消息通知弹窗 */
     val understandingSummaryDialog = MutableLiveData<ClawAgentMessageInfo?>()
 
+    /** 帮你找工作 */
+    val helpYouFindJobDialog = MutableLiveData<ClawAgentMessageInfo?>()
+
     /** 查询属性数组候选值结果（工作经历/教育经历等表单数据） */
     val attributeArrayResult = MutableLiveData<AttributeArrayQueryData?>()
 
@@ -493,10 +496,20 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 }
             }
         }
-        if (newMsg.isNotificationSwitch()) {
+        initDialog(newMsg)
+        ingestMessages(listOf(newMsg), isReal = true)
+    }
+
+    /**
+     * see 消息 弹窗（当触发 这个消息 时 弹窗出来）
+     */
+    private fun initDialog(newMsg: JobAgentMessage){
+        if (newMsg.isNotificationSwitch() ) {
             understandingSummaryDialog.value = newMsg.toMessageInfo()
         }
-        ingestMessages(listOf(newMsg), isReal = true)
+        if (newMsg.isUnderstandingSummaryCard()) {
+            helpYouFindJobDialog.value = newMsg.toMessageInfo()
+        }
     }
 
     /**

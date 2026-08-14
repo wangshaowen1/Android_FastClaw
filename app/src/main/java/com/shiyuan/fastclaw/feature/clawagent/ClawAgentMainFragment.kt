@@ -702,6 +702,13 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             showNotificationSwitchDialog()
             mRealVM.understandingSummaryDialog.value = null
         }
+        // 达到帮你找工作弹窗
+        mRealVM.helpYouFindJobDialog.observe(viewLifecycleOwner) { info ->
+            info ?: return@observe
+            showNotificationSwitchDialog()
+            mRealVM.helpYouFindJobDialog.value = null
+        }
+
         // 模拟面试查询未
         mRealVM.interviewUnfinishedResult.observe(this) {
             val data = it ?: return@observe
