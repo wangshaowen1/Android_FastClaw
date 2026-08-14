@@ -136,7 +136,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
     /**
      * 查询“已标记不合适的会话”入口数据，当前分支暂无数据源，先不展示假入口。
      */
-    private fun queryMarkedUnsuitableEntry(): MarkedUnsuitableConversationItem? = null
+    private fun queryMarkedUnsuitableEntry(): UnsuitableConversationItem? = null
 
     /**
      * 将 IM 末条消息转换成会话列表摘要，非文本消息展示资源文案。

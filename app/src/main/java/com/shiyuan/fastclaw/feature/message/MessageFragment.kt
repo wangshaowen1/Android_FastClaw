@@ -3,8 +3,11 @@ package com.shiyuan.fastclaw.feature.message
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelFragment
 import com.shiyuan.fastclaw.databinding.FragmentMessageBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentMsgAdapter
 
 class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageViewModel>() {
+
+    private val msgAdapter by lazy { MessageAdapter() }
 
     companion object {
         /**
@@ -13,25 +16,31 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
         fun newInstance() = MessageFragment()
     }
 
-    private val messageAdapter by lazy {
-        MessageAdapter().apply {
-            onConversationClick = { mRealVM.openConversation(it) }
-            onMarkedUnsuitableClick = { mRealVM.openMarkedUnsuitable() }
-        }
-    }
-
     /**
      * 初始化消息列表 RecyclerView，并订阅 ViewModel 输出的列表数据。
      */
     override fun onPrepareView() {
         super.onPrepareView()
+        initView()
+        initObserve()
+    }
+
+    private fun initView() {
         binding.rvMessages.apply {
             layoutManager = LinearLayoutManager(context)
-            itemAnimator = null
-            adapter = messageAdapter
+            adapter = msgAdapter
         }
+        msgAdapter.onConversationClick = {
+            mRealVM.openConversation(it)
+        }
+        msgAdapter.onMarkedUnsuitableClick = {
+            mRealVM.openMarkedUnsuitable()
+        }
+    }
+
+    private fun initObserve() {
         mRealVM.messageList.observe(viewLifecycleOwner) { items ->
-            messageAdapter.submitList(items)
+            msgAdapter.submitList(items)
         }
     }
 

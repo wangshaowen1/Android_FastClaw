@@ -18,13 +18,13 @@ class MessageAdapter : BaseMultiItemAdapter<MessageListItem>() {
 
     init {
         register<ConversationViewHolder, MessageConversationItem>(TYPE_CONVERSATION, { inflater, parent ->
-            ConversationViewHolder(ItemMessageConversationBinding.inflate(inflater, parent, false)) {
-                onConversationClick(it)
+            ConversationViewHolder(ItemMessageConversationBinding.inflate(inflater, parent, false)).apply {
+                onConversationClickListener = { onConversationClick(it) }
             }
         }) { holder, item -> holder.bind(item) }
-        register<ConversationUnsuitableViewHolder, MarkedUnsuitableConversationItem>(TYPE_MARKED_UNSUITABLE, { inflater, parent ->
-            ConversationUnsuitableViewHolder(ItemMessageMarkedUnsuitableBinding.inflate(inflater, parent, false)) {
-                onMarkedUnsuitableClick()
+        register<ConversationUnsuitableViewHolder, UnsuitableConversationItem>(TYPE_MARKED_UNSUITABLE, { inflater, parent ->
+            ConversationUnsuitableViewHolder(ItemMessageMarkedUnsuitableBinding.inflate(inflater, parent, false)).apply {
+                onMarkedUnsuitableClickListener = { onMarkedUnsuitableClick() }
             }
         }) { holder, item -> holder.bind(item) }
         onItemViewType { position, list -> list[position].itemType }

@@ -4,21 +4,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemMessageMarkedUnsuitableBinding
-import com.shiyuan.fastclaw.feature.message.MarkedUnsuitableConversationItem
+import com.shiyuan.fastclaw.feature.message.UnsuitableConversationItem
 
 /**
  * 已标记不合适入口 ViewHolder，负责渲染入口数量并转发点击事件。
  */
-class ConversationUnsuitableViewHolder(
-    private val binding: ItemMessageMarkedUnsuitableBinding,
-    private val onMarkedUnsuitableClick: () -> Unit,
-) : RecyclerView.ViewHolder(binding.root) {
+class ConversationUnsuitableViewHolder(private val binding: ItemMessageMarkedUnsuitableBinding, ) : RecyclerView.ViewHolder(binding.root) {
+
+    var onMarkedUnsuitableClickListener: () -> Unit = {}
 
     /**
      * 绑定“已标记不合适的会话”入口行，当前只展示联系人数量与入口点击。
      */
-    fun bind(item: MarkedUnsuitableConversationItem) {
+    fun bind(item: UnsuitableConversationItem) {
         binding.tvCount.text = binding.root.context.getString(R.string.message_marked_unsuitable_count, item.count)
-        binding.root.setOnSingleClickListener { onMarkedUnsuitableClick() }
+        binding.root.setOnSingleClickListener { onMarkedUnsuitableClickListener() }
     }
 }

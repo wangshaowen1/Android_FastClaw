@@ -41,7 +41,7 @@ data class MessageConversationItem(
  *
  * @param count 当前入口下的联系人数量。
  */
-data class MarkedUnsuitableConversationItem(
+data class UnsuitableConversationItem(
     val count: Int,
 ) : MessageListItem {
     override val id: String = "marked_unsuitable"

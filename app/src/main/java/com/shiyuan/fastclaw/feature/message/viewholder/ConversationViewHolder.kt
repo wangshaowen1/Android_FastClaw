@@ -13,7 +13,9 @@ import com.shiyuan.fastclaw.feature.message.MessageTimeFormatter
 /**
  * 普通 P2P 会话列表项 ViewHolder，负责渲染联系人信息与末条消息摘要。
  */
-class ConversationViewHolder(private val binding: ItemMessageConversationBinding, private val onConversationClick: (MessageConversationItem) -> Unit, ) : RecyclerView.ViewHolder(binding.root) {
+class ConversationViewHolder(private val binding: ItemMessageConversationBinding, ) : RecyclerView.ViewHolder(binding.root) {
+
+    var onConversationClickListener: (MessageConversationItem) -> Unit = {}
 
     /**
      * 绑定普通 P2P 会话行，包含头像、未读数、草稿标记与末条消息摘要。
@@ -33,6 +35,6 @@ class ConversationViewHolder(private val binding: ItemMessageConversationBinding
             .error(R.drawable.ic_default_avatar_big)
             .circleCrop()
             .into(binding.ivAvatar)
-        binding.root.setOnSingleClickListener { onConversationClick(item) }
+        binding.root.setOnSingleClickListener { onConversationClickListener(item) }
     }
 }
