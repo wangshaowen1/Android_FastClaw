@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * 云信离线推送点击处理：业务通知按 jumpUri 跳转，聊天通知沿用 IM 模块默认逻辑。
  */
-public final class AimarryMixPushMessageHandler implements MixPushMessageHandler {
+public final class FastClawMixPushMessageHandler implements MixPushMessageHandler {
 
     private static final String PAYLOAD_JUMP_URI = "pushMsgJumpUri";
     private final ImMixPushMessageHandler defaultHandler = new ImMixPushMessageHandler();

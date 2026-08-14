@@ -36,11 +36,8 @@ import com.shiyuan.fastclaw.widget.MyLoadViewFactory
 import com.kuaige.oss.OssType
 import com.kuaige.payment.PaymentConfig
 import com.netease.nimlib.sdk.mixpush.NIMPushClient
-import com.netease.nimlib.sdk.msg.model.CustomNotification
 import com.netease.nimlib.sdk.util.NIMUtil
-import com.nhsd.basic.BaseApp
 import com.nhsd.basic.Session
-import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.manager.LoadingConfig
 import com.nhsd.basic.utils.Logger
 import com.nhsd.mvc.MVCHelper
@@ -48,7 +45,7 @@ import com.nhsd.permisson.DefaultRationaleFactory
 import com.nhsd.permisson.PermissionX
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
-import com.shiyuan.fastclaw.core.im.AimarryMixPushMessageHandler
+import com.shiyuan.fastclaw.core.im.FastClawMixPushMessageHandler
 import com.shiyuan.fastclaw.core.im.FriendInteractionAttachment
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
@@ -64,7 +61,6 @@ import com.tulele.im.utils.AccountHelper
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Random
-import kotlin.text.get
 
 class App : ImApplication() {
 
@@ -376,7 +372,7 @@ class App : ImApplication() {
 
     fun initSdkAfterAgreeLicense() {
         if (hasAgree()) {
-            NIMPushClient.registerMixPushMessageHandler(AimarryMixPushMessageHandler())
+            NIMPushClient.registerMixPushMessageHandler(FastClawMixPushMessageHandler())
             Utils.init(this)
             DeviceID.register(this)
             Oaid.init()

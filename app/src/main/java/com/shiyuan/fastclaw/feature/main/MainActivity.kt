@@ -35,6 +35,7 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.manager.UpgradeManager
 import com.shiyuan.fastclaw.databinding.ActivityMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentMainFragment
+import com.shiyuan.fastclaw.feature.message.MessageFragment
 import com.shiyuan.fastclaw.feature.mine.MineFragment
 import com.shiyuan.fastclaw.feature.report.HomeTreasuryFragment
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -176,11 +177,20 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                         HomeTreasuryFragment::class.java
                     )
                 }
+                R.id.rbMessage -> {
+                    setKeepScreenOn(false)
+                    mRealVM.showTab.set(2)
+                    binding.vLine.visibility = View.VISIBLE
+                    supportFragmentManager.switchFragment(
+                        R.id.fragment,
+                        MessageFragment::class.java
+                    )
+                }
                 R.id.rbMine -> {
                     //我的
                     EventManager.onAppTrack(AppEvent.KLX_CAPP_MY_PAGE, mutableMapOf(AppEventParam.KEY_IS_LOGIN to if (User.get().isVisitor) "否" else "是"))
                     setKeepScreenOn(false)
-                    mRealVM.showTab.set(2)
+                    mRealVM.showTab.set(3)
                     binding.vLine.visibility = View.VISIBLE
                     supportFragmentManager.switchFragment(R.id.fragment, MineFragment::class.java)
                 }
@@ -189,7 +199,8 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         when (Config.get().appConfig.openAppLoadTab) {
             0 -> binding.mrg.check(R.id.rbHome)
             1 -> binding.mrg.check(R.id.rbTreasury)
-            2 -> binding.mrg.check(R.id.rbMine)
+            2 -> binding.mrg.check(R.id.rbMessage)
+            3 -> binding.mrg.check(R.id.rbMine)
             else -> binding.mrg.check(R.id.rbHome)
         }
     }
@@ -199,7 +210,8 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
         when(position){
             0 -> binding.mrg.check(R.id.rbHome)
             1 -> binding.mrg.check(R.id.rbTreasury)
-            2 -> binding.mrg.check(R.id.rbMine)
+            2 -> binding.mrg.check(R.id.rbMessage)
+            3 -> binding.mrg.check(R.id.rbMine)
             else -> binding.mrg.check(R.id.rbHome)
         }
 
@@ -257,6 +269,15 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     binding.mrg.check(R.id.rbTreasury) // 真正执行切换
                 }
             }
+
+            R.id.tabMessage -> {
+                clickTab(
+                    tabId = R.id.tabMessage,
+                    null
+                ) {
+                    binding.mrg.check(R.id.rbMessage)
+                }
+            }
         }
     }
 
@@ -283,8 +304,11 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                 R.id.tabHome -> {
                     FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_HOME))
                 }
-                else -> {
+                R.id.tabTreasury -> {
                     FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_TREASURY))
+                }
+                R.id.tabMessage -> {
+                    FlowEventBus.postSync(Events.MainTabDoubleClickEvent(Events.MainTabDoubleClickEvent.TAB_MESSAGE))
                 }
             }
             return // 连续点击直接拦截，不再执行拦截器 check
@@ -356,6 +380,10 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
                     Events.MainTabEvent.TAB_MINE -> {
                         binding.mrg.check(R.id.rbMine)
+                    }
+
+                    Events.MainTabEvent.TAB_MESSAGE -> {
+                        binding.mrg.check(R.id.rbMessage)
                     }
                 }
             }

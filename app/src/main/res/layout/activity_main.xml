@@ -15,66 +15,84 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/color_f6f9ff"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/color_f6f9ff">
 
         <FrameLayout
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <View
-            android:visibility="gone"
             android:id="@+id/v_line"
-            app:layout_constraintBottom_toTopOf="@id/mrg"
-            android:background="@color/color_EDF3FF"
             android:layout_width="match_parent"
-            android:layout_height="1dp"/>
+            android:layout_height="1dp"
+            android:background="@color/color_EDF3FF"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/mrg" />
 
         <com.shiyuan.fastclaw.widget.MultRadioGroup
-            android:background="@color/color_f6f9ff"
             android:id="@+id/mrg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/color_f6f9ff"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:paddingVertical="6dp"
+                android:paddingBottom="6dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="24dp">
+                android:layout_height="wrap_content">
 
                 <View
-                    android:onClick="@{layout.clickHandler::onClick}"
+                    android:layout_marginTop="6dp"
                     android:id="@+id/tabHome"
-                    android:layout_width="90dp"
+                    android:layout_width="0dp"
                     android:layout_height="40dp"
+                    android:onClick="@{layout.clickHandler::onClick}"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintEnd_toStartOf="@id/tabTreasury"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <View
-                    android:onClick="@{layout.clickHandler::onClick}"
+                    android:layout_marginTop="6dp"
                     android:id="@+id/tabTreasury"
-                    android:layout_width="90dp"
+                    android:layout_width="0dp"
                     android:layout_height="40dp"
+                    android:onClick="@{layout.clickHandler::onClick}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tabMessage"
                     app:layout_constraintStart_toEndOf="@id/tabHome"
-                    app:layout_constraintEnd_toStartOf="@id/tabMine"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <View
-                    android:onClick="@{layout.clickHandler::onClick}"
-                    android:id="@+id/tabMine"
-                    android:layout_width="90dp"
+                    android:layout_marginTop="6dp"
+                    android:id="@+id/tabMessage"
+                    android:layout_width="0dp"
                     android:layout_height="40dp"
+                    android:onClick="@{layout.clickHandler::onClick}"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toStartOf="@id/tabMine"
+                    app:layout_constraintStart_toEndOf="@id/tabTreasury"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:layout_marginTop="6dp"
+                    android:id="@+id/tabMine"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:onClick="@{layout.clickHandler::onClick}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tabMessage"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.shiyuan.fastclaw.widget.FixedAnimatedRadioButton
                     android:id="@+id/rbHome"
@@ -113,6 +131,24 @@
                     tools:checked="false" />
 
                 <com.shiyuan.fastclaw.widget.FixedAnimatedRadioButton
+                    android:id="@+id/rbMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:button="@null"
+                    android:drawableTop="@drawable/cb_main_tab_message"
+                    android:drawablePadding="2dp"
+                    android:gravity="center"
+                    android:text="@string/tab_message"
+                    android:textColor="@color/cb_main_tab_txt"
+                    android:textSize="10sp"
+                    app:layout_constraintBottom_toBottomOf="@id/tabMessage"
+                    app:layout_constraintEnd_toEndOf="@id/tabMessage"
+                    app:layout_constraintStart_toStartOf="@id/tabMessage"
+                    app:layout_constraintTop_toTopOf="@id/tabMessage"
+                    tools:checked="false" />
+
+                <com.shiyuan.fastclaw.widget.FixedAnimatedRadioButton
                     android:id="@+id/rbMine"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -129,6 +165,27 @@
                     app:layout_constraintStart_toStartOf="@id/tabMine"
                     app:layout_constraintTop_toTopOf="@id/tabMine"
                     tools:checked="false" />
+
+                <com.shiyuan.fastclaw.widget.super_button.SuperButton
+                    android:id="@+id/sbMessageCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="-8dp"
+                    android:layout_marginTop="-4dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:minWidth="16dp"
+                    android:minHeight="16dp"
+                    android:textColor="@color/white"
+                    android:textSize="9sp"
+                    app:layout_constraintEnd_toEndOf="@id/rbMessage"
+                    app:layout_constraintTop_toTopOf="@id/rbMessage"
+                    app:sCornersRadius="8dp"
+                    app:sSolidColor="@color/color_fb415e"
+                    app:sStrokeColor="@color/white"
+                    app:sStrokeWidth="1dp"
+                    android:text="99"
+                    tools:visibility="visible" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
