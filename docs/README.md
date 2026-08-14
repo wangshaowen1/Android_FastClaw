@@ -2,7 +2,7 @@
 title: FastClaw 项目文档
 type: overview
 status: active
-last_verified: 2026-08-04
+last_verified: 2026-08-13
 ---
 
 # FastClaw 项目文档
@@ -18,6 +18,7 @@ last_verified: 2026-08-04
 | 小虾对话 | 会话恢复、SSE 消息、卡片动作、历史合并与报告状态 | `app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [聊天对话](features/chat-conversation.md) |
 | 模拟面试 | 面试创建、房间状态、语音作答、SSE 文本流、恢复与报告轮询 | `app/src/main/java/com/shiyuan/fastclaw/feature/interview/`、`app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [模拟面试](features/mock-interview.md) |
 | 在线简历 | 结构化简历、求职偏好、理解度与附件解析任务 | `app/src/main/java/com/shiyuan/fastclaw/feature/mine/`、`app/src/main/java/com/shiyuan/fastclaw/feature/information/` | [在线简历](features/online-resume.md) |
+| IMSDK | 私有依赖、账号凭据、登录登出、会话生命周期与离线推送边界 | `app/src/main/java/com/shiyuan/fastclaw/App.kt`、`app/src/main/java/com/shiyuan/fastclaw/core/User.kt` | [IMSDK 接入](features/imsdk.md) |
 | 网络与流式传输 | Retrofit 接口、统一响应处理与原始 SSE 分发 | `app/src/main/java/com/shiyuan/fastclaw/core/network/` | 按任务读取代码；当前没有独立架构文档 |
 | 公共应用基础 | Base 类、事件、导航、资源与通用组件 | `app/src/main/java/com/shiyuan/fastclaw/` | [App 分层架构](architecture/app-layering.md) |
 
@@ -44,8 +45,9 @@ last_verified: 2026-08-04
 | [聊天对话](features/chat-conversation.md) | 解释会话、消息合并、SSE 和列表状态边界 | active | in-progress；Android `app` 模块 |
 | [模拟面试](features/mock-interview.md) | 解释面试房间状态、语音/TTS、恢复、违规替换和报告轮询边界 | active | in-progress；Android `app` 模块 |
 | [在线简历](features/online-resume.md) | 解释三类简历数据、编辑刷新和附件解析边界 | active | in-progress；Android `app` 模块 |
+| [IMSDK 接入](features/imsdk.md) | 说明私有依赖、宿主契约、账号生命周期、安全阻塞和推送边界 | active | in-progress；Android `app` 模块 |
 
 ## 推荐阅读路径
 
 - 新开发者：先读根 `README.md` 与 `AGENTS.md`，再按负责领域选择一篇功能文档，最后进入对应稳定代码锚点。
-- 任务型 AI：规则/Skill 维护读取 [AI Skill 与规则治理架构](architecture/ai-skill-governance.md)；聊天、通用卡片、SSE 或消息列表任务只加载[聊天对话](features/chat-conversation.md)；模拟面试房间、语音作答、恢复或面试报告轮询任务只加载[模拟面试](features/mock-interview.md)；简历、求职偏好、理解度或附件上传任务只加载[在线简历](features/online-resume.md)。局部修改仍以目标代码和 `AGENTS.md` 路由的快速规则为准。
+- 任务型 AI：规则/Skill 维护读取 [AI Skill 与规则治理架构](architecture/ai-skill-governance.md)；聊天、通用卡片、SSE 或消息列表任务只加载[聊天对话](features/chat-conversation.md)；模拟面试房间、语音作答、恢复或面试报告轮询任务只加载[模拟面试](features/mock-interview.md)；简历、求职偏好、理解度或附件上传任务只加载[在线简历](features/online-resume.md)；IM 依赖、账号、登录登出、消息或推送任务先加载[IMSDK 接入](features/imsdk.md)。局部修改仍以目标代码和 `AGENTS.md` 路由的快速规则为准。

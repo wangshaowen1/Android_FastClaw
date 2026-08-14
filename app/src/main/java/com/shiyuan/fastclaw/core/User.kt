@@ -13,11 +13,13 @@ import com.shiyuan.fastclaw.core.network.apis.request.CompleteUserDataInfoBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.core.manager.DataNexusManager
 import com.tencent.mmkv.MMKV
+import com.tulele.im.ImUserAccount
+import kotlin.text.get
 
 /**
  * 当前登录用户信息。
  */
-class User : IUser {
+class User : IUser, ImUserAccount {
     private val legacySp = SP(USER_DATA_MMKV_ID)
     private val mmkv by lazy { MMKV.mmkvWithID(USER_DATA_MMKV_ID) ?: MMKV.defaultMMKV() }
 
@@ -133,6 +135,8 @@ class User : IUser {
         userData.token?.apply {
             storeToken(this)
         }
+        userData.imAccId?.let(::storeImAccessId)
+        userData.imAccToken?.let(::storeImToken)
         notifyChange()
 
         if (id.isNullOrEmpty()) {
@@ -162,6 +166,8 @@ class User : IUser {
         lastLoginTime = null
         registerStatus = null
         token = null
+        imAccessId = null
+        imToken = null
         computingPower = 0
         purchaseCourseStatus = 0
         isPaid = null
@@ -281,6 +287,19 @@ class User : IUser {
         requestNotificationsPermissionEnable = false
     }
 
+    var imAccessId: String? by MmkvDelegate<String?>(IM_ACCESS_ID, null) { mmkv }
+    var imToken: String? by MmkvDelegate<String?>(IM_TOKEN, null) { mmkv }
+
+
+
+    fun storeImAccessId(accId: String?) {
+        imAccessId = accId
+    }
+
+    fun storeImToken(token: String?) {
+        imToken = token
+    }
+
     private fun migrateLegacyUserDataIfNeeded() {
         if (mmkv.decodeBool(mmkvKey(USER_DATA_MIGRATED), false)) {
             return
@@ -345,9 +364,41 @@ class User : IUser {
         legacySp.remove(REQUEST_NOTIFICATIONS_PERMISSION)
     }
 
+    /**
+     * 实现了IM的ImUserAccount
+     */
+
+    override fun getAccessId(): String? {
+        return imAccessId
+    }
+
+    override fun getToken(): String? {
+        return imToken
+    }
+
+    override fun isRingOn(): Boolean {
+        return true
+    }
+
+    override fun isVibrateOn(): Boolean {
+        return true
+    }
+
+    override fun isValid(): Boolean {
+        return !TextUtils.isEmpty(imAccessId) && !TextUtils.isEmpty(imToken)
+    }
+
+    override fun getAvatar(): String? {
+        return avatarUrl
+    }
+
+
     companion object {
         private const val USER_DATA_MMKV_ID = "USER_DATA"
         private const val USER_DATA_MIGRATED = "USER_DATA_MIGRATED"
+
+        private const val IM_ACCESS_ID = "imAccessId"
+        private const val IM_TOKEN = "imToken"
 
         /** 后端账户 id 存储 key。 */
         val USER_ID = "userId"
@@ -422,4 +473,6 @@ class User : IUser {
 
         private fun mmkvKey(key: String): String = "${USER_DATA_MMKV_ID}_$key"
     }
+
+
 }

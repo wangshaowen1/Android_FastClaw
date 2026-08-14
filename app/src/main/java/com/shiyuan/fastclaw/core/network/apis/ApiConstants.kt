@@ -436,4 +436,15 @@ object ApiConstants {
      * 查询福利偏好字典
      */
     const val DICT_WELFARE_QUERY = "/api/candidate/app/jobAgent/dict/welfare/query"
+
+
+    /**
+     * 刷新云信 IM Token
+     */
+    const val REGISTER_IM_TOKEN = "/api/chat/im/token/refresh"
+
+
+
+    /** 查询当前用户云信账号。 */
+    const val CHAT_IM_ACCOUNT_QUERY = "/api/chat/im/account/query"
 }

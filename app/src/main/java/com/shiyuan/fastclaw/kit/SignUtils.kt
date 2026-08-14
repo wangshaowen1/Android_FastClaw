@@ -13,12 +13,15 @@ import com.nhsd.basic.bus.FlowEventBus
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.AppEventParam
 import com.shiyuan.fastclaw.core.manager.EventManager
+import com.tulele.im.utils.AccountHelper
 
 object SignUtils {
 
     @JvmStatic
     fun signOut() {
         App.instance.deleteAlias()
+        // 业务登出时，必须在清空用户凭据之前调用
+        AccountHelper.logout()
         User.get().loginOut()
         Cache.get().clear()
         FlowEventBus.postSync(Events.UserChangedEvent(Events.UserChangedEvent.SIGN_OUT))
@@ -27,6 +30,8 @@ object SignUtils {
 
     @JvmStatic
     fun signIn() {
+        AccountHelper.login()
+
         User.Companion.get().userId?.let { App.instance.setAlias(it) }
         FlashLoginManager.finishAuthActivity()
         ActivityUtils.finishActivity(LoginActivity::class.java)

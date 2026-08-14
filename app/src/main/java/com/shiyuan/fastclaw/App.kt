@@ -35,8 +35,12 @@ import com.shiyuan.fastclaw.widget.LoadingDialog2
 import com.shiyuan.fastclaw.widget.MyLoadViewFactory
 import com.kuaige.oss.OssType
 import com.kuaige.payment.PaymentConfig
+import com.netease.nimlib.sdk.mixpush.NIMPushClient
+import com.netease.nimlib.sdk.msg.model.CustomNotification
+import com.netease.nimlib.sdk.util.NIMUtil
 import com.nhsd.basic.BaseApp
 import com.nhsd.basic.Session
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.manager.LoadingConfig
 import com.nhsd.basic.utils.Logger
 import com.nhsd.mvc.MVCHelper
@@ -44,13 +48,25 @@ import com.nhsd.permisson.DefaultRationaleFactory
 import com.nhsd.permisson.PermissionX
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
+import com.shiyuan.fastclaw.core.im.AimarryMixPushMessageHandler
+import com.shiyuan.fastclaw.core.im.FriendInteractionAttachment
+import com.shiyuan.fastclaw.core.network.apis.ApiFactory
+import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
+import com.shiyuan.fastclaw.feature.main.MainActivity
+import com.shiyuan.fastclaw.router.AppNavigator
 import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.mmkv.MMKV
+import com.tulele.im.ImApplication
+import com.tulele.im.ImPushConfig
+import com.tulele.im.ImSession
+import com.tulele.im.ImUserAccount
+import com.tulele.im.utils.AccountHelper
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Random
+import kotlin.text.get
 
-class App : BaseApp() {
+class App : ImApplication() {
 
     private lateinit var mainThreadHandler: Handler
 
@@ -70,6 +86,8 @@ class App : BaseApp() {
     var defaultCity: String? = null
 
     private lateinit var umInitConfig: UmInitConfig
+
+    private lateinit var imSession: ImSession
 
     var ran: String? = null
         private set
@@ -163,6 +181,19 @@ class App : BaseApp() {
         MMKV.initialize(this)
         config = Config()
         user = User()
+
+        imSession = ImSession(this)
+
+        imSession.registerAttachmentParser(
+            FriendInteractionAttachment.MSG_TYPE,
+            FriendInteractionAttachment.PARSER
+        )
+
+        observeImKickOut()
+        //observeImCustomNotifications()
+        initImSession()
+
+
         appStatusTracker = AppStatusTracker()
         registerActivityLifecycleCallbacks(appStatusTracker)
 
@@ -197,6 +228,58 @@ class App : BaseApp() {
         PaymentConfig.init(BuildConfig.WX_APP_ID, BuildConfig.WX_APP_SECRET)
         initGrowingIO()
     }
+
+
+    /** 云信通知账号被其他客户端挤下线时，统一清理业务登录态并返回登录页。 */
+    private fun observeImKickOut() {
+        imSession.onUserKickOutListener = object : ImSession.OnUserKickOutListener {
+            override fun onUserKickOut() {
+                AppNavigator.forceUserNotLoggedIn(
+                    getString(R.string.im_kick_out_toast),
+                    IM_KICK_OUT_TOAST_DURATION_MILLIS
+                )
+            }
+        }
+    }
+
+
+/*    *//** 分发云信自定义系统通知，不写入聊天消息列表。 *//*
+    private fun observeImCustomNotifications() {
+        imSession.setOnCustomNotificationListener(
+            object : ImSession.OnCustomNotificationListener {
+                override fun onCustomNotification(notification: CustomNotification) {
+                    val relationEvent = FriendRelationNotification.parse(notification)
+                    if (relationEvent != null) {
+                        FlowEventBus.postSync(relationEvent)
+                    } else {
+                        PushManager.dispatchCustomNotification(notification.content)
+                    }
+                }
+            }
+        )
+    }*/
+
+    fun initImSession() {
+        if (hasAgree()) {
+            AccountHelper.setImTokenProvider(object : AccountHelper.ImTokenProvider {
+                /** 在 IM 登录协程中获取并保存当前用户的云信凭据。 */
+                override suspend fun getImToken(): String? {
+                    if (User.get().isVisitor) return null
+                    val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
+                    User.get().storeImAccessId(data?.imAccId)
+                    User.get().storeImToken(data?.imAccToken)
+                    return data?.imAccToken
+                }
+            })
+            if (NIMUtil.isMainProcess(this)) {
+                AccountHelper.initAutoLoginConfig(this)
+                imSession.init()
+            }
+        } else {
+            AccountHelper.configImClient(this)
+        }
+    }
+
 
     class AppStatusTracker : ActivityLifecycleCallbacks {
         /**
@@ -263,9 +346,6 @@ class App : BaseApp() {
         return DEV_ENV.contains(BuildConfig.FLAVOR_env)
     }
 
-    fun hasAgree(): Boolean {
-        return !Config.get().isFirstOpenApp
-    }
 
     fun resetRan() {
         ran = random.nextInt(100000).toString()
@@ -296,6 +376,7 @@ class App : BaseApp() {
 
     fun initSdkAfterAgreeLicense() {
         if (hasAgree()) {
+            NIMPushClient.registerMixPushMessageHandler(AimarryMixPushMessageHandler())
             Utils.init(this)
             DeviceID.register(this)
             Oaid.init()
@@ -371,5 +452,52 @@ class App : BaseApp() {
         var isColdStart = true
 
         private val DEV_ENV = listOf("develop", "preview")
+
+        private const val IM_KICK_OUT_TOAST_DURATION_MILLIS = 3_000L
+    }
+
+    override fun hasAgree(): Boolean {
+        return !Config.get().isFirstOpenApp
+    }
+
+    /**
+     *
+     * 继承 im 下面实现的方法
+     */
+
+    override fun getImAppKey(): String {
+        return  BuildConfig.NIM_APP_KEY
+    }
+
+    /** 将宿主维护的厂商推送配置交给 IM 组件。 */
+    override fun getImPushConfig(): ImPushConfig = ImPushConfig(
+        channelPushEnabled = false,
+        xiaomiAppId = "",
+        xiaomiAppKey = "",
+        xiaomiCertificateName = "",
+        oppoAppId = "",
+        oppoAppKey = "",
+        oppoAppSecret = "",
+        oppoCertificateName = "",
+        vivoCertificateName = "",
+        huaweiAppId = "",
+        huaweiCertificateName = "",
+        honorCertificateName = "",
+    )
+
+    override fun getImUserAccount(): ImUserAccount? {
+        return  user
+    }
+
+    override fun getImSession(): ImSession? {
+        return  imSession
+    }
+
+    override fun getNotificationEntrance(): Class<out Activity?> {
+        return  MainActivity::class.java
+    }
+
+    override fun onImLoginSuccess() {
+       // EventBus.post(ImLoginSuccessEvent())
     }
 }

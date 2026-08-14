@@ -1,6 +1,10 @@
 package com.shiyuan.fastclaw.router
 
+import android.content.Intent
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.common.Constant
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.core.User
@@ -12,8 +16,49 @@ import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
 import com.shiyuan.fastclaw.feature.login.unified.UnifiedLoginActivity
 import com.shiyuan.fastclaw.feature.login.unified.UnifiedLoginDialog
 import com.shiyuan.fastclaw.kit.SignUtils
+import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.text.get
 
 object AppNavigator {
+
+    private val isHandlingUserNotLoggedIn = AtomicBoolean(false)
+    /**
+     * 统一处理登录失效：并发触发只响应一次，提示指定文案并清空页面栈返回登录页。
+     *
+     * @param message 退出登录前展示的提示文案
+     * @param delayToLoginMillis 提示后延迟返回登录页的时长，0 表示立即返回
+     */
+    @JvmStatic
+    fun forceUserNotLoggedIn(message: String?, delayToLoginMillis: Long = 0L) {
+        if (User.get().isVisitor || !isHandlingUserNotLoggedIn.compareAndSet(false, true)) return
+        App.instance.post(
+            Runnable {
+                val returnToLogin = Runnable {
+                    SignUtils.signOut()
+                    App.instance.startActivity(
+                        Intent(App.instance, PhoneNewLoginActivity::class.java)
+                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    )
+                    isHandlingUserNotLoggedIn.set(false)
+                }
+                if (delayToLoginMillis > 0 && !message.isNullOrBlank()) {
+                    val toast = Toast.makeText(App.instance, message, Toast.LENGTH_LONG)
+                    toast.show()
+                    App.instance.postDelay(
+                        Runnable {
+                            toast.cancel()
+                            returnToLogin.run()
+                        },
+                        delayToLoginMillis.coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
+                    )
+                } else {
+                    message?.takeIf { it.isNotBlank() }?.showToast()
+                    returnToLogin.run()
+                }
+            }
+        )
+    }
+
 
     /**
      * 强制退出并打开登录

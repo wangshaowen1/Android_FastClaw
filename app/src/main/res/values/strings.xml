@@ -1215,5 +1215,7 @@
     <string name="interview_target_job_screenshot_step_3">保存图片</string>
     <string name="interview_finish">结束面试</string>
 
+    <string name="im_kick_out_toast">您的账号已在另一台终端登录，本机将退出登录</string>
+
 </resources>
 

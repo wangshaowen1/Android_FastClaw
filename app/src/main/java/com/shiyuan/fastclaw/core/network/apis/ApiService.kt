@@ -74,6 +74,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.UnbindThirdPartyBody
 import com.shiyuan.fastclaw.core.network.apis.request.UpdateAvatarBody
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.network.SSEvent
+import com.shiyuan.fastclaw.core.network.apis.entity.ImTokenData
 import com.shiyuan.fastclaw.core.network.apis.request.DictIndustryQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.DictPositionQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.DictWelfareQueryBody
@@ -725,5 +726,14 @@ interface ApiService {
 
     @POST(ApiConstants.ONLINERESUME_ATTRIBUTE_ARRAY_DELETE)
     suspend fun onlineResumeAttributeDelete(@Body body: Any): ApiResponse<AttributeSave?>
+
+
+    @POST(ApiConstants.REGISTER_IM_TOKEN)
+    suspend fun registerImToken(@Body body: UserTokenBody): ApiResponse<ImTokenData?>
+
+    /** 查询当前用户云信账号。 */
+    @POST(ApiConstants.CHAT_IM_ACCOUNT_QUERY)
+    suspend fun queryImAccount(): ApiResponse<ImTokenData?>
+
 
 }

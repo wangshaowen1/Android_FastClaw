@@ -3,6 +3,8 @@ package com.shiyuan.fastclaw.feature.main
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
+import com.netease.nimlib.sdk.NIMClient
+import com.netease.nimlib.sdk.StatusCode
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.core.AppRepository
@@ -11,6 +13,10 @@ import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.response
+import com.tulele.im.ImSession
+import com.tulele.im.utils.AccountHelper
+import kotlin.text.get
+import com.shiyuan.fastclaw.core.ext.request
 
 /**
  * *****************************************
@@ -71,6 +77,15 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
                     result = {
                         fetchingUserInfo = false
                         User.get().updateFrom(this.data)
+                        // IM 账号无效时先同步；自动登录 417/未登录时改走手动登录。
+                        if (!ImSession.get().account.isValid()) {
+                            syncImAccountAndLogin()
+                        } else {
+                            val imStatus = NIMClient.getStatus()
+                            if (imStatus == StatusCode.UNLOGIN) {
+                                AccountHelper.login()
+                            }
+                        }
                     },
                     error = { fetchingUserInfo = false }
                 )
@@ -80,6 +95,19 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
 
+    /** 查询并保存云信账号后登录；普通查询失败时继续走刷新 Token 的既有兜底链路。 */
+    private fun syncImAccountAndLogin() {
+        request(
+            apiBlock = { mRepo.api.queryImAccount() },
+            onError = { AccountHelper.login() },
+            onSuccess = {
+                val account = data
+                User.get().storeImAccessId(account?.imAccId)
+                User.get().storeImToken(account?.imAccToken)
+                AccountHelper.login()
+            }
+        )
+    }
 
     fun commonInit() {
         if (User.get().isVisitor) return
