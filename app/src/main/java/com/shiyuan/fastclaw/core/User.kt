@@ -68,7 +68,7 @@ class User : IUser, ImUserAccount {
         private set
 
     /** 当前登录 token。 */
-    var token: String? by MmkvDelegate(mmkvKey(TOKEN), null as String?) { mmkv }
+    var authToken: String? by MmkvDelegate(mmkvKey(TOKEN), null as String?) { mmkv }
         private set
 
     /** 当前用户算力余额。 */
@@ -165,7 +165,7 @@ class User : IUser, ImUserAccount {
         registerWay = null
         lastLoginTime = null
         registerStatus = null
-        token = null
+        authToken = null
         imAccessId = null
         imToken = null
         computingPower = 0
@@ -192,7 +192,7 @@ class User : IUser, ImUserAccount {
         get() = TextUtils.isEmpty(id)
 
     override fun getId(): String? {
-        return token
+        return authToken
     }
 
     fun storeUserId(userId: String?) {
@@ -240,7 +240,7 @@ class User : IUser, ImUserAccount {
     }
 
     fun storeToken(token: String?) {
-        this.token = token
+        this.authToken = token
     }
 
     fun storeComputingPower(computingPower: Int) {

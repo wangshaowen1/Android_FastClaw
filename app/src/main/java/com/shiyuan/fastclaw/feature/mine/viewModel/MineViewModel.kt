@@ -204,7 +204,7 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
      */
     private fun getUserPoints() {
         val user = User.Companion.get()
-        user.token?.let {
+        user.authToken?.let {
             launch {
                 response(
                     bean = mRepo.api.getUserPoints(),
@@ -219,7 +219,7 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
 
     fun getRechargePackages() {
         val user = User.Companion.get()
-        user.token?.let {
+        user.authToken?.let {
             launch {
                 response(
                     bean = mRepo.api.queryPointConfigList(),
@@ -233,7 +233,7 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
 
     fun getPayWays() {
         val user = User.Companion.get()
-        user.token?.let {
+        user.authToken?.let {
             launch {
                 response(
                     bean = mRepo.api.queryTradePayWayList(),
@@ -291,7 +291,7 @@ class MineViewModel : PaymentViewModel<AppRepository>() {
 
     private fun understandingScore() {
         val user = User.Companion.get()
-        user.token?.let {
+        user.authToken?.let {
             launch(block = {
                 response(
                     ApiFactory.apiService.understandingScore(),
