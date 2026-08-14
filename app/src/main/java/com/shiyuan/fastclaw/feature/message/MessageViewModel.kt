@@ -26,7 +26,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
 
     private val conversationManager get() = ImSession.get().getConversationManager()
     private val userManager get() = ImSession.get().getUserManager()
-    private var loadJob: Job? = null
+    private var loadConversationsJob: Job? = null
     private var pageState = false
     private var registerConversationManager: IConversationManager? = null
 
@@ -56,8 +56,8 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
      */
     fun getConversations() {
         if (!pageState) return
-        loadJob?.cancel()
-        loadJob = viewModelScope.launch {
+        loadConversationsJob?.cancel()
+        loadConversationsJob = viewModelScope.launch {
             isLoading.set(true)
             try {
                 val conversations = queryImConversations().orEmpty()
@@ -219,8 +219,8 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
      * 取消当前会话加载任务并清空引用，避免旧任务回填列表。
      */
     private fun cancelLoadJob() {
-        loadJob?.cancel()
-        loadJob = null
+        loadConversationsJob?.cancel()
+        loadConversationsJob = null
     }
 
     /**
