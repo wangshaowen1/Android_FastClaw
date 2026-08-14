@@ -101,7 +101,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_bubble_layout">
 
-        <TextView
+        <!--<TextView
             android:id="@+id/tv_detail_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -123,21 +123,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_detail_title"
             app:layout_constraintBottom_toBottomOf="@+id/tv_detail_title"
-            />
+            />-->
 
         <!-- 行列表：通过代码 addView + flow.referencedIds 绑定动态行 -->
         <androidx.constraintlayout.helper.widget.Flow
             android:id="@+id/flow_detail_rows"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             android:orientation="vertical"
             app:flow_verticalGap="16dp"
             app:flow_verticalStyle="packed"
             app:flow_wrapMode="none"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_detail_title" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -33,8 +33,8 @@ class AgentUnderstandingUpgradeViewHolder(private val binding: ItemMsgAgentUnder
         binding.wpvAlignProgress.progress = score
         binding.wpvAlignProgress.text = "$score%"
         binding.tvAlignTitle.text = context.getString(R.string.str_agent_understanding_upgrade_title)
-        binding.tvAlignSubtitle.text = payload?.description?.takeIf { it.isNotBlank() }
-            ?: context.getString(R.string.str_agent_understanding_align_subtitle, score)
+        //binding.tvAlignSubtitle.text = payload?.description?.takeIf { it.isNotBlank() } ?: context.getString(R.string.str_agent_understanding_align_subtitle, score)
+        binding.tvAlignSubtitle.text = context.getString(R.string.str_agent_understanding_align_subtitle)
         binding.clBubbleLayout.setOnSingleClickListener {
             OnlineResumeActivity.start(context,1)
         }
