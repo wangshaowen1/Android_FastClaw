@@ -11,6 +11,7 @@
         <!--<item name="android:typeface">monospace</item>-->
         <item name="android:windowContentOverlay">@android:color/transparent</item>
         <item name="android:textColorSecondary">@color/textColorSecondary</item>
+        <item name="matisseTheme">@style/Theme.FastClaw.Matisse</item>
         <item name="toolbarNavigationButtonStyle">@style/toolbarNavigationButtonStyle</item>
         <item name="actionBarSize">@dimen/action_bar_size</item>
         <item name="calendarViewStyle">@style/Widget.Holo.CalendarView</item>
@@ -823,7 +824,7 @@
     </style>
 
     <!-- Matisse 视觉由宿主主题统一覆盖，避免依赖源码 Module 承载项目定制。 -->
-    <style name="Theme.FastClaw.Matisse" parent="Matisse.Kuaige">
+    <style name="Theme.FastClaw.Matisse" parent="Matisse.Base">
         <item name="android:windowBackground">@color/color_121212</item>
         <item name="page.bg">@color/color_121212</item>
         <item name="bottomToolbar.bg">@color/color_121212</item>

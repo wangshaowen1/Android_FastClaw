@@ -787,7 +787,6 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
     private fun openAlbum() {
         Matisse.from(this)
             .choose(MimeType.ofImage(), false)
-            .theme(R.style.Theme_FastClaw_Matisse)
             .countable(false)
             .capture(true)
             .captureStrategy(CaptureStrategy(true, FileManager.getInstance().fileProvider, "album"))
