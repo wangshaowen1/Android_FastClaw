@@ -28,6 +28,8 @@ from urllib.request import (
 USER_AGENT = "ProjectDocs-MasterGo-Reader/1.0"
 METADATA_LIMIT = 8 * 1024 * 1024
 HTML_LIMIT = 4 * 1024 * 1024
+SCRIPT_LIMIT = 12 * 1024 * 1024
+MAX_SCRIPT_ASSETS = 12
 DEFAULT_MIN_DATA_BYTES = 1024
 ASSET_PATTERN = re.compile(
     rb"(?:https?://[A-Za-z0-9._~:/?#\[\]@!$&'()*+,;=%-]+|[A-Za-z0-9_./%-]{4,})"
@@ -103,6 +105,71 @@ def extract_wv(page_text: str, metadata: Any, explicit_wv: Optional[str]) -> str
         if match:
             return match.group(1)
     raise ReaderError("无法从当前页面确认 wv；接口可能变化，可核实后显式传入 --wv。")
+
+
+def extract_master_version(script_text: str) -> Optional[str]:
+    decoded = unquote(html.unescape(script_text))
+    matches = {
+        match
+        for match in re.findall(
+            r"[\"']?VUE_APP_MASTER_VERSION[\"']?\s*:\s*[\"']([A-Za-z0-9._-]+)[\"']",
+            decoded,
+        )
+    }
+    if len(matches) == 1:
+        return next(iter(matches))
+    return None
+
+
+def extract_script_urls(page_text: str, page_url: str) -> list[str]:
+    decoded = html.unescape(page_text)
+    urls: list[str] = []
+    seen: set[str] = set()
+    for match in re.finditer(
+        r"<script\b[^>]*\bsrc\s*=\s*([\"'])(.*?)\1",
+        decoded,
+        flags=re.IGNORECASE | re.DOTALL,
+    ):
+        try:
+            candidate = require_mastergo_url(urljoin(page_url, match.group(2).strip()))
+        except ReaderError:
+            continue
+        if not urlparse(candidate).path.lower().endswith(".js") or candidate in seen:
+            continue
+        urls.append(candidate)
+        seen.add(candidate)
+        if len(urls) >= MAX_SCRIPT_ASSETS:
+            break
+    return urls
+
+
+def extract_wv_from_page_assets(
+    page_text: str,
+    page_url: str,
+    opener: Any,
+    timeout: float,
+) -> str:
+    versions: set[str] = set()
+    for script_url in extract_script_urls(page_text, page_url):
+        try:
+            script_bytes, _, _ = read_limited(
+                opener,
+                script_url,
+                page_url,
+                timeout,
+                SCRIPT_LIMIT,
+            )
+        except (HTTPError, URLError, ReaderError):
+            continue
+        version = extract_master_version(script_bytes.decode("utf-8", errors="ignore"))
+        if version:
+            versions.add(version)
+
+    if len(versions) == 1:
+        return next(iter(versions))
+    if len(versions) > 1:
+        raise ReaderError("页面运行包中存在多个 MasterGo 数据版本，无法安全选择 wv。")
+    raise ReaderError("无法从当前页面或其 MasterGo 运行包确认 wv；可核实后显式传入 --wv。")
 
 
 def check_cookie_header(path: Path) -> None:
@@ -215,22 +282,36 @@ def clean_context(raw: bytes) -> str:
 def extract_keyword_matches(data: bytes, keywords: list[str], limit: int) -> list[dict[str, str]]:
     matches: list[dict[str, str]] = []
     seen: set[tuple[str, str]] = set()
+    searches: list[tuple[str, bytes]] = []
+    seen_keywords: set[str] = set()
     for keyword in keywords:
         needle = keyword.encode("utf-8")
-        if not needle:
+        if not needle or keyword in seen_keywords:
             continue
-        position = 0
-        while len(matches) < limit:
-            found = data.find(needle, position)
+        searches.append((keyword, needle))
+        seen_keywords.add(keyword)
+
+    positions = [0] * len(searches)
+    exhausted = [False] * len(searches)
+    while len(matches) < limit:
+        found_in_round = False
+        for index, (keyword, needle) in enumerate(searches):
+            if exhausted[index]:
+                continue
+            found = data.find(needle, positions[index])
             if found < 0:
-                break
+                exhausted[index] = True
+                continue
+            found_in_round = True
             snippet = clean_context(data[max(0, found - 180) : found + len(needle) + 260])
             key = (keyword, snippet)
             if snippet and key not in seen:
                 matches.append({"keyword": keyword, "context": snippet[:500]})
                 seen.add(key)
-            position = found + len(needle)
-        if len(matches) >= limit:
+                if len(matches) >= limit:
+                    break
+            positions[index] = found + len(needle)
+        if not found_in_round:
             break
     return matches
 
@@ -297,7 +378,18 @@ def read_mastergo(args: argparse.Namespace) -> Path:
         file_key = first_value(metadata, "fileKey")
         if not isinstance(file_key, str) or not file_key:
             raise ReaderError("metadata 中缺少 fileKey，可能没有权限或接口已变化。")
-        wv = extract_wv(page_text, metadata, args.wv)
+        if args.wv:
+            wv = extract_wv(page_text, metadata, args.wv)
+        else:
+            try:
+                wv = extract_wv(page_text, metadata, None)
+            except ReaderError:
+                wv = extract_wv_from_page_assets(
+                    page_text,
+                    resolved_url,
+                    opener,
+                    args.timeout,
+                )
 
         output_dir = Path(tempfile.mkdtemp(prefix=f"mastergo-{document_id}-"))
         data_path = output_dir / "mastergo.data"
@@ -343,9 +435,21 @@ def run_self_test() -> None:
     assert extract_document_id(sample_url) == "123456"
     assert extract_document_id("https://mastergo.com/view?documentId=987") == "987"
     assert extract_wv("fetch('/data/key?wv=v2.4.1')", {}, None) == "v2.4.1"
+    assert extract_master_version('VUE_APP_MASTER_VERSION:"v2.191.0"') == "v2.191.0"
+    script_urls = extract_script_urls(
+        '<script src="https://static.mastergo.com/static/js/app.test.js"></script>',
+        "https://mastergo.com/prototyping/123",
+    )
+    assert script_urls == ["https://static.mastergo.com/static/js/app.test.js"]
     assert first_value({"data": {"fileKey": "abc"}}, "fileKey") == "abc"
     matches = extract_keyword_matches("页面状态：空态".encode("utf-8"), ["状态"], 5)
     assert matches and matches[0]["keyword"] == "状态"
+    balanced = extract_keyword_matches(
+        "高频 高频 高频 稀有".encode("utf-8"),
+        ["高频", "稀有"],
+        2,
+    )
+    assert {match["keyword"] for match in balanced} == {"高频", "稀有"}
     assets = extract_asset_paths(b"a/b/cover.webp and https://example.com/x.png", 5)
     assert "a/b/cover.webp" in assets
     assert not is_mastergo_host("example.com")
