@@ -94,7 +94,8 @@ public class DownloadService extends Service {
             down.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
         }*/
         //down.setDestinationInExternalPublicDir(DOWNLOADPATH, fileName);
-        down.setDestinationInExternalFilesDir(this, FileManager.getInstance().getApkFolder().getName(), fileName);
+        // 下载目标与校验、复用统一使用 FileManager.apkFolder，避免完成后找错目录。
+        down.setDestinationUri(Uri.fromFile(new File(path)));
         down.setTitle(Utils.parseName(url));
         downloadId = manager.enqueue(down);
         handler.postDelayed(new Runnable() {
