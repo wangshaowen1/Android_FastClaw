@@ -109,6 +109,16 @@ class User : IUser, ImUserAccount {
     val isLogged: Boolean
         get() = !TextUtils.isEmpty(id)
 
+    /**
+     * 云信账号 ID，供 AccountHelper.login() 读取并作为 IM 登录账号。
+     */
+    var imAccessId: String? by MmkvDelegate<String?>(IM_ACCESS_ID, null) { mmkv }
+
+    /**
+     * 云信登录 token，供 AccountHelper.login() 读取并作为 IM 登录凭证。
+     */
+    var imToken: String? by MmkvDelegate<String?>(IM_TOKEN, null) { mmkv }
+
     init {
         migrateLegacyUserDataIfNeeded()
     }
@@ -286,11 +296,6 @@ class User : IUser, ImUserAccount {
     fun setRequestNotificationsPermissionDisable() {
         requestNotificationsPermissionEnable = false
     }
-
-    var imAccessId: String? by MmkvDelegate<String?>(IM_ACCESS_ID, null) { mmkv }
-    var imToken: String? by MmkvDelegate<String?>(IM_TOKEN, null) { mmkv }
-
-
 
     fun storeImAccessId(accId: String?) {
         imAccessId = accId

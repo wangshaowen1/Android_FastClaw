@@ -14,6 +14,7 @@ import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.response
+import com.nhsd.basic.utils.Logger
 import com.tulele.im.ImSession
 import com.tulele.im.StateChangeListener
 import com.tulele.im.conversation.ConversationListener
@@ -22,6 +23,8 @@ import com.tulele.im.entity.Conversation
 import com.tulele.im.utils.AccountHelper
 import kotlin.text.get
 import com.shiyuan.fastclaw.core.ext.request
+
+private const val IM_LOGIN_LOG_TAG = "ImLogin"
 
 /**
  * *****************************************
@@ -116,6 +119,14 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListe
                     result = {
                         fetchingUserInfo = false
                         User.get().updateFrom(this.data)
+                        Logger.i(
+                            IM_LOGIN_LOG_TAG,
+                            "fetchUserInfo imReady=${this.data?.imReady}, " +
+                                "imAccId=${this.data?.imAccId}, " +
+                                "imAccToken=${this.data?.imAccToken}, " +
+                                "localValid=${ImSession.get().account.isValid}, " +
+                                "nimStatus=${NIMClient.getStatus()}"
+                        )
                         // IM 账号无效时先同步；自动登录 417/未登录时改走手动登录。
                         if (!ImSession.get().account.isValid()) {
                             syncImAccountAndLogin()
@@ -142,11 +153,21 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListe
         request(
             apiBlock = { mRepo.api.queryImAccount() },
             onError = {
+                Logger.i(
+                    IM_LOGIN_LOG_TAG,
+                    "syncImAccountAndLogin localValid=${ImSession.get().account.isValid}, " + "nimStatus=${NIMClient.getStatus()}"
+                )
                 AccountHelper.login()
                 refreshImData()
             },
             onSuccess = {
                 val account = data
+                Logger.i(IM_LOGIN_LOG_TAG,
+                    "syncImAccountAndLogin imReady=${account?.imReady}, " +
+                        "imAccId=${account?.imAccId}, " +
+                        "imAccToken=${account?.imAccToken}, " +
+                        "nimStatus=${NIMClient.getStatus()}"
+                )
                 User.get().storeImAccessId(account?.imAccId)
                 User.get().storeImToken(account?.imAccToken)
                 AccountHelper.login()

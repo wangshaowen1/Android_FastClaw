@@ -48,6 +48,7 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.shiyuan.fastclaw.core.im.FastClawMixPushMessageHandler
 import com.shiyuan.fastclaw.core.im.FriendInteractionAttachment
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
+import com.shiyuan.fastclaw.core.network.apis.ApiException
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -61,6 +62,8 @@ import com.tulele.im.utils.AccountHelper
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Random
+
+private const val IM_LOGIN_LOG_TAG = "ImLogin"
 
 class App : ImApplication() {
 
@@ -264,6 +267,7 @@ class App : ImApplication() {
                     val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
                     User.get().storeImAccessId(data?.imAccId)
                     User.get().storeImToken(data?.imAccToken)
+                    Logger.i(IM_LOGIN_LOG_TAG, "initImSession imReady=${data?.imReady}, " + "imAccId=${data?.imAccId}, " + "imAccToken=${data?.imAccToken}")
                     return data?.imAccToken
                 }
             })

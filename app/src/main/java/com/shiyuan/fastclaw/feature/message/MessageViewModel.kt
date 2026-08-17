@@ -38,7 +38,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
         pageState = active
         if (active) {
             registerConversationListener()
-            refreshVisibleData()
+            refreshConversations()
         } else {
             cancelLoadJob()
         }
@@ -47,14 +47,14 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
     /**
      * 刷新当前消息页的 IM 会话与后端互动数据。
      */
-    fun refreshVisibleData() {
-        getConversations()
+    fun refreshConversations() {
+        getConversationList()
     }
 
     /**
      * 拉取 IM 本地会话并映射为消息列表 UI 数据，SDK 未就绪或资料失败时降级为空态。
      */
-    fun getConversations() {
+    fun getConversationList() {
         if (!pageState) return
         loadConversationsJob?.cancel()
         loadConversationsJob = viewModelScope.launch {
@@ -191,28 +191,28 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
      * IM 首次加载会话列表后刷新消息 Tab，确保登录后会话回填到页面。
      */
     override fun onConversationsLoaded(conversations: List<Conversation>?) {
-        refreshVisibleData()
+        refreshConversations()
     }
 
     /**
      * 会话列表新增或更新时刷新消息 Tab，覆盖新消息、撤回和最近会话排序变化。
      */
     override fun onConversationsChanged(conversations: List<Conversation>) {
-        refreshVisibleData()
+        refreshConversations()
     }
 
     /**
      * 会话被删除时刷新消息 Tab，避免已删除会话继续停留在列表中。
      */
     override fun onConversationDeleted(conversation: Conversation) {
-        refreshVisibleData()
+        refreshConversations()
     }
 
     /**
      * 会话状态变化时刷新消息 Tab，覆盖未读数、发送状态等局部状态变化。
      */
     override fun onConversationStateChanged(conversation: Conversation) {
-        refreshVisibleData()
+        refreshConversations()
     }
 
     /**
