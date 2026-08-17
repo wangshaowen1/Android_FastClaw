@@ -106,6 +106,7 @@ import kotlin.math.abs
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_SELECT_JOB_STATUS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_UPLOAD_RESUME
 import com.shiyuan.fastclaw.core.manager.EventManager
+import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentJobRecommendationDialog
 
 /** 
  * @createtime 2026年05月20日 10:25
@@ -705,8 +706,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         // 达到帮你找工作弹窗
         mRealVM.helpYouFindJobDialog.observe(viewLifecycleOwner) { info ->
             info ?: return@observe
-            showNotificationSwitchDialog()
-            mRealVM.helpYouFindJobDialog.value = null
+            showHelpYouFindJobDialog()
         }
 
         // 模拟面试查询未
@@ -1095,6 +1095,16 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 // todo: 检测通知权限
             }
         }
+    }
+
+    /** 达到帮你找工作弹窗 */
+    private fun showHelpYouFindJobDialog() {
+        ClawAgentJobRecommendationDialog(requireContext()).apply {
+            onDismissListener = {
+                mRealVM.helpYouFindJobDialog.value = null
+                mRealVM.pullMessages()
+            }
+        }.showDialog()
     }
 
     /**

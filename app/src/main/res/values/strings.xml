@@ -956,6 +956,9 @@
     <string name="str_agent_searching_jobs_desc">我能帮你完善画像、准备面试。对你了解越多，越能帮你更多~</string>
     <string name="str_agent_no_jobs_found_title">小虾正在陪伴你的求职</string>
     <string name="str_agent_no_jobs_found_desc">我能帮你完善画像、优化简历、准备面试~你的求职，我全程支持。</string>
+    <string name="str_agent_job_recommendation_title">小虾可以帮你推荐工作啦!</string>
+    <string name="str_agent_job_recommendation_message">正在扫描全网简历,稍后可以在“机会”\n中查看</string>
+    <string name="str_agent_job_recommendation_confirm">好的, 知道了</string>
     <string name="str_agent_memory_title">小虾记住了</string>
     <string name="str_agent_memory_all">查看全部记忆</string>
     <string name="str_agent_memory_negation">不对</string>

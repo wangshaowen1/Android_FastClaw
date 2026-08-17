@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="296dp"
+    android:layout_height="wrap_content"
+    app:background_normalColor="@color/color_ffffff"
+    app:super_corner="30dp">
+
+    <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+        android:paddingHorizontal="26dp"
+        android:id="@+id/layout_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:background_normalColor="#F1F7FF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:corner_leftTop="30dp"
+        app:corner_rightTop="30dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="115dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:includeFontPadding="false"
+            android:lineHeight="24dp"
+            android:text="@string/str_agent_job_recommendation_title"
+            android:textColor="@color/color_000000"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="119dp"
+            android:layout_height="58dp"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="22dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:src="@drawable/img_claw_agent_job_recommendation"
+            app:layout_constraintStart_toEndOf="@id/tv_title"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+
+    <TextView
+        android:layout_marginHorizontal="26dp"
+        android:id="@+id/tv_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="start"
+        android:includeFontPadding="false"
+        android:lineHeight="21dp"
+        android:text="@string/str_agent_job_recommendation_message"
+        android:textColor="@color/color_90_000000"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_header" />
+
+    <com.shiyuan.fastclaw.widget.super_button.SuperButton
+        android:id="@+id/sb_confirm"
+        android:layout_width="236dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="@string/str_agent_job_recommendation_confirm"
+        android:textColor="@color/color_ffffff"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_message"
+        app:sCornersRadius="20dp"
+        app:sSolidColor="@color/color_2f6bff" />
+
+</com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
