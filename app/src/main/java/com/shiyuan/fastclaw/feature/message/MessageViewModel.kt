@@ -7,9 +7,10 @@ import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
+import com.shiyuan.fastclaw.feature.message.MessageAdapter.Companion.TYPE_CONVERSATION
 import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.data.MessageListItem
-import com.shiyuan.fastclaw.feature.message.data.UnsuitableItem
+import com.shiyuan.fastclaw.feature.message.data.UnsuitableEntry
 import com.tulele.im.ImSession
 import com.tulele.im.conversation.ConversationListener
 import com.tulele.im.conversation.IConversationManager
@@ -91,6 +92,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
                     val user = users[account]
                     ConversationItem(
                         id = account,
+                        itemType = TYPE_CONVERSATION,
                         targetName = user?.name?.takeIf { it.isNotBlank() } ?: account,
                         targetDesc = user?.signature?.takeIf { it.isNotBlank() },
                         targetAvatar = user?.avatar,
@@ -158,8 +160,8 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
     /**
      * 根据黑名单会话数量生成“已标记不合适的会话”入口，数量为空时不展示。
      */
-    private fun queryMarkedUnsuitableEntry(count: Int): UnsuitableItem? =
-        count.takeIf { it > 0 }?.let { UnsuitableItem(it) }
+    private fun queryMarkedUnsuitableEntry(count: Int): UnsuitableEntry? =
+        count.takeIf { it > 0 }?.let { UnsuitableEntry(it) }
 
     /**
      * 判断当前联系人是否已被标记为不合适，SDK 查询异常时按普通会话展示。

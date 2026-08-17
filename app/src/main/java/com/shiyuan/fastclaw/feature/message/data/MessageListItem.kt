@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.message.data
 
-import com.shiyuan.fastclaw.feature.message.MessageAdapter
+import com.shiyuan.fastclaw.feature.message.MessageAdapter.Companion.TYPE_CONVERSATION
+import com.shiyuan.fastclaw.feature.message.MessageAdapter.Companion.TYPE_UNSUITABLE_ENTRY
 
 /**
  * 消息列表统一行模型，供多类型 Adapter 根据 itemType 分发不同布局。
@@ -34,18 +35,18 @@ data class ConversationItem(
     val lastMessageTime: Long,
     val unreadCount: Int,
     val isDraft: Boolean = false,
-) : MessageListItem {
-    override val itemType: Int = MessageAdapter.Companion.TYPE_CONVERSATION
-}
+    override val itemType: Int = TYPE_CONVERSATION
+) : MessageListItem
 
 /**
  * 已标记不合适的会话入口行，用于和普通会话在同一个消息列表中混排。
  *
  * @param count 当前入口下的联系人数量。
  */
-data class UnsuitableItem(
+data class UnsuitableEntry(
     val count: Int,
-) : MessageListItem {
-    override val id: String = "marked_unsuitable"
-    override val itemType: Int = MessageAdapter.Companion.TYPE_MARKED_UNSUITABLE
-}
+    override val id: String = "marked_unsuitable",
+    override val itemType: Int = TYPE_UNSUITABLE_ENTRY
+
+) : MessageListItem
+

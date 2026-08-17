@@ -63,7 +63,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/viewTitleSpace"
             app:layout_constraintVertical_bias="0.0"
-            tools:itemCount="5"
+            tools:itemCount="3"
             tools:layout_editor_absoluteX="0dp"
             tools:listitem="@layout/item_message_conversation" />
 
@@ -89,9 +89,10 @@
                 android:src="@drawable/img_message_empty" />
 
             <TextView
+                android:paddingStart="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="5dp"
                 android:includeFontPadding="false"
                 android:text="@string/message_empty_tip"
                 android:textColor="@color/color_60_3c3c43"

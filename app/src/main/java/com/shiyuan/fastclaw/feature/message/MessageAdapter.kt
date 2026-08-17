@@ -10,7 +10,7 @@ import com.shiyuan.fastclaw.databinding.ItemMessageConversationBinding
 import com.shiyuan.fastclaw.databinding.ItemMessageMarkedUnsuitableBinding
 import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.data.MessageListItem
-import com.shiyuan.fastclaw.feature.message.data.UnsuitableItem
+import com.shiyuan.fastclaw.feature.message.data.UnsuitableEntry
 import com.shiyuan.fastclaw.feature.message.viewholder.ConversationViewHolder
 import com.shiyuan.fastclaw.feature.message.viewholder.ConversationUnsuitableViewHolder
 
@@ -29,7 +29,12 @@ class MessageAdapter : BaseMultiItemAdapter<MessageListItem>() {
                 onConversationClickListener = { onConversationClick(it) }
             }
         }) { holder, item -> holder.bind(item) }
-        register<ConversationUnsuitableViewHolder, UnsuitableItem>(TYPE_MARKED_UNSUITABLE, { inflater, parent ->
+        register<ConversationViewHolder, ConversationItem>(TYPE_UNSUITABLE, { inflater, parent ->
+            ConversationViewHolder(ItemMessageConversationBinding.inflate(inflater, parent, false)).apply {
+                onConversationClickListener = { onConversationClick(it) }
+            }
+        }) { holder, item -> holder.bind(item) }
+        register<ConversationUnsuitableViewHolder, UnsuitableEntry>(TYPE_UNSUITABLE_ENTRY, { inflater, parent ->
             ConversationUnsuitableViewHolder(ItemMessageMarkedUnsuitableBinding.inflate(inflater, parent, false)).apply {
                 onMarkedUnsuitableClickListener = { onMarkedUnsuitableClick() }
             }
@@ -103,7 +108,10 @@ class MessageAdapter : BaseMultiItemAdapter<MessageListItem>() {
         // 普通 IM 会话列表项类型。
         const val TYPE_CONVERSATION = 1
 
-        // 已标记不合适会话入口列表项类型。
-        const val TYPE_MARKED_UNSUITABLE = 2
+        // 已标记不合适会话入口。
+        const val TYPE_UNSUITABLE_ENTRY = 2
+
+        // 已标记不合适会话表项类型。
+        const val TYPE_UNSUITABLE = 3
     }
 }
