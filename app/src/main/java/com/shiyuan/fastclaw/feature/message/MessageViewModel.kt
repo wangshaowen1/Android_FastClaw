@@ -7,6 +7,9 @@ import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
+import com.shiyuan.fastclaw.feature.message.data.ConversationItem
+import com.shiyuan.fastclaw.feature.message.data.MessageListItem
+import com.shiyuan.fastclaw.feature.message.data.UnsuitableItem
 import com.tulele.im.ImSession
 import com.tulele.im.conversation.ConversationListener
 import com.tulele.im.conversation.IConversationManager
@@ -18,17 +21,29 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+// 消息会话列表 ViewModel，负责加载 IM 会话并监听会话变化。
 class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListener {
-
-    val messageList = MutableLiveData<List<MessageListItem>>(emptyList())
+    // 消息页展示的会话和入口列表数据。
+    val conversationList = MutableLiveData<List<MessageListItem>>(emptyList())
+    // 当前列表是否为空。
     val isEmpty = ObservableBoolean(true)
+    // 当前是否正在加载会话列表。
     val isLoading = ObservableBoolean(false)
-
+    // IM 会话管理器，按当前会话实例实时获取。
     private val conversationManager get() = ImSession.get().getConversationManager()
+    // IM 用户资料管理器，用于补齐会话用户信息。
     private val userManager get() = ImSession.get().getUserManager()
+    // 当前会话列表加载任务，页面离开或重新刷新时取消旧任务。
     private var loadConversationsJob: Job? = null
+    // 页面是否处于可见状态，避免后台继续刷新列表。
     private var pageState = false
+    // 已注册监听的会话管理器实例，避免重复注册监听。
     private var registerConversationManager: IConversationManager? = null
+
+    override fun onCreate() {
+        super.onCreate()
+        registerConversationListener()
+    }
 
     /**
      * 同步页面可见状态，页面不可见时取消本轮会话加载，避免后台继续刷新 UI。
@@ -66,12 +81,15 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
                             !conversation.contactId.isNullOrBlank()
                     }
                     .sortedByDescending { it.time }
-                val users = fetchUsers(conversations.mapNotNull { it.contactId }.distinct())
+                val (unsuitableConversations, normalConversations) = conversations.partition { conversation ->
+                    isMarkedUnsuitable(conversation.contactId.orEmpty())
+                }
+                val users = fetchUsers(normalConversations.mapNotNull { it.contactId }.distinct())
                     .associateBy { it.account }
-                val items = conversations.map { conversation ->
+                val items = normalConversations.map { conversation ->
                     val account = conversation.contactId.orEmpty()
                     val user = users[account]
-                    MessageConversationItem(
+                    ConversationItem(
                         id = account,
                         targetName = user?.name?.takeIf { it.isNotBlank() } ?: account,
                         targetDesc = user?.signature?.takeIf { it.isNotBlank() },
@@ -81,11 +99,11 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
                         unreadCount = conversation.unreadCount,
                     )
                 }
-                updateMessageList(items)
+                updateMessageList(items, unsuitableConversations.size)
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
-                updateMessageList(emptyList())
+                updateMessageList(emptyList(), 0)
             } finally {
                 isLoading.set(false)
             }
@@ -95,15 +113,8 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
     /**
      * 会话点击入口，本轮只做列表，后续接入单聊详情页时在这里统一跳转。
      */
-    fun openConversation(item: MessageConversationItem) {
+    fun openConversation(item: ConversationItem) {
         // 这轮只做消息 Tab 和会话列表，单聊详情页后续接入。
-    }
-
-    /**
-     * 已标记不合适会话入口，本轮保留点击出口，具体页面后续接入。
-     */
-    fun openMarkedUnsuitable() {
-        // 这轮只实现入口类型与展示，具体页面后续接入。
     }
 
     /**
@@ -134,20 +145,31 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>(), ConversationLi
     /**
      * 合并普通会话与预留入口类型，并同步空态开关。
      */
-    private fun updateMessageList(conversations: List<MessageConversationItem>) {
-        val markedUnsuitable = queryMarkedUnsuitableEntry()
+    private fun updateMessageList(conversations: List<ConversationItem>, unsuitableCount: Int) {
+        val markedUnsuitable = queryMarkedUnsuitableEntry(unsuitableCount)
         val items = buildList {
             addAll(conversations)
             markedUnsuitable?.let { add(it) }
         }
-        messageList.value = items
+        conversationList.value = items
         isEmpty.set(items.isEmpty())
     }
 
     /**
-     * 查询“已标记不合适的会话”入口数据，当前分支暂无数据源，先不展示假入口。
+     * 根据黑名单会话数量生成“已标记不合适的会话”入口，数量为空时不展示。
      */
-    private fun queryMarkedUnsuitableEntry(): UnsuitableConversationItem? = null
+    private fun queryMarkedUnsuitableEntry(count: Int): UnsuitableItem? =
+        count.takeIf { it > 0 }?.let { UnsuitableItem(it) }
+
+    /**
+     * 判断当前联系人是否已被标记为不合适，SDK 查询异常时按普通会话展示。
+     */
+    private fun isMarkedUnsuitable(account: String): Boolean =
+        try {
+            ImSession.get().isInBlackList(account)
+        } catch (_: Exception) {
+            false
+        }
 
     /**
      * 将 IM 末条消息转换成会话列表摘要，非文本消息展示资源文案。

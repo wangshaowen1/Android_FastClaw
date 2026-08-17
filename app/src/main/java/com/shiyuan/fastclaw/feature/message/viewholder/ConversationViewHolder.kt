@@ -7,7 +7,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.formatMessageNum
 import com.shiyuan.fastclaw.databinding.ItemMessageConversationBinding
-import com.shiyuan.fastclaw.feature.message.MessageConversationItem
+import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.MessageTimeFormatter
 
 /**
@@ -15,12 +15,12 @@ import com.shiyuan.fastclaw.feature.message.MessageTimeFormatter
  */
 class ConversationViewHolder(private val binding: ItemMessageConversationBinding, ) : RecyclerView.ViewHolder(binding.root) {
 
-    var onConversationClickListener: (MessageConversationItem) -> Unit = {}
+    var onConversationClickListener: (ConversationItem) -> Unit = {}
 
     /**
      * 绑定普通 P2P 会话行，包含头像、未读数、草稿标记与末条消息摘要。
      */
-    fun bind(item: MessageConversationItem) {
+    fun bind(item: ConversationItem) {
         binding.tvName.text = item.targetName
         binding.tvDesc.text = item.targetDesc.orEmpty()
         binding.tvDesc.visibility = if (item.targetDesc.isNullOrBlank()) View.GONE else View.VISIBLE

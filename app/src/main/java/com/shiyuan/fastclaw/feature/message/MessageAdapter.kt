@@ -8,21 +8,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
 import com.shiyuan.fastclaw.databinding.ItemMessageConversationBinding
 import com.shiyuan.fastclaw.databinding.ItemMessageMarkedUnsuitableBinding
+import com.shiyuan.fastclaw.feature.message.data.ConversationItem
+import com.shiyuan.fastclaw.feature.message.data.MessageListItem
+import com.shiyuan.fastclaw.feature.message.data.UnsuitableItem
 import com.shiyuan.fastclaw.feature.message.viewholder.ConversationViewHolder
 import com.shiyuan.fastclaw.feature.message.viewholder.ConversationUnsuitableViewHolder
 
+// 消息会话列表适配器，负责普通会话和不合适会话入口的多类型展示。
 class MessageAdapter : BaseMultiItemAdapter<MessageListItem>() {
 
-    var onConversationClick: (MessageConversationItem) -> Unit = {}
+    // 普通会话列表项点击回调，由页面层决定后续跳转或业务处理。
+    var onConversationClick: (ConversationItem) -> Unit = {}
+
+    // 已标记不合适会话入口点击回调，由页面层打开对应落地页。
     var onMarkedUnsuitableClick: () -> Unit = {}
 
     init {
-        register<ConversationViewHolder, MessageConversationItem>(TYPE_CONVERSATION, { inflater, parent ->
+        register<ConversationViewHolder, ConversationItem>(TYPE_CONVERSATION, { inflater, parent ->
             ConversationViewHolder(ItemMessageConversationBinding.inflate(inflater, parent, false)).apply {
                 onConversationClickListener = { onConversationClick(it) }
             }
         }) { holder, item -> holder.bind(item) }
-        register<ConversationUnsuitableViewHolder, UnsuitableConversationItem>(TYPE_MARKED_UNSUITABLE, { inflater, parent ->
+        register<ConversationUnsuitableViewHolder, UnsuitableItem>(TYPE_MARKED_UNSUITABLE, { inflater, parent ->
             ConversationUnsuitableViewHolder(ItemMessageMarkedUnsuitableBinding.inflate(inflater, parent, false)).apply {
                 onMarkedUnsuitableClickListener = { onMarkedUnsuitableClick() }
             }
@@ -93,7 +100,10 @@ class MessageAdapter : BaseMultiItemAdapter<MessageListItem>() {
     }
 
     companion object {
+        // 普通 IM 会话列表项类型。
         const val TYPE_CONVERSATION = 1
+
+        // 已标记不合适会话入口列表项类型。
         const val TYPE_MARKED_UNSUITABLE = 2
     }
 }

@@ -1,4 +1,6 @@
-package com.shiyuan.fastclaw.feature.message
+package com.shiyuan.fastclaw.feature.message.data
+
+import com.shiyuan.fastclaw.feature.message.MessageAdapter
 
 /**
  * 消息列表统一行模型，供多类型 Adapter 根据 itemType 分发不同布局。
@@ -23,7 +25,7 @@ sealed interface MessageListItem {
  * @param unreadCount 会话未读数量。
  * @param isDraft 是否展示草稿标记，当前预留给后续草稿能力。
  */
-data class MessageConversationItem(
+data class ConversationItem(
     override val id: String,
     val targetName: String,
     val targetDesc: String?,
@@ -33,7 +35,7 @@ data class MessageConversationItem(
     val unreadCount: Int,
     val isDraft: Boolean = false,
 ) : MessageListItem {
-    override val itemType: Int = MessageAdapter.TYPE_CONVERSATION
+    override val itemType: Int = MessageAdapter.Companion.TYPE_CONVERSATION
 }
 
 /**
@@ -41,9 +43,9 @@ data class MessageConversationItem(
  *
  * @param count 当前入口下的联系人数量。
  */
-data class UnsuitableConversationItem(
+data class UnsuitableItem(
     val count: Int,
 ) : MessageListItem {
     override val id: String = "marked_unsuitable"
-    override val itemType: Int = MessageAdapter.TYPE_MARKED_UNSUITABLE
+    override val itemType: Int = MessageAdapter.Companion.TYPE_MARKED_UNSUITABLE
 }

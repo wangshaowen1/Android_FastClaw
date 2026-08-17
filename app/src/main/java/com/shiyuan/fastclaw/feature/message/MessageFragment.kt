@@ -24,6 +24,9 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
         initObserve()
     }
 
+    /**
+     * 初始化消息列表与入口点击事件。
+     */
     private fun initView() {
         binding.rvMessages.apply {
             layoutManager = LinearLayoutManager(context)
@@ -33,12 +36,15 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
             mRealVM.openConversation(it)
         }
         msgAdapter.onMarkedUnsuitableClick = {
-            mRealVM.openMarkedUnsuitable()
+            UnableConversationActivity.start(requireContext())
         }
     }
 
+    /**
+     * 监听消息列表数据变化并刷新适配器。
+     */
     private fun initObserve() {
-        mRealVM.messageList.observe(viewLifecycleOwner) { items ->
+        mRealVM.conversationList.observe(viewLifecycleOwner) { items ->
             msgAdapter.submitList(items)
         }
     }
