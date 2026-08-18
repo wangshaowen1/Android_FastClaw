@@ -39,7 +39,6 @@ import com.shiyuan.fastclaw.feature.clawagent.ClawAgentMainFragment
 import com.shiyuan.fastclaw.feature.message.MessageFragment
 import com.shiyuan.fastclaw.feature.mine.MineFragment
 import com.shiyuan.fastclaw.feature.opportunity.HomeOpportunityFragment
-import com.shiyuan.fastclaw.feature.report.HomeTreasuryFragment
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.router.AppRouter
 import kotlinx.coroutines.MainScope

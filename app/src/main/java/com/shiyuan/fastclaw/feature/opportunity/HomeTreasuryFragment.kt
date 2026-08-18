@@ -153,8 +153,8 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
 
     private fun onPackageCardClick() {
         if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_INTERVIEW_PASS)) return
-          EventManager.onAppTrack(KLX_CLICK_INTERVIEW_PASS,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
-          mRealVM.queryInterviewPassPackageResumeStatus()
+        EventManager.onAppTrack(KLX_CLICK_INTERVIEW_PASS,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
+        mRealVM.queryInterviewPassPackageResumeStatus()
     }
 
     private fun observePassPackageResumeStatus() {

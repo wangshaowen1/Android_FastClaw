@@ -19,7 +19,7 @@ class HomeOpportunityFragment : BaseViewModelFragment<FragmentHomeOpportunityBin
             setFragments(
                 listOf(
                     HomeTreasuryFragment(),
-                    HomeTreasuryFragment(),
+                    NotOpportunityFragment(),
                 )
             )
         }
