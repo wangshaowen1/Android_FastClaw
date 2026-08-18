@@ -706,7 +706,7 @@
 
     <string name="report_my_name">我的报告</string>
     <string name="mine_other_functions">其他功能</string>
-    <string name="mine_hr">我是HR</string>
+    <string name="mine_hr">我是招聘方</string>
     <string name="hr_back">返回</string>
     <string name="hr_copy_link">复制链接</string>
     <string name="hr_page_content_description">HR 识才极速筛选，100份简历1分钟筛完</string>
@@ -959,7 +959,7 @@
     <string name="str_agent_no_jobs_found_title">小虾正在陪伴你的求职</string>
     <string name="str_agent_no_jobs_found_desc">我能帮你完善画像、优化简历、准备面试~你的求职，我全程支持。</string>
     <string name="str_agent_job_recommendation_title">小虾可以帮你推荐工作啦!</string>
-    <string name="str_agent_job_recommendation_message">正在扫描全网简历,稍后可以在“机会”\n中查看</string>
+    <string name="str_agent_job_recommendation_message">正在扫描全网岗位,稍后可以在“机会”\n中查看</string>
     <string name="str_agent_job_recommendation_confirm">好的, 知道了</string>
     <string name="str_agent_memory_title">小虾记住了</string>
     <string name="str_agent_memory_all">查看全部记忆</string>

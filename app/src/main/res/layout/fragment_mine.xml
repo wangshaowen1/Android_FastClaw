@@ -426,7 +426,7 @@
                     <LinearLayout
                         android:id="@+id/ll_interview_report"
                         singleClick="@{layout.clickHandler::onClick}"
-                        android:layout_width="65dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
@@ -439,7 +439,7 @@
                             android:src="@drawable/ic_mine_other_report" />
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="21dp"
                             android:layout_marginTop="4dp"
                             android:gravity="center"
@@ -458,7 +458,7 @@
                     <LinearLayout
                         android:id="@+id/ll_my_order"
                         singleClick="@{layout.clickHandler::onClick}"
-                        android:layout_width="65dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
@@ -471,7 +471,7 @@
                             android:src="@drawable/ic_mine_other_order" />
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="21dp"
                             android:layout_marginTop="4dp"
                             android:gravity="center"
@@ -490,7 +490,7 @@
                     <LinearLayout
                         singleClick="@{layout.clickHandler::onClick}"
                         android:id="@+id/ll_hr"
-                        android:layout_width="65dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
@@ -504,7 +504,7 @@
 
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="21dp"
                             android:layout_marginTop="4dp"
                             android:gravity="center"
