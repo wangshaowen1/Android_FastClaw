@@ -58,16 +58,34 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         initTreasuryCards()
         observeJobAgentModuleList()
         observePassPackageResumeStatus()
-        mRealVM.queryJobAgentModuleList()
+        loadTreasuryCards()
     }
 
     private fun initTreasuryCards() {
         binding.rvTreasuryCards.adapter = treasuryAdapter
+        binding.lsv.setDefaultEmptyImage(R.drawable.ic_empty)
+        binding.lsv.setNoDataPrompt(getString(R.string.no_data))
+        binding.lsv.setRetryListener { loadTreasuryCards() }
+    }
+
+    private fun loadTreasuryCards() {
+        binding.lsv.showLoading()
+        mRealVM.queryJobAgentModuleList { error ->
+            if (view != null) {
+                binding.lsv.showRetry(error)
+            }
+        }
     }
 
     private fun observeJobAgentModuleList() {
-        mRealVM.jobAgentModuleList.observe(this) { modules ->
-            treasuryAdapter.submitList(modules.filter { module -> module.isSupported() })
+        mRealVM.jobAgentModuleList.observe(viewLifecycleOwner) { modules ->
+            val supportedModules = modules.filter { module -> module.isSupported() }
+            treasuryAdapter.submitList(supportedModules)
+            if (supportedModules.isEmpty()) {
+                binding.lsv.showEmpty()
+            } else {
+                binding.lsv.showContent()
+            }
         }
     }
 

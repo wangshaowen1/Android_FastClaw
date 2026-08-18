@@ -12,7 +12,6 @@ import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.parseMessage
-import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
@@ -168,10 +167,12 @@ class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
         }
     }
 
-    fun queryJobAgentModuleList() {
-        request(
+    fun queryJobAgentModuleList(onError: (Throwable?) -> Unit = {}) {
+        requestWithLoading(
             apiBlock = { mRepo.api.queryJobAgentModuleList() },
-            showToast = false,
+            showLoading = false,
+            showToastError = false,
+            onError = onError,
         ) {
             jobAgentModuleList.postValue(this.data.orEmpty())
         }
