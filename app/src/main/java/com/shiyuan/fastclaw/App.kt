@@ -280,24 +280,28 @@ class App : ImApplication() {
     }*/
 
     fun initImSession() {
-        if (hasAgree()) {
-            AccountHelper.setImTokenProvider(object : AccountHelper.ImTokenProvider {
-                /** 在 IM 登录协程中获取并保存当前用户的云信凭据。 */
-                override suspend fun getImToken(): String? {
-                    if (User.get().isVisitor) return null
-                    val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
-                    User.get().storeImAccessId(data?.imAccId)
-                    User.get().storeImToken(data?.imAccToken)
-                    Logger.i(IM_LOGIN_LOG_TAG, "initImSession imReady=${data?.imReady}, " + "imAccId=${data?.imAccId}, " + "imAccToken=${data?.imAccToken}")
-                    return data?.imAccToken
-                }
-            })
-            if (NIMUtil.isMainProcess(this)) {
-                AccountHelper.initAutoLoginConfig(this)
-                imSession.init()
+        if (!hasAgree()) return
+
+        AccountHelper.setImTokenProvider(object : AccountHelper.ImTokenProvider {
+            /** 在 IM 登录协程中获取并保存当前用户的云信凭据。 */
+            override suspend fun getImToken(): String? {
+                if (User.get().isVisitor) return null
+                val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
+                User.get().storeImAccessId(data?.imAccId)
+                User.get().storeImToken(data?.imAccToken)
+                Logger.i(
+                    IM_LOGIN_LOG_TAG,
+                    "initImSession imReady=${data?.imReady}, " +
+                        "hasAccount=${!data?.imAccId.isNullOrBlank()}, " +
+                        "hasToken=${!data?.imAccToken.isNullOrBlank()}"
+                )
+                return data?.imAccToken
             }
-        } else {
-            AccountHelper.configImClient(this)
+        })
+
+        AccountHelper.initialize(this)
+        if (NIMUtil.isMainProcess(this)) {
+            imSession.init()
         }
     }
 

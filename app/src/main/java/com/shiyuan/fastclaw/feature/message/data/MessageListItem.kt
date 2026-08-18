@@ -25,8 +25,7 @@ sealed interface MessageListItem {
  * @param lastMessage 会话末条消息摘要。
  * @param lastMessageTime 会话末条消息时间戳。
  * @param unreadCount 会话未读数量。
- * @param localExtension 会话本地扩展，仅当前设备可见。
- * @param serverExtension 会话服务端扩展，多端同步后可用于承载职位等业务信息。
+ * @param extension 组件归一化后的会话扩展。
  * @param isDraft 是否展示草稿标记，当前预留给后续草稿能力。
  */
 data class ConversationItem(
@@ -38,8 +37,7 @@ data class ConversationItem(
     val lastMessage: String,
     val lastMessageTime: Long,
     val unreadCount: Int,
-    val localExtension: String?,
-    val serverExtension: String?,
+    val extension: Map<String, Any?>,
     val isDraft: Boolean = false,
     override val itemType: Int = TYPE_CONVERSATION
 ) : MessageListItem

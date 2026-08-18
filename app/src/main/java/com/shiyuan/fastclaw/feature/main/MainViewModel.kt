@@ -3,22 +3,21 @@ package com.shiyuan.fastclaw.feature.main
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.MutableLiveData
-import com.netease.nimlib.sdk.NIMClient
-import com.netease.nimlib.sdk.StatusCode
-import com.netease.nimlib.sdk.msg.model.IMMessage
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.launch
-import com.shiyuan.fastclaw.core.im.ImConversationChangeListener
-import com.shiyuan.fastclaw.core.im.V2ConversationManager
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.response
 import com.nhsd.basic.utils.Logger
+import com.tulele.im.ImAuthState
 import com.tulele.im.ImSession
 import com.tulele.im.StateChangeListener
+import com.tulele.im.conversation.ConversationListener
+import com.tulele.im.entity.Conversation
+import com.tulele.im.entity.MessageWrapper
 import com.tulele.im.utils.AccountHelper
 
 private const val IM_LOGIN_LOG_TAG = "ImLogin"
@@ -32,7 +31,7 @@ private const val IM_LOGIN_LOG_TAG = "ImLogin"
  * @Version: 1.0
  * *****************************************
  */
-class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationChangeListener {
+class MainViewModel : AppRepositoryViewModel<AppRepository>() {
 
     //显示隐藏底部
     val showBottomBar = ObservableBoolean(true)
@@ -55,15 +54,15 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationCha
     //设置编辑的回调
     var setIsEditing: ((Boolean) -> Unit)? = null
 
-    // 云信 V2 会话管理器，负责总未读数查询和会话变化监听。
-    private val conversationManager get() = V2ConversationManager
+    // 组件会话门面，宿主不直接依赖云信会话服务。
+    private val conversationManager get() = ImSession.get().getConversationManager()
     // 当前主 ViewModel 是否已经注册 IM 会话监听。
     private var conversationListenerRegistered = false
     // 当前主 ViewModel 是否已经注册 IM 消息和登录状态监听。
     private var imListenersRegistered = false
 
     private val imStateChangeListener = StateChangeListener { statusCode ->
-        if (statusCode == StatusCode.LOGINED) {
+        if (statusCode == ImAuthState.LOGGED_IN) {
             refreshImData()
         }
     }
@@ -72,9 +71,19 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationCha
         /**
          * 收到 IM 新消息后刷新底部消息 Tab 未读数。
          */
-        override fun onMessageReceived(imMessage: List<IMMessage>?) {
+        override fun onMessageReceived(messages: List<MessageWrapper>) {
             refreshImUnreadCount()
         }
+    }
+
+    private val conversationListener = object : ConversationListener {
+        override fun onConversationsLoaded(conversations: List<Conversation>?) = refreshImUnreadCount()
+
+        override fun onConversationsChanged(conversations: List<Conversation>) = refreshImUnreadCount()
+
+        override fun onConversationDeleted(conversation: Conversation) = refreshImUnreadCount()
+
+        override fun onConversationStateChanged(conversation: Conversation) = refreshImUnreadCount()
     }
 
     /**
@@ -123,17 +132,14 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationCha
                         Logger.i(
                             IM_LOGIN_LOG_TAG,
                             "fetchUserInfo imReady=${this.data?.imReady}, " +
-                                "imAccId=${this.data?.imAccId}, " +
-                                "imAccToken=${this.data?.imAccToken}, " +
                                 "localValid=${ImSession.get().account.isValid}, " +
-                                "nimStatus=${NIMClient.getStatus()}"
+                                "logged=${AccountHelper.isLogged()}"
                         )
-                        // IM 账号无效时先同步；自动登录 417/未登录时改走手动登录。
+                        // IM 账号无效时先同步；已有账号但组件未登录时走组件登录入口。
                         if (!ImSession.get().account.isValid()) {
                             syncImAccountAndLogin()
                         } else {
-                            val imStatus = NIMClient.getStatus()
-                            if (imStatus == StatusCode.UNLOGIN) {
+                            if (!AccountHelper.isLogged()) {
                                 AccountHelper.login()
                             }
                             refreshImData()
@@ -156,7 +162,8 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationCha
             onError = {
                 Logger.i(
                     IM_LOGIN_LOG_TAG,
-                    "syncImAccountAndLogin localValid=${ImSession.get().account.isValid}, " + "nimStatus=${NIMClient.getStatus()}"
+                    "syncImAccountAndLogin localValid=${ImSession.get().account.isValid}, " +
+                        "logged=${AccountHelper.isLogged()}"
                 )
                 AccountHelper.login()
                 refreshImData()
@@ -165,9 +172,8 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationCha
                 val account = data
                 Logger.i(IM_LOGIN_LOG_TAG,
                     "syncImAccountAndLogin imReady=${account?.imReady}, " +
-                        "imAccId=${account?.imAccId}, " +
-                        "imAccToken=${account?.imAccToken}, " +
-                        "nimStatus=${NIMClient.getStatus()}"
+                        "hasAccount=${!account?.imAccId.isNullOrBlank()}, " +
+                        "hasToken=${!account?.imAccToken.isNullOrBlank()}"
                 )
                 User.get().storeImAccessId(account?.imAccId)
                 User.get().storeImToken(account?.imAccToken)
@@ -226,7 +232,8 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationCha
      */
     private fun registerImConversationListener() {
         if (conversationListenerRegistered) return
-        conversationListenerRegistered = conversationManager.addConversationListener(this)
+        conversationManager.addConversationListener(conversationListener)
+        conversationListenerRegistered = true
     }
 
     /**
@@ -234,7 +241,7 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationCha
      */
     private fun removeImConversationListener() {
         if (!conversationListenerRegistered) return
-        conversationManager.removeConversationListener(this)
+        conversationManager.removeConversationListener(conversationListener)
         conversationListenerRegistered = false
     }
 
@@ -251,20 +258,6 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationCha
     private fun queryImUnreadCount(): Int {
         if (!AccountHelper.isLogged()) return 0
         return conversationManager.getTotalUnreadCount()
-    }
-
-    /**
-     * IM 会话变化时刷新主 Tab 未读数。
-     */
-    override fun onConversationChanged() {
-        refreshImUnreadCount()
-    }
-
-    /**
-     * IM 总未读数变化时直接回填主 Tab 红点数量。
-     */
-    override fun onTotalUnreadCountChanged(unreadCount: Int) {
-        imUnreadCount.value = unreadCount
     }
 
     /**

@@ -1,7 +1,7 @@
 package com.shiyuan.fastclaw.core.im
 
 import com.google.gson.Gson
-import com.netease.nimlib.sdk.msg.attachment.MsgAttachmentParser
+import com.tulele.im.custom.AttachmentParser
 import com.tulele.im.custom.CustomAttachment
 
 /**
@@ -47,7 +47,7 @@ class FriendInteractionAttachment : CustomAttachment(MSG_TYPE) {
         private val gson = Gson()
 
         @JvmField
-        val PARSER = MsgAttachmentParser { text ->
+        val PARSER = AttachmentParser { text ->
             runCatching {
                 gson.fromJson(text, FriendInteractionAttachment::class.java)
             }.getOrNull()
