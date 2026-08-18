@@ -75,7 +75,7 @@ import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.LoadState
 import com.shiyuan.fastclaw.common.NumberAnimator
-import com.shiyuan.fastclaw.common.OssHelp
+import com.shiyuan.fastclaw.common.CloudImageHelper
 import com.shiyuan.fastclaw.common.ext.fromHtml
 import com.shiyuan.fastclaw.common.ext.getBitmapDrawableCopyOrNull
 import com.shiyuan.fastclaw.common.ext.loadAnimatedWebp
@@ -1204,7 +1204,7 @@ interface OnColorSetListener {
 @BindingAdapter("setBackgroundColorUrl", "callback", requireAll = false)
 fun setBackgroundColorUrl(view: View, url: String?, onColorSetListener: OnColorSetListener?) {
     if (url != null) {
-        OssHelp.fetchImageColor(url) {
+        CloudImageHelper.fetchImageColor(url) {
             if (it != null) {
                 onColorSetListener?.onColorSet(it)
                 view.setBackgroundColor(it)

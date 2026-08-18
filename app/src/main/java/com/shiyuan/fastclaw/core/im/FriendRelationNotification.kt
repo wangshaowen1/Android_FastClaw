@@ -1,8 +1,8 @@
 package com.shiyuan.fastclaw.core.im
 
 import com.google.gson.Gson
-import com.netease.nimlib.sdk.msg.model.CustomNotification
 import com.nhsd.basic.bus.AppEvent
+import com.tulele.im.entity.ImCustomNotification
 
 /**
  * 好友申请和双向屏蔽的云信自定义通知协议。
@@ -39,16 +39,16 @@ object FriendRelationNotification {
     ) : AppEvent
 
     /** 解析受支持的关系通知，其他自定义通知继续交由各自业务处理。 */
-    fun parse(notification: CustomNotification): Event? {
+    fun parse(notification: ImCustomNotification): Event? {
         val content = notification.content?.takeIf { it.isNotBlank() } ?: return null
         val payload = runCatching { gson.fromJson(content, Payload::class.java) }.getOrNull()
             ?: return null
         val eventType = payload.eventType?.takeIf(::isSupportedEvent) ?: return null
-        val fromAccount = notification.fromAccount?.takeIf { it.isNotBlank() } ?: return null
+        val fromAccount = notification.senderId?.takeIf { it.isNotBlank() } ?: return null
         return Event(
             fromAccount = fromAccount,
             eventType = eventType,
-            time = notification.time,
+            time = notification.timestamp,
         )
     }
 

@@ -12,7 +12,7 @@ import com.shiyuan.fastclaw.core.db.convert.QuestionListTypeConverter
 @Entity(tableName = "ChatScene")
 @TypeConverters(value = [QuestionListTypeConverter::class, JumpMessageListTypeConverter::class])
 class ChatScene {
-    constructor(sceneId: String, avatar: String?, nickname:String?,welcomeMessage: String?,tipsMessages: List<TemplateQuestion>?=null,jumpMessages:List<JumpMessageInfo?>?=null) {
+    constructor(sceneId: String, avatar: String?, nickname:String?,welcomeMessage: String?,tipsMessages: List<TemplateQuestion>?=null,jumpMessages:List<JumpMessageInfo>?=null) {
         this.sceneId = sceneId
         this.messagesSceneId=sceneId
         this.avatar = avatar
@@ -28,5 +28,5 @@ class ChatScene {
     var nickname:String?=null
     var welcomeMessage: String? = null
     var tipsMessages:List<TemplateQuestion>?=null
-    var jumpMessages:List<JumpMessageInfo?>?=null
+    var jumpMessages:List<JumpMessageInfo>?=null
 }

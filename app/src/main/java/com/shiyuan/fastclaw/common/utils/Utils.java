@@ -49,8 +49,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.kuaige.imageloader.BlurImageProcessor;
+import com.kuaige.imageloader.CloudImageConfig;
 import com.kuaige.imageloader.GlideImageLoader;
+import com.kuaige.imageloader.ImageProcessingOptions;
 import com.nhsd.basic.BaseActivity;
 import com.nhsd.basic.BaseApp;
 import com.nhsd.basic.ext.LifecycleUtils;
@@ -416,7 +417,13 @@ public class Utils {
 
 
     public static String getBlurUrl(String url) {
-        return BlurImageProcessor.INSTANCE.process(url);
+        if (url == null) {
+            return null;
+        }
+        return CloudImageConfig.getProcessor().process(
+                url,
+                new ImageProcessingOptions(null, null, true)
+        );
     }
 
     public static void setBlurBackground(Context context, ImageView coverView, ImageView coverBgView, String coverImageUrl, int defaultResId) {

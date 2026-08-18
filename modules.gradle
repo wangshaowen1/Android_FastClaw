@@ -12,8 +12,8 @@ ext {
             imageloader: [
                     groupId   : 'com.kuaige',
                     artifactId: 'imageloader',
-                    version   : '1.0.5',
-                    gav       : 'com.kuaige:imageloader:1.0.5'
+                    version   : '1.0.6',
+                    gav       : 'com.kuaige:imageloader:1.0.6'
             ],
             oss        : [
                     groupId   : 'com.kuaige',
@@ -72,8 +72,8 @@ ext {
             imsdk      : [
                     groupId   : 'com.kuaige.thirdparty',
                     artifactId: 'imsdk',
-                    version   : '2.0.0-rc04',
-                    gav       : 'com.kuaige.thirdparty:imsdk:2.0.0-rc04'
+                    version   : '2.0.0-rc05',
+                    gav       : 'com.kuaige.thirdparty:imsdk:2.0.0-rc05'
             ]
     ]
 }

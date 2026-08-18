@@ -37,7 +37,7 @@ import com.google.android.material.shape.RoundedCornerTreatment;
 import com.google.android.material.shape.ShapeAppearanceModel;
 import com.gyf.immersionbar.ImmersionBar;
 import com.shiyuan.fastclaw.R;
-import com.shiyuan.fastclaw.common.OssHelp;
+import com.shiyuan.fastclaw.common.CloudImageHelper;
 import com.shiyuan.fastclaw.common.utils.GlideHelper;
 import com.shiyuan.fastclaw.common.utils.Utils;
 import com.shiyuan.fastclaw.core.ext.DataUtils;
@@ -482,7 +482,7 @@ public class PhotoPagerActivity extends BaseActivity {
                 // Loading image
                 PhotoItem photoItem = photoItems.get(position);
                 holder.aiChip.setVisibility(photoItem.isAiChip() ? View.VISIBLE : View.GONE);
-                GlideHelper.loadFlickrFull(OssHelp.asOssWebp(photoItem.getUri()), photoItem.getThumbUri(), holder.image,
+                GlideHelper.loadFlickrFull(CloudImageHelper.asWebp(photoItem.getUri()), photoItem.getThumbUri(), holder.image,
                         new GlideHelper.ImageLoadingListener() {
                             @Override
                             public void onLoaded() {

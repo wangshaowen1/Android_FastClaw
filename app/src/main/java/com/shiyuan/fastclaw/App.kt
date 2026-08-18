@@ -33,6 +33,12 @@ import com.shiyuan.fastclaw.widget.CommonDialog
 import com.shiyuan.fastclaw.widget.CustomizedRefreshHeader
 import com.shiyuan.fastclaw.widget.LoadingDialog2
 import com.shiyuan.fastclaw.widget.MyLoadViewFactory
+import com.kuaige.imageloader.AliyunOssImageUrlStrategy
+import com.kuaige.imageloader.CloudImageConfig
+import com.kuaige.imageloader.CloudImageUrlProcessor
+import com.kuaige.imageloader.DomainProvider
+import com.kuaige.imageloader.TencentCosImageUrlStrategy
+import com.kuaige.imageloader.VolcengineTosImageUrlStrategy
 import com.kuaige.oss.OssType
 import com.kuaige.payment.PaymentConfig
 import com.netease.nimlib.sdk.mixpush.NIMPushClient
@@ -218,6 +224,7 @@ class App : ImApplication() {
 
         // SAM 转换：直接使用 Lambda
         LoadingConfig.setFactory { LoadingDialog2() }
+        initImageLoaderConfig()
         OssManager.init(ossType = OssType.ALIYUN, ossFileNameProvider = { ossPathName, suffix ->
             val timestamp = System.currentTimeMillis()
             "klxapp/$ossPathName/${User.get().userId}/0$timestamp.$suffix"
@@ -226,6 +233,20 @@ class App : ImApplication() {
         initSmartRefreshLayoutView()
         PaymentConfig.init(BuildConfig.WX_APP_ID, BuildConfig.WX_APP_SECRET)
         initGrowingIO()
+    }
+
+    private fun initImageLoaderConfig() {
+        CloudImageConfig.processor = CloudImageUrlProcessor(
+            listOf(
+                VolcengineTosImageUrlStrategy(
+                    DomainProvider { Config.get().appConfig.tosDomainList.orEmpty() }
+                ),
+                AliyunOssImageUrlStrategy(
+                    DomainProvider { Config.get().appConfig.ossDomainList.orEmpty() }
+                ),
+                TencentCosImageUrlStrategy()
+            )
+        )
     }
 
 
@@ -259,24 +280,28 @@ class App : ImApplication() {
     }*/
 
     fun initImSession() {
-        if (hasAgree()) {
-            AccountHelper.setImTokenProvider(object : AccountHelper.ImTokenProvider {
-                /** 在 IM 登录协程中获取并保存当前用户的云信凭据。 */
-                override suspend fun getImToken(): String? {
-                    if (User.get().isVisitor) return null
-                    val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
-                    User.get().storeImAccessId(data?.imAccId)
-                    User.get().storeImToken(data?.imAccToken)
-                    Logger.i(IM_LOGIN_LOG_TAG, "initImSession imReady=${data?.imReady}, " + "imAccId=${data?.imAccId}, " + "imAccToken=${data?.imAccToken}")
-                    return data?.imAccToken
-                }
-            })
-            if (NIMUtil.isMainProcess(this)) {
-                AccountHelper.initAutoLoginConfig(this)
-                imSession.init()
+        if (!hasAgree()) return
+
+        AccountHelper.setImTokenProvider(object : AccountHelper.ImTokenProvider {
+            /** 在 IM 登录协程中获取并保存当前用户的云信凭据。 */
+            override suspend fun getImToken(): String? {
+                if (User.get().isVisitor) return null
+                val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
+                User.get().storeImAccessId(data?.imAccId)
+                User.get().storeImToken(data?.imAccToken)
+                Logger.i(
+                    IM_LOGIN_LOG_TAG,
+                    "initImSession imReady=${data?.imReady}, " +
+                        "hasAccount=${!data?.imAccId.isNullOrBlank()}, " +
+                        "hasToken=${!data?.imAccToken.isNullOrBlank()}"
+                )
+                return data?.imAccToken
             }
-        } else {
-            AccountHelper.configImClient(this)
+        })
+
+        AccountHelper.initialize(this)
+        if (NIMUtil.isMainProcess(this)) {
+            imSession.init()
         }
     }
 

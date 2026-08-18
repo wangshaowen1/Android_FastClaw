@@ -4,7 +4,7 @@ package com.shiyuan.fastclaw.core.ext
 
 import android.app.Activity
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.OssHelp
+import com.shiyuan.fastclaw.common.CloudImageHelper
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.common.ext.topActivity
 import com.shiyuan.fastclaw.common.utils.WXUtils
@@ -100,11 +100,11 @@ fun toPhotoItem(list: MutableList<String?>?): ArrayList<PhotoItem?>? {
     val photoItems: ArrayList<PhotoItem?> = ArrayList<PhotoItem?>(list.size)
     if (list.size == 1) {
         val str = list.get(0)
-        val thumbnail = OssHelp.getOssHighQualityThumbnail(str)
+        val thumbnail = CloudImageHelper.getHighQualityThumbnail(str)
         photoItems.add(PhotoItem(thumbnail, str))
     } else {
         for (str in list) {
-            val thumbnail = OssHelp.getOssThumbnail(str)
+            val thumbnail = CloudImageHelper.getThumbnail(str)
             photoItems.add(PhotoItem(thumbnail, str))
         }
     }
