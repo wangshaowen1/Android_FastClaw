@@ -2,8 +2,9 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp' version '2.3.9'
     id 'kotlin-parcelize'
-    id 'org.jetbrains.kotlin.plugin.serialization' version "2.2.10"
+    id 'org.jetbrains.kotlin.plugin.serialization' version "2.3.20"
     id 'com.growingio.android.autotracker'
 }
 
@@ -80,12 +81,6 @@ android {
         versionCode rootProject.ext.android.versionCodeRelease
         multiDexEnabled true
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
-        //指定room.schemaLocation生成的文件路径
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
         packagingOptions {
             doNotStrip "*/armeabi-v7a/*.so"
             doNotStrip "*/x86/*.so"
@@ -316,6 +311,14 @@ android {
         checkReleaseBuilds false
     }
 }
+
+// Room schema 由 KSP 生成
+ksp {
+    arg('room.schemaLocation', "$projectDir/schemas")
+    arg('room.incremental', 'true')
+    arg('room.generateKotlin', 'true')
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
@@ -343,7 +346,9 @@ dependencies {
     implementation libs.androidx.splashscreen
     implementation rootProject.ext.modules.baselibrary.gav
     implementation rootProject.ext.modules.imageloader.gav
-    implementation rootProject.ext.modules.oss.gav
+    implementation(rootProject.ext.modules.oss.gav) {
+        exclude group: 'com.kuaige', module: 'imageloader'
+    }
     //implementation rootProject.ext.modules.videoedit.gav
     implementation rootProject.ext.modules.luban.gav
     implementation rootProject.ext.modules.payment.gav
@@ -368,11 +373,11 @@ dependencies {
     implementation 'org.ahocorasick:ahocorasick:0.6.3'
     implementation 'io.github.happylishang:antifake:1.7.1'
     //Room
-    def room_version = "2.7.2"
+    def room_version = "2.8.4"
     implementation "androidx.room:room-common:$room_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-paging:$room_version" // Room 与 Paging 的集成库
-    kapt "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
     implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
     implementation 'androidx.paging:paging-runtime-ktx:3.3.6'
     implementation 'com.github.zhpanvip:bannerviewpager:3.5.7'

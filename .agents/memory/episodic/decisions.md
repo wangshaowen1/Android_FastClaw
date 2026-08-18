@@ -191,3 +191,16 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 `git diff --check` 通过，静态确认删除标记位于正确的 Manifest 父节点且前台下载服务仍保留；按项目规则未运行 Gradle，最终 release 合并 Manifest 与重启场景仍需验证。
+
+## 本轮 ImageLoader 多云图片处理升级
+
+### 变更了什么
+图片 URL 处理 → ImageLoader 升级到 `1.0.6`，由应用集中注册 TOS、阿里云 OSS、腾讯 COS 策略；自定义域名通过应用配置中的域名列表动态提供，旧 `OssHelp` 迁移为平台无关的 `CloudImageHelper`。
+
+构建兼容 → 同步升级 Kotlin 2.3.20、AGP 8.13.2 与 Room 2.8.4，并将 Room 编译器由 KAPT 迁移到 KSP 2.3.9。
+
+### 为什么
+旧实现耦合固定平台判断和 URL 参数拼接，无法完整覆盖不同地域与自定义域名；ImageLoader 1.0.6 的 Kotlin 2.3 metadata 也要求消费工程同步兼容工具链。
+
+### 验证结论
+已静态确认旧图片处理 API 和 Room KAPT 配置无残留，FastClaw 包名、动态域名字段、IM/支付初始化顺序保持不变；按项目规则未运行 Gradle，待本地构建与图片加载回归。
