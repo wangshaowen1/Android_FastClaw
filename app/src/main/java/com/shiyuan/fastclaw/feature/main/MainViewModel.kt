@@ -9,20 +9,17 @@ import com.netease.nimlib.sdk.msg.model.IMMessage
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.core.AppRepository
-import com.shiyuan.fastclaw.core.Global
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.launch
+import com.shiyuan.fastclaw.core.im.ImConversationChangeListener
+import com.shiyuan.fastclaw.core.im.V2ConversationManager
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.response
 import com.nhsd.basic.utils.Logger
 import com.tulele.im.ImSession
 import com.tulele.im.StateChangeListener
-import com.tulele.im.conversation.ConversationListener
-import com.tulele.im.conversation.IConversationManager
-import com.tulele.im.entity.Conversation
 import com.tulele.im.utils.AccountHelper
-import kotlin.text.get
-import com.shiyuan.fastclaw.core.ext.request
 
 private const val IM_LOGIN_LOG_TAG = "ImLogin"
 
@@ -35,7 +32,7 @@ private const val IM_LOGIN_LOG_TAG = "ImLogin"
  * @Version: 1.0
  * *****************************************
  */
-class MainViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListener {
+class MainViewModel : AppRepositoryViewModel<AppRepository>(), ImConversationChangeListener {
 
     //显示隐藏底部
     val showBottomBar = ObservableBoolean(true)
@@ -49,6 +46,7 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListe
     //当前显示的tab是第几个
     val showTab = ObservableInt(0)
 
+    // 底部消息 Tab 展示的 IM 总未读数。
     val imUnreadCount = MutableLiveData(0)
 
     //作品中是否是编辑状态
@@ -57,8 +55,11 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListe
     //设置编辑的回调
     var setIsEditing: ((Boolean) -> Unit)? = null
 
-    private val conversationManager get() = ImSession.get().getConversationManager()
-    private var registeredConversationManager: IConversationManager? = null
+    // 云信 V2 会话管理器，负责总未读数查询和会话变化监听。
+    private val conversationManager get() = V2ConversationManager
+    // 当前主 ViewModel 是否已经注册 IM 会话监听。
+    private var conversationListenerRegistered = false
+    // 当前主 ViewModel 是否已经注册 IM 消息和登录状态监听。
     private var imListenersRegistered = false
 
     private val imStateChangeListener = StateChangeListener { statusCode ->
@@ -224,19 +225,17 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListe
      * 绑定 IM 会话监听，重复进入主界面时复用已绑定的会话管理器。
      */
     private fun registerImConversationListener() {
-        val manager = conversationManager
-        if (registeredConversationManager === manager) return
-        registeredConversationManager?.removeConversationListener(this)
-        manager.addConversationListener(this)
-        registeredConversationManager = manager
+        if (conversationListenerRegistered) return
+        conversationListenerRegistered = conversationManager.addConversationListener(this)
     }
 
     /**
      * 移除 IM 会话监听，避免主 ViewModel 销毁后继续收到未读数回调。
      */
     private fun removeImConversationListener() {
-        registeredConversationManager?.removeConversationListener(this)
-        registeredConversationManager = null
+        if (!conversationListenerRegistered) return
+        conversationManager.removeConversationListener(this)
+        conversationListenerRegistered = false
     }
 
     /**
@@ -251,39 +250,21 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListe
      */
     private fun queryImUnreadCount(): Int {
         if (!AccountHelper.isLogged()) return 0
-        return try {
-            conversationManager.getTotalUnreadCount()
-        } catch (_: Exception) {
-            0
-        }
+        return conversationManager.getTotalUnreadCount()
     }
 
     /**
-     * IM 首次加载会话列表后刷新主 Tab 未读数。
+     * IM 会话变化时刷新主 Tab 未读数。
      */
-    override fun onConversationsLoaded(conversations: List<Conversation>?) {
+    override fun onConversationChanged() {
         refreshImUnreadCount()
     }
 
     /**
-     * IM 会话新增或更新时刷新主 Tab 未读数。
+     * IM 总未读数变化时直接回填主 Tab 红点数量。
      */
-    override fun onConversationsChanged(conversations: List<Conversation>) {
-        refreshImUnreadCount()
-    }
-
-    /**
-     * IM 会话删除后刷新主 Tab 未读数。
-     */
-    override fun onConversationDeleted(conversation: Conversation) {
-        refreshImUnreadCount()
-    }
-
-    /**
-     * IM 会话状态变化时刷新主 Tab 未读数。
-     */
-    override fun onConversationStateChanged(conversation: Conversation) {
-        refreshImUnreadCount()
+    override fun onTotalUnreadCountChanged(unreadCount: Int) {
+        imUnreadCount.value = unreadCount
     }
 
     /**
@@ -294,6 +275,9 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>(), ConversationListe
         super.onDestroy()
     }
 
+    /**
+     * 拉取公共初始化数据，游客状态下跳过接口请求。
+     */
     fun commonInit() {
         if (User.get().isVisitor) return
         launch {
