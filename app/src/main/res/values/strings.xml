@@ -50,7 +50,7 @@
     <string name="tab_mine">我的</string>
     <string name="creation">创作</string>
     <string name="tab_claw">小虾</string>
-    <string name="tab_treasury">宝典</string>
+    <string name="tab_treasury">机会</string>
     <string name="message_empty_tip">暂时没有消息哦~</string>
     <string name="message_draft_prefix">[草稿]</string>
     <string name="message_marked_unsuitable_title">已标记不合适的会话</string>
@@ -1235,6 +1235,10 @@
     <string name="interview_finish">结束面试</string>
 
     <string name="im_kick_out_toast">您的账号已在另一台终端登录，本机将退出登录</string>
+
+
+    <string name="opportunity_opportunity">机会</string>
+    <string name="opportunity_job_search_bible">求职宝典</string>
 
 </resources>
 

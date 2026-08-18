@@ -38,6 +38,7 @@ import com.shiyuan.fastclaw.databinding.ActivityMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentMainFragment
 import com.shiyuan.fastclaw.feature.message.MessageFragment
 import com.shiyuan.fastclaw.feature.mine.MineFragment
+import com.shiyuan.fastclaw.feature.opportunity.HomeOpportunityFragment
 import com.shiyuan.fastclaw.feature.report.HomeTreasuryFragment
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.router.AppRouter
@@ -176,7 +177,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     binding.vLine.visibility = View.VISIBLE
                     supportFragmentManager.switchFragment(
                         R.id.fragment,
-                        HomeTreasuryFragment::class.java
+                        HomeOpportunityFragment::class.java
                     )
                 }
                 R.id.rbMessage -> {
