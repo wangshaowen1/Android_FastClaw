@@ -21,9 +21,10 @@ class ConversationViewHolder(private val binding: ItemMessageConversationBinding
      * 绑定普通 P2P 会话行，包含头像、未读数、草稿标记与末条消息摘要。
      */
     fun bind(item: ConversationItem) {
+        val targetDesc = formatTargetDesc(item)
         binding.tvName.text = item.targetName
-        binding.tvDesc.text = item.targetDesc.orEmpty()
-        binding.tvDesc.visibility = if (item.targetDesc.isNullOrBlank()) View.GONE else View.VISIBLE
+        binding.tvDesc.text = targetDesc.orEmpty()
+        binding.tvDesc.visibility = if (targetDesc.isNullOrBlank()) View.GONE else View.VISIBLE
         binding.tvLastMessage.text = item.lastMessage
         binding.tvTime.text = MessageTimeFormatter.format(item.lastMessageTime)
         binding.sbUnreadCount.text = item.unreadCount.formatMessageNum()
@@ -37,4 +38,10 @@ class ConversationViewHolder(private val binding: ItemMessageConversationBinding
             .into(binding.ivAvatar)
         binding.root.setOnSingleClickListener { onConversationClickListener(item) }
     }
+
+    /**
+     * 拼接会话对象公司和职位作为列表副标题。
+     */
+    private fun formatTargetDesc(item: ConversationItem): String? =
+        listOfNotNull(item.targetCompany, item.targetPosition).joinToString(" | ").takeIf { it.isNotBlank() }
 }

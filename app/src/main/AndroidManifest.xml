@@ -185,7 +185,7 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
         </activity>
         <activity
-            android:name=".feature.message.UnableConversationActivity"
+            android:name=".feature.message.UnableMessageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity

@@ -13,7 +13,7 @@ import com.shiyuan.fastclaw.databinding.ActivityUnableConversationBinding
 /**
  * 已标记不合适会话列表页，承接消息 Tab 中“不合适会话”入口。
  */
-class UnableConversationActivity : BaseViewModelActivity<ActivityUnableConversationBinding, MessageViewModel>() {
+class UnableMessageActivity : BaseViewModelActivity<ActivityUnableConversationBinding, UnableMessageViewModel>() {
 
     private val conversationAdapter by lazy { MessageAdapter() }
 
@@ -22,7 +22,7 @@ class UnableConversationActivity : BaseViewModelActivity<ActivityUnableConversat
          * 打开已标记不合适会话列表页。
          */
         fun start(context: Context) {
-            context.startActivity(Intent(context, UnableConversationActivity::class.java))
+            context.startActivity(Intent(context, UnableMessageActivity::class.java))
         }
     }
 
@@ -33,6 +33,7 @@ class UnableConversationActivity : BaseViewModelActivity<ActivityUnableConversat
         super.onCreate(savedInstanceState)
         initView()
         initObserve()
+        initData()
     }
 
     /**
@@ -41,7 +42,7 @@ class UnableConversationActivity : BaseViewModelActivity<ActivityUnableConversat
     private fun initView() {
         binding.ivBack.setOnSingleClickListener { finish() }
         binding.rvConversations.apply {
-            layoutManager = LinearLayoutManager(this@UnableConversationActivity)
+            layoutManager = LinearLayoutManager(this@UnableMessageActivity)
             adapter = conversationAdapter
         }
         conversationAdapter.onConversationClick = {
@@ -59,19 +60,18 @@ class UnableConversationActivity : BaseViewModelActivity<ActivityUnableConversat
     }
 
     /**
-     * 页面可见时刷新已标记不合适的会话。
+     * 标记页面进入可见状态并触发会话列表加载。
      */
-    override fun onResume() {
-        super.onResume()
+    private fun initData() {
         mRealVM.setPageState(true)
     }
 
     /**
-     * 页面不可见时暂停会话刷新。
+     * 页面销毁时同步不可见状态，避免旧任务继续回填 UI。
      */
-    override fun onPause() {
+    override fun onDestroy() {
         mRealVM.setPageState(false)
-        super.onPause()
+        super.onDestroy()
     }
 
     /**

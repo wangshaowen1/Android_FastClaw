@@ -47,7 +47,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
             mRealVM.openConversation(it)
         }
         msgAdapter.onMarkedUnsuitableClick = {
-            UnableConversationActivity.start(requireContext())
+            UnableMessageActivity.start(requireContext())
         }
         binding.sbTest.setOnSingleClickListener {
             sendTestImMessage()
@@ -89,7 +89,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
             chat.onMessageSendResultListener = object : Chat.OnMessageSendResultListener {
                 override fun onSendSuccess(message: MessageWrapper, antispamResult: String?) {
                     showMessage("IM 测试消息发送成功")
-                    mRealVM.refreshConversations()
+                    //mRealVM.getConversationList()
                     chat?.close()
                 }
 

@@ -18,10 +18,11 @@ sealed interface MessageListItem {
  * 普通 IM 会话行，展示联系人信息、末条消息、时间和未读状态。
  *
  * @param id 云信 conversationId，作为列表稳定 id 和后续进入会话的凭据。
- * @param contactId P2P 会话对端账号，用于资料查询、黑名单判断和发送消息。
+ * @param contactId P2P 会话对端账号，用于资料查询、会话扩展判断和发送消息。
  * @param targetName 会话对象昵称，资料缺失时使用账号兜底。
- * @param targetDesc 会话对象补充描述，当前为空时隐藏。
  * @param targetAvatar 会话对象头像地址。
+ * @param targetCompany 会话对象所在公司。
+ * @param targetPosition 会话对象职位名称。
  * @param lastMessage 会话末条消息摘要。
  * @param lastMessageTime 会话末条消息时间戳。
  * @param unreadCount 会话未读数量。
@@ -32,8 +33,9 @@ data class ConversationItem(
     override val id: String,
     val contactId: String,
     val targetName: String,
-    val targetDesc: String?,
     val targetAvatar: String?,
+    val targetCompany: String?,
+    val targetPosition: String?,
     val lastMessage: String,
     val lastMessageTime: Long,
     val unreadCount: Int,
