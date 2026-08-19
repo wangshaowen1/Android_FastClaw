@@ -15,10 +15,8 @@ import com.nhsd.basic.utils.Logger
 import com.tulele.im.ImAuthState
 import com.tulele.im.ImSession
 import com.tulele.im.StateChangeListener
-import com.tulele.im.conversation.ConversationListener
-import com.tulele.im.entity.Conversation
-import com.tulele.im.entity.MessageWrapper
 import com.tulele.im.utils.AccountHelper
+import kotlinx.coroutines.Job
 
 private const val IM_LOGIN_LOG_TAG = "ImLogin"
 
@@ -54,36 +52,15 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
     //设置编辑的回调
     var setIsEditing: ((Boolean) -> Unit)? = null
 
-    // 组件会话门面，宿主不直接依赖云信会话服务。
-    private val conversationManager get() = ImSession.get().getConversationManager()
-    // 当前主 ViewModel 是否已经注册 IM 会话监听。
-    private var conversationListenerRegistered = false
-    // 当前主 ViewModel 是否已经注册 IM 消息和登录状态监听。
+    // 当前主 ViewModel 是否已经注册 IM 登录状态监听。
     private var imListenersRegistered = false
+    // 未读数持续订阅任务，避免重复收集同一状态流。
+    private var unreadCountCollectionJob: Job? = null
 
     private val imStateChangeListener = StateChangeListener { statusCode ->
         if (statusCode == ImAuthState.LOGGED_IN) {
             refreshImData()
         }
-    }
-
-    private val onMessageReceiveListener = object : ImSession.OnMessageReceiveListener {
-        /**
-         * 收到 IM 新消息后刷新底部消息 Tab 未读数。
-         */
-        override fun onMessageReceived(messages: List<MessageWrapper>) {
-            refreshImUnreadCount()
-        }
-    }
-
-    private val conversationListener = object : ConversationListener {
-        override fun onConversationsLoaded(conversations: List<Conversation>?) = refreshImUnreadCount()
-
-        override fun onConversationsChanged(conversations: List<Conversation>) = refreshImUnreadCount()
-
-        override fun onConversationDeleted(conversation: Conversation) = refreshImUnreadCount()
-
-        override fun onConversationStateChanged(conversation: Conversation) = refreshImUnreadCount()
     }
 
     /**
@@ -93,18 +70,16 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
         //获取用户主页信息接口
         fetchUserInfo()
         registerImListeners()
-        refreshImUnreadCount()
     }
 
     /**
-     * 页面恢复时补拉 IM 未读数，覆盖后台期间错过的会话变化。
+     * 页面恢复时确保 IM 登录状态监听和未读数订阅已启动。
      */
     override fun onResume() {
         super.onResume()
         isLogin.set(User.get().isLogged)
         if (User.get().isLogged) {
             registerImListeners()
-            refreshImUnreadCount()
         } else {
             clearImUnreadCount()
         }
@@ -189,11 +164,10 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 登录态可用时同步 IM 数据，并刷新底部消息 Tab 未读数。
+     * 登录态可用时同步 IM 数据，未读数由统一状态流持续推送。
      */
     fun refreshImData() {
         registerImListeners()
-        refreshImUnreadCount()
         if (AccountHelper.isLogged()) {
             ImSession.get().syncIMData()
         }
@@ -207,66 +181,40 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     /**
-     * 注册 IM 消息、登录状态和会话监听，避免重复添加全局监听。
+     * 注册 IM 登录状态监听并启动未读数订阅，避免重复收集和添加监听。
      */
     private fun registerImListeners() {
-        registerImConversationListener()
+        startUnreadCountCollection()
         if (imListenersRegistered) return
-        ImSession.get().apply {
-            addOnMessageReceiveListener(onMessageReceiveListener)
-            addStateChangeListeners(imStateChangeListener)
-        }
+        ImSession.get().addStateChangeListeners(imStateChangeListener)
         imListenersRegistered = true
     }
 
     /**
-     * 移除 IM 消息、登录状态和会话监听，避免 ViewModel 销毁后继续收到回调。
+     * 停止未读数订阅并移除 IM 登录状态监听。
      */
     private fun unregisterImListeners() {
-        removeImConversationListener()
+        unreadCountCollectionJob?.cancel()
+        unreadCountCollectionJob = null
         if (!imListenersRegistered) return
-        ImSession.get().apply {
-            removeOnMessageReceiveListener(onMessageReceiveListener)
-            removeStateChangeListeners(imStateChangeListener)
-        }
+        ImSession.get().removeStateChangeListeners(imStateChangeListener)
         imListenersRegistered = false
     }
 
     /**
-     * 绑定 IM 会话监听，重复进入主界面时复用已绑定的会话管理器。
+     * 持续收集组件聚合后的未读数，由 ViewModel 生命周期统一取消。
      */
-    private fun registerImConversationListener() {
-        if (conversationListenerRegistered) return
-        conversationManager.addConversationListener(conversationListener)
-        conversationListenerRegistered = true
+    private fun startUnreadCountCollection() {
+        if (unreadCountCollectionJob?.isActive == true) return
+        unreadCountCollectionJob = launch {
+            ImSession.get().unreadCounter.collect { count ->
+                imUnreadCount.value = count
+            }
+        }
     }
 
     /**
-     * 移除 IM 会话监听，避免主 ViewModel 销毁后继续收到未读数回调。
-     */
-    private fun removeImConversationListener() {
-        if (!conversationListenerRegistered) return
-        conversationManager.removeConversationListener(conversationListener)
-        conversationListenerRegistered = false
-    }
-
-    /**
-     * 查询 IM 会话未读总数并回填主 Tab 红点数据。
-     */
-    private fun refreshImUnreadCount() {
-        imUnreadCount.value = queryImUnreadCount()
-    }
-
-    /**
-     * 查询 IM SDK 会话未读总数，未登录或 SDK 查询失败时返回 0。
-     */
-    private fun queryImUnreadCount(): Int {
-        if (!AccountHelper.isLogged()) return 0
-        return conversationManager.getTotalUnreadCount()
-    }
-
-    /**
-     * ViewModel 销毁时移除 IM 消息、登录状态和会话监听。
+     * ViewModel 销毁时停止未读数订阅并移除 IM 登录状态监听。
      */
     override fun onDestroy() {
         unregisterImListeners()

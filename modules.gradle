@@ -72,8 +72,8 @@ ext {
             imsdk      : [
                     groupId   : 'com.kuaige.thirdparty',
                     artifactId: 'imsdk',
-                    version   : '2.0.0-rc06',
-                    gav       : 'com.kuaige.thirdparty:imsdk:2.0.0-rc06'
+                    version   : '2.0.0-rc07',
+                    gav       : 'com.kuaige.thirdparty:imsdk:2.0.0-rc07'
             ]
     ]
 }
