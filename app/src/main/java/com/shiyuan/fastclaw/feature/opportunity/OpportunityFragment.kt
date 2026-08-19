@@ -8,11 +8,14 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.nhsd.permisson.PermissionX
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
@@ -22,12 +25,16 @@ import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
 import com.shiyuan.fastclaw.databinding.FragmentNotOpportunityBinding
 import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
+import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityMatchState
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
+import com.shiyuan.fastclaw.widget.shape.internal.BOLD
+import kotlin.coroutines.resume
 
-class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding, OpportunityViewModel>() {
+class OpportunityFragment :
+    BaseViewModelFragment<FragmentNotOpportunityBinding, OpportunityViewModel>() {
 
     private var lastVisitorState: Boolean? = null
 
@@ -45,7 +52,7 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
             }
             val resume = data.orEmpty().maxByOrNull { it.uploadTime.orEmpty() }
             mRealVM.isJobUpCompleted.value = resume?.parseStatus == 2
-            if(resume?.parseStatus == 0 || resume?.parseStatus == 1){
+            if (resume?.parseStatus == 0 || resume?.parseStatus == 1) {
                 if (!isResumePolling) {
                     startResumePolling()
                 }
@@ -55,14 +62,14 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
                 startRotation(binding.ivState)
                 binding.tvState.setTextColor(resources.getColor(R.color.color_2f6bff))
                 binding.tvState.text = resume.parseStatusText
-            }else if(resume?.parseStatus == 2){
+            } else if (resume?.parseStatus == 2) {
                 binding.llState.gone()
                 binding.vLine.visible()
                 binding.cardUploadResumeAction.gone()
                 binding.cardUploadAlready.visible()
                 stopResumePolling()  // ✅ 停止轮询
                 stopRotation(binding.ivState)
-            }else if(resume?.parseStatus == 3){
+            } else if (resume?.parseStatus == 3) {
                 binding.llState.visible()
                 binding.vLine.gone()
                 binding.cardUploadResumeAction.visible()
@@ -77,7 +84,7 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
                 stopRotation(binding.ivState)
                 binding.tvState.setTextColor(resources.getColor(R.color.color_fb415e))
                 binding.tvState.text = resume.parseStatusText
-            }else{
+            } else {
                 binding.llState.gone()
                 binding.vLine.visible()
                 binding.cardUploadResumeAction.visible()
@@ -97,34 +104,60 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
             startResumePolling()
         }
         mRealVM.isJobUpCompleted.observe(this) { data ->
-            if(data){
+            if (data) {
                 binding.clJobPreference.setBackgroundResource(R.drawable.bg_opportunity_card_bg3)
                 binding.tvJobPreferenceTitle.setTextColor(resources.getColor(R.color.color_000000))
                 binding.tvJobPreferenceDescription.setTextColor(resources.getColor(R.color.color_85_3c3c43))
                 binding.cardJobPreferenceAction.setBackgroundResource(R.drawable.bg_upload_resume_btn)
                 binding.cardJobPreferenceAction.setOnSingleClickListener {
                     if (!AppNavigator.checkLoginIntercepted(false)) {
-                        OnlineResumeActivity.start(requireActivity(),1)
+                        OnlineResumeActivity.start(requireActivity(), 1)
                     }
                 }
-            }else{
+            } else {
                 binding.clJobPreference.setBackgroundResource(R.drawable.bg_opportunity_card_bg2)
                 binding.tvJobPreferenceTitle.setTextColor(resources.getColor(R.color.color_75_3c3c43))
                 binding.tvJobPreferenceDescription.setTextColor(resources.getColor(R.color.color_55_3c3c43))
                 binding.cardJobPreferenceAction.setBackgroundResource(R.drawable.bg_20_666666_r50)
                 binding.cardJobPreferenceAction.setOnSingleClickListener {
                     if (!AppNavigator.checkLoginIntercepted(false)) {
-                         "请先上传简历".showToast()
+                        "请先上传简历".showToast()
                     }
                 }
             }
         }
-        mRealVM.isCompleted.observe(this) { data ->
-            if(data){
-                binding.cardUnderstandUser.gone()
-            }else{
-                binding.cardUnderstandUser.visible()
+        mRealVM.matchState.observe(this) { data ->
+            when (data) {
+                OpportunityMatchState.MATCHED -> {
+
+                }
+                OpportunityMatchState.NORMAL_MATCHING -> {
+                    binding.cardUnderstandUser.gone()
+                    binding.cardNoChance.visible()
+                    binding.llProcessedOpportunity.visible()
+                }
+                else -> {
+                    binding.cardUnderstandUser.visible()
+                    binding.cardNoChance.gone()
+                    binding.llProcessedOpportunity.gone()
+                }
             }
+
+        }
+        mRealVM.chanceData.observe(this) { data ->
+          val isEmpty = data.orEmpty().isEmpty()
+           if(isEmpty){
+            binding.llViewAllProcessedOpportunity.gone()
+            binding.rlEmpty.visible()
+            binding.rvProcessedOpportunity.gone()
+           }else{
+               binding.llViewAllProcessedOpportunity.visible()
+               binding.llViewAllProcessedOpportunity.setOnSingleClickListener {
+
+               }
+               binding.rlEmpty.gone()
+               binding.rvProcessedOpportunity.visible()
+           }
         }
     }
 
@@ -157,21 +190,32 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
             show(this@OpportunityFragment.childFragmentManager)
         }
     }
+
     fun hideLoading() {
         commonLoadingDialog?.dismissAllowingStateLoss()
         commonLoadingDialog = null
     }
+
     private var uploadResumeDialog: UploadResumeDialog? = null
     fun uploadResume(replaceResumeTaskId: String? = null) {
         //上传简历
-        uploadResumeDialog = UploadResumeDialog.show(manager = this@OpportunityFragment.childFragmentManager, false,  bizType =BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,{ fileInfo ->
+        uploadResumeDialog = UploadResumeDialog.show(
+            manager = this@OpportunityFragment.childFragmentManager,
+            false,
+            bizType = BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
+            { fileInfo ->
                 if (fileInfo != null) {
                     showLoading("上传中")
                     mRealVM.uploadFilesWithSecurityCheck(
                         listOf(fileInfo.uri), BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
                         onSuccess = { successUrls ->
                             hideLoading()
-                            mRealVM.submitResumeUpload(successUrls.first(), fileInfo.fileName, replaceResumeTaskId, false) {
+                            mRealVM.submitResumeUpload(
+                                successUrls.first(),
+                                fileInfo.fileName,
+                                replaceResumeTaskId,
+                                false
+                            ) {
                                 hideLoading()
                             }
                         },
@@ -180,7 +224,8 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
                             it.showToast()
                         })
                 }
-            }, {
+            },
+            {
                 mRealVM.code.value = it
             })
     }
@@ -200,6 +245,7 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
         }
         syncUserState()
     }
+
     private val handler = Handler(Looper.getMainLooper())
     private val POLLING_INTERVAL = 2000L // 2秒
     private var resumePollingRunnable: Runnable? = null
@@ -222,9 +268,11 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
             view.startAnimation(rotateAnim)
         }
     }
+
     private fun stopRotation(view: View) {
         view.clearAnimation()
     }
+
     private fun startResumePolling() {
         if (User.get().isVisitor || isResumePolling) return  // ✅ 防止游客或重复启动
 
@@ -246,6 +294,7 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
         handler.postDelayed(resumePollingRunnable!!, POLLING_INTERVAL)
         Log.d("Polling", "开始轮询")
     }
+
     private fun stopResumePolling() {
         if (!isResumePolling) return  // ✅ 停止前检查
 

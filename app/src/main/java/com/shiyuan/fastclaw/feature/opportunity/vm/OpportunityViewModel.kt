@@ -29,6 +29,12 @@ import com.shiyuan.fastclaw.feature.report.data.ReportRepository
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import java.util.UUID
 
+enum class OpportunityMatchState {
+    UNMATCHED,
+    NORMAL_MATCHING,
+    MATCHED
+}
+
 /**
  * @Introduce:
  */
@@ -37,19 +43,36 @@ class OpportunityViewModel : HomeReportViewModel() {
     var isJobUpCompleted = MutableLiveData(false)
     var isJobPreferenceCompleted = MutableLiveData(false) // TODO 岗位偏好接口接入后使用接口结果
 
-    var isCompleted = MediatorLiveData<Boolean>().apply {
-        value = false
+    val chanceData = MutableLiveData<List<Any>>(emptyList())
+
+    val matchState = MediatorLiveData<OpportunityMatchState>().apply {
+        value = resolveMatchState()
         addSource(isJobUpCompleted) {
-            value = isJobPreferenceCompleted.value == true && it == true
+            value = resolveMatchState()
         }
         addSource(isJobPreferenceCompleted) {
-            value = it == true && isJobUpCompleted.value == true
+            value = resolveMatchState()
+        }
+        addSource(chanceData) {
+            value = resolveMatchState()
         }
     }
+
 
     fun resetUserState() {
         resumeListData.value = emptyList()
         isJobUpCompleted.value = false
         isJobPreferenceCompleted.value = false
+    }
+
+    private fun resolveMatchState(): OpportunityMatchState {
+        if (isJobUpCompleted.value != true || isJobPreferenceCompleted.value != true) {
+            return OpportunityMatchState.UNMATCHED
+        }
+        return if (chanceData.value.orEmpty().isEmpty()) {
+            OpportunityMatchState.NORMAL_MATCHING
+        } else {
+            OpportunityMatchState.MATCHED
+        }
     }
 }
