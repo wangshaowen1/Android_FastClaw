@@ -10,13 +10,17 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
+import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.nhsd.permisson.PermissionX
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.Events
@@ -30,6 +34,7 @@ import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
+import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.shiyuan.fastclaw.widget.shape.internal.BOLD
 import kotlin.coroutines.resume
 
@@ -38,11 +43,29 @@ class OpportunityFragment :
 
     private var lastVisitorState: Boolean? = null
 
+    private val opportunityAdapter by lazy {
+        QuickAdapter<ItemProcessedOpportunityVM>(
+            R.layout.item_processed_opportunity,
+            emptyList()
+        )
+    }
+
     override fun onPrepareView() {
         super.onPrepareView()
+        initView()
         initObservers()
         initUserEvents()
         syncUserState(force = true)
+    }
+
+    private fun initView() {
+        binding.rvProcessedOpportunity.apply {
+            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            if (itemDecorationCount == 0) {
+                addItemDecoration(SpaceDecoration(10.dp, SpaceDecoration.Direction.MIDDLE))
+            }
+            adapter = opportunityAdapter
+        }
     }
 
     private fun initObservers() {
@@ -129,7 +152,9 @@ class OpportunityFragment :
         mRealVM.matchState.observe(this) { data ->
             when (data) {
                 OpportunityMatchState.MATCHED -> {
-
+                    binding.cardUnderstandUser.gone()
+                    binding.cardNoChance.gone()
+                    binding.llProcessedOpportunity.visible()
                 }
                 OpportunityMatchState.NORMAL_MATCHING -> {
                     binding.cardUnderstandUser.gone()
@@ -145,19 +170,21 @@ class OpportunityFragment :
 
         }
         mRealVM.chanceData.observe(this) { data ->
-          val isEmpty = data.orEmpty().isEmpty()
-           if(isEmpty){
-            binding.llViewAllProcessedOpportunity.gone()
-            binding.rlEmpty.visible()
-            binding.rvProcessedOpportunity.gone()
-           }else{
-               binding.llViewAllProcessedOpportunity.visible()
-               binding.llViewAllProcessedOpportunity.setOnSingleClickListener {
-
-               }
-               binding.rlEmpty.gone()
-               binding.rvProcessedOpportunity.visible()
-           }
+            val opportunityItems = data.orEmpty()
+            opportunityAdapter.submitList(opportunityItems.map(::ItemProcessedOpportunityVM))
+            val isEmpty = opportunityItems.isEmpty()
+            if (isEmpty) {
+                binding.llViewAllProcessedOpportunity.gone()
+                binding.rlEmpty.visible()
+                binding.rvProcessedOpportunity.gone()
+            } else {
+                binding.llViewAllProcessedOpportunity.visible()
+                binding.llViewAllProcessedOpportunity.setOnSingleClickListener {
+                    ProcessedOpportunityActivity.start(requireActivity())
+                }
+                binding.rlEmpty.gone()
+                binding.rvProcessedOpportunity.visible()
+            }
         }
     }
 
@@ -178,6 +205,7 @@ class OpportunityFragment :
         mRealVM.resetUserState()
         if (!isVisitor) {
             mRealVM.isJobPreferenceCompleted.value = true
+            mRealVM.chanceData.value = mRealVM.createFakeChanceData()
             mRealVM.queryResumeList()
         }
     }

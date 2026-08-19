@@ -25,6 +25,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
 import com.shiyuan.fastclaw.core.response
+import com.shiyuan.fastclaw.feature.opportunity.ProcessedOpportunityItem
 import com.shiyuan.fastclaw.feature.report.data.ReportRepository
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import java.util.UUID
@@ -40,10 +41,18 @@ enum class OpportunityMatchState {
  */
 class OpportunityViewModel : HomeReportViewModel() {
 
+    val mToolbarVMProcessedOpportunity = ToolbarViewModel(
+        navigationAction = { finish() },
+        title = R.string.not_opportunity_processed_title.getResString(),
+        background = Color.TRANSPARENT
+    )
+
     var isJobUpCompleted = MutableLiveData(false)
     var isJobPreferenceCompleted = MutableLiveData(false) // TODO 岗位偏好接口接入后使用接口结果
 
-    val chanceData = MutableLiveData<List<Any>>(emptyList())
+
+    val chanceData = MutableLiveData<List<ProcessedOpportunityItem>>(emptyList())
+
 
     val matchState = MediatorLiveData<OpportunityMatchState>().apply {
         value = resolveMatchState()
@@ -75,4 +84,23 @@ class OpportunityViewModel : HomeReportViewModel() {
             OpportunityMatchState.MATCHED
         }
     }
+
+     fun createFakeChanceData(): List<ProcessedOpportunityItem> = listOf(
+        ProcessedOpportunityItem(
+            title = R.string.processed_opportunity_sample_high_backend.getResString(),
+            company = R.string.processed_opportunity_sample_company.getResString(),
+            requirements = R.string.processed_opportunity_sample_requirements.getResString(),
+            salary = R.string.processed_opportunity_sample_salary.getResString(),
+            actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
+            matchPercent = 76
+        ),
+        ProcessedOpportunityItem(
+            title = R.string.processed_opportunity_sample_backend.getResString(),
+            company = R.string.processed_opportunity_sample_company.getResString(),
+            requirements = R.string.processed_opportunity_sample_requirements.getResString(),
+            salary = R.string.processed_opportunity_sample_salary.getResString(),
+            actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
+            matchPercent = 76
+        )
+    )
 }

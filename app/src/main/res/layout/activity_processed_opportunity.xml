@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_f6f9ff">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="153dp"
+            android:background="@drawable/bg_processed_opportunity_header" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/view_model_toolbar"
+                app:toolbar="@{layout.mToolbarVMProcessedOpportunity}" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/spacing_l"
+                android:layout_marginTop="6dp"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/ll_tab_communicating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_tab_communicating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="@string/processed_opportunity_tab_communicating"
+                        android:textColor="@color/color_90_000000"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        tools:text="沟通中 2" />
+
+                    <View
+                        android:id="@+id/v_tab_communicating_indicator"
+                        android:layout_width="18dp"
+                        android:layout_height="3dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/bg_2f6bff_r50" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_tab_unsuitable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="30dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_tab_unsuitable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:text="@string/processed_opportunity_tab_unsuitable"
+                        android:textColor="@color/color_55_3c3c43"
+                        android:textSize="14sp"
+                        tools:text="不合适 12" />
+
+                    <View
+                        android:id="@+id/v_tab_unsuitable_indicator"
+                        android:layout_width="18dp"
+                        android:layout_height="3dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/bg_2f6bff_r50"
+                        android:visibility="invisible" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp_processed_opportunity"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/spacing_m"
+                android:layout_weight="1"
+                tools:background="@color/color_f6f9ff" />
+        </LinearLayout>
+    </FrameLayout>
+</layout>
