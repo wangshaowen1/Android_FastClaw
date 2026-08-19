@@ -1243,6 +1243,7 @@
     <string name="not_opportunity_understand_description">替你筛选符合你薪资、职位和发展预期的工作机会。</string>
     <string name="not_opportunity_upload_description">快速了解你的经历和能力</string>
     <string name="not_opportunity_upload_action">去上传</string>
+    <string name="not_opportunity_upload_already">已上传</string>
     <string name="not_opportunity_resume_parsing">简历解析中</string>
     <string name="not_opportunity_preference_title">确认求职偏好</string>
     <string name="not_opportunity_preference_description">城市、岗位、薪资等主要诉求</string>

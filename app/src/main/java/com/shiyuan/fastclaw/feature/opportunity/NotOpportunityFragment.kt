@@ -1,24 +1,191 @@
 package com.shiyuan.fastclaw.feature.opportunity
 
-import android.graphics.Typeface
-import android.util.TypedValue
-import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.viewpager2.widget.ViewPager2
+
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.common.adapter.FragmentStateCacheAdapter
+import com.shiyuan.fastclaw.common.ext.gone
+import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
 import com.shiyuan.fastclaw.databinding.FragmentNotOpportunityBinding
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
-import com.shiyuan.fastclaw.feature.report.HomeTreasuryFragment
+import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
+import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 
 class NotOpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding, OpportunityViewModel>() {
 
 
     override fun onPrepareView() {
         super.onPrepareView()
+        initObservers()
+        mRealVM.queryResumeList()
+    }
 
+    private fun initObservers() {
+        mRealVM.resumeListData.observe(this) { data ->
+            val resumeList = data.orEmpty()
+            if(resumeList.any { it.parseStatus == 0 || it.parseStatus == 1 }){
+                if (!isResumePolling) {
+                    startResumePolling()
+                }
+                binding.llState.visible()
+                binding.vLine.gone()
+                startRotation(binding.ivState)
+               // binding.tvState.text =
+            }else if(resumeList.any { it.parseStatus == 2}){
+                binding.llState.gone()
+                binding.vLine.gone()
+                binding.cardUploadResumeAction.gone()
+                binding.cardUploadAlready.visible()
+                stopResumePolling()  // ✅ 停止轮询
+                stopRotation(binding.ivState)
+            }else{
+                binding.llState.gone()
+                binding.vLine.gone()
+                binding.cardUploadResumeAction.visible()
+                binding.cardUploadResumeAction.setOnSingleClickListener {
+                    uploadResume()
+                }
+                binding.cardUploadAlready.gone()
+                stopResumePolling()  // ✅ 停止轮询
+                stopRotation(binding.ivState)
+            }
+        }
+
+        mRealVM.isCompleted.observe(this) { data ->
+
+
+        }
+
+        mRealVM.resumeUploadResult.observe(this) { data -> //上传成功
+            //解析简成功发送消息
+            FlowEventBus.postSync(Events.ResumeEvent(true))
+            startResumePolling()
+        }
+
+
+    }
+
+
+    private var commonLoadingDialog: CommonLoadingDialog? = null
+    fun showLoading(text: String? = null) {
+        if (commonLoadingDialog?.isAdded == true) return
+        commonLoadingDialog = CommonLoadingDialog.newInstance(text).apply {
+            show(this.childFragmentManager)
+        }
+    }
+    fun hideLoading() {
+        commonLoadingDialog?.dismissAllowingStateLoss()
+        commonLoadingDialog = null
+    }
+    private var uploadResumeDialog: UploadResumeDialog? = null
+    fun uploadResume(replaceResumeTaskId: String? = null) {
+        //上传简历
+        uploadResumeDialog = UploadResumeDialog.show(manager = this.childFragmentManager, false,  bizType =BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,{ fileInfo ->
+                if (fileInfo != null) {
+                    showLoading("上传中")
+                    mRealVM.uploadFilesWithSecurityCheck(
+                        listOf(fileInfo.uri), BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
+                        onSuccess = { successUrls ->
+                            hideLoading()
+                            mRealVM.submitResumeUpload(successUrls.first(), fileInfo.fileName, replaceResumeTaskId, false) {
+                                hideLoading()
+                            }
+                        },
+                        onFailure = {
+                            hideLoading()
+                            it.showToast()
+                        })
+                }
+            }, {
+                mRealVM.code.value = it
+            })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!mRealVM.code.value.isNullOrEmpty()) {
+            Log.d("uploadResumeDialog", mRealVM.code.value.toString())
+            uploadResumeDialog?.dismissAllowingStateLoss()
+            mRealVM.queryCodeResumeBinding(mRealVM.code.value ?: "") { resume ->
+                mRealVM.submitResumeUpload(
+                    resume?.resumeUrl,
+                    resume?.resumeFileName,
+                    resume?.resumeTaskBizId
+                )
+            }
+        }
+    }
+    private val handler = Handler(Looper.getMainLooper())
+    private val POLLING_INTERVAL = 2000L // 2秒
+    private var resumePollingRunnable: Runnable? = null
+    private var isResumePolling = false
+    private var rotateAnim: RotateAnimation? = null
+
+    private fun startRotation(view: View) {
+        if (rotateAnim == null) {
+            rotateAnim = RotateAnimation(
+                0f, 360f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f
+            ).apply {
+                duration = 1000L
+                repeatCount = Animation.INFINITE
+                interpolator = LinearInterpolator()
+            }
+        }
+        // 如果动画已经在运行，不要重复启动
+        if (rotateAnim != null && view.animation != rotateAnim) {
+            view.startAnimation(rotateAnim)
+        }
+    }
+
+    private fun stopRotation(view: View) {
+        view.clearAnimation()
+    }
+
+    private fun startResumePolling() {
+        if (isResumePolling) return  // ✅ 防止重复启动
+
+        isResumePolling = true
+        resumePollingRunnable = object : Runnable {
+            override fun run() {
+                val activity = activity
+                if (activity != null && !activity.isFinishing && !activity.isDestroyed && isResumePolling) {
+                    Log.d("Polling", "轮询检查状态...")
+                    mRealVM.queryResumeList()
+                    handler.postDelayed(this, POLLING_INTERVAL)
+                }
+            }
+        }
+        handler.postDelayed(resumePollingRunnable!!, POLLING_INTERVAL)
+        Log.d("Polling", "开始轮询")
+    }
+
+    private fun stopResumePolling() {
+        if (!isResumePolling) return  // ✅ 停止前检查
+
+        isResumePolling = false
+        resumePollingRunnable?.let {
+            handler.removeCallbacks(it)
+            resumePollingRunnable = null
+        }
+        Log.d("Polling", "停止轮询")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopResumePolling()
     }
 
 }

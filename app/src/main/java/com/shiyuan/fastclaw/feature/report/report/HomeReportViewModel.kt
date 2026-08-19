@@ -34,7 +34,7 @@ import java.util.UUID
 /**
  * @Introduce:
  */
-class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
+open class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
 
 
     val mToolbarVMMyResume = ToolbarViewModel(

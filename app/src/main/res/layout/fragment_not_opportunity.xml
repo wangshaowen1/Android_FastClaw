@@ -120,6 +120,7 @@
 
 
                                 <TextView
+                                    android:id="@+id/tv_state"
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="3dp"
@@ -133,6 +134,7 @@
                             </LinearLayout>
 
                             <View
+                                android:id="@+id/v_line"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/tv_upload_resume_description"
@@ -150,6 +152,22 @@
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:textStyle="normal"
+                                app:layout_constraintBottom_toBottomOf="@id/tv_upload_resume_description"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="@id/tv_upload_resume_title" />
+
+
+                            <TextView
+                                android:visibility="gone"
+                                android:fontFamily="sans-serif-medium"
+                                android:id="@+id/card_upload_already"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:text="@string/not_opportunity_upload_already"
+                                android:textColor="@color/color_85_3c3c43"
+                                android:textSize="14sp"
                                 app:layout_constraintBottom_toBottomOf="@id/tv_upload_resume_description"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="@id/tv_upload_resume_title" />
@@ -224,5 +242,7 @@
             </LinearLayout>
 
         </LinearLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
