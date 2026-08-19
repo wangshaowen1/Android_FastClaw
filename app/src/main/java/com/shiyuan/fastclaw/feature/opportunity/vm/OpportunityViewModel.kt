@@ -46,4 +46,10 @@ class OpportunityViewModel : HomeReportViewModel() {
             value = it == true && isJobUpCompleted.value == true
         }
     }
+
+    fun resetUserState() {
+        resumeListData.value = emptyList()
+        isJobUpCompleted.value = false
+        isJobPreferenceCompleted.value = false
+    }
 }

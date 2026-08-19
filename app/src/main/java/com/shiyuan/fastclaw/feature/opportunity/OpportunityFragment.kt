@@ -10,6 +10,7 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
@@ -17,6 +18,7 @@ import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
 import com.shiyuan.fastclaw.databinding.FragmentNotOpportunityBinding
 import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
@@ -27,19 +29,22 @@ import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 
 class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding, OpportunityViewModel>() {
 
+    private var lastVisitorState: Boolean? = null
 
     override fun onPrepareView() {
         super.onPrepareView()
-        if (!User.get().isVisitor) {
-            mRealVM.queryResumeList()
-        }
         initObservers()
-
+        initUserEvents()
+        syncUserState(force = true)
     }
 
     private fun initObservers() {
         mRealVM.resumeListData.observe(this) { data ->
+            if (User.get().isVisitor && data.orEmpty().isNotEmpty()) {
+                return@observe
+            }
             val resume = data.orEmpty().maxByOrNull { it.uploadTime.orEmpty() }
+            mRealVM.isJobUpCompleted.value = resume?.parseStatus == 2
             if(resume?.parseStatus == 0 || resume?.parseStatus == 1){
                 if (!isResumePolling) {
                     startResumePolling()
@@ -57,7 +62,6 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
                 binding.cardUploadAlready.visible()
                 stopResumePolling()  // ✅ 停止轮询
                 stopRotation(binding.ivState)
-                mRealVM.isJobUpCompleted.value = true
             }else if(resume?.parseStatus == 3){
                 binding.llState.visible()
                 binding.vLine.gone()
@@ -87,13 +91,11 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
                 stopRotation(binding.ivState)
             }
         }
-
         mRealVM.resumeUploadResult.observe(this) { data -> //上传成功
             //解析简成功发送消息
             FlowEventBus.postSync(Events.ResumeEvent(true))
             startResumePolling()
         }
-
         mRealVM.isJobUpCompleted.observe(this) { data ->
             if(data){
                 binding.clJobPreference.setBackgroundResource(R.drawable.bg_opportunity_card_bg3)
@@ -117,13 +119,33 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
                 }
             }
         }
-
         mRealVM.isCompleted.observe(this) { data ->
             if(data){
                 binding.cardUnderstandUser.gone()
             }else{
                 binding.cardUnderstandUser.visible()
             }
+        }
+    }
+
+    private fun initUserEvents() {
+        observeEvents {
+            onUserStatusChanged {
+                syncUserState(force = true)
+            }
+        }
+    }
+
+    private fun syncUserState(force: Boolean = false) {
+        val isVisitor = User.get().isVisitor
+        if (!force && lastVisitorState == isVisitor) return
+
+        lastVisitorState = isVisitor
+        stopResumePolling()
+        mRealVM.resetUserState()
+        if (!isVisitor) {
+            mRealVM.isJobPreferenceCompleted.value = true
+            mRealVM.queryResumeList()
         }
     }
 
@@ -176,6 +198,7 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
                 )
             }
         }
+        syncUserState()
     }
     private val handler = Handler(Looper.getMainLooper())
     private val POLLING_INTERVAL = 2000L // 2秒
@@ -203,11 +226,15 @@ class OpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBinding,
         view.clearAnimation()
     }
     private fun startResumePolling() {
-        if (isResumePolling) return  // ✅ 防止重复启动
+        if (User.get().isVisitor || isResumePolling) return  // ✅ 防止游客或重复启动
 
         isResumePolling = true
         resumePollingRunnable = object : Runnable {
             override fun run() {
+                if (User.get().isVisitor) {
+                    stopResumePolling()
+                    return
+                }
                 val activity = activity
                 if (activity != null && !activity.isFinishing && !activity.isDestroyed && isResumePolling) {
                     Log.d("Polling", "轮询检查状态...")
