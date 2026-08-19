@@ -271,7 +271,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     /**
      * 拉取当前页面需要展示的 IM 会话列表。
      */
-    protected abstract fun getConversationList()
+    abstract fun getConversationList()
 
     /**
      * 根据当前缓存刷新页面自己的消息列表。
