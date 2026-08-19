@@ -33,6 +33,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
         super.onPrepareView()
         initView()
         initObserve()
+        initData()
     }
 
     /**
@@ -64,19 +65,10 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
     }
 
     /**
-     * 页面重新可见时刷新会话列表。
+     * 标记页面进入可见状态并触发会话列表加载。
      */
-    override fun onResume() {
-        super.onResume()
-        mRealVM.setPageState(true)
-    }
-
-    /**
-     * 页面不可见时取消消息刷新，避免后台任务继续回写页面。
-     */
-    override fun onPause() {
-        mRealVM.setPageState(false)
-        super.onPause()
+    private fun initData() {
+        mRealVM.getConversationList()
     }
 
     /**

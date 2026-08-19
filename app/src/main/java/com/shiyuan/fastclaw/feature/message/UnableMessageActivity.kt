@@ -63,15 +63,7 @@ class UnableMessageActivity : BaseViewModelActivity<ActivityUnableConversationBi
      * 标记页面进入可见状态并触发会话列表加载。
      */
     private fun initData() {
-        mRealVM.setPageState(true)
-    }
-
-    /**
-     * 页面销毁时同步不可见状态，避免旧任务继续回填 UI。
-     */
-    override fun onDestroy() {
-        mRealVM.setPageState(false)
-        super.onDestroy()
+        mRealVM.getConversationList()
     }
 
     /**
