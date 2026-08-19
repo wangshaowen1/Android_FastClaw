@@ -33,25 +33,40 @@ class NotOpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBindi
 
     private fun initObservers() {
         mRealVM.resumeListData.observe(this) { data ->
-            val resumeList = data.orEmpty()
-            if(resumeList.any { it.parseStatus == 0 || it.parseStatus == 1 }){
+            val resume = data.orEmpty().maxByOrNull { it.uploadTime.orEmpty() }
+            if(resume?.parseStatus == 0 || resume?.parseStatus == 1){
                 if (!isResumePolling) {
                     startResumePolling()
                 }
                 binding.llState.visible()
                 binding.vLine.gone()
+                binding.ivState.setImageResource(R.drawable.ic_running2)
                 startRotation(binding.ivState)
-               // binding.tvState.text =
-            }else if(resumeList.any { it.parseStatus == 2}){
+                binding.tvState.setTextColor(resources.getColor(R.color.color_2f6bff))
+                binding.tvState.text = resume.parseStatusText
+            }else if(resume?.parseStatus == 2){
                 binding.llState.gone()
-                binding.vLine.gone()
+                binding.vLine.visible()
                 binding.cardUploadResumeAction.gone()
                 binding.cardUploadAlready.visible()
                 stopResumePolling()  // ✅ 停止轮询
                 stopRotation(binding.ivState)
+            }else if(resume?.parseStatus == 3){
+                binding.llState.visible()
+                binding.vLine.gone()
+                binding.cardUploadResumeAction.visible()
+                binding.cardUploadResumeAction.setOnSingleClickListener {
+                    uploadResume()
+                }
+                binding.cardUploadAlready.gone()
+                stopResumePolling()  // ✅ 停止轮询
+                binding.ivState.setImageResource(R.drawable.ic_running_fail)
+                stopRotation(binding.ivState)
+                binding.tvState.setTextColor(resources.getColor(R.color.color_fb415e))
+                binding.tvState.text = resume.parseStatusText
             }else{
                 binding.llState.gone()
-                binding.vLine.gone()
+                binding.vLine.visible()
                 binding.cardUploadResumeAction.visible()
                 binding.cardUploadResumeAction.setOnSingleClickListener {
                     uploadResume()
@@ -62,7 +77,8 @@ class NotOpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBindi
             }
         }
 
-        mRealVM.isCompleted.observe(this) { data ->
+        mRealVM.isJobPreferenceCompleted.observe(this) { data ->
+
 
 
         }
@@ -81,7 +97,7 @@ class NotOpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBindi
     fun showLoading(text: String? = null) {
         if (commonLoadingDialog?.isAdded == true) return
         commonLoadingDialog = CommonLoadingDialog.newInstance(text).apply {
-            show(this.childFragmentManager)
+            show(this@NotOpportunityFragment.childFragmentManager)
         }
     }
     fun hideLoading() {
@@ -91,7 +107,7 @@ class NotOpportunityFragment : BaseViewModelFragment<FragmentNotOpportunityBindi
     private var uploadResumeDialog: UploadResumeDialog? = null
     fun uploadResume(replaceResumeTaskId: String? = null) {
         //上传简历
-        uploadResumeDialog = UploadResumeDialog.show(manager = this.childFragmentManager, false,  bizType =BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,{ fileInfo ->
+        uploadResumeDialog = UploadResumeDialog.show(manager = this@NotOpportunityFragment.childFragmentManager, false,  bizType =BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,{ fileInfo ->
                 if (fileInfo != null) {
                     showLoading("上传中")
                     mRealVM.uploadFilesWithSecurityCheck(

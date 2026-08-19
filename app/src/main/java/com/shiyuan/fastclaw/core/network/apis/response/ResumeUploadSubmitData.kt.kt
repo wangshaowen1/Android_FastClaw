@@ -38,6 +38,7 @@ data class ResumeUploadSubmitMyData(
  *
  */
 data class ResumeListData(
+    val uploadTime: String? = null,
     val updateTime: String? = null,
     val resumeName: String? = null,
     val fileName: String? = null,

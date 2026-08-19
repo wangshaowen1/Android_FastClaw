@@ -33,7 +33,8 @@ import java.util.UUID
  */
 class OpportunityViewModel : HomeReportViewModel() {
 
-    var type = MutableLiveData(1)
+
+    var isJobPreferenceCompleted = MutableLiveData(false)
 
     var isCompleted = MutableLiveData(false)
 
