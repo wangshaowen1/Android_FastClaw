@@ -26,7 +26,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
     // 消息页展示的会话和入口列表数据。
     val conversationList = MutableLiveData<List<MessageListItem>>(emptyList())
     // 当前列表是否为空。
-    val isEmpty = ObservableBoolean(true)
+    val isEmpty = ObservableBoolean(false)
     // 当前是否正在加载会话列表。
     val isLoading = ObservableBoolean(false)
     // 组件会话门面，页面不直接依赖云信 SDK 模型。
@@ -113,7 +113,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
                         extension = conversation.extension,
                     )
                 }
-                updateMessageList(items, unsuitableConversations.size)
+                updateMessageList(items, 1)
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
@@ -166,7 +166,7 @@ class MessageViewModel : AppRepositoryViewModel<AppRepository>() {
             markedUnsuitable?.let { add(it) }
         }
         conversationList.value = items
-        isEmpty.set(items.isEmpty())
+        isEmpty.set(conversations.isEmpty())
     }
 
     /**

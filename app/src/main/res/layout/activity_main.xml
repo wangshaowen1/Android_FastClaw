@@ -178,6 +178,7 @@
                     android:minHeight="16dp"
                     android:textColor="@color/white"
                     android:textSize="9sp"
+                    app:sSizeWidth="0dp"
                     app:layout_constraintEnd_toEndOf="@id/rbMessage"
                     app:layout_constraintTop_toTopOf="@id/rbMessage"
                     app:sCornersRadius="8dp"

@@ -65,17 +65,40 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvConversations"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layoutMessagesScroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="16dp"
             android:clipToPadding="false"
-            android:paddingBottom="34dp"
-            android:visibility="@{layout.isEmpty ? View.GONE : View.VISIBLE}"
+            setVisible="@{!layout.isEmpty}"
+            android:visibility="visible"
+            android:paddingBottom="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layoutNavigation"
-            tools:itemCount="3"
-            tools:listitem="@layout/item_message_conversation" />
+            app:layout_constraintVertical_bias="0.0">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvConversations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_ffffff_r20"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clipToPadding="false"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_message_conversation" />
+
+        </androidx.core.widget.NestedScrollView>
 
         <LinearLayout
             android:id="@+id/layoutEmpty"
@@ -83,7 +106,8 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:visibility="@{layout.isEmpty ? View.VISIBLE : View.GONE}"
+            setVisible="@{layout.isEmpty}"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

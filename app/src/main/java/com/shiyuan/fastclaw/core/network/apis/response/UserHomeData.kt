@@ -64,11 +64,11 @@ data class UserHomeData(
     //第三方首次登录待绑定手机号票据
     val bindTicket: String? = null,
     //云信 IM 账号是否已就绪，登录/第三方/查询用户信息统一下发
-    val imReady: Boolean? = null,
+    var imReady: Boolean? = null,
     //云信 IM 账号 ID，登录/第三方/查询用户信息统一下发
-    val imAccId: String? = null,
+    var imAccId: String? = null,
     //云信 IM 账号 Token，登录/第三方/查询用户信息统一下发
-    val imAccToken: String? = null,
+    var imAccToken: String? = null,
 
 ) : Parcelable {
 

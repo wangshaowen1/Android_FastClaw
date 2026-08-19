@@ -110,12 +110,12 @@ class User : IUser, ImUserAccount {
         get() = !TextUtils.isEmpty(id)
 
     /**
-     * 云信账号 ID，供 AccountHelper.login() 读取并作为 IM 登录账号。
+     * 云信账号 ID，供 V2AccountManager 读取并作为 IM 登录账号。
      */
     var imAccessId: String? by MmkvDelegate<String?>(IM_ACCESS_ID, null) { mmkv }
 
     /**
-     * 云信登录 token，供 AccountHelper.login() 读取并作为 IM 登录凭证。
+     * 云信登录 token，供 V2AccountManager 读取并作为 IM 登录凭证。
      */
     var imToken: String? by MmkvDelegate<String?>(IM_TOKEN, null) { mmkv }
 

@@ -31,8 +31,8 @@ class ConversationViewHolder(private val binding: ItemMessageConversationBinding
         binding.tvDraft.visibility = if (item.isDraft) View.VISIBLE else View.GONE
         Glide.with(binding.ivAvatar)
             .load(item.targetAvatar)
-            .placeholder(R.drawable.ic_default_avatar_big)
-            .error(R.drawable.ic_default_avatar_big)
+            .placeholder(R.drawable.ic_default_avatar)
+            .error(R.drawable.ic_default_avatar)
             .circleCrop()
             .into(binding.ivAvatar)
         binding.root.setOnSingleClickListener { onConversationClickListener(item) }

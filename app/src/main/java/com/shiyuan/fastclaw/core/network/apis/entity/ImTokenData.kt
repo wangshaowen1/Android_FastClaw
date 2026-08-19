@@ -7,7 +7,7 @@ package com.shiyuan.fastclaw.core.network.apis.entity
  * @param imAccToken 云信登录 token
  */
 data class ImTokenData(
-    val imReady: Boolean? = null,
-    val imAccId: String? = null,
-    val imAccToken: String? = null
+    var imReady: Boolean? = null,
+    var imAccId: String? = null,
+    var imAccToken: String? = null
 )

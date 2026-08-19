@@ -287,6 +287,11 @@ class App : ImApplication() {
             override suspend fun getImToken(): String? {
                 if (User.get().isVisitor) return null
                 val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
+
+                data?.imAccId = "123456"
+                data?.imAccToken = "123456"
+                data?.imReady = true
+
                 User.get().storeImAccessId(data?.imAccId)
                 User.get().storeImToken(data?.imAccToken)
                 Logger.i(

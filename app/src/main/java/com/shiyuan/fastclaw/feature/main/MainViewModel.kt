@@ -128,6 +128,11 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
                     bean = mRepo.api.getUserHomeInfo(UserTokenBody()),
                     result = {
                         fetchingUserInfo = false
+
+                        data?.imAccId = "123456"
+                        data?.imAccToken = "123456"
+                        data?.imReady = true
+
                         User.get().updateFrom(this.data)
                         Logger.i(
                             IM_LOGIN_LOG_TAG,
