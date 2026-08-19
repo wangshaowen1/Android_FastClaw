@@ -18,7 +18,7 @@ class HomeOpportunityFragment : BaseViewModelFragment<FragmentHomeOpportunityBin
         FragmentStateCacheAdapter(childFragmentManager, lifecycle).apply {
             setFragments(
                 listOf(
-                    NotOpportunityFragment(),
+                    OpportunityFragment(),
                     HomeTreasuryFragment(),
                 )
             )

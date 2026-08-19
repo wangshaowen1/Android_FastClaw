@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.opportunity.vm
 
 import android.graphics.Color
 import androidx.databinding.ObservableField
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
@@ -33,10 +34,22 @@ import java.util.UUID
  */
 class OpportunityViewModel : HomeReportViewModel() {
 
+    var isJobUpCompleted = MutableLiveData(false)
+    var isJobPreferenceCompleted = MutableLiveData(false) // TODO 岗位偏好接口接入后使用接口结果
 
-    var isJobPreferenceCompleted = MutableLiveData(false)
+    var isCompleted = MediatorLiveData<Boolean>().apply {
+        value = false
+        addSource(isJobUpCompleted) {
+            value = isJobPreferenceCompleted.value == true && it == true
+        }
+        addSource(isJobPreferenceCompleted) {
+            value = it == true && isJobUpCompleted.value == true
+        }
+    }
 
-    var isCompleted = MutableLiveData(false)
-
-
+    fun resetUserState() {
+        resumeListData.value = emptyList()
+        isJobUpCompleted.value = false
+        isJobPreferenceCompleted.value = false
+    }
 }

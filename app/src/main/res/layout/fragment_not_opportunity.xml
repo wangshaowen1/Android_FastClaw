@@ -10,6 +10,13 @@
         android:layout_height="match_parent">
 
 
+        <View
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"/>
+
         <LinearLayout
             android:layout_marginTop="160dp"
             android:id="@+id/card_understand_user"
@@ -185,6 +192,7 @@
                         app:cardElevation="0dp">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/cl_job_preference"
                             android:paddingVertical="23dp"
                             android:background="@drawable/bg_opportunity_card_bg2"
                             android:layout_width="match_parent"
