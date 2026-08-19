@@ -141,7 +141,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         SimpleBrowserActivity.launch(
             requireActivity(),
             Constants.SALARY_URL,
-            title = getString(R.string.home_treasury_salary_check)
+           /* title = getString(R.string.home_treasury_salary_check)*/
         )
     }
 

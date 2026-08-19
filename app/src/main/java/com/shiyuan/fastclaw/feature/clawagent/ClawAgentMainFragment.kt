@@ -317,7 +317,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         msgAdapter.onActivityClickAction = {
             if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
                 EventManager.onAppTrack(KLX_CLICK_SALARY_TEST, mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
-                SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
+                SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL/*, title = getString(R.string.home_treasury_salary_check)*/)
             }
         }
 
@@ -888,7 +888,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             JobAgentModuleData.TYPE_SALARY_VALUATION -> {
                 if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
                     EventManager.onAppTrack(KLX_CLICK_SALARY_TEST, mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
-                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL, title = getString(R.string.home_treasury_salary_check))
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL/*, title = getString(R.string.home_treasury_salary_check)*/)
                 }
             }
             JobAgentModuleData.TYPE_INTERVIEW_PASS_PACKAGE_REPORT -> {
