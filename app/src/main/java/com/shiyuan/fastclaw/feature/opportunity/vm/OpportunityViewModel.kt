@@ -36,6 +36,13 @@ enum class OpportunityMatchState {
     MATCHED
 }
 
+enum class OpportunityDetailActionState {
+    NEW_OPPORTUNITY,
+    COMMUNICATING,
+    UNSUITABLE,
+    CLOSED
+}
+
 /**
  * @Introduce:
  */
@@ -47,6 +54,10 @@ class OpportunityViewModel : HomeReportViewModel() {
     )
 
     val opportunityDetail = ObservableField(OpportunityDetailUiModel.preview())
+
+    val opportunityDetailActionState = MutableLiveData(
+        OpportunityDetailActionState.NEW_OPPORTUNITY
+    )
 
     val mToolbarVMProcessedOpportunity = ToolbarViewModel(
         navigationAction = { finish() },
@@ -81,6 +92,10 @@ class OpportunityViewModel : HomeReportViewModel() {
         resumeListData.value = emptyList()
         isJobUpCompleted.value = false
         isJobPreferenceCompleted.value = false
+    }
+
+    fun updateOpportunityDetailActionState(state: OpportunityDetailActionState) {
+        opportunityDetailActionState.value = state
     }
 
     private fun resolveMatchState(): OpportunityMatchState {
