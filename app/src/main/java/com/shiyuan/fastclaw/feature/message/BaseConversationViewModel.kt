@@ -130,17 +130,6 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     }
 
     /**
-     * 批量补齐会话用户资料，资料失败时保留账号兜底展示。
-     */
-    protected suspend fun fetchUsers(accounts: List<String>) = try {
-        if (accounts.isEmpty()) emptyList() else userManager.fetchUserInfo(accounts).orEmpty()
-    } catch (exception: CancellationException) {
-        throw exception
-    } catch (_: Exception) {
-        emptyList()
-    }
-
-    /**
      * 全量刷新会话缓存，并发布当前页面列表。
      */
     protected fun refreshConversationCache(conversations: List<Conversation>) {
@@ -228,6 +217,17 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
             MessageType.appCustom -> App.instance.getString(R.string.message_preview_custom)
             else -> ""
         }
+    }
+
+    /**
+     * 批量补齐会话用户资料，资料失败时保留账号兜底展示。
+     */
+    protected suspend fun fetchUsers(accounts: List<String>) = try {
+        if (accounts.isEmpty()) emptyList() else userManager.fetchUserInfo(accounts).orEmpty()
+    } catch (exception: CancellationException) {
+        throw exception
+    } catch (_: Exception) {
+        emptyList()
     }
 
     /**
