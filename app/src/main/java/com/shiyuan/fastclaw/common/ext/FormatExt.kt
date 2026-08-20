@@ -95,9 +95,9 @@ fun Float?.formatDecimal() = String.format(Locale.getDefault(), "%.2f", this ?: 
 fun Boolean.string(): String = if (this) "是" else "否"
 
 /**
- * 格式化消息数量
+ * 格式化消息数量，超过 99 时按 99 展示。
  */
-fun Int?.formatMessageNum() = this?.let { if (it > 99) "99+" else it.toString() }
+fun Int?.formatMessageNum() = this?.let { if (it > 99) "99" else it.toString() }
 
 fun String.convertInt(): Int {
     return this.toIntOrNull() ?: 0

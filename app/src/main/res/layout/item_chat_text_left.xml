@@ -31,7 +31,7 @@
             android:layout_height="32dp"
             android:layout_marginTop="12dp"
             android:contentDescription="@null"
-            android:src="@drawable/ic_default_avatar"
+            android:src="@drawable/icon_default_avatar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTime"
             app:layout_goneMarginTop="0dp" />

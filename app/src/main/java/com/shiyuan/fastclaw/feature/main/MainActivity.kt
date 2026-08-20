@@ -217,7 +217,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     }
 
     /**
-     * 更新消息 Tab 未读红点，0 条时隐藏，超过 99 条按公共消息数量格式展示。
+     * 更新消息 Tab 未读红点，0 条时隐藏，超过 99 条按 99 展示。
      */
     private fun updateMessageCount(count: Int) {
         binding.sbMessageCount.text = count.formatMessageNum()

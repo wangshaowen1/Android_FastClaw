@@ -21,8 +21,8 @@ class TextChatLeftViewHolder(private val binding: ItemChatTextLeftBinding) : Rec
         binding.tvContent.text = item.content
         Glide.with(binding.ivAvatar)
             .load(item.avatar)
-            .placeholder(R.drawable.ic_default_avatar)
-            .error(R.drawable.ic_default_avatar)
+            .placeholder(R.drawable.icon_default_avatar)
+            .error(R.drawable.icon_default_avatar)
             .circleCrop()
             .into(binding.ivAvatar)
     }
