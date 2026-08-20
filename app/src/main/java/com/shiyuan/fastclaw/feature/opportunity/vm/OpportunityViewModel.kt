@@ -82,7 +82,7 @@ class OpportunityViewModel : HomeReportViewModel() {
         addSource(isJobPreferenceCompleted) {
             value = resolveMatchState()
         }
-        addSource(chanceData) {
+        addSource(matchingData) {
             value = resolveMatchState()
         }
     }
@@ -102,7 +102,7 @@ class OpportunityViewModel : HomeReportViewModel() {
         if (isJobUpCompleted.value != true || isJobPreferenceCompleted.value != true) {
             return OpportunityMatchState.UNMATCHED
         }
-        return if (chanceData.value.orEmpty().isEmpty()) {
+        return if (matchingData.value.orEmpty().isEmpty()) {
             OpportunityMatchState.NORMAL_MATCHING
         } else {
             OpportunityMatchState.MATCHED

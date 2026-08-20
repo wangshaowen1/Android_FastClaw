@@ -196,8 +196,6 @@ class OpportunityFragment :
         }
         mRealVM.chanceData.observe(this) { data ->
             val opportunityItems = data.orEmpty()
-            opportunityAdapter.submitList(opportunityItems.map(::ItemProcessedOpportunityVM))
-            matchOpportunityAdapter.submitList(opportunityItems.map(::ItemMatchOpportunityVM))
             val isEmpty = opportunityItems.isEmpty()
             if (isEmpty) {
                 binding.llViewAllProcessedOpportunity.gone()
@@ -210,16 +208,15 @@ class OpportunityFragment :
                 }
                 binding.rlEmpty.gone()
                 binding.rvProcessedOpportunity.visible()
-
-                binding.tvMatchOpportunity.text = getColoredSpanText(
-                    getString(R.string.not_opportunity_match_count, opportunityItems.size),
-                    opportunityItems.size.toString(),
-                    resources.getColor(R.color.color_2f6bff)
-                )
             }
         }
         mRealVM.matchingData.observe(this) { data ->
             val opportunityItems = data.orEmpty()
+            binding.tvMatchOpportunity.text = getColoredSpanText(
+                getString(R.string.not_opportunity_match_count, opportunityItems.size),
+                opportunityItems.size.toString(),
+                resources.getColor(R.color.color_2f6bff)
+            )
             matchOpportunityAdapter.submitList(opportunityItems.map(::ItemMatchOpportunityVM))
         }
     }
@@ -241,8 +238,10 @@ class OpportunityFragment :
         mRealVM.resetUserState()
         if (!isVisitor) {
             mRealVM.isJobPreferenceCompleted.value = true
-            mRealVM.chanceData.value = mRealVM.createFakeChanceData()
-            mRealVM.matchingData.value = mRealVM.createFakeChanceData()
+           // mRealVM.chanceData.value = mRealVM.createFakeChanceData()
+           // mRealVM.matchingData.value = mRealVM.createFakeChanceData()
+            //opportunityAdapter.submitList( mRealVM.chanceData.value?.map(::ItemProcessedOpportunityVM))
+           // matchOpportunityAdapter.submitList( mRealVM.matchingData.value?.map(::ItemMatchOpportunityVM))
             mRealVM.queryResumeList()
         }
     }
@@ -297,6 +296,9 @@ class OpportunityFragment :
 
     override fun onResume() {
         super.onResume()
+        if (binding.v.isShown) {
+            binding.v.resumeAnimation()
+        }
         if (!mRealVM.code.value.isNullOrEmpty()) {
             Log.d("uploadResumeDialog", mRealVM.code.value.toString())
             uploadResumeDialog?.dismissAllowingStateLoss()
@@ -309,6 +311,11 @@ class OpportunityFragment :
             }
         }
         syncUserState()
+    }
+
+    override fun onPause() {
+        binding.v.pauseAnimation()
+        super.onPause()
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -371,9 +378,11 @@ class OpportunityFragment :
         Log.d("Polling", "停止轮询")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+
+    override fun onDestroyView() {
+        binding.v.cancelAnimation()
         stopResumePolling()
+        super.onDestroyView()
     }
 
 }

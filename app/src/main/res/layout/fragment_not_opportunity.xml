@@ -18,7 +18,12 @@
             android:layout_height="match_parent">
 
 
-            <View
+            <com.airbnb.lottie.LottieAnimationView
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_imageAssetsFolder="loading_opportunity/images"
+                app:lottie_fileName="loading_opportunity/loading_opportunity.json"
+                app:lottie_repeatMode="reverse"
                 android:visibility="gone"
                 android:id="@+id/v"
                 android:layout_width="match_parent"
