@@ -19,6 +19,7 @@
 
 
             <View
+                android:visibility="gone"
                 android:id="@+id/v"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
@@ -452,6 +453,38 @@
 
                 </LinearLayout>
 
+
+            </LinearLayout>
+
+            <!--匹配到机会-->
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:id="@+id/ll_match_opportunity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="15dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+             <TextView
+                 android:id="@+id/tv_match_opportunity"
+                 android:textColor="@color/black"
+                 android:layout_marginLeft="5dp"
+                 android:textStyle="bold"
+                 android:textSize="18sp"
+                 tools:text="小虾发现了新机会2个"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_marginTop="20dp"
+                    android:id="@+id/rv_match_opportunity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             </LinearLayout>
 

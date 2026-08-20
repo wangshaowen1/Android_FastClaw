@@ -43,25 +43,28 @@ class ProcessedOpportunityListFragment :
             }
             adapter = opportunityAdapter
         }
+        binding.srl.setOnRefreshListener {
+            mRealVM.chanceData.value = mRealVM.createFakeChanceData()
+        }
+        binding.lsvProcessedOpportunity.showLoading()
         mRealVM.chanceData.value = mRealVM.createFakeChanceData()
         mRealVM.chanceData.observe(viewLifecycleOwner) { data ->
-            val items = if (requireArguments().getInt(ARG_TAB_TYPE) == TAB_COMMUNICATING) {
+            binding.srl.finishRefresh()
+            val tabType = requireArguments().getInt(ARG_TAB_TYPE)
+            val items = if (tabType == TAB_COMMUNICATING) {
                 data.orEmpty()
             } else {
                 emptyList()
             }
             opportunityAdapter.submitList(items.map(::ItemProcessedOpportunityVM))
+            if (items.isEmpty()) {
+                binding.lsvProcessedOpportunity.showEmpty()
+            } else {
+                binding.lsvProcessedOpportunity.showContent()
+            }
+            (activity as? ProcessedOpportunityActivity)?.updateTabCount(tabType, items.size)
         }
     }
 }
 
-data class ProcessedOpportunityItem(
-    val title: String,
-    val company: String,
-    val requirements: String,
-    val salary: String,
-    val actionTime: String,
-    val matchPercent: Int
-)
 
-class ItemProcessedOpportunityVM(data: ProcessedOpportunityItem) : AppItemViewModel<ProcessedOpportunityItem>(data)

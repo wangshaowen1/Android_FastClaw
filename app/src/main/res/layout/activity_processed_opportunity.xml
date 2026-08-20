@@ -53,7 +53,7 @@
                         android:text="@string/processed_opportunity_tab_communicating"
                         android:textColor="@color/color_90_000000"
                         android:textSize="14sp"
-                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
                         tools:text="沟通中 2" />
 
                     <View
@@ -61,7 +61,7 @@
                         android:layout_width="18dp"
                         android:layout_height="3dp"
                         android:layout_marginTop="6dp"
-                        android:background="@drawable/bg_2f6bff_r50" />
+                        android:background="@drawable/bg_2f6bff_r2" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -87,7 +87,7 @@
                         android:layout_width="18dp"
                         android:layout_height="3dp"
                         android:layout_marginTop="6dp"
-                        android:background="@drawable/bg_2f6bff_r50"
+                        android:background="@drawable/bg_2f6bff_r2"
                         android:visibility="invisible" />
                 </LinearLayout>
             </LinearLayout>
