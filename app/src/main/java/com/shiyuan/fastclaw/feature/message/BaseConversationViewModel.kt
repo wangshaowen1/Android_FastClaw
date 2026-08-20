@@ -37,27 +37,37 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     protected var isPageActive = false
     // 当前 ViewModel 是否已经注册 IM 会话监听，避免重复注册监听。
     private var conversationListenerRegistered = false
+    // 当前页面维护的会话缓存，key 为云信 conversationId。
+    private val conversationCache = linkedMapOf<String, Conversation>()
 
     private val conversationListener = object : ConversationListener {
         /**
-         * 首次加载会话完成时刷新当前页面列表。
+         * 首次加载会话完成时全量刷新会话缓存。
          */
-        override fun onConversationsLoaded(conversations: List<Conversation>?) = refreshConversations()
+        override fun onConversationsLoaded(conversations: List<Conversation>?) {
+            refreshConversationCache(conversations.orEmpty())
+        }
 
         /**
-         * 会话内容发生变化时刷新当前页面列表。
+         * 会话内容发生变化时局部更新会话缓存（一条或多条会话新增 / 更新）。
          */
-        override fun onConversationsChanged(conversations: List<Conversation>) = refreshConversations()
+        override fun onConversationsChanged(conversations: List<Conversation>) {
+            updateConversationCache(conversations)
+        }
 
         /**
-         * 会话被删除时刷新当前页面列表。
+         * 会话被删除时从缓存移除对应会话。
          */
-        override fun onConversationDeleted(conversation: Conversation) = refreshConversations()
+        override fun onConversationDeleted(conversation: Conversation) {
+            removeConversationCache(conversation)
+        }
 
         /**
-         * 会话状态变化时刷新当前页面列表。
+         * 单条会话的轻量状态刷新（如进入聊天页后未读数归零）。 列表顺序不变，调用方只需局部刷新对应
          */
-        override fun onConversationStateChanged(conversation: Conversation) = refreshConversations()
+        override fun onConversationStateChanged(conversation: Conversation) {
+            updateConversationCache(listOf(conversation))
+        }
     }
 
     /**
@@ -126,17 +136,56 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     }
 
     /**
+     * 全量刷新会话缓存，并发布当前页面列表。
+     */
+    protected fun refreshConversationCache(conversations: List<Conversation>) {
+        conversationCache.clear()
+        updateConversationCache(conversations)
+    }
+
+    /**
+     * 局部更新会话缓存，并发布当前页面列表。
+     */
+    protected fun updateConversationCache(conversations: List<Conversation>) {
+        conversations.forEach { conversation ->
+            if (isValidConversation(conversation)) conversationCache[conversation.conversationId] = conversation
+        }
+        refreshConversationList()
+    }
+
+    /**
+     * 从缓存中移除已删除会话，并发布当前页面列表。
+     */
+    protected fun removeConversationCache(conversation: Conversation) {
+        conversationCache.remove(conversation.conversationId)
+        refreshConversationList()
+    }
+
+    /**
+     * 获取当前缓存中的会话列表，按末条消息时间倒序展示。
+     */
+    protected fun getCachedConversations(): List<Conversation>  {
+        return conversationCache.values.sortedByDescending { it.time }
+    }
+
+    /**
+     * 判断会话是否可以进入当前消息列表缓存。
+     */
+    private fun isValidConversation(conversation: Conversation): Boolean =
+        conversation.conversationType == ConversationType.P2P && conversation.contactId.isNotBlank()
+
+    /**
      * 将 IM 会话扩展信息转换成列表展示模型。
      */
     protected fun buildConversationItem(conversation: Conversation, itemType: Int): ConversationItem {
-        val account = conversation.contactId
+        val contactId = conversation.contactId
         val profile = conversation.extension[ROLE_HR] as? Map<*, *>
         val profileValue = { key: String -> (profile?.get(key) as? String)?.takeIf { it.isNotBlank() } }
         return ConversationItem(
             id = conversation.conversationId,
-            contactId = account,
+            contactId = contactId,
             itemType = itemType,
-            targetName = profileValue(KEY_NAME) ?: conversation.name?.takeIf { it.isNotBlank() } ?: account,
+            targetName = profileValue(KEY_NAME) ?: conversation.name?.takeIf { it.isNotBlank() } ?: contactId,
             targetAvatar = profileValue(KEY_AVATAR) ?: conversation.avatar,
             targetCompany = profileValue(KEY_COMPANY),
             targetPosition = profileValue(KEY_POSITION),
@@ -151,9 +200,8 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
      * 根据会话 serverExtension 判断当前 HR 是否已被求职者标记为不合适。
      */
     protected fun isMarkedUnsuitable(conversation: Conversation): Boolean {
-        val hrInfo = conversation.extension[ROLE_HR] as? Map<*, *>
-        return hrInfo?.get(KEY_IS_INAPPROPRIATE) == true ||
-            conversation.extension[KEY_IS_INAPPROPRIATE] == true
+        val hrInfo = conversation.serverExtension[ROLE_HR] as? Map<*, *>
+        return hrInfo?.get(KEY_IS_INAPPROPRIATE) == true || conversation.extension[KEY_IS_INAPPROPRIATE] == true
     }
 
     /**
@@ -225,12 +273,14 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
      */
     abstract fun getConversationList()
 
+    /**
+     * 根据当前缓存刷新页面自己的消息列表。
+     */
+    abstract fun refreshConversationList()
+
     companion object {
         // 会话扩展中 HR 资料节点字段。
         private const val ROLE_HR = "hr"
-
-        // 会话扩展中求职者资料节点字段。
-        private const val ROLE_CANDIDATE = "candidate"
 
         // 会话扩展中的头像字段。
         private const val KEY_AVATAR = "avatar"

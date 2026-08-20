@@ -304,6 +304,7 @@ class App : ImApplication() {
             }
         })
 
+        AccountHelper.syncCloudConversations = true // 同步云端
         AccountHelper.initialize(this)
         if (NIMUtil.isMainProcess(this)) {
             imSession.init()

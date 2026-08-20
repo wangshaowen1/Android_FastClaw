@@ -14,23 +14,11 @@ class MessageViewModel : BaseConversationViewModel() {
      * 拉取普通 IM 会话列表，排除已标记不合适的会话。
      */
     override fun getConversationList() {
-        if (!isPageActive) return
         loadConversationsJob?.cancel()
         loadConversationsJob = viewModelScope.launch {
             isLoading.set(true)
             try {
-                val allConversations = queryP2pConversations()
-                val normalConversations = allConversations.filter { conversation ->
-                    !isMarkedUnsuitable(conversation)
-                }
-                val items = mutableListOf<MessageListItem>()
-                normalConversations.forEach { conversation ->
-                    items.add(buildConversationItem(conversation, TYPE_CONVERSATION))
-                }
-                if (allConversations.size - normalConversations.size > 0) {
-                    items.add(UnsuitableEntry(allConversations.size - normalConversations.size))
-                }
-                refreshMessageList(items)
+                refreshConversationCache(queryP2pConversations())
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
@@ -39,5 +27,24 @@ class MessageViewModel : BaseConversationViewModel() {
                 isLoading.set(false)
             }
         }
+    }
+
+    /**
+     * 根据缓存生成普通会话列表，并在存在不合适会话时追加入口。
+     */
+    override fun refreshConversationList() {
+        val items = mutableListOf<MessageListItem>()
+        var unsuitableConversationCount = 0
+        getCachedConversations().forEach { conversation ->
+            if (!isMarkedUnsuitable(conversation)) {
+                items.add(buildConversationItem(conversation, TYPE_CONVERSATION))
+            } else {
+                unsuitableConversationCount++
+            }
+        }
+        if (unsuitableConversationCount > 0) {
+            items.add(UnsuitableEntry(unsuitableConversationCount))
+        }
+        refreshMessageList(items)
     }
 }
