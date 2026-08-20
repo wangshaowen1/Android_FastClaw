@@ -17,7 +17,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
 
     companion object {
         // 测试消息接收账号。
-        private const val TEST_IM_ACCOUNT = "234567"
+        private const val TEST_IM_ACCOUNT = "123456"
 
         // 测试消息内容。
         private const val TEST_IM_CONTENT = "消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息"

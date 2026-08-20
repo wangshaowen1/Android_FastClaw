@@ -34,6 +34,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         private const val EXTRA_TARGET_NAME = "extra_target_name"
         // 向上滚动接近顶部时提前加载历史消息的阈值。
         private const val PREFETCH_THRESHOLD = 5
+        // 新消息平滑滚动到底部的速度，复用小虾对话的滚动手感。
+        private const val MESSAGE_SCROLL_SPEED = 0.1f
 
         /**
          * 从会话列表打开 IM 单聊详情页。
@@ -65,6 +67,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         binding.rvMessages.apply {
             layoutManager = messageLayoutManager
             adapter = messageAdapter
+            itemAnimator = null
         }
         // 无感知加载：向上滚动到接近顶部时提前预取更早历史（DiffUtil 顶部静默插入，不出现下拉转圈）
         binding.rvMessages.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -95,15 +98,22 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
      */
     private fun initObserve() {
         mRealVM.messageList.observe(this) { items ->
-            val oldSize = messageAdapter.items.size
-            val oldLastId = messageAdapter.items.lastOrNull()?.id
-            val isFirstLoad = oldSize == 0 && items.isNotEmpty()
-            val isAtBottom = RecyclerViewScrollHelper.isScrollBottom(binding.rvMessages, 0)
-            val hasNewTailMessage = oldLastId != items.lastOrNull()?.id
-            val shouldScrollToBottom = isFirstLoad || forceScrollToBottom || (isAtBottom && hasNewTailMessage)
-            messageAdapter.submitList(items)
-            if (shouldScrollToBottom) scrollToBottom()
+            // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
+            // 跟随新消息，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
+            // 如果用户在底部，就跟随新消息滚到底；如果用户往上翻历史，就不打断。
+            val hadMessages = messageAdapter.items.isNotEmpty()
+            val hasNewTailMessage = items.size > messageAdapter.items.size
+            val scrollToLatest = forceScrollToBottom || !binding.rvMessages.canScrollVertically(1)
             forceScrollToBottom = false
+            messageAdapter.submitList(items)
+            if (items.isNotEmpty() && scrollToLatest) {
+                // 首次加载和普通状态刷新直接贴底；新增尾部消息复用小虾对话的平滑滚动动画。
+                if (hadMessages && hasNewTailMessage) {
+                    RecyclerViewScrollHelper.smoothScrollToBottom(binding.rvMessages, 100L, MESSAGE_SCROLL_SPEED)
+                } else {
+                    RecyclerViewScrollHelper.scrollToBottom(binding.rvMessages, 100L)
+                }
+            }
         }
     }
 
@@ -125,16 +135,6 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         forceScrollToBottom = true
         mRealVM.sendTextMessage(content)
         binding.etContent.text?.clear()
-    }
-
-    /**
-     * 将消息列表滚动到底部。
-     */
-    private fun scrollToBottom() {
-        binding.rvMessages.post {
-            val lastPosition = messageAdapter.items.lastIndex
-            if (lastPosition >= 0) binding.rvMessages.scrollToPosition(lastPosition)
-        }
     }
 
     /**
