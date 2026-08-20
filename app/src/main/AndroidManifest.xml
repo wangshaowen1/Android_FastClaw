@@ -191,7 +191,7 @@
         <activity
             android:name=".feature.message.chat.MessageChatActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".feature.settings.SettingsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
