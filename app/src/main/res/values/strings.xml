@@ -53,9 +53,9 @@
     <string name="tab_treasury">机会</string>
     <string name="message_empty_tip">暂时没有消息哦~</string>
     <string name="message_draft_prefix">[草稿]</string>
-    <string name="message_marked_unsuitable_title">已标记不合适的会话</string>
+    <string name="message_marked_unsuitable_title">已标记不合适</string>
     <string name="message_marked_unsuitable_count">%1$d个联系人</string>
-    <string name="message_unsuitable_conversation_title">不合适的会话</string>
+    <string name="message_unsuitable_conversation_title">已标记不合适</string>
     <string name="message_unsuitable_empty_tip">暂时没有不合适的会话哦~</string>
     <string name="message_preview_image">图片</string>
     <string name="message_preview_video">视频</string>
