@@ -82,6 +82,9 @@ class OpportunityFragment :
             }
             adapter = matchOpportunityAdapter
         }
+        matchOpportunityAdapter.setOnItemClickListener { adapter, view, i ->
+            OpportunityDetailActivity.start(this.requireActivity())
+        }
     }
 
     private fun initObservers() {

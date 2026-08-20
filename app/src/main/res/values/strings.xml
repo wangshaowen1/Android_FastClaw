@@ -1284,5 +1284,22 @@
     <string name="processed_opportunity_match_percent_value">%1$d</string>
     <string name="percent_symbol">%</string>
 
+    <string name="opportunity_detail_job_description">岗位描述</string>
+    <string name="opportunity_detail_work_location">工作地点</string>
+    <string name="opportunity_detail_security_tip_title">小虾安全提示</string>
+    <string name="opportunity_detail_unsuitable">不合适</string>
+    <string name="opportunity_detail_communicate_now">立即沟通</string>
+    <string name="opportunity_detail_sample_title">高级后端工程师</string>
+    <string name="opportunity_detail_sample_company">腾讯科技（深圳）有限公司</string>
+    <string name="opportunity_detail_sample_location">深圳</string>
+    <string name="opportunity_detail_sample_experience">3–5年</string>
+    <string name="opportunity_detail_sample_education">本科</string>
+    <string name="opportunity_detail_sample_salary">13–30k·15薪</string>
+    <string name="opportunity_detail_sample_introduction_markdown">这一家发展迅猛的**AI初创公司**，方向升级明显，而且你有现实拿到它的可能。 **发展前景佳**，薪资涨幅高，对你来说，它最大的价值不是“又多一个岗位”，而是有机会从传统 ToB 产品进一步进入 **AI 应用方向**</string>
+    <string name="opportunity_detail_sample_description_html"><![CDATA[<b>【岗位职责】</b><br/>1、负责日常行政事务、办公物资管理、会议筹备与纪要整理。<br/>2、对接内外部沟通，跟进各类事项进度，做好信息同步与归档。<br/>3、协助完成数据统计、文档撰写、流程落地等辅助工作。完成领导交办的其他临时性工作。<br/>5、AI Agent产品整体规划与设计：负责消费级 AI智能体（AI Agent）产品的全生命周期管理，涵盖通用智能体、垂直场景专属智能体、多智能体协作系统的需求调研、产品规划、方案设计、迭代落地与版本管理，输出完整的PRD、产品架构图、交互流程、规则配置文档。<br/>6、智能体核心能力搭建：深耕AI Agent核心技术与产品能力，包括但不限于大模型调用、记忆系统（短期/长期记忆）、工具调用（插件、API、函数调用）、自主规划、任务拆解、多轮对话推理、自主迭代、人机协同能力的产品设计，持续优化智能体的自主执行、问题解决与场景适配能力。<br/><br/><b>【任职要求】</b><br/>1、大专及以上学历，1 年以内相关工作经验…<font color="#2F6BFF"><u>查看全部</u></font>]]></string>
+    <string name="opportunity_detail_sample_company_profile">互联网 ·10000人以上·已上市</string>
+    <string name="opportunity_detail_sample_address">深圳创维半导体设计大厦西座12楼1205</string>
+    <string name="opportunity_detail_security_tip_content">严禁用人单位和招聘者用户做出任何损害求职者合法权益的违法违规行为，包括但不限于扣押求职者证件、收取求职者财物、向求职者集资、让求职者入股、诱导求职者异地入职、异地参加培训、违法违规使用求职者简历等，您一旦发现此类行为，请立即举报。</string>
+
 </resources>
 
