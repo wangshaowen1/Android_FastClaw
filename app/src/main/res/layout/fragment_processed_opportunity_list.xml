@@ -15,7 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="@dimen/spacing_l"
-        android:paddingTop="@dimen/spacing_m"
         app:srlEnableLoadMore="false">
 
         <com.shiyuan.fastclaw.widget.LoadStateViewHolder
@@ -34,7 +33,7 @@
                 android:overScrollMode="never"
                 android:paddingHorizontal="15dp"
                 android:paddingBottom="@dimen/spacing_l"
-                tools:itemCount="2"
+                tools:itemCount="10"
                 tools:listitem="@layout/item_processed_opportunity" />
         </com.shiyuan.fastclaw.widget.LoadStateViewHolder>
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>

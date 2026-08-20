@@ -98,6 +98,9 @@ class OpportunityFragment :
             }
             adapter = opportunityAdapter
         }
+        opportunityAdapter.setOnItemClickListener { adapter, view, i ->
+            OpportunityDetailActivity.start(this.requireActivity())
+        }
         binding.rvMatchOpportunity.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             if (itemDecorationCount == 0) {
