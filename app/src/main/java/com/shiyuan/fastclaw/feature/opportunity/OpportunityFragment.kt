@@ -1,6 +1,7 @@
 package com.shiyuan.fastclaw.feature.opportunity
 
 
+import android.graphics.Rect
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
@@ -43,7 +45,17 @@ import kotlin.coroutines.resume
 class OpportunityFragment :
     BaseViewModelFragment<FragmentNotOpportunityBinding, OpportunityViewModel>() {
 
+    private companion object {
+        const val LOTTIE_RESUME_DELAY_MS = 120L
+    }
+
     private var lastVisitorState: Boolean? = null
+    private val lottieVisibleRect = Rect()
+    private var isContentScrolling = false
+    private val resumeLottieAfterScroll = Runnable {
+        isContentScrolling = false
+        updateLottiePlayback()
+    }
 
     private val opportunityAdapter by lazy {
         QuickAdapter<ItemProcessedOpportunityVM>(
@@ -68,6 +80,17 @@ class OpportunityFragment :
     }
 
     private fun initView() {
+
+        //滚动时立即暂停 Lottie。 连续 120ms 未滚动后，检查 Lottie 是否仍在可视区域。
+        binding.scrollContent.setOnScrollChangeListener { _, _, _, _, _ ->
+            isContentScrolling = true
+            binding.v.pauseAnimation()
+            binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
+            binding.scrollContent.postDelayed(
+                resumeLottieAfterScroll,
+                LOTTIE_RESUME_DELAY_MS,
+            )
+        }
         binding.rvProcessedOpportunity.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             if (itemDecorationCount == 0) {
@@ -238,9 +261,9 @@ class OpportunityFragment :
         mRealVM.resetUserState()
         if (!isVisitor) {
             mRealVM.isJobPreferenceCompleted.value = true
-           // mRealVM.chanceData.value = mRealVM.createFakeChanceData()
+            mRealVM.chanceData.value = mRealVM.createFakeChanceData()
            // mRealVM.matchingData.value = mRealVM.createFakeChanceData()
-            //opportunityAdapter.submitList( mRealVM.chanceData.value?.map(::ItemProcessedOpportunityVM))
+           opportunityAdapter.submitList( mRealVM.chanceData.value?.map(::ItemProcessedOpportunityVM))
            // matchOpportunityAdapter.submitList( mRealVM.matchingData.value?.map(::ItemMatchOpportunityVM))
             mRealVM.queryResumeList()
         }
@@ -296,9 +319,7 @@ class OpportunityFragment :
 
     override fun onResume() {
         super.onResume()
-        if (binding.v.isShown) {
-            binding.v.resumeAnimation()
-        }
+        updateLottiePlayback()
         if (!mRealVM.code.value.isNullOrEmpty()) {
             Log.d("uploadResumeDialog", mRealVM.code.value.toString())
             uploadResumeDialog?.dismissAllowingStateLoss()
@@ -314,8 +335,23 @@ class OpportunityFragment :
     }
 
     override fun onPause() {
+        binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
+        isContentScrolling = false
         binding.v.pauseAnimation()
         super.onPause()
+    }
+
+    private fun updateLottiePlayback() {
+        val isLottieVisible = binding.v.visibility == View.VISIBLE &&
+            binding.v.getLocalVisibleRect(lottieVisibleRect)
+        if (!isContentScrolling &&
+            viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
+            isLottieVisible
+        ) {
+            binding.v.resumeAnimation()
+        } else {
+            binding.v.pauseAnimation()
+        }
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -380,6 +416,8 @@ class OpportunityFragment :
 
 
     override fun onDestroyView() {
+        binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
+        isContentScrolling = false
         binding.v.cancelAnimation()
         stopResumePolling()
         super.onDestroyView()

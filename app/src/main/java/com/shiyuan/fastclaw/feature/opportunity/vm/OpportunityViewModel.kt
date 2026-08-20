@@ -127,7 +127,32 @@ class OpportunityViewModel : HomeReportViewModel() {
             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
             matchPercent = 76,
             isRead = true
-        )
+        ),
+         ProcessedOpportunityItem(
+             title = R.string.processed_opportunity_sample_backend.getResString(),
+             company = R.string.processed_opportunity_sample_company.getResString(),
+             requirements = R.string.processed_opportunity_sample_requirements.getResString(),
+             salary = R.string.processed_opportunity_sample_salary.getResString(),
+             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
+             matchPercent = 76,
+             isRead = true
+         ), ProcessedOpportunityItem(
+             title = R.string.processed_opportunity_sample_backend.getResString(),
+             company = R.string.processed_opportunity_sample_company.getResString(),
+             requirements = R.string.processed_opportunity_sample_requirements.getResString(),
+             salary = R.string.processed_opportunity_sample_salary.getResString(),
+             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
+             matchPercent = 76,
+             isRead = true
+         ), ProcessedOpportunityItem(
+             title = R.string.processed_opportunity_sample_backend.getResString(),
+             company = R.string.processed_opportunity_sample_company.getResString(),
+             requirements = R.string.processed_opportunity_sample_requirements.getResString(),
+             salary = R.string.processed_opportunity_sample_salary.getResString(),
+             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
+             matchPercent = 76,
+             isRead = true
+         )
     )
 }
 
