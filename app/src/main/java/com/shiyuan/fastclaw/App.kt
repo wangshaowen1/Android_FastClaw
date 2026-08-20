@@ -288,9 +288,9 @@ class App : ImApplication() {
                 if (User.get().isVisitor) return null
                 val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
 
-                /*data?.imAccId = "123456"
-                data?.imAccToken = "123456"
-                data?.imReady = true*/
+                data?.imAccId = "234567"
+                data?.imAccToken = "234567"
+                data?.imReady = true
 
                 User.get().storeImAccessId(data?.imAccId)
                 User.get().storeImToken(data?.imAccToken)

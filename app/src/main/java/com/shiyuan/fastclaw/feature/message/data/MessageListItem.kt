@@ -30,17 +30,29 @@ sealed interface MessageListItem {
  * @param isDraft 是否展示草稿标记，当前预留给后续草稿能力。
  */
 data class ConversationItem(
+    /** 云信 conversationId，作为列表稳定 id 和后续进入会话的凭据。 */
     override val id: String,
+    /** P2P 会话对端账号，用于打开 IM 单聊。 */
     val contactId: String,
+    /** 会话对象昵称，资料缺失时使用账号兜底。 */
     val targetName: String,
+    /** 会话对象头像地址。 */
     val targetAvatar: String?,
+    /** 会话对象所在公司。 */
     val targetCompany: String?,
+    /** 会话对象职位名称。 */
     val targetPosition: String?,
+    /** 会话末条消息摘要。 */
     val lastMessage: String,
+    /** 会话末条消息时间戳。 */
     val lastMessageTime: Long,
+    /** 会话未读数量。 */
     val unreadCount: Int,
+    /** 组件归一化后的会话扩展。 */
     val extension: Map<String, Any?>,
+    /** 是否展示草稿标记，当前预留给后续草稿能力。 */
     val isDraft: Boolean = false,
+    /** 列表项布局类型。 */
     override val itemType: Int = TYPE_CONVERSATION
 ) : MessageListItem
 

@@ -123,13 +123,6 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     }
 
     /**
-     * 会话点击入口，后续接入单聊详情页时在这里统一跳转。
-     */
-    fun openConversation(item: ConversationItem) {
-        // 单聊详情页后续接入。
-    }
-
-    /**
      * 全量刷新会话缓存，并发布当前页面列表。
      */
     protected fun refreshConversationCache(conversations: List<Conversation>) {

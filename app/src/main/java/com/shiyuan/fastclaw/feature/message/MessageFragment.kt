@@ -4,6 +4,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.databinding.FragmentMessageBinding
+import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
+import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.tulele.im.Chat
 import com.tulele.im.ImSession
 import com.tulele.im.entity.Contact
@@ -18,7 +20,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
         private const val TEST_IM_ACCOUNT = "234567"
 
         // 测试消息内容。
-        private const val TEST_IM_CONTENT = "消息消息消息消息消息消息消息消息"
+        private const val TEST_IM_CONTENT = "消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息"
 
         /**
          * 创建消息 Tab 页面实例，保持主 Tab Fragment 创建方式一致。
@@ -45,7 +47,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
             adapter = msgAdapter
         }
         msgAdapter.onConversationClick = {
-            mRealVM.openConversation(it)
+            MessageChatActivity.start(requireContext(), it)
         }
         msgAdapter.onMarkedUnsuitableClick = {
             UnableMessageActivity.start(requireContext())
