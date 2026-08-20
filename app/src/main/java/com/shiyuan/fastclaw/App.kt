@@ -93,6 +93,8 @@ class App : ImApplication() {
     private lateinit var umInitConfig: UmInitConfig
 
     private lateinit var imSession: ImSession
+    // IM SDK 是否已经初始化，避免重复调用云信初始化。
+    private var imSessionInitialized = false
 
     var ran: String? = null
         private set
@@ -279,8 +281,13 @@ class App : ImApplication() {
         )
     }*/
 
+    /**
+     * 初始化 IM SDK，隐私未同意、非主进程或已初始化时直接跳过。
+     */
     fun initImSession() {
+        if (imSessionInitialized) return
         if (!hasAgree()) return
+        if (!NIMUtil.isMainProcess(this)) return
 
         AccountHelper.setImTokenProvider(object : AccountHelper.ImTokenProvider {
             /** 在 IM 登录协程中获取并保存当前用户的云信凭据。 */
@@ -306,9 +313,8 @@ class App : ImApplication() {
 
         AccountHelper.syncCloudConversations = true // 同步云端
         AccountHelper.initialize(this)
-        if (NIMUtil.isMainProcess(this)) {
-            imSession.init()
-        }
+        imSession.init()
+        imSessionInitialized = true
     }
 
 
@@ -411,6 +417,7 @@ class App : ImApplication() {
             Utils.init(this)
             DeviceID.register(this)
             Oaid.init()
+            initImSession()
             // 强烈建议在应用对应的Application#onCreate()方法中调用，避免出现content为null的异常
 
             if(BuildConfig.ENABLE_DATANEXUS){
