@@ -150,7 +150,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         conversations.forEach { conversation ->
             if (isValidConversation(conversation)) conversationCache[conversation.conversationId] = conversation
         }
-        refreshConversationListByCache()
+        refreshConversationList()
     }
 
     /**
@@ -158,14 +158,15 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
      */
     protected fun removeConversationCache(conversation: Conversation) {
         conversationCache.remove(conversation.conversationId)
-        refreshConversationListByCache()
+        refreshConversationList()
     }
 
     /**
      * 获取当前缓存中的会话列表，按末条消息时间倒序展示。
      */
-    protected fun getCachedConversations(): List<Conversation> =
-        conversationCache.values.sortedByDescending { it.time }
+    protected fun getCachedConversations(): List<Conversation>  {
+        return conversationCache.values.sortedByDescending { it.time }
+    }
 
     /**
      * 判断会话是否可以进入当前消息列表缓存。
@@ -199,9 +200,8 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
      * 根据会话 serverExtension 判断当前 HR 是否已被求职者标记为不合适。
      */
     protected fun isMarkedUnsuitable(conversation: Conversation): Boolean {
-        val hrInfo = conversation.extension[ROLE_HR] as? Map<*, *>
-        return hrInfo?.get(KEY_IS_INAPPROPRIATE) == true ||
-            conversation.extension[KEY_IS_INAPPROPRIATE] == true
+        val hrInfo = conversation.serverExtension[ROLE_HR] as? Map<*, *>
+        return hrInfo?.get(KEY_IS_INAPPROPRIATE) == true || conversation.extension[KEY_IS_INAPPROPRIATE] == true
     }
 
     /**
@@ -276,7 +276,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     /**
      * 根据当前缓存刷新页面自己的消息列表。
      */
-    protected abstract fun refreshConversationListByCache()
+    abstract fun refreshConversationList()
 
     companion object {
         // 会话扩展中 HR 资料节点字段。

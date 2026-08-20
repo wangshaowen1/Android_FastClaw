@@ -31,7 +31,7 @@ class UnableMessageViewModel : BaseConversationViewModel() {
     /**
      * 根据缓存生成已标记不合适的会话列表。
      */
-    override fun refreshConversationListByCache() {
+    override fun refreshConversationList() {
         val items = mutableListOf<MessageListItem>()
         getCachedConversations().forEach { conversation ->
             if (isMarkedUnsuitable(conversation)) {

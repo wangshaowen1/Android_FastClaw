@@ -32,14 +32,14 @@ class MessageViewModel : BaseConversationViewModel() {
     /**
      * 根据缓存生成普通会话列表，并在存在不合适会话时追加入口。
      */
-    override fun refreshConversationListByCache() {
+    override fun refreshConversationList() {
         val items = mutableListOf<MessageListItem>()
         var unsuitableConversationCount = 0
         getCachedConversations().forEach { conversation ->
-            if (isMarkedUnsuitable(conversation)) {
-                unsuitableConversationCount++
-            } else {
+            if (!isMarkedUnsuitable(conversation)) {
                 items.add(buildConversationItem(conversation, TYPE_CONVERSATION))
+            } else {
+                unsuitableConversationCount++
             }
         }
         if (unsuitableConversationCount > 0) {
