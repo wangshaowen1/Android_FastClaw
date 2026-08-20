@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.message
 
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
@@ -16,6 +17,7 @@ import com.tulele.im.entity.MessageType
 import com.tulele.im.utils.AccountHelper
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.jvm.JvmName
 
 // 消息会话列表基类，封装 IM 会话查询、监听和通用列表映射。
@@ -86,17 +88,38 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         isPageActive = active
         if (active) {
             registerConversationListener()
-            refreshConversations()
+            getConversationList()
         } else {
             cancelLoadJob()
         }
     }
 
     /**
-     * 刷新当前页面的 IM 会话列表。
+     * 拉取 IM 的 P2P 会话列表，并刷新当前页面会话缓存。
      */
-    protected fun refreshConversations() {
-        getConversationList()
+    fun getConversationList() {
+        loadConversationsJob?.cancel()
+        loadConversationsJob = viewModelScope.launch {
+            isLoading.set(true)
+            try {
+                if (!AccountHelper.isLogged()) {
+                    refreshMessageList(emptyList())
+                    return@launch
+                }
+                val conversations = conversationManager.queryConversations()
+                    .orEmpty()
+                    .filter { it.conversationType == ConversationType.P2P }
+                    .filter { it.contactId.isNotBlank() }
+                    .sortedByDescending { it.time }
+                refreshConversationCache(conversations)
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                refreshMessageList(emptyList())
+            } finally {
+                isLoading.set(false)
+            }
+        }
     }
 
     /**
@@ -104,24 +127,6 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
      */
     fun openConversation(item: ConversationItem) {
         // 单聊详情页后续接入。
-    }
-
-    /**
-     * 查询 IM SDK 的 P2P 本地会话，未登录或 SDK 查询失败都按空列表处理。
-     */
-    protected suspend fun queryP2pConversations(): List<Conversation> {
-        if (!AccountHelper.isLogged()) return emptyList()
-        return try {
-            conversationManager.queryConversations()
-                .orEmpty()
-                .filter { it.conversationType == ConversationType.P2P }
-                .filter { it.contactId.isNotBlank() }
-                .sortedByDescending { it.time }
-        } catch (exception: CancellationException) {
-            throw exception
-        } catch (_: Exception) {
-            emptyList()
-        }
     }
 
     /**
@@ -175,6 +180,14 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         conversation.conversationType == ConversationType.P2P && conversation.contactId.isNotBlank()
 
     /**
+     * 根据会话 serverExtension 判断当前 HR 是否已被求职者标记为不合适。
+     */
+    protected fun isMarkedUnsuitable(conversation: Conversation): Boolean {
+        val hrInfo = conversation.serverExtension[ROLE_HR] as? Map<*, *>
+        return hrInfo?.get(KEY_IS_INAPPROPRIATE) == true || conversation.extension[KEY_IS_INAPPROPRIATE] == true
+    }
+
+    /**
      * 将 IM 会话扩展信息转换成列表展示模型。
      */
     protected fun buildConversationItem(conversation: Conversation, itemType: Int): ConversationItem {
@@ -194,14 +207,6 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
             unreadCount = conversation.unreadCount,
             extension = conversation.extension,
         )
-    }
-
-    /**
-     * 根据会话 serverExtension 判断当前 HR 是否已被求职者标记为不合适。
-     */
-    protected fun isMarkedUnsuitable(conversation: Conversation): Boolean {
-        val hrInfo = conversation.serverExtension[ROLE_HR] as? Map<*, *>
-        return hrInfo?.get(KEY_IS_INAPPROPRIATE) == true || conversation.extension[KEY_IS_INAPPROPRIATE] == true
     }
 
     /**
@@ -267,11 +272,6 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         cancelLoadJob()
         super.onDestroy()
     }
-
-    /**
-     * 拉取当前页面需要展示的 IM 会话列表。
-     */
-    abstract fun getConversationList()
 
     /**
      * 根据当前缓存刷新页面自己的消息列表。
