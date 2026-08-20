@@ -41,6 +41,13 @@ enum class OpportunityMatchState {
  */
 class OpportunityViewModel : HomeReportViewModel() {
 
+    val mToolbarVMOpportunityDetail = ToolbarViewModel(
+        navigationAction = { finish() },
+        background = Color.TRANSPARENT
+    )
+
+    val opportunityDetail = ObservableField(OpportunityDetailUiModel.preview())
+
     val mToolbarVMProcessedOpportunity = ToolbarViewModel(
         navigationAction = { finish() },
         title = R.string.not_opportunity_processed_title.getResString(),
@@ -107,4 +114,36 @@ class OpportunityViewModel : HomeReportViewModel() {
             isRead = true
         )
     )
+}
+
+data class OpportunityDetailUiModel(
+    val title: String,
+    val company: String,
+    val location: String,
+    val experience: String,
+    val education: String,
+    val salary: String,
+    val matchPercent: Int,
+    val introductionMarkdown: String,
+    val descriptionHtml: String,
+    val companyProfile: String,
+    val address: String,
+    val securityTip: String
+) {
+    companion object {
+        fun preview() = OpportunityDetailUiModel(
+            title = R.string.opportunity_detail_sample_title.getResString(),
+            company = R.string.opportunity_detail_sample_company.getResString(),
+            location = R.string.opportunity_detail_sample_location.getResString(),
+            experience = R.string.opportunity_detail_sample_experience.getResString(),
+            education = R.string.opportunity_detail_sample_education.getResString(),
+            salary = R.string.opportunity_detail_sample_salary.getResString(),
+            matchPercent = 76,
+            introductionMarkdown = R.string.opportunity_detail_sample_introduction_markdown.getResString(),
+            descriptionHtml = R.string.opportunity_detail_sample_description_html.getResString(),
+            companyProfile = R.string.opportunity_detail_sample_company_profile.getResString(),
+            address = R.string.opportunity_detail_sample_address.getResString(),
+            securityTip = R.string.opportunity_detail_security_tip_content.getResString()
+        )
+    }
 }
