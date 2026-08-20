@@ -11,8 +11,10 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="16dp"
         android:layout_width="match_parent"
-        android:layout_height="142dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/bg_ffffff_r27">
 
         <TextView
@@ -20,8 +22,6 @@
             style="@style/Text18"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="@dimen/spacing_l"
             android:layout_marginEnd="@dimen/spacing_s"
             android:ellipsize="end"
             android:includeFontPadding="false"
@@ -47,44 +47,17 @@
             app:layout_constraintEnd_toEndOf="@id/tv_opportunity_title"
             app:layout_constraintStart_toStartOf="@id/tv_opportunity_title"
             app:layout_constraintTop_toBottomOf="@id/tv_opportunity_title"
-            tools:text="selleck上海新香微电子股份有..." />
+            tools:text="selleck上海新香微电子股份有" />
 
-        <FrameLayout
+        <com.shiyuan.fastclaw.widget.progress.MatchPercentProgressView
             android:id="@+id/fl_match_percent"
             android:layout_width="34dp"
             android:layout_height="34dp"
-            android:layout_marginTop="23dp"
+            android:layout_marginTop="8.5dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/ic_opportunity_match_76"
+            app:progress="@{item.data.matchPercent}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:includeFontPadding="false"
-                    android:text="@{@string/processed_opportunity_match_percent_value(item.data.matchPercent)}"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    tools:text="76" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:includeFontPadding="false"
-                    android:text="@string/percent_symbol"
-                    android:textColor="@color/color_90_000000"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_opportunity_requirements"
@@ -107,7 +80,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_s"
-            android:layout_marginEnd="15dp"
             android:includeFontPadding="false"
             android:text="@{item.data.salary}"
             android:textColor="@color/color_2f6bff"
@@ -121,7 +93,6 @@
             android:id="@+id/v_divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginHorizontal="14dp"
             android:layout_marginTop="8dp"
             android:background="@color/color_e9f0fe"
             app:layout_constraintEnd_toEndOf="parent"
@@ -132,9 +103,7 @@
             style="@style/Text12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="14dp"
             android:ellipsize="end"
             android:includeFontPadding="false"
             android:maxLines="1"
