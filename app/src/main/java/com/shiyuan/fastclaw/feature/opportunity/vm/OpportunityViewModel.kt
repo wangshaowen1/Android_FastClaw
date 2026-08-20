@@ -53,6 +53,8 @@ class OpportunityViewModel : HomeReportViewModel() {
 
     val chanceData = MutableLiveData<List<ProcessedOpportunityItem>>(emptyList())
 
+    val matchingData = MutableLiveData<List<ProcessedOpportunityItem>>(emptyList())
+
 
     val matchState = MediatorLiveData<OpportunityMatchState>().apply {
         value = resolveMatchState()
@@ -92,7 +94,8 @@ class OpportunityViewModel : HomeReportViewModel() {
             requirements = R.string.processed_opportunity_sample_requirements.getResString(),
             salary = R.string.processed_opportunity_sample_salary.getResString(),
             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
-            matchPercent = 76
+            matchPercent = 76,
+            isRead = false
         ),
         ProcessedOpportunityItem(
             title = R.string.processed_opportunity_sample_backend.getResString(),
@@ -100,7 +103,8 @@ class OpportunityViewModel : HomeReportViewModel() {
             requirements = R.string.processed_opportunity_sample_requirements.getResString(),
             salary = R.string.processed_opportunity_sample_salary.getResString(),
             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
-            matchPercent = 76
+            matchPercent = 76,
+            isRead = true
         )
     )
 }

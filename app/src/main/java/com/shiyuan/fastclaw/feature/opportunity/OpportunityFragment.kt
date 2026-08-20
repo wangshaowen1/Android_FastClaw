@@ -20,7 +20,9 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.nhsd.permisson.PermissionX
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.base.item.AppItemViewModel
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
+import com.shiyuan.fastclaw.common.ext.getColoredSpanText
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.Events
@@ -50,6 +52,13 @@ class OpportunityFragment :
         )
     }
 
+    private val matchOpportunityAdapter by lazy {
+        QuickAdapter<ItemMatchOpportunityVM>(
+            R.layout.item_match_opportunity,
+            emptyList()
+        )
+    }
+
     override fun onPrepareView() {
         super.onPrepareView()
         initView()
@@ -65,6 +74,13 @@ class OpportunityFragment :
                 addItemDecoration(SpaceDecoration(10.dp, SpaceDecoration.Direction.MIDDLE))
             }
             adapter = opportunityAdapter
+        }
+        binding.rvMatchOpportunity.apply {
+            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            if (itemDecorationCount == 0) {
+                addItemDecoration(SpaceDecoration(12.dp, SpaceDecoration.Direction.MIDDLE))
+            }
+            adapter = matchOpportunityAdapter
         }
     }
 
@@ -152,18 +168,24 @@ class OpportunityFragment :
         mRealVM.matchState.observe(this) { data ->
             when (data) {
                 OpportunityMatchState.MATCHED -> {
+                    binding.v.gone()
                     binding.cardUnderstandUser.gone()
                     binding.cardNoChance.gone()
+                    binding.llMatchOpportunity.visible()
                     binding.llProcessedOpportunity.visible()
                 }
                 OpportunityMatchState.NORMAL_MATCHING -> {
+                    binding.v.visible()
                     binding.cardUnderstandUser.gone()
                     binding.cardNoChance.visible()
+                    binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.visible()
                 }
                 else -> {
+                    binding.v.visible()
                     binding.cardUnderstandUser.visible()
                     binding.cardNoChance.gone()
+                    binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.gone()
                 }
             }
@@ -172,6 +194,7 @@ class OpportunityFragment :
         mRealVM.chanceData.observe(this) { data ->
             val opportunityItems = data.orEmpty()
             opportunityAdapter.submitList(opportunityItems.map(::ItemProcessedOpportunityVM))
+            matchOpportunityAdapter.submitList(opportunityItems.map(::ItemMatchOpportunityVM))
             val isEmpty = opportunityItems.isEmpty()
             if (isEmpty) {
                 binding.llViewAllProcessedOpportunity.gone()
@@ -184,7 +207,17 @@ class OpportunityFragment :
                 }
                 binding.rlEmpty.gone()
                 binding.rvProcessedOpportunity.visible()
+
+                binding.tvMatchOpportunity.text = getColoredSpanText(
+                    getString(R.string.not_opportunity_match_count, opportunityItems.size),
+                    opportunityItems.size.toString(),
+                    resources.getColor(R.color.color_2f6bff)
+                )
             }
+        }
+        mRealVM.matchingData.observe(this) { data ->
+            val opportunityItems = data.orEmpty()
+            matchOpportunityAdapter.submitList(opportunityItems.map(::ItemMatchOpportunityVM))
         }
     }
 
@@ -206,6 +239,7 @@ class OpportunityFragment :
         if (!isVisitor) {
             mRealVM.isJobPreferenceCompleted.value = true
             mRealVM.chanceData.value = mRealVM.createFakeChanceData()
+            mRealVM.matchingData.value = mRealVM.createFakeChanceData()
             mRealVM.queryResumeList()
         }
     }
@@ -340,3 +374,15 @@ class OpportunityFragment :
     }
 
 }
+data class ProcessedOpportunityItem(
+    val title: String,
+    val company: String,
+    val requirements: String,
+    val salary: String,
+    val actionTime: String,
+    val matchPercent: Int,
+    val isRead: Boolean
+)
+
+class ItemProcessedOpportunityVM(data: ProcessedOpportunityItem) : AppItemViewModel<ProcessedOpportunityItem>(data)
+class ItemMatchOpportunityVM(data: ProcessedOpportunityItem) : AppItemViewModel<ProcessedOpportunityItem>(data)

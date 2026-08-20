@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="item"
+            type="com.shiyuan.fastclaw.feature.opportunity.ItemMatchOpportunityVM" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="1dp"
+        android:background="@drawable/bg_ffffff_r20"
+        android:padding="@dimen/spacing_m">
+
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:id="@+id/v_new_opportunity_dot"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:visibility="@{item.data.isRead ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="@id/tv_new_opportunity"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_new_opportunity"
+            app:sCornersRadius="3dp"
+            app:sSolidColor="@color/color_fb415e" />
+
+        <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:id="@+id/tv_new_opportunity"
+            android:layout_width="58dp"
+            android:layout_height="23dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="@string/not_opportunity_match_new"
+            android:textColor="@color/color_2f6bff"
+            android:textSize="13sp"
+            android:layout_marginStart="7dp"
+            app:layout_goneMarginStart="0dp"
+           app:layout_constraintStart_toEndOf="@id/v_new_opportunity_dot"
+            app:layout_constraintTop_toTopOf="parent"
+            app:sCornersRadius="@dimen/radius_m"
+            app:sSolidColor="#E8F1FF" />
+
+        <com.shiyuan.fastclaw.widget.progress.MatchPercentProgressView
+            android:id="@+id/v_match_percent"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:progress="@{item.data.matchPercent}" />
+
+        <View
+            android:id="@+id/v_divider"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_opportunity_match_divider_dash"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/v_match_percent" />
+
+        <TextView
+            android:id="@+id/tv_opportunity_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="3dp"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@{item.data.title}"
+            android:textColor="@color/color_90_000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tv_opportunity_salary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/v_divider"
+            tools:text="高级后端工程师" />
+
+        <TextView
+            android:id="@+id/tv_opportunity_salary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="@{item.data.salary}"
+            android:textColor="@color/color_2f6bff"
+            android:textSize="15sp"
+            app:layout_constraintTop_toTopOf="@id/tv_opportunity_title"
+            app:layout_constraintBottom_toBottomOf="@id/tv_opportunity_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="13-30K·15薪" />
+
+        <TextView
+            android:id="@+id/tv_opportunity_company"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@{item.data.company}"
+            android:textColor="@color/color_85_3c3c43"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_opportunity_title"
+            tools:text="selleck上海新香微电子股份有..." />
+
+        <TextView
+            android:id="@+id/tv_opportunity_requirements"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@{item.data.requirements}"
+            android:textColor="@color/color_85_3c3c43"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_opportunity_company"
+            tools:text="深圳·3年以上·本科" />
+
+        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+            android:id="@+id/layout_match_reason"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="14dp"
+            android:paddingTop="@dimen/spacing_s"
+            android:paddingEnd="6dp"
+            android:paddingBottom="@dimen/spacing_s"
+            app:background_normalColor="@color/color_f6f9ff"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_opportunity_requirements"
+            app:super_corner="17dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:lineHeight="19dp"
+                android:text="@string/not_opportunity_match_reason"
+                android:textColor="@color/color_90_000000"
+                android:textSize="13sp" />
+
+        </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -67,13 +67,4 @@ class ProcessedOpportunityListFragment :
     }
 }
 
-data class ProcessedOpportunityItem(
-    val title: String,
-    val company: String,
-    val requirements: String,
-    val salary: String,
-    val actionTime: String,
-    val matchPercent: Int
-)
 
-class ItemProcessedOpportunityVM(data: ProcessedOpportunityItem) : AppItemViewModel<ProcessedOpportunityItem>(data)
