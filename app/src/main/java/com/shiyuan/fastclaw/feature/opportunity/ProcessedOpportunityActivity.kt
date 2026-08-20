@@ -60,6 +60,8 @@ class ProcessedOpportunityActivity :
     }
 
     private fun initView() {
+        updateTabCount(TAB_COMMUNICATING, 0)
+        updateTabCount(TAB_UNSUITABLE, 0)
         binding.vpProcessedOpportunity.adapter =
             FragmentStateCacheAdapter(supportFragmentManager, lifecycle).apply {
                 setFragments(
@@ -79,6 +81,16 @@ class ProcessedOpportunityActivity :
             binding.vpProcessedOpportunity.setCurrentItem(TAB_UNSUITABLE, false)
         }
         binding.vpProcessedOpportunity.registerOnPageChangeCallback(pageChangeCallback)
+    }
+
+    internal fun updateTabCount(tabType: Int, count: Int) {
+        when (tabType) {
+            TAB_COMMUNICATING -> binding.tvTabCommunicating.text =
+                getString(R.string.processed_opportunity_tab_communicating_count, count)
+
+            TAB_UNSUITABLE -> binding.tvTabUnsuitable.text =
+                getString(R.string.processed_opportunity_tab_unsuitable_count, count)
+        }
     }
 
     private fun updateTabState(index: Int) {
@@ -104,7 +116,7 @@ class ProcessedOpportunityActivity :
     private fun tabTextColor(colorRes: Int): Int = ContextCompat.getColor(this, colorRes)
 
     private fun typefaceForSelected(selected: Boolean): Typeface =
-        if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
+        if (selected) Typeface.create("sans-serif-medium", Typeface.NORMAL) else Typeface.DEFAULT
 
     override fun onDestroy() {
         binding.vpProcessedOpportunity.unregisterOnPageChangeCallback(pageChangeCallback)

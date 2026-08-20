@@ -1258,8 +1258,10 @@
     <string name="not_opportunity_example_count">48</string>
     <string name="not_opportunity_processed_title">已处理机会</string>
     <string name="not_opportunity_searching_hint">正在帮你找机会~</string>
-    <string name="processed_opportunity_tab_communicating">沟通中 2</string>
-    <string name="processed_opportunity_tab_unsuitable">不合适 12</string>
+    <string name="processed_opportunity_tab_communicating">沟通中</string>
+    <string name="processed_opportunity_tab_communicating_count">沟通中 %1$d</string>
+    <string name="processed_opportunity_tab_unsuitable">不合适</string>
+    <string name="processed_opportunity_tab_unsuitable_count">不合适 %1$d</string>
     <string name="processed_opportunity_sample_high_backend">高后端工程师</string>
     <string name="processed_opportunity_sample_backend">后端工程师</string>
     <string name="processed_opportunity_sample_company">selleck上海新香微电子股份有...</string>

@@ -63,8 +63,6 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
 
     private fun initTreasuryCards() {
         binding.rvTreasuryCards.adapter = treasuryAdapter
-        binding.lsv.setDefaultEmptyImage(R.drawable.ic_empty)
-        binding.lsv.setNoDataPrompt(getString(R.string.no_data))
         binding.lsv.setRetryListener { loadTreasuryCards() }
     }
 
