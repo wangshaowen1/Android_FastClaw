@@ -24,12 +24,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <include
+            app:toolbar="@{layout.mToolbarVMOpportunityDetail}"
             android:id="@+id/toolbar"
             layout="@layout/view_model_toolbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:toolbar="@{layout.mToolbarVMOpportunityDetail}" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/sv_opportunity_detail"
@@ -61,7 +61,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="12dp"
                         android:includeFontPadding="false"
-                        android:text="@{layout.opportunityDetail.title}"
                         android:textColor="@color/color_96_000000"
                         android:textSize="22sp"
                         android:textStyle="bold"
@@ -78,7 +77,6 @@
                         android:ellipsize="end"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@{layout.opportunityDetail.company}"
                         android:textColor="@color/color_96_000000"
                         android:textSize="13sp"
                         app:layout_constraintEnd_toEndOf="@id/tv_opportunity_title"
@@ -93,8 +91,7 @@
                         android:layout_marginEnd="5dp"
                         app:layout_constraintBottom_toBottomOf="@id/tv_opportunity_company"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/tv_opportunity_title"
-                        app:progress="@{layout.opportunityDetail.matchPercent}" />
+                        app:layout_constraintTop_toTopOf="@id/tv_opportunity_title" />
 
                     <LinearLayout
                         android:id="@+id/layout_job_requirements"
@@ -114,11 +111,11 @@
                             android:src="@drawable/ic_opportunity_detail_location" />
 
                         <TextView
+                            android:id="@+id/tv_opportunity_location"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:includeFontPadding="false"
-                            android:text="@{layout.opportunityDetail.location}"
                             android:textColor="@color/color_55_3c3c43"
                             android:textSize="13sp"
                             tools:text="深圳" />
@@ -132,11 +129,11 @@
                             android:src="@drawable/ic_opportunity_detail_experience" />
 
                         <TextView
+                            android:id="@+id/tv_opportunity_experience"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:includeFontPadding="false"
-                            android:text="@{layout.opportunityDetail.experience}"
                             android:textColor="@color/color_55_3c3c43"
                             android:textSize="13sp"
                             tools:text="3–5年" />
@@ -150,11 +147,11 @@
                             android:src="@drawable/ic_opportunity_detail_education" />
 
                         <TextView
+                            android:id="@+id/tv_opportunity_education"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:includeFontPadding="false"
-                            android:text="@{layout.opportunityDetail.education}"
                             android:textColor="@color/color_55_3c3c43"
                             android:textSize="13sp"
                             tools:text="本科" />
@@ -165,7 +162,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
-                        android:text="@{layout.opportunityDetail.salary}"
                         android:textColor="@color/color_2f6bff"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -177,7 +173,6 @@
 
                 <TextView
                     android:id="@+id/tv_opportunity_introduction"
-                    opportunityMarkdown="@{layout.opportunityDetail.introductionMarkdown}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="21dp"
@@ -208,7 +203,6 @@
 
                 <TextView
                     android:id="@+id/tv_job_description"
-                    setTextHtmlSpannable="@{layout.opportunityDetail.descriptionHtml}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
@@ -252,7 +246,6 @@
                         android:ellipsize="end"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@{layout.opportunityDetail.company}"
                         android:textColor="@color/color_90_000000"
                         android:textSize="14sp"
                         android:fontFamily="sans-serif-medium"
@@ -271,7 +264,6 @@
                         android:ellipsize="end"
                         android:includeFontPadding="false"
                         android:maxLines="1"
-                        android:text="@{layout.opportunityDetail.companyProfile}"
                         android:textColor="@color/color_55_3c3c43"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -325,6 +317,7 @@
                            android:src="@drawable/im_opportunity_map" />
 
                        <TextView
+                           android:id="@+id/tv_work_address"
                            android:layout_marginStart="10dp"
                            app:layout_constraintTop_toTopOf="parent"
                            app:layout_constraintBottom_toBottomOf="parent"
@@ -340,7 +333,6 @@
                            android:maxLines="2"
                            android:paddingHorizontal="12dp"
                            android:paddingVertical="4dp"
-                           android:text="@{layout.opportunityDetail.address}"
                            android:textColor="@color/color_90_000000"
                            android:textSize="13sp"
                            tools:text="深圳创维半导体设计大厦西座12楼1205" />

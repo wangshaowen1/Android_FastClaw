@@ -1,7 +1,6 @@
 package com.shiyuan.fastclaw.feature.opportunity.vm
 
 import android.graphics.Color
-import androidx.databinding.ObservableField
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -24,6 +23,7 @@ import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
+import com.shiyuan.fastclaw.core.network.apis.request.OpportunityDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
@@ -31,6 +31,8 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailActionData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedPageData
@@ -73,11 +75,7 @@ class OpportunityViewModel : HomeReportViewModel() {
         background = Color.TRANSPARENT
     )
 
-    val opportunityDetail = ObservableField(OpportunityDetailUiModel.preview())
-
-    val opportunityDetailActionState = MutableLiveData(
-        OpportunityDetailActionState.NEW_OPPORTUNITY
-    )
+    val opportunityDetail = MutableLiveData<OpportunityDetailData>()
 
     val mToolbarVMProcessedOpportunity = ToolbarViewModel(
         navigationAction = { finish() },
@@ -136,9 +134,9 @@ class OpportunityViewModel : HomeReportViewModel() {
     fun queryProcessedOpportunityPreview() {
         request(
             apiBlock = { mRepo.api.queryProcessedOpportunityPage(PagedBody(1, 5)) },
-            onError = {
+           /* onError = {
                 chanceData.value = createFakeChanceData()
-            },
+            },*/
             onSuccess = {
                 chanceData.value = data?.opportunities?.items.orEmpty()
             }
@@ -245,9 +243,52 @@ class OpportunityViewModel : HomeReportViewModel() {
         newOpportunityPollingJob = null
     }
 
-    fun updateOpportunityDetailActionState(state: OpportunityDetailActionState) {
-        opportunityDetailActionState.value = state
+    /** 根据上一页传入的岗位 ID 查询机会详情。 */
+    fun queryOpportunityDetail(jobId: String) {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.queryOpportunityDetail(OpportunityDetailQueryBody(jobId))
+            },
+           /* onError = {
+                opportunityDetail.value = createFakeOpportunityDetail(jobId)
+            },*/
+            onSuccess = {
+                data?.let { detail ->
+                    opportunityDetail.value = detail
+                }
+            }
+        )
     }
+
+    private fun createFakeOpportunityDetail(jobId: String) = OpportunityDetailData(
+        jobId = jobId,
+        jobTitle = R.string.opportunity_detail_sample_title.getResString(),
+        matchPercent = 76,
+        status = "UNSUITABLE",
+        jobClosed = true,
+        companyName = R.string.opportunity_detail_sample_company.getResString(),
+        salaryText = R.string.opportunity_detail_sample_salary.getResString(),
+        workCity = R.string.opportunity_detail_sample_location.getResString(),
+        experienceText = R.string.opportunity_detail_sample_experience.getResString(),
+        degreeText = R.string.opportunity_detail_sample_education.getResString(),
+        recommendationReason =
+            R.string.opportunity_detail_sample_introduction_markdown.getResString(),
+        jobDescription = R.string.opportunity_detail_sample_description_markdown.getResString(),
+        companyIndustry = "互联网",
+        companyScale = "10000人以上",
+        financingStage = "已上市",
+        workAddress = R.string.opportunity_detail_sample_address.getResString(),
+        actions = listOf(
+            OpportunityDetailActionData(
+                buttonText = R.string.opportunity_detail_unsuitable.getResString(),
+                actionCode = "MARK_UNSUITABLE"
+            ),
+            OpportunityDetailActionData(
+                buttonText = R.string.opportunity_detail_communicate_now.getResString(),
+                actionCode = "MARK_COMMUNICATING"
+            )
+        )
+    )
 
     private fun resolveMatchState(): OpportunityMatchState {
         if (isJobUpCompleted.value != true || isJobPreferenceCompleted.value != true) {
@@ -326,37 +367,5 @@ class OpportunityViewModel : HomeReportViewModel() {
 
     private companion object {
         const val PROCESSED_OPPORTUNITY_PAGE_SIZE = 20
-    }
-}
-
-data class OpportunityDetailUiModel(
-    val title: String,
-    val company: String,
-    val location: String,
-    val experience: String,
-    val education: String,
-    val salary: String,
-    val matchPercent: Int,
-    val introductionMarkdown: String,
-    val descriptionHtml: String,
-    val companyProfile: String,
-    val address: String,
-    val securityTip: String
-) {
-    companion object {
-        fun preview() = OpportunityDetailUiModel(
-            title = R.string.opportunity_detail_sample_title.getResString(),
-            company = R.string.opportunity_detail_sample_company.getResString(),
-            location = R.string.opportunity_detail_sample_location.getResString(),
-            experience = R.string.opportunity_detail_sample_experience.getResString(),
-            education = R.string.opportunity_detail_sample_education.getResString(),
-            salary = R.string.opportunity_detail_sample_salary.getResString(),
-            matchPercent = 76,
-            introductionMarkdown = R.string.opportunity_detail_sample_introduction_markdown.getResString(),
-            descriptionHtml = R.string.opportunity_detail_sample_description_html.getResString(),
-            companyProfile = R.string.opportunity_detail_sample_company_profile.getResString(),
-            address = R.string.opportunity_detail_sample_address.getResString(),
-            securityTip = R.string.opportunity_detail_security_tip_content.getResString()
-        )
     }
 }

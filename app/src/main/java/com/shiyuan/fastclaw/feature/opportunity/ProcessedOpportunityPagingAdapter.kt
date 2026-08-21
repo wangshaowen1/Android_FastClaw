@@ -9,7 +9,9 @@ import com.shiyuan.fastclaw.common.ext.getVm
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.ItemProcessedOpportunityBinding
 
-class ProcessedOpportunityPagingAdapter :
+class ProcessedOpportunityPagingAdapter(
+    private val onItemClick: (OpportunityProcessedItemData) -> Unit
+) :
     PagingDataAdapter<OpportunityProcessedItemData, ProcessedOpportunityPagingAdapter.ViewHolder>(
         DIFF_CALLBACK
     ) {
@@ -39,6 +41,9 @@ class ProcessedOpportunityPagingAdapter :
                     item = item,
                     viewModelFactory = { ItemProcessedOpportunityVM(item) }
                 )
+                binding.root.setOnClickListener {
+                    onItemClick(item)
+                }
                 binding.executePendingBindings()
             }
         }

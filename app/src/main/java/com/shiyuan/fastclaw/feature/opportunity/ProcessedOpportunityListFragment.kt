@@ -34,7 +34,9 @@ class ProcessedOpportunityListFragment :
     }
 
     private val opportunityAdapter by lazy {
-        ProcessedOpportunityPagingAdapter()
+        ProcessedOpportunityPagingAdapter { opportunity ->
+            OpportunityDetailActivity.start(requireActivity(), opportunity.jobId)
+        }
     }
 
     private val footerAdapter by lazy {
@@ -88,5 +90,3 @@ class ProcessedOpportunityListFragment :
         mRealVM.queryProcessedOpportunityCounts(status)
     }
 }
-
-

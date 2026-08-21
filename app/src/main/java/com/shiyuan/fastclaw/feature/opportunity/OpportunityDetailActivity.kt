@@ -10,13 +10,13 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
-import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.databinding.BindingAdapter
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.shiyuan.fastclaw.BR
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
 import com.shiyuan.fastclaw.databinding.ActivityOpportunityDetailBinding
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailActionState
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
@@ -28,20 +28,57 @@ import io.noties.markwon.Markwon
 class OpportunityDetailActivity :
     BaseViewModelActivity<ActivityOpportunityDetailBinding, OpportunityViewModel>() {
 
+    private val markwon by lazy { Markwon.create(this) }
+
     companion object {
-        fun start(activity: Activity?) {
-            activity ?: return
-            activity.startActivity(Intent(activity, OpportunityDetailActivity::class.java))
+        private const val EXTRA_JOB_ID = "extra_job_id"
+
+        fun start(activity: Activity?, jobId: String) {
+            if (activity == null || jobId.isBlank()) return
+            activity.startActivity(
+                Intent(activity, OpportunityDetailActivity::class.java)
+                    .putExtra(EXTRA_JOB_ID, jobId)
+            )
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mRealVM.opportunityDetailActionState.value = OpportunityDetailActionState.UNSUITABLE
-        mRealVM.opportunityDetailActionState.observe(this) { state ->
-            renderActionState(state)
+        binding.toolbar.setVariable(BR.toolbar, mRealVM.mToolbarVMOpportunityDetail)
+        val jobId = intent.getStringExtra(EXTRA_JOB_ID).orEmpty()
+        if (jobId.isBlank()) {
+            finish()
+            return
         }
         setupReportTip()
+        mRealVM.opportunityDetail.observe(this) { detail ->
+            renderDetail(detail)
+        }
+        mRealVM.queryOpportunityDetail(jobId)
+    }
+
+    private fun renderDetail(detail: OpportunityDetailData) {
+        binding.tvOpportunityTitle.text = detail.jobTitle
+        binding.tvOpportunityCompany.text = detail.companyName
+        binding.vMatchPercent.progress = detail.matchPercent
+        binding.tvOpportunityLocation.text = detail.workCity
+        binding.tvOpportunityExperience.text = detail.experienceText
+        binding.tvOpportunityEducation.text = detail.degreeText
+        binding.tvOpportunitySalary.text = detail.salaryText
+        binding.tvOpportunityIntroduction.visibility = if (detail.recommendationReason.isBlank()) View.GONE else View.VISIBLE
+        markwon.setMarkdown(
+            binding.tvOpportunityIntroduction,
+            detail.recommendationReason
+        )
+        markwon.setMarkdown(binding.tvJobDescription, detail.jobDescription)
+        binding.tvLocationCompany.text = detail.companyName
+        binding.tvCompanyProfile.text = listOf(
+            detail.companyIndustry,
+            detail.companyScale,
+            detail.financingStage
+        ).filter(String::isNotBlank).joinToString(" · ")
+        binding.tvWorkAddress.text = detail.workAddress
+        renderBottomActions(detail)
     }
 
     private fun setupReportTip() {
@@ -74,43 +111,49 @@ class OpportunityDetailActivity :
         }
     }
 
-    private fun renderActionState(state: OpportunityDetailActionState) {
-        val isClosed = state == OpportunityDetailActionState.CLOSED
-        binding.tvUnsuitable.setText(
-            when (state) {
-                OpportunityDetailActionState.UNSUITABLE -> R.string.opportunity_detail_temporarily_unsuitable
-                OpportunityDetailActionState.CLOSED -> R.string.opportunity_detail_position_closed
-                else -> R.string.opportunity_detail_unsuitable
-            }
-        )
-        binding.tvUnsuitable.setTextColor(
-            ContextCompat.getColor(
-                this,
-                if (isClosed) R.color.color_55_3c3c43 else R.color.color_2f6bff
+    private fun renderBottomActions(detail: OpportunityDetailData) {
+        val state = resolveActionState(detail)
+        val firstAction = detail.actions.getOrNull(0)
+        val secondAction = detail.actions.getOrNull(1)
+        val showSecondAction = state == OpportunityDetailActionState.NEW_OPPORTUNITY || state == OpportunityDetailActionState.COMMUNICATING
+
+        binding.layoutBottomAction.visibility = if (state == null) View.GONE else View.VISIBLE
+        binding.tvUnsuitable.apply {
+            text = firstAction?.buttonText.orEmpty()
+            isEnabled = state != OpportunityDetailActionState.CLOSED && firstAction?.actionCode != null
+            setTextColor(
+                ContextCompat.getColor(
+                    this@OpportunityDetailActivity,
+                    if (state == OpportunityDetailActionState.CLOSED) {
+                        R.color.color_55_3c3c43
+                    } else {
+                        R.color.color_2f6bff
+                    }
+                )
             )
-        )
-        binding.tvUnsuitable.setBackgroundResource(
-            if (isClosed) {
-                R.drawable.bg_opportunity_detail_closed_button
-            } else {
-                R.drawable.bg_opportunity_detail_secondary_button
-            }
-        )
-        binding.tvCommunicateNow.setText(
-            if (state == OpportunityDetailActionState.COMMUNICATING) {
-                R.string.opportunity_detail_continue_communicating
-            } else {
-                R.string.opportunity_detail_communicate_now
-            }
-        )
-        binding.tvCommunicateNow.visibility =
-            if (state == OpportunityDetailActionState.NEW_OPPORTUNITY ||
-                state == OpportunityDetailActionState.COMMUNICATING
-            ) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+            setBackgroundResource(
+                if (state == OpportunityDetailActionState.CLOSED) {
+                    R.drawable.bg_opportunity_detail_closed_button
+                } else {
+                    R.drawable.bg_opportunity_detail_secondary_button
+                }
+            )
+        }
+        binding.tvCommunicateNow.apply {
+            text = secondAction?.buttonText.orEmpty()
+            isEnabled = secondAction?.actionCode != null
+            visibility = if (showSecondAction) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun resolveActionState(
+        detail: OpportunityDetailData
+    ): OpportunityDetailActionState? = when {
+        detail.jobClosed -> OpportunityDetailActionState.CLOSED
+        detail.status == "NEW" -> OpportunityDetailActionState.NEW_OPPORTUNITY
+        detail.status == "COMMUNICATING" -> OpportunityDetailActionState.COMMUNICATING
+        detail.status == "UNSUITABLE" -> OpportunityDetailActionState.UNSUITABLE
+        else -> null
     }
 
     override fun setTranslucentStatus() {
@@ -120,9 +163,4 @@ class OpportunityDetailActivity :
             .transparentStatusBar()
             .init()
     }
-}
-
-@BindingAdapter("opportunityMarkdown")
-fun setOpportunityMarkdown(view: TextView, markdown: String?) {
-    Markwon.create(view.context).setMarkdown(view, markdown.orEmpty())
 }

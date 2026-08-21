@@ -457,6 +457,11 @@ object ApiConstants {
      */
     const val OPPORTUNITY_PROCESSED_PAGE = "/api/candidate/app/opportunity/processed/page"
 
+    /**
+     * 查询机会详情
+     */
+    const val OPPORTUNITY_DETAIL_QUERY = "/api/candidate/app/opportunity/detail/query"
+
 
     /**
      * 刷新云信 IM Token

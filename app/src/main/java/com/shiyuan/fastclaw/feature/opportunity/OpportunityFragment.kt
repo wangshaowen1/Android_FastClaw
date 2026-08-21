@@ -93,8 +93,10 @@ class OpportunityFragment :
             }
             adapter = opportunityAdapter
         }
-        opportunityAdapter.setOnItemClickListener { adapter, view, i ->
-            OpportunityDetailActivity.start(this.requireActivity())
+        opportunityAdapter.setOnItemClickListener { _, _, i ->
+            mRealVM.chanceData.value.orEmpty().getOrNull(i)?.let { opportunity ->
+                OpportunityDetailActivity.start(requireActivity(), "opportunity.jobId")
+            }
         }
         binding.rvMatchOpportunity.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -103,8 +105,10 @@ class OpportunityFragment :
             }
             adapter = matchOpportunityAdapter
         }
-        matchOpportunityAdapter.setOnItemClickListener { adapter, view, i ->
-            OpportunityDetailActivity.start(this.requireActivity())
+        matchOpportunityAdapter.setOnItemClickListener { _, _, i ->
+            mRealVM.matchingData.value.orEmpty().getOrNull(i)?.let { opportunity ->
+                OpportunityDetailActivity.start(requireActivity(), opportunity.jobId)
+            }
         }
     }
 
