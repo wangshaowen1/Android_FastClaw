@@ -148,6 +148,29 @@
                     app:layout_constraintTop_toTopOf="@id/tabMessage"
                     tools:checked="false" />
 
+                <com.shiyuan.fastclaw.widget.super_button.SuperButton
+                    android:id="@+id/sbOpportunityCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="-8dp"
+                    android:layout_marginTop="-4dp"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:minWidth="16dp"
+                    android:minHeight="16dp"
+                    android:textColor="@color/white"
+                    android:textSize="9sp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@id/rbTreasury"
+                    app:layout_constraintTop_toTopOf="@id/rbTreasury"
+                    app:sCornersRadius="8dp"
+                    app:sSizeWidth="0dp"
+                    app:sSolidColor="@color/color_fb415e"
+                    app:sStrokeColor="@color/white"
+                    app:sStrokeWidth="1dp"
+                    tools:text="2"
+                    tools:visibility="visible" />
+
                 <com.shiyuan.fastclaw.widget.FixedAnimatedRadioButton
                     android:id="@+id/rbMine"
                     android:layout_width="wrap_content"

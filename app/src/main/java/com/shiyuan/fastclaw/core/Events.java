@@ -34,6 +34,10 @@ public class Events {
         }
     }
 
+    /** 刷新底部机会 Tab 的未处理数量。 */
+    public static class OpportunityNavCountRefreshEvent implements AppEvent {
+    }
+
     public static class UserDataEvent implements AppEvent {
         public final String[] keys;
         public String data;

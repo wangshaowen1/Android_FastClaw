@@ -437,6 +437,11 @@ object ApiConstants {
      */
     const val DICT_WELFARE_QUERY = "/api/candidate/app/jobAgent/dict/welfare/query"
 
+    /**
+     * 查询机会导航未处理数量
+     */
+    const val OPPORTUNITY_NAV_COUNT_QUERY = "/api/candidate/app/opportunity/nav/count/query"
+
 
     /**
      * 刷新云信 IM Token

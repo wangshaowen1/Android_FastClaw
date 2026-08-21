@@ -116,6 +116,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNavCountData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.PayOrderInfo
@@ -726,6 +727,10 @@ interface ApiService {
 
     @POST(ApiConstants.ONLINERESUME_ATTRIBUTE_ARRAY_DELETE)
     suspend fun onlineResumeAttributeDelete(@Body body: Any): ApiResponse<AttributeSave?>
+
+    /** 查询机会导航未处理数量。 */
+    @POST(ApiConstants.OPPORTUNITY_NAV_COUNT_QUERY)
+    suspend fun queryOpportunityNavCount(): ApiResponse<OpportunityNavCountData>
 
 
     @POST(ApiConstants.REGISTER_IM_TOKEN)

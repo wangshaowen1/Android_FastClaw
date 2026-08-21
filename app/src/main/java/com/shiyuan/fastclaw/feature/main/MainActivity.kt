@@ -208,11 +208,14 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     }
 
     /**
-     * 订阅主界面状态变化，保持底部消息 Tab 红点与 IM 未读总数同步。
+     * 订阅主界面状态变化，保持底部 Tab 数量同步。
      */
     private fun initObserve() {
         mRealVM.imUnreadCount.observe(this) { count ->
             updateMessageCount(count)
+        }
+        mRealVM.opportunityUnprocessedCount.observe(this) { count ->
+            updateOpportunityCount(count)
         }
     }
 
@@ -222,6 +225,14 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
     private fun updateMessageCount(count: Int) {
         binding.sbMessageCount.text = count.formatMessageNum()
         binding.sbMessageCount.visibility = if (count > 0) View.VISIBLE else View.GONE
+    }
+
+    /**
+     * 更新机会 Tab 未处理数量，0 条时隐藏，超过 99 条按 99 展示。
+     */
+    private fun updateOpportunityCount(count: Int) {
+        binding.sbOpportunityCount.text = count.formatMessageNum()
+        binding.sbOpportunityCount.visibility = if (count > 0) View.VISIBLE else View.GONE
     }
 
 
@@ -406,9 +417,13 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     }
                 }
             }
+            on<Events.OpportunityNavCountRefreshEvent> {
+                mRealVM.queryOpportunityNavCount()
+            }
             on<Events.UserChangedEvent> { event ->
                 if (event.eventType == Events.UserChangedEvent.TOKEN_EXPIRED) {
                     mRealVM.clearImUnreadCount()
+                    mRealVM.clearOpportunityNavCount()
                     AppNavigator.forceLogoutAndLogin()
                 } else {
                     mRealVM.fetchUserInfo()
@@ -417,6 +432,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                         //displayPopUpBox(type = MainBulletFrameEnum.COMPLETE_PERSONAL_INFO)
                     } else {
                         mRealVM.clearImUnreadCount()
+                        mRealVM.clearOpportunityNavCount()
                         lifecycleScope.launch {
                             delay(100)
                             if (isActive) {
@@ -426,6 +442,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
                     }
                 }
             }
+
         }
     }
 

@@ -46,6 +46,9 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
     // 底部消息 Tab 展示的 IM 总未读数。
     val imUnreadCount = MutableLiveData(0)
 
+    // 底部机会 Tab 展示的有效未处理机会数。
+    val opportunityUnprocessedCount = MutableLiveData(0)
+
     //作品中是否是编辑状态
     val isEditing = ObservableBoolean(false)
 
@@ -80,8 +83,10 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
         isLogin.set(User.get().isLogged)
         if (User.get().isLogged) {
             registerImListeners()
+            queryOpportunityNavCount()
         } else {
             clearImUnreadCount()
+            clearOpportunityNavCount()
         }
        /* if (isLogin.get()) {
             Global.refreshBalance()
@@ -178,6 +183,30 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
      */
     fun clearImUnreadCount() {
         imUnreadCount.value = 0
+    }
+
+    /**
+     * 查询底部机会 Tab 的有效未处理机会数，游客状态下不发起请求。
+     */
+    fun queryOpportunityNavCount() {
+        if (User.get().isVisitor) {
+            opportunityUnprocessedCount.value = 0
+            return
+        }
+        request(
+            apiBlock = { mRepo.api.queryOpportunityNavCount() },
+            onSuccess = {
+                data?.let { opportunityUnprocessedCount.value = it.unprocessedCount }
+            }
+            /*, onError = {
+                opportunityUnprocessedCount.value = 10
+            }*/
+        )
+    }
+
+    /** 清空底部机会 Tab 的未处理数量。 */
+    fun clearOpportunityNavCount() {
+        opportunityUnprocessedCount.value = 0
     }
 
     /**
