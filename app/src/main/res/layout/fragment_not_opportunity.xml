@@ -25,7 +25,7 @@
                 app:lottie_imageAssetsFolder="loading_opportunity/images"
                 app:lottie_fileName="loading_opportunity/loading_opportunity.json"
                 app:lottie_repeatMode="reverse"
-                android:visibility="gone"
+
                 android:id="@+id/v"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
@@ -464,6 +464,7 @@
 
             <!--匹配到机会-->
             <LinearLayout
+                android:visibility="gone"
                 android:layout_marginTop="20dp"
                 android:id="@+id/ll_match_opportunity"
                 android:layout_width="match_parent"
@@ -496,6 +497,7 @@
 
             <!--已处理机会-->
             <LinearLayout
+                android:visibility="gone"
                 android:id="@+id/ll_processed_opportunity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

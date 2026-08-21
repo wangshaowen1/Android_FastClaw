@@ -9,11 +9,13 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
@@ -46,16 +48,11 @@ class OpportunityFragment :
     BaseViewModelFragment<FragmentNotOpportunityBinding, OpportunityViewModel>() {
 
     private companion object {
+        const val OPPORTUNITY_PAGE = 0
         const val LOTTIE_RESUME_DELAY_MS = 120L
     }
 
     private var lastVisitorState: Boolean? = null
-    private val lottieVisibleRect = Rect()
-    private var isContentScrolling = false
-    private val resumeLottieAfterScroll = Runnable {
-        isContentScrolling = false
-        updateLottiePlayback()
-    }
 
     private val opportunityAdapter by lazy {
         QuickAdapter<ItemProcessedOpportunityVM>(
@@ -81,15 +78,10 @@ class OpportunityFragment :
 
     private fun initView() {
 
+        bindParentPagerLottieState()
         //滚动时立即暂停 Lottie。 连续 120ms 未滚动后，检查 Lottie 是否仍在可视区域。
         binding.scrollContent.setOnScrollChangeListener { _, _, _, _, _ ->
-            isContentScrolling = true
-            binding.v.pauseAnimation()
-            binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
-            binding.scrollContent.postDelayed(
-                resumeLottieAfterScroll,
-                LOTTIE_RESUME_DELAY_MS,
-            )
+            onContentScrolled()
         }
         binding.rvProcessedOpportunity.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -197,21 +189,21 @@ class OpportunityFragment :
         mRealVM.matchState.observe(this) { data ->
             when (data) {
                 OpportunityMatchState.MATCHED -> {
-                    binding.v.gone()
+                    renderLottie(false)
                     binding.cardUnderstandUser.gone()
                     binding.cardNoChance.gone()
                     binding.llMatchOpportunity.visible()
                     binding.llProcessedOpportunity.visible()
                 }
                 OpportunityMatchState.NORMAL_MATCHING -> {
-                    binding.v.visible()
+                    renderLottie(true)
                     binding.cardUnderstandUser.gone()
                     binding.cardNoChance.visible()
                     binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.visible()
                 }
                 else -> {
-                    binding.v.visible()
+                    renderLottie(true)
                     binding.cardUnderstandUser.visible()
                     binding.cardNoChance.gone()
                     binding.llMatchOpportunity.gone()
@@ -322,7 +314,7 @@ class OpportunityFragment :
 
     override fun onResume() {
         super.onResume()
-        updateLottiePlayback()
+        scheduleLottiePlaybackUpdate()
         if (!mRealVM.code.value.isNullOrEmpty()) {
             Log.d("uploadResumeDialog", mRealVM.code.value.toString())
             uploadResumeDialog?.dismissAllowingStateLoss()
@@ -340,21 +332,89 @@ class OpportunityFragment :
     override fun onPause() {
         binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
         isContentScrolling = false
-        binding.v.pauseAnimation()
+        pauseLottiePlayback()
         super.onPause()
     }
 
-    private fun updateLottiePlayback() {
+    private val lottieVisibleRect = Rect()
+    private var isContentScrolling = false
+    private var parentPager: ViewPager2? = null
+    // 纵向滚动停止 120ms 后再判断，避免滚动过程中频繁暂停和恢复。
+    private val resumeLottieAfterScroll = Runnable {
+        updateLottiePlayback(isScrolling = false)
+    }
+    // ViewPager2 切页时 onPause 触发较晚，主动监听滑动状态以便立即暂停动画。
+    private val parentPagerCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            updateLottiePlayback()
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+            updateLottiePlayback()
+        }
+    }
+
+    private fun onContentScrolled() {
+        updateLottiePlayback(isScrolling = true)
+        binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
+        binding.scrollContent.postDelayed(
+            resumeLottieAfterScroll,
+            LOTTIE_RESUME_DELAY_MS,
+        )
+    }
+
+    // 回调与当前 View 生命周期绑定，并在 onDestroyView 中使用同一实例注销。
+    private fun bindParentPagerLottieState() {
+        parentPager?.unregisterOnPageChangeCallback(parentPagerCallback)
+        parentPager = parentFragment?.view?.findViewById(R.id.vp_opportunity_pages)
+        parentPager?.registerOnPageChangeCallback(parentPagerCallback)
+        updateLottiePlayback()
+    }
+
+    private fun renderLottie(isVisible: Boolean) {
+        if (isVisible) {
+            binding.v.visible()
+            if (viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) {
+                scheduleLottiePlaybackUpdate()
+            }
+        } else {
+            binding.v.gone()
+            pauseLottiePlayback()
+        }
+    }
+
+    // 首次显示需等待布局完成，否则可视区域判断可能拿不到正确结果。
+    private fun scheduleLottiePlaybackUpdate() {
+        binding.v.doOnPreDraw {
+            updateLottiePlayback()
+        }
+    }
+
+    private fun updateLottiePlayback(isScrolling: Boolean = isContentScrolling) {
+        isContentScrolling = isScrolling
         val isLottieVisible = binding.v.visibility == View.VISIBLE &&
             binding.v.getLocalVisibleRect(lottieVisibleRect)
-        if (!isContentScrolling &&
+        // 父 Pager 停稳且当前为机会页时，才继续判断生命周期和页面内可见性。
+        val isParentPagerIdleAndSelected = parentPager?.run {
+            scrollState == ViewPager2.SCROLL_STATE_IDLE && currentItem == OPPORTUNITY_PAGE
+        } ?: true
+        val shouldPlayLottie = isParentPagerIdleAndSelected &&
+            !isContentScrolling &&
             viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
             isLottieVisible
-        ) {
+        if (shouldPlayLottie) {
             binding.v.resumeAnimation()
         } else {
-            binding.v.pauseAnimation()
+            pauseLottiePlayback()
         }
+    }
+
+    private fun pauseLottiePlayback() {
+        binding.v.pauseAnimation()
+    }
+
+    private fun releaseLottie() {
+        binding.v.cancelAnimation()
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -419,9 +479,11 @@ class OpportunityFragment :
 
 
     override fun onDestroyView() {
+        parentPager?.unregisterOnPageChangeCallback(parentPagerCallback)
+        parentPager = null
         binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
         isContentScrolling = false
-        binding.v.cancelAnimation()
+        releaseLottie()
         stopResumePolling()
         super.onDestroyView()
     }
