@@ -166,7 +166,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
      */
     protected fun isMarkedUnsuitable(conversation: Conversation): Boolean {
         val hrInfo = conversation.serverExtension[ROLE_HR] as? Map<*, *>
-        return hrInfo?.get(KEY_IS_INAPPROPRIATE) == true || conversation.extension[KEY_IS_INAPPROPRIATE] == true
+        return hrInfo?.get(KEY_IS_INAPPROPRIATE) == true
     }
 
     /**
@@ -174,8 +174,9 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
      */
     protected fun buildConversationItem(conversation: Conversation, itemType: Int): ConversationItem {
         val contactId = conversation.contactId
-        val profile = conversation.extension[ROLE_HR] as? Map<*, *>
+        val profile = conversation.serverExtension[ROLE_HR] as? Map<*, *>
         val profileValue = { key: String -> (profile?.get(key) as? String)?.takeIf { it.isNotBlank() } }
+        val position = (conversation.serverExtension[KEY_POSITION] as? String)?.takeIf { it.isNotBlank() }
         return ConversationItem(
             id = conversation.conversationId,
             contactId = contactId,
@@ -183,7 +184,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
             targetName = profileValue(KEY_NAME) ?: conversation.name?.takeIf { it.isNotBlank() } ?: contactId,
             targetAvatar = profileValue(KEY_AVATAR) ?: conversation.avatar,
             targetCompany = profileValue(KEY_COMPANY),
-            targetPosition = profileValue(KEY_POSITION),
+            targetPosition = position,
             lastMessage = formatLastMessage(conversation),
             lastMessageTime = conversation.time,
             unreadCount = conversation.unreadCount,

@@ -3,15 +3,18 @@ package com.shiyuan.fastclaw.feature.message.chat
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.feature.message.MessageTimeFormatter
+import com.shiyuan.fastclaw.core.ext.requestWithLoading
+import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
 import com.shiyuan.fastclaw.feature.message.data.JobChatItem
-import com.shiyuan.fastclaw.feature.message.data.ResumeDeliveryChatItem
+import com.shiyuan.fastclaw.feature.message.data.ResumeDeliveryAttachment
 import com.shiyuan.fastclaw.feature.message.data.ResumeRequestChatItem
 import com.shiyuan.fastclaw.feature.message.data.TextChatItem
 import com.tulele.im.Chat
@@ -31,6 +34,8 @@ import org.json.JSONObject
 class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMessageSendResultListener {
     // 当前页面消息列表。
     val messageList = MutableLiveData<List<ChatMessageItem>>(emptyList())
+    // 待发送的最新简历，页面收到后弹出发送确认框。
+    val resumeForDelivery = MutableLiveData<ResumeData?>()
     // 当前是否正在加载更早历史消息。
     val isLoadingHistory = ObservableBoolean(false)
 
@@ -38,6 +43,8 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private var chat: Chat? = null
     // 当前会话消息缓存，key 为 messageClientId。
     private val messageCache = linkedMapOf<String, MessageWrapper>()
+    // 本机主动发送过的消息 id，用于 SDK 回填方向前保持右侧展示。
+    private val localSendMessageIds = mutableSetOf<String>()
     // 是否还有更早历史消息。
     private var hasMoreHistory = true
 
@@ -148,6 +155,27 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         val text = content.trim()
         if (text.isBlank()) return
         val message = chat?.sendTextMessage(text) ?: return
+        localSendMessageIds.add(message.messageClientId)
+        mergeMessages(listOf(message))
+    }
+
+    /**
+     * 组装 resumeDelivery 消息并即时插入列表。
+     */
+    fun sendResumeDeliveryMessage(resume: ResumeData) {
+        val currentChat = chat ?: return
+        val resumeId = resume.checkId?.takeIf { it.isNotBlank() }
+        val resumeName = resume.resumeFileName?.takeIf { it.isNotBlank() }
+        val resumeUrl = resume.resumeFileUrl?.takeIf { it.isNotBlank() }
+        if (resumeId == null || resumeName == null || resumeUrl == null) {
+            "简历信息不完整".showToast()
+            return
+        }
+        val attachment = ResumeDeliveryAttachment.buildResume(resume)
+        val message = currentChat.createCustomMessage(attachment)
+        message.setContent(resumeName)
+        localSendMessageIds.add(message.messageClientId)
+        currentChat.reSendMessage(message)
         mergeMessages(listOf(message))
     }
 
@@ -188,14 +216,26 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
+     * 查询最新可用简历，成功后通知页面弹出确认框。
+     */
+    fun queryResumeForDelivery() {
+        requestWithLoading(apiBlock = { mRepo.api.queryLatestResume() },
+            showLoading = false,
+            showToastError = true,
+        ) {
+            resumeForDelivery.value = data
+        }
+    }
+
+    /**
      * 根据云信消息类型转换成对应的页面消息模型。
      */
     private fun buildMessageItem(message: MessageWrapper, timeText: String): ChatMessageItem {
-        val isSelf = message.direct == MessageDirection.Out
-        val payload = message.customPayload()
+        val isSelf = message.direct == MessageDirection.Out || message.messageClientId in localSendMessageIds
         return when {
             // HR 索要简历消息，按协议 attachment.raw 解析请求状态和简历信息。
             message.messageType == MessageType.custom && message.subtype == SUBTYPE_RESUME_REQUEST -> {
+                val payload = message.customPayload()
                 val resume = payload?.optJSONObject("resume")
                 val status = payload?.optString("status")
                 ResumeRequestChatItem(
@@ -221,32 +261,11 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
             }
             // 求职者主动发送简历消息，按协议 attachment.raw 解析投递状态和简历文件。
             message.messageType == MessageType.custom && message.subtype == SUBTYPE_RESUME_DELIVERY -> {
-                val resume = payload?.optJSONObject("resume")
-                val status = payload?.optString("status")
-                ResumeDeliveryChatItem(
-                    id = message.messageClientId,
-                    protocolVersion = payload?.optInt("v"),
-                    protocolType = payload?.optString("type"),
-                    deliveryId = payload?.optString("deliveryId"),
-                    status = status,
-                    title = App.instance.getString(R.string.message_chat_resume_delivery_title),
-                    fileName = resume?.optString("name")
-                        ?: App.instance.getString(R.string.message_chat_resume_file_default),
-                    statusText = status.resumeStatusText(),
-                    resumeId = resume?.optString("resumeId"),
-                    resumeUrl = resume?.optString("url"),
-                    resumeMimeType = resume?.optString("mimeType"),
-                    resumeSize = resume?.optLong("size"),
-                    createdAt = payload?.optLong("createdAt"),
-                    updatedAt = payload?.optLong("updatedAt"),
-                    operatorId = payload?.optString("operatorId"),
-                    isSelf = isSelf,
-                    time = message.time,
-                    timeText = timeText,
-                )
+                ResumeDeliveryAttachment.buildChat(message, isSelf, timeText)
             }
             // 职业卡片消息，按协议 attachment.raw.job 解析职位快照字段。
             message.messageType == MessageType.custom && message.subtype == SUBTYPE_JOB_CARD -> {
+                val payload = message.customPayload()
                 val job = payload?.optJSONObject("job")
                 JobChatItem(
                     id = message.messageClientId,
@@ -275,8 +294,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
             else -> {
                 TextChatItem(
                     id = message.messageClientId,
-                    content = message.content?.takeIf { it.isNotBlank() }
-                        ?: App.instance.getString(R.string.message_preview_custom),
+                    content = message.content?.takeIf { it.isNotBlank() } ?: App.instance.getString(R.string.message_preview_custom),
                     avatar = if (isSelf) User.get().avatarUrl else null,
                     isSelf = isSelf,
                     time = message.time,
@@ -291,7 +309,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      */
     private fun buildMessageTime(previous: MessageWrapper?, current: MessageWrapper): String {
         val shouldShowTime = previous == null || current.time - previous.time > MESSAGE_TIME_INTERVAL
-        return if (shouldShowTime) MessageTimeFormatter.format(current.time) else ""
+        return if (shouldShowTime) MessageFormatter.format(current.time) else ""
     }
 
     /**
@@ -354,5 +372,6 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
 
         // 简历投递已发送状态。
         private const val STATUS_SENT = "sent"
+
     }
 }

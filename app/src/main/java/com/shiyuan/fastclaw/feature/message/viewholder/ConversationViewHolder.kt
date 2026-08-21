@@ -8,7 +8,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.formatMessageNum
 import com.shiyuan.fastclaw.databinding.ItemMessageConversationBinding
 import com.shiyuan.fastclaw.feature.message.data.ConversationItem
-import com.shiyuan.fastclaw.feature.message.MessageTimeFormatter
+import com.shiyuan.fastclaw.feature.message.MessageFormatter
 
 /**
  * 普通 P2P 会话列表项 ViewHolder，负责渲染联系人信息与末条消息摘要。
@@ -26,7 +26,7 @@ class ConversationViewHolder(private val binding: ItemMessageConversationBinding
         binding.tvDesc.text = targetDesc.orEmpty()
         binding.tvDesc.visibility = if (targetDesc.isNullOrBlank()) View.GONE else View.VISIBLE
         binding.tvLastMessage.text = item.lastMessage
-        binding.tvTime.text = MessageTimeFormatter.format(item.lastMessageTime)
+        binding.tvTime.text = MessageFormatter.format(item.lastMessageTime)
         binding.sbUnreadCount.text = item.unreadCount.formatMessageNum()
         binding.sbUnreadCount.visibility = if (item.unreadCount > 0) View.VISIBLE else View.GONE
         binding.tvDraft.visibility = if (item.isDraft) View.VISIBLE else View.GONE
