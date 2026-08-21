@@ -1,7 +1,5 @@
 package com.shiyuan.fastclaw.feature.message
 
-import com.shiyuan.fastclaw.App
-import com.shiyuan.fastclaw.R
 import com.tulele.im.custom.CustomAttachment
 import com.tulele.im.entity.MessageWrapper
 import com.tulele.im.entity.UnknownAttachment
@@ -11,11 +9,6 @@ import java.util.Calendar
 import java.util.Locale
 
 object MessageFormatter {
-    private const val STATUS_PENDING = "pending"
-    private const val STATUS_ACCEPTED = "accepted"
-    private const val STATUS_REJECTED = "rejected"
-    private const val STATUS_SENT = "sent"
-    private const val STATUS_RECEIVED = "received"
     private const val RESUME_FILE_TYPE_PDF = "PDF"
     private const val RESUME_FILE_TYPE_DOC = "DOC"
     private const val RESUME_FILE_TYPE_DOCX = "DOCX"
@@ -47,17 +40,6 @@ object MessageFormatter {
         RESUME_FILE_TYPE_DOC -> MIME_TYPE_DOC
         RESUME_FILE_TYPE_DOCX -> MIME_TYPE_DOCX
         else -> this
-    }
-
-    /**
-     * 将主动发送简历状态转换成展示文案。
-     */
-    fun String?.deliveryStatusText(): String = when (this) {
-        STATUS_ACCEPTED, STATUS_RECEIVED -> App.instance.getString(R.string.message_chat_resume_delivery_received)
-        STATUS_REJECTED -> App.instance.getString(R.string.message_chat_resume_delivery_rejected)
-        STATUS_PENDING -> App.instance.getString(R.string.message_chat_resume_delivery_sent)
-        STATUS_SENT -> App.instance.getString(R.string.message_chat_resume_delivery_sent)
-        else -> App.instance.getString(R.string.message_chat_resume_delivery_sent)
     }
 
     /**

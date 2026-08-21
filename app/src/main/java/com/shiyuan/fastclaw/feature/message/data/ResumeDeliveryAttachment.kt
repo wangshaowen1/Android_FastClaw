@@ -5,7 +5,6 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.feature.message.MessageFormatter.customPayload
-import com.shiyuan.fastclaw.feature.message.MessageFormatter.deliveryStatusText
 import com.shiyuan.fastclaw.feature.message.MessageFormatter.toResumeMimeType
 import com.tulele.im.custom.CustomAttachment
 import com.tulele.im.entity.MessageWrapper
@@ -136,7 +135,6 @@ class ResumeDeliveryAttachment : CustomAttachment(MSG_TYPE) {
                 status = status,
                 title = App.instance.getString(R.string.message_chat_resume_delivery_title),
                 fileName = resume?.optString(KEY_NAME) ?: defaultFileName,
-                statusText = status.deliveryStatusText(),
                 resumeId = resume?.optString(KEY_RESUME_ID),
                 resumeUrl = resume?.optString(KEY_URL),
                 resumeMimeType = resume?.optString(KEY_MIME_TYPE),
@@ -144,6 +142,7 @@ class ResumeDeliveryAttachment : CustomAttachment(MSG_TYPE) {
                 createdAt = payload?.optLong(KEY_CREATED_AT),
                 updatedAt = payload?.optLong(KEY_UPDATED_AT),
                 operatorId = payload?.optString(KEY_OPERATOR_ID),
+                avatar = if (isSelf) User.get().avatarUrl else null,
                 isSelf = isSelf,
                 time = message.time,
                 timeText = timeText,
