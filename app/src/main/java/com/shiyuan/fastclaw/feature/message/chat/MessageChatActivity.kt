@@ -25,7 +25,6 @@ import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
-import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.dialog.ResumeConfirmDialog
 
 /**
@@ -43,6 +42,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private var hasRunningImeAnimation = false
     // 当前聊天对象账号。
     private var contactId: String = ""
+    //HR头像
+    private var targetAvatar: String? = null
     // 发简历面板是否已展开。
     private var isResumePanelVisible = false
 
@@ -51,6 +52,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         private const val EXTRA_CONTACT_ID = "extra_contact_id"
         // 接收方昵称参数。
         private const val EXTRA_TARGET_NAME = "extra_target_name"
+        // 接收方头像参数。
+        private const val EXTRA_TARGET_AVATAR = "extra_target_avatar"
         // 向上滚动接近顶部时提前加载历史消息的阈值。
         private const val PREFETCH_THRESHOLD = 5
         // 新消息平滑滚动到底部的速度，复用小虾对话的滚动手感。
@@ -61,12 +64,13 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         private const val SEND_BUTTON_BOTTOM_MARGIN = 6
 
         /**
-         * 从会话列表打开 IM 单聊详情页。
+         * 根据会话对象账号、昵称和头像打开 IM 单聊详情页。
          */
-        fun start(context: Context, item: ConversationItem) {
+        fun start(context: Context, id: String, name: String, avatar: String?) {
             val intent = Intent(context, MessageChatActivity::class.java)
-                .putExtra(EXTRA_CONTACT_ID, item.contactId)
-                .putExtra(EXTRA_TARGET_NAME, item.targetName)
+                .putExtra(EXTRA_CONTACT_ID, id)
+                .putExtra(EXTRA_TARGET_NAME, name)
+                .putExtra(EXTRA_TARGET_AVATAR, avatar)
             context.startActivity(intent)
         }
     }
@@ -123,7 +127,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             mRealVM.queryResumeForDelivery()
         }
         messageAdapter.onResumeRequestAcceptClick = {
-            showMessage(getString(R.string.message_chat_resume_action_waiting))
+            mRealVM.acceptResumeRequest(it)
         }
         messageAdapter.onResumeRequestRejectClick = {
             showMessage(getString(R.string.message_chat_resume_action_waiting))
@@ -224,9 +228,10 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
      * 读取会话参数并初始化 IM 单聊。
      */
     private fun initData() {
-        contactId = intent.getStringExtra(EXTRA_CONTACT_ID) ?: ""
         binding.tvTitle.text = intent.getStringExtra(EXTRA_TARGET_NAME).orEmpty()
-        mRealVM.initChat(contactId)
+        contactId = intent.getStringExtra(EXTRA_CONTACT_ID) ?: ""
+        targetAvatar = intent.getStringExtra(EXTRA_TARGET_AVATAR)
+        mRealVM.startChat(contactId, targetAvatar)
     }
 
 

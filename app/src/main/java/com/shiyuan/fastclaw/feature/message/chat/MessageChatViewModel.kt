@@ -3,8 +3,14 @@ package com.shiyuan.fastclaw.feature.message.chat
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.netease.nimlib.sdk.NIMClient
+import com.netease.nimlib.sdk.v2.V2NIMFailureCallback
+import com.netease.nimlib.sdk.v2.V2NIMSuccessCallback
+import com.netease.nimlib.sdk.v2.message.V2NIMMessage
+import com.netease.nimlib.sdk.v2.message.V2NIMMessageService
+import com.netease.nimlib.sdk.v2.message.attachment.V2NIMMessageCustomAttachment
+import com.netease.nimlib.sdk.v2.message.params.V2NIMModifyMessageParams.V2NIMModifyMessageParamsBuilder
 import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
@@ -13,22 +19,20 @@ import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
-import com.shiyuan.fastclaw.feature.message.data.JobChatItem
+import com.shiyuan.fastclaw.feature.message.data.MessageJobAttachment
+import com.shiyuan.fastclaw.feature.message.data.MessageTextAttachment
 import com.shiyuan.fastclaw.feature.message.data.ResumeDeliveryAttachment
+import com.shiyuan.fastclaw.feature.message.data.ResumeRequestAttachment
 import com.shiyuan.fastclaw.feature.message.data.ResumeRequestChatItem
-import com.shiyuan.fastclaw.feature.message.data.TextChatItem
 import com.tulele.im.Chat
 import com.tulele.im.ImCallback
 import com.tulele.im.ImSession
-import com.tulele.im.custom.CustomAttachment
 import com.tulele.im.entity.Contact
 import com.tulele.im.entity.MessageDirection
 import com.tulele.im.entity.MessageType
 import com.tulele.im.entity.MessageWrapper
-import com.tulele.im.entity.UnknownAttachment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 // IM 单聊页面 ViewModel，负责会话打开、历史消息加载、实时消息监听和发送文本消息。
 class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMessageSendResultListener {
@@ -47,11 +51,14 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private val localSendMessageIds = mutableSetOf<String>()
     // 是否还有更早历史消息。
     private var hasMoreHistory = true
+    // 当前聊天对象头像。
+    private var targetAvatar: String? = null
 
     /**
      * 初始化聊天参数、打开当前 IM 会话并加载历史消息。
      */
-    fun initChat(contactId: String) {
+    fun startChat(contactId: String, targetAvatar: String?) {
+        this.targetAvatar = targetAvatar
         chat = ImSession.get().openChat(Contact(contactId))
         chat?.onMessageSendResultListener = this
         chat?.active()
@@ -182,6 +189,35 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
+     * 将原索要简历消息更新为已同意状态并写入简历信息。（修改方法需要改库，暂时测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试）
+     */
+    private fun modifyResumeRequestMessage(item: ResumeRequestChatItem, resume: ResumeData) {
+        val message = messageCache[item.id] ?: return
+        val sdkMessage = message.sdkMessage() ?: return
+        val attachment = ResumeRequestAttachment.buildAccepted(item, resume)
+        val params = V2NIMModifyMessageParamsBuilder.builder()
+            .withSubType(SUBTYPE_RESUME_REQUEST)
+            .withText(attachment.pushContent.toString())
+            .withAttachment(buildResumeRequestAttachment(attachment))
+            .build()
+        NIMClient.getService(V2NIMMessageService::class.java).modifyMessage(
+            sdkMessage,
+            params,
+            V2NIMSuccessCallback { result ->
+                if (result?.errorCode != 200 || result.message == null) {
+                    "简历请求处理失败".showToast()
+                    return@V2NIMSuccessCallback
+                }
+                message.replaceSdkMessage(result.message)
+                mergeMessages(listOf(message))
+            },
+            V2NIMFailureCallback { error ->
+                "简历请求处理失败：${error.code}".showToast()
+            },
+        )
+    }
+
+    /**
      * 文本消息发送成功时刷新对应消息状态。
      */
     override fun onSendSuccess(message: MessageWrapper, antispamResult: String?) {
@@ -230,6 +266,40 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
+     * 同意 HR 索要简历请求，并按协议修改原 resumeRequest 消息。
+     */
+    fun acceptResumeRequest(item: ResumeRequestChatItem) {
+        requestWithLoading(apiBlock = { mRepo.api.queryLatestResume() },
+            showLoading = false,
+            showToastError = true,
+        ) {
+            val resume = data
+            if (resume == null || !resume.hasLatestResume) {
+                showToast(R.string.message_chat_resume_empty_tip)
+                return@requestWithLoading
+            }
+            modifyResumeRequestMessage(item, resume)
+        }
+    }
+
+    /**
+     * 创建云信 V2 自定义附件，复用 ResumeRequestAttachment 的协议序列化。
+     */
+    private fun buildResumeRequestAttachment(attachment: ResumeRequestAttachment): V2NIMMessageCustomAttachment {
+        return object : V2NIMMessageCustomAttachment {
+            /**
+             * 返回云信保存和同步的自定义消息原始 JSON。
+             */
+            override fun getRaw(): String = attachment.toJson(true)
+
+            /**
+             * 发送侧无需解析云信回填的原始 JSON。
+             */
+            override fun parse(attach: String?) = Unit
+        }
+    }
+
+    /**
      * 根据云信消息类型转换成对应的页面消息模型。
      */
     private fun buildMessageItem(message: MessageWrapper, timeText: String): ChatMessageItem {
@@ -237,30 +307,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         return when {
             // HR 索要简历消息，按协议 attachment.raw 解析请求状态和简历信息。
             message.messageType == MessageType.custom && message.subtype == SUBTYPE_RESUME_REQUEST -> {
-                val payload = message.customPayload()
-                val resume = payload?.optJSONObject("resume")
-                val status = payload?.optString("status")
-                ResumeRequestChatItem(
-                    id = message.messageClientId,
-                    protocolVersion = payload?.optInt("v"),
-                    protocolType = payload?.optString("type"),
-                    requestId = payload?.optString("requestId"),
-                    status = status,
-                    title = App.instance.getString(R.string.message_chat_resume_request_title),
-                    statusText = status.resumeStatusText(),
-                    resumeId = resume?.optString("resumeId"),
-                    resumeName = resume?.optString("name"),
-                    resumeUrl = resume?.optString("url"),
-                    resumeMimeType = resume?.optString("mimeType"),
-                    resumeSize = resume?.optLong("size"),
-                    createdAt = payload?.optLong("createdAt"),
-                    updatedAt = payload?.optLong("updatedAt"),
-                    operatorId = payload?.optString("operatorId"),
-                    avatar = if (isSelf) User.get().avatarUrl else null,
-                    isSelf = isSelf,
-                    time = message.time,
-                    timeText = timeText,
-                )
+                ResumeRequestAttachment.buildChat(message, isSelf, timeText, messageAvatar(isSelf))
             }
             // 求职者主动发送简历消息，按协议 attachment.raw 解析投递状态和简历文件。
             message.messageType == MessageType.custom && message.subtype == SUBTYPE_RESUME_DELIVERY -> {
@@ -268,41 +315,11 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
             }
             // 职业卡片消息，按协议 attachment.raw.job 解析职位快照字段。
             message.messageType == MessageType.custom && message.subtype == SUBTYPE_JOB_CARD -> {
-                val payload = message.customPayload()
-                val job = payload?.optJSONObject("job")
-                JobChatItem(
-                    id = message.messageClientId,
-                    protocolVersion = payload?.optInt("v"),
-                    protocolType = payload?.optString("type"),
-                    cardId = payload?.optString("cardId"),
-                    jobId = job?.optString("jobId"),
-                    jobName = job?.optString("jobName"),
-                    salaryText = job?.optString("salaryText"),
-                    brandId = job?.optString("brandId"),
-                    brandName = job?.optString("brandName"),
-                    companyId = job?.optString("companyId"),
-                    companyName = job?.optString("companyName"),
-                    cityCode = job?.optString("cityCode"),
-                    cityName = job?.optString("cityName"),
-                    experienceCode = job?.optString("experienceCode"),
-                    experienceText = job?.optString("experienceText"),
-                    educationCode = job?.optString("educationCode"),
-                    educationText = job?.optString("educationText"),
-                    isJobChanged = job?.optBoolean("isJobChanged") == true,
-                    time = message.time,
-                    timeText = timeText,
-                )
+                MessageJobAttachment.buildChat(message, timeText)
             }
             // 普通文本或暂不支持的消息类型，兜底展示为文本气泡。
             else -> {
-                TextChatItem(
-                    id = message.messageClientId,
-                    content = message.content?.takeIf { it.isNotBlank() } ?: App.instance.getString(R.string.message_preview_custom),
-                    avatar = if (isSelf) User.get().avatarUrl else null,
-                    isSelf = isSelf,
-                    time = message.time,
-                    timeText = timeText,
-                )
+                MessageTextAttachment.buildChat(message, isSelf, timeText, messageAvatar(isSelf))
             }
         }
     }
@@ -316,30 +333,24 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 读取协议自定义消息附件 JSON。
+     * 根据消息方向返回当前用户或聊天对象头像。
      */
-    private fun MessageWrapper.customPayload(): JSONObject? {
-        val raw = when (val attachment = attachment) {
-            is UnknownAttachment -> attachment.raw
-            is CustomAttachment -> attachment.toJson(false)
-            else -> null
-        }?.takeIf { it.isNotBlank() } ?: return null
-        return try {
-            JSONObject(raw)
-        } catch (ignored: Exception) {
-            null
-        }
+    private fun messageAvatar(isSelf: Boolean): String? {
+        return if (isSelf) User.get().avatarUrl else targetAvatar
     }
 
     /**
-     * 将简历请求状态转换成展示文案。
+     * 读取 MessageWrapper 内部 V2NIMMessage，用于调用云信 modifyMessage。
      */
-    private fun String?.resumeStatusText(): String = when (this) {
-        STATUS_ACCEPTED -> App.instance.getString(R.string.message_chat_resume_delivery_sent)
-        STATUS_REJECTED -> App.instance.getString(R.string.message_chat_resume_request_rejected)
-        STATUS_PENDING -> App.instance.getString(R.string.message_chat_resume_request_pending)
-        STATUS_SENT -> App.instance.getString(R.string.message_chat_resume_delivery_sent)
-        else -> App.instance.getString(R.string.message_chat_resume_request_pending)
+    private fun MessageWrapper.sdkMessage(): V2NIMMessage? {
+        return runCatching { MESSAGE_PROXY_FIELD.get(this) as? V2NIMMessage }.getOrNull()
+    }
+
+    /**
+     * 修改成功后替换 MessageWrapper 内部消息体，让当前页面立即刷新。
+     */
+    private fun MessageWrapper.replaceSdkMessage(message: V2NIMMessage) {
+        runCatching { MESSAGE_PROXY_FIELD.set(this, message) }
     }
 
     /**
@@ -370,14 +381,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         // 简历请求待处理状态。
         private const val STATUS_PENDING = "pending"
 
-        // 简历请求已同意状态。
-        private const val STATUS_ACCEPTED = "accepted"
-
-        // 简历请求已拒绝状态。
-        private const val STATUS_REJECTED = "rejected"
-
-        // 简历投递已发送状态。
-        private const val STATUS_SENT = "sent"
-
+        // MessageWrapper 内部 V2NIMMessage 字段，用于补齐 imsdk 未暴露的 modifyMessage 能力。
+        private val MESSAGE_PROXY_FIELD by lazy {
+            MessageWrapper::class.java.getDeclaredField("proxy").apply { isAccessible = true }
+        }
     }
 }

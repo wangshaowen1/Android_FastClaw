@@ -1,10 +1,10 @@
 package com.shiyuan.fastclaw.feature.message.data
 
+import com.shiyuan.fastclaw.feature.message.chat.MessageChatAdapter.Companion.TYPE_JOB_CARD
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatAdapter.Companion.TYPE_RESUME_DELIVERY
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatAdapter.Companion.TYPE_RESUME_REQUEST
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatAdapter.Companion.TYPE_TEXT_LEFT
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatAdapter.Companion.TYPE_TEXT_RIGHT
-import com.shiyuan.fastclaw.feature.message.chat.MessageChatAdapter.Companion.TYPE_JOB_CARD
 
 /**
  * IM 对话消息统一行模型，供多类型 Adapter 根据 itemType 分发不同布局。
@@ -107,8 +107,6 @@ data class ResumeRequestChatItem(
     val status: String?,
     /** 卡片标题。 */
     val title: String,
-    /** 当前请求状态展示文案。 */
-    val statusText: String,
     /** 简历业务 ID。 */
     val resumeId: String?,
     /** 简历文件名。 */

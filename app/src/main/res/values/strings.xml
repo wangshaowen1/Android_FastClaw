@@ -69,7 +69,7 @@
     <string name="message_chat_send">发送</string>
     <string name="message_chat_send_resume">发简历</string>
     <string name="message_chat_resume_confirm_title">发送附件简历</string>
-    <string name="message_chat_resume_request_title">HR想查看你的简历</string>
+    <string name="message_chat_resume_request_title">我想要您一份附件简历，您是否同意？</string>
     <string name="message_chat_resume_request_pending">待处理</string>
     <string name="message_chat_resume_request_rejected">已拒绝</string>
     <string name="message_chat_resume_delivery_title">已发送简历</string>

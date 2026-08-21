@@ -5,7 +5,6 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.databinding.FragmentMessageBinding
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
-import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.tulele.im.Chat
 import com.tulele.im.ImSession
 import com.tulele.im.entity.Contact
@@ -47,7 +46,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
             adapter = msgAdapter
         }
         msgAdapter.onConversationClick = {
-            MessageChatActivity.start(requireContext(), it)
+            MessageChatActivity.start(requireContext(), it.contactId, it.targetName, it.targetAvatar)
         }
         msgAdapter.onMarkedUnsuitableClick = {
             UnableMessageActivity.start(requireContext())
