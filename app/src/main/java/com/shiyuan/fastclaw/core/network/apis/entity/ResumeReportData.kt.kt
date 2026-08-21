@@ -18,6 +18,7 @@ import kotlinx.parcelize.Parcelize
     var checkStatus: String? = null,
     var resumeFileName: String ?,
     val resumeFileType: String ?,
+    val resumeFileSize: Long? = null,
     val submitTime: String ? = null,
     var checkId: String ? = null,
     var fileName: String ? = null,
@@ -42,6 +43,7 @@ import kotlinx.parcelize.Parcelize
         checkStatus: String? = this.checkStatus,
         resumeFileName: String? = this.resumeFileName,
         resumeFileType: String? = this.resumeFileType,
+        resumeFileSize: Long? = this.resumeFileSize,
         submitTime: String? = this.submitTime,
         checkId: String? = this.checkId,
         fileName: String? = this.fileName,
@@ -50,7 +52,7 @@ import kotlinx.parcelize.Parcelize
     ) = ResumeData(
         hasLatestResume, isJd, blockingIssuesMessage, blockingMessage,
         blockingIssues, resumeFileUrl, checkStatus, resumeFileName,
-        resumeFileType, submitTime, checkId,fileName,resumeName,updateTime
+        resumeFileType, resumeFileSize, submitTime, checkId,fileName,resumeName,updateTime
     )
 }
 

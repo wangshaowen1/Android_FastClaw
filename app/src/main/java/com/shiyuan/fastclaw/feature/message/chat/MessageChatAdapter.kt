@@ -35,21 +35,30 @@ class MessageChatAdapter : BaseMultiItemAdapter<ChatMessageItem>() {
     var onResumeFileClick: (ResumeDeliveryChatItem) -> Unit = {}
 
     init {
+        // 职位卡片消息，展示首次沟通或切换职位的职位快照。
         register<JobChatViewHolder, JobChatItem>(TYPE_JOB_CARD, { inflater, parent ->
             JobChatViewHolder(ItemChatJobCardBinding.inflate(inflater, parent, false))
         }) { holder, item -> holder.bind(item) }
+
+        // 左侧文本消息，展示对方发送的普通文本内容。
         register<TextChatLeftViewHolder, TextChatItem>(TYPE_TEXT_LEFT, { inflater, parent ->
             TextChatLeftViewHolder(ItemChatTextLeftBinding.inflate(inflater, parent, false))
         }) { holder, item -> holder.bind(item) }
+
+        // 右侧文本消息，展示当前账号发送的普通文本内容。
         register<TextChatRightViewHolder, TextChatItem>(TYPE_TEXT_RIGHT, { inflater, parent ->
             TextChatRightViewHolder(ItemChatTextRightBinding.inflate(inflater, parent, false))
         }) { holder, item -> holder.bind(item) }
+
+        // 索要简历消息，展示 HR 请求简历以及同意、拒绝操作状态。
         register<ResumeRequestViewHolder, ResumeRequestChatItem>(TYPE_RESUME_REQUEST, { inflater, parent ->
             ResumeRequestViewHolder(ItemChatResumeRequestBinding.inflate(inflater, parent, false)).apply {
                 onAcceptClickListener = { onResumeRequestAcceptClick(it) }
                 onRejectClickListener = { onResumeRequestRejectClick(it) }
             }
         }) { holder, item -> holder.bind(item) }
+
+        // 主动发送简历消息，展示求职者发送的简历文件信息。
         register<ResumeDeliveryViewHolder, ResumeDeliveryChatItem>(TYPE_RESUME_DELIVERY, { inflater, parent ->
             ResumeDeliveryViewHolder(ItemChatResumeDeliveryBinding.inflate(inflater, parent, false)).apply {
                 onFileClickListener = { onResumeFileClick(it) }
