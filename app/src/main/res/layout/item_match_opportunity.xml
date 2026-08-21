@@ -7,6 +7,8 @@
 
         <import type="android.view.View" />
 
+        <import type="android.text.TextUtils" />
+
         <variable
             name="item"
             type="com.shiyuan.fastclaw.feature.opportunity.ItemMatchOpportunityVM" />
@@ -23,7 +25,7 @@
             android:id="@+id/v_new_opportunity_dot"
             android:layout_width="6dp"
             android:layout_height="6dp"
-            android:visibility="@{item.data.isRead ? View.GONE : View.VISIBLE}"
+            android:visibility="@{item.data.unread ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="@id/tv_new_opportunity"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_new_opportunity"
@@ -73,7 +75,7 @@
             android:ellipsize="end"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="@{item.data.title}"
+            android:text="@{item.data.jobTitle}"
             android:textColor="@color/color_90_000000"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -87,7 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
-            android:text="@{item.data.salary}"
+            android:text="@{item.data.salaryText}"
             android:textColor="@color/color_2f6bff"
             android:textSize="15sp"
             app:layout_constraintTop_toTopOf="@id/tv_opportunity_title"
@@ -103,7 +105,7 @@
             android:ellipsize="end"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="@{item.data.company}"
+            android:text="@{item.data.companyName}"
             android:textColor="@color/color_85_3c3c43"
             android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -119,7 +121,7 @@
             android:ellipsize="end"
             android:includeFontPadding="false"
             android:maxLines="1"
-            android:text="@{item.data.requirements}"
+            android:text="@{item.requirements}"
             android:textColor="@color/color_85_3c3c43"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -132,6 +134,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:visibility="@{TextUtils.isEmpty(item.data.recommendationReason) ? View.GONE : View.VISIBLE}"
             android:paddingStart="14dp"
             android:paddingTop="@dimen/spacing_s"
             android:paddingEnd="6dp"
@@ -147,7 +150,7 @@
                 android:layout_height="wrap_content"
                 android:includeFontPadding="false"
                 android:lineHeight="19dp"
-                android:text="@string/not_opportunity_match_reason"
+                android:text="@{item.data.recommendationReason}"
                 android:textColor="@color/color_90_000000"
                 android:textSize="13sp" />
 

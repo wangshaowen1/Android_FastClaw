@@ -9,7 +9,10 @@ import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
+import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.ext.PollingState
 import com.shiyuan.fastclaw.core.ext.launch
+import com.shiyuan.fastclaw.core.ext.launchPolling
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
@@ -22,6 +25,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
@@ -29,6 +33,7 @@ import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.feature.opportunity.ProcessedOpportunityItem
 import com.shiyuan.fastclaw.feature.report.data.ReportRepository
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
+import kotlinx.coroutines.Job
 import java.util.UUID
 
 enum class OpportunityMatchState {
@@ -48,6 +53,9 @@ enum class OpportunityDetailActionState {
  * @Introduce:
  */
 class OpportunityViewModel : HomeReportViewModel() {
+
+    private var newOpportunityPollingJob: Job? = null
+    private var resumePollingJob: Job? = null
 
     val mToolbarVMOpportunityDetail = ToolbarViewModel(
         navigationAction = { finish() },
@@ -72,7 +80,7 @@ class OpportunityViewModel : HomeReportViewModel() {
 
     val chanceData = MutableLiveData<List<ProcessedOpportunityItem>>(emptyList())
 
-    val matchingData = MutableLiveData<List<ProcessedOpportunityItem>>(emptyList())
+    val matchingData = MutableLiveData<List<OpportunityNewItemData>>(emptyList())
 
     val opportunityStats = MutableLiveData<OpportunityStatsData?>()
 
@@ -92,9 +100,11 @@ class OpportunityViewModel : HomeReportViewModel() {
 
 
     fun resetUserState() {
+        stopNewOpportunityPolling()
         resumeListData.value = emptyList()
         isJobUpCompleted.value = false
         isJobPreferenceCompleted.value = false
+        matchingData.value = emptyList()
         opportunityStats.value = null
     }
 
@@ -106,6 +116,71 @@ class OpportunityViewModel : HomeReportViewModel() {
                 data?.let { opportunityStats.value = it }
             }
         )
+    }
+
+    fun startResumePolling() {
+        if (User.get().isVisitor || resumePollingJob?.isActive == true) return
+
+        resumePollingJob = launchPolling(
+            intervalMs = 3000L,
+            retryOnNetworkError = true,
+            showToastError = false,
+            apiBlock = { mRepo.api.resumeQuery(PagedBody(1, 100)) },
+            checkState = { response ->
+                if (response?.isSuccess != true) {
+                    PollingState.CONTINUE
+                } else {
+                    val latestResume = response.data?.items.orEmpty()
+                        .maxByOrNull { it.uploadTime.orEmpty() }
+                    if (latestResume?.parseStatus == 0 || latestResume?.parseStatus == 1) {
+                        PollingState.CONTINUE
+                    } else {
+                        PollingState.SUCCESS
+                    }
+                }
+            },
+            onSuccess = { response ->
+                resumePollingJob = null
+                resumeListData.value = response?.data?.items.orEmpty()
+            },
+            onPolling = { response ->
+                if (response?.isSuccess == true) {
+                    resumeListData.value = response.data?.items.orEmpty()
+                }
+            }
+        )
+    }
+
+    fun stopResumePolling() {
+        resumePollingJob?.cancel()
+        resumePollingJob = null
+    }
+
+    /** 页面可见且处于常态化匹配时，轮询查询新机会。 */
+    fun startNewOpportunityPolling() {
+        if (newOpportunityPollingJob?.isActive == true) return
+
+        newOpportunityPollingJob = launchPolling(
+            intervalMs = 5000L,
+            retryOnNetworkError = false,
+            showToastError = false,
+            apiBlock = { mRepo.api.queryNewOpportunities() },
+            checkState = { response ->
+                when {
+                    response?.isSuccess == true &&  response.data.orEmpty().isNotEmpty() -> PollingState.SUCCESS
+                    else -> PollingState.CONTINUE
+                }
+            },
+            onSuccess = { response ->
+                newOpportunityPollingJob = null
+                matchingData.value = response?.data.orEmpty()
+            }
+        )
+    }
+
+    fun stopNewOpportunityPolling() {
+        newOpportunityPollingJob?.cancel()
+        newOpportunityPollingJob = null
     }
 
     fun updateOpportunityDetailActionState(state: OpportunityDetailActionState) {
@@ -121,6 +196,12 @@ class OpportunityViewModel : HomeReportViewModel() {
         } else {
             OpportunityMatchState.MATCHED
         }
+    }
+
+    override fun onCleared() {
+        stopResumePolling()
+        stopNewOpportunityPolling()
+        super.onCleared()
     }
 
      fun createFakeChanceData(): List<ProcessedOpportunityItem> = listOf(

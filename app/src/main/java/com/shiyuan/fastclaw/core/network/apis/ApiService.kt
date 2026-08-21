@@ -117,6 +117,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedDa
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNavCountData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
@@ -736,6 +737,10 @@ interface ApiService {
     /** 查询常态化匹配统计数据。 */
     @POST(ApiConstants.OPPORTUNITY_STATS_QUERY)
     suspend fun queryOpportunityStats(): ApiResponse<OpportunityStatsData>
+
+    /** 查询最新推荐批次中的有效未处理机会。 */
+    @POST(ApiConstants.OPPORTUNITY_NEW_QUERY)
+    suspend fun queryNewOpportunities(): ApiResponse<List<OpportunityNewItemData>>
 
 
     @POST(ApiConstants.REGISTER_IM_TOKEN)

@@ -2,8 +2,6 @@ package com.shiyuan.fastclaw.feature.opportunity
 
 
 import android.graphics.Rect
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -33,6 +31,7 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.databinding.FragmentNotOpportunityBinding
 import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityMatchState
@@ -113,9 +112,7 @@ class OpportunityFragment :
             val resume = data.orEmpty().maxByOrNull { it.uploadTime.orEmpty() }
             mRealVM.isJobUpCompleted.value = resume?.parseStatus == 2
             if (resume?.parseStatus == 0 || resume?.parseStatus == 1) {
-                if (!isResumePolling) {
-                    startResumePolling()
-                }
+                mRealVM.startResumePolling()
                 binding.llState.visible()
                 binding.vLine.gone()
                 binding.ivState.setImageResource(R.drawable.ic_running2)
@@ -127,7 +124,7 @@ class OpportunityFragment :
                 binding.vLine.visible()
                 binding.cardUploadResumeAction.gone()
                 binding.cardUploadAlready.visible()
-                stopResumePolling()  // ✅ 停止轮询
+                mRealVM.stopResumePolling()
                 stopRotation(binding.ivState)
             } else if (resume?.parseStatus == 3) {
                 binding.llState.visible()
@@ -139,7 +136,7 @@ class OpportunityFragment :
                     }
                 }
                 binding.cardUploadAlready.gone()
-                stopResumePolling()  // ✅ 停止轮询
+                mRealVM.stopResumePolling()
                 binding.ivState.setImageResource(R.drawable.ic_running_fail)
                 stopRotation(binding.ivState)
                 binding.tvState.setTextColor(resources.getColor(R.color.color_fb415e))
@@ -154,14 +151,14 @@ class OpportunityFragment :
                     }
                 }
                 binding.cardUploadAlready.gone()
-                stopResumePolling()  // ✅ 停止轮询
+                mRealVM.stopResumePolling()
                 stopRotation(binding.ivState)
             }
         }
         mRealVM.resumeUploadResult.observe(this) { data -> //上传成功
             //解析简成功发送消息
             FlowEventBus.postSync(Events.ResumeEvent(true))
-            startResumePolling()
+            mRealVM.startResumePolling()
         }
         mRealVM.isJobUpCompleted.observe(this) { data ->
             if (data) {
@@ -204,7 +201,6 @@ class OpportunityFragment :
                     binding.llProcessedOpportunity.visible()
                     mRealVM.queryOpportunityStats()
                 }
-
                 else -> {
                     renderLottie(true)
                     binding.cardUnderstandUser.visible()
@@ -213,7 +209,7 @@ class OpportunityFragment :
                     binding.llProcessedOpportunity.gone()
                 }
             }
-
+            updateNewOpportunityPolling(lastUiVisible == true)
         }
         mRealVM.chanceData.observe(this) { data ->
             val opportunityItems = data.orEmpty()
@@ -270,14 +266,12 @@ class OpportunityFragment :
         if (!force && lastVisitorState == isVisitor) return
 
         lastVisitorState = isVisitor
-        stopResumePolling()
+        mRealVM.stopResumePolling()
         mRealVM.resetUserState()
         if (!isVisitor) {
-            mRealVM.isJobPreferenceCompleted.value = false
+            mRealVM.isJobPreferenceCompleted.value = true
             mRealVM.chanceData.value = mRealVM.createFakeChanceData()
-            // mRealVM.matchingData.value = mRealVM.createFakeChanceData()
             opportunityAdapter.submitList(mRealVM.chanceData.value?.map(::ItemProcessedOpportunityVM))
-            // matchOpportunityAdapter.submitList( mRealVM.matchingData.value?.map(::ItemMatchOpportunityVM))
             mRealVM.queryResumeList()
         }
     }
@@ -338,7 +332,7 @@ class OpportunityFragment :
 
     private var lastUiVisible: Boolean? = null
     private fun dispatchChanged() {
-        val isUiVisible = isResumed && !isHidden == true
+        val isUiVisible = isVisible && isResumed && !isHidden
         if (lastUiVisible == isUiVisible) return
         lastUiVisible = isUiVisible
         Log.d("uploadResumeDialog", lastUiVisible.toString())
@@ -346,12 +340,22 @@ class OpportunityFragment :
     }
 
     private fun onVisibilityChanged(isVisible: Boolean) {
+        updateNewOpportunityPolling(isVisible)
         if (isVisible) {
             scheduleLottiePlaybackUpdate()
             handleWechatResumeReturn()
             syncUserState()
         } else {
             stopLottiePlayback()
+        }
+    }
+
+    /** 轮询最新机会**/
+    private fun updateNewOpportunityPolling(isVisible: Boolean) {
+        if (isVisible && mRealVM.matchState.value == OpportunityMatchState.NORMAL_MATCHING) {
+            mRealVM.startNewOpportunityPolling()
+        } else {
+            mRealVM.stopNewOpportunityPolling()
         }
     }
 
@@ -375,8 +379,8 @@ class OpportunityFragment :
     }
 
     override fun onPause() {
-        dispatchChanged()
         super.onPause()
+        dispatchChanged()
     }
 
     private val lottieVisibleRect = Rect()
@@ -469,10 +473,6 @@ class OpportunityFragment :
         binding.v.cancelAnimation()
     }
 
-    private val handler = Handler(Looper.getMainLooper())
-    private val POLLING_INTERVAL = 2000L // 2秒
-    private var resumePollingRunnable: Runnable? = null
-    private var isResumePolling = false
     private var rotateAnim: RotateAnimation? = null
     private fun startRotation(view: View) {
         if (rotateAnim == null) {
@@ -496,47 +496,14 @@ class OpportunityFragment :
         view.clearAnimation()
     }
 
-    private fun startResumePolling() {
-        if (User.get().isVisitor || isResumePolling) return  // ✅ 防止游客或重复启动
-
-        isResumePolling = true
-        resumePollingRunnable = object : Runnable {
-            override fun run() {
-                if (User.get().isVisitor) {
-                    stopResumePolling()
-                    return
-                }
-                val activity = activity
-                if (activity != null && !activity.isFinishing && !activity.isDestroyed && isResumePolling) {
-                    Log.d("Polling", "轮询检查状态...")
-                    mRealVM.queryResumeList()
-                    handler.postDelayed(this, POLLING_INTERVAL)
-                }
-            }
-        }
-        handler.postDelayed(resumePollingRunnable!!, POLLING_INTERVAL)
-        Log.d("Polling", "开始轮询")
-    }
-
-    private fun stopResumePolling() {
-        if (!isResumePolling) return  // ✅ 停止前检查
-
-        isResumePolling = false
-        resumePollingRunnable?.let {
-            handler.removeCallbacks(it)
-            resumePollingRunnable = null
-        }
-        Log.d("Polling", "停止轮询")
-    }
-
-
     override fun onDestroyView() {
         parentPager?.unregisterOnPageChangeCallback(parentPagerCallback)
         parentPager = null
         binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
         isContentScrolling = false
         releaseLottie()
-        stopResumePolling()
+        mRealVM.stopResumePolling()
+        mRealVM.stopNewOpportunityPolling()
         super.onDestroyView()
     }
 
@@ -555,5 +522,10 @@ data class ProcessedOpportunityItem(
 class ItemProcessedOpportunityVM(data: ProcessedOpportunityItem) :
     AppItemViewModel<ProcessedOpportunityItem>(data)
 
-class ItemMatchOpportunityVM(data: ProcessedOpportunityItem) :
-    AppItemViewModel<ProcessedOpportunityItem>(data)
+class ItemMatchOpportunityVM(data: OpportunityNewItemData) :
+    AppItemViewModel<OpportunityNewItemData>(data) {
+
+    val requirements = listOf(data.workCity, data.experienceText, data.degreeText)
+        .filter(String::isNotBlank)
+        .joinToString("·")
+}
