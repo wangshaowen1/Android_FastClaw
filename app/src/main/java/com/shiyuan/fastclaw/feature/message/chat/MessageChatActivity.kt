@@ -3,13 +3,24 @@ package com.shiyuan.fastclaw.feature.message.chat
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.setupTranslucentStatus
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
+import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
 import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 
@@ -24,8 +35,12 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private lateinit var messageLayoutManager: LinearLayoutManager
     // 下一次列表刷新后是否滚动到底部。
     private var forceScrollToBottom = false
-
+    // 键盘动画运行中标记，避免普通 Insets 回调和动画回调同时修改底部间距。
+    private var hasRunningImeAnimation = false
+    // 当前聊天对象账号。
     private var contactId: String = ""
+    // 发简历面板是否已展开。
+    private var isResumePanelVisible = false
 
     companion object {
         // 接收方账号参数。
@@ -36,6 +51,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         private const val PREFETCH_THRESHOLD = 5
         // 新消息平滑滚动到底部的速度，复用小虾对话的滚动手感。
         private const val MESSAGE_SCROLL_SPEED = 0.1f
+        // 键盘弹起时输入区和键盘顶部的目标间距。
+        private const val INPUT_KEYBOARD_GAP = 9
 
         /**
          * 从会话列表打开 IM 单聊详情页。
@@ -63,7 +80,9 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
      */
     private fun initView() {
         binding.ivBack.setOnSingleClickListener { finish() }
-        messageLayoutManager = LinearLayoutManager(this)
+        messageLayoutManager = LinearLayoutManager(this).apply {
+            stackFromEnd = true
+        }
         binding.rvMessages.apply {
             layoutManager = messageLayoutManager
             adapter = messageAdapter
@@ -80,7 +99,20 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             }
         })
         binding.ivSend.setOnSingleClickListener {
-            sendTextMessage()
+            val hasContent = binding.etContent.text?.toString()?.isNotBlank() == true
+            if (hasContent) {
+                sendTextMessage()
+            } else if (isResumePanelVisible) {
+                hideResumePanel()
+            } else {
+                showResumePanel()
+            }
+        }
+        binding.etContent.doAfterTextChanged {
+            updateSendButton()
+        }
+        binding.layoutSendResume.setOnSingleClickListener {
+            showMessage(getString(R.string.message_chat_resume_action_waiting))
         }
         messageAdapter.onResumeRequestAcceptClick = {
             showMessage(getString(R.string.message_chat_resume_action_waiting))
@@ -91,6 +123,68 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         messageAdapter.onResumeFileClick = {
             showMessage(getString(R.string.message_chat_resume_action_waiting))
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.layoutInput) { view, insets ->
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            if (!hasRunningImeAnimation) {
+                view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    bottomMargin = resolveBottomMargin(imeBottom)
+                }
+            }
+            insets
+        }
+        ViewCompat.setWindowInsetsAnimationCallback(
+            binding.layoutInput,
+            object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+                /**
+                 * 键盘动画开始时暂停普通 Insets 回调改 margin。
+                 */
+                override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+                    if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                        hasRunningImeAnimation = true
+                    }
+                }
+
+                /**
+                 * 键盘动画过程中逐帧更新输入区底部间距。
+                 */
+                override fun onProgress(
+                    insets: WindowInsetsCompat,
+                    runningAnimations: MutableList<WindowInsetsAnimationCompat>
+                ): WindowInsetsCompat {
+                    val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                    binding.layoutInput.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                        bottomMargin = resolveBottomMargin(imeBottom)
+                    }
+                    return insets
+                }
+
+                /**
+                 * 键盘动画结束后恢复普通 Insets 回调。
+                 */
+                override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                    if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
+                        hasRunningImeAnimation = false
+                        ViewCompat.requestApplyInsets(binding.layoutInput)
+                    }
+                }
+            }
+        )
+        SoftKeyBoardListener(this).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
+            /**
+             * 键盘真正展开后隐藏发简历面板，避免和输入法同时占位。
+             */
+            override fun keyBoardShow(height: Int) {
+                hideResumePanel()
+            }
+
+            /**
+             * 键盘收起时不再延迟修正 Insets，避免动画结束后再次跳动。
+             */
+            override fun keyBoardHide(height: Int) {
+                hasRunningImeAnimation = false
+            }
+        })
     }
 
     /**
@@ -103,7 +197,10 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             // 如果用户在底部，就跟随新消息滚到底；如果用户往上翻历史，就不打断。
             val hadMessages = messageAdapter.items.isNotEmpty()
             val hasNewTailMessage = items.size > messageAdapter.items.size
-            val scrollToLatest = forceScrollToBottom || !binding.rvMessages.canScrollVertically(1)
+            val scrollToLatest = forceScrollToBottom || RecyclerViewScrollHelper.isScrollBottom(
+                binding.rvMessages,
+                binding.rvMessages.paddingBottom
+            )
             forceScrollToBottom = false
             messageAdapter.submitList(items)
             if (items.isNotEmpty() && scrollToLatest) {
@@ -126,6 +223,49 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         mRealVM.initChat(contactId)
     }
 
+
+    /**
+     * 计算输入区相对父容器底部应有的间距，让输入框和键盘顶部保持固定间距。
+     */
+    private fun resolveBottomMargin(imeBottom: Int): Int {
+        return (imeBottom - binding.layoutContainer.paddingBottom + INPUT_KEYBOARD_GAP.dp).coerceAtLeast(0)
+    }
+
+    /**
+     * 展开发简历面板并把右侧按钮切成关闭态。
+     */
+    private fun showResumePanel() {
+        if (isResumePanelVisible) return
+        hideKeyboard(binding.etContent)
+        binding.etContent.clearFocus()
+        isResumePanelVisible = true
+        binding.layoutSendResume.visibility = View.VISIBLE
+        updateSendButton()
+    }
+
+    /**
+     * 隐藏发简历面板并恢复默认输入框高度。
+     */
+    private fun hideResumePanel() {
+        if (!isResumePanelVisible) return
+        isResumePanelVisible = false
+        binding.layoutSendResume.visibility = View.GONE
+        updateSendButton()
+    }
+
+    /**
+     * 根据输入框是否有内容切换发送按钮样式。
+     */
+    private fun updateSendButton() {
+        val hasContent = binding.etContent.text?.toString()?.isNotBlank() == true
+        val iconRes = when {
+            hasContent -> R.drawable.ic_message_send_active
+            isResumePanelVisible -> R.drawable.ic_message_send_inactive
+            else -> R.drawable.ic_message_add_image
+        }
+        binding.ivSend.setImageResource(iconRes)
+    }
+
     /**
      * 发送输入框中的文本消息。
      */
@@ -141,10 +281,6 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
      * 设置透明状态栏并保持深色状态栏字体。
      */
     override fun setTranslucentStatus() {
-        ImmersionBar.with(this)
-            .statusBarDarkFont(true)
-            .navigationBarColor(R.color.color_f6f9ff)
-            .transparentStatusBar()
-            .init()
+        setupTranslucentStatus(true, ContextCompat.getColor(this, R.color.color_f6f9ff))
     }
 }

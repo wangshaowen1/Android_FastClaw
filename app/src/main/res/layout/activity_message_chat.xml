@@ -11,9 +11,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color_f6f9ff">
+        android:background="@color/color_f6f9ff"
+        android:paddingBottom="12dp">
 
         <ImageView
             android:id="@+id/ivTopShadow"
@@ -86,42 +88,109 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/color_f6f9ff"
-            android:paddingStart="16dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="4dp"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <EditText
-                android:id="@+id/etContent"
+            <View
+                android:id="@+id/viewInputDivider"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_ffffff_r100"
-                android:hint="@string/message_chat_input_hint"
-                android:includeFontPadding="false"
-                android:minHeight="40dp"
-                android:paddingStart="18dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="48dp"
-                android:paddingBottom="8dp"
-                android:textColor="@color/color_000000"
-                android:textColorHint="@color/color_60_3c3c43"
-                android:textSize="15sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="1dp"
+                android:background="@color/color_EDF3FF"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/ivSend"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="@string/message_chat_send"
-                android:src="@drawable/ic_agent_send"
-                app:layout_constraintBottom_toBottomOf="@id/etContent"
-                app:layout_constraintEnd_toEndOf="@id/etContent"
-                app:layout_constraintTop_toTopOf="@id/etContent" />
+            <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
+                android:id="@+id/layoutContent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:minHeight="40dp"
+                app:background_normalColor="@color/color_ffffff"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:super_corner="20dp">
+
+                <EditText
+                    android:id="@+id/etContent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:gravity="center_vertical|start"
+                    android:hint="@string/message_chat_input_hint"
+                    android:includeFontPadding="false"
+                    android:inputType="textMultiLine"
+                    android:maxLines="4"
+                    android:minHeight="40dp"
+                    android:paddingStart="18dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="6dp"
+                    android:paddingBottom="6dp"
+                    android:textColor="@color/color_90_000000"
+                    android:textColorHint="@color/color_55_3c3c43"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ivSend"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="手打洒水打算asdas啊撒大" />
+
+                <ImageView
+                    android:id="@+id/ivSend"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:contentDescription="@string/message_chat_send"
+                    android:src="@drawable/ic_message_add_image"
+                    app:layout_constraintBottom_toBottomOf="@id/etContent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+            </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutSendResume"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:paddingTop="15dp"
+                android:paddingStart="29dp"
+                android:paddingEnd="29dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutContent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/ivSendResume"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_message_resume_action" />
+
+                    <TextView
+                        android:id="@+id/tvSendResume"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="@string/message_chat_send_resume"
+                        android:textColor="@color/color_000000"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

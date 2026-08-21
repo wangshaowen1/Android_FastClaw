@@ -65,8 +65,9 @@
     <string name="message_preview_notification">通知消息</string>
     <string name="message_preview_video_call">通话消息</string>
     <string name="message_preview_custom">自定义消息</string>
-    <string name="message_chat_input_hint">发消息...</string>
+    <string name="message_chat_input_hint">和TA聊一聊～</string>
     <string name="message_chat_send">发送</string>
+    <string name="message_chat_send_resume">发简历</string>
     <string name="message_chat_resume_request_title">HR想查看你的简历</string>
     <string name="message_chat_resume_request_pending">待处理</string>
     <string name="message_chat_resume_request_rejected">已拒绝</string>
