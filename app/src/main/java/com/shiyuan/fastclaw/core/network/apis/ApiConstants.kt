@@ -404,6 +404,12 @@ object ApiConstants {
     const val JOB_AGENT_ATTRIBUTE_REJECT = "/api/candidate/app/jobAgent/attribute/reject"
 
     /**
+     * 检查高重要度属性是否已全部回答
+     */
+    const val JOB_AGENT_ATTRIBUTE_ANSWER_CHECK =
+        "/api/candidate/app/jobAgent/attribute/answer/check"
+
+    /**
      * 查询城市字典组件提供已选、历史、热门、A-Z 分组和搜索数据。
      */
     const val JOB_AGENT_DICT_REGION_QUERY = "/api/candidate/app/jobAgent/dict/region/query"

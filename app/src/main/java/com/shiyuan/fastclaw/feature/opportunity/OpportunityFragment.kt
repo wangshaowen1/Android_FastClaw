@@ -281,7 +281,7 @@ class OpportunityFragment :
         mRealVM.stopResumePolling()
         mRealVM.resetUserState()
         if (!isVisitor) {
-            mRealVM.isJobPreferenceCompleted.value = true
+            mRealVM.queryJobPreferenceCompletion()
             mRealVM.queryResumeList()
         }
     }

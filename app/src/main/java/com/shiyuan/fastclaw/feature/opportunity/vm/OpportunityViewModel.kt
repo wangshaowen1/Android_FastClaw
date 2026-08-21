@@ -85,7 +85,7 @@ class OpportunityViewModel : HomeReportViewModel() {
     )
 
     var isJobUpCompleted = MutableLiveData(false)
-    var isJobPreferenceCompleted = MutableLiveData(false) // TODO 岗位偏好接口接入后使用接口结果
+    var isJobPreferenceCompleted = MutableLiveData(false)
 
 
     val chanceData = MutableLiveData<List<OpportunityProcessedItemData>>(emptyList())
@@ -258,6 +258,16 @@ class OpportunityViewModel : HomeReportViewModel() {
                 data?.let { detail ->
                     opportunityDetail.value = detail
                 }
+            }
+        )
+    }
+
+    /** 查询高重要度求职属性是否已全部确认。 */
+    fun queryJobPreferenceCompletion() {
+        request(
+            apiBlock = { mRepo.api.checkJobAgentAttributeAnswers() },
+            onSuccess = {
+                isJobPreferenceCompleted.value = data?.result == true
             }
         )
     }

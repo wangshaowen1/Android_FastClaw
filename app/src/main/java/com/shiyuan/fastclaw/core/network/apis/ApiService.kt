@@ -109,6 +109,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.InviteRecordPageData
 import com.shiyuan.fastclaw.core.network.apis.response.InviteStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentCancelData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
+import com.shiyuan.fastclaw.core.network.apis.response.JobAgentAttributeAnswerCheckData
 import com.shiyuan.fastclaw.core.network.apis.response.JobSearchStatus
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
@@ -653,6 +654,10 @@ interface ApiService {
      */
     @POST(ApiConstants.JOB_AGENT_ATTRIBUTE_REJECT)
     suspend fun rejectAttribute(@Body body: AttributeRejectBody): ApiResponse<ActionSubmitData?>
+
+    /** 检查高重要度属性是否已全部回答。 */
+    @POST(ApiConstants.JOB_AGENT_ATTRIBUTE_ANSWER_CHECK)
+    suspend fun checkJobAgentAttributeAnswers(): ApiResponse<JobAgentAttributeAnswerCheckData>
 
     @POST(ApiConstants.QUERY_REGION_DICT)
     suspend fun queryRegionDict(@Body body: RegionDictQueryBody): ApiResponse<RegionDictData?>
