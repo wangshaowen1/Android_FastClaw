@@ -195,6 +195,7 @@ class OpportunityFragment :
                     binding.llMatchOpportunity.visible()
                     binding.llProcessedOpportunity.visible()
                 }
+
                 OpportunityMatchState.NORMAL_MATCHING -> {
                     renderLottie(true)
                     binding.cardUnderstandUser.gone()
@@ -203,6 +204,7 @@ class OpportunityFragment :
                     binding.llProcessedOpportunity.visible()
                     mRealVM.queryOpportunityStats()
                 }
+
                 else -> {
                     renderLottie(true)
                     binding.cardUnderstandUser.visible()
@@ -271,11 +273,11 @@ class OpportunityFragment :
         stopResumePolling()
         mRealVM.resetUserState()
         if (!isVisitor) {
-            mRealVM.isJobPreferenceCompleted.value = true
+            mRealVM.isJobPreferenceCompleted.value = false
             mRealVM.chanceData.value = mRealVM.createFakeChanceData()
-           // mRealVM.matchingData.value = mRealVM.createFakeChanceData()
-           opportunityAdapter.submitList( mRealVM.chanceData.value?.map(::ItemProcessedOpportunityVM))
-           // matchOpportunityAdapter.submitList( mRealVM.matchingData.value?.map(::ItemMatchOpportunityVM))
+            // mRealVM.matchingData.value = mRealVM.createFakeChanceData()
+            opportunityAdapter.submitList(mRealVM.chanceData.value?.map(::ItemProcessedOpportunityVM))
+            // matchOpportunityAdapter.submitList( mRealVM.matchingData.value?.map(::ItemMatchOpportunityVM))
             mRealVM.queryResumeList()
         }
     }
@@ -328,9 +330,33 @@ class OpportunityFragment :
             })
     }
 
+
     override fun onResume() {
         super.onResume()
-        scheduleLottiePlaybackUpdate()
+        dispatchChanged()
+    }
+
+    private var lastUiVisible: Boolean? = null
+    private fun dispatchChanged() {
+        val isUiVisible = isResumed && !isHidden == true
+        if (lastUiVisible == isUiVisible) return
+        lastUiVisible = isUiVisible
+        Log.d("uploadResumeDialog", lastUiVisible.toString())
+        onVisibilityChanged(isUiVisible)
+    }
+
+    private fun onVisibilityChanged(isVisible: Boolean) {
+        if (isVisible) {
+            scheduleLottiePlaybackUpdate()
+            handleWechatResumeReturn()
+            syncUserState()
+        } else {
+            stopLottiePlayback()
+        }
+    }
+
+
+    private fun handleWechatResumeReturn() {
         if (!mRealVM.code.value.isNullOrEmpty()) {
             Log.d("uploadResumeDialog", mRealVM.code.value.toString())
             uploadResumeDialog?.dismissAllowingStateLoss()
@@ -342,23 +368,26 @@ class OpportunityFragment :
                 )
             }
         }
-        syncUserState()
+    }
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        dispatchChanged()
     }
 
     override fun onPause() {
-        binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
-        isContentScrolling = false
-        pauseLottiePlayback()
+        dispatchChanged()
         super.onPause()
     }
 
     private val lottieVisibleRect = Rect()
     private var isContentScrolling = false
     private var parentPager: ViewPager2? = null
+
     // 纵向滚动停止 120ms 后再判断，避免滚动过程中频繁暂停和恢复。
     private val resumeLottieAfterScroll = Runnable {
         updateLottiePlayback(isScrolling = false)
     }
+
     // ViewPager2 切页时 onPause 触发较晚，主动监听滑动状态以便立即暂停动画。
     private val parentPagerCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -409,21 +438,28 @@ class OpportunityFragment :
     private fun updateLottiePlayback(isScrolling: Boolean = isContentScrolling) {
         isContentScrolling = isScrolling
         val isLottieVisible = binding.v.visibility == View.VISIBLE &&
-            binding.v.getLocalVisibleRect(lottieVisibleRect)
+                binding.v.getLocalVisibleRect(lottieVisibleRect)
         // 父 Pager 停稳且当前为机会页时，才继续判断生命周期和页面内可见性。
         val isParentPagerIdleAndSelected = parentPager?.run {
             scrollState == ViewPager2.SCROLL_STATE_IDLE && currentItem == OPPORTUNITY_PAGE
         } ?: true
         val shouldPlayLottie = isParentPagerIdleAndSelected &&
-            !isContentScrolling &&
-            viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
-            isLottieVisible
+                !isContentScrolling &&
+                viewLifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
+                isLottieVisible
         if (shouldPlayLottie) {
             binding.v.resumeAnimation()
         } else {
             pauseLottiePlayback()
         }
     }
+
+    private fun stopLottiePlayback() {
+        binding.scrollContent.removeCallbacks(resumeLottieAfterScroll)
+        isContentScrolling = false
+        pauseLottiePlayback()
+    }
+
 
     private fun pauseLottiePlayback() {
         binding.v.pauseAnimation()
@@ -505,6 +541,7 @@ class OpportunityFragment :
     }
 
 }
+
 data class ProcessedOpportunityItem(
     val title: String,
     val company: String,
@@ -515,5 +552,8 @@ data class ProcessedOpportunityItem(
     val isRead: Boolean
 )
 
-class ItemProcessedOpportunityVM(data: ProcessedOpportunityItem) : AppItemViewModel<ProcessedOpportunityItem>(data)
-class ItemMatchOpportunityVM(data: ProcessedOpportunityItem) : AppItemViewModel<ProcessedOpportunityItem>(data)
+class ItemProcessedOpportunityVM(data: ProcessedOpportunityItem) :
+    AppItemViewModel<ProcessedOpportunityItem>(data)
+
+class ItemMatchOpportunityVM(data: ProcessedOpportunityItem) :
+    AppItemViewModel<ProcessedOpportunityItem>(data)
