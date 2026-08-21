@@ -4,6 +4,11 @@ import android.graphics.Color
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
@@ -19,6 +24,7 @@ import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
+import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
@@ -26,14 +32,17 @@ import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResum
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedPageData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
 import com.shiyuan.fastclaw.core.response
-import com.shiyuan.fastclaw.feature.opportunity.ProcessedOpportunityItem
+import com.shiyuan.fastclaw.feature.opportunity.ProcessedOpportunityPagingSource
 import com.shiyuan.fastclaw.feature.report.data.ReportRepository
 import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 enum class OpportunityMatchState {
@@ -56,6 +65,8 @@ class OpportunityViewModel : HomeReportViewModel() {
 
     private var newOpportunityPollingJob: Job? = null
     private var resumePollingJob: Job? = null
+    private val processedOpportunityPagingFlows =
+        mutableMapOf<String, Flow<PagingData<OpportunityProcessedItemData>>>()
 
     val mToolbarVMOpportunityDetail = ToolbarViewModel(
         navigationAction = { finish() },
@@ -78,7 +89,9 @@ class OpportunityViewModel : HomeReportViewModel() {
     var isJobPreferenceCompleted = MutableLiveData(false) // TODO 岗位偏好接口接入后使用接口结果
 
 
-    val chanceData = MutableLiveData<List<ProcessedOpportunityItem>>(emptyList())
+    val chanceData = MutableLiveData<List<OpportunityProcessedItemData>>(emptyList())
+
+    val processedOpportunityPageData = MutableLiveData<OpportunityProcessedPageData?>()
 
     val matchingData = MutableLiveData<List<OpportunityNewItemData>>(emptyList())
 
@@ -105,6 +118,7 @@ class OpportunityViewModel : HomeReportViewModel() {
         isJobUpCompleted.value = false
         isJobPreferenceCompleted.value = false
         matchingData.value = emptyList()
+        chanceData.value = emptyList()
         opportunityStats.value = null
     }
 
@@ -114,6 +128,54 @@ class OpportunityViewModel : HomeReportViewModel() {
             apiBlock = { mRepo.api.queryOpportunityStats() },
             onSuccess = {
                 data?.let { opportunityStats.value = it }
+            }
+        )
+    }
+
+    /** 查询首页最近 5 条已处理机会，不传 status。 */
+    fun queryProcessedOpportunityPreview() {
+        request(
+            apiBlock = { mRepo.api.queryProcessedOpportunityPage(PagedBody(1, 5)) },
+            onError = {
+                chanceData.value = createFakeChanceData()
+            },
+            onSuccess = {
+                chanceData.value = data?.opportunities?.items.orEmpty()
+            }
+        )
+    }
+
+    fun processedOpportunityPagingFlow(
+        status: String
+    ): Flow<PagingData<OpportunityProcessedItemData>> {
+        return processedOpportunityPagingFlows.getOrPut(status) {
+            Pager(
+                config = PagingConfig(
+                    pageSize = PROCESSED_OPPORTUNITY_PAGE_SIZE,
+                    initialLoadSize = PROCESSED_OPPORTUNITY_PAGE_SIZE,
+                    enablePlaceholders = false
+                ),
+                pagingSourceFactory = {
+                    ProcessedOpportunityPagingSource(mRepo.api, status)
+                }
+            ).flow.cachedIn(viewModelScope)
+        }
+    }
+
+    /** 查询已处理机会两个 Tab 的实时总数。 */
+    fun queryProcessedOpportunityCounts(status: String) {
+        request(
+            apiBlock = {
+                mRepo.api.queryProcessedOpportunityPage(
+                    OpportunityProcessedPageBody(
+                        status = status,
+                        pageNum = 1,
+                        pageSize = 1
+                    )
+                )
+            },
+            onSuccess = {
+                processedOpportunityPageData.value = data
             }
         )
     }
@@ -204,51 +266,67 @@ class OpportunityViewModel : HomeReportViewModel() {
         super.onCleared()
     }
 
-     fun createFakeChanceData(): List<ProcessedOpportunityItem> = listOf(
-        ProcessedOpportunityItem(
-            title = R.string.processed_opportunity_sample_high_backend.getResString(),
-            company = R.string.processed_opportunity_sample_company.getResString(),
-            requirements = R.string.processed_opportunity_sample_requirements.getResString(),
-            salary = R.string.processed_opportunity_sample_salary.getResString(),
-            actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
+     fun createFakeChanceData(): List<OpportunityProcessedItemData> = listOf(
+        OpportunityProcessedItemData(
+            jobTitle = R.string.processed_opportunity_sample_high_backend.getResString(),
+            companyName = R.string.processed_opportunity_sample_company.getResString(),
+            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
+            workCity = R.string.opportunity_detail_sample_location.getResString(),
+            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
+            degreeText = R.string.opportunity_detail_sample_education.getResString(),
             matchPercent = 76,
-            isRead = false
+            status = OpportunityProcessedItemData.STATUS_UNSUITABLE,
+            statusTime = "2026-08-05 16:45:00"
         ),
-        ProcessedOpportunityItem(
-            title = R.string.processed_opportunity_sample_backend.getResString(),
-            company = R.string.processed_opportunity_sample_company.getResString(),
-            requirements = R.string.processed_opportunity_sample_requirements.getResString(),
-            salary = R.string.processed_opportunity_sample_salary.getResString(),
-            actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
+        OpportunityProcessedItemData(
+            jobTitle = R.string.processed_opportunity_sample_backend.getResString(),
+            companyName = R.string.processed_opportunity_sample_company.getResString(),
+            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
+            workCity = R.string.opportunity_detail_sample_location.getResString(),
+            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
+            degreeText = R.string.opportunity_detail_sample_education.getResString(),
             matchPercent = 76,
-            isRead = true
+            status = OpportunityProcessedItemData.STATUS_COMMUNICATING,
+            statusTime = "2026-08-05 16:45:00"
         ),
-         ProcessedOpportunityItem(
-             title = R.string.processed_opportunity_sample_backend.getResString(),
-             company = R.string.processed_opportunity_sample_company.getResString(),
-             requirements = R.string.processed_opportunity_sample_requirements.getResString(),
-             salary = R.string.processed_opportunity_sample_salary.getResString(),
-             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
-             matchPercent = 76,
-             isRead = true
-         ), ProcessedOpportunityItem(
-             title = R.string.processed_opportunity_sample_backend.getResString(),
-             company = R.string.processed_opportunity_sample_company.getResString(),
-             requirements = R.string.processed_opportunity_sample_requirements.getResString(),
-             salary = R.string.processed_opportunity_sample_salary.getResString(),
-             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
-             matchPercent = 76,
-             isRead = true
-         ), ProcessedOpportunityItem(
-             title = R.string.processed_opportunity_sample_backend.getResString(),
-             company = R.string.processed_opportunity_sample_company.getResString(),
-             requirements = R.string.processed_opportunity_sample_requirements.getResString(),
-             salary = R.string.processed_opportunity_sample_salary.getResString(),
-             actionTime = R.string.processed_opportunity_sample_action_time.getResString(),
-             matchPercent = 76,
-             isRead = true
-         )
+        OpportunityProcessedItemData(
+            jobTitle = R.string.processed_opportunity_sample_backend.getResString(),
+            companyName = R.string.processed_opportunity_sample_company.getResString(),
+            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
+            workCity = R.string.opportunity_detail_sample_location.getResString(),
+            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
+            degreeText = R.string.opportunity_detail_sample_education.getResString(),
+            matchPercent = 76,
+            status = OpportunityProcessedItemData.STATUS_COMMUNICATING,
+            statusTime = "2026-08-05 16:45:00"
+        ),
+        OpportunityProcessedItemData(
+            jobTitle = R.string.processed_opportunity_sample_backend.getResString(),
+            companyName = R.string.processed_opportunity_sample_company.getResString(),
+            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
+            workCity = R.string.opportunity_detail_sample_location.getResString(),
+            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
+            degreeText = R.string.opportunity_detail_sample_education.getResString(),
+            matchPercent = 76,
+            status = OpportunityProcessedItemData.STATUS_COMMUNICATING,
+            statusTime = "2026-08-05 16:45:00"
+        ),
+        OpportunityProcessedItemData(
+            jobTitle = R.string.processed_opportunity_sample_backend.getResString(),
+            companyName = R.string.processed_opportunity_sample_company.getResString(),
+            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
+            workCity = R.string.opportunity_detail_sample_location.getResString(),
+            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
+            degreeText = R.string.opportunity_detail_sample_education.getResString(),
+            matchPercent = 76,
+            status = OpportunityProcessedItemData.STATUS_COMMUNICATING,
+            statusTime = "2026-08-05 16:45:00"
+        )
     )
+
+    private companion object {
+        const val PROCESSED_OPPORTUNITY_PAGE_SIZE = 20
+    }
 }
 
 data class OpportunityDetailUiModel(

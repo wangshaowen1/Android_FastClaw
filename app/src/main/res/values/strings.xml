@@ -1283,9 +1283,9 @@
     <string name="processed_opportunity_sample_high_backend">高后端工程师</string>
     <string name="processed_opportunity_sample_backend">后端工程师</string>
     <string name="processed_opportunity_sample_company">selleck上海新香微电子股份有...</string>
-    <string name="processed_opportunity_sample_requirements">深圳·3年以上·本科</string>
     <string name="processed_opportunity_sample_salary">13-30K·15薪</string>
-    <string name="processed_opportunity_sample_action_time">8月5日16:45你发起立即沟通</string>
+    <string name="processed_opportunity_communicating_action_time">%1$s你发起立即沟通</string>
+    <string name="processed_opportunity_unsuitable_action_time">%1$s你标记为不合适</string>
     <string name="processed_opportunity_match_percent_value">%1$d</string>
     <string name="percent_symbol">%</string>
 

@@ -57,6 +57,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStreamBody
 import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeUpdateBody
+import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBody
 import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.PlayEventBody
@@ -118,6 +119,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNavCountData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedPageData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
@@ -741,6 +743,18 @@ interface ApiService {
     /** 查询最新推荐批次中的有效未处理机会。 */
     @POST(ApiConstants.OPPORTUNITY_NEW_QUERY)
     suspend fun queryNewOpportunities(): ApiResponse<List<OpportunityNewItemData>>
+
+    /** 分页查询已处理机会。 */
+    @POST(ApiConstants.OPPORTUNITY_PROCESSED_PAGE)
+    suspend fun queryProcessedOpportunityPage(
+        @Body body: PagedBody
+    ): ApiResponse<OpportunityProcessedPageData>
+
+    /** 按状态分页查询已处理机会。 */
+    @POST(ApiConstants.OPPORTUNITY_PROCESSED_PAGE)
+    suspend fun queryProcessedOpportunityPage(
+        @Body body: OpportunityProcessedPageBody
+    ): ApiResponse<OpportunityProcessedPageData>
 
 
     @POST(ApiConstants.REGISTER_IM_TOKEN)

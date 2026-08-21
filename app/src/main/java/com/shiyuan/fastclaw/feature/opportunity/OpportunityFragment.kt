@@ -18,6 +18,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
 import com.nhsd.permisson.PermissionX
@@ -32,6 +33,7 @@ import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.FragmentNotOpportunityBinding
 import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityMatchState
@@ -41,6 +43,8 @@ import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.shiyuan.fastclaw.widget.shape.internal.BOLD
+import java.text.SimpleDateFormat
+import java.util.Locale
 import kotlin.coroutines.resume
 
 class OpportunityFragment :
@@ -191,6 +195,7 @@ class OpportunityFragment :
                     binding.cardNoChance.gone()
                     binding.llMatchOpportunity.visible()
                     binding.llProcessedOpportunity.visible()
+                    updateChanceData(lastUiVisible == true)
                 }
 
                 OpportunityMatchState.NORMAL_MATCHING -> {
@@ -200,6 +205,8 @@ class OpportunityFragment :
                     binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.visible()
                     mRealVM.queryOpportunityStats()
+                    updateNewOpportunityPolling(lastUiVisible == true)
+                    updateChanceData(lastUiVisible == true)
                 }
                 else -> {
                     renderLottie(true)
@@ -209,10 +216,11 @@ class OpportunityFragment :
                     binding.llProcessedOpportunity.gone()
                 }
             }
-            updateNewOpportunityPolling(lastUiVisible == true)
+
         }
         mRealVM.chanceData.observe(this) { data ->
             val opportunityItems = data.orEmpty()
+            opportunityAdapter.submitList(opportunityItems.map(::ItemProcessedOpportunityVM))
             val isEmpty = opportunityItems.isEmpty()
             if (isEmpty) {
                 binding.llViewAllProcessedOpportunity.gone()
@@ -270,8 +278,6 @@ class OpportunityFragment :
         mRealVM.resetUserState()
         if (!isVisitor) {
             mRealVM.isJobPreferenceCompleted.value = true
-            mRealVM.chanceData.value = mRealVM.createFakeChanceData()
-            opportunityAdapter.submitList(mRealVM.chanceData.value?.map(::ItemProcessedOpportunityVM))
             mRealVM.queryResumeList()
         }
     }
@@ -341,6 +347,7 @@ class OpportunityFragment :
 
     private fun onVisibilityChanged(isVisible: Boolean) {
         updateNewOpportunityPolling(isVisible)
+        updateChanceData(isVisible)
         if (isVisible) {
             scheduleLottiePlaybackUpdate()
             handleWechatResumeReturn()
@@ -359,6 +366,12 @@ class OpportunityFragment :
         }
     }
 
+    /** 请求已处理机会**/
+    private fun updateChanceData(isVisible: Boolean) {
+        if (isVisible && (mRealVM.matchState.value == OpportunityMatchState.NORMAL_MATCHING || mRealVM.matchState.value == OpportunityMatchState.NORMAL_MATCHING)) {
+            mRealVM.queryProcessedOpportunityPreview()
+        }
+    }
 
     private fun handleWechatResumeReturn() {
         if (!mRealVM.code.value.isNullOrEmpty()) {
@@ -509,18 +522,34 @@ class OpportunityFragment :
 
 }
 
-data class ProcessedOpportunityItem(
-    val title: String,
-    val company: String,
-    val requirements: String,
-    val salary: String,
-    val actionTime: String,
-    val matchPercent: Int,
-    val isRead: Boolean
-)
+class ItemProcessedOpportunityVM(data: OpportunityProcessedItemData) :
+    AppItemViewModel<OpportunityProcessedItemData>(data) {
 
-class ItemProcessedOpportunityVM(data: ProcessedOpportunityItem) :
-    AppItemViewModel<ProcessedOpportunityItem>(data)
+    val requirements = listOf(data.workCity, data.experienceText, data.degreeText)
+        .filter(String::isNotBlank)
+        .joinToString("·")
+
+    val actionTime = buildProcessedActionTime(data.statusTime, data.status)
+
+    private fun buildProcessedActionTime(statusTime: String, status: String): String {
+        val formattedTime = runCatching {
+            val date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).parse(statusTime)
+            date?.let {
+                SimpleDateFormat("M月d日H时m分", Locale.CHINA).format(it)
+            }
+        }.getOrNull() ?: statusTime
+
+        return when (status) {
+            OpportunityProcessedItemData.STATUS_COMMUNICATING ->
+                R.string.processed_opportunity_communicating_action_time.getResString(formattedTime)
+
+            OpportunityProcessedItemData.STATUS_UNSUITABLE ->
+                R.string.processed_opportunity_unsuitable_action_time.getResString(formattedTime)
+
+            else -> formattedTime
+        }
+    }
+}
 
 class ItemMatchOpportunityVM(data: OpportunityNewItemData) :
     AppItemViewModel<OpportunityNewItemData>(data) {

@@ -1,16 +1,21 @@
 package com.shiyuan.fastclaw.feature.opportunity
 
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.ext.dp
-import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.base.item.AppItemViewModel
-import com.shiyuan.fastclaw.common.adapter.QuickAdapter
+import com.shiyuan.fastclaw.common.ext.startRefreshWithAdapter
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.FragmentProcessedOpportunityListBinding
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
+import com.shiyuan.fastclaw.widget.stateful.paging.MyMultiStatePagingFooterAdapter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class ProcessedOpportunityListFragment :
     BaseViewModelFragment<FragmentProcessedOpportunityListBinding, OpportunityViewModel>() {
@@ -18,6 +23,7 @@ class ProcessedOpportunityListFragment :
     companion object {
         private const val ARG_TAB_TYPE = "arg_tab_type"
         private const val TAB_COMMUNICATING = 0
+        private const val TAB_UNSUITABLE = 1
 
         fun newInstance(tabType: Int): ProcessedOpportunityListFragment =
             ProcessedOpportunityListFragment().apply {
@@ -28,10 +34,26 @@ class ProcessedOpportunityListFragment :
     }
 
     private val opportunityAdapter by lazy {
-        QuickAdapter<ItemProcessedOpportunityVM>(
-            R.layout.item_processed_opportunity,
-            emptyList()
+        ProcessedOpportunityPagingAdapter()
+    }
+
+    private val footerAdapter by lazy {
+        MyMultiStatePagingFooterAdapter(
+            hostAdapter = opportunityAdapter,
+            displayOnEmpty = false
         )
+    }
+
+    private val tabType by lazy {
+        requireArguments().getInt(ARG_TAB_TYPE)
+    }
+
+    private val status by lazy {
+        if (tabType == TAB_COMMUNICATING) {
+            OpportunityProcessedItemData.STATUS_COMMUNICATING
+        } else {
+            OpportunityProcessedItemData.STATUS_UNSUITABLE
+        }
     }
 
     override fun onPrepareView() {
@@ -41,29 +63,29 @@ class ProcessedOpportunityListFragment :
             if (itemDecorationCount == 0) {
                 addItemDecoration(SpaceDecoration(10.dp, SpaceDecoration.Direction.MIDDLE))
             }
-            adapter = opportunityAdapter
+            adapter = opportunityAdapter.withLoadStateFooter(footerAdapter)
         }
-        binding.srl.setOnRefreshListener {
-            mRealVM.chanceData.value = mRealVM.createFakeChanceData()
-        }
-        binding.lsvProcessedOpportunity.showLoading()
-        mRealVM.chanceData.value = mRealVM.createFakeChanceData()
-        mRealVM.chanceData.observe(viewLifecycleOwner) { data ->
-            binding.srl.finishRefresh()
-            val tabType = requireArguments().getInt(ARG_TAB_TYPE)
-            val items = if (tabType == TAB_COMMUNICATING) {
-                data.orEmpty()
-            } else {
-                emptyList()
+        binding.srl.startRefreshWithAdapter(
+            pagingDataAdapter = opportunityAdapter,
+            loadStateHolder = binding.lsvProcessedOpportunity,
+            onRefreshListener = {
+                mRealVM.queryProcessedOpportunityCounts(status)
             }
-            opportunityAdapter.submitList(items.map(::ItemProcessedOpportunityVM))
-            if (items.isEmpty()) {
-                binding.lsvProcessedOpportunity.showEmpty()
-            } else {
-                binding.lsvProcessedOpportunity.showContent()
+        )
+        mRealVM.processedOpportunityPageData.observe(viewLifecycleOwner) { data ->
+            (activity as? ProcessedOpportunityActivity)?.apply {
+                updateTabCount(TAB_COMMUNICATING, data?.communicatingCount ?: 0)
+                updateTabCount(TAB_UNSUITABLE, data?.unsuitableCount ?: 0)
             }
-            (activity as? ProcessedOpportunityActivity)?.updateTabCount(tabType, items.size)
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mRealVM.processedOpportunityPagingFlow(status).collectLatest { pagingData ->
+                    opportunityAdapter.submitData(pagingData)
+                }
+            }
+        }
+        mRealVM.queryProcessedOpportunityCounts(status)
     }
 }
 
