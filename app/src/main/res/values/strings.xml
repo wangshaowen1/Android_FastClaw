@@ -1260,7 +1260,8 @@
     <string name="not_opportunity_preference_description">城市、岗位、薪资等主要诉求，共6项</string>
     <string name="not_opportunity_preference_action">去完成</string>
     <string name="not_opportunity_searching_title">正在寻找新机会</string>
-    <string name="not_opportunity_browsed_job_count">共浏览岗位<b>12302</b>个</string>
+    <string name="not_opportunity_browsed_job_count">共浏览岗位<b>0</b>个</string>
+    <string name="not_opportunity_browsed_job_count_format">共浏览岗位%1$d个</string>
     <string name="not_opportunity_searching_description">只有薪资、职位和发展机会符合你的期待，才会通知你。</string>
     <string name="not_opportunity_recommended">推荐机会</string>
     <string name="not_opportunity_pending">待定机会</string>

@@ -201,6 +201,7 @@ class OpportunityFragment :
                     binding.cardNoChance.visible()
                     binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.visible()
+                    mRealVM.queryOpportunityStats()
                 }
                 else -> {
                     renderLottie(true)
@@ -236,6 +237,21 @@ class OpportunityFragment :
                 resources.getColor(R.color.color_2f6bff)
             )
             matchOpportunityAdapter.submitList(opportunityItems.map(::ItemMatchOpportunityVM))
+        }
+        mRealVM.opportunityStats.observe(this) { data ->
+            val viewedJobCount = data?.viewedJobCount ?: 0
+            binding.tvBrowsedJobCount.text = getColoredSpanText(
+                getString(R.string.not_opportunity_browsed_job_count_format, viewedJobCount),
+                viewedJobCount.toString(),
+                resources.getColor(R.color.color_90_000000),
+                true
+            )
+            binding.tvRecommendedOpportunityCount.text =
+                (data?.recommendedOpportunityCount ?: 0).toString()
+            binding.tvPendingOpportunityCount.text =
+                (data?.pendingOpportunityCount ?: 0).toString()
+            binding.tvMismatchedOpportunityCount.text =
+                (data?.notMatchedOpportunityCount ?: 0).toString()
         }
     }
 

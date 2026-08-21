@@ -22,6 +22,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
 import com.shiyuan.fastclaw.core.response
@@ -73,6 +74,8 @@ class OpportunityViewModel : HomeReportViewModel() {
 
     val matchingData = MutableLiveData<List<ProcessedOpportunityItem>>(emptyList())
 
+    val opportunityStats = MutableLiveData<OpportunityStatsData?>()
+
 
     val matchState = MediatorLiveData<OpportunityMatchState>().apply {
         value = resolveMatchState()
@@ -92,6 +95,17 @@ class OpportunityViewModel : HomeReportViewModel() {
         resumeListData.value = emptyList()
         isJobUpCompleted.value = false
         isJobPreferenceCompleted.value = false
+        opportunityStats.value = null
+    }
+
+    /** 查询常态化匹配卡片展示的四项统计数据。 */
+    fun queryOpportunityStats() {
+        request(
+            apiBlock = { mRepo.api.queryOpportunityStats() },
+            onSuccess = {
+                data?.let { opportunityStats.value = it }
+            }
+        )
     }
 
     fun updateOpportunityDetailActionState(state: OpportunityDetailActionState) {

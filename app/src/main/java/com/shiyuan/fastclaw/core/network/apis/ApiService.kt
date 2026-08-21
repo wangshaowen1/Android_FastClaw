@@ -117,6 +117,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedDa
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNavCountData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.PayOrderInfo
@@ -731,6 +732,10 @@ interface ApiService {
     /** 查询机会导航未处理数量。 */
     @POST(ApiConstants.OPPORTUNITY_NAV_COUNT_QUERY)
     suspend fun queryOpportunityNavCount(): ApiResponse<OpportunityNavCountData>
+
+    /** 查询常态化匹配统计数据。 */
+    @POST(ApiConstants.OPPORTUNITY_STATS_QUERY)
+    suspend fun queryOpportunityStats(): ApiResponse<OpportunityStatsData>
 
 
     @POST(ApiConstants.REGISTER_IM_TOKEN)
