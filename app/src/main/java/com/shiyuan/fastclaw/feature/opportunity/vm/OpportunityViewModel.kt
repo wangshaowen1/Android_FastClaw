@@ -25,6 +25,7 @@ import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBody
+import com.shiyuan.fastclaw.core.network.apis.request.OpportunityStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
@@ -134,9 +135,9 @@ class OpportunityViewModel : HomeReportViewModel() {
     fun queryProcessedOpportunityPreview() {
         request(
             apiBlock = { mRepo.api.queryProcessedOpportunityPage(PagedBody(1, 5)) },
-           /* onError = {
+            onError = {
                 chanceData.value = createFakeChanceData()
-            },*/
+            },
             onSuccess = {
                 chanceData.value = data?.opportunities?.items.orEmpty()
             }
@@ -244,14 +245,15 @@ class OpportunityViewModel : HomeReportViewModel() {
     }
 
     /** 根据上一页传入的岗位 ID 查询机会详情。 */
-    fun queryOpportunityDetail(jobId: String) {
+    fun queryOpportunityDetail(jobId: String, showLoading: Boolean = true) {
         requestWithLoading(
             apiBlock = {
                 mRepo.api.queryOpportunityDetail(OpportunityDetailQueryBody(jobId))
             },
-           /* onError = {
+            showLoading = showLoading,
+            onError = {
                 opportunityDetail.value = createFakeOpportunityDetail(jobId)
-            },*/
+            },
             onSuccess = {
                 data?.let { detail ->
                     opportunityDetail.value = detail
@@ -260,12 +262,29 @@ class OpportunityViewModel : HomeReportViewModel() {
         )
     }
 
+    /** 提交详情页操作，完成后重新查询详情及最新可用操作。 */
+    fun updateOpportunityStatus(jobId: String, actionCode: String) {
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.updateOpportunityStatus(
+                    OpportunityStatusUpdateBody(jobId, actionCode)
+                )
+            },
+            onError = {
+                queryOpportunityDetail(jobId, showLoading = false)
+            },
+            onSuccess = {
+                queryOpportunityDetail(jobId, showLoading = false)
+            }
+        )
+    }
+
     private fun createFakeOpportunityDetail(jobId: String) = OpportunityDetailData(
         jobId = jobId,
         jobTitle = R.string.opportunity_detail_sample_title.getResString(),
         matchPercent = 76,
-        status = "UNSUITABLE",
-        jobClosed = true,
+        status = "NEW",
+       /* jobClosed = true,*/
         companyName = R.string.opportunity_detail_sample_company.getResString(),
         salaryText = R.string.opportunity_detail_sample_salary.getResString(),
         workCity = R.string.opportunity_detail_sample_location.getResString(),

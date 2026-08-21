@@ -13,6 +13,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.BR
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
@@ -121,6 +122,11 @@ class OpportunityDetailActivity :
         binding.tvUnsuitable.apply {
             text = firstAction?.buttonText.orEmpty()
             isEnabled = state != OpportunityDetailActionState.CLOSED && firstAction?.actionCode != null
+            setOnSingleClickListener {
+                firstAction?.actionCode?.let { actionCode ->
+                    mRealVM.updateOpportunityStatus(detail.jobId, actionCode)
+                }
+            }
             setTextColor(
                 ContextCompat.getColor(
                     this@OpportunityDetailActivity,
@@ -143,6 +149,11 @@ class OpportunityDetailActivity :
             text = secondAction?.buttonText.orEmpty()
             isEnabled = secondAction?.actionCode != null
             visibility = if (showSecondAction) View.VISIBLE else View.GONE
+            setOnSingleClickListener {
+                secondAction?.actionCode?.let { actionCode ->
+                    mRealVM.updateOpportunityStatus(detail.jobId, actionCode)
+                }
+            }
         }
     }
 

@@ -59,6 +59,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeQuery
 import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityDetailQueryBody
+import com.shiyuan.fastclaw.core.network.apis.request.OpportunityStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.PlayEventBody
@@ -123,6 +124,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedPageData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatsData
+import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatusUpdateData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.PayOrderInfo
@@ -763,6 +765,12 @@ interface ApiService {
     suspend fun queryOpportunityDetail(
         @Body body: OpportunityDetailQueryBody
     ): ApiResponse<OpportunityDetailData>
+
+    /** 更新机会状态。 */
+    @POST(ApiConstants.OPPORTUNITY_STATUS_UPDATE)
+    suspend fun updateOpportunityStatus(
+        @Body body: OpportunityStatusUpdateBody
+    ): ApiResponse<OpportunityStatusUpdateData>
 
 
     @POST(ApiConstants.REGISTER_IM_TOKEN)
