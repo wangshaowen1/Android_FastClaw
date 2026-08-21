@@ -109,9 +109,9 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
                     result = {
                         fetchingUserInfo = false
 
-                        data?.imAccId = "234567"
+                        /*data?.imAccId = "234567"
                         data?.imAccToken = "234567"
-                        data?.imReady = true
+                        data?.imReady = true*/
 
                         User.get().updateFrom(this.data)
                         Logger.i(

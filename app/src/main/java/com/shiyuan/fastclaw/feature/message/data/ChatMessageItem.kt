@@ -125,6 +125,8 @@ data class ResumeRequestChatItem(
     val updatedAt: Long?,
     /** 最近操作人云信账号。 */
     val operatorId: String?,
+    /** 消息发送方头像。 */
+    val avatar: String?,
     /** 是否为当前登录用户发送。 */
     val isSelf: Boolean,
     /** 消息创建时间。 */
@@ -153,8 +155,6 @@ data class ResumeDeliveryChatItem(
     val title: String,
     /** 简历文件名。 */
     val fileName: String,
-    /** 当前投递状态展示文案。 */
-    val statusText: String,
     /** 简历业务 ID。 */
     val resumeId: String?,
     /** 简历访问地址。 */
@@ -169,6 +169,8 @@ data class ResumeDeliveryChatItem(
     val updatedAt: Long?,
     /** 最近操作人云信账号。 */
     val operatorId: String?,
+    /** 消息发送方头像。 */
+    val avatar: String?,
     /** 是否为当前登录用户发送。 */
     val isSelf: Boolean,
     /** 消息创建时间。 */

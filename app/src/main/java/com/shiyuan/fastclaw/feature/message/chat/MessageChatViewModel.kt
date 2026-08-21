@@ -168,15 +168,17 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         val resumeName = resume.resumeFileName?.takeIf { it.isNotBlank() }
         val resumeUrl = resume.resumeFileUrl?.takeIf { it.isNotBlank() }
         if (resumeId == null || resumeName == null || resumeUrl == null) {
-            "简历信息不完整".showToast()
+            showToast(R.string.message_chat_resume_empty_tip)
             return
         }
+        val textMessage = currentChat.sendTextMessage(RESUME_DELIVERY_TEXT)
+        localSendMessageIds.add(textMessage.messageClientId)
         val attachment = ResumeDeliveryAttachment.buildResume(resume)
         val message = currentChat.createCustomMessage(attachment)
         message.setContent(resumeName)
         localSendMessageIds.add(message.messageClientId)
         currentChat.reSendMessage(message)
-        mergeMessages(listOf(message))
+        mergeMessages(listOf(textMessage, message))
     }
 
     /**
@@ -254,6 +256,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
                     createdAt = payload?.optLong("createdAt"),
                     updatedAt = payload?.optLong("updatedAt"),
                     operatorId = payload?.optString("operatorId"),
+                    avatar = if (isSelf) User.get().avatarUrl else null,
                     isSelf = isSelf,
                     time = message.time,
                     timeText = timeText,
@@ -360,6 +363,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
 
         // 相邻消息超过 5 分钟时重新展示时间。
         private const val MESSAGE_TIME_INTERVAL = 5 * 60 * 1000L
+
+        // 主动发送简历前先发送的文本消息内容。
+        private const val RESUME_DELIVERY_TEXT = "这是我的简历，您看看"
 
         // 简历请求待处理状态。
         private const val STATUS_PENDING = "pending"
