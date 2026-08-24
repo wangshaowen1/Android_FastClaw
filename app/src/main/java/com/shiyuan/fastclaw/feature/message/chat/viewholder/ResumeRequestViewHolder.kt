@@ -10,7 +10,7 @@ import com.shiyuan.fastclaw.databinding.ItemChatResumeRequestBinding
 import com.shiyuan.fastclaw.feature.message.data.ResumeRequestChatItem
 
 /**
- * 简历请求消息 ViewHolder，负责渲染请求卡片和同意/拒绝操作入口。
+ * HR简历请求消息 ViewHolder，负责渲染请求卡片和同意/拒绝操作入口。
  */
 class ResumeRequestViewHolder(private val binding: ItemChatResumeRequestBinding) : RecyclerView.ViewHolder(binding.root) {
 

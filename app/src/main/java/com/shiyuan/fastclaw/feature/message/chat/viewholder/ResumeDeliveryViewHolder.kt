@@ -10,7 +10,7 @@ import com.shiyuan.fastclaw.databinding.ItemChatResumeDeliveryBinding
 import com.shiyuan.fastclaw.feature.message.data.ResumeDeliveryChatItem
 
 /**
- * 简历投递消息 ViewHolder，负责渲染简历文件卡片和状态文案。
+ * 用户简历投递消息 ViewHolder，负责渲染简历文件卡片和状态文案。
  */
 class ResumeDeliveryViewHolder(private val binding: ItemChatResumeDeliveryBinding) : RecyclerView.ViewHolder(binding.root) {
 

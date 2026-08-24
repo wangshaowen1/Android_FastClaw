@@ -195,9 +195,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     /**
      * 按新的简历请求附件内容修改原消息。
      */
-    private fun modifyResumeRequestMessage(item: ResumeRequestChatItem, attachment: ResumeRequestAttachment) {
+    private fun modifyResumeRequestMessage(id: String, attachment: ResumeRequestAttachment, onSuccess: () -> Unit = {}, ) {
         val currentChat = chat ?: return
-        val message = messageCache[item.id] ?: return
+        val message = messageCache[id] ?: return
         val params = MessageModifyParams(
             text = attachment.pushContent.toString(),
             customAttachment = attachment,
@@ -208,6 +208,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              */
             override fun onSuccess(result: MessageWrapper?) {
                 mergeMessages(listOfNotNull(result))
+                onSuccess()
             }
 
             /**
@@ -315,7 +316,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
                 showToast(R.string.message_chat_resume_empty_tip)
                 return@requestWithLoading
             }
-            modifyResumeRequestMessage(item, ResumeRequestAttachment.buildAccepted(item, resume))
+            modifyResumeRequestMessage(item.id, ResumeRequestAttachment.buildAccepted(item, resume)) {
+                sendTextMessage(RESUME_REQUEST_ACCEPT_TEXT)
+            }
         }
     }
 
@@ -323,7 +326,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 拒绝 HR 索要简历请求，并按协议修改原 resumeRequest 消息。
      */
     fun rejectResumeRequest(item: ResumeRequestChatItem) {
-        modifyResumeRequestMessage(item, ResumeRequestAttachment.buildRejected(item))
+        modifyResumeRequestMessage(item.id, ResumeRequestAttachment.buildRejected(item))
     }
 
     /**
@@ -400,6 +403,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
 
         // 主动发送简历前先发送的文本消息内容。
         private const val RESUME_DELIVERY_TEXT = "这是我的简历，您看看"
+
+        // 同意 HR 索要简历后发送的文本消息内容。
+        private const val RESUME_REQUEST_ACCEPT_TEXT = "你好，我已投递简历"
 
     }
 }

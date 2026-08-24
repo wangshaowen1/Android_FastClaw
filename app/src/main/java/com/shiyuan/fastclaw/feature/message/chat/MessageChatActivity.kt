@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.message.chat
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -21,6 +22,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
@@ -88,6 +90,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     /**
      * 初始化返回按钮、消息列表、输入框和卡片预留点击事件。
      */
+    @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         binding.ivBack.setOnSingleClickListener { finish() }
         messageLayoutManager = LinearLayoutManager(this).apply {
@@ -108,6 +111,12 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
                 }
             }
         })
+        binding.rvMessages.setOnTouchListener { _, event ->
+            if (KeyboardUtils.isSoftInputShown(window)) {
+                hideKeyboard(binding.etContent)
+            }
+            false // 不影响 RecyclerView 正常滑动
+        }
         binding.ivSend.setOnSingleClickListener {
             val hasContent = binding.etContent.text?.toString()?.isNotBlank() == true
             if (hasContent) {
