@@ -11,13 +11,16 @@ import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.data.MessageListItem
 import com.tulele.im.ImSession
 import com.tulele.im.conversation.ConversationListener
+import com.tulele.im.custom.CustomAttachment
 import com.tulele.im.entity.Conversation
 import com.tulele.im.entity.ConversationType
 import com.tulele.im.entity.MessageType
+import com.tulele.im.entity.UnknownAttachment
 import com.tulele.im.utils.AccountHelper
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import kotlin.jvm.JvmName
 
 // 消息会话列表基类，封装 IM 会话查询、监听和通用列表映射。
@@ -193,9 +196,36 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     }
 
     /**
-     * 将 IM 末条消息转换成会话列表摘要，非文本消息展示资源文案。
+     * 将 IM 末条消息转换成会话列表摘要，自定义消息按协议结构化字段生成文案。
      */
     protected fun formatLastMessage(conversation: Conversation): String {
+        if (conversation.messageType == MessageType.custom || conversation.messageType == MessageType.appCustom) {
+            val defaultPreview = App.instance.getString(R.string.message_preview_custom)
+            val raw = when (val attachment = conversation.attachment) {
+                is UnknownAttachment -> attachment.raw
+                is CustomAttachment -> attachment.toJson(false)
+                else -> return defaultPreview
+            }
+            val payload = try {
+                JSONObject(raw)
+            } catch (_: Exception) {
+                return defaultPreview
+            }
+            return when (payload.optString(KEY_TYPE)) {
+                TYPE_RESUME_REQUEST -> when (payload.optString(KEY_STATUS)) {
+                    STATUS_ACCEPTED, STATUS_SENT -> App.instance.getString(R.string.message_conversation_resume_request_accepted)
+                    STATUS_REJECTED -> App.instance.getString(R.string.message_conversation_resume_request_rejected)
+                    else -> App.instance.getString(R.string.message_conversation_resume_request_pending)
+                }
+                TYPE_RESUME_DELIVERY -> {
+                    payload.optJSONObject(KEY_RESUME)
+                        ?.optString(KEY_NAME)
+                        ?.takeIf { it.isNotBlank() }
+                        ?: App.instance.getString(R.string.resume_attachment)
+                }
+                else -> defaultPreview
+            }
+        }
         conversation.content?.takeIf { it.isNotBlank() }?.let { return it }
         return when (conversation.messageType) {
             MessageType.image -> App.instance.getString(R.string.message_preview_image)
@@ -207,8 +237,6 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
             MessageType.notification -> App.instance.getString(R.string.message_preview_notification)
             MessageType.avchat,
             MessageType.nrtc_netcall -> App.instance.getString(R.string.message_preview_video_call)
-            MessageType.custom,
-            MessageType.appCustom -> App.instance.getString(R.string.message_preview_custom)
             else -> ""
         }
     }
@@ -290,5 +318,29 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
 
         // 会话扩展中的不合适标记字段。
         private const val KEY_IS_INAPPROPRIATE = "isInappropriate"
+
+        // 自定义消息协议类型字段。
+        private const val KEY_TYPE = "type"
+
+        // 自定义消息状态字段。
+        private const val KEY_STATUS = "status"
+
+        // 自定义消息简历节点字段。
+        private const val KEY_RESUME = "resume"
+
+        // HR 索要简历协议类型。
+        private const val TYPE_RESUME_REQUEST = "resumeRequest"
+
+        // 求职者主动发送简历协议类型。
+        private const val TYPE_RESUME_DELIVERY = "resumeDelivery"
+
+        // 简历消息已同意状态。
+        private const val STATUS_ACCEPTED = "accepted"
+
+        // 简历消息已拒绝状态。
+        private const val STATUS_REJECTED = "rejected"
+
+        // 旧版本简历消息已发送状态。
+        private const val STATUS_SENT = "sent"
     }
 }
