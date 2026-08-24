@@ -54,8 +54,6 @@ import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.shiyuan.fastclaw.core.im.FastClawMixPushMessageHandler
 import com.shiyuan.fastclaw.core.im.FriendInteractionAttachment
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
-import com.shiyuan.fastclaw.core.network.apis.ApiException
-import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.tencent.bugly.crashreport.CrashReport
@@ -293,17 +291,14 @@ class App : ImApplication() {
             /** 在 IM 登录协程中获取并保存当前用户的云信凭据。 */
             override suspend fun getImToken(): String? {
                 if (User.get().isVisitor) return null
-                val data = ApiFactory.apiService.registerImToken(UserTokenBody()).data
-
+                val data = ApiFactory.apiService.refreshImToken().data
                 /*data?.imAccId = "234567"
                 data?.imAccToken = "234567"
-                data?.imReady = true*/
-
+                data?.ready = true*/
                 User.get().storeImAccessId(data?.imAccId)
                 User.get().storeImToken(data?.imAccToken)
-                Logger.i(
-                    IM_LOGIN_LOG_TAG,
-                    "initImSession imReady=${data?.imReady}, " +
+                Logger.i(IM_LOGIN_LOG_TAG,
+                    "initImSession ready=${data?.ready}, " +
                         "hasAccount=${!data?.imAccId.isNullOrBlank()}, " +
                         "hasToken=${!data?.imAccToken.isNullOrBlank()}"
                 )

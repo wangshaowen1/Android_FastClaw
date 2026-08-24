@@ -47,7 +47,7 @@ class UnableMessageActivity : BaseViewModelActivity<ActivityUnableConversationBi
             adapter = conversationAdapter
         }
         conversationAdapter.onConversationClick = {
-            MessageChatActivity.start(this, it.contactId, it.targetName, it.targetAvatar)
+            MessageChatActivity.start(this, it.id, it.contactId, it.targetName, it.targetAvatar)
         }
     }
 

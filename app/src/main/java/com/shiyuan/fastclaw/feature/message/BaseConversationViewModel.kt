@@ -316,6 +316,9 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         // 会话扩展中的职位字段。
         private const val KEY_POSITION = "position"
 
+        // 会话扩展中的后端本地会话业务 ID 字段。
+        private const val KEY_SESSION_ID = "sessionId"
+
         // 会话扩展中的不合适标记字段。
         private const val KEY_IS_INAPPROPRIATE = "isInappropriate"
 

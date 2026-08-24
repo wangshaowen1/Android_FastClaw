@@ -43,6 +43,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private var forceScrollToBottom = false
     // 键盘动画运行中标记，避免普通 Insets 回调和动画回调同时修改底部间距。
     private var hasRunningImeAnimation = false
+    // 当前后端本地会话业务 ID。
+    private var sessionId: String = ""
     // 当前聊天对象账号。
     private var contactId: String = ""
     //HR头像
@@ -53,6 +55,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private var pendingShowResumePanel = false
 
     companion object {
+        // 聊天会话参数。
+        private const val EXTRA_SESSION_ID = "extra_session_id"
         // 接收方账号参数。
         private const val EXTRA_CONTACT_ID = "extra_contact_id"
         // 接收方昵称参数。
@@ -75,11 +79,12 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         private const val WAIT_KEYBOARD_HIDE_MAX_COUNT = 6
 
         /**
-         * 根据会话对象账号、昵称和头像打开 IM 单聊详情页。
+         * 根据会话业务 ID、对象账号、昵称和头像打开 IM 单聊详情页。
          */
-        fun start(context: Context, id: String, name: String, avatar: String?) {
+        fun start(context: Context, sessionId: String, contactId: String, name: String, avatar: String?) {
             val intent = Intent(context, MessageChatActivity::class.java)
-                .putExtra(EXTRA_CONTACT_ID, id)
+                .putExtra(EXTRA_SESSION_ID, sessionId)
+                .putExtra(EXTRA_CONTACT_ID, contactId)
                 .putExtra(EXTRA_TARGET_NAME, name)
                 .putExtra(EXTRA_TARGET_AVATAR, avatar)
             context.startActivity(intent)
@@ -148,10 +153,10 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             mRealVM.queryResumeForDelivery()
         }
         messageAdapter.onResumeRequestAcceptClick = {
-            mRealVM.acceptResumeRequest(it)
+            mRealVM.acceptResumeForRequest(sessionId, it)
         }
         messageAdapter.onResumeRequestRejectClick = {
-            mRealVM.rejectResumeRequest(it)
+            mRealVM.rejectResumeForRequest(it)
         }
         messageAdapter.onResumeFileClick = {
             //showMessage(getString(R.string.message_chat_resume_action_waiting))
@@ -252,6 +257,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
      */
     private fun initData() {
         binding.tvTitle.text = intent.getStringExtra(EXTRA_TARGET_NAME).orEmpty()
+        sessionId = intent.getStringExtra(EXTRA_SESSION_ID) ?: ""
         contactId = intent.getStringExtra(EXTRA_CONTACT_ID) ?: ""
         targetAvatar = intent.getStringExtra(EXTRA_TARGET_AVATAR)
         mRealVM.initChat(contactId, targetAvatar)

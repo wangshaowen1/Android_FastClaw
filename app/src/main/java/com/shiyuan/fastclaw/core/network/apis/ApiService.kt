@@ -70,6 +70,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.RegionDictQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
@@ -94,7 +95,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.BindThirdPartyData
 import com.shiyuan.fastclaw.core.network.apis.response.CheckMobileBindStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobCityData
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
-import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyInfo
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanySearchData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundGenerateResultData
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
@@ -793,13 +793,15 @@ interface ApiService {
         @Body body: ImSessionCreateBody
     ): ApiResponse<ImSessionCreateData>
 
-
-    @POST(ApiConstants.REGISTER_IM_TOKEN)
-    suspend fun registerImToken(@Body body: UserTokenBody): ApiResponse<ImTokenData?>
-
-    /** 查询当前用户云信账号。 */
-    @POST(ApiConstants.CHAT_IM_ACCOUNT_QUERY)
+    /** 查询 App 端云信账号。 */
+    @POST(ApiConstants.IM_ACCOUNT_QUERY)
     suspend fun queryImAccount(): ApiResponse<ImTokenData?>
 
+    /** 刷新 App 端云信 Token。 */
+    @POST(ApiConstants.IM_TOKEN_REFRESH)
+    suspend fun refreshImToken(): ApiResponse<ImTokenData?>
 
+    /** 同意发送简历。 */
+    @POST(ApiConstants.IM_RESUME_SEND_AGREE)
+    suspend fun agreeResumeSend(@Body body: ResumeSendAgreeBody): ApiResponse<Any?>
 }

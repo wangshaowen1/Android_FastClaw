@@ -170,7 +170,8 @@ class OpportunityDetailActivity :
         mRealVM.createEnterpriseImSession(detail.jobId) { session ->
             MessageChatActivity.start(
                 context = this,
-                id = session.targetBaseAccountId.toString(),
+                sessionId = session.sessionId?:"",
+                contactId = session.targetBaseAccountId.toString(),
                 name = session.targetNickname.orEmpty(),
                 avatar = session.targetAvatarUrl,
             )

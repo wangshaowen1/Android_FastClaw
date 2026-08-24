@@ -108,27 +108,8 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
                     bean = mRepo.api.getUserHomeInfo(UserTokenBody()),
                     result = {
                         fetchingUserInfo = false
-
-                        /*data?.imAccId = "234567"
-                        data?.imAccToken = "234567"
-                        data?.imReady = true*/
-
                         User.get().updateFrom(this.data)
-                        Logger.i(
-                            IM_LOGIN_LOG_TAG,
-                            "fetchUserInfo imReady=${this.data?.imReady}, " +
-                                "localValid=${ImSession.get().account.isValid}, " +
-                                "logged=${AccountHelper.isLogged()}"
-                        )
-                        // IM 账号无效时先同步；已有账号但组件未登录时走组件登录入口。
-                        if (!ImSession.get().account.isValid()) {
-                            syncImAccountAndLogin()
-                        } else {
-                            if (!AccountHelper.isLogged()) {
-                                AccountHelper.login()
-                            }
-                            refreshImData()
-                        }
+                        syncImAccountAndLogin()
                     },
                     error = { fetchingUserInfo = false }
                 )
@@ -139,7 +120,7 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
 
 
     /**
-     * 查询并保存云信账号后登录，普通查询失败时继续走刷新 Token 的既有兜底链路。
+     * 查询并保存云信账号后登录，用户信息刷新成功后必须同步最新 IM 账号。
      */
     private fun syncImAccountAndLogin() {
         request(
@@ -147,21 +128,23 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
             onError = {
                 Logger.i(
                     IM_LOGIN_LOG_TAG,
-                    "syncImAccountAndLogin localValid=${ImSession.get().account.isValid}, " +
+                    "syncImAccountAndLogin localValid=${ImSession.get().account}, " +
                         "logged=${AccountHelper.isLogged()}"
                 )
                 AccountHelper.login()
                 refreshImData()
             },
             onSuccess = {
-                val account = data
                 Logger.i(IM_LOGIN_LOG_TAG,
-                    "syncImAccountAndLogin imReady=${account?.imReady}, " +
-                        "hasAccount=${!account?.imAccId.isNullOrBlank()}, " +
-                        "hasToken=${!account?.imAccToken.isNullOrBlank()}"
+                    "fetchUserInfo imReady=${this.data?.ready}, " +
+                            "localValid=${ImSession.get().account}, " +
+                            "logged=${AccountHelper.isLogged()}"
                 )
-                User.get().storeImAccessId(account?.imAccId)
-                User.get().storeImToken(account?.imAccToken)
+                /*data?.imAccId = "234567"
+                data?.imAccToken = "234567"
+                data?.ready = true*/
+                User.get().storeImAccessId(data?.imAccId)
+                User.get().storeImToken(data?.imAccToken)
                 AccountHelper.login()
                 refreshImData()
             }
