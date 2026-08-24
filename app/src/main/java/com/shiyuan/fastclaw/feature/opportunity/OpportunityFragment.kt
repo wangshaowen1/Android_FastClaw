@@ -123,6 +123,7 @@ class OpportunityFragment :
                 mRealVM.startResumePolling()
                 binding.llState.visible()
                 binding.vLine.gone()
+                binding.cardUploadResumeAction.gone()
                 binding.ivState.setImageResource(R.drawable.ic_running2)
                 startRotation(binding.ivState)
                 binding.tvState.setTextColor(resources.getColor(R.color.color_2f6bff))
@@ -212,6 +213,7 @@ class OpportunityFragment :
                     updateNewOpportunityPolling(lastUiVisible == true)
                     updateChanceData(lastUiVisible == true)
                 }
+
                 else -> {
                     renderLottie(true)
                     binding.cardUnderstandUser.visible()
@@ -350,6 +352,7 @@ class OpportunityFragment :
     }
 
     private fun onVisibilityChanged(isVisible: Boolean) {
+        updateJobResumeState(isVisible)
         updateNewOpportunityPolling(isVisible)
         updateChanceData(isVisible)
         if (isVisible) {
@@ -358,6 +361,19 @@ class OpportunityFragment :
             syncUserState()
         } else {
             stopLottiePlayback()
+        }
+    }
+
+    /** 更新是否传来简历和维护求职偏好信息**/
+    private fun updateJobResumeState(isVisible: Boolean) {
+        if (isVisible && !User.get().isVisitor) {
+            if (mRealVM.isJobUpCompleted.value == false) {
+                mRealVM.queryResumeList()
+            } else {
+                if(mRealVM.isJobPreferenceCompleted.value == false){
+                    mRealVM.queryJobPreferenceCompletion()
+                }
+            }
         }
     }
 
@@ -390,6 +406,7 @@ class OpportunityFragment :
             }
         }
     }
+
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         dispatchChanged()
