@@ -17,6 +17,9 @@ class MessageJobAttachment : CustomAttachment(MSG_TYPE) {
     // 职位卡片业务幂等 ID。
     var cardId: String? = null
 
+    // 实际发起职业卡片事件的一方。
+    var operatorRole: String? = null
+
     // 职位业务 ID。
     var jobId: String? = null
 
@@ -87,6 +90,7 @@ class MessageJobAttachment : CustomAttachment(MSG_TYPE) {
             .put(KEY_VERSION, protocolVersion ?: PROTOCOL_VERSION)
             .put(KEY_TYPE, TYPE_JOB_CARD)
             .put(KEY_CARD_ID, cardId)
+            .put(KEY_OPERATOR_ROLE, operatorRole)
             .put(KEY_JOB, job)
             .toString()
     }
@@ -100,6 +104,7 @@ class MessageJobAttachment : CustomAttachment(MSG_TYPE) {
         private const val KEY_VERSION = "v"
         private const val KEY_TYPE = "type"
         private const val KEY_CARD_ID = "cardId"
+        private const val KEY_OPERATOR_ROLE = "operatorRole"
         private const val KEY_JOB = "job"
         private const val KEY_JOB_ID = "jobId"
         private const val KEY_JOB_NAME = "jobName"
@@ -127,6 +132,7 @@ class MessageJobAttachment : CustomAttachment(MSG_TYPE) {
                 protocolVersion = payload?.optInt(KEY_VERSION),
                 protocolType = payload?.optString(KEY_TYPE),
                 cardId = payload?.optString(KEY_CARD_ID),
+                operatorRole = payload?.optString(KEY_OPERATOR_ROLE),
                 jobId = job?.optString(KEY_JOB_ID),
                 jobName = job?.optString(KEY_JOB_NAME),
                 salaryText = job?.optString(KEY_SALARY_TEXT),

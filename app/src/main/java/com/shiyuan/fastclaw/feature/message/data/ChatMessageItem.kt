@@ -35,6 +35,8 @@ data class JobChatItem(
     val protocolType: String?,
     /** 职位卡片业务幂等 ID。 */
     val cardId: String?,
+    /** 实际发起职业卡片事件的一方。 */
+    val operatorRole: String?,
     /** 职位业务 ID。 */
     val jobId: String?,
     /** 职位名称快照。 */
