@@ -23,6 +23,7 @@ import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
+import com.shiyuan.fastclaw.core.network.apis.request.ImSessionCreateBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityStatusUpdateBody
@@ -30,6 +31,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
+import com.shiyuan.fastclaw.core.network.apis.response.ImSessionCreateData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailActionData
@@ -135,10 +137,11 @@ class OpportunityViewModel : HomeReportViewModel() {
     fun queryProcessedOpportunityPreview() {
         request(
             apiBlock = { mRepo.api.queryProcessedOpportunityPage(PagedBody(1, 5)) },
-            onError = {
-                chanceData.value = createFakeChanceData()
-            },
+           /* onError = {
+
+            },*/
             onSuccess = {
+                //chanceData.value = createFakeChanceData()
                 chanceData.value = data?.opportunities?.items.orEmpty()
             }
         )
@@ -251,11 +254,12 @@ class OpportunityViewModel : HomeReportViewModel() {
                 mRepo.api.queryOpportunityDetail(OpportunityDetailQueryBody(jobId))
             },
             showLoading = showLoading,
-            onError = {
+           /* onError = {
                 opportunityDetail.value = createFakeOpportunityDetail(jobId)
-            },
+            },*/
             onSuccess = {
                 data?.let { detail ->
+                   // opportunityDetail.value = createFakeOpportunityDetail(jobId)
                     opportunityDetail.value = detail
                 }
             }
@@ -285,6 +289,29 @@ class OpportunityViewModel : HomeReportViewModel() {
             },
             onSuccess = {
                 queryOpportunityDetail(jobId, showLoading = false)
+            }
+        )
+    }
+
+    /** 创建企业侧 IM 会话，成功后交由页面进入聊天。 */
+    fun createEnterpriseImSession(
+        jobId: String,
+        onSuccess: (ImSessionCreateData) -> Unit,
+    ) {
+        val targetBaseAccountId = User.get().userId?.toLongOrNull() ?: return
+        val currentJobId = jobId.toLongOrNull() ?: return
+        requestWithLoading(
+            apiBlock = {
+                mRepo.api.createEnterpriseImSession(
+                    ImSessionCreateBody(
+                        targetSubjectType = 1,
+                        targetBaseAccountId = targetBaseAccountId,
+                        currentJobId = currentJobId,
+                    )
+                )
+            },
+            onSuccess = {
+                data?.takeIf { it.targetBaseAccountId > 0 }?.let(onSuccess)
             }
         )
     }

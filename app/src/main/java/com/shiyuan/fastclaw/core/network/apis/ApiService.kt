@@ -60,6 +60,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.OnlineResumeAttributeUpdat
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityStatusUpdateBody
+import com.shiyuan.fastclaw.core.network.apis.request.ImSessionCreateBody
 import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.PlayEventBody
@@ -126,6 +127,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedPageData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatsData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityStatusUpdateData
+import com.shiyuan.fastclaw.core.network.apis.response.ImSessionCreateData
 import com.shiyuan.fastclaw.core.network.apis.response.WelfareDict
 import com.shiyuan.fastclaw.core.network.apis.response.PositionDict
 import com.shiyuan.fastclaw.core.network.apis.response.PayOrderInfo
@@ -776,6 +778,12 @@ interface ApiService {
     suspend fun updateOpportunityStatus(
         @Body body: OpportunityStatusUpdateBody
     ): ApiResponse<OpportunityStatusUpdateData>
+
+    /** 创建企业侧 IM 会话。 */
+    @POST(ApiConstants.ENTERPRISE_IM_SESSION_CREATE)
+    suspend fun createEnterpriseImSession(
+        @Body body: ImSessionCreateBody
+    ): ApiResponse<ImSessionCreateData>
 
 
     @POST(ApiConstants.REGISTER_IM_TOKEN)

@@ -95,7 +95,7 @@ class OpportunityFragment :
         }
         opportunityAdapter.setOnItemClickListener { _, _, i ->
             mRealVM.chanceData.value.orEmpty().getOrNull(i)?.let { opportunity ->
-                OpportunityDetailActivity.start(requireActivity(), "opportunity.jobId")
+                OpportunityDetailActivity.start(requireActivity(), opportunity.jobId)
             }
         }
         binding.rvMatchOpportunity.apply {
@@ -364,7 +364,7 @@ class OpportunityFragment :
         }
     }
 
-    /** 更新是否传来简历和维护求职偏好信息**/
+    /** 更新是否传来简历和维护求职偏好**/
     private fun updateJobResumeState(isVisible: Boolean) {
         if (isVisible && !User.get().isVisitor) {
             if (mRealVM.isJobUpCompleted.value == false) {

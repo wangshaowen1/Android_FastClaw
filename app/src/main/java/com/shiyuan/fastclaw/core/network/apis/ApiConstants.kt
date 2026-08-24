@@ -473,6 +473,8 @@ object ApiConstants {
      */
     const val OPPORTUNITY_STATUS_UPDATE = "/api/candidate/app/opportunity/status/update"
 
+    /** 创建企业侧 IM 会话。 */
+    const val ENTERPRISE_IM_SESSION_CREATE = "/api/enterprise/im/session/create"
 
     /**
      * 刷新云信 IM Token

@@ -19,6 +19,7 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
 import com.shiyuan.fastclaw.databinding.ActivityOpportunityDetailBinding
+import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailActionState
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
 import io.noties.markwon.Markwon
@@ -33,6 +34,7 @@ class OpportunityDetailActivity :
 
     companion object {
         private const val EXTRA_JOB_ID = "extra_job_id"
+        private const val ACTION_MARK_COMMUNICATING = "MARK_COMMUNICATING"
 
         fun start(activity: Activity?, jobId: String) {
             if (activity == null || jobId.isBlank()) return
@@ -151,9 +153,24 @@ class OpportunityDetailActivity :
             visibility = if (showSecondAction) View.VISIBLE else View.GONE
             setOnSingleClickListener {
                 secondAction?.actionCode?.let { actionCode ->
-                    mRealVM.updateOpportunityStatus(detail.jobId, actionCode)
+                    submitBottomAction(detail, actionCode)
                 }
             }
+        }
+    }
+
+    private fun submitBottomAction(detail: OpportunityDetailData, actionCode: String) {
+        if (actionCode != ACTION_MARK_COMMUNICATING) {
+            mRealVM.updateOpportunityStatus(detail.jobId, actionCode)
+            return
+        }
+        mRealVM.createEnterpriseImSession(detail.jobId) { session ->
+            MessageChatActivity.start(
+                context = this,
+                id = session.targetBaseAccountId.toString(),
+                name = session.targetNickname.orEmpty(),
+                avatar = session.targetAvatarUrl,
+            )
         }
     }
 
