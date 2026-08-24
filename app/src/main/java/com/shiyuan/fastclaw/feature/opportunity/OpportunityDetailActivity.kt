@@ -81,6 +81,9 @@ class OpportunityDetailActivity :
             detail.financingStage
         ).filter(String::isNotBlank).joinToString(" · ")
         binding.tvWorkAddress.text = detail.workAddress
+        binding.clXq.setOnSingleClickListener {
+            CompanyDetailActivity.start(this, detail.enterpriseId)
+        }
         renderBottomActions(detail)
     }
 

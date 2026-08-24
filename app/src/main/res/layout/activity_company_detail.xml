@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="layout"
+            type="com.shiyuan.fastclaw.feature.opportunity.vm.CompanyDetailViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/company_detail_background">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/view_model_toolbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:toolbar="@{layout.toolbar}" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/spacing_l"
+                android:paddingBottom="@dimen/spacing_xl"
+                android:visibility="@{layout.companyDetail == null ? View.INVISIBLE : View.VISIBLE}">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="25dp"
+                        android:orientation="vertical"
+                        app:layout_constraintEnd_toStartOf="@id/iv_company_logo"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="2"
+                            android:text="@{layout.companyName}"
+                            android:textColor="@color/color_ffffff"
+                            style="@style/Text20"
+                            tools:text="腾讯科技（深圳）有限公司" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:ellipsize="end"
+                            android:includeFontPadding="false"
+                            android:maxLines="2"
+                            android:text="@{layout.companySummary}"
+                            android:textColor="@color/color_70_ffffff"
+                            style="@style/Text12"
+                            tools:text="互联网/AI·10000人以上·已上市上" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/iv_company_logo"
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:background="@drawable/bg_2f6bff_r11"
+                        android:clipToOutline="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:contentDescription="@{layout.companyName}"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:loadUri="@{layout.companyDetail.logoUrl}" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:includeFontPadding="false"
+                    android:lineHeight="24dp"
+                    android:text="@{layout.companyDetail.introduction}"
+                    android:textColor="@color/color_ffffff"
+                    style="@style/Text14"
+                    tools:text="腾讯科技专注于互联网/AI，已经上市，我们的产品是专门做帮助企业提升高效协同、决策效率，目前服务100000企业用户。" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="26dp"
+                    android:background="@color/company_detail_divider" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xl"
+                    android:includeFontPadding="false"
+                    android:text="@string/opportunity_detail_work_location"
+                    android:textColor="@color/color_ffffff"
+                    style="@style/Text18" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:includeFontPadding="false"
+                    android:lineHeight="24dp"
+                    android:text="@{layout.companyDetail.location}"
+                    android:textColor="@color/color_ffffff"
+                    style="@style/Text14"
+                    tools:text="深圳创维半导体设计大厦西座12楼1205" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="26dp"
+                    android:background="@color/company_detail_divider" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xl"
+                    android:includeFontPadding="false"
+                    android:text="@string/opportunity_company_detail_welfare"
+                    android:textColor="@color/color_ffffff"
+                    style="@style/Text18" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/flex_welfare"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    app:alignItems="center"
+                    app:flexDirection="row"
+                    app:flexWrap="wrap" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

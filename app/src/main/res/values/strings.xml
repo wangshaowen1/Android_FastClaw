@@ -1320,6 +1320,8 @@
     <string name="opportunity_detail_sample_address">深圳创维半导体设计大厦西座12楼1205</string>
     <string name="opportunity_detail_security_tip_content">严禁用人单位和招聘者用户做出任何损害求职者合法权益的违法违规行为，包括但不限于扣押求职者证件、收取求职者财物、向求职者集资、让求职者入股、诱导求职者异地入职、异地参加培训、违法违规使用求职者简历等，您一旦发现此类行为，请立即举报。</string>
     <string name="opportunity_detail_report_now">立即举报</string>
+    <string name="opportunity_company_detail_title">公司主页</string>
+    <string name="opportunity_company_detail_welfare">福利待遇</string>
 
 </resources>
 

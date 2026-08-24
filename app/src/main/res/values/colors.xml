@@ -202,6 +202,8 @@
     <color name="color_ff5f6a">#FF5F6A</color>
     <color name="color_15_ff0e0e">#26FF0E0E</color>
     <color name="color_15_ffffff">#26FFFFFF</color>
+    <color name="company_detail_background">#2D303A</color>
+    <color name="company_detail_divider">#0AFFFFFF</color>
     <color name="color_060608">#060608</color>
     <color name="color_ff3434">#ffff3434</color>
     <color name="color_ff8e5e">#ffff8e5e</color>

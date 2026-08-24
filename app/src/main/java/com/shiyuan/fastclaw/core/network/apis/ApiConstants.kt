@@ -469,6 +469,11 @@ object ApiConstants {
     const val OPPORTUNITY_DETAIL_QUERY = "/api/candidate/app/opportunity/detail/query"
 
     /**
+     * 查询机会关联公司的公开信息
+     */
+    const val OPPORTUNITY_COMPANY_DETAIL_QUERY = "/api/candidate/app/opportunity/company/detail/query"
+
+    /**
      * 更新机会状态
      */
     const val OPPORTUNITY_STATUS_UPDATE = "/api/candidate/app/opportunity/status/update"
