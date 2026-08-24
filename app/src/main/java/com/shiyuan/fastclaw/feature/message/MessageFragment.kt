@@ -73,6 +73,16 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
     }
 
     /**
+     * 页面重新可见时刷新草稿展示状态。
+     */
+    override fun onResume() {
+        super.onResume()
+        if (!mRealVM.conversationList.value.isNullOrEmpty()) {
+            mRealVM.refreshConversationList()
+        }
+    }
+
+    /**
      * 发送 IM 测试文本消息，用于验证云信 V2 单聊发送链路。
      */
     private fun sendTestImMessage() {

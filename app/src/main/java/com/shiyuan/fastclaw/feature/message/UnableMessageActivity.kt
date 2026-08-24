@@ -68,6 +68,16 @@ class UnableMessageActivity : BaseViewModelActivity<ActivityUnableConversationBi
     }
 
     /**
+     * 页面重新可见时刷新草稿展示状态。
+     */
+    override fun onResume() {
+        super.onResume()
+        if (!mRealVM.conversationList.value.isNullOrEmpty()) {
+            mRealVM.refreshConversationList()
+        }
+    }
+
+    /**
      * 设置透明状态栏并保持深色状态栏字体。
      */
     override fun setTranslucentStatus() {

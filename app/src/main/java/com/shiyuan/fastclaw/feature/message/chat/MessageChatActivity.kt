@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
+import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
 import com.shiyuan.fastclaw.feature.message.dialog.ResumeConfirmDialog
 
 /**
@@ -145,6 +146,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             }
         }
         binding.etContent.doAfterTextChanged {
+            MessageDraftStore.save(sessionId, it?.toString().orEmpty())
             updateSendButton()
             updateSendPosition()
         }
@@ -260,6 +262,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         sessionId = intent.getStringExtra(EXTRA_SESSION_ID) ?: ""
         contactId = intent.getStringExtra(EXTRA_CONTACT_ID) ?: ""
         targetAvatar = intent.getStringExtra(EXTRA_TARGET_AVATAR)
+        restoreMessageDraft()
         mRealVM.initChat(contactId, targetAvatar)
     }
 
@@ -373,7 +376,18 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         if (content.isBlank()) return
         forceScrollToBottom = true
         mRealVM.sendTextMessage(content)
+        MessageDraftStore.clear(sessionId)
         binding.etContent.text?.clear()
+    }
+
+    /**
+     * 恢复当前会话输入框草稿。
+     */
+    private fun restoreMessageDraft() {
+        MessageDraftStore.get(sessionId)?.let { draft ->
+            binding.etContent.setText(draft)
+            binding.etContent.setSelection(binding.etContent.text?.length ?: 0)
+        }
     }
 
     /**

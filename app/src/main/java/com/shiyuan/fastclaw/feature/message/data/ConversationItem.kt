@@ -35,7 +35,7 @@ data class ConversationItem(
     val unreadCount: Int,
     /** 组件归一化后的会话扩展。 */
     val extension: Map<String, Any?>,
-    /** 是否展示草稿标记，当前预留给后续草稿能力。 */
+    /** 是否展示草稿标记。 */
     val isDraft: Boolean = false,
     /** 列表项布局类型。 */
     override val itemType: Int = TYPE_CONVERSATION
