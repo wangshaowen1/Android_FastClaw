@@ -3,14 +3,8 @@ package com.shiyuan.fastclaw.feature.message.chat
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.netease.nimlib.sdk.NIMClient
-import com.netease.nimlib.sdk.v2.V2NIMFailureCallback
-import com.netease.nimlib.sdk.v2.V2NIMSuccessCallback
-import com.netease.nimlib.sdk.v2.message.V2NIMMessage
-import com.netease.nimlib.sdk.v2.message.V2NIMMessageService
-import com.netease.nimlib.sdk.v2.message.attachment.V2NIMMessageCustomAttachment
-import com.netease.nimlib.sdk.v2.message.params.V2NIMModifyMessageParams.V2NIMModifyMessageParamsBuilder
 import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
@@ -28,7 +22,9 @@ import com.tulele.im.Chat
 import com.tulele.im.ImCallback
 import com.tulele.im.ImSession
 import com.tulele.im.entity.Contact
+import com.tulele.im.entity.ConversationType
 import com.tulele.im.entity.MessageDirection
+import com.tulele.im.entity.MessageModifyParams
 import com.tulele.im.entity.MessageType
 import com.tulele.im.entity.MessageWrapper
 import kotlinx.coroutines.flow.collectLatest
@@ -57,11 +53,12 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     /**
      * 初始化聊天参数、打开当前 IM 会话并加载历史消息。
      */
-    fun startChat(contactId: String, targetAvatar: String?) {
+    fun initChat(contactId: String, targetAvatar: String?) {
         this.targetAvatar = targetAvatar
         chat = ImSession.get().openChat(Contact(contactId))
         chat?.onMessageSendResultListener = this
         chat?.active()
+        clearUnread(contactId)
         initObserve()
         loadDataList()
     }
@@ -73,6 +70,11 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         val currentChat = chat ?: return
         viewModelScope.launch {
             currentChat.observeMessages().collectLatest { messages ->
+                mergeMessages(messages)
+            }
+        }
+        viewModelScope.launch {
+            currentChat.observeModifiedMessages().collectLatest { messages ->
                 mergeMessages(messages)
             }
         }
@@ -189,32 +191,37 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 将原索要简历消息更新为已同意状态并写入简历信息。（修改方法需要改库，暂时测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试）
+     * 按新的简历请求附件内容修改原消息。
      */
-    private fun modifyResumeRequestMessage(item: ResumeRequestChatItem, resume: ResumeData) {
+    private fun modifyResumeRequestMessage(item: ResumeRequestChatItem, attachment: ResumeRequestAttachment) {
+        val currentChat = chat ?: return
         val message = messageCache[item.id] ?: return
-        val sdkMessage = message.sdkMessage() ?: return
-        val attachment = ResumeRequestAttachment.buildAccepted(item, resume)
-        val params = V2NIMModifyMessageParamsBuilder.builder()
-            .withSubType(SUBTYPE_RESUME_REQUEST)
-            .withText(attachment.pushContent.toString())
-            .withAttachment(buildResumeRequestAttachment(attachment))
-            .build()
-        NIMClient.getService(V2NIMMessageService::class.java).modifyMessage(
-            sdkMessage,
-            params,
-            V2NIMSuccessCallback { result ->
-                if (result?.errorCode != 200 || result.message == null) {
-                    "简历请求处理失败".showToast()
-                    return@V2NIMSuccessCallback
-                }
-                message.replaceSdkMessage(result.message)
-                mergeMessages(listOf(message))
-            },
-            V2NIMFailureCallback { error ->
-                "简历请求处理失败：${error.code}".showToast()
-            },
+        val params = MessageModifyParams(
+            text = attachment.pushContent.toString(),
+            customAttachment = attachment,
         )
+        currentChat.modifyMessage(message, params, object : ImCallback<MessageWrapper> {
+            /**
+             * 云端消息修改成功后刷新当前消息。
+             */
+            override fun onSuccess(result: MessageWrapper?) {
+                mergeMessages(listOfNotNull(result))
+            }
+
+            /**
+             * 云端消息修改失败时提示错误码。
+             */
+            override fun onFailed(code: Int) {
+                showToast(R.string.message_chat_resume_request_failed)
+            }
+
+            /**
+             * 云端消息修改异常时提示失败。
+             */
+            override fun onException(exception: Throwable) {
+                showToast(R.string.message_chat_resume_request_failed)
+            }
+        })
     }
 
     /**
@@ -278,25 +285,15 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
                 showToast(R.string.message_chat_resume_empty_tip)
                 return@requestWithLoading
             }
-            modifyResumeRequestMessage(item, resume)
+            modifyResumeRequestMessage(item, ResumeRequestAttachment.buildAccepted(item, resume))
         }
     }
 
     /**
-     * 创建云信 V2 自定义附件，复用 ResumeRequestAttachment 的协议序列化。
+     * 拒绝 HR 索要简历请求，并按协议修改原 resumeRequest 消息。
      */
-    private fun buildResumeRequestAttachment(attachment: ResumeRequestAttachment): V2NIMMessageCustomAttachment {
-        return object : V2NIMMessageCustomAttachment {
-            /**
-             * 返回云信保存和同步的自定义消息原始 JSON。
-             */
-            override fun getRaw(): String = attachment.toJson(true)
-
-            /**
-             * 发送侧无需解析云信回填的原始 JSON。
-             */
-            override fun parse(attach: String?) = Unit
-        }
+    fun rejectResumeRequest(item: ResumeRequestChatItem) {
+        modifyResumeRequestMessage(item, ResumeRequestAttachment.buildRejected(item))
     }
 
     /**
@@ -340,17 +337,10 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 读取 MessageWrapper 内部 V2NIMMessage，用于调用云信 modifyMessage。
+     * 清空当前单聊会话未读数，避免用户已进入聊天页后列表和首页仍展示红点。
      */
-    private fun MessageWrapper.sdkMessage(): V2NIMMessage? {
-        return runCatching { MESSAGE_PROXY_FIELD.get(this) as? V2NIMMessage }.getOrNull()
-    }
-
-    /**
-     * 修改成功后替换 MessageWrapper 内部消息体，让当前页面立即刷新。
-     */
-    private fun MessageWrapper.replaceSdkMessage(message: V2NIMMessage) {
-        runCatching { MESSAGE_PROXY_FIELD.set(this, message) }
+    private fun clearUnread(contactId: String) {
+        ImSession.get().getConversationManager().markConversationRead(contactId, ConversationType.P2P)
     }
 
     /**
@@ -378,12 +368,5 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         // 主动发送简历前先发送的文本消息内容。
         private const val RESUME_DELIVERY_TEXT = "这是我的简历，您看看"
 
-        // 简历请求待处理状态。
-        private const val STATUS_PENDING = "pending"
-
-        // MessageWrapper 内部 V2NIMMessage 字段，用于补齐 imsdk 未暴露的 modifyMessage 能力。
-        private val MESSAGE_PROXY_FIELD by lazy {
-            MessageWrapper::class.java.getDeclaredField("proxy").apply { isAccessible = true }
-        }
     }
 }

@@ -84,26 +84,47 @@ class ResumeRequestAttachment : CustomAttachment(MSG_TYPE) {
         // HR 索要简历自定义消息 subtype。
         const val MSG_TYPE = 1001
 
+        // 简历请求协议版本号。
         private const val PROTOCOL_VERSION = 1
+        // 简历请求协议类型。
         private const val TYPE_RESUME_REQUEST = "resumeRequest"
+        // 简历请求待处理状态。
         private const val STATUS_PENDING = "pending"
+        // 简历请求已同意状态。
         private const val STATUS_ACCEPTED = "accepted"
+        // 简历请求已拒绝状态。
         private const val STATUS_REJECTED = "rejected"
+        // 旧版本简历请求已发送状态。
         private const val STATUS_SENT = "sent"
+        // 待处理状态的通知栏和摘要文案。
         private const val PUSH_PENDING = "对方请求查看你的附件简历"
+        // 已同意状态的通知栏和摘要文案。
         private const val PUSH_ACCEPTED = "附件简历已发送"
+        // 已拒绝状态的通知栏和摘要文案。
         private const val PUSH_REJECTED = "你已拒绝发送附件简历"
+        // 协议版本字段。
         private const val KEY_VERSION = "v"
+        // 协议类型字段。
         private const val KEY_TYPE = "type"
+        // 请求状态字段。
         private const val KEY_STATUS = "status"
+        // 简历信息节点字段。
         private const val KEY_RESUME = "resume"
+        // 简历业务 ID 字段。
         private const val KEY_RESUME_ID = "resumeId"
+        // 简历文件名字段。
         private const val KEY_NAME = "name"
+        // 简历文件地址字段。
         private const val KEY_URL = "url"
+        // 简历文件 MIME 类型字段。
         private const val KEY_MIME_TYPE = "mimeType"
+        // 简历文件大小字段。
         private const val KEY_SIZE = "size"
+        // 业务创建时间字段。
         private const val KEY_CREATED_AT = "createdAt"
+        // 业务更新时间字段。
         private const val KEY_UPDATED_AT = "updatedAt"
+        // 最近操作人云信账号字段。
         private const val KEY_OPERATOR_ID = "operatorId"
 
         /**
@@ -120,6 +141,21 @@ class ResumeRequestAttachment : CustomAttachment(MSG_TYPE) {
                 resumeUrl = resume.resumeFileUrl
                 resumeMimeType = resume.resumeFileType.toResumeMimeType()
                 resumeSize = resume.resumeFileSize
+                createdAt = item.createdAt ?: now
+                updatedAt = now
+                operatorId = User.get().imAccessId
+            }
+        }
+
+        /**
+         * 根据原索要简历卡片组装已拒绝附件。
+         */
+        fun buildRejected(item: ResumeRequestChatItem): ResumeRequestAttachment {
+            val now = System.currentTimeMillis()
+            return ResumeRequestAttachment().apply {
+                protocolVersion = item.protocolVersion ?: PROTOCOL_VERSION
+                protocolType = TYPE_RESUME_REQUEST
+                status = STATUS_REJECTED
                 createdAt = item.createdAt ?: now
                 updatedAt = now
                 operatorId = User.get().imAccessId

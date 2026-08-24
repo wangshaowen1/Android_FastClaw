@@ -130,10 +130,10 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             mRealVM.acceptResumeRequest(it)
         }
         messageAdapter.onResumeRequestRejectClick = {
-            showMessage(getString(R.string.message_chat_resume_action_waiting))
+            mRealVM.rejectResumeRequest(it)
         }
         messageAdapter.onResumeFileClick = {
-            showMessage(getString(R.string.message_chat_resume_action_waiting))
+            //showMessage(getString(R.string.message_chat_resume_action_waiting))
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutInput) { view, insets ->
@@ -231,7 +231,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         binding.tvTitle.text = intent.getStringExtra(EXTRA_TARGET_NAME).orEmpty()
         contactId = intent.getStringExtra(EXTRA_CONTACT_ID) ?: ""
         targetAvatar = intent.getStringExtra(EXTRA_TARGET_AVATAR)
-        mRealVM.startChat(contactId, targetAvatar)
+        mRealVM.initChat(contactId, targetAvatar)
     }
 
 
