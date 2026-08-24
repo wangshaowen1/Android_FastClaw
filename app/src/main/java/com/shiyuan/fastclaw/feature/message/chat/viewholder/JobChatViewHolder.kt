@@ -2,7 +2,9 @@ package com.shiyuan.fastclaw.feature.message.chat.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemChatJobCardBinding
+import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.JobChatItem
 
 /**
@@ -28,8 +30,7 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
         binding.tvStage.visibility = if (stage.isNullOrBlank()) View.GONE else View.VISIBLE
         binding.layoutCompany.visibility = if (company.isNullOrBlank() && stage.isNullOrBlank()) View.GONE else View.VISIBLE
         bindTagViews(tags)
-        binding.tvActionTime.visibility = View.GONE
-        binding.viewDivider.visibility = View.GONE
+        bindActionText(item)
     }
 
     /**
@@ -43,5 +44,34 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
             view.visibility = if (tag.isNullOrBlank()) View.GONE else View.VISIBLE
         }
         binding.layoutTags.visibility = if (tags.any { it.isNotBlank() }) View.VISIBLE else View.GONE
+    }
+
+    /**
+     * 按职业卡片操作方和是否切换职位展示底部动作文案。
+     */
+    private fun bindActionText(item: JobChatItem) {
+        val context = binding.root.context
+        val text = if (item.isJobChanged) {
+            if (item.operatorRole == OPERATOR_ROLE_CANDIDATE) {
+                context.getString(R.string.message_chat_job_changed_by_self)
+            } else {
+                context.getString(R.string.message_chat_job_changed_by_hr)
+            }
+        } else {
+            val action = if (item.operatorRole == OPERATOR_ROLE_CANDIDATE) {
+                context.getString(R.string.message_chat_job_started_by_self)
+            } else {
+                context.getString(R.string.message_chat_job_started_by_other)
+            }
+            context.getString(R.string.message_chat_job_started_format, MessageFormatter.format(item.time), action)
+        }
+        binding.tvActionTime.text = text
+        binding.tvActionTime.visibility = View.VISIBLE
+        binding.viewDivider.visibility = View.VISIBLE
+    }
+
+    companion object {
+        // 求职者操作方枚举值。
+        private const val OPERATOR_ROLE_CANDIDATE = "candidate"
     }
 }

@@ -86,6 +86,11 @@
     <string name="message_chat_resume_empty_tip">暂无可发送的简历</string>
     <string name="message_chat_resume_request_failed">简历请求处理失败</string>
     <string name="message_chat_resume_request_failed_code">简历请求处理失败：%1$d</string>
+    <string name="message_chat_job_started_format">%1$s %2$s</string>
+    <string name="message_chat_job_started_by_self">由你发起的沟通</string>
+    <string name="message_chat_job_started_by_other">由对方发起的沟通</string>
+    <string name="message_chat_job_changed_by_self">你切换了沟通职位</string>
+    <string name="message_chat_job_changed_by_hr">招聘方切换了沟通职位</string>
     <string name="please_write">请填写</string>
     <string name="already_write">已填写</string>
     <string name="please_selected">请选择</string>

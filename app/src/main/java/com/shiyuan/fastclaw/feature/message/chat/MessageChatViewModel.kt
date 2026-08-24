@@ -27,6 +27,7 @@ import com.tulele.im.entity.MessageDirection
 import com.tulele.im.entity.MessageModifyParams
 import com.tulele.im.entity.MessageType
 import com.tulele.im.entity.MessageWrapper
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -59,6 +60,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         chat?.onMessageSendResultListener = this
         chat?.active()
         clearUnread(contactId)
+        fetchTargetAvatar(contactId)
         initObserve()
         loadDataList()
     }
@@ -91,7 +93,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              * 首次历史消息加载成功时刷新当前消息缓存。
              */
             override fun onSuccess(result: List<MessageWrapper>?) {
-                val messages = result.orEmpty().filterNot { it.isDeleted }
+                val messages = result.orEmpty().filterNot { it.shouldIgnore() }
                 messageCache.clear()
                 messages.forEach { message ->
                     messageCache[message.messageClientId] = message
@@ -130,7 +132,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              * 加载更早历史成功时追加到当前消息缓存。
              */
             override fun onSuccess(result: List<MessageWrapper>?) {
-                val messages = result.orEmpty().filterNot { it.isDeleted }
+                val messages = result.orEmpty().filterNot { it.shouldIgnore() }
                 val newMessages = messages.filterNot { messageCache.containsKey(it.messageClientId) }
                 newMessages.forEach { message ->
                     messageCache[message.messageClientId] = message
@@ -242,10 +244,17 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 合并新增或变化的消息，并按消息时间重新发布列表。
      */
     private fun mergeMessages(messages: List<MessageWrapper>) {
-        messages.filterNot { it.isDeleted }.forEach { message ->
+        messages.filterNot { it.shouldIgnore() }.forEach { message ->
             messageCache[message.messageClientId] = message
         }
         refreshMessageList()
+    }
+
+    /**
+     * 判断消息是否需要在聊天列表中忽略。
+     */
+    private fun MessageWrapper.shouldIgnore(): Boolean {
+        return isDeleted || (messageType == MessageType.custom && subtype == SUBTYPE_RESUME_REQUEST_RESULT)
     }
 
     /**
@@ -258,6 +267,27 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         }
         if (messageList.value == items) return
         messageList.value = items
+    }
+
+    /**
+     * 从 IM 用户资料中查询一次对方头像，查询成功后刷新当前消息头像。
+     */
+    private fun fetchTargetAvatar(contactId: String) {
+        viewModelScope.launch {
+            try {
+                val avatar = ImSession.get().getUserManager()
+                    .fetchUserInfo(contactId)
+                    ?.avatar
+                    ?.takeIf { it.isNotBlank() }
+                    ?: return@launch
+                if (targetAvatar == avatar) return@launch
+                targetAvatar = avatar
+                refreshMessageList()
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+            }
+        }
     }
 
     /**
@@ -361,6 +391,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
 
         // 职位卡片自定义消息 subtype。
         private const val SUBTYPE_JOB_CARD = 1003
+
+        // 简历请求结果消息 subtype，只过滤不展示。
+        private const val SUBTYPE_RESUME_REQUEST_RESULT = 1004
 
         // 相邻消息超过 5 分钟时重新展示时间。
         private const val MESSAGE_TIME_INTERVAL = 5 * 60 * 1000L
