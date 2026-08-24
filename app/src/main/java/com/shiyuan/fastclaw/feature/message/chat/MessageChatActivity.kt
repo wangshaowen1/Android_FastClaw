@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -15,7 +17,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.blankj.utilcode.util.ToastUtils
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
@@ -48,6 +49,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private var targetAvatar: String? = null
     // 发简历面板是否已展开。
     private var isResumePanelVisible = false
+    // 键盘收起后是否需要继续展示发简历面板。
+    private var pendingShowResumePanel = false
 
     companion object {
         // 接收方账号参数。
@@ -64,6 +67,12 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         private const val INPUT_KEYBOARD_GAP = 9
         // 发送按钮多行输入时距离输入框底部的间距。
         private const val SEND_BUTTON_BOTTOM_MARGIN = 6
+        // 发简历面板展开和收起动画时长。
+        private const val RESUME_PANEL_ANIMATION_DURATION = 100L
+        // 等待键盘收起后展示发简历面板的检查间隔。
+        private const val WAIT_KEYBOARD_HIDE_DELAY = 60L
+        // 等待键盘收起的最大检查次数，避免部分机型不回调导致点击无响应。
+        private const val WAIT_KEYBOARD_HIDE_MAX_COUNT = 6
 
         /**
          * 根据会话对象账号、昵称和头像打开 IM 单聊详情页。
@@ -114,6 +123,9 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         binding.rvMessages.setOnTouchListener { _, event ->
             if (KeyboardUtils.isSoftInputShown(window)) {
                 hideKeyboard(binding.etContent)
+            }
+            if (isResumePanelVisible) {
+                hideResumePanel()
             }
             false // 不影响 RecyclerView 正常滑动
         }
@@ -178,6 +190,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
                     if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
                         hasRunningImeAnimation = false
                         ViewCompat.requestApplyInsets(binding.layoutInput)
+                        showResumePanelAfterHidden()
                     }
                 }
             }
@@ -186,12 +199,13 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
 
             //键盘真正展开后隐藏发简历面板，避免和输入法同时占位。
             override fun keyBoardShow(height: Int) {
-                hideResumePanel()
+                hideResumePanel(false)
             }
 
             //键盘收起时不再延迟修正 Insets，避免动画结束后再次跳动。
             override fun keyBoardHide(height: Int) {
                 hasRunningImeAnimation = false
+                showResumePanelAfterHidden()
             }
         })
     }
@@ -256,21 +270,67 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
      */
     private fun showResumePanel() {
         if (isResumePanelVisible) return
+        val keyboardShown = KeyboardUtils.isImeVisible(binding.root)
         hideKeyboard(binding.etContent)
         binding.etContent.clearFocus()
-        isResumePanelVisible = true
-        binding.layoutSendResume.visibility = View.VISIBLE
-        updateSendButton()
+        if (keyboardShown) {
+            pendingShowResumePanel = true
+            updateSendButton()
+            showResumePanelAfterHidden(0)
+            return
+        }
+        showResumePanelDirectly()
     }
 
     /**
      * 隐藏发简历面板并恢复默认输入框高度。
      */
-    private fun hideResumePanel() {
+    private fun hideResumePanel(clearPending: Boolean = true) {
+        if (clearPending) {
+            pendingShowResumePanel = false
+        }
         if (!isResumePanelVisible) return
         isResumePanelVisible = false
+        animateResumePanelChange()
         binding.layoutSendResume.visibility = View.GONE
         updateSendButton()
+    }
+
+    /**
+     * 立即展开发简历面板。
+     */
+    private fun showResumePanelDirectly() {
+        isResumePanelVisible = true
+        animateResumePanelChange()
+        binding.layoutSendResume.visibility = View.VISIBLE
+        updateSendButton()
+    }
+
+    /**
+     * 键盘完全收起后再展开发简历面板，避免键盘动画和面板动画互相抢布局。
+     */
+    private fun showResumePanelAfterHidden(waitCount: Int = 0) {
+        if (!pendingShowResumePanel) return
+        if (KeyboardUtils.isImeVisible(binding.root) && waitCount < WAIT_KEYBOARD_HIDE_MAX_COUNT) {
+            binding.layoutInput.postDelayed({
+                showResumePanelAfterHidden(waitCount + 1)
+            }, WAIT_KEYBOARD_HIDE_DELAY)
+            return
+        }
+        pendingShowResumePanel = false
+        if (!isResumePanelVisible) {
+            showResumePanelDirectly()
+        }
+    }
+
+    /**
+     * 使用布局过渡动画处理发简历面板展开和收起。
+     */
+    private fun animateResumePanelChange() {
+        TransitionManager.beginDelayedTransition(binding.layoutContainer, ChangeBounds().apply {
+                duration = RESUME_PANEL_ANIMATION_DURATION
+            }
+        )
     }
 
     /**
@@ -280,7 +340,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         val hasContent = binding.etContent.text?.toString()?.isNotBlank() == true
         val iconRes = when {
             hasContent -> R.drawable.ic_message_send_active
-            isResumePanelVisible -> R.drawable.ic_message_send_inactive
+            isResumePanelVisible || pendingShowResumePanel -> R.drawable.ic_message_send_inactive
             else -> R.drawable.ic_message_add_image
         }
         binding.ivSend.setImageResource(iconRes)

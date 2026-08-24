@@ -10,6 +10,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.blankj.utilcode.util.ScreenUtils;
 import com.shiyuan.fastclaw.App;
 
@@ -80,6 +83,14 @@ public class KeyboardUtils {
         Rect rect = new Rect();
         decorView.getWindowVisibleDisplayFrame(rect);
         return screenHeight - rect.bottom - getNavigateBarHeight(window.getWindowManager()) >= 0;
+    }
+
+    /**
+     * 判断当前输入法是否仍然可见。
+     */
+    public static boolean isImeVisible(View view) {
+        WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(view);
+        return insets != null && insets.isVisible(WindowInsetsCompat.Type.ime());
     }
 
     public static int getNavigateBarHeight(WindowManager windowManager) {
