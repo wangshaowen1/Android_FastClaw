@@ -13,34 +13,38 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.gyf.immersionbar.ImmersionBar
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.BR
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
 import com.shiyuan.fastclaw.databinding.ActivityOpportunityDetailBinding
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailActionState
-import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
+import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailViewModel
 import io.noties.markwon.Markwon
 
 /**
  * 机会详情。
  */
 class OpportunityDetailActivity :
-    BaseViewModelActivity<ActivityOpportunityDetailBinding, OpportunityViewModel>() {
+    BaseViewModelActivity<ActivityOpportunityDetailBinding, OpportunityDetailViewModel>() {
 
     private val markwon by lazy { Markwon.create(this) }
 
     companion object {
         private const val EXTRA_JOB_ID = "extra_job_id"
+        private const val EXTRA_UNREAD = "extra_unread"
         private const val ACTION_MARK_COMMUNICATING = "MARK_COMMUNICATING"
 
-        fun start(activity: Activity?, jobId: String) {
+        fun start(activity: Activity?, jobId: String, unread: Boolean = false) {
             if (activity == null || jobId.isBlank()) return
             activity.startActivity(
                 Intent(activity, OpportunityDetailActivity::class.java)
                     .putExtra(EXTRA_JOB_ID, jobId)
+                    .putExtra(EXTRA_UNREAD, unread)
             )
         }
     }
@@ -56,8 +60,15 @@ class OpportunityDetailActivity :
         setupReportTip()
         mRealVM.opportunityDetail.observe(this) { detail ->
             renderDetail(detail)
+            notifyOpportunityReadIfNeeded()
         }
         mRealVM.queryOpportunityDetail(jobId)
+    }
+
+    private fun notifyOpportunityReadIfNeeded() {
+        if (!intent.getBooleanExtra(EXTRA_UNREAD, false)) return
+        intent.putExtra(EXTRA_UNREAD, false)
+        FlowEventBus.postSticky(Events.OpportunityListRefreshEvent(1))
     }
 
     private fun renderDetail(detail: OpportunityDetailData) {
@@ -129,7 +140,9 @@ class OpportunityDetailActivity :
             isEnabled = state != OpportunityDetailActionState.CLOSED && firstAction?.actionCode != null
             setOnSingleClickListener {
                 firstAction?.actionCode?.let { actionCode ->
-                    mRealVM.updateOpportunityStatus(detail.jobId, actionCode)
+                    mRealVM.updateOpportunityStatus(detail.jobId, actionCode){
+                        FlowEventBus.postSticky(Events.OpportunityListRefreshEvent(2))
+                    }
                 }
             }
             setTextColor(
@@ -164,7 +177,9 @@ class OpportunityDetailActivity :
 
     private fun submitBottomAction(detail: OpportunityDetailData, actionCode: String) {
         if (actionCode != ACTION_MARK_COMMUNICATING) {
-            mRealVM.updateOpportunityStatus(detail.jobId, actionCode)
+            mRealVM.updateOpportunityStatus(detail.jobId, actionCode) {
+                FlowEventBus.postSticky(Events.OpportunityListRefreshEvent(2))
+            }
             return
         }
         mRealVM.createEnterpriseImSession(detail.jobId) { session ->

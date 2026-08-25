@@ -38,6 +38,15 @@ public class Events {
     public static class OpportunityNavCountRefreshEvent implements AppEvent {
     }
 
+    /** 机会详情已读取，刷新最新机会列表。 */
+    public static class OpportunityListRefreshEvent implements AppEvent {
+        public int type;
+
+        public OpportunityListRefreshEvent(int type) {
+            this.type = type;
+        }
+    }
+
     public static class UserDataEvent implements AppEvent {
         public final String[] keys;
         public String data;

@@ -35,7 +35,9 @@ import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBo
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.FragmentNotOpportunityBinding
+import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
+import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityIsCanMatchState
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityMatchState
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
@@ -45,6 +47,7 @@ import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.shiyuan.fastclaw.widget.shape.internal.BOLD
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.collections.orEmpty
 import kotlin.coroutines.resume
 
 class OpportunityFragment :
@@ -54,8 +57,6 @@ class OpportunityFragment :
         const val OPPORTUNITY_PAGE = 0
         const val LOTTIE_RESUME_DELAY_MS = 120L
     }
-
-    private var lastVisitorState: Boolean? = null
 
     private val opportunityAdapter by lazy {
         QuickAdapter<ItemProcessedOpportunityVM>(
@@ -76,7 +77,6 @@ class OpportunityFragment :
         initView()
         initObservers()
         initUserEvents()
-        syncUserState(force = true)
     }
 
     private fun initView() {
@@ -107,16 +107,17 @@ class OpportunityFragment :
         }
         matchOpportunityAdapter.setOnItemClickListener { _, _, i ->
             mRealVM.matchingData.value.orEmpty().getOrNull(i)?.let { opportunity ->
-                OpportunityDetailActivity.start(requireActivity(), opportunity.jobId)
+                OpportunityDetailActivity.start(
+                    requireActivity(),
+                    opportunity.jobId,
+                    opportunity.unread,
+                )
             }
         }
     }
 
     private fun initObservers() {
         mRealVM.resumeListData.observe(this) { data ->
-            if (User.get().isVisitor && data.orEmpty().isNotEmpty()) {
-                return@observe
-            }
             val resume = data.orEmpty().maxByOrNull { it.uploadTime.orEmpty() }
             mRealVM.isJobUpCompleted.value = resume?.parseStatus == 2
             if (resume?.parseStatus == 0 || resume?.parseStatus == 1) {
@@ -177,7 +178,8 @@ class OpportunityFragment :
                 binding.cardJobPreferenceAction.setBackgroundResource(R.drawable.bg_upload_resume_btn)
                 binding.cardJobPreferenceAction.setOnSingleClickListener {
                     if (!AppNavigator.checkLoginIntercepted(false)) {
-                        OnlineResumeActivity.start(requireActivity(), 1)
+                        val mainActivity = activity as? MainActivity
+                        mainActivity?.switchToTab(0)
                     }
                 }
             } else {
@@ -192,39 +194,51 @@ class OpportunityFragment :
                 }
             }
         }
-        mRealVM.matchState.observe(this) { data ->
+        mRealVM.isMatchState.observe(this) { data ->
             when (data) {
-                OpportunityMatchState.MATCHED -> {
-                    renderLottie(false)
-                    binding.cardUnderstandUser.gone()
-                    binding.cardNoChance.gone()
-                    binding.llMatchOpportunity.visible()
-                    binding.llProcessedOpportunity.visible()
-                    updateChanceData(lastUiVisible == true)
-                }
-
-                OpportunityMatchState.NORMAL_MATCHING -> {
-                    renderLottie(true)
-                    binding.cardUnderstandUser.gone()
-                    binding.cardNoChance.visible()
-                    binding.llMatchOpportunity.gone()
-                    binding.llProcessedOpportunity.visible()
-                    mRealVM.queryOpportunityStats()
-                    updateNewOpportunityPolling(lastUiVisible == true)
-                    updateChanceData(lastUiVisible == true)
-                }
-
-                else -> {
+                OpportunityIsCanMatchState.UNMATCHED -> {
                     renderLottie(true)
                     binding.cardUnderstandUser.visible()
                     binding.cardNoChance.gone()
                     binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.gone()
                 }
+                OpportunityIsCanMatchState.CANMATCHED -> {
+                    mRealVM.queryOpportunityStats()  //查询状态
+                    mRealVM.queryNewOpportunities()//查询机会列表
+                    mRealVM.queryProcessedOpportunityPreview()//查询完成机会
+                }
             }
-
         }
+
+        mRealVM.matchingData.observe(this) { data ->
+            if(mRealVM.isMatchState.value != OpportunityIsCanMatchState.CANMATCHED) return@observe
+            val opportunityItems = data.orEmpty()
+            data.orEmpty().let { list ->
+                if (list.isEmpty()) {
+                    // 空逻辑
+                    renderLottie(true)
+                    binding.cardUnderstandUser.gone()
+                    binding.cardNoChance.visible()
+                    binding.llMatchOpportunity.gone()
+                    binding.llProcessedOpportunity.visible()
+                    updateNewOpportunityPolling(lastUiVisible == true)
+                } else {
+                    // 非空逻辑
+                    renderLottie(false)
+                    binding.cardUnderstandUser.gone()
+                    binding.cardNoChance.gone()
+                    binding.llMatchOpportunity.visible()
+                    binding.llProcessedOpportunity.visible()
+
+                    binding.tvMatchOpportunity.text = getColoredSpanText(getString(R.string.not_opportunity_match_count, opportunityItems.size), opportunityItems.size.toString(), resources.getColor(R.color.color_2f6bff))
+                    matchOpportunityAdapter.submitList(list.map(::ItemMatchOpportunityVM))
+                }
+            }
+        }
+
         mRealVM.chanceData.observe(this) { data ->
+            if(mRealVM.isMatchState.value != OpportunityIsCanMatchState.CANMATCHED) return@observe
             val opportunityItems = data.orEmpty()
             opportunityAdapter.submitList(opportunityItems.map(::ItemProcessedOpportunityVM))
             val isEmpty = opportunityItems.isEmpty()
@@ -241,16 +255,9 @@ class OpportunityFragment :
                 binding.rvProcessedOpportunity.visible()
             }
         }
-        mRealVM.matchingData.observe(this) { data ->
-            val opportunityItems = data.orEmpty()
-            binding.tvMatchOpportunity.text = getColoredSpanText(
-                getString(R.string.not_opportunity_match_count, opportunityItems.size),
-                opportunityItems.size.toString(),
-                resources.getColor(R.color.color_2f6bff)
-            )
-            matchOpportunityAdapter.submitList(opportunityItems.map(::ItemMatchOpportunityVM))
-        }
+
         mRealVM.opportunityStats.observe(this) { data ->
+            if(mRealVM.isMatchState.value != OpportunityIsCanMatchState.CANMATCHED) return@observe
             val viewedJobCount = data?.viewedJobCount ?: 0
             binding.tvBrowsedJobCount.text = getColoredSpanText(
                 getString(R.string.not_opportunity_browsed_job_count_format, viewedJobCount),
@@ -270,24 +277,19 @@ class OpportunityFragment :
     private fun initUserEvents() {
         observeEvents {
             onUserStatusChanged {
-                syncUserState(force = true)
+                mRealVM.stopResumePolling()
+                mRealVM.resetUserState()
+            }
+            on<Events.OpportunityListRefreshEvent> { event ->
+                if(event.type == 1){
+                    mRealVM.queryNewOpportunities()
+                }else{
+                    mRealVM.queryNewOpportunities()
+                    mRealVM.queryProcessedOpportunityPreview()
+                }
             }
         }
     }
-
-    private fun syncUserState(force: Boolean = false) {
-        val isVisitor = User.get().isVisitor
-        if (!force && lastVisitorState == isVisitor) return
-
-        lastVisitorState = isVisitor
-        mRealVM.stopResumePolling()
-        mRealVM.resetUserState()
-        if (!isVisitor) {
-            mRealVM.queryJobPreferenceCompletion()
-            mRealVM.queryResumeList()
-        }
-    }
-
 
     private var commonLoadingDialog: CommonLoadingDialog? = null
     fun showLoading(text: String? = null) {
@@ -354,42 +356,33 @@ class OpportunityFragment :
     private fun onVisibilityChanged(isVisible: Boolean) {
         updateJobResumeState(isVisible)
         updateNewOpportunityPolling(isVisible)
-        updateChanceData(isVisible)
         if (isVisible) {
-            scheduleLottiePlaybackUpdate()
-            handleWechatResumeReturn()
-            syncUserState()
+            scheduleLottiePlaybackUpdate()//开始动画
+            handleWechatResumeReturn() //微信上传简历后
         } else {
-            stopLottiePlayback()
+            stopLottiePlayback()//停止动画
         }
     }
 
     /** 更新是否传来简历和维护求职偏好**/
     private fun updateJobResumeState(isVisible: Boolean) {
-        if (isVisible && !User.get().isVisitor) {
-            if (mRealVM.isJobUpCompleted.value == false) {
-                mRealVM.queryResumeList()
-            } else {
-                if(mRealVM.isJobPreferenceCompleted.value == false){
-                    mRealVM.queryJobPreferenceCompletion()
-                }
-            }
+        if (!isVisible || User.get().isVisitor) return
+
+        if (mRealVM.isJobUpCompleted.value != true) {
+            mRealVM.queryResumeList()
+        }
+        if (mRealVM.isJobPreferenceCompleted.value != true) {
+            mRealVM.queryJobPreferenceCompletion()
         }
     }
 
     /** 轮询最新机会**/
     private fun updateNewOpportunityPolling(isVisible: Boolean) {
-        if (isVisible && mRealVM.matchState.value == OpportunityMatchState.NORMAL_MATCHING) {
+        if (User.get().isVisitor) return
+        if (isVisible && mRealVM.matchingData.value.orEmpty().isEmpty()) {
             mRealVM.startNewOpportunityPolling()
         } else {
             mRealVM.stopNewOpportunityPolling()
-        }
-    }
-
-    /** 请求已处理机会**/
-    private fun updateChanceData(isVisible: Boolean) {
-        if (isVisible && (mRealVM.matchState.value == OpportunityMatchState.NORMAL_MATCHING || mRealVM.matchState.value == OpportunityMatchState.NORMAL_MATCHING)) {
-            mRealVM.queryProcessedOpportunityPreview()
         }
     }
 

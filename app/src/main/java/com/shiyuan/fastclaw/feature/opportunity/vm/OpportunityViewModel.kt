@@ -19,23 +19,16 @@ import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchPolling
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.ext.request
-import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
-import com.shiyuan.fastclaw.core.network.apis.request.ImSessionCreateBody
-import com.shiyuan.fastclaw.core.network.apis.request.OpportunityDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBody
-import com.shiyuan.fastclaw.core.network.apis.request.OpportunityStatusUpdateBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
-import com.shiyuan.fastclaw.core.network.apis.response.ImSessionCreateData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeInfoSection
-import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailActionData
-import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedPageData
@@ -56,11 +49,10 @@ enum class OpportunityMatchState {
     MATCHED
 }
 
-enum class OpportunityDetailActionState {
-    NEW_OPPORTUNITY,
-    COMMUNICATING,
-    UNSUITABLE,
-    CLOSED
+
+enum class OpportunityIsCanMatchState {
+    UNMATCHED,
+    CANMATCHED
 }
 
 /**
@@ -73,13 +65,6 @@ class OpportunityViewModel : HomeReportViewModel() {
     private val processedOpportunityPagingFlows =
         mutableMapOf<String, Flow<PagingData<OpportunityProcessedItemData>>>()
 
-    val mToolbarVMOpportunityDetail = ToolbarViewModel(
-        navigationAction = { finish() },
-        background = Color.TRANSPARENT
-    )
-
-    val opportunityDetail = MutableLiveData<OpportunityDetailData>()
-
     val mToolbarVMProcessedOpportunity = ToolbarViewModel(
         navigationAction = { finish() },
         title = R.string.not_opportunity_processed_title.getResString(),
@@ -90,25 +75,22 @@ class OpportunityViewModel : HomeReportViewModel() {
     var isJobPreferenceCompleted = MutableLiveData(false)
 
 
-    val chanceData = MutableLiveData<List<OpportunityProcessedItemData>>(emptyList())
+    val chanceData = MutableLiveData<List<OpportunityProcessedItemData>>()
 
     val processedOpportunityPageData = MutableLiveData<OpportunityProcessedPageData?>()
 
-    val matchingData = MutableLiveData<List<OpportunityNewItemData>>(emptyList())
+    val matchingData = MutableLiveData<List<OpportunityNewItemData>>()
 
     val opportunityStats = MutableLiveData<OpportunityStatsData?>()
 
 
-    val matchState = MediatorLiveData<OpportunityMatchState>().apply {
-        value = resolveMatchState()
+    val isMatchState = MediatorLiveData<OpportunityIsCanMatchState>().apply {
+        value = resolveIsCanMatchState()
         addSource(isJobUpCompleted) {
-            value = resolveMatchState()
+            value = resolveIsCanMatchState()
         }
         addSource(isJobPreferenceCompleted) {
-            value = resolveMatchState()
-        }
-        addSource(matchingData) {
-            value = resolveMatchState()
+            value = resolveIsCanMatchState()
         }
     }
 
@@ -137,11 +119,7 @@ class OpportunityViewModel : HomeReportViewModel() {
     fun queryProcessedOpportunityPreview() {
         request(
             apiBlock = { mRepo.api.queryProcessedOpportunityPage(PagedBody(1, 5)) },
-           /* onError = {
-
-            },*/
             onSuccess = {
-                //chanceData.value = createFakeChanceData()
                 chanceData.value = data?.opportunities?.items.orEmpty()
             }
         )
@@ -220,6 +198,16 @@ class OpportunityViewModel : HomeReportViewModel() {
         resumePollingJob = null
     }
 
+    /** 单次刷新最新机会。 */
+    fun queryNewOpportunities() {
+        request(
+            apiBlock = { mRepo.api.queryNewOpportunities() },
+            onSuccess = {
+                matchingData.value = data.orEmpty()
+            }
+        )
+    }
+
     /** 页面可见且处于常态化匹配时，轮询查询新机会。 */
     fun startNewOpportunityPolling() {
         if (newOpportunityPollingJob?.isActive == true) return
@@ -247,25 +235,6 @@ class OpportunityViewModel : HomeReportViewModel() {
         newOpportunityPollingJob = null
     }
 
-    /** 根据上一页传入的岗位 ID 查询机会详情。 */
-    fun queryOpportunityDetail(jobId: String, showLoading: Boolean = true) {
-        requestWithLoading(
-            apiBlock = {
-                mRepo.api.queryOpportunityDetail(OpportunityDetailQueryBody(jobId))
-            },
-            showLoading = showLoading,
-           /* onError = {
-                opportunityDetail.value = createFakeOpportunityDetail(jobId)
-            },*/
-            onSuccess = {
-                data?.let { detail ->
-                   // opportunityDetail.value = createFakeOpportunityDetail(jobId)
-                    opportunityDetail.value = detail
-                }
-            }
-        )
-    }
-
     /** 查询高重要度求职属性是否已全部确认。 */
     fun queryJobPreferenceCompletion() {
         request(
@@ -276,84 +245,11 @@ class OpportunityViewModel : HomeReportViewModel() {
         )
     }
 
-    /** 提交详情页操作，完成后重新查询详情及最新可用操作。 */
-    fun updateOpportunityStatus(jobId: String, actionCode: String) {
-        requestWithLoading(
-            apiBlock = {
-                mRepo.api.updateOpportunityStatus(
-                    OpportunityStatusUpdateBody(jobId, actionCode)
-                )
-            },
-            onError = {
-                queryOpportunityDetail(jobId, showLoading = false)
-            },
-            onSuccess = {
-                queryOpportunityDetail(jobId, showLoading = false)
-            }
-        )
-    }
-
-    /** 创建企业侧 IM 会话，成功后交由页面进入聊天。 */
-    fun createEnterpriseImSession(
-        jobId: String,
-        onSuccess: (ImSessionCreateData) -> Unit,
-    ) {
-        val targetBaseAccountId = User.get().userId?.toLongOrNull() ?: return
-        val currentJobId = jobId.toLongOrNull() ?: return
-        requestWithLoading(
-            apiBlock = {
-                mRepo.api.createEnterpriseImSession(
-                    ImSessionCreateBody(
-                        targetSubjectType = 1,
-                        targetBaseAccountId = targetBaseAccountId,
-                        currentJobId = currentJobId,
-                    )
-                )
-            },
-            onSuccess = {
-                data?.takeIf { it.targetBaseAccountId > 0 }?.let(onSuccess)
-            }
-        )
-    }
-
-    private fun createFakeOpportunityDetail(jobId: String) = OpportunityDetailData(
-        jobId = jobId,
-        jobTitle = R.string.opportunity_detail_sample_title.getResString(),
-        matchPercent = 76,
-        status = "NEW",
-       /* jobClosed = true,*/
-        companyName = R.string.opportunity_detail_sample_company.getResString(),
-        salaryText = R.string.opportunity_detail_sample_salary.getResString(),
-        workCity = R.string.opportunity_detail_sample_location.getResString(),
-        experienceText = R.string.opportunity_detail_sample_experience.getResString(),
-        degreeText = R.string.opportunity_detail_sample_education.getResString(),
-        recommendationReason =
-            R.string.opportunity_detail_sample_introduction_markdown.getResString(),
-        jobDescription = R.string.opportunity_detail_sample_description_markdown.getResString(),
-        companyIndustry = "互联网",
-        companyScale = "10000人以上",
-        financingStage = "已上市",
-        workAddress = R.string.opportunity_detail_sample_address.getResString(),
-        actions = listOf(
-            OpportunityDetailActionData(
-                buttonText = R.string.opportunity_detail_unsuitable.getResString(),
-                actionCode = "MARK_UNSUITABLE"
-            ),
-            OpportunityDetailActionData(
-                buttonText = R.string.opportunity_detail_communicate_now.getResString(),
-                actionCode = "MARK_COMMUNICATING"
-            )
-        )
-    )
-
-    private fun resolveMatchState(): OpportunityMatchState {
-        if (isJobUpCompleted.value != true || isJobPreferenceCompleted.value != true) {
-            return OpportunityMatchState.UNMATCHED
-        }
-        return if (matchingData.value.orEmpty().isEmpty()) {
-            OpportunityMatchState.NORMAL_MATCHING
-        } else {
-            OpportunityMatchState.MATCHED
+    private fun resolveIsCanMatchState(): OpportunityIsCanMatchState {
+        if (isJobUpCompleted.value == true && isJobPreferenceCompleted.value == true) {
+            return OpportunityIsCanMatchState.CANMATCHED
+        }else{
+            return OpportunityIsCanMatchState.UNMATCHED
         }
     }
 
@@ -363,63 +259,6 @@ class OpportunityViewModel : HomeReportViewModel() {
         super.onCleared()
     }
 
-     fun createFakeChanceData(): List<OpportunityProcessedItemData> = listOf(
-        OpportunityProcessedItemData(
-            jobTitle = R.string.processed_opportunity_sample_high_backend.getResString(),
-            companyName = R.string.processed_opportunity_sample_company.getResString(),
-            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
-            workCity = R.string.opportunity_detail_sample_location.getResString(),
-            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
-            degreeText = R.string.opportunity_detail_sample_education.getResString(),
-            matchPercent = 76,
-            status = OpportunityProcessedItemData.STATUS_UNSUITABLE,
-            statusTime = "2026-08-05 16:45:00"
-        ),
-        OpportunityProcessedItemData(
-            jobTitle = R.string.processed_opportunity_sample_backend.getResString(),
-            companyName = R.string.processed_opportunity_sample_company.getResString(),
-            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
-            workCity = R.string.opportunity_detail_sample_location.getResString(),
-            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
-            degreeText = R.string.opportunity_detail_sample_education.getResString(),
-            matchPercent = 76,
-            status = OpportunityProcessedItemData.STATUS_COMMUNICATING,
-            statusTime = "2026-08-05 16:45:00"
-        ),
-        OpportunityProcessedItemData(
-            jobTitle = R.string.processed_opportunity_sample_backend.getResString(),
-            companyName = R.string.processed_opportunity_sample_company.getResString(),
-            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
-            workCity = R.string.opportunity_detail_sample_location.getResString(),
-            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
-            degreeText = R.string.opportunity_detail_sample_education.getResString(),
-            matchPercent = 76,
-            status = OpportunityProcessedItemData.STATUS_COMMUNICATING,
-            statusTime = "2026-08-05 16:45:00"
-        ),
-        OpportunityProcessedItemData(
-            jobTitle = R.string.processed_opportunity_sample_backend.getResString(),
-            companyName = R.string.processed_opportunity_sample_company.getResString(),
-            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
-            workCity = R.string.opportunity_detail_sample_location.getResString(),
-            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
-            degreeText = R.string.opportunity_detail_sample_education.getResString(),
-            matchPercent = 76,
-            status = OpportunityProcessedItemData.STATUS_COMMUNICATING,
-            statusTime = "2026-08-05 16:45:00"
-        ),
-        OpportunityProcessedItemData(
-            jobTitle = R.string.processed_opportunity_sample_backend.getResString(),
-            companyName = R.string.processed_opportunity_sample_company.getResString(),
-            salaryText = R.string.processed_opportunity_sample_salary.getResString(),
-            workCity = R.string.opportunity_detail_sample_location.getResString(),
-            experienceText = R.string.opportunity_detail_sample_experience.getResString(),
-            degreeText = R.string.opportunity_detail_sample_education.getResString(),
-            matchPercent = 76,
-            status = OpportunityProcessedItemData.STATUS_COMMUNICATING,
-            statusTime = "2026-08-05 16:45:00"
-        )
-    )
 
     private companion object {
         const val PROCESSED_OPPORTUNITY_PAGE_SIZE = 20
