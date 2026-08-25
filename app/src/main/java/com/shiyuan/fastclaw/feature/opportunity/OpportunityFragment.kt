@@ -86,6 +86,21 @@ class OpportunityFragment :
         binding.scrollContent.setOnScrollChangeListener { _, _, _, _, _ ->
             onContentScrolled()
         }
+        binding.srl.setOnRefreshListener {
+            if (User.get().isVisitor) {
+                binding.srl.finishRefresh()
+                return@setOnRefreshListener
+            }
+            if (mRealVM.isMatchState.value == OpportunityIsCanMatchState.CANMATCHED) {
+                mRealVM.queryOpportunityStats()
+                mRealVM.queryNewOpportunities()
+                mRealVM.queryProcessedOpportunityPreview()
+            } else {
+                mRealVM.queryResumeList()
+                mRealVM.queryJobPreferenceCompletion()
+            }
+            binding.srl.finishRefresh(1000)
+        }
         binding.rvProcessedOpportunity.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             if (itemDecorationCount == 0) {
