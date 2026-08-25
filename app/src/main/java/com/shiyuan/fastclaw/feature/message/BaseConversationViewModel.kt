@@ -9,6 +9,7 @@ import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.data.MessageListItem
+import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
 import com.tulele.im.ImSession
 import com.tulele.im.conversation.ConversationListener
 import com.tulele.im.custom.CustomAttachment
@@ -180,6 +181,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         val profile = conversation.serverExtension[ROLE_HR] as? Map<*, *>
         val profileValue = { key: String -> (profile?.get(key) as? String)?.takeIf { it.isNotBlank() } }
         val position = (conversation.serverExtension[KEY_POSITION] as? String)?.takeIf { it.isNotBlank() }
+        val draftContent = MessageDraftStore.get(conversation.conversationId)
         return ConversationItem(
             id = conversation.conversationId,
             contactId = contactId,
@@ -188,10 +190,11 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
             targetAvatar = profileValue(KEY_AVATAR) ?: conversation.avatar,
             targetCompany = profileValue(KEY_COMPANY),
             targetPosition = position,
-            lastMessage = formatLastMessage(conversation),
+            lastMessage = draftContent ?: formatLastMessage(conversation),
             lastMessageTime = conversation.time,
             unreadCount = conversation.unreadCount,
             extension = conversation.extension,
+            isDraft = draftContent != null,
         )
     }
 
@@ -315,6 +318,9 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
 
         // 会话扩展中的职位字段。
         private const val KEY_POSITION = "position"
+
+        // 会话扩展中的后端本地会话业务 ID 字段。
+        private const val KEY_SESSION_ID = "sessionId"
 
         // 会话扩展中的不合适标记字段。
         private const val KEY_IS_INAPPROPRIATE = "isInappropriate"

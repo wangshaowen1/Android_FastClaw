@@ -16,7 +16,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
 
     companion object {
         // 测试消息接收账号。
-        private const val TEST_IM_ACCOUNT = "123456"
+        private const val TEST_IM_ACCOUNT = "c_85412362174510"//c_85412362174492//c_85412362174510
 
         // 测试消息内容。
         private const val TEST_IM_CONTENT = "消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息"
@@ -46,7 +46,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
             adapter = msgAdapter
         }
         msgAdapter.onConversationClick = {
-            MessageChatActivity.start(requireContext(), it.contactId, it.targetName, it.targetAvatar)
+            MessageChatActivity.start(requireContext(), it.id, it.contactId, it.targetName, it.targetAvatar)
         }
         msgAdapter.onMarkedUnsuitableClick = {
             UnableMessageActivity.start(requireContext())
@@ -70,6 +70,16 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
      */
     private fun initData() {
         mRealVM.getConversationList()
+    }
+
+    /**
+     * 页面重新可见时刷新草稿展示状态。
+     */
+    override fun onResume() {
+        super.onResume()
+        if (!mRealVM.conversationList.value.isNullOrEmpty()) {
+            mRealVM.refreshConversationList()
+        }
     }
 
     /**

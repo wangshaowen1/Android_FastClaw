@@ -480,14 +480,10 @@ object ApiConstants {
 
     /** 创建企业侧 IM 会话。 */
     const val ENTERPRISE_IM_SESSION_CREATE = "/api/enterprise/im/session/create"
-
-    /**
-     * 刷新云信 IM Token
-     */
-    const val REGISTER_IM_TOKEN = "/api/chat/im/token/refresh"
-
-
-
-    /** 查询当前用户云信账号。 */
-    const val CHAT_IM_ACCOUNT_QUERY = "/api/chat/im/account/query"
+    /** 查询 App 端云信账号。 */
+    const val IM_ACCOUNT_QUERY = "/api/app/im/account/query"
+    /** 刷新 App 端云信 Token。 */
+    const val IM_TOKEN_REFRESH = "/api/app/im/token/refresh"
+    /** 同意发送简历。 */
+    const val IM_RESUME_SEND_AGREE = "/api/app/im/resume/send/agree"
 }

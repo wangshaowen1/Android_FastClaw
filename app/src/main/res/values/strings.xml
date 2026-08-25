@@ -85,7 +85,6 @@
     <string name="message_chat_resume_action_waiting">功能接入中</string>
     <string name="message_chat_resume_empty_tip">暂无可发送的简历</string>
     <string name="message_chat_resume_request_failed">简历请求处理失败</string>
-    <string name="message_chat_resume_request_failed_code">简历请求处理失败：%1$d</string>
     <string name="message_chat_job_started_format">%1$s %2$s</string>
     <string name="message_chat_job_started_by_self">由你发起的沟通</string>
     <string name="message_chat_job_started_by_other">由对方发起的沟通</string>

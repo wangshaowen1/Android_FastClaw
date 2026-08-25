@@ -11,6 +11,7 @@ import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
 import com.shiyuan.fastclaw.feature.message.data.MessageJobAttachment
@@ -304,9 +305,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 同意 HR 索要简历请求，并按协议修改原 resumeRequest 消息。
+     * 同意 HR 索要简历请求，继续查询简历并修改原 resumeRequest 消息。
      */
-    fun acceptResumeRequest(item: ResumeRequestChatItem) {
+    fun queryResumeForRequest(item: ResumeRequestChatItem) {
         requestWithLoading(apiBlock = { mRepo.api.queryLatestResume() },
             showLoading = false,
             showToastError = true,
@@ -323,9 +324,21 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
+     * 同意 HR 索要简历请求，先告诉后台。
+     */
+    fun acceptResumeForRequest(sessionId: String, item: ResumeRequestChatItem) {
+        requestWithLoading(apiBlock = { mRepo.api.agreeResumeSend(ResumeSendAgreeBody(sessionId)) },
+            showLoading = false,
+            showToastError = true,
+        ) {
+            queryResumeForRequest(item)
+        }
+    }
+
+    /**
      * 拒绝 HR 索要简历请求，并按协议修改原 resumeRequest 消息。
      */
-    fun rejectResumeRequest(item: ResumeRequestChatItem) {
+    fun rejectResumeForRequest(item: ResumeRequestChatItem) {
         modifyResumeRequestMessage(item.id, ResumeRequestAttachment.buildRejected(item))
     }
 

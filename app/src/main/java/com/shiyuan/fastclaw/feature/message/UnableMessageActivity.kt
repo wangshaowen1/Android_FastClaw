@@ -47,7 +47,7 @@ class UnableMessageActivity : BaseViewModelActivity<ActivityUnableConversationBi
             adapter = conversationAdapter
         }
         conversationAdapter.onConversationClick = {
-            MessageChatActivity.start(this, it.contactId, it.targetName, it.targetAvatar)
+            MessageChatActivity.start(this, it.id, it.contactId, it.targetName, it.targetAvatar)
         }
     }
 
@@ -65,6 +65,16 @@ class UnableMessageActivity : BaseViewModelActivity<ActivityUnableConversationBi
      */
     private fun initData() {
         mRealVM.getConversationList()
+    }
+
+    /**
+     * 页面重新可见时刷新草稿展示状态。
+     */
+    override fun onResume() {
+        super.onResume()
+        if (!mRealVM.conversationList.value.isNullOrEmpty()) {
+            mRealVM.refreshConversationList()
+        }
     }
 
     /**
