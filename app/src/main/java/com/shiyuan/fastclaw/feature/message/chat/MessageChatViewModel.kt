@@ -178,12 +178,12 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private fun onLoadDataComplete() {
         if (autoSendGreeting == true) {
             autoSendGreeting = false
-            sendFirstCreateGreeting()
+            sendTextMessage(FIRST_CREATE_GREETING)
         }
     }
 
     /**
-     * 发送文本消息，并立即把本地消息插入列表。
+     * 求职者发送文本消息 - 并立即把本地消息插入列表。
      */
     fun sendTextMessage(content: String) {
         val text = content.trim()
@@ -194,14 +194,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 首次创建会话时发送默认开场白。
-     */
-    fun sendFirstCreateGreeting() {
-        sendTextMessage(FIRST_CREATE_GREETING)
-    }
-
-    /**
-     * 组装 resumeDelivery 消息并即时插入列表。
+     * 求职者主动发送简历 - 组装 resumeDelivery 消息并即时插入列表。
      */
     fun sendResumeDeliveryMessage(resume: ResumeData) {
         val currentChat = chat ?: return
@@ -223,7 +216,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 按新的简历请求附件内容修改原消息。
+     * HR请求简历 - 按新的简历请求附件内容修改原消息。
      */
     private fun modifyResumeRequestMessage(id: String, attachment: ResumeRequestAttachment, onSuccess: () -> Unit = {}, ) {
         val currentChat = chat ?: return
@@ -233,24 +226,18 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
             customAttachment = attachment,
         )
         currentChat.modifyMessage(message, params, object : ImCallback<MessageWrapper> {
-            /**
-             * 云端消息修改成功后刷新当前消息。
-             */
+            //云端消息修改成功后刷新当前消息。
             override fun onSuccess(result: MessageWrapper?) {
                 mergeMessages(listOfNotNull(result))
                 onSuccess()
             }
 
-            /**
-             * 云端消息修改失败时提示错误码。
-             */
+            //云端消息修改失败时提示错误码。
             override fun onFailed(code: Int) {
                 showToast(R.string.message_chat_resume_request_failed)
             }
 
-            /**
-             * 云端消息修改异常时提示失败。
-             */
+            //云端消息修改异常时提示失败。
             override fun onException(exception: Throwable) {
                 showToast(R.string.message_chat_resume_request_failed)
             }
