@@ -32,6 +32,7 @@ import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
 import com.shiyuan.fastclaw.feature.message.dialog.JobSwitchConfirmDialog
 import com.shiyuan.fastclaw.feature.message.dialog.ResumeConfirmDialog
+import com.shiyuan.fastclaw.feature.opportunity.OpportunityDetailActivity
 
 /**
  * IM 单聊详情页，承接消息会话列表进入后的聊天展示和文本发送。
@@ -52,6 +53,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private var contactId: String = ""
     //HR头像
     private var targetAvatar: String? = null
+    // 当前沟通岗位 ID。
+    private var currentJobId: Long = 0
     // 发简历面板是否已展开。
     private var isMorePanelVisible = false
     // 键盘收起后是否需要继续展示发简历面板。
@@ -156,7 +159,12 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         messageAdapter.onResumeFileClick = {
             //showMessage(getString(R.string.message_chat_resume_action_waiting))
         }
-
+        messageAdapter.onHrAvatarClick = {
+            OpportunityDetailActivity.start(this, "$currentJobId")
+        }
+        messageAdapter.onJobCardClick = {
+            OpportunityDetailActivity.start(this, it.jobId?:"")
+        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutInput) { view, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             if (!hasRunningImeAnimation) {
@@ -257,6 +265,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         sessionId = params?.sessionId.orEmpty()
         contactId = params?.contactId.orEmpty()
         targetAvatar = params?.avatar
+        currentJobId = params?.currentJobId?:0
         mRealVM.initChat(params)
         showJobSwitchDialog(params)
         restoreMessageDraft()

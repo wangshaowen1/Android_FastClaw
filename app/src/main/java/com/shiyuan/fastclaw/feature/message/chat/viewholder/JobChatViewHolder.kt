@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.feature.message.chat.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemChatJobCardBinding
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
@@ -11,6 +12,9 @@ import com.shiyuan.fastclaw.feature.message.data.JobChatItem
  * 职位卡片消息 ViewHolder，负责渲染当前会话关联的岗位信息。
  */
 class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    // 职位卡片点击回调。
+    var onCardClickListener: (JobChatItem) -> Unit = {}
 
     /**
      * 绑定职位卡片标题、薪资、公司信息和标签。
@@ -31,6 +35,7 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
         binding.layoutCompany.visibility = if (company.isNullOrBlank() && stage.isNullOrBlank()) View.GONE else View.VISIBLE
         bindTagViews(tags)
         bindActionState(item)
+        binding.layoutCard.setOnSingleClickListener { onCardClickListener(item) }
     }
 
     /**
