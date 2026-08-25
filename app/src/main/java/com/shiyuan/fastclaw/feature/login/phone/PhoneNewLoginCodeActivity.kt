@@ -18,13 +18,15 @@ import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewCodeLoginBinding
 import com.shiyuan.fastclaw.feature.login.dialog.LoginNewLoadingDialog
+import com.shiyuan.fastclaw.feature.main.MainActivity
 
 /**
  * 新版验证码登录页
  *  @author：CaoWei
  *  @date：2026/6/30 15:49
  */
-class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLoginBinding, PhoneNewLoginViewModel>() {
+class PhoneNewLoginCodeActivity :
+    BaseViewModelActivity<ActivityPhoneNewCodeLoginBinding, PhoneNewLoginViewModel>() {
 
     private val codeViews by lazy {
         listOf(binding.tvCode1, binding.tvCode2, binding.tvCode3, binding.tvCode4)
@@ -121,7 +123,8 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
         bindUserData = intent.getParcelableExtra(EXTRA_BIND_USER_DATA)
         mRealVM.mobile.value = phone
         mRealVM.checkedPolicy.set(intent.getBooleanExtra(EXTRA_CHECKED_POLICY, true))
-        binding.tvCodeSubtitle.text = getString(R.string.login_new_code_subtitle, phone.toMaskedPhone())
+        binding.tvCodeSubtitle.text =
+            getString(R.string.login_new_code_subtitle, phone.toMaskedPhone())
         initInput()
         initClicks()
         observeVm()
@@ -211,6 +214,7 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
             BUSINESS_TYPE_LOGIN -> {
                 loginPhone()
             }
+
             BUSINESS_TYPE_BIND_PHONE -> {
                 bindPhone()
                 return
@@ -230,6 +234,7 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
         return when (businessType) {
             BUSINESS_TYPE_LOGIN,
             BUSINESS_TYPE_BIND_PHONE -> SendSmsValidateCodeBody.BIZ_TYPE_LOGIN
+
             else -> SendSmsValidateCodeBody.BIZ_TYPE_CHANGE_PHONE
         }
     }
@@ -238,8 +243,12 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
      * 手机号验证直接登录
      */
     private fun loginPhone() {
-        mRealVM.phoneLogin(onLogin = {
+        mRealVM.phoneLogin(
+            onLogin = {
                 hideLoginLoading()
+                if (isTaskRoot) {
+                    MainActivity.start(this)
+                }
                 finish()
             },
             onError = {
@@ -261,7 +270,8 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
             binding.tvCodeError.visibility = View.VISIBLE
             return
         }
-        mRealVM.bindPhone(userData = userData, onLogin = {
+        mRealVM.bindPhone(
+            userData = userData, onLogin = {
                 hideLoginLoading()
                 finish()
             },
@@ -277,7 +287,8 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
      * 修改手机号，成功后关闭验证码页。
      */
     private fun changePhone() {
-        mRealVM.changePhone(onSuccess = {
+        mRealVM.changePhone(
+            onSuccess = {
                 hideLoginLoading()
                 finish()
             },
@@ -346,7 +357,8 @@ class PhoneNewLoginCodeActivity : BaseViewModelActivity<ActivityPhoneNewCodeLogi
      * 在手机号输入框底部展示接口返回的错误提示。
      */
     private fun showCodeError(message: String?) {
-        binding.tvCodeError.text = message.takeUnless { it.isNullOrBlank() } ?: getString(R.string.login_new_code_error)
+        binding.tvCodeError.text =
+            message.takeUnless { it.isNullOrBlank() } ?: getString(R.string.login_new_code_error)
         binding.tvCodeError.visibility = View.VISIBLE
     }
 }
