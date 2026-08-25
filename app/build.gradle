@@ -113,7 +113,7 @@ android {
         buildConfigField "String", "DATANEXUS_APP_SECRET_KEY", '""'
         buildConfigField "boolean", "ENABLE_DATANEXUS", "false"
         // imkey-ba8e330981fd9468ebf3dfc9349259fd
-        buildConfigField "String", "NIM_APP_KEY", '"66c530a8bf4da27d46c7ad5cfc4f38e7"'
+        buildConfigField "String", "NIM_APP_KEY", '"aef89804213aa471176586e8cc8edc71"'
 
         buildConfigField "boolean", "DATANEXUS_ANID_ENABLE", "true"
         buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-b4c3df125fee41c6a83135074b12a8b6"'

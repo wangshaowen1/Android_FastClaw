@@ -291,7 +291,7 @@ class App : ImApplication() {
             /** 在 IM 登录协程中获取并保存当前用户的云信凭据。 */
             override suspend fun getImToken(): String? {
                 if (User.get().isVisitor) return null
-                val data = ApiFactory.apiService.refreshImToken().data
+                val data = ApiFactory.apiService.queryImAccount().data
                 /*data?.imAccId = "234567"
                 data?.imAccToken = "234567"
                 data?.ready = true*/
