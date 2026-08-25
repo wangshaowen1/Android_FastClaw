@@ -168,6 +168,12 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 当前 SSE 请求 ID（meta 事件下发），用于取消/断线重连 */
      var currentRequestId: String? = null
 
+    /** 当前 SSE 完成后是否需要拉取增量消息兜底 */
+    private var shouldPullMessagesOnStreamComplete: Boolean = true
+
+    /** 收到这些卡片类型后，当前 SSE 完成时不再拉取增量消息兜底 */
+    private val skipPullAfterStreamCompleteCardTypes = setOf(CARD_UNDERSTANDING_SUMMARY)
+
     /** 已接收的最后一条 SSE 事件序号，用于断线重连 lastSeq */
     private var lastSeq: Long? = null
 
@@ -204,6 +210,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     private val sseProcessor by lazy {
         ClawAgentSseProcessor(
             onStart = {
+                shouldPullMessagesOnStreamComplete = true
                 streaming.value = true
                 streamError.value = null
             },
@@ -215,6 +222,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             onMessage = { msg ->
                 // 记录游标
                 latestCursor = msg.cursor
+                shouldPullMessagesOnStreamComplete = !msg.shouldSkipPullAfterStreamComplete()
                 // message/snapshot 是完整消息，按 messageId upsert
                 sseInsertMessages(msg)
             },
@@ -234,10 +242,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             onComplete = {
                 checkLastMessages()
                 // 拉取增量消息 前端兜底
-                pullMessages()
+                if (shouldPullMessagesOnStreamComplete) {
+                    pullMessages()
+                }
+                shouldPullMessagesOnStreamComplete = true
                 streaming.value = false
             },
             onErrorCallback = { e ->
+                shouldPullMessagesOnStreamComplete = true
                 streaming.value = false
                 streamError.value = e
             }
@@ -905,6 +917,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 是否理解升级（UNDERSTANDING_SUMMARY） */
     private fun JobAgentMessage.isUnderstandingSummaryCard(): Boolean =
         messageType == MSG_CARD && cardType == CARD_UNDERSTANDING_SUMMARY
+
+    /** 当前消息是否无需在 SSE 完成后增量拉取兜底 */
+    private fun JobAgentMessage.shouldSkipPullAfterStreamComplete(): Boolean =
+        messageType == MSG_CARD && cardType in skipPullAfterStreamCompleteCardTypes
 
     /** 是否简历流程互斥卡，只保留最新一张 */
     private fun JobAgentMessage.isLatestOnlyResumeCard(): Boolean =

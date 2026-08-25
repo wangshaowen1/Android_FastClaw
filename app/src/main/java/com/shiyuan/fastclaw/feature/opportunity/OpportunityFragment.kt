@@ -288,6 +288,10 @@ class OpportunityFragment :
                     mRealVM.queryProcessedOpportunityPreview()
                 }
             }
+            on<Events.OpportunityJobUpCompletedEvent> { event ->
+                mRealVM.isJobUpCompleted.value = true
+                mRealVM.isJobPreferenceCompleted.value = true
+            }
         }
     }
 

@@ -47,6 +47,11 @@ public class Events {
         }
     }
 
+    /**  */
+    public static class OpportunityJobUpCompletedEvent implements AppEvent {
+
+    }
+
     public static class UserDataEvent implements AppEvent {
         public final String[] keys;
         public String data;
