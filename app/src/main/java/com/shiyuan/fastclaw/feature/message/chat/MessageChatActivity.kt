@@ -30,6 +30,7 @@ import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
+import com.shiyuan.fastclaw.feature.message.dialog.JobSwitchConfirmDialog
 import com.shiyuan.fastclaw.feature.message.dialog.ResumeConfirmDialog
 
 /**
@@ -256,10 +257,20 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         sessionId = params?.sessionId.orEmpty()
         contactId = params?.contactId.orEmpty()
         targetAvatar = params?.avatar
-        mRealVM.initChat(contactId, targetAvatar, params?.isFirstCreate)
+        mRealVM.initChat(params)
+        showJobSwitchDialog(params)
         restoreMessageDraft()
     }
 
+    /**
+     * 首次进入切换职位会话时展示二次确认弹框。
+     */
+    private fun showJobSwitchDialog(params: MessageChatParams?) {
+        if (params?.isJobSwitched == false || params?.currentJobName.isNullOrBlank()) return
+        JobSwitchConfirmDialog.show(supportFragmentManager, params.currentJobName) {
+            mRealVM.switchTargetJob(params.currentJobId)
+        }
+    }
 
     /**
      * 计算输入区相对父容器底部应有的间距，让输入框和键盘顶部保持固定间距。
