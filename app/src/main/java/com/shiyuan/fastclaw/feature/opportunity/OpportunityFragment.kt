@@ -50,6 +50,12 @@ import java.util.Locale
 import kotlin.collections.orEmpty
 import kotlin.coroutines.resume
 
+/**
+ * 机会首页。
+ *
+ * 未满足匹配条件时展示简历和求职偏好引导；满足条件后展示新机会、已处理机会和统计数据，
+ * 同时根据页面可见性管理简历解析轮询、新机会轮询及 Lottie 播放。
+ */
 class OpportunityFragment :
     BaseViewModelFragment<FragmentNotOpportunityBinding, OpportunityViewModel>() {
 
@@ -58,6 +64,7 @@ class OpportunityFragment :
         const val LOTTIE_RESUME_DELAY_MS = 120L
     }
 
+    /** 首页最多展示 5 条已处理机会。 */
     private val opportunityAdapter by lazy {
         QuickAdapter<ItemProcessedOpportunityVM>(
             R.layout.item_processed_opportunity,
@@ -65,6 +72,7 @@ class OpportunityFragment :
         )
     }
 
+    /** 当前最新一批未处理机会列表。 */
     private val matchOpportunityAdapter by lazy {
         QuickAdapter<ItemMatchOpportunityVM>(
             R.layout.item_match_opportunity,
@@ -82,10 +90,11 @@ class OpportunityFragment :
     private fun initView() {
 
         bindParentPagerLottieState()
-        //滚动时立即暂停 Lottie。 连续 120ms 未滚动后，检查 Lottie 是否仍在可视区域。
+        // 滚动时立即暂停 Lottie；连续 120ms 未滚动后，再检查动画是否仍在可视区域。
         binding.scrollContent.setOnScrollChangeListener { _, _, _, _, _ ->
             onContentScrolled()
         }
+        // 根据匹配资格刷新两组数据：匹配完成后查统计/新机会/已处理机会，否则查简历和求职偏好。
         binding.srl.setOnRefreshListener {
             if (User.get().isVisitor) {
                 binding.srl.finishRefresh()
@@ -132,6 +141,7 @@ class OpportunityFragment :
     }
 
     private fun initObservers() {
+        // 返回简历列表后取上传时间最新的一份，并按解析状态切换上传、解析中、成功或失败 UI。
         mRealVM.resumeListData.observe(this) { data ->
             val resume = data.orEmpty().maxByOrNull { it.uploadTime.orEmpty() }
             mRealVM.isJobUpCompleted.value = resume?.parseStatus == 2
@@ -180,11 +190,12 @@ class OpportunityFragment :
                 stopRotation(binding.ivState)
             }
         }
-        mRealVM.resumeUploadResult.observe(this) { data -> //上传成功
-            //解析简成功发送消息
+        // 简历上传提交成功后通知其他页面，并开始轮询解析结果。
+        mRealVM.resumeUploadResult.observe(this) { data ->
             FlowEventBus.postSync(Events.ResumeEvent(true))
             mRealVM.startResumePolling()
         }
+        // 简历解析结果决定求职偏好卡片是否可操作。
         mRealVM.isJobUpCompleted.observe(this) { data ->
             if (data) {
                 binding.clJobPreference.setBackgroundResource(R.drawable.bg_opportunity_card_bg3)
@@ -209,6 +220,7 @@ class OpportunityFragment :
                 }
             }
         }
+        // 简历和求职偏好均完成后，开始请求机会首页所需的三组数据。
         mRealVM.isMatchState.observe(this) { data ->
             when (data) {
                 OpportunityIsCanMatchState.UNMATCHED -> {
@@ -219,19 +231,20 @@ class OpportunityFragment :
                     binding.llProcessedOpportunity.gone()
                 }
                 OpportunityIsCanMatchState.CANMATCHED -> {
-                    mRealVM.queryOpportunityStats()  //查询状态
-                    mRealVM.queryNewOpportunities()//查询机会列表
-                    mRealVM.queryProcessedOpportunityPreview()//查询完成机会
+                    mRealVM.queryOpportunityStats() // 查询统计数据。
+                    mRealVM.queryNewOpportunities() // 查询最新未处理机会。
+                    mRealVM.queryProcessedOpportunityPreview() // 查询最近 5 条已处理机会。
                 }
             }
         }
 
+        // 返回最新未处理机会列表：空列表展示匹配中状态，非空列表展示机会卡片。
         mRealVM.matchingData.observe(this) { data ->
             if(mRealVM.isMatchState.value != OpportunityIsCanMatchState.CANMATCHED) return@observe
             val opportunityItems = data.orEmpty()
             data.orEmpty().let { list ->
                 if (list.isEmpty()) {
-                    // 空逻辑
+                    // 暂无新机会时维持轮询，并展示匹配中状态。
                     renderLottie(true)
                     binding.cardUnderstandUser.gone()
                     binding.cardNoChance.visible()
@@ -239,7 +252,7 @@ class OpportunityFragment :
                     binding.llProcessedOpportunity.visible()
                     updateNewOpportunityPolling(lastUiVisible == true)
                 } else {
-                    // 非空逻辑
+                    // 已匹配到机会时停止空态动画，展示本批机会。
                     renderLottie(false)
                     binding.cardUnderstandUser.gone()
                     binding.cardNoChance.gone()
@@ -252,6 +265,7 @@ class OpportunityFragment :
             }
         }
 
+        // 返回最近 5 条已处理机会，用于首页预览和空态切换。
         mRealVM.chanceData.observe(this) { data ->
             if(mRealVM.isMatchState.value != OpportunityIsCanMatchState.CANMATCHED) return@observe
             val opportunityItems = data.orEmpty()
@@ -271,6 +285,7 @@ class OpportunityFragment :
             }
         }
 
+        // 返回机会统计响应，依次展示浏览、推荐、待定和不匹配数量。
         mRealVM.opportunityStats.observe(this) { data ->
             if(mRealVM.isMatchState.value != OpportunityIsCanMatchState.CANMATCHED) return@observe
             val viewedJobCount = data?.viewedJobCount ?: 0
@@ -289,6 +304,7 @@ class OpportunityFragment :
         }
     }
 
+    /** 监听登录态和详情操作事件，按事件范围重新请求对应机会数据。 */
     private fun initUserEvents() {
         observeEvents {
             onUserStatusChanged {
@@ -310,7 +326,9 @@ class OpportunityFragment :
         }
     }
 
+    /** 文件上传期间展示的加载弹窗。 */
     private var commonLoadingDialog: CommonLoadingDialog? = null
+    /** 展示加载弹窗，已有实例显示时不重复创建。 */
     fun showLoading(text: String? = null) {
         if (commonLoadingDialog?.isAdded == true) return
         commonLoadingDialog = CommonLoadingDialog.newInstance(text).apply {
@@ -318,14 +336,21 @@ class OpportunityFragment :
         }
     }
 
+    /** 关闭并释放加载弹窗引用。 */
     fun hideLoading() {
         commonLoadingDialog?.dismissAllowingStateLoss()
         commonLoadingDialog = null
     }
 
+    /** 简历来源选择弹窗。 */
     private var uploadResumeDialog: UploadResumeDialog? = null
+    /**
+     * 选择并上传简历。
+     *
+     * 请求链路：先申请上传凭证并完成文件安全检查，再提交简历 URL、文件名和可选替换任务 ID。
+     * 返回：文件上传成功地址用于提交简历；提交结果由 resumeUploadResult 统一处理。
+     */
     fun uploadResume(replaceResumeTaskId: String? = null) {
-        //上传简历
         uploadResumeDialog = UploadResumeDialog.show(
             manager = this@OpportunityFragment.childFragmentManager,
             false,
@@ -363,7 +388,9 @@ class OpportunityFragment :
         dispatchChanged()
     }
 
+    /** 上一次分发的页面可见状态，避免重复启动请求、轮询或动画。 */
     private var lastUiVisible: Boolean? = null
+    /** 合并 Fragment 可见、RESUMED 和非隐藏状态后分发一次变化。 */
     private fun dispatchChanged() {
         val isUiVisible = isVisible && isResumed && !isHidden
         if (lastUiVisible == isUiVisible) return
@@ -372,18 +399,19 @@ class OpportunityFragment :
         onVisibilityChanged(isUiVisible)
     }
 
+    /** 页面可见时恢复必要请求和动画，不可见时停止轮询与动画。 */
     private fun onVisibilityChanged(isVisible: Boolean) {
         updateJobResumeState(isVisible)
         updateNewOpportunityPolling(isVisible)
         if (isVisible) {
-            scheduleLottiePlaybackUpdate()//开始动画
-            handleWechatResumeReturn() //微信上传简历后
+            scheduleLottiePlaybackUpdate() // 开始动画。
+            handleWechatResumeReturn() // 处理微信上传简历后的回跳。
         } else {
-            stopLottiePlayback()//停止动画
+            stopLottiePlayback() // 停止动画。
         }
     }
 
-    /** 更新是否传来简历和维护求职偏好**/
+    /** 页面可见时补查简历解析结果和求职偏好完成状态。 */
     private fun updateJobResumeState(isVisible: Boolean) {
         if (!isVisible || User.get().isVisitor) return
 
@@ -395,7 +423,7 @@ class OpportunityFragment :
         }
     }
 
-    /** 轮询最新机会**/
+    /** 仅在页面可见、具备匹配资格且当前无新机会时维持轮询。 */
     private fun updateNewOpportunityPolling(isVisible: Boolean) {
         if (User.get().isVisitor) return
         if (isVisible && mRealVM.matchingData.value.orEmpty().isEmpty() && mRealVM.isMatchState.value == OpportunityIsCanMatchState.CANMATCHED) {
@@ -405,6 +433,12 @@ class OpportunityFragment :
         }
     }
 
+    /**
+     * 处理微信侧上传简历后的授权码回跳。
+     *
+     * 请求：使用授权码查询已绑定的简历信息。
+     * 返回：简历 URL、文件名和业务任务 ID，随后提交为当前用户简历。
+     */
     private fun handleWechatResumeReturn() {
         if (!mRealVM.code.value.isNullOrEmpty()) {
             Log.d("uploadResumeDialog", mRealVM.code.value.toString())
@@ -429,8 +463,11 @@ class OpportunityFragment :
         dispatchChanged()
     }
 
+    /** Lottie 当前可见区域，复用对象以减少滚动期间分配。 */
     private val lottieVisibleRect = Rect()
+    /** 页面纵向内容是否正在滚动。 */
     private var isContentScrolling = false
+    /** 父级机会/宝典 ViewPager2，用于感知横向切页。 */
     private var parentPager: ViewPager2? = null
 
     // 纵向滚动停止 120ms 后再判断，避免滚动过程中频繁暂停和恢复。
@@ -466,6 +503,7 @@ class OpportunityFragment :
         updateLottiePlayback()
     }
 
+    /** 根据页面状态控制 Lottie 区域显示或隐藏。 */
     private fun renderLottie(isVisible: Boolean) {
         if (isVisible) {
             binding.v.visible()
@@ -485,6 +523,11 @@ class OpportunityFragment :
         }
     }
 
+    /**
+     * 统一判断 Lottie 是否允许播放。
+     *
+     * 需要同时满足父 Pager 停稳且选中机会页、页面未纵向滚动、生命周期已 RESUMED、动画视图可见。
+     */
     private fun updateLottiePlayback(isScrolling: Boolean = isContentScrolling) {
         isContentScrolling = isScrolling
         val isLottieVisible = binding.v.visibility == View.VISIBLE &&
@@ -555,13 +598,16 @@ class OpportunityFragment :
 
 }
 
+/** 已处理机会条目的页面展示模型。 */
 class ItemProcessedOpportunityVM(data: OpportunityProcessedItemData) :
     AppItemViewModel<OpportunityProcessedItemData>(data) {
 
+    /** 工作城市、经验和学历要求组合后的展示文案。 */
     val requirements = listOf(data.workCity, data.experienceText, data.degreeText)
         .filter(String::isNotBlank)
         .joinToString("·")
 
+    /** 根据处理状态补充语义后的处理时间文案。 */
     val actionTime = buildProcessedActionTime(data.statusTime, data.status)
 
     private fun buildProcessedActionTime(statusTime: String, status: String): String {
@@ -584,9 +630,11 @@ class ItemProcessedOpportunityVM(data: OpportunityProcessedItemData) :
     }
 }
 
+/** 新机会条目的页面展示模型。 */
 class ItemMatchOpportunityVM(data: OpportunityNewItemData) :
     AppItemViewModel<OpportunityNewItemData>(data) {
 
+    /** 工作城市、经验和学历要求组合后的展示文案。 */
     val requirements = listOf(data.workCity, data.experienceText, data.degreeText)
         .filter(String::isNotBlank)
         .joinToString("·")

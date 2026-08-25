@@ -17,6 +17,12 @@ import com.shiyuan.fastclaw.widget.stateful.paging.MyMultiStatePagingFooterAdapt
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+/**
+ * 已处理机会的单个状态列表页。
+ *
+ * 通过 [OpportunityViewModel.processedOpportunityPagingFlow] 请求分页列表，
+ * 并通过聚合响应刷新“沟通中”和“不合适”两个 Tab 的总数。
+ */
 class ProcessedOpportunityListFragment :
     BaseViewModelFragment<FragmentProcessedOpportunityListBinding, OpportunityViewModel>() {
 
@@ -25,6 +31,11 @@ class ProcessedOpportunityListFragment :
         private const val TAB_COMMUNICATING = 0
         private const val TAB_UNSUITABLE = 1
 
+        /**
+         * 创建指定状态的列表页。
+         *
+         * @param tabType 0 为沟通中，1 为不合适。
+         */
         fun newInstance(tabType: Int): ProcessedOpportunityListFragment =
             ProcessedOpportunityListFragment().apply {
                 arguments = Bundle().apply {
@@ -33,12 +44,14 @@ class ProcessedOpportunityListFragment :
             }
     }
 
+    /** 分页列表适配器，点击条目进入对应岗位的机会详情。 */
     private val opportunityAdapter by lazy {
         ProcessedOpportunityPagingAdapter { opportunity ->
             OpportunityDetailActivity.start(requireActivity(), opportunity.jobId)
         }
     }
 
+    /** 分页尾部状态，用于展示加载中、失败和没有更多数据。 */
     private val footerAdapter by lazy {
         MyMultiStatePagingFooterAdapter(
             hostAdapter = opportunityAdapter,
@@ -50,6 +63,7 @@ class ProcessedOpportunityListFragment :
         requireArguments().getInt(ARG_TAB_TYPE)
     }
 
+    /** 当前 Tab 对应的服务端机会状态。 */
     private val status by lazy {
         if (tabType == TAB_COMMUNICATING) {
             OpportunityProcessedItemData.STATUS_COMMUNICATING
@@ -67,6 +81,7 @@ class ProcessedOpportunityListFragment :
             }
             adapter = opportunityAdapter.withLoadStateFooter(footerAdapter)
         }
+        // 下拉刷新由 Paging3 重新加载，同时刷新服务端返回的两个状态总数。
         binding.srl.startRefreshWithAdapter(
             pagingDataAdapter = opportunityAdapter,
             loadStateHolder = binding.lsvProcessedOpportunity,
@@ -74,12 +89,14 @@ class ProcessedOpportunityListFragment :
                 mRealVM.queryProcessedOpportunityCounts(status)
             }
         )
+        // 返回 OpportunityProcessedPageData，两个列表页共享 ViewModel 中的聚合计数。
         mRealVM.processedOpportunityPageData.observe(viewLifecycleOwner) { data ->
             (activity as? ProcessedOpportunityActivity)?.apply {
                 updateTabCount(TAB_COMMUNICATING, data?.communicatingCount ?: 0)
                 updateTabCount(TAB_UNSUITABLE, data?.unsuitableCount ?: 0)
             }
         }
+        // PagingData 随页面 STARTED 生命周期收集，停止可见后自动取消本次收集。
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mRealVM.processedOpportunityPagingFlow(status).collectLatest { pagingData ->

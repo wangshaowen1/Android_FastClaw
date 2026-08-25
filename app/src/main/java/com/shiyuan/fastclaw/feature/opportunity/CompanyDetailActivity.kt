@@ -14,13 +14,18 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ActivityCompanyDetailBinding
 import com.shiyuan.fastclaw.feature.opportunity.vm.CompanyDetailViewModel
 
-/** 公司主页。 */
+/** 公司主页，展示机会详情接口关联企业的公开信息和福利标签。 */
 class CompanyDetailActivity :
     BaseViewModelActivity<ActivityCompanyDetailBinding, CompanyDetailViewModel>() {
 
     companion object {
         private const val EXTRA_ENTERPRISE_ID = "extra_enterprise_id"
 
+        /**
+         * 打开公司主页。
+         *
+         * @param enterpriseId 企业业务 ID；为空、非数字或非正数时不跳转。
+         */
         fun start(activity: Activity?, enterpriseId: String) {
             val currentEnterpriseId = enterpriseId.toLongOrNull() ?: return
             if (activity == null || currentEnterpriseId <= 0) return
@@ -40,11 +45,13 @@ class CompanyDetailActivity :
             return
         }
         mRealVM.companyDetail.observe(this) { detail ->
+            // OpportunityCompanyDetailData 的文本字段由 DataBinding 展示，标签在此动态创建。
             renderWelfareTags(detail.welfareTags)
         }
         mRealVM.queryCompanyDetail(enterpriseId)
     }
 
+    /** 将接口返回的非空福利标签渲染到流式布局。 */
     private fun renderWelfareTags(tags: List<String>) {
         binding.flexWelfare.removeAllViews()
         tags.filter(String::isNotBlank).forEach { tag ->

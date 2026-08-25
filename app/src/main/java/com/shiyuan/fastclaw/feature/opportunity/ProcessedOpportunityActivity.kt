@@ -16,7 +16,9 @@ import com.shiyuan.fastclaw.databinding.ActivityProcessedOpportunityBinding
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
 
 /**
- * 已处理机会。
+ * 已处理机会容器页。
+ *
+ * 使用两个固定 Tab 展示“沟通中”和“不合适”的分页列表及服务端总数。
  */
 class ProcessedOpportunityActivity :
     BaseViewModelActivity<ActivityProcessedOpportunityBinding, OpportunityViewModel>() {
@@ -26,6 +28,11 @@ class ProcessedOpportunityActivity :
         private const val TAB_COMMUNICATING = 0
         private const val TAB_UNSUITABLE = 1
 
+        /**
+         * 打开已处理机会页。
+         *
+         * @param selectedIndex 默认选中的 Tab，超出范围时限制到 0..1。
+         */
         fun start(activity: Activity?, selectedIndex: Int = TAB_COMMUNICATING) {
             activity ?: return
             activity.startActivity(
@@ -36,10 +43,12 @@ class ProcessedOpportunityActivity :
         }
     }
 
+    /** 入口指定的初始 Tab。 */
     private val selectedIndex by lazy {
         intent.getIntExtra(EXTRA_SELECTED_INDEX, TAB_COMMUNICATING).coerceIn(0, 1)
     }
 
+    /** ViewPager2 切页后同步 Tab 的文字和指示器状态。 */
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             updateTabState(position.coerceIn(0, 1))
@@ -59,6 +68,7 @@ class ProcessedOpportunityActivity :
             .init()
     }
 
+    /** 初始化固定的两个列表页和 Tab 点击切换。 */
     private fun initView() {
         updateTabCount(TAB_COMMUNICATING, 0)
         updateTabCount(TAB_UNSUITABLE, 0)
@@ -83,6 +93,12 @@ class ProcessedOpportunityActivity :
         binding.vpProcessedOpportunity.registerOnPageChangeCallback(pageChangeCallback)
     }
 
+    /**
+     * 使用分页接口返回的聚合数量更新指定 Tab。
+     *
+     * @param tabType 0 为沟通中，1 为不合适。
+     * @param count 服务端返回的对应状态机会总数。
+     */
     internal fun updateTabCount(tabType: Int, count: Int) {
         when (tabType) {
             TAB_COMMUNICATING -> binding.tvTabCommunicating.text =
@@ -93,6 +109,7 @@ class ProcessedOpportunityActivity :
         }
     }
 
+    /** 同步选中 Tab 的指示器、颜色和字重。 */
     private fun updateTabState(index: Int) {
         val communicatingSelected = index == TAB_COMMUNICATING
         binding.vTabCommunicatingIndicator.visibility =
@@ -119,6 +136,7 @@ class ProcessedOpportunityActivity :
         if (selected) Typeface.create("sans-serif-medium", Typeface.NORMAL) else Typeface.DEFAULT
 
     override fun onDestroy() {
+        // 使用注册时的同一回调实例注销，避免 Activity 泄漏。
         binding.vpProcessedOpportunity.unregisterOnPageChangeCallback(pageChangeCallback)
         super.onDestroy()
     }

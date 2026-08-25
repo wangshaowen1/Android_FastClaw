@@ -28,7 +28,9 @@ import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailViewModel
 import io.noties.markwon.Markwon
 
 /**
- * 机会详情。
+ * 机会详情页。
+ *
+ * 展示 [OpportunityDetailData]，并根据服务端状态和 actions 渲染底部操作。
  */
 class OpportunityDetailActivity :
     BaseViewModelActivity<ActivityOpportunityDetailBinding, OpportunityDetailViewModel>() {
@@ -40,6 +42,12 @@ class OpportunityDetailActivity :
         private const val EXTRA_UNREAD = "extra_unread"
         private const val ACTION_MARK_COMMUNICATING = "MARK_COMMUNICATING"
 
+        /**
+         * 打开指定岗位的机会详情。
+         *
+         * @param jobId 岗位 ID，空值时不跳转。
+         * @param unread 当前机会是否未读；详情加载成功后通知列表刷新已读状态。
+         */
         fun start(activity: Activity?, jobId: String, unread: Boolean = false) {
             if (activity == null || jobId.isBlank()) return
             activity.startActivity(
@@ -59,6 +67,7 @@ class OpportunityDetailActivity :
             return
         }
         setupReportTip()
+        // 返回 OpportunityDetailData 后统一渲染详情，并处理一次性的已读通知。
         mRealVM.opportunityDetail.observe(this) { detail ->
             renderDetail(detail)
             notifyOpportunityReadIfNeeded()
@@ -66,12 +75,14 @@ class OpportunityDetailActivity :
         mRealVM.queryOpportunityDetail(jobId)
     }
 
+    /** 首次成功展示未读机会后，通知机会列表重新查询已读状态。 */
     private fun notifyOpportunityReadIfNeeded() {
         if (!intent.getBooleanExtra(EXTRA_UNREAD, false)) return
         intent.putExtra(EXTRA_UNREAD, false)
         FlowEventBus.postSticky(Events.OpportunityListRefreshEvent(1))
     }
 
+    /** 将机会详情响应渲染到页面，并继续处理公司入口和底部操作。 */
     private fun renderDetail(detail: OpportunityDetailData) {
         binding.tvOpportunityTitle.text = detail.jobTitle
         binding.tvOpportunityCompany.text = detail.companyName
@@ -99,6 +110,7 @@ class OpportunityDetailActivity :
         renderBottomActions(detail)
     }
 
+    /** 为安全提示中的“立即举报”添加企业微信客服点击能力。 */
     private fun setupReportTip() {
         val content = getString(R.string.opportunity_detail_security_tip_content)
         val reportText = getString(R.string.opportunity_detail_report_now)
@@ -129,6 +141,7 @@ class OpportunityDetailActivity :
         }
     }
 
+    /** 使用响应中的状态和 actions 渲染底部按钮文案、可用性及点击事件。 */
     private fun renderBottomActions(detail: OpportunityDetailData) {
         val state = resolveActionState(detail)
         val firstAction = detail.actions.getOrNull(0)
@@ -176,6 +189,12 @@ class OpportunityDetailActivity :
         }
     }
 
+    /**
+     * 提交底部操作。
+     *
+     * MARK_COMMUNICATING 先请求创建企业 IM 会话，返回会话信息后进入聊天；
+     * 其他操作直接请求更新机会状态，并通知列表刷新。
+     */
     private fun submitBottomAction(detail: OpportunityDetailData, actionCode: String) {
         if (actionCode != ACTION_MARK_COMMUNICATING) {
             mRealVM.updateOpportunityStatus(detail.jobId, actionCode) {
@@ -197,6 +216,7 @@ class OpportunityDetailActivity :
         }
     }
 
+    /** 岗位关闭优先级最高，其余状态使用服务端 status 映射。 */
     private fun resolveActionState(
         detail: OpportunityDetailData
     ): OpportunityDetailActionState? = when {

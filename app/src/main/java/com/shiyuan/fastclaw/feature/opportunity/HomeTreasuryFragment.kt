@@ -30,8 +30,14 @@ import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 
+/**
+ * 求职宝典工具列表页。
+ *
+ * 请求服务端配置的求职工具模块，只展示当前客户端支持的类型，并按类型分发入口。
+ */
 class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, HomeReportViewModel>() {
 
+    /** 服务端模块数据与本地图标、点击入口的绑定适配器。 */
     private val treasuryAdapter =
         SingleBindingAdapter<ItemHomeTreasuryBinding, JobAgentModuleData>(
             R.layout.item_home_treasury,
@@ -66,6 +72,12 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         binding.lsv.setRetryListener { loadTreasuryCards() }
     }
 
+    /**
+     * 请求求职宝典模块列表。
+     *
+     * 请求：无业务参数。
+     * 返回：JobAgentModuleData 列表，由 [observeJobAgentModuleList] 过滤并展示。
+     */
     private fun loadTreasuryCards() {
         binding.lsv.showLoading()
         mRealVM.queryJobAgentModuleList { error ->
@@ -75,6 +87,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         }
     }
 
+    /** 消费模块列表返回数据，并切换内容、空态或重试状态。 */
     private fun observeJobAgentModuleList() {
         mRealVM.jobAgentModuleList.observe(viewLifecycleOwner) { modules ->
             val supportedModules = modules.filter { module -> module.isSupported() }
@@ -87,10 +100,12 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         }
     }
 
+    /** 仅保留当前客户端已实现点击入口的模块类型。 */
     private fun JobAgentModuleData.isSupported(): Boolean {
         return reportType in SUPPORTED_REPORT_TYPES
     }
 
+    /** 将服务端模块类型映射到当前客户端内置图标。 */
     private fun JobAgentModuleData.localIconRes(): Int {
         return when (reportType) {
             JobAgentModuleData.TYPE_COMPANY_RESEARCH -> R.drawable.img_home_treasury_company
@@ -103,6 +118,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
     }
 
 
+    /** 高亮权益文案中的数字部分。 */
     private fun buildBenefitText(text: String): CharSequence {
         val color = resources.getColor(R.color.color_2f6bff)
         return SpannableString(text).apply {
@@ -117,12 +133,14 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         }
     }
 
+    /** 公司查询入口：切换到首页的企业查询页面。 */
     private fun onCompanyCardClick() {
         if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_COMPANY_CHECK)) return
         FlowEventBus.postSync(Events.CompanyInterviewEvent(0))
         FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
     }
 
+    /** 简历测评入口：完成登录拦截与埋点后打开 H5。 */
     private fun onMeasureCardClick() {
         if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_RESUME_TEST)) return
         EventManager.onAppTrack(KLX_CLICK_RESUME_TEST,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
@@ -133,6 +151,7 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         )
     }
 
+    /** 薪资测评入口：完成登录拦截与埋点后打开 H5。 */
     private fun onSalaryCardClick() {
         if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_SALARY_TEST)) return
         EventManager.onAppTrack(KLX_CLICK_SALARY_TEST,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
@@ -143,18 +162,25 @@ class HomeTreasuryFragment : BaseViewModelFragment<FragmentHomeTreasuryBinding, 
         )
     }
 
+    /** 模拟面试入口：切换到首页的模拟面试页面。 */
     private fun onInterviewCardClick() {
         if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_MOCK_INTERVIEW)) return
         FlowEventBus.postSync(Events.CompanyInterviewEvent(1))
         FlowEventBus.postSync(Events.MainTabEvent(Events.MainTabEvent.TAB_HOME))
     }
 
+    /**
+     * 面试直通车入口。
+     *
+     * 请求简历检测状态，响应结果由 [observePassPackageResumeStatus] 处理。
+     */
     private fun onPackageCardClick() {
         if (AppNavigator.checkLoginIntercepted(false,loginSource = BAODIAN_TAB_INTERVIEW_PASS)) return
         EventManager.onAppTrack(KLX_CLICK_INTERVIEW_PASS,mutableMapOf(KLX_ENTRY_SOURCE to BAODIAN_TAB))
         mRealVM.queryInterviewPassPackageResumeStatus()
     }
 
+    /** 根据返回的 resumeCheckId 拼接面试直通车地址并打开 H5。 */
     private fun observePassPackageResumeStatus() {
         mRealVM.interviewPassPackageResumeStatus.observe(this) { data ->
             val url = if (data?.resumeCheckId == null) {

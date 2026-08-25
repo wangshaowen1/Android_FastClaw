@@ -9,6 +9,12 @@ import com.shiyuan.fastclaw.common.ext.getVm
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.ItemProcessedOpportunityBinding
 
+/**
+ * 已处理机会 Paging3 适配器。
+ *
+ * 接收 [OpportunityProcessedItemData]，为每条数据创建可复用的 [ItemProcessedOpportunityVM]，
+ * 并将点击事件交还给页面处理。
+ */
 class ProcessedOpportunityPagingAdapter(
     private val onItemClick: (OpportunityProcessedItemData) -> Unit
 ) :
@@ -30,10 +36,12 @@ class ProcessedOpportunityPagingAdapter(
         holder.bind(position)
     }
 
+    /** 已处理机会条目的 DataBinding ViewHolder。 */
     inner class ViewHolder(
         private val binding: ItemProcessedOpportunityBinding
     ) : BindingViewHolder<ItemProcessedOpportunityBinding>(binding) {
 
+        /** 绑定当前位置的数据，并使用岗位 ID 作为 ItemVM 缓存键。 */
         override fun bind(position: Int) {
             getItem(position)?.let { item ->
                 binding.item = binding.getVm(
@@ -50,6 +58,7 @@ class ProcessedOpportunityPagingAdapter(
     }
 
     private companion object {
+        /** 岗位 ID 判断是否为同一条机会，完整数据判断内容是否变化。 */
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<OpportunityProcessedItemData>() {
             override fun areItemsTheSame(
                 oldItem: OpportunityProcessedItemData,
