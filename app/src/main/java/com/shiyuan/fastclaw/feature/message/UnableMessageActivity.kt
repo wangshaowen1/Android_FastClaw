@@ -10,6 +10,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ActivityUnableConversationBinding
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
+import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 
 /**
  * 已标记不合适会话列表页，承接消息 Tab 中“不合适会话”入口。
@@ -47,7 +48,14 @@ class UnableMessageActivity : BaseViewModelActivity<ActivityUnableConversationBi
             adapter = conversationAdapter
         }
         conversationAdapter.onConversationClick = {
-            MessageChatActivity.start(this, it.id, it.contactId, it.targetName, it.targetAvatar)
+            MessageChatActivity.start(this,
+                MessageChatParams(
+                    sessionId = it.id,
+                    contactId = it.contactId,
+                    name = it.targetName,
+                    avatar = it.targetAvatar,
+                )
+            )
         }
     }
 

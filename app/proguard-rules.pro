@@ -199,6 +199,10 @@
 -keep class com.shiyuan.fastclaw.common.Events*{*;}
 -keep class com.shiyuan.fastclaw.common.Events$*{*;}
 
+-keep class com.shiyuan.fastclaw.feature.message.data.MessageDraftStore{*;}
+-keep class com.shiyuan.fastclaw.feature.message.data.MessageDraftStore$*{*;}
+-keep class com.shiyuan.fastclaw.feature.message.data.**{*;}
+
 #封装ViewBinding 用了反射需要这个
 -keepclassmembers class * implements androidx.viewbinding.ViewBinding {
   public static * inflate(android.view.LayoutInflater);

@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
+import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
 import com.shiyuan.fastclaw.feature.message.dialog.ResumeConfirmDialog
 
@@ -56,14 +57,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private var pendingShowMorePanel = false
 
     companion object {
-        // 聊天会话参数。
-        private const val EXTRA_SESSION_ID = "extra_session_id"
-        // 接收方账号参数。
-        private const val EXTRA_CONTACT_ID = "extra_contact_id"
-        // 接收方昵称参数。
-        private const val EXTRA_TARGET_NAME = "extra_target_name"
-        // 接收方头像参数。
-        private const val EXTRA_TARGET_AVATAR = "extra_target_avatar"
+        // 聊天页启动参数。
+        private const val EXTRA_CHAT_PARAMS = "extra_chat_params"
         // 向上滚动接近顶部时提前加载历史消息的阈值。
         private const val PREFETCH_THRESHOLD = 5
         // 新消息平滑滚动到底部的速度，复用小虾对话的滚动手感。
@@ -80,14 +75,11 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         private const val WAIT_KEYBOARD_HIDE_MAX_COUNT = 6
 
         /**
-         * 根据会话业务 ID、对象账号、昵称和头像打开 IM 单聊详情页。
+         * 根据聊天参数打开 IM 单聊详情页。
          */
-        fun start(context: Context, sessionId: String, contactId: String, name: String, avatar: String?) {
+        fun start(context: Context, params: MessageChatParams) {
             val intent = Intent(context, MessageChatActivity::class.java)
-                .putExtra(EXTRA_SESSION_ID, sessionId)
-                .putExtra(EXTRA_CONTACT_ID, contactId)
-                .putExtra(EXTRA_TARGET_NAME, name)
-                .putExtra(EXTRA_TARGET_AVATAR, avatar)
+                .putExtra(EXTRA_CHAT_PARAMS, params)
             context.startActivity(intent)
         }
     }
@@ -257,12 +249,14 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     /**
      * 读取会话参数并初始化 IM 单聊。
      */
+    @Suppress("DEPRECATION")
     private fun initData() {
-        binding.tvTitle.text = intent.getStringExtra(EXTRA_TARGET_NAME).orEmpty()
-        sessionId = intent.getStringExtra(EXTRA_SESSION_ID) ?: ""
-        contactId = intent.getStringExtra(EXTRA_CONTACT_ID) ?: ""
-        targetAvatar = intent.getStringExtra(EXTRA_TARGET_AVATAR)
-        mRealVM.initChat(contactId, targetAvatar)
+        val params = intent.getParcelableExtra<MessageChatParams>(EXTRA_CHAT_PARAMS)
+        binding.tvTitle.text = params?.name.orEmpty()
+        sessionId = params?.sessionId.orEmpty()
+        contactId = params?.contactId.orEmpty()
+        targetAvatar = params?.avatar
+        mRealVM.initChat(contactId, targetAvatar, params?.isFirstCreate)
         restoreMessageDraft()
     }
 

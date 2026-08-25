@@ -6,4 +6,6 @@ data class ImSessionCreateData(
     val targetBaseAccountId: Long = 0,
     val targetNickname: String? = null,
     val targetAvatarUrl: String? = null,
+    // 本次会话是否首次创建。
+    val isFirstCreate: Boolean? = false,
 )

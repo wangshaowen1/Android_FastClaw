@@ -22,6 +22,7 @@ import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
 import com.shiyuan.fastclaw.databinding.ActivityOpportunityDetailBinding
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
+import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailActionState
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailViewModel
 import io.noties.markwon.Markwon
@@ -184,11 +185,14 @@ class OpportunityDetailActivity :
         }
         mRealVM.createEnterpriseImSession(detail.jobId) { session ->
             MessageChatActivity.start(
-                context = this,
-                sessionId = session.sessionId?:"",
-                contactId = session.targetBaseAccountId.toString(),
-                name = session.targetNickname.orEmpty(),
-                avatar = session.targetAvatarUrl,
+                this,
+                MessageChatParams(
+                    sessionId = session.sessionId ?: "",
+                    contactId = session.targetBaseAccountId.toString(),
+                    name = session.targetNickname.orEmpty(),
+                    avatar = session.targetAvatarUrl,
+                    isFirstCreate = session.isFirstCreate == true,
+                )
             )
         }
     }

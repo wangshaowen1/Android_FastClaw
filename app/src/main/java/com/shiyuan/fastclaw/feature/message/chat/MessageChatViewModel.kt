@@ -51,12 +51,18 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private var hasMoreHistory = true
     // 当前聊天对象头像。
     private var targetAvatar: String? = null
+    // 首次创建会话时是否需要自动发送开场白。
+    private var autoSendGreeting: Boolean? = false
+
 
     /**
      * 初始化聊天参数、打开当前 IM 会话并加载历史消息。
+     *
+     * @param autoSendGreeting 首次创建会话时是否自动发送开场白。
      */
-    fun initChat(contactId: String, targetAvatar: String?) {
+    fun initChat(contactId: String, targetAvatar: String?, isFirstCreate: Boolean?) {
         this.targetAvatar = targetAvatar
+        this.autoSendGreeting = isFirstCreate
         chat = ImSession.get().openChat(Contact(contactId))
         chat?.onMessageSendResultListener = this
         chat?.active()
@@ -84,7 +90,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 首次加载最近历史消息。
+     * 首次加载最近历史消息，必要时发送首次创建开场白。
      */
     fun loadDataList() {
         val currentChat = chat ?: return
@@ -102,6 +108,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
                 hasMoreHistory = messages.size >= Chat.LOAD_MESSAGE_COUNT
                 refreshMessageList()
                 isLoadingHistory.set(false)
+                onLoadDataComplete()
             }
 
             /**
@@ -109,6 +116,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              */
             override fun onFailed(code: Int) {
                 isLoadingHistory.set(false)
+                onLoadDataComplete()
             }
 
             /**
@@ -116,6 +124,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              */
             override fun onException(exception: Throwable) {
                 isLoadingHistory.set(false)
+                onLoadDataComplete()
             }
         })
     }
@@ -161,6 +170,16 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
+     * 首次加载数据完成
+     */
+    private fun onLoadDataComplete() {
+        if (autoSendGreeting == true) {
+            autoSendGreeting = false
+            sendFirstCreateGreeting()
+        }
+    }
+
+    /**
      * 发送文本消息，并立即把本地消息插入列表。
      */
     fun sendTextMessage(content: String) {
@@ -169,6 +188,13 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         val message = chat?.sendTextMessage(text) ?: return
         localSendMessageIds.add(message.messageClientId)
         mergeMessages(listOf(message))
+    }
+
+    /**
+     * 首次创建会话时发送默认开场白。
+     */
+    fun sendFirstCreateGreeting() {
+        sendTextMessage(FIRST_CREATE_GREETING)
     }
 
     /**
@@ -418,7 +444,10 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         private const val RESUME_DELIVERY_TEXT = "这是我的简历，您看看"
 
         // 同意 HR 索要简历后发送的文本消息内容。
-        private const val RESUME_REQUEST_ACCEPT_TEXT = "你好，我已投递简历"
+        private const val RESUME_REQUEST_ACCEPT_TEXT = "您好，我已投递简历"
+
+        // 首次创建会话时自动发送的开场白。
+        private const val FIRST_CREATE_GREETING = "您好，认真看了岗位介绍，很感兴趣，可以深入聊聊吗？"
 
     }
 }
