@@ -63,7 +63,7 @@
                         android:includeFontPadding="false"
                         android:textColor="@color/color_96_000000"
                         android:textSize="22sp"
-                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
                         app:layout_constraintEnd_toStartOf="@id/v_match_percent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -164,7 +164,7 @@
                         android:includeFontPadding="false"
                         android:textColor="@color/color_2f6bff"
                         android:textSize="16sp"
-                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
                         app:layout_constraintBottom_toBottomOf="@id/layout_job_requirements"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/layout_job_requirements"
@@ -199,7 +199,7 @@
                     android:text="@string/opportunity_detail_job_description"
                     android:textColor="@color/color_90_000000"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:fontFamily="sans-serif-medium" />
 
                 <TextView
                     android:id="@+id/tv_job_description"
@@ -229,7 +229,7 @@
                     android:text="@string/opportunity_detail_work_location"
                     android:textColor="@color/color_90_000000"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:fontFamily="sans-serif-medium" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_xq"
@@ -373,7 +373,7 @@
                         android:text="@string/opportunity_detail_security_tip_title"
                         android:textColor="@color/color_90_000000"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:fontFamily="sans-serif-medium" />
                 </LinearLayout>
 
                 <TextView

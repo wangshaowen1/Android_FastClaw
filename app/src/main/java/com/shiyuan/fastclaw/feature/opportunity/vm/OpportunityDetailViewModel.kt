@@ -92,6 +92,7 @@ class OpportunityDetailViewModel : AppRepositoryViewModel<AppRepository>() {
     ) {
         val currentJobId = jobId.toLongOrNull() ?: return
         requestWithLoading(
+            showToastError = true,
             apiBlock = {
                 mRepo.api.createEnterpriseImSession(
                     ImSessionCreateBody(

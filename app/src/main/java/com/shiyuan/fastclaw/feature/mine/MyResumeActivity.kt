@@ -99,6 +99,9 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                     stopRotation(itemBinding.ivState)
 
                     itemBinding.llUploading.visibility = View.GONE
+
+                    //发送消息给机会列表
+                    FlowEventBus.postSticky(Events.OpportunityListRefreshEvent(2))
                 }
 
                 0, 1 -> {
