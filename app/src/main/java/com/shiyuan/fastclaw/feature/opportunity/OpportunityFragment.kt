@@ -383,7 +383,7 @@ class OpportunityFragment :
     /** 轮询最新机会**/
     private fun updateNewOpportunityPolling(isVisible: Boolean) {
         if (User.get().isVisitor) return
-        if (isVisible && mRealVM.matchingData.value.orEmpty().isEmpty()) {
+        if (isVisible && mRealVM.matchingData.value.orEmpty().isEmpty() && mRealVM.isMatchState.value == OpportunityIsCanMatchState.CANMATCHED) {
             mRealVM.startNewOpportunityPolling()
         } else {
             mRealVM.stopNewOpportunityPolling()

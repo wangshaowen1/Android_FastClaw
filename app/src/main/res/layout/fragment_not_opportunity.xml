@@ -35,7 +35,7 @@
 
             <!--/* 未开始匹配-->
             <LinearLayout
-                android:visibility="gone"
+
                 android:id="@+id/card_understand_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
