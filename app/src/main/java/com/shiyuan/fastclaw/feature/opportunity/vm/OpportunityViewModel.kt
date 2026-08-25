@@ -268,25 +268,22 @@ class OpportunityViewModel : HomeReportViewModel() {
      * 页面可见且处于常态化匹配时轮询查询新机会。
      *
      * 请求：每 5 秒查询一次，无业务参数。
-     * 返回：新机会列表；列表非空时结束本轮轮询并写入 [matchingData]。
+     * 返回：新机会列表；请求成功后写入 [matchingData]，并继续下一轮轮询。
      */
     fun startNewOpportunityPolling() {
         if (newOpportunityPollingJob?.isActive == true) return
 
         newOpportunityPollingJob = launchPolling(
-            intervalMs = 5000L,
-            retryOnNetworkError = false,
+            intervalMs = 15000L,
+            retryOnNetworkError = true,
             showToastError = false,
             apiBlock = { mRepo.api.queryNewOpportunities() },
-            checkState = { response ->
-                when {
-                    response?.isSuccess == true &&  response.data.orEmpty().isNotEmpty() -> PollingState.SUCCESS
-                    else -> PollingState.CONTINUE
+            checkState = { PollingState.CONTINUE },
+            onSuccess = {},
+            onPolling = { response ->
+                if (response?.isSuccess == true) {
+                    matchingData.value = response.data.orEmpty()
                 }
-            },
-            onSuccess = { response ->
-                newOpportunityPollingJob = null
-                matchingData.value = response?.data.orEmpty()
             }
         )
     }

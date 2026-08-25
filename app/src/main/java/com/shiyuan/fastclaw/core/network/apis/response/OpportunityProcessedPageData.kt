@@ -50,6 +50,7 @@ data class OpportunityProcessedItemData(
     val status: String = "",
     /** 当前状态对应的处理时间，格式为 yyyy-MM-dd HH:mm:ss。 */
     val statusTime: String = "",
+    val jobClosed: Boolean = false,
 ) {
     companion object {
         /** 已进入沟通状态。 */

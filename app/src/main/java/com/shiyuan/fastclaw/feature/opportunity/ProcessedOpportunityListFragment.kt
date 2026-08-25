@@ -7,8 +7,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.common.ext.startRefreshWithAdapter
+import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.FragmentProcessedOpportunityListBinding
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
@@ -74,8 +77,15 @@ class ProcessedOpportunityListFragment :
 
     override fun onPrepareView() {
         super.onPrepareView()
+        observeEvents {
+            on<Events.OpportunityListRefreshEvent> {
+                opportunityAdapter.refresh()
+                mRealVM.queryProcessedOpportunityCounts(status)
+            }
+        }
         binding.rvProcessedOpportunity.apply {
             layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            itemAnimator = null
             if (itemDecorationCount == 0) {
                 addItemDecoration(SpaceDecoration(10.dp, SpaceDecoration.Direction.MIDDLE))
             }
