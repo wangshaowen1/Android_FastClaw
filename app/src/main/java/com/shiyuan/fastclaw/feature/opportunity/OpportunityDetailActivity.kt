@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailActionState
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailViewModel
+import com.shiyuan.fastclaw.widget.listmoretextview.MyClickSpan
 import io.noties.markwon.Markwon
 
 /**
@@ -44,6 +45,7 @@ class OpportunityDetailActivity :
         private const val EXTRA_JOB_ID = "extra_job_id"
         private const val EXTRA_UNREAD = "extra_unread"
         private const val ACTION_MARK_COMMUNICATING = "MARK_COMMUNICATING"
+        private const val JOB_DESCRIPTION_COLLAPSED_LINES = 20
 
         /**
          * 打开指定岗位的机会详情。
@@ -99,7 +101,7 @@ class OpportunityDetailActivity :
             binding.tvOpportunityIntroduction,
             detail.recommendationReason
         )
-        markwon.setMarkdown(binding.tvJobDescription, detail.jobDescription)
+        renderJobDescription(detail.jobDescription)
         binding.tvLocationCompany.text = detail.companyName
         binding.tvCompanyProfile.text = listOf(
             detail.companyIndustry,
@@ -123,6 +125,24 @@ class OpportunityDetailActivity :
             binding.vMatchPercent.visible()
             binding.tvOpportunitySalary.visible()
         }
+    }
+
+    /** 岗位描述超过设定行数时折叠，并在右下角显示“查看全部”。 */
+    private fun renderJobDescription(description: String) {
+        val descriptionView = binding.tvJobDescription
+        val markdown = markwon.toMarkdown(description)
+        descriptionView.setMaxLine(JOB_DESCRIPTION_COLLAPSED_LINES)
+        descriptionView.movementMethod = LinkMovementMethod.getInstance()
+        descriptionView.highlightColor = Color.TRANSPARENT
+        descriptionView.setOnAllSpanClickListener(
+            object : MyClickSpan.OnAllSpanClickListener {
+                override fun onClick(widget: View?) {
+                    descriptionView.setMaxLine(Int.MAX_VALUE)
+                    descriptionView.text = markdown
+                }
+            }
+        )
+        descriptionView.text = markdown
     }
 
     /** 为安全提示中的“立即举报”添加企业微信客服点击能力。 */

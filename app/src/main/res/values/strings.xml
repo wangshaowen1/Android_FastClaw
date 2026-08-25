@@ -1303,6 +1303,7 @@
     <string name="percent_symbol">%</string>
 
     <string name="opportunity_detail_job_description">岗位描述</string>
+    <string name="opportunity_detail_view_all_suffix">...查看全部</string>
     <string name="opportunity_detail_work_location">工作地点</string>
     <string name="opportunity_detail_security_tip_title">小虾安全提示</string>
     <string name="opportunity_detail_unsuitable">不合适</string>

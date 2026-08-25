@@ -233,7 +233,7 @@
                      android:textSize="18sp"
                      android:fontFamily="sans-serif-medium" />
 
-                 <TextView
+                 <com.shiyuan.fastclaw.widget.listmoretextview.ListMoreTextView
                      android:id="@+id/tv_job_description"
                      android:layout_width="match_parent"
                      android:layout_height="wrap_content"
@@ -244,6 +244,11 @@
                      android:linksClickable="true"
                      android:textColor="@color/color_85_3c3c43"
                      android:textSize="14sp"
+                     app:more_action_text="@string/opportunity_detail_view_all_suffix"
+                     app:more_action_text_color="@color/color_2f6bff"
+                     app:more_action_text_maxLines="20"
+                     app:more_action_text_size="14"
+                     app:more_can_click="true"
                      tools:text="【岗位职责】\n1、负责日常行政事务、办公物资管理、会议筹备与纪要整理。\n\n【任职要求】\n1、大专及以上学历，1 年以内相关工作经验...查看全部" />
 
                  <View
