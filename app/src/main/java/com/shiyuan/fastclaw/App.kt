@@ -67,8 +67,6 @@ import java.lang.ref.WeakReference
 import java.util.LinkedList
 import java.util.Random
 
-private const val IM_LOGIN_LOG_TAG = "ImLogin"
-
 class App : ImApplication() {
 
     private lateinit var mainThreadHandler: Handler
@@ -297,11 +295,7 @@ class App : ImApplication() {
                 data?.ready = true*/
                 User.get().storeImAccessId(data?.imAccId)
                 User.get().storeImToken(data?.imAccToken)
-                Logger.i(IM_LOGIN_LOG_TAG,
-                    "initImSession ready=${data?.ready}, " +
-                        "hasAccount=${!data?.imAccId.isNullOrBlank()}, " +
-                        "hasToken=${!data?.imAccToken.isNullOrBlank()}"
-                )
+                Logger.i("ImLogin", "initImSession imAccId=${data?.imAccId}")
                 return data?.imAccToken
             }
         })

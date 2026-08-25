@@ -18,8 +18,6 @@ import com.tulele.im.StateChangeListener
 import com.tulele.im.utils.AccountHelper
 import kotlinx.coroutines.Job
 
-private const val IM_LOGIN_LOG_TAG = "ImLogin"
-
 /**
  * *****************************************
  * 项目名称: KidsTales
@@ -127,7 +125,7 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
             apiBlock = { mRepo.api.queryImAccount() },
             onError = {
                 Logger.i(
-                    IM_LOGIN_LOG_TAG,
+                    "ImLogin",
                     "syncImAccountAndLogin localValid=${ImSession.get().account}, " +
                         "logged=${AccountHelper.isLogged()}"
                 )
@@ -135,14 +133,15 @@ class MainViewModel : AppRepositoryViewModel<AppRepository>() {
                 refreshImData()
             },
             onSuccess = {
-                Logger.i(IM_LOGIN_LOG_TAG,
-                    "fetchUserInfo imReady=${this.data?.ready}, " +
+                Logger.i("ImLogin",
+                    "fetchUserInfo imAccId=${this.data?.imAccId}, " +
                             "localValid=${ImSession.get().account}, " +
                             "logged=${AccountHelper.isLogged()}"
                 )
                 /*data?.imAccId = "234567"
                 data?.imAccToken = "234567"
                 data?.ready = true*/
+
                 User.get().storeImAccessId(data?.imAccId)
                 User.get().storeImToken(data?.imAccToken)
                 AccountHelper.login()
