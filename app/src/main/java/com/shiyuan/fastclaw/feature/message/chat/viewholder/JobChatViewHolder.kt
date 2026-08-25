@@ -30,7 +30,7 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
         binding.tvStage.visibility = if (stage.isNullOrBlank()) View.GONE else View.VISIBLE
         binding.layoutCompany.visibility = if (company.isNullOrBlank() && stage.isNullOrBlank()) View.GONE else View.VISIBLE
         bindTagViews(tags)
-        bindActionText(item)
+        bindActionState(item)
     }
 
     /**
@@ -47,31 +47,38 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
     }
 
     /**
-     * 按职业卡片操作方和是否切换职位展示底部动作文案。
+     * 根据是否切换职位控制卡片底部发起时间和系统提示展示。
      */
-    private fun bindActionText(item: JobChatItem) {
+    private fun bindActionState(item: JobChatItem) {
         val context = binding.root.context
-        val text = if (item.isJobChanged) {
-            if (item.operatorRole == OPERATOR_ROLE_CANDIDATE) {
-                context.getString(R.string.message_chat_job_changed_by_self)
-            } else {
-                context.getString(R.string.message_chat_job_changed_by_hr)
+        binding.tvJobChange.visibility = if (item.isJobChanged) View.VISIBLE else View.GONE
+        binding.tvActionTime.visibility = if (item.isJobChanged) View.GONE else View.VISIBLE
+        binding.viewDivider.visibility = if (item.isJobChanged) View.GONE else View.VISIBLE
+        if (item.isJobChanged) {
+            binding.tvJobChange.text = when (item.operatorRole) {
+                OPERATOR_ROLE_CANDIDATE -> context.getString(R.string.message_chat_job_changed_by_self)
+                OPERATOR_ROLE_HR -> context.getString(R.string.message_chat_job_changed_by_hr)
+                else -> context.getString(R.string.message_chat_job_changed_by_hr)
             }
         } else {
-            val action = if (item.operatorRole == OPERATOR_ROLE_CANDIDATE) {
-                context.getString(R.string.message_chat_job_started_by_self)
-            } else {
-                context.getString(R.string.message_chat_job_started_by_other)
+            val action = when (item.operatorRole) {
+                OPERATOR_ROLE_CANDIDATE -> context.getString(R.string.message_chat_job_started_by_self)
+                OPERATOR_ROLE_HR -> context.getString(R.string.message_chat_job_started_by_other)
+                else -> context.getString(R.string.message_chat_job_started_by_other)
             }
-            context.getString(R.string.message_chat_job_started_format, MessageFormatter.format(item.time), action)
+            binding.tvActionTime.text = context.getString(
+                R.string.message_chat_job_started_format,
+                MessageFormatter.format(item.time),
+                action
+            )
         }
-        binding.tvActionTime.text = text
-        binding.tvActionTime.visibility = View.VISIBLE
-        binding.viewDivider.visibility = View.VISIBLE
     }
 
     companion object {
         // 求职者操作方枚举值。
         private const val OPERATOR_ROLE_CANDIDATE = "candidate"
+
+        // HR 操作方枚举值。
+        private const val OPERATOR_ROLE_HR = "hr"
     }
 }
