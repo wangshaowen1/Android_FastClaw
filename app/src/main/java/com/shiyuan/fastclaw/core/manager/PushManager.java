@@ -39,7 +39,7 @@ import org.android.agoo.xiaomi.MiPushRegistar;
 
 /*推送tag和alias管理*/
 public class PushManager {
-    public static final String ALIAS_TYPE = "FastFilmAliasType";
+    public static final String ALIAS_TYPE = "FastClawAliasType";
     private static final String TAG = PushManager.class.getSimpleName();
 
     private final Context mContext;
