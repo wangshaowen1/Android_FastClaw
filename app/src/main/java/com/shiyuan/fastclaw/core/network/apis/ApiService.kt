@@ -61,6 +61,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBo
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityCompanyDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityStatusUpdateBody
+import com.shiyuan.fastclaw.core.network.apis.request.ImJobSwitchBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImSessionCreateBody
 import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
@@ -804,4 +805,8 @@ interface ApiService {
     /** 同意发送简历。 */
     @POST(ApiConstants.IM_RESUME_SEND_AGREE)
     suspend fun agreeResumeSend(@Body body: ResumeSendAgreeBody): ApiResponse<Any?>
+
+    /** 切换 IM 会话当前沟通职位。 */
+    @POST(ApiConstants.IM_JOB_SWITCH)
+    suspend fun switchImJob(@Body body: ImJobSwitchBody): ApiResponse<Any?>
 }

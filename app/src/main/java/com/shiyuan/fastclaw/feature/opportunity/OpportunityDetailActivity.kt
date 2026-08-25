@@ -207,10 +207,13 @@ class OpportunityDetailActivity :
                 this,
                 MessageChatParams(
                     sessionId = session.sessionId ?: "",
-                    contactId = session.targetBaseAccountId.toString(),
+                    contactId = session.targetImAccId.orEmpty(),
                     name = session.targetNickname.orEmpty(),
                     avatar = session.targetAvatarUrl,
-                    isFirstCreate = session.isFirstCreate == true,
+                    currentJobId = session.currentJobId,
+                    currentJobName = detail.jobTitle,
+                    isFirstCreate = session.created == true,
+                    isJobSwitched = session.jobSwitched == true,
                 )
             )
         }

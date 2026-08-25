@@ -20,6 +20,9 @@ class ResumeRequestViewHolder(private val binding: ItemChatResumeRequestBinding)
     // 拒绝简历请求点击回调。
     var onRejectClickListener: (ResumeRequestChatItem) -> Unit = {}
 
+    // HR 头像点击回调。
+    var onAvatarClickListener: (ResumeRequestChatItem) -> Unit = {}
+
     /**
      * 绑定简历请求卡片内容和点击事件。
      */
@@ -39,6 +42,7 @@ class ResumeRequestViewHolder(private val binding: ItemChatResumeRequestBinding)
             .into(binding.ivAvatar)
         binding.tvAccept.setOnSingleClickListener { onAcceptClickListener(item) }
         binding.tvReject.setOnSingleClickListener { onRejectClickListener(item) }
+        binding.ivAvatar.setOnSingleClickListener { onAvatarClickListener(item) }
     }
 
     /**

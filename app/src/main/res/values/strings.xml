@@ -90,6 +90,10 @@
     <string name="message_chat_job_started_by_other">由对方发起的沟通</string>
     <string name="message_chat_job_changed_by_self">你切换了沟通职位</string>
     <string name="message_chat_job_changed_by_hr">招聘方切换了沟通职位</string>
+    <string name="message_chat_job_switch_title">温馨提示</string>
+    <string name="message_chat_job_switch_content">您与该招聘者已沟通过，是否就新职位\n%1$s继续沟通？</string>
+    <string name="message_chat_job_switch_note">注：更换职位将通知招聘者</string>
+    <string name="message_chat_job_switch_confirm">切换职位</string>
     <string name="please_write">请填写</string>
     <string name="already_write">已填写</string>
     <string name="please_selected">请选择</string>

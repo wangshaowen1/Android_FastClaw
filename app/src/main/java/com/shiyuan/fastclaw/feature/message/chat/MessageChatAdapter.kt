@@ -34,15 +34,25 @@ class MessageChatAdapter : BaseMultiItemAdapter<ChatMessageItem>() {
     // 简历文件点击回调，后续接入预览或下载时由页面层处理。
     var onResumeFileClick: (ResumeDeliveryChatItem) -> Unit = {}
 
+    // 职位卡片点击回调。
+    var onJobCardClick: (JobChatItem) -> Unit = {}
+
+    // HR 头像点击回调。
+    var onHrAvatarClick: () -> Unit = {}
+
     init {
         // 职位卡片消息，展示首次沟通或切换职位的职位快照。
         register<JobChatViewHolder, JobChatItem>(TYPE_JOB_CARD, { inflater, parent ->
-            JobChatViewHolder(ItemChatJobCardBinding.inflate(inflater, parent, false))
+            JobChatViewHolder(ItemChatJobCardBinding.inflate(inflater, parent, false)).apply {
+                onCardClickListener = { onJobCardClick(it) }
+            }
         }) { holder, item -> holder.bind(item) }
 
         // 左侧文本消息，展示对方发送的普通文本内容。
         register<TextChatLeftViewHolder, TextChatItem>(TYPE_TEXT_LEFT, { inflater, parent ->
-            TextChatLeftViewHolder(ItemChatTextLeftBinding.inflate(inflater, parent, false))
+            TextChatLeftViewHolder(ItemChatTextLeftBinding.inflate(inflater, parent, false)).apply {
+                onAvatarClickListener = { onHrAvatarClick() }
+            }
         }) { holder, item -> holder.bind(item) }
 
         // 右侧文本消息，展示当前账号发送的普通文本内容。
@@ -55,6 +65,7 @@ class MessageChatAdapter : BaseMultiItemAdapter<ChatMessageItem>() {
             ResumeRequestViewHolder(ItemChatResumeRequestBinding.inflate(inflater, parent, false)).apply {
                 onAcceptClickListener = { onResumeRequestAcceptClick(it) }
                 onRejectClickListener = { onResumeRequestRejectClick(it) }
+                onAvatarClickListener = { onHrAvatarClick() }
             }
         }) { holder, item -> holder.bind(item) }
 

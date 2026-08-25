@@ -11,9 +11,11 @@ import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.core.network.apis.request.ImJobSwitchBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
+import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.message.data.MessageJobAttachment
 import com.shiyuan.fastclaw.feature.message.data.MessageTextAttachment
 import com.shiyuan.fastclaw.feature.message.data.ResumeDeliveryAttachment
@@ -49,20 +51,21 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private val localSendMessageIds = mutableSetOf<String>()
     // 是否还有更早历史消息。
     private var hasMoreHistory = true
+    // 当前聊天对象账号。
+    private var contactId: String = ""
     // 当前聊天对象头像。
     private var targetAvatar: String? = null
     // 首次创建会话时是否需要自动发送开场白。
     private var autoSendGreeting: Boolean? = false
 
-
     /**
      * 初始化聊天参数、打开当前 IM 会话并加载历史消息。
-     *
-     * @param autoSendGreeting 首次创建会话时是否自动发送开场白。
+     * 首次创建会话时是否自动发送开场白。
      */
-    fun initChat(contactId: String, targetAvatar: String?, isFirstCreate: Boolean?) {
-        this.targetAvatar = targetAvatar
-        this.autoSendGreeting = isFirstCreate
+    fun initChat(params: MessageChatParams?) {
+        this.contactId = params?.contactId?:""
+        this.targetAvatar = params?.avatar
+        this.autoSendGreeting = params?.isFirstCreate
         chat = ImSession.get().openChat(Contact(contactId))
         chat?.onMessageSendResultListener = this
         chat?.active()
@@ -366,6 +369,16 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      */
     fun rejectResumeForRequest(item: ResumeRequestChatItem) {
         modifyResumeRequestMessage(item.id, ResumeRequestAttachment.buildRejected(item))
+    }
+
+    /**
+     * 调用后端接口切换当前 IM 会话沟通职位。
+     */
+    fun switchTargetJob(currentJobId: Long?) {
+        currentJobId ?: return
+        requestWithLoading(apiBlock = {
+            mRepo.api.switchImJob(ImJobSwitchBody(currentJobId))
+        }) {}
     }
 
     /**

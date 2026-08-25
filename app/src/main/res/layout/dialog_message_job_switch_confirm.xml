@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_ffffff_r20"
+    android:paddingStart="26dp"
+    android:paddingTop="22dp"
+    android:paddingEnd="26dp"
+    android:paddingBottom="20dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:text="@string/message_chat_job_switch_title"
+        android:textColor="@color/color_90_000000"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvContent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:textColor="@color/color_90_000000"
+        android:textSize="13sp"
+        android:lineSpacingMultiplier="1.1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        tools:text="您与该招聘者已沟通过，是否就新职位&#10;投资顾问继续沟通？" />
+
+    <TextView
+        android:id="@+id/tvNote"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/message_chat_job_switch_note"
+        android:textColor="@color/color_75_3c3c43"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvContent" />
+
+    <com.shiyuan.fastclaw.widget.super_button.SuperButton
+        android:id="@+id/tvCancel"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10.5dp"
+        android:gravity="center"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp"
+        android:text="@string/cancel"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/color_ffffff"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tvSwitch"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvNote"
+        app:sCornersRadius="100dp"
+        app:sSizeHeight="40dp"
+        app:sSolidColor="@color/color_bdbdbd" />
+
+    <com.shiyuan.fastclaw.widget.super_button.SuperButton
+        android:id="@+id/tvSwitch"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="10.5dp"
+        android:gravity="center"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:padding="0dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/message_chat_job_switch_confirm"
+        android:textColor="@color/color_ffffff"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/tvCancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvCancel"
+        app:layout_constraintTop_toTopOf="@id/tvCancel"
+        app:sCornersRadius="100dp"
+        app:sSizeHeight="40dp"
+        app:sSolidColor="@color/color_2f6bff" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
