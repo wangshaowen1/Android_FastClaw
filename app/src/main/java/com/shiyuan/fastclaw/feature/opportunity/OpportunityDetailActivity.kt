@@ -17,6 +17,9 @@ import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.BR
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.common.ext.gone
+import com.shiyuan.fastclaw.common.ext.invisible
+import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.customerServiceTransfer
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
@@ -108,6 +111,18 @@ class OpportunityDetailActivity :
             CompanyDetailActivity.start(this, detail.enterpriseId)
         }
         renderBottomActions(detail)
+        if(detail.jobClosed){
+           binding.llZw.visible()
+           binding.llContent.gone()
+           binding.vMatchPercent.invisible()
+           binding.tvOpportunitySalary.invisible()
+
+        }else{
+            binding.llZw.gone()
+            binding.llContent.visible()
+            binding.vMatchPercent.visible()
+            binding.tvOpportunitySalary.visible()
+        }
     }
 
     /** 为安全提示中的“立即举报”添加企业微信客服点击能力。 */

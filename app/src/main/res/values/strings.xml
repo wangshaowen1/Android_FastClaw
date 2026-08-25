@@ -1325,6 +1325,7 @@
     <string name="opportunity_detail_report_now">立即举报</string>
     <string name="opportunity_company_detail_title">公司主页</string>
     <string name="opportunity_company_detail_welfare">福利待遇</string>
+    <string name="opportunity_tzzp">停止招聘</string>
 
 </resources>
 

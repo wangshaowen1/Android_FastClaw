@@ -232,8 +232,9 @@ class OpportunityFragment :
                 }
                 OpportunityIsCanMatchState.CANMATCHED -> {
                     mRealVM.queryOpportunityStats() // 查询统计数据。
-                    mRealVM.queryNewOpportunities() // 查询最新未处理机会。
+                    updateNewOpportunityPolling(lastUiVisible == true)// 查询最新未处理机会。
                     mRealVM.queryProcessedOpportunityPreview() // 查询最近 5 条已处理机会。
+
                 }
             }
         }
@@ -250,7 +251,6 @@ class OpportunityFragment :
                     binding.cardNoChance.visible()
                     binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.visible()
-                    updateNewOpportunityPolling(lastUiVisible == true)
                 } else {
                     // 已匹配到机会时停止空态动画，展示本批机会。
                     renderLottie(false)
@@ -426,7 +426,8 @@ class OpportunityFragment :
     /** 仅在页面可见、具备匹配资格且当前无新机会时维持轮询。 */
     private fun updateNewOpportunityPolling(isVisible: Boolean) {
         if (User.get().isVisitor) return
-        if (isVisible && mRealVM.matchingData.value.orEmpty().isEmpty() && mRealVM.isMatchState.value == OpportunityIsCanMatchState.CANMATCHED) {
+        //可见可匹配就轮询
+        if (isVisible && mRealVM.isMatchState.value == OpportunityIsCanMatchState.CANMATCHED) {
             mRealVM.startNewOpportunityPolling()
         } else {
             mRealVM.stopNewOpportunityPolling()
