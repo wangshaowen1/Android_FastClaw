@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="3dp"
+        android:layout_marginEnd="8dp"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:includeFontPadding="false"
@@ -73,7 +73,7 @@
         app:layout_constraintEnd_toStartOf="@id/tvTime"
         app:layout_constraintStart_toEndOf="@id/tvName"
         app:layout_constraintTop_toTopOf="@id/tvName"
-        tools:text="深圳市新句彩电子有限公司｜高级产..." />
+        tools:text="深圳市新句彩电子有限公司｜高级产高级产高级产高级产..." />
 
     <TextView
         android:id="@+id/tvTime"
@@ -117,6 +117,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tvDraft"
         app:layout_constraintTop_toBottomOf="@id/tvName"
-        tools:text="我们希望了解下你做过的模型，方便发个简..." />
+        tools:text="我们希望了解下你做过的模型，方便发个简方便发个简方便发个简" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

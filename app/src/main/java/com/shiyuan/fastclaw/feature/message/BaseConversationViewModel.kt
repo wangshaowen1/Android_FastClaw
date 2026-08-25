@@ -164,17 +164,17 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
      */
     protected fun buildConversationItem(conversation: Conversation, itemType: Int): ConversationItem {
         val contactId = conversation.contactId
-        val profile = conversation.serverExtension[ROLE_HR] as? Map<*, *>
-        val profileValue = { key: String -> (profile?.get(key) as? String)?.takeIf { it.isNotBlank() } }
+        val hrProfile = conversation.serverExtension[ROLE_HR] as? Map<*, *>
+        val hrProfileValue = { key: String -> (hrProfile?.get(key) as? String)?.takeIf { it.isNotBlank() } }
         val position = (conversation.serverExtension[KEY_POSITION] as? String)?.takeIf { it.isNotBlank() }
         val draftContent = MessageDraftStore.get(conversation.conversationId)
         return ConversationItem(
             id = conversation.conversationId,
             contactId = contactId,
             itemType = itemType,
-            targetName = profileValue(KEY_NAME) ?: conversation.name?.takeIf { it.isNotBlank() } ?: contactId,
-            targetAvatar = profileValue(KEY_AVATAR) ?: conversation.avatar,
-            targetCompany = profileValue(KEY_COMPANY),
+            targetName = hrProfileValue(KEY_NAME) ?: conversation.name?.takeIf { it.isNotBlank() } ?: contactId,
+            targetAvatar = hrProfileValue(KEY_AVATAR) ?: conversation.avatar,
+            targetCompany = hrProfileValue(KEY_COMPANY),
             targetPosition = position,
             lastMessage = draftContent ?: formatLastMessage(conversation),
             lastMessageTime = conversation.time,
