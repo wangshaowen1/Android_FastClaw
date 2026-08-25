@@ -68,7 +68,7 @@
                         android:text="@string/not_opportunity_understand_title"
                         android:textColor="@color/color_90_000000"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:fontFamily="sans-serif-medium" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -304,7 +304,7 @@
                         android:text="@string/not_opportunity_searching_title"
                         android:textColor="@color/color_90_000000"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:fontFamily="sans-serif-medium" />
 
                     <View
                         android:layout_width="@dimen/dp1"
@@ -378,7 +378,7 @@
                             android:textColor="#E609B65D"
                             android:textSize="18sp"
                             android:text="0"
-                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -417,7 +417,7 @@
                                 android:includeFontPadding="false"
                                 android:textColor="@color/color_85_3c3c43"
                                 android:textSize="18sp"
-                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"
                                 android:text="0"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -452,7 +452,7 @@
                                 android:includeFontPadding="false"
                                 android:textColor="@color/color_85_3c3c43"
                                 android:textSize="18sp"
-                                android:textStyle="bold"
+                                android:fontFamily="sans-serif-medium"
                                 android:text="0"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -484,7 +484,7 @@
                  android:id="@+id/tv_match_opportunity"
                  android:textColor="@color/black"
                  android:layout_marginLeft="5dp"
-                 android:textStyle="bold"
+                 android:fontFamily="sans-serif-medium"
                  android:textSize="18sp"
                  tools:text="小虾发现了新机会2个"
                  android:layout_width="wrap_content"
@@ -522,7 +522,7 @@
                         android:text="@string/not_opportunity_processed_title"
                         android:textColor="@color/color_90_000000"
                         android:textSize="18sp"
-                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/ll_view_all_processed_opportunity"
                         app:layout_constraintStart_toStartOf="parent"

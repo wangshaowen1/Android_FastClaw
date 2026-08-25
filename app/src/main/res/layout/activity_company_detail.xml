@@ -65,7 +65,8 @@
                             android:maxLines="2"
                             android:text="@{layout.companyName}"
                             android:textColor="@color/color_ffffff"
-                            style="@style/Text20"
+                            android:textSize="20sp"
+                            android:fontFamily="sans-serif-medium"
                             tools:text="腾讯科技（深圳）有限公司" />
 
                         <TextView
@@ -77,7 +78,7 @@
                             android:maxLines="2"
                             android:text="@{layout.companySummary}"
                             android:textColor="@color/color_70_ffffff"
-                            style="@style/Text12"
+                            android:textSize="12sp"
                             tools:text="互联网/AI·10000人以上·已上市上" />
                     </LinearLayout>
 
@@ -103,7 +104,7 @@
                     android:lineHeight="24dp"
                     android:text="@{layout.companyDetail.introduction}"
                     android:textColor="@color/color_ffffff"
-                    style="@style/Text14"
+                    android:textSize="14sp"
                     tools:text="腾讯科技专注于互联网/AI，已经上市，我们的产品是专门做帮助企业提升高效协同、决策效率，目前服务100000企业用户。" />
 
                 <View
@@ -119,7 +120,8 @@
                     android:includeFontPadding="false"
                     android:text="@string/opportunity_detail_work_location"
                     android:textColor="@color/color_ffffff"
-                    style="@style/Text18" />
+                    android:textSize="18sp"
+                    android:fontFamily="sans-serif-medium" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -129,7 +131,7 @@
                     android:lineHeight="24dp"
                     android:text="@{layout.companyDetail.location}"
                     android:textColor="@color/color_ffffff"
-                    style="@style/Text14"
+                    android:textSize="14sp"
                     tools:text="深圳创维半导体设计大厦西座12楼1205" />
 
                 <View
@@ -145,7 +147,8 @@
                     android:includeFontPadding="false"
                     android:text="@string/opportunity_company_detail_welfare"
                     android:textColor="@color/color_ffffff"
-                    style="@style/Text18" />
+                    android:textSize="18sp"
+                    android:fontFamily="sans-serif-medium" />
 
                 <com.google.android.flexbox.FlexboxLayout
                     android:id="@+id/flex_welfare"

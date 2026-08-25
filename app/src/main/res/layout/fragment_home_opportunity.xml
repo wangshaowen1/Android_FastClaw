@@ -51,7 +51,7 @@
                 android:text="@string/opportunity_opportunity"
                 android:textColor="@color/color_000000"
                 android:textSize="22sp"
-                android:textStyle="bold" />
+                android:fontFamily="sans-serif-medium" />
 
 
             <TextView
@@ -65,7 +65,7 @@
                 android:gravity="center"
                 android:text="@string/opportunity_job_search_bible"
                 android:textColor="@color/color_75_3c3c43"
-                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
                 android:textSize="18sp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

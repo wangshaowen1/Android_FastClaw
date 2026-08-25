@@ -80,7 +80,7 @@ class HomeOpportunityFragment : BaseViewModelFragment<FragmentHomeOpportunityBin
             TypedValue.COMPLEX_UNIT_SP,
             if (selected) SELECTED_TEXT_SIZE_SP else UNSELECTED_TEXT_SIZE_SP,
         )
-        tabView.typeface = if (selected) SELECTED_TYPEFACE else UNSELECTED_TYPEFACE
+       // tabView.typeface = if (selected) SELECTED_TYPEFACE else UNSELECTED_TYPEFACE
     }
 
     override fun onDestroyView() {
