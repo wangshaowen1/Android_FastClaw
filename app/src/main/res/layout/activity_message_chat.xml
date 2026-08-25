@@ -160,7 +160,7 @@
             </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layoutSendResume"
+                android:id="@+id/layoutMore"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:paddingStart="29dp"
@@ -172,6 +172,7 @@
                 tools:visibility="visible">
 
                 <LinearLayout
+                    android:id="@+id/layoutSendResume"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"

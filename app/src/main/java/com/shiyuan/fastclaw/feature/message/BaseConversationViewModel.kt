@@ -85,20 +85,6 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     }
 
     /**
-     * 同步页面可见状态，页面不可见时取消本轮会话加载，避免后台继续刷新 UI。
-     */
-    fun setPageState(active: Boolean) {
-        if (isPageActive == active) return
-        isPageActive = active
-        if (active) {
-            registerConversationListener()
-            getConversationList()
-        } else {
-            cancelLoadJob()
-        }
-    }
-
-    /**
      * 拉取 IM 的 P2P 会话列表，并刷新当前页面会话缓存。
      */
     fun getConversationList() {

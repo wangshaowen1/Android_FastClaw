@@ -194,5 +194,21 @@
                 tools:text="8月5日 16:45 由你发起的沟通"
                 tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvJobChange"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:includeFontPadding="false"
+            android:textColor="@color/color_55_3c3c43"
+            android:textSize="12sp"
+            android:text="你切换了沟通职位"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutCard"
+            tools:text="你切换了沟通职位"
+            tools:visibility="visible" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
