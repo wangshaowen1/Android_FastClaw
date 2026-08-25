@@ -1103,6 +1103,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             onDismissListener = {
                 mRealVM.helpYouFindJobDialog.value = null
                 mRealVM.pullMessages()
+                FlowEventBus.postSticky(Events.OpportunityJobUpCompletedEvent())
             }
         }.showDialog()
     }

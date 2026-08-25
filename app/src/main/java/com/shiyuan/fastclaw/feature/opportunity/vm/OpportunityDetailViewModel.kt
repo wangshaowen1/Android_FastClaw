@@ -68,14 +68,11 @@ class OpportunityDetailViewModel : AppRepositoryViewModel<AppRepository>() {
         jobId: String,
         onSuccess: (ImSessionCreateData) -> Unit,
     ) {
-        val targetBaseAccountId = User.get().userId?.toLongOrNull() ?: return
         val currentJobId = jobId.toLongOrNull() ?: return
         requestWithLoading(
             apiBlock = {
                 mRepo.api.createEnterpriseImSession(
                     ImSessionCreateBody(
-                        targetSubjectType = 1,
-                        targetBaseAccountId = targetBaseAccountId,
                         currentJobId = currentJobId,
                     )
                 )
