@@ -33,7 +33,7 @@ last_verified: 2026-08-14
 | 我的 Tab | 账号、简历和个人功能入口 | `feature/mine/MineFragment` |
 | 公共 scheme 路由 | 解析当前 App scheme，并把已支持的 host 分发到业务入口 | `router/AppRouter` |
 | 推送跳转 | 接收推送 `jumpUri`，处理冷启动或切回前台后的延迟分发 | `core/manager/PushManager`、`router/AppLaunchJump` |
-| 登录拦截 | 判断游客状态并统一拉起登录流程 | `router/AppNavigator` |
+| 登录拦截 | 判断游客状态并统一拉起登录流程；强制退出时保留已存在的首页、关闭其他页面并打开手机号登录页 | `router/AppNavigator` |
 
 `AndroidManifest.xml` 是启动 Activity 和外部 scheme 声明的当前依据，`MainActivity` 是主 Tab 与页面归属的当前依据。当前启动链路只保存邀请归因，`SplashViewModel` 进入主页时没有把普通业务 scheme 继续交给 `AppRouter`；新增外部业务跳转时需要补齐这段分发。修改 Manifest 中的公共入口、`AppRouter` 或 `AppLaunchJump` 的公开跳转、`AppNavigator` 的登录拦截、主 Tab 或上表页面职责时，应同时更新本节；普通页面内部跳转不需要登记。
 
