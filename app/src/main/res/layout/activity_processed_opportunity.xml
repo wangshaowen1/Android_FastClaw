@@ -96,7 +96,6 @@
                 android:id="@+id/vp_processed_opportunity"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/spacing_m"
                 android:layout_weight="1"
                 tools:background="@color/color_f6f9ff" />
         </LinearLayout>

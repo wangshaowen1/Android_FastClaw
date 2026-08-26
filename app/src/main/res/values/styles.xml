@@ -575,6 +575,12 @@
         <attr name="requestException" format="string" />
         <!--无数据提示内容-->
         <attr name="noData" format="string" />
+        <!--无数据提示文字颜色-->
+        <attr name="noDataTextColor" format="color" />
+        <!--无数据提示文字大小-->
+        <attr name="noDataTextSize" format="dimension" />
+        <!--无数据提示文字是否加粗-->
+        <attr name="noDataTextBold" format="boolean" />
         <!--网络异常提示内容-->
         <attr name="networkAnomalySrc" format="reference" />
         <!--请求异常提示内容-->

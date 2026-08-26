@@ -55,6 +55,9 @@
                 app:layout_constraintRight_toRightOf="parent"
                 android:id="@+id/lsv"
                 app:noData="@string/no_data"
+                app:noDataTextColor="@color/color_85_3c3c43"
+                app:noDataTextSize="14sp"
+                app:noDataTextBold="false"
                 app:noDataSrc="@drawable/ic_empty"
                  android:layout_width="match_parent"
                 android:layout_height="wrap_content">

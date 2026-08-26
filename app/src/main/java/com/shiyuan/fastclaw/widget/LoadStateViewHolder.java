@@ -2,6 +2,7 @@ package com.shiyuan.fastclaw.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -133,6 +134,22 @@ public class LoadStateViewHolder extends ViewAnimator {
             binding.retryBtn.setBackgroundResource(R.drawable.bg_empty_button_light);
             binding.noDataBtn.setTextColor(getResources().getColor(R.color.color_30_000000));
             binding.noDataBtn.setBackgroundResource(R.drawable.bg_empty_button_light);
+        }
+        // 显式配置优先于 lightMode，未配置时保留原有样式。
+        if (typedArray.hasValue(R.styleable.LoadStateViewHolder_noDataTextColor)) {
+            binding.noData.setTextColor(typedArray.getColor(
+                    R.styleable.LoadStateViewHolder_noDataTextColor,
+                    binding.noData.getCurrentTextColor()));
+        }
+        if (typedArray.hasValue(R.styleable.LoadStateViewHolder_noDataTextSize)) {
+            binding.noData.setTextSize(TypedValue.COMPLEX_UNIT_PX, typedArray.getDimension(
+                    R.styleable.LoadStateViewHolder_noDataTextSize,
+                    binding.noData.getTextSize()));
+        }
+        if (typedArray.hasValue(R.styleable.LoadStateViewHolder_noDataTextBold)) {
+            boolean noDataTextBold = typedArray.getBoolean(R.styleable.LoadStateViewHolder_noDataTextBold, true);
+            int textStyle = noDataTextBold ? Typeface.BOLD : Typeface.NORMAL;
+            binding.noData.setTypeface(Typeface.create(binding.noData.getTypeface(), textStyle), textStyle);
         }
         typedArray.recycle();
         if (isInEditMode()) {
