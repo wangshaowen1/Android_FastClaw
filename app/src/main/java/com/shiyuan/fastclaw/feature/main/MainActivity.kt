@@ -3,13 +3,13 @@ package com.shiyuan.fastclaw.feature.main
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.SparseArray
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.core.util.getOrDefault
 import androidx.lifecycle.lifecycleScope
 import com.nhsd.basic.BaseViewModelActivity
@@ -372,7 +372,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
 
     override fun setTranslucentStatus() {
-        setupTranslucentStatus(true, Color.TRANSPARENT)
+        setupTranslucentStatus(true, ContextCompat.getColor(this, R.color.color_f6f9ff))
     }
 
     private fun checkUpgrade() {
