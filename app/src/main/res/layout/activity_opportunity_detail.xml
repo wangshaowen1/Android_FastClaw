@@ -115,9 +115,12 @@
                             android:id="@+id/tv_opportunity_location"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
+                            android:layout_marginStart="1dp"
+                            android:ellipsize="end"
                             android:includeFontPadding="false"
+                            android:maxLines="1"
                             android:maxWidth="52sp"
+                            android:maxEms="4"
                             android:textColor="@color/color_55_3c3c43"
                             android:textSize="13sp"
                             tools:text="深圳" />
@@ -125,7 +128,7 @@
                         <ImageView
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:layout_marginStart="20dp"
+                            android:layout_marginStart="10dp"
                             android:contentDescription="@null"
                             android:scaleType="center"
                             android:src="@drawable/ic_opportunity_detail_experience" />
@@ -134,8 +137,10 @@
                             android:id="@+id/tv_opportunity_experience"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
+                            android:layout_marginStart="1dp"
+                            android:ellipsize="end"
                             android:includeFontPadding="false"
+                            android:maxLines="1"
                             android:maxWidth="52sp"
                             android:textColor="@color/color_55_3c3c43"
                             android:textSize="13sp"
@@ -145,7 +150,7 @@
                             android:scaleType="center"
                             android:layout_width="16dp"
                             android:layout_height="16dp"
-                            android:layout_marginStart="20dp"
+                            android:layout_marginStart="10dp"
                             android:contentDescription="@null"
                             android:src="@drawable/ic_opportunity_detail_education" />
 
@@ -153,12 +158,13 @@
                             android:id="@+id/tv_opportunity_education"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="2dp"
+                            android:layout_marginStart="1dp"
+                            android:ellipsize="end"
                             android:includeFontPadding="false"
-                            android:maxWidth="52sp"
+                            android:maxLines="1"
                             android:textColor="@color/color_55_3c3c43"
                             android:textSize="13sp"
-                            tools:text="本科" />
+                            tools:text="本科本科" />
                     </LinearLayout>
 
                     <TextView

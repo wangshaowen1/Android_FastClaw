@@ -238,6 +238,10 @@ class OpportunityDetailActivity :
             return
         }
         mRealVM.createEnterpriseImSession(detail.jobId) { session ->
+
+            mRealVM.queryOpportunityDetail(detail.jobId)
+            FlowEventBus.postSticky(Events.OpportunityListRefreshEvent(2))
+
             MessageChatActivity.start(
                 this,
                 MessageChatParams(
