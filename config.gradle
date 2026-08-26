@@ -14,7 +14,7 @@ ext {
      * gradle配置
      */
     android = [
-            compileSdkVersion : 35,
+            compileSdkVersion : 36,
             applicationId     : "com.shiyuan.fastclaw",
             minSdkVersion     : 24,
             targetSdkVersion  : 35,

@@ -65,7 +65,7 @@ app/src/main/java/com/kgmedia/fastfilm/
 
 | 配置项 | 值 |
 |--------|-----|
-| compileSdkVersion | 35 |
+| compileSdkVersion | 36 |
 | minSdkVersion | 24 |
 | targetSdkVersion | 35 |
 | JVM Target | 17 |
