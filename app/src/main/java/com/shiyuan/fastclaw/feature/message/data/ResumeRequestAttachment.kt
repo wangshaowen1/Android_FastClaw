@@ -174,6 +174,7 @@ class ResumeRequestAttachment : CustomAttachment(MSG_TYPE) {
                 protocolVersion = payload?.optInt(KEY_VERSION),
                 protocolType = payload?.optString(KEY_TYPE),
                 requestId = payload?.optString("requestId"),
+                messageServerId = message.messageServerId,
                 status = status,
                 title = App.instance.getString(R.string.message_chat_resume_request_title),
                 resumeId = resume?.optString(KEY_RESUME_ID),

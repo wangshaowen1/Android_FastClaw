@@ -105,6 +105,8 @@ data class ResumeRequestChatItem(
     val protocolType: String?,
     /** 简历请求业务幂等 ID。 */
     val requestId: String?,
+    /** 云信索要简历原消息服务端 ID。 */
+    val messageServerId: String?,
     /** 当前请求状态。 */
     val status: String?,
     /** 卡片标题。 */

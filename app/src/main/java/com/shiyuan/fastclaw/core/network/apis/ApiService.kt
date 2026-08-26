@@ -802,7 +802,7 @@ interface ApiService {
     @POST(ApiConstants.IM_TOKEN_REFRESH)
     suspend fun refreshImToken(): ApiResponse<ImTokenData?>
 
-    /** 同意发送简历。 */
+    /** 处理 HR 索要简历。 */
     @POST(ApiConstants.IM_RESUME_SEND_AGREE)
     suspend fun agreeResumeSend(@Body body: ResumeSendAgreeBody): ApiResponse<Any?>
 
