@@ -11,13 +11,10 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import androidx.core.util.getOrDefault
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.nhsd.basic.BasicEdgeToEdgeConfig
 import com.nhsd.basic.BaseViewModelActivity
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.applyWindowInsetsPadding
 import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.isActive
 import com.nhsd.basic.ext.launchNoCrash
@@ -59,11 +56,6 @@ import kotlinx.coroutines.launch
  * *****************************************
  */
 class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>() {
-    override val edgeToEdgeStrategy: BasicEdgeToEdgeConfig.Strategy
-        get() = super.edgeToEdgeStrategy.copy(
-            rootInsetsMode = BasicEdgeToEdgeConfig.RootInsetsMode.NONE,
-        )
-
     companion object {
         val clicks = SparseArray<Long>()
         const val CLICK_INTERVAL_TIME: Long = 500
@@ -95,23 +87,6 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.isNavigationBarContrastEnforced = false
-        }
-        val bottomInsetTypes = WindowInsetsCompat.Type.navigationBars() or
-            WindowInsetsCompat.Type.displayCutout()
-        binding.fragment.applyWindowInsetsPadding(
-            insetTypes = bottomInsetTypes,
-            applyLeft = true,
-            applyRight = true,
-            applyBottom = true,
-        )
-        binding.mrg.applyWindowInsetsPadding(
-            insetTypes = bottomInsetTypes,
-            applyLeft = true,
-            applyRight = true,
-            applyBottom = true,
-        )
 
         registerTime = System.currentTimeMillis()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
