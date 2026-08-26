@@ -35,8 +35,8 @@ data class ConversationItem(
     val lastMessageTime: Long,
     /** 会话未读数量。 */
     val unreadCount: Int,
-    /** 组件归一化后的会话扩展。 */
-    val extension: Map<String, Any?>,
+    /** 会话云端扩展。 */
+    val serverExtension: Map<String, Any?>,
     /** 是否展示草稿标记。 */
     val isDraft: Boolean = false,
     /** 列表项布局类型。 */

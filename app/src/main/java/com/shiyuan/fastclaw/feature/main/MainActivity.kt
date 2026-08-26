@@ -382,7 +382,7 @@ class MainActivity : BaseViewModelActivity<ActivityMainBinding, MainViewModel>()
 
 
     override fun setTranslucentStatus() {
-        setupTranslucentStatus(true, Color.WHITE)
+        setupTranslucentStatus(true, Color.TRANSPARENT)
     }
 
     private fun checkUpgrade() {

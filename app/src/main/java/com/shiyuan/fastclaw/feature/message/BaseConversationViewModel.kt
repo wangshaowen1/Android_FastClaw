@@ -3,7 +3,9 @@ package com.shiyuan.fastclaw.feature.message
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.blankj.utilcode.util.GsonUtils
 import com.shiyuan.fastclaw.App
+import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
@@ -181,7 +183,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
             lastMessage = draftContent ?: formatLastMessage(conversation),
             lastMessageTime = conversation.time,
             unreadCount = conversation.unreadCount,
-            extension = conversation.extension,
+            serverExtension = conversation.serverExtension,
             isDraft = draftContent != null,
         )
     }
@@ -249,6 +251,12 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
     protected fun refreshMessageList(items: List<MessageListItem>) {
         conversationList.value = items
         isEmpty.set(items.isEmpty())
+        if (BuildConfig.DEBUG) {
+            conversationList.value?.forEachIndexed { index, msg ->
+                println("conversationList[$index]=${GsonUtils.toJson(msg)}")
+            }
+            println("conversationList")
+        }
     }
 
     /**

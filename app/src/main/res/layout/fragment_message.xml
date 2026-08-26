@@ -116,6 +116,7 @@
         </LinearLayout>
 
         <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:visibility="gone"
             android:id="@+id/sb_test"
             android:layout_width="50dp"
             android:layout_height="50dp"
