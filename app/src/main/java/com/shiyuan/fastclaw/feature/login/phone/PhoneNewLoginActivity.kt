@@ -29,6 +29,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewLoginBinding
 import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
+import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.umeng.socialize.UMShareAPI
 import com.umeng.socialize.bean.SHARE_MEDIA
@@ -326,6 +327,9 @@ class PhoneNewLoginActivity : BaseViewModelActivity<ActivityPhoneNewLoginBinding
         mRealVM.loginByThird(loginType, map = data, onLogin = { needBindMobile, userData ->
                 if (needBindMobile && userData != null) {
                     PhoneNewBindActivity.start(this, userData)
+                } else if (isTaskRoot) {
+                    // 避免IM账号被挤后（会关闭首页跳转登录页），再次登录无首页了
+                    MainActivity.start(this)
                 }
                 finish()
             }

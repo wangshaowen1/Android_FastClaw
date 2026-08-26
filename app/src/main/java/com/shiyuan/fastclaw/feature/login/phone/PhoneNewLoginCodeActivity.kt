@@ -247,6 +247,7 @@ class PhoneNewLoginCodeActivity :
             onLogin = {
                 hideLoginLoading()
                 if (isTaskRoot) {
+                    // 避免IM账号被挤后（会关闭首页跳转登录页），再次登录无首页了
                     MainActivity.start(this)
                 }
                 finish()
@@ -273,6 +274,8 @@ class PhoneNewLoginCodeActivity :
         mRealVM.bindPhone(
             userData = userData, onLogin = {
                 hideLoginLoading()
+                // 避免IM账号被挤后（会关闭首页跳转登录页），再次登录无首页了
+                MainActivity.start(this)
                 finish()
             },
             onError = {
