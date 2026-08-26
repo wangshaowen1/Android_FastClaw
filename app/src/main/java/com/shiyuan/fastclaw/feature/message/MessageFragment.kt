@@ -2,9 +2,12 @@ package com.shiyuan.fastclaw.feature.message
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelFragment
+import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.databinding.FragmentMessageBinding
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
+import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.tulele.im.Chat
 import com.tulele.im.ImSession
@@ -47,16 +50,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
             adapter = msgAdapter
         }
         msgAdapter.onConversationClick = {
-            MessageChatActivity.start(requireContext(),
-                MessageChatParams(
-                    sessionId = it.id,
-                    contactId = it.contactId,
-                    name = it.targetName,
-                    avatar = it.targetAvatar,
-                    currentJobId = it.jobId,
-                    currentJobName = it.targetPosition,
-                )
-            )
+            startChatActivity(it)
         }
         msgAdapter.onMarkedUnsuitableClick = {
             UnableMessageActivity.start(requireContext())
@@ -72,6 +66,11 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
     private fun initObserve() {
         mRealVM.conversationList.observe(viewLifecycleOwner) { items ->
             msgAdapter.submitList(items)
+        }
+        observeEvents {
+            on<Events.UserChangedEvent> { event ->
+                mRealVM.getConversationList()
+            }
         }
     }
 
@@ -90,6 +89,22 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
         if (!mRealVM.conversationList.value.isNullOrEmpty()) {
             mRealVM.refreshConversationList()
         }
+    }
+
+    /**
+     * 启动会话聊天页面
+     */
+    private fun startChatActivity(item: ConversationItem) {
+        MessageChatActivity.start(requireContext(),
+            MessageChatParams(
+                sessionId = item.id,
+                contactId = item.contactId,
+                name = item.targetName,
+                avatar = item.targetAvatar,
+                currentJobId = item.jobId,
+                currentJobName = item.targetPosition,
+            )
+        )
     }
 
     /**
