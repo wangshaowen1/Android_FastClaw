@@ -25,7 +25,7 @@
             tools:text="17:24"
             tools:visibility="visible" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
             android:id="@+id/layoutCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -33,7 +33,6 @@
             android:layout_marginBottom="1dp"
             android:layout_marginStart="1dp"
             android:layout_marginEnd="1dp"
-            android:background="@drawable/bg_ffffff_r20"
             android:elevation="4dp"
             android:outlineAmbientShadowColor="#3300258A"
             android:outlineSpotShadowColor="#3300258A"
@@ -45,7 +44,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTime"
-            app:layout_goneMarginTop="0dp">
+            app:layout_goneMarginTop="0dp"
+            app:background_normalColor="@color/color_ffffff"
+            app:super_corner="20dp">
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -193,7 +194,7 @@
                 app:layout_constraintTop_toBottomOf="@id/viewDivider"
                 tools:text="8月5日 16:45 由你发起的沟通"
                 tools:visibility="visible" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout>
 
         <TextView
             android:id="@+id/tvJobChange"
