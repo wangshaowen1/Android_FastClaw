@@ -115,8 +115,8 @@ class LogoffViewModel : AppRepositoryViewModel<AppRepository>() {
         ActivityUtils.finishActivity(AccountSettingsActivity::class.java)
     }
 
-    override fun onCleared() {
-        super.onCleared()
+    override fun onDestroy() {
+        super.onDestroy()
         countDownTimer?.cancel()
     }
 }

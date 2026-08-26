@@ -895,11 +895,11 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     /**
      * 清理计时任务和 SSE 连接。
      */
-    override fun onCleared() {
+    override fun onDestroy() {
         answerTimerJob?.cancel()
         localAiStreamJob?.cancel()
         sseHandler.cancel()
-        super.onCleared()
+        super.onDestroy()
     }
 
     /**

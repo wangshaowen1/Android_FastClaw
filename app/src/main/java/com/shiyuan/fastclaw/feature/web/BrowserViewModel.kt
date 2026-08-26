@@ -45,6 +45,13 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
     lateinit var paymentClient: PaymentClient
     var orderNo: String? = null
 
+    fun replacePaymentClient(client: PaymentClient) {
+        if (::paymentClient.isInitialized) {
+            paymentClient.release()
+        }
+        paymentClient = client
+    }
+
     val mToolbarVM by lazy {
         ToolbarViewModel(
             navigationAction = { back() },
@@ -174,10 +181,13 @@ class BrowserViewModel : AppRepositoryViewModel<BrowserRepository>() {
         )
     }
 
-    override fun onCleared() {
+    override fun onDestroy() {
         paymentStatusPollingJob?.cancel()
         paymentStatusPollingJob = null
         setLoading(false)
-        super.onCleared()
+        if (::paymentClient.isInitialized) {
+            paymentClient.release()
+        }
+        super.onDestroy()
     }
 }

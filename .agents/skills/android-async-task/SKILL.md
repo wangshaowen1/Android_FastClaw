@@ -1,6 +1,6 @@
 ---
 name: android-async-task
-description: "Android 异步长任务规范。仅在本次实际涉及轮询、polling、launchPolling、SSE、流式接口、支付状态检查、任务状态检查、下载任务、Job 保存、onCleared 取消、重复启动保护、取消逻辑、Coroutine 长任务、DownloadService、HttpDownload 或 SSEStreamHandler 时使用。普通 loading/error 文案或一次性接口请求不要触发本 skill。"
+description: "Android 异步长任务规范。仅在本次实际涉及轮询、polling、launchPolling、SSE、流式接口、支付状态检查、任务状态检查、下载任务、Job 保存、ViewModel 清理、重复启动保护、取消逻辑、Coroutine 长任务、DownloadService、HttpDownload 或 SSEStreamHandler 时使用。普通 loading/error 文案或一次性接口请求不要触发本 skill。"
 ---
 
 # Android 异步任务
@@ -20,9 +20,9 @@ description: "Android 异步长任务规范。仅在本次实际涉及轮询、p
 ## 先确定所有者
 
 - Activity/Fragment 不实现网络轮询、SSE 或持久下载状态机。
-- ViewModel 创建的页面级 Job、SSE handler、临时下载在 `onCleared()` 取消。
+- ViewModel 持有的页面任务在 `onDestroy()` 取消，不直接覆写 `onCleared()`。
 - View 自己拥有的播放器、动画、逐帧进度可以留在 UI 层，但必须在当前基类和 View 缓存策略对应的真实 View 生命周期释放。
-- Service、系统 DownloadManager、应用级 Manager 或持久队列拥有的任务可跨页面继续；页面只用任务 ID 解绑/重绑观察，除非用户主动取消，不在 `onCleared()` 停止底层任务。
+- Service、系统 DownloadManager、应用级 Manager 或持久队列的任务可跨页面继续；页面销毁时只解绑观察，用户主动取消时才停止任务。
 - Adapter item 内部任务必须有明确 `clear()`，并由实际宿主在回收或销毁路径调用。
 
 所有长任务启动前选择一种重复策略：仍在执行则 return，或先 cancel 再启动。结束后清空引用；页面级任务的成功、失败、异常和取消都要复位 loading/generating/progress 等临时状态。
@@ -40,8 +40,6 @@ description: "Android 异步长任务规范。仅在本次实际涉及轮询、p
 - ViewModel 保存单个 handler，新流启动前取消旧 handler，scope 使用 `viewModelScope`。
 - 文本拼接、协议字段解析和节流进入已有或新增 processor，不在页面直接创建 EventSource/callbackFlow。
 - `onStart` 清旧内容并进入生成中；`onUpdate` 只写 UI 实际消费的状态；`onComplete` 和 error 都退出生成中。
-- `onCleared()` 取消 handler。
-
 ## 下载与本地循环
 
 - 先区分“页面关闭即取消”的临时下载和“离开页面仍继续”的持久下载。前者由 ViewModel 保存 Job；后者由 Service/系统/Manager 持有，页面保存任务 ID 和观察状态。

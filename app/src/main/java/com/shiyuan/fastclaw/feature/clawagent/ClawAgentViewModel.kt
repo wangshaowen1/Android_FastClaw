@@ -1574,14 +1574,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         messageList.value = list
     }
 
-    override fun onCleared() {
+    override fun onDestroy() {
         sseHandler.cancel()
         companyBackgroundGeneratePollingJob?.cancel()
         mockInterviewReportPollingJob?.cancel()
         mockInterviewReportPollingJob = null
         passPackageReportPollingJob?.cancel()
         passPackageReportPollingJob = null
-        super.onCleared()
+        super.onDestroy()
     }
 
     companion object {

@@ -471,11 +471,11 @@ open class CommonRepositoryViewModel<T : AppRepository> : AppRepositoryViewModel
         return this?.message?.takeIf { it.isNotBlank() } ?: defaultReason
     }
 
-    override fun onCleared() {
+    override fun onDestroy() {
         isSecureFileUploadActive = false
         fileSecurityPollingJob?.cancel()
         fileSecurityPollingJob = null
-        super.onCleared()
+        super.onDestroy()
     }
 
     private data class SecureUploadFile(

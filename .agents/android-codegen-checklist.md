@@ -24,7 +24,7 @@ Checklist 按任务范围裁剪执行，不要求每次全量跑完；只有完�
 6. API 是否应加到 `ApiService.kt`，路径常量是否应加到 `ApiConstants.kt`，请求体是否放在 `request/`？
 7. 是否真的需要新 Repository，还是 `AppRepository` / `CommonRepository` 已足够？
 8. 是否真的需要 UiModel、UseCase、UiState？
-9. 长任务所有者是否明确：ViewModel 页面任务保存 `Job`/handler 并在 `onCleared()` 取消；Service、系统下载或应用级 Manager 任务由页面解绑观察者而不是误取消？
+9. 长任务所有者是否明确：ViewModel 页面任务是否在 `onDestroy()` 取消；Service、系统下载或应用级 Manager 任务是否只解绑观察？
 10. 是否新增了字符串资源，并同步当前分支需要覆盖的 `values*/strings.xml`？
 11. 是否涉及 Room version、Migration 或 AutoMigration？
 12. 是否涉及支付、登录、授权、广告奖励、统计、归因、推送、设备标识等需要 SDK 隔离和安全校验的能力？

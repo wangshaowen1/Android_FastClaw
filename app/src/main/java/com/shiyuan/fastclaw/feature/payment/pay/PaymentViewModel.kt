@@ -159,4 +159,9 @@ open class PaymentViewModel<T : AppRepository> : AppRepositoryViewModel<T>() {
         baoFuOrderId = data?.orderNo
         isBaoFu.set(data?.isBaoFu == true)
     }
+
+    override fun onDestroy() {
+        paymentClient.release()
+        super.onDestroy()
+    }
 }

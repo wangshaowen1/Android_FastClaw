@@ -7,7 +7,8 @@ import com.nhsd.basic.DialogFragmentViewModelOwner
 import com.nhsd.basic.ext.handleDialogUiEvent
 import com.nhsd.basic.ext.handleDialogUiState
 import com.nhsd.basic.ext.isActive
-import com.nhsd.basic.ext.setupDialogFragmentViewModel
+import com.nhsd.basic.ext.observeUiEvents
+import com.nhsd.basic.ext.setupDialogFragmentViewModelState
 import com.nhsd.basic.viewmodel.BaseLayoutViewModel
 import com.nhsd.basic.viewmodel.ClickHandler
 import com.nhsd.basic.viewmodel.UiEvent
@@ -43,10 +44,15 @@ abstract class BaseBlurVMDialogFragment<VB : ViewDataBinding, VM : BaseLayoutVie
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 提前订阅事件，避免 ViewModel 初始化阶段发送的瞬时事件丢失。
+        observeUiEvents(
+            viewModel = mRealVM,
+            onUiEventReceived = { event -> onDialogUiEventReceived(event) },
+        )
         if (!useSharedViewModel) {
             mRealVM.setBundle(arguments ?: Bundle())
         }
-        handleViewModelLifecycle { it.onCreate() }
+        handleViewModelLifecycle { it.performCreate() }
     }
 
 
@@ -81,13 +87,12 @@ abstract class BaseBlurVMDialogFragment<VB : ViewDataBinding, VM : BaseLayoutVie
         super.onPrepareView()
 
         // 使用扩展函数设置 ViewModel
-        setupDialogFragmentViewModel(
+        setupDialogFragmentViewModelState(
             useSharedViewModel = useSharedViewModel,
             binding = binding,
             viewModel = mRealVM,
             onViewModelCreated = { onViewModelCreated() },
             onUiStateChanged = { state -> onDialogUiStateChanged(state) },
-            onUiEventReceived = { event -> onDialogUiEventReceived(event) },
             onClick = { view, data -> onClick(view, data) }
         )
     }
@@ -105,7 +110,6 @@ abstract class BaseBlurVMDialogFragment<VB : ViewDataBinding, VM : BaseLayoutVie
 
 
     override fun onDestroy() {
-        handleViewModelLifecycle { it.onDestroy() }
         if (useSharedViewModel) {
             mRealVM.clickHandler?.removeListeners(clickListener)
         }

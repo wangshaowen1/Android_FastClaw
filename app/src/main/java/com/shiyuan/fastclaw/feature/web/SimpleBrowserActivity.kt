@@ -371,7 +371,7 @@ class SimpleBrowserActivity : BaseViewModelActivity<ActivityBrowserBinding, Brow
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AndroidBug5497Workaround.assistActivity(this)
-        mRealVM.paymentClient = createAppPayment()
+        mRealVM.replacePaymentClient(createAppPayment())
 //        mRealVM.shareManagerFactory = this
 //        mRealVM.getFragmentManager = { supportFragmentManager }
         initUI()

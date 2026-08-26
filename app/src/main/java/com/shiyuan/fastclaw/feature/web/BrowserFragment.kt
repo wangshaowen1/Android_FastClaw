@@ -268,7 +268,7 @@ class BrowserFragment : BaseViewModelFragment<FragmentBrowserBinding, BrowserVie
 
     override fun onPrepareView() {
         super.onPrepareView()
-        mRealVM.paymentClient = createAppPayment()
+        mRealVM.replacePaymentClient(createAppPayment())
         //mRealVM.shareManagerFactory = this
         //mRealVM.getFragmentManager = { childFragmentManager }
         initUI()

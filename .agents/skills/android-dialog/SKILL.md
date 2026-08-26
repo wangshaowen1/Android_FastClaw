@@ -46,8 +46,8 @@ description: "Android 弹窗实现规范。仅在本次实际新增、重构或�
 
 ## 所有权与关闭
 
-- Dialog ViewModel 创建的页面任务在 `onCleared()` 取消。
-- Service、系统下载、应用级 Manager 或持久队列拥有的任务，弹窗关闭只解绑/重绑观察，不误取消底层任务。
+- Dialog ViewModel 的页面任务在 `onDestroy()` 取消。
+- Service、系统下载、应用级 Manager 或持久队列拥有的任务，弹窗关闭时只解绑观察。
 - 正常交互使用 `dismiss()` 或附近封装。
 - 只有 FragmentManager 已保存状态、结果允许丢失且附近同类确实采用时，才用 `dismissAllowingStateLoss()`。
 - 所有关闭路径避免重复回调，并清理弹窗自己拥有的键盘、监听器和临时任务。

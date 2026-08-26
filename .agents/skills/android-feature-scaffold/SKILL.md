@@ -30,7 +30,7 @@ description: "Android 页面骨架生成规范。仅在本次实际新增页面�
 - 本项目 `onPrepareView()` 不是通用模板的 `onViewCreated()`。注册 ViewPager callback、AdapterDataObserver、键盘或事件监听前，先查当前 baselibrary、基类是否缓存 View 和附近同类的配对清理点。
 - Fragment 收集 LiveData/Flow 使用 `viewLifecycleOwner`；连续 Flow 可用 `viewLifecycleOwner.lifecycleScope + repeatOnLifecycle`。
 - 数据观察使用 view lifecycle，不代表所有手动回调都固定在 `onDestroyView()` 清理；按回调持有对象和当前基类判断。
-- ViewModel 拥有的轮询、SSE handler、临时下载或媒体进度任务在 `onCleared()` 取消；Service、系统下载和应用级 Manager 的任务只解绑页面观察。
+- ViewModel 页面任务在 `onDestroy()` 取消；页面对 Service、系统下载和应用级 Manager 任务只解绑观察。
 
 ## 状态、XML 与事件
 

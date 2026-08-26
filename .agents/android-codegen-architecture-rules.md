@@ -28,7 +28,7 @@ Repository 返回当前项目已有响应/业务模型，不随意吞异常；�
 
 ## 异步所有权
 
-- 页面 ViewModel 创建的轮询、SSE handler、临时下载和页面任务在 `onCleared()` 取消。
+- 页面 ViewModel 创建的轮询、SSE handler、临时下载和页面任务统一在 `onDestroy()` 清理。
 - View 拥有的播放器、动画和逐帧进度按真实 View 生命周期释放。
 - Service、系统下载、应用级 Manager 或持久队列拥有的任务可跨页面继续，页面通过任务 ID 解绑/重绑观察。
 - 具体 helper、重复启动、终态和错误清理见 [异步 Skill](skills/android-async-task/SKILL.md)。
