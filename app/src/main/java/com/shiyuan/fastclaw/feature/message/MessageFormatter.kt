@@ -9,12 +9,6 @@ import java.util.Calendar
 import java.util.Locale
 
 object MessageFormatter {
-    private const val RESUME_FILE_TYPE_PDF = "PDF"
-    private const val RESUME_FILE_TYPE_DOC = "DOC"
-    private const val RESUME_FILE_TYPE_DOCX = "DOCX"
-    private const val MIME_TYPE_PDF = "application/pdf"
-    private const val MIME_TYPE_DOC = "application/msword"
-    private const val MIME_TYPE_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
     /**
      * 读取协议自定义消息附件 JSON。
@@ -30,16 +24,6 @@ object MessageFormatter {
         } catch (ignored: Exception) {
             null
         }
-    }
-
-    /**
-     * 将接口返回的文件类型转换为协议使用的 MIME 类型。
-     */
-    fun String?.toResumeMimeType(): String? = when (this?.uppercase()) {
-        RESUME_FILE_TYPE_PDF -> MIME_TYPE_PDF
-        RESUME_FILE_TYPE_DOC -> MIME_TYPE_DOC
-        RESUME_FILE_TYPE_DOCX -> MIME_TYPE_DOCX
-        else -> this
     }
 
     /**

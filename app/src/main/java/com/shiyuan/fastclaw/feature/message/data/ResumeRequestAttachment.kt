@@ -5,7 +5,6 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.feature.message.MessageFormatter.customPayload
-import com.shiyuan.fastclaw.feature.message.MessageFormatter.toResumeMimeType
 import com.tulele.im.custom.CustomAttachment
 import com.tulele.im.entity.MessageWrapper
 import org.json.JSONObject
@@ -139,7 +138,7 @@ class ResumeRequestAttachment : CustomAttachment(MSG_TYPE) {
                 resumeId = resume.checkId
                 resumeName = resume.resumeFileName
                 resumeUrl = resume.resumeFileUrl
-                resumeMimeType = resume.resumeFileType.toResumeMimeType()
+                resumeMimeType = resume.resumeFileType
                 resumeSize = resume.resumeFileSize
                 createdAt = item.createdAt ?: now
                 updatedAt = now

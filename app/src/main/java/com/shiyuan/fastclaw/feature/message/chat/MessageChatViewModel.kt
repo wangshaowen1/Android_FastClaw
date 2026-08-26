@@ -10,11 +10,12 @@ import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
-import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.ImJobSwitchBody
+import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody.Companion.STATUS_ACCEPTED
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody.Companion.STATUS_REJECTED
+import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
@@ -41,7 +42,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     // 当前页面消息列表。
     val messageList = MutableLiveData<List<ChatMessageItem>>(emptyList())
     // 待发送的最新简历，页面收到后弹出发送确认框。
-    val resumeForDelivery = MutableLiveData<ResumeData?>()
+    val resumeForDelivery = MutableLiveData<ResumeListData?>()
     // 当前是否正在加载更早历史消息。
     val isLoadingHistory = ObservableBoolean(false)
 
@@ -199,11 +200,11 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     /**
      * 求职者主动发送简历 - 组装 resumeDelivery 消息并即时插入列表。
      */
-    fun sendResumeDeliveryMessage(resume: ResumeData) {
+    fun sendResumeDeliveryMessage(resume: ResumeListData) {
         val currentChat = chat ?: return
-        val resumeId = resume.checkId?.takeIf { it.isNotBlank() }
-        val resumeName = resume.resumeFileName?.takeIf { it.isNotBlank() }
-        val resumeUrl = resume.resumeFileUrl?.takeIf { it.isNotBlank() }
+        val resumeId = resume.resumeId?.takeIf { it.isNotBlank() }
+        val resumeName = (resume.resumeName ?: resume.fileName)?.takeIf { it.isNotBlank() }
+        val resumeUrl = resume.resumeUrl?.takeIf { it.isNotBlank() }
         if (resumeId == null || resumeName == null || resumeUrl == null) {
             showToast(R.string.message_chat_resume_empty_tip)
             return
@@ -315,11 +316,13 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 查询最新可用简历，成功后通知页面弹出确认框。
      */
     fun queryResumeForDelivery() {
-        requestWithLoading(apiBlock = { mRepo.api.queryLatestResume() },
+        requestWithLoading(apiBlock = { mRepo.api.resumeQuery(PagedBody(1, 100)) },
             showLoading = false,
             showToastError = true,
         ) {
-            resumeForDelivery.value = data
+            resumeForDelivery.value = data?.items.orEmpty()
+                .filter { it.parseStatus == RESUME_PARSE_STATUS_SUCCESS }
+                .maxByOrNull { it.uploadTime.orEmpty() }
         }
     }
 
@@ -327,7 +330,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 同意 HR 索要简历请求，先告诉后台。
      */
     fun acceptResumeForRequest(sessionId: String, item: ResumeRequestChatItem) {
-        handleResumeRequest(sessionId, item, STATUS_ACCEPTED) {
+        handleResumeForRequest(sessionId, item, STATUS_ACCEPTED) {
             sendTextMessage(RESUME_REQUEST_ACCEPT_TEXT)
         }
     }
@@ -336,13 +339,13 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 拒绝 HR 索要简历请求，先告诉后台。
      */
     fun rejectResumeForRequest(sessionId: String, item: ResumeRequestChatItem) {
-        handleResumeRequest(sessionId, item, STATUS_REJECTED)
+        handleResumeForRequest(sessionId, item, STATUS_REJECTED)
     }
 
     /**
      * 提交 HR 索要简历处理结果，由后台负责更新原 IM 消息。
      */
-    fun handleResumeRequest(sessionId: String, item: ResumeRequestChatItem, status: String, onSuccess: () -> Unit = {}, ) {
+    fun handleResumeForRequest(sessionId: String, item: ResumeRequestChatItem, status: String, onSuccess: () -> Unit = {}, ) {
         if (item.messageServerId.isNullOrBlank()) {
             showToast(R.string.message_chat_resume_request_failed)
             return
@@ -446,6 +449,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
 
         // 简历请求结果消息 subtype，只过滤不展示。
         private const val SUBTYPE_RESUME_REQUEST_RESULT = 1004
+
+        // 简历解析成功状态。
+        private const val RESUME_PARSE_STATUS_SUCCESS = 2
 
         // 相邻消息超过 5 分钟时重新展示时间。
         private const val MESSAGE_TIME_INTERVAL = 5 * 60 * 1000L

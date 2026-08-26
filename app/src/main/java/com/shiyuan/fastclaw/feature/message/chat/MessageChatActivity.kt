@@ -244,7 +244,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             }
         }
         mRealVM.resumeForDelivery.observe(this) { resume ->
-            if (resume == null || !resume.hasLatestResume) {
+            if (resume == null) {
                 showToast(R.string.message_chat_resume_empty_tip)
                 return@observe
             }

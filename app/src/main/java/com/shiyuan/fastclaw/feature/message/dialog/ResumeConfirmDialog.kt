@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.BaseBottomDialogFragment
-import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.databinding.DialogMessageResumeConfirmBinding
 
 /**
@@ -15,7 +15,7 @@ import com.shiyuan.fastclaw.databinding.DialogMessageResumeConfirmBinding
 class ResumeConfirmDialog : BaseBottomDialogFragment<DialogMessageResumeConfirmBinding>() {
 
     // 点击发送后的页面回调。
-    private var onSendClick: ((ResumeData) -> Unit)? = null
+    private var onSendClick: ((ResumeListData) -> Unit)? = null
 
     companion object {
         // 简历数据参数。
@@ -24,7 +24,7 @@ class ResumeConfirmDialog : BaseBottomDialogFragment<DialogMessageResumeConfirmB
         /**
          * 展示发送附件简历确认弹框。
          */
-        fun show(manager: FragmentManager, resume: ResumeData, onSendClick: (ResumeData) -> Unit): ResumeConfirmDialog {
+        fun show(manager: FragmentManager, resume: ResumeListData, onSendClick: (ResumeListData) -> Unit): ResumeConfirmDialog {
             val dialog = ResumeConfirmDialog()
             dialog.arguments = Bundle().apply {
                 putParcelable(EXTRA_RESUME, resume)
@@ -40,8 +40,8 @@ class ResumeConfirmDialog : BaseBottomDialogFragment<DialogMessageResumeConfirmB
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val resume = arguments?.getParcelable<ResumeData>(EXTRA_RESUME) ?: return
-        binding.tvFileName.text = resume.resumeFileName.orEmpty()
+        val resume = arguments?.getParcelable<ResumeListData>(EXTRA_RESUME) ?: return
+        binding.tvFileName.text = resume.resumeName ?: resume.fileName.orEmpty()
         binding.tvUploadTime.text = buildUploadTime(resume)
         binding.tvUploadTime.visibility = if (binding.tvUploadTime.text.isNullOrBlank()) View.GONE else View.VISIBLE
         binding.ivFile.setImageResource(resolveResumeIcon(resume))
@@ -56,8 +56,8 @@ class ResumeConfirmDialog : BaseBottomDialogFragment<DialogMessageResumeConfirmB
     /**
      * 组装简历上传时间文案。
      */
-    private fun buildUploadTime(resume: ResumeData): String {
-        val uploadTime = resume.submitTime?.takeIf { it.isNotBlank() }
+    private fun buildUploadTime(resume: ResumeListData): String {
+        val uploadTime = resume.uploadTime?.takeIf { it.isNotBlank() }
             ?: resume.updateTime?.takeIf { it.isNotBlank() }
             ?: return ""
         return getString(R.string.resume_confirm_upload_time, uploadTime)
@@ -66,8 +66,8 @@ class ResumeConfirmDialog : BaseBottomDialogFragment<DialogMessageResumeConfirmB
     /**
      * 根据简历格式选择文件图标。
      */
-    private fun resolveResumeIcon(resume: ResumeData): Int {
-        val fileInfo = "${resume.resumeFileType.orEmpty()} ${resume.resumeFileName.orEmpty()}"
+    private fun resolveResumeIcon(resume: ResumeListData): Int {
+        val fileInfo = "${resume.fileType.orEmpty()} ${resume.resumeName.orEmpty()} ${resume.fileName.orEmpty()}"
         return if (fileInfo.contains("pdf", ignoreCase = true)) {
             R.drawable.ic_resume
         } else {

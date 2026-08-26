@@ -3,9 +3,8 @@ package com.shiyuan.fastclaw.feature.message.data
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
+import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.feature.message.MessageFormatter.customPayload
-import com.shiyuan.fastclaw.feature.message.MessageFormatter.toResumeMimeType
 import com.tulele.im.custom.CustomAttachment
 import com.tulele.im.entity.MessageWrapper
 import org.json.JSONObject
@@ -17,7 +16,7 @@ class ResumeDeliveryAttachment : CustomAttachment(MSG_TYPE) {
     // 主动投递业务幂等 ID。
     var deliveryId: String? = null
 
-    // 简历业务 ID，当前由最新简历接口的 checkId 映射。
+    // 简历业务 ID。
     var resumeId: String? = null
 
     // 简历文件名称。
@@ -65,7 +64,7 @@ class ResumeDeliveryAttachment : CustomAttachment(MSG_TYPE) {
             .put(KEY_URL, resumeUrl)
             .put(KEY_MIME_TYPE, resumeMimeType)
             .put(KEY_SIZE, resumeSize)
-        return JSONObject()
+         val objectJson = JSONObject()
             .put(KEY_VERSION, PROTOCOL_VERSION)
             .put(KEY_TYPE, TYPE_RESUME_DELIVERY)
             .put(KEY_DELIVERY_ID, deliveryId)
@@ -75,6 +74,7 @@ class ResumeDeliveryAttachment : CustomAttachment(MSG_TYPE) {
             .put(KEY_UPDATED_AT, updatedAt)
             .put(KEY_OPERATOR_ID, operatorId)
             .toString()
+        return objectJson
     }
 
     companion object {
@@ -99,20 +99,20 @@ class ResumeDeliveryAttachment : CustomAttachment(MSG_TYPE) {
         private const val KEY_OPERATOR_ID = "operatorId"
 
         /**
-         * 根据最新简历接口数据组装主动发送简历附件。
+         * 根据我的简历列表数据组装主动发送简历附件。
          */
-        fun buildResume(resume: ResumeData): ResumeDeliveryAttachment {
+        fun buildResume(resume: ResumeListData): ResumeDeliveryAttachment {
             val now = System.currentTimeMillis()
             return ResumeDeliveryAttachment().apply {
                 protocolVersion = PROTOCOL_VERSION
                 protocolType = TYPE_RESUME_DELIVERY
                 deliveryId = UUID.randomUUID().toString()
                 status = STATUS_PENDING
-                resumeId = resume.checkId
-                resumeName = resume.resumeFileName
-                resumeUrl = resume.resumeFileUrl
-                resumeMimeType = resume.resumeFileType.toResumeMimeType()
-                resumeSize = resume.resumeFileSize
+                resumeId = resume.resumeId
+                resumeName = resume.resumeName ?: resume.fileName
+                resumeUrl = resume.resumeUrl
+                resumeMimeType = resume.fileType
+                resumeSize = resume.fileSize
                 createdAt = now
                 updatedAt = now
                 operatorId = User.get().imAccessId
