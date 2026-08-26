@@ -69,7 +69,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         chat = ImSession.get().openChat(Contact(contactId))
         chat?.onMessageSendResultListener = this
         chat?.active()
-        clearUnread(contactId)
+        clearUnreadMessage(contactId)
         fetchTargetAvatar(contactId)
         initObserve()
         loadDataList()
@@ -83,6 +83,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         viewModelScope.launch {
             currentChat.observeMessages().collectLatest { messages ->
                 mergeMessages(messages)
+                clearUnreadReceiving(messages)
             }
         }
         viewModelScope.launch {
@@ -361,7 +362,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     /**
      * 调用后端接口切换当前 IM 会话沟通职位。
      */
-    fun switchTargetJob(currentJobId: Long?) {
+    fun switchTargetJob(currentJobId: String?) {
         currentJobId ?: return
         requestWithLoading(apiBlock = {
             mRepo.api.switchImJob(ImJobSwitchBody(currentJobId))
@@ -409,9 +410,18 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
+     * 当前聊天页收到对方新消息后清空会话未读数。
+     */
+    private fun clearUnreadReceiving(messages: List<MessageWrapper>) {
+        // 新接收的任意一条消息是收到的消息，也就是对方发来的
+        val hasIncomingMessage = messages.any { message -> message.direct == MessageDirection.In }
+        if (hasIncomingMessage) clearUnreadMessage(contactId)
+    }
+
+    /**
      * 清空当前单聊会话未读数，避免用户已进入聊天页后列表和首页仍展示红点。
      */
-    private fun clearUnread(contactId: String) {
+    private fun clearUnreadMessage(contactId: String) {
         ImSession.get().getConversationManager().markConversationRead(contactId, ConversationType.P2P)
     }
 

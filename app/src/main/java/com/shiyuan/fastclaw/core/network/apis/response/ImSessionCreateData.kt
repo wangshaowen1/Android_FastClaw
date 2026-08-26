@@ -13,7 +13,7 @@ data class ImSessionCreateData(
     // 会话记录中的目标方基础账号 ID。
     val targetBaseAccountId: Long = 0,
     // 当前沟通岗位 ID。
-    val currentJobId: Long = 0,
+    val currentJobId: String? = null,
     // 当前用户云信账号 ID。
     val currentImAccId: String? = null,
     // 对端云信账号 ID。

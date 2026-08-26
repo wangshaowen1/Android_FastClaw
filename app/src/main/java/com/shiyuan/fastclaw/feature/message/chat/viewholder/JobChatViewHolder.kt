@@ -5,8 +5,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemChatJobCardBinding
-import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.JobChatItem
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 /**
  * 职位卡片消息 ViewHolder，负责渲染当前会话关联的岗位信息。
@@ -71,12 +72,19 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
                 OPERATOR_ROLE_HR -> context.getString(R.string.message_chat_job_started_by_other)
                 else -> context.getString(R.string.message_chat_job_started_by_other)
             }
-            binding.tvActionTime.text = context.getString(
-                R.string.message_chat_job_started_format,
-                MessageFormatter.format(item.time),
+            binding.tvActionTime.text = context.getString(R.string.message_chat_job_started_format,
+                formatActionTime(item.time),
                 action
             )
         }
+    }
+
+    /**
+     * 格式化职位卡片底部发起时间，固定显示月日和时分。
+     */
+    private fun formatActionTime(timestamp: Long): String {
+        if (timestamp <= 0L) return ""
+        return SimpleDateFormat("M月d日 H:mm", Locale.getDefault()).format(timestamp)
     }
 
     companion object {

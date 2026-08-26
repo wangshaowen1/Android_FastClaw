@@ -167,6 +167,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         val hrProfile = conversation.serverExtension[ROLE_HR] as? Map<*, *>
         val hrProfileValue = { key: String -> (hrProfile?.get(key) as? String)?.takeIf { it.isNotBlank() } }
         val position = (conversation.serverExtension[KEY_POSITION] as? String)?.takeIf { it.isNotBlank() }
+        val jobId = (conversation.serverExtension[KEY_JOB_ID] as? String)?.takeIf { it.isNotBlank() }
         val draftContent = MessageDraftStore.get(conversation.conversationId)
         return ConversationItem(
             id = conversation.conversationId,
@@ -176,6 +177,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
             targetAvatar = hrProfileValue(KEY_AVATAR) ?: conversation.avatar,
             targetCompany = hrProfileValue(KEY_COMPANY),
             targetPosition = position,
+            jobId = jobId,
             lastMessage = draftContent ?: formatLastMessage(conversation),
             lastMessageTime = conversation.time,
             unreadCount = conversation.unreadCount,
@@ -304,6 +306,9 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
 
         // 会话扩展中的职位字段。
         private const val KEY_POSITION = "position"
+
+        // 会话扩展中的岗位 ID 字段。
+        private const val KEY_JOB_ID = "jobId"
 
         // 会话扩展中的后端本地会话业务 ID 字段。
         private const val KEY_SESSION_ID = "sessionId"

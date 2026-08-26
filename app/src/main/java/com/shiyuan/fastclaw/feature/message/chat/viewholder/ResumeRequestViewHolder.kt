@@ -56,7 +56,7 @@ class ResumeRequestViewHolder(private val binding: ItemChatResumeRequestBinding)
      * 根据简历请求状态返回状态展示文案。
      */
     private fun String?.requestStatusText(): String = when (this) {
-        STATUS_ACCEPTED, STATUS_SENT -> binding.root.context.getString(R.string.message_chat_resume_delivery_sent)
+        STATUS_ACCEPTED, STATUS_SENT -> binding.root.context.getString(R.string.message_chat_resume_request_sent)
         STATUS_REJECTED -> binding.root.context.getString(R.string.message_chat_resume_request_rejected)
         else -> binding.root.context.getString(R.string.message_chat_resume_request_pending)
     }

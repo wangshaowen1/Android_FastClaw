@@ -17,7 +17,7 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
 
     companion object {
         // 测试消息接收账号。
-        private const val TEST_IM_ACCOUNT = "c_66269210513841"//c_55707298730331//c_66269210513841
+        private const val TEST_IM_ACCOUNT = "c_66269210513841"//c_47643556327426//c_66269210513841
 
         // 测试消息内容。
         private const val TEST_IM_CONTENT = "消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息"
@@ -53,6 +53,8 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
                     contactId = it.contactId,
                     name = it.targetName,
                     avatar = it.targetAvatar,
+                    currentJobId = it.jobId,
+                    currentJobName = it.targetPosition,
                 )
             )
         }

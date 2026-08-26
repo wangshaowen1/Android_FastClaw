@@ -54,6 +54,8 @@ class UnableMessageActivity : BaseViewModelActivity<ActivityUnableConversationBi
                     contactId = it.contactId,
                     name = it.targetName,
                     avatar = it.targetAvatar,
+                    currentJobId = it.jobId,
+                    currentJobName = it.targetPosition,
                 )
             )
         }

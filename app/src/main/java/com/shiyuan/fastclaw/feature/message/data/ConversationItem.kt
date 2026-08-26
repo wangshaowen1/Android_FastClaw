@@ -27,6 +27,8 @@ data class ConversationItem(
     val targetCompany: String?,
     /** 会话对象职位名称。 */
     val targetPosition: String?,
+    /** 当前沟通岗位 ID。 */
+    val jobId: String?,
     /** 会话末条消息摘要。 */
     val lastMessage: String,
     /** 会话末条消息时间戳。 */

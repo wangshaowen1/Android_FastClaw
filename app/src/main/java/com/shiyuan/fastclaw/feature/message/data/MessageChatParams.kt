@@ -17,11 +17,11 @@ data class MessageChatParams(
     // 会话对象头像地址。
     val avatar: String?,
     // 当前沟通的岗位ID。
-    val currentJobId: Long? = null,
+    val currentJobId: String? = null,
     // 当前沟通的岗位名称。
     val currentJobName: String? = null,
     // 本次是否首次创建。
     val isFirstCreate: Boolean? = false,
     // 本次请求是否切换了会话当前岗位；首次创建或原岗位与请求岗位一致时为 false，不一致并完成更新时为 true。
-    val isJobSwitched: Boolean? = true,
+    val isJobSwitched: Boolean? = false,
 ) : Parcelable

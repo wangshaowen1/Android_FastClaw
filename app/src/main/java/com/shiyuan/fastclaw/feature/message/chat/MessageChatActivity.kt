@@ -54,7 +54,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     //HR头像
     private var targetAvatar: String? = null
     // 当前沟通岗位 ID。
-    private var currentJobId: Long = 0
+    private var currentJobId: String? = null
     // 发简历面板是否已展开。
     private var isMorePanelVisible = false
     // 键盘收起后是否需要继续展示发简历面板。
@@ -160,7 +160,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             //showMessage(getString(R.string.message_chat_resume_action_waiting))
         }
         messageAdapter.onHrAvatarClick = {
-            OpportunityDetailActivity.start(this, "$currentJobId")
+            OpportunityDetailActivity.start(this, currentJobId?:"")
         }
         messageAdapter.onJobCardClick = {
             OpportunityDetailActivity.start(this, it.jobId?:"")
@@ -265,7 +265,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         sessionId = params?.sessionId.orEmpty()
         contactId = params?.contactId.orEmpty()
         targetAvatar = params?.avatar
-        currentJobId = params?.currentJobId?:0
+        currentJobId = params?.currentJobId
         mRealVM.initChat(params)
         showJobSwitchDialog(params)
         restoreMessageDraft()
