@@ -13,6 +13,8 @@ import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.request.ImJobSwitchBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody.Companion.STATUS_ACCEPTED
+import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody.Companion.STATUS_REJECTED
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
@@ -322,41 +324,39 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 同意 HR 索要简历请求，继续查询简历并修改原 resumeRequest 消息。
-     */
-    fun queryResumeForRequest(item: ResumeRequestChatItem) {
-        requestWithLoading(apiBlock = { mRepo.api.queryLatestResume() },
-            showLoading = false,
-            showToastError = true,
-        ) {
-            val resume = data
-            if (resume == null || !resume.hasLatestResume) {
-                showToast(R.string.message_chat_resume_empty_tip)
-                return@requestWithLoading
-            }
-            modifyResumeRequestMessage(item.id, ResumeRequestAttachment.buildAccepted(item, resume)) {
-                sendTextMessage(RESUME_REQUEST_ACCEPT_TEXT)
-            }
-        }
-    }
-
-    /**
      * 同意 HR 索要简历请求，先告诉后台。
      */
     fun acceptResumeForRequest(sessionId: String, item: ResumeRequestChatItem) {
-        requestWithLoading(apiBlock = { mRepo.api.agreeResumeSend(ResumeSendAgreeBody(sessionId)) },
-            showLoading = false,
-            showToastError = true,
-        ) {
-            queryResumeForRequest(item)
+        handleResumeRequest(sessionId, item, STATUS_ACCEPTED) {
+            sendTextMessage(RESUME_REQUEST_ACCEPT_TEXT)
         }
     }
 
     /**
-     * 拒绝 HR 索要简历请求，并按协议修改原 resumeRequest 消息。
+     * 拒绝 HR 索要简历请求，先告诉后台。
      */
-    fun rejectResumeForRequest(item: ResumeRequestChatItem) {
-        modifyResumeRequestMessage(item.id, ResumeRequestAttachment.buildRejected(item))
+    fun rejectResumeForRequest(sessionId: String, item: ResumeRequestChatItem) {
+        handleResumeRequest(sessionId, item, STATUS_REJECTED)
+    }
+
+    /**
+     * 提交 HR 索要简历处理结果，由后台负责更新原 IM 消息。
+     */
+    fun handleResumeRequest(sessionId: String, item: ResumeRequestChatItem, status: String, onSuccess: () -> Unit = {}, ) {
+        if (item.messageServerId.isNullOrBlank()) {
+            showToast(R.string.message_chat_resume_request_failed)
+            return
+        }
+        requestWithLoading(apiBlock = {
+            mRepo.api.agreeResumeSend(ResumeSendAgreeBody(
+                    sessionId = sessionId,
+                    messageServerId = item.messageServerId,
+                    status = status,
+                )
+            )
+        }, showLoading = false, showToastError = true) {
+            onSuccess()
+        }
     }
 
     /**

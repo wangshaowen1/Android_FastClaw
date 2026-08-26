@@ -154,7 +154,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             mRealVM.acceptResumeForRequest(sessionId, it)
         }
         messageAdapter.onResumeRequestRejectClick = {
-            mRealVM.rejectResumeForRequest(it)
+            mRealVM.rejectResumeForRequest(sessionId, it)
         }
         messageAdapter.onResumeFileClick = {
             //showMessage(getString(R.string.message_chat_resume_action_waiting))

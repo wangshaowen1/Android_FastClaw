@@ -43,5 +43,5 @@ class ConversationViewHolder(private val binding: ItemMessageConversationBinding
      * 拼接会话对象公司和职位作为列表副标题。
      */
     private fun formatTargetDesc(item: ConversationItem): String? =
-        listOfNotNull(item.targetCompany, item.targetPosition).joinToString(" | ").takeIf { it.isNotBlank() }
+        listOfNotNull(item.targetCompany, item.targetPosition).joinToString("｜").takeIf { it.isNotBlank() }
 }
