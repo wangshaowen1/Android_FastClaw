@@ -35,10 +35,7 @@ object AppNavigator {
             Runnable {
                 val returnToLogin = Runnable {
                     SignUtils.signOut()
-                    App.instance.startActivity(
-                        Intent(App.instance, PhoneNewLoginActivity::class.java)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    )
+                    startLogin(showToast = false)
                     isHandlingUserNotLoggedIn.set(false)
                 }
                 if (delayToLoginMillis > 0 && !message.isNullOrBlank()) {

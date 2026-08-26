@@ -150,6 +150,9 @@ class OpportunityViewModel : HomeReportViewModel() {
     fun queryProcessedOpportunityPreview() {
         request(
             apiBlock = { mRepo.api.queryProcessedOpportunityPage(PagedBody(1, 5)) },
+            onError = {
+                chanceData.value = emptyList()
+            },
             onSuccess = {
                 chanceData.value = data?.opportunities?.items.orEmpty()
             }
