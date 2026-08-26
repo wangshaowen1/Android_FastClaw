@@ -322,10 +322,10 @@ class OpportunityViewModel : HomeReportViewModel() {
     }
 
     /** ViewModel 销毁时取消所有长轮询任务。 */
-    override fun onCleared() {
+    override fun onDestroy() {
         stopResumePolling()
         stopNewOpportunityPolling()
-        super.onCleared()
+        super.onDestroy()
     }
 
 
