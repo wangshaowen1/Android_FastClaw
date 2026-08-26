@@ -43,6 +43,7 @@ import com.kuaige.oss.OssType
 import com.kuaige.payment.PaymentConfig
 import com.netease.nimlib.sdk.mixpush.NIMPushClient
 import com.netease.nimlib.sdk.util.NIMUtil
+import com.nhsd.basic.BasicEdgeToEdgeConfig
 import com.nhsd.basic.Session
 import com.nhsd.basic.manager.LoadingConfig
 import com.nhsd.basic.utils.Logger
@@ -160,6 +161,12 @@ class App : ImApplication() {
     }
 
     override fun onCreate() {
+        // 顶部已有页面级沉浸式适配，迁移期仅统一为旧页面避让导航栏。
+        BasicEdgeToEdgeConfig.configure(
+            BasicEdgeToEdgeConfig.Strategy(
+                rootInsetsMode = BasicEdgeToEdgeConfig.RootInsetsMode.NAVIGATION_BAR,
+            ),
+        )
         super.onCreate()
         instance = this
 
