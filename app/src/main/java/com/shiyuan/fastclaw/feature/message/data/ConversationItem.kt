@@ -17,6 +17,8 @@ sealed interface MessageListItem {
 data class ConversationItem(
     /** 云信 conversationId，作为列表稳定 id 和后续进入会话的凭据。 */
     override val id: String,
+    /** 后端本地会话业务 ID。 */
+    val sessionId: String?,
     /** P2P 会话对端账号，用于打开 IM 单聊。 */
     val contactId: String,
     /** 会话对象昵称，资料缺失时使用账号兜底。 */

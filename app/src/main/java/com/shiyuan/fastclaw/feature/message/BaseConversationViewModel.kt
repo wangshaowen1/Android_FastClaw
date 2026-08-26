@@ -170,9 +170,11 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         val hrProfileValue = { key: String -> (hrProfile?.get(key) as? String)?.takeIf { it.isNotBlank() } }
         val position = (conversation.serverExtension[KEY_POSITION] as? String)?.takeIf { it.isNotBlank() }
         val jobId = (conversation.serverExtension[KEY_JOB_ID] as? String)?.takeIf { it.isNotBlank() }
+        val sessionId = (conversation.serverExtension[KEY_SESSION_ID] as? String)?.takeIf { it.isNotBlank() }
         val draftContent = MessageDraftStore.get(conversation.conversationId)
         return ConversationItem(
             id = conversation.conversationId,
+            sessionId = sessionId,
             contactId = contactId,
             itemType = itemType,
             targetName = hrProfileValue(KEY_NAME) ?: conversation.name?.takeIf { it.isNotBlank() } ?: contactId,

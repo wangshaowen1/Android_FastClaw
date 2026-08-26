@@ -95,9 +95,8 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
      * 启动会话聊天页面
      */
     private fun startChatActivity(item: ConversationItem) {
-        MessageChatActivity.start(requireContext(),
-            MessageChatParams(
-                sessionId = item.id,
+        MessageChatActivity.start(requireContext(), MessageChatParams(
+                sessionId = item.sessionId.orEmpty(),
                 contactId = item.contactId,
                 name = item.targetName,
                 avatar = item.targetAvatar,
