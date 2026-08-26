@@ -68,7 +68,7 @@ class ResumeRequestViewHolder(private val binding: ItemChatResumeRequestBinding)
         return if (status == STATUS_PENDING || status == STATUS_SENT || status.isNullOrBlank()) {
             R.color.color_2f6bff
         } else {
-            R.color.color_75_3c3c43
+            R.color.color_2f6bff
         }
     }
 
