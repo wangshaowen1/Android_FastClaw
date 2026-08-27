@@ -109,7 +109,7 @@ class ResumeDeliveryAttachment : CustomAttachment(MSG_TYPE) {
                 deliveryId = UUID.randomUUID().toString()
                 status = STATUS_PENDING
                 resumeId = resume.resumeId
-                resumeName = resume.resumeName ?: resume.fileName
+                resumeName = resume.resumeName.orEmpty().ifBlank { resume.fileName.orEmpty() }
                 resumeUrl = resume.resumeUrl
                 resumeMimeType = resume.fileType
                 resumeSize = resume.fileSize

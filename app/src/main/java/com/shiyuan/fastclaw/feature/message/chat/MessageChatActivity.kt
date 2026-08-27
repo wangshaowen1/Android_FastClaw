@@ -28,6 +28,7 @@ import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
+import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
 import com.shiyuan.fastclaw.feature.message.dialog.JobSwitchConfirmDialog
@@ -47,6 +48,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private var forceScrollToBottom = false
     // 键盘动画运行中标记，避免普通 Insets 回调和动画回调同时修改底部间距。
     private var hasRunningImeAnimation = false
+    // 当前会话的ID
+    private var conversationId: String = ""
     // 当前后端本地会话业务 ID。
     private var sessionId: String = ""
     // 当前聊天对象账号。
@@ -142,7 +145,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             }
         }
         binding.etContent.doAfterTextChanged {
-            MessageDraftStore.save(sessionId, it?.toString().orEmpty())
+            MessageDraftStore.save(conversationId, it?.toString().orEmpty())
             updateSendButton()
             updateSendPosition()
         }
@@ -261,6 +264,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     @Suppress("DEPRECATION")
     private fun initData() {
         val params = intent.getParcelableExtra<MessageChatParams>(EXTRA_CHAT_PARAMS)
+        conversationId = MessageFormatter.buildP2pConversationId(params?.contactId.orEmpty())
         binding.tvTitle.text = params?.name.orEmpty()
         sessionId = params?.sessionId.orEmpty()
         contactId = params?.contactId.orEmpty()
@@ -390,7 +394,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         if (content.isBlank()) return
         forceScrollToBottom = true
         mRealVM.sendTextMessage(content)
-        MessageDraftStore.clear(sessionId)
+        MessageDraftStore.clear(conversationId)
         binding.etContent.text?.clear()
     }
 
@@ -398,7 +402,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
      * 恢复当前会话输入框草稿。
      */
     private fun restoreMessageDraft() {
-        MessageDraftStore.get(sessionId)?.let { draft ->
+        MessageDraftStore.get(conversationId)?.let { draft ->
             binding.etContent.setText(draft)
             binding.etContent.setSelection(binding.etContent.text?.length ?: 0)
         }
