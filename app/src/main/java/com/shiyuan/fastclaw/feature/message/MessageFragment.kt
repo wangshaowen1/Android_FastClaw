@@ -96,13 +96,12 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
      */
     private fun startChatActivity(item: ConversationItem) {
         MessageChatActivity.start(requireContext(), MessageChatParams(
-                sessionId = item.sessionId.orEmpty(),
-                contactId = item.contactId,
-                name = item.targetName,
-                avatar = item.targetAvatar,
-                currentJobId = item.jobId,
-                currentJobName = item.targetPosition,
-            )
+        sessionId = item.sessionId.orEmpty(),
+        contactId = item.contactId,
+        name = item.targetName,
+        avatar = item.targetAvatar,
+        currentJobId = item.jobId,
+        currentJobName = item.targetPosition,)
         )
     }
 
