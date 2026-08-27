@@ -255,7 +255,7 @@ class OpportunityDetailActivity :
                     contactId = session.targetImAccId.orEmpty(),
                     name = session.targetNickname.orEmpty(),
                     avatar = session.targetAvatarUrl,
-                    currentJobId = session.currentJobId,
+                    currentJobId = detail.jobId,
                     currentJobName = detail.jobTitle,
                     isFirstCreate = session.created == true,
                     isJobSwitched = session.jobSwitched == true,
