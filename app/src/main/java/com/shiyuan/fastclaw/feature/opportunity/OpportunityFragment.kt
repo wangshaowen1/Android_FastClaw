@@ -229,6 +229,7 @@ class OpportunityFragment :
                     binding.cardNoChance.gone()
                     binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.gone()
+                    binding.vTopBg.visible()
                 }
                 OpportunityIsCanMatchState.CANMATCHED -> {
                     mRealVM.queryOpportunityStats() // 查询统计数据。
@@ -251,6 +252,7 @@ class OpportunityFragment :
                     binding.cardNoChance.visible()
                     binding.llMatchOpportunity.gone()
                     binding.llProcessedOpportunity.visible()
+                    binding.vTopBg.gone()
                 } else {
                     // 已匹配到机会时停止空态动画，展示本批机会。
                     renderLottie(false)
@@ -258,6 +260,7 @@ class OpportunityFragment :
                     binding.cardNoChance.gone()
                     binding.llMatchOpportunity.visible()
                     binding.llProcessedOpportunity.visible()
+                    binding.vTopBg.gone()
 
                     binding.tvMatchOpportunity.text = getColoredSpanText(getString(R.string.not_opportunity_match_count, opportunityItems.size), opportunityItems.size.toString(), resources.getColor(R.color.color_2f6bff))
                     matchOpportunityAdapter.submitList(list.map(::ItemMatchOpportunityVM))
