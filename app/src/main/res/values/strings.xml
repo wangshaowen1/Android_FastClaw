@@ -1275,7 +1275,7 @@
     <string name="not_opportunity_upload_already">已上传</string>
     <string name="not_opportunity_resume_parsing">简历解析中</string>
     <string name="not_opportunity_preference_title">确认求职偏好</string>
-    <string name="not_opportunity_preference_description">城市、岗位、薪资等主要诉求，共6项</string>
+    <string name="not_opportunity_preference_description">城市、岗位、薪资等主要诉求</string>
     <string name="not_opportunity_preference_action">去完成</string>
     <string name="not_opportunity_searching_title">正在寻找新机会</string>
     <string name="not_opportunity_browsed_job_count">共浏览岗位<b>0</b>个</string>

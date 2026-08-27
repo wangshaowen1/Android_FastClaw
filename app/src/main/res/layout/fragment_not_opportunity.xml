@@ -189,6 +189,7 @@
 
 
                                 <TextView
+                                    android:layout_marginRight="10dp"
                                     android:id="@+id/card_upload_already"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
