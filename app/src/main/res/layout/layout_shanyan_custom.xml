@@ -79,7 +79,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/ivPolicyCheck"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="已阅读并同意《服务协议》、《隐私政策》以及《中国移动认证服务条款》" />
+                tools:text="已阅读并同意《快龙虾用户协议》、《隐私政策》以及《中国移动认证服务条款》" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView

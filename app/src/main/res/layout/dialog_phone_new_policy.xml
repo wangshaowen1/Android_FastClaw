@@ -26,7 +26,7 @@
     <TextView
         android:id="@+id/tvContent"
         android:layout_width="0dp"
-        android:layout_height="42dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:lineSpacingExtra="0dp"
@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        tools:text="已阅读并同意 服务协议、隐私政策 以及中国移动认证服务条款" />
+        tools:text="已阅读并同意 快龙虾用户协议、隐私政策 以及中国移动认证服务条款" />
 
     <TextView
         android:id="@+id/btnAgree"
