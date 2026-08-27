@@ -9,6 +9,7 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.gyf.immersionbar.ImmersionBar
@@ -30,6 +31,7 @@ import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailActionState
 import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailViewModel
 import com.shiyuan.fastclaw.widget.listmoretextview.MyClickSpan
 import io.noties.markwon.Markwon
+import io.noties.markwon.SoftBreakAddsNewLinePlugin
 
 /**
  * 机会详情页。
@@ -39,7 +41,11 @@ import io.noties.markwon.Markwon
 class OpportunityDetailActivity :
     BaseViewModelActivity<ActivityOpportunityDetailBinding, OpportunityDetailViewModel>() {
 
-    private val markwon by lazy { Markwon.create(this) }
+    private val markwon by lazy {
+        Markwon.builder(this)
+            .usePlugin(SoftBreakAddsNewLinePlugin.create())
+            .build()
+    }
 
     companion object {
         private const val EXTRA_JOB_ID = "extra_job_id"
