@@ -10,6 +10,7 @@ import com.shiyuan.fastclaw.base.viewmodel.AppRepositoryViewModel
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
+import com.shiyuan.fastclaw.core.network.apis.request.ImFirstMessageNotifyBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImJobSwitchBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody
@@ -58,6 +59,8 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private var nextLocalSendMessageTime = 0L
     // 是否还有更早历史消息。
     private var hasMoreHistory = true
+    // 当前后端本地会话业务 ID。
+    private var sessionId: String = ""
     // 当前聊天对象账号。
     private var contactId: String = ""
     // 当前聊天对象头像。
@@ -70,7 +73,8 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 首次创建会话时是否自动发送开场白。
      */
     fun initChat(params: MessageChatParams?) {
-        this.contactId = params?.contactId?:""
+        this.sessionId = params?.sessionId.orEmpty()
+        this.contactId = params?.contactId.orEmpty()
         this.targetAvatar = params?.avatar
         this.autoSendGreeting = params?.isFirstCreate
         chat = ImSession.get().openChat(Contact(contactId))
@@ -194,11 +198,14 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 求职者发送文本消息 - 并立即把本地消息插入列表。
      */
     fun sendTextMessage(content: String) {
-        val text = content.trim()
-        if (text.isBlank()) return
+        val text = content.trim().takeIf { it.isNotBlank() } ?: return
+        val isFirstReply = isFirstReply()
         val message = chat?.sendTextMessage(text) ?: return
         rememberLocalSendMessage(message)
         mergeMessages(listOf(message))
+        if (isFirstReply) {
+            notifyFirstMessageSent()
+        }
     }
 
     /**
@@ -292,6 +299,13 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
+     * 判断是回复对方的第一条消息
+     */
+    private fun isFirstReply() : Boolean {
+        return messageCache.values.none { message -> message.direct == MessageDirection.Out && !message.shouldIgnore() }
+    }
+
+    /**
      * 将消息缓存转换成页面列表模型。
      */
     private fun refreshMessageList() {
@@ -382,6 +396,17 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         requestWithLoading(apiBlock = {
             mRepo.api.switchImJob(ImJobSwitchBody(currentJobId))
         }) {}
+    }
+
+    /**
+     * 通知后端当前会话首条聊天消息已发送成功。
+     */
+    fun notifyFirstMessageSent() {
+        requestWithLoading(
+            apiBlock = { mRepo.api.notifyFirstMessageSent(ImFirstMessageNotifyBody(sessionId)) },
+            showLoading = false,
+            showToastError = false,
+        ) {}
     }
 
     /**

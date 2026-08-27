@@ -116,7 +116,6 @@ android {
         buildConfigField "String", "NIM_APP_KEY", '"aef89804213aa471176586e8cc8edc71"'
 
         buildConfigField "boolean", "DATANEXUS_ANID_ENABLE", "true"
-        buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-b4c3df125fee41c6a83135074b12a8b6"'
         buildConfigField "String", "DASHSCOPE_SPEECH_URL", '"wss://dashscope.aliyuncs.com/api-ws/v1/inference"'
         buildConfigField "String", "WX_KF_URL", '"https://work.weixin.qq.com/kfid/kfc40a9a48f69a47f52"'
         buildConfigField "String", "WX_KF_CORPID", '"wwc3993f67fa68ae04"'
@@ -183,6 +182,8 @@ android {
             buildConfigField "String", "OFFICIAL_URL", '"https://example.com"' //官方网站
             buildConfigField "String", "SHANYAN_APPID", '"pUH247TE"' //闪验APPID
             buildConfigField "String", "SHANYAN_APP_KEY", '"BjfmxHIp"' //闪验APPKEY
+            //阿里语音
+            buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-ws-H.RYYXRXP.FWhj.MEUCIBlCS4I-U7oziLE2jWrlZgr9yb8QjvpbPC_SnOVkVfXxAiEAvknGCA_1nhWiF6Ar0gJrNxZnktLX1cSl5Fh_VvZEgZc"'
 
             manifestPlaceholders = [
                     qqappid            : "YOUR_QQ_APP_ID",
@@ -215,6 +216,8 @@ android {
             buildConfigField "String", "OFFICIAL_URL", '"https://example.com"' //官方网站
             buildConfigField "String", "SHANYAN_APPID", '"pUH247TE"' //闪验APPID
             buildConfigField "String", "SHANYAN_APP_KEY", '"BjfmxHIp"' //闪验APPKEY
+            //阿里语音
+            buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-ws-H.RXPIRMX.iEam.MEUCIQDJ2FzvD1GhRNdyIuCiZCeZW0xZu708zEdlThIFn11XzQIgY5nOMeGzoFHIxhE3dSlM1S8Tz_RJduq326scot52mFw"'
 
             versionNameSuffix ""
             signingConfig signingConfigs.debug

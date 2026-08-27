@@ -488,4 +488,6 @@ object ApiConstants {
     const val IM_RESUME_SEND_AGREE = "/api/app/im/resume/send/agree"
     /** 切换 IM 会话当前沟通职位。 */
     const val IM_JOB_SWITCH = "/api/app/im/job/switch"
+    /** 通知首条聊天消息已发送。 */
+    const val IM_FIRST_MESSAGE_NOTIFY = "/api/app/im/session/firstMessage/notify"
 }

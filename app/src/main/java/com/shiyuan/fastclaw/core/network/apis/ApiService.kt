@@ -61,6 +61,7 @@ import com.shiyuan.fastclaw.core.network.apis.request.OpportunityProcessedPageBo
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityCompanyDetailQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.OpportunityStatusUpdateBody
+import com.shiyuan.fastclaw.core.network.apis.request.ImFirstMessageNotifyBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImJobSwitchBody
 import com.shiyuan.fastclaw.core.network.apis.request.ImSessionCreateBody
 import com.shiyuan.fastclaw.core.network.apis.request.OrderStatusBody
@@ -809,4 +810,8 @@ interface ApiService {
     /** 切换 IM 会话当前沟通职位。 */
     @POST(ApiConstants.IM_JOB_SWITCH)
     suspend fun switchImJob(@Body body: ImJobSwitchBody): ApiResponse<Any?>
+
+    /** 通知首条聊天消息已发送。 */
+    @POST(ApiConstants.IM_FIRST_MESSAGE_NOTIFY)
+    suspend fun notifyFirstMessageSent(@Body body: ImFirstMessageNotifyBody): ApiResponse<Any?>
 }
