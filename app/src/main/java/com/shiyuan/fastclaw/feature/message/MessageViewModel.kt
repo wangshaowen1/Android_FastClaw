@@ -14,7 +14,8 @@ class MessageViewModel : BaseConversationViewModel() {
      */
     override fun refreshConversationList() {
         val items = mutableListOf<MessageListItem>()
-        var unsuitableConversationCount = 0getCachedConversations().forEach { conversation ->
+        var unsuitableConversationCount = 0
+        getCachedConversations().forEach { conversation ->
             if (!isMarkedUnsuitable(conversation)) {
                 items.add(buildConversationItem(conversation, TYPE_CONVERSATION))
             } else {
