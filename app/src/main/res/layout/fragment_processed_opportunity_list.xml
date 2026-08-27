@@ -22,7 +22,7 @@
             android:id="@+id/lsv_processed_opportunity"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:noData="@string/no_data"
+            app:noData="@string/no_data2"
             app:noDataTextColor="@color/color_85_3c3c43"
             app:noDataTextSize="14sp"
             app:noDataTextBold="false"

@@ -141,7 +141,6 @@
                             android:ellipsize="end"
                             android:includeFontPadding="false"
                             android:maxLines="1"
-                            android:maxWidth="52sp"
                             android:textColor="@color/color_55_3c3c43"
                             android:textSize="13sp"
                             tools:text="3–5年" />
