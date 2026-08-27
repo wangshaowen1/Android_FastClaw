@@ -171,7 +171,7 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
         val position = (conversation.serverExtension[KEY_POSITION] as? String)?.takeIf { it.isNotBlank() }
         val jobId = (conversation.serverExtension[KEY_JOB_ID] as? String)?.takeIf { it.isNotBlank() }
         val sessionId = (conversation.serverExtension[KEY_SESSION_ID] as? String)?.takeIf { it.isNotBlank() }
-        val draftContent = MessageDraftStore.get(conversation.conversationId)
+        val draftContent = MessageDraftStore.get(sessionId?:"")
         return ConversationItem(
             id = conversation.conversationId,
             sessionId = sessionId,

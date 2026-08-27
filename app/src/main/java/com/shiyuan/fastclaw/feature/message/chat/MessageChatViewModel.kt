@@ -52,6 +52,10 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private val messageCache = linkedMapOf<String, MessageWrapper>()
     // 本机主动发送过的消息 id，用于 SDK 回填方向前保持右侧展示。
     private val localSendMessageIds = mutableSetOf<String>()
+    // 本机主动发送消息的展示顺序时间，避免连续发送多条消息时 SDK 回填顺序抖动。
+    private val localSendMessageTimes = mutableMapOf<String, Long>()
+    // 下一条 间。
+    private var nextLocalSendMessageTime = 0L
     // 是否还有更早历史消息。
     private var hasMoreHistory = true
     // 当前聊天对象账号。
@@ -193,7 +197,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         val text = content.trim()
         if (text.isBlank()) return
         val message = chat?.sendTextMessage(text) ?: return
-        localSendMessageIds.add(message.messageClientId)
+        rememberLocalSendMessage(message)
         mergeMessages(listOf(message))
     }
 
@@ -210,13 +214,23 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
             return
         }
         val textMessage = currentChat.sendTextMessage(RESUME_DELIVERY_TEXT)
-        localSendMessageIds.add(textMessage.messageClientId)
+        rememberLocalSendMessage(textMessage)
         val attachment = ResumeDeliveryAttachment.buildResume(resume)
         val message = currentChat.createCustomMessage(attachment)
         message.setContent(resumeName)
-        localSendMessageIds.add(message.messageClientId)
+        rememberLocalSendMessage(message)
         currentChat.reSendMessage(message)
         mergeMessages(listOf(textMessage, message))
+    }
+
+    /**
+     * 记录本机主动发送消息的展示顺序，避免同一批消息按 SDK 回填时间互换位置。
+     */
+    private fun rememberLocalSendMessage(message: MessageWrapper) {
+        localSendMessageIds.add(message.messageClientId)
+        val sortTime = maxOf(System.currentTimeMillis(), nextLocalSendMessageTime + 1)
+        nextLocalSendMessageTime = sortTime
+        localSendMessageTimes[message.messageClientId] = sortTime
     }
 
     /**
@@ -283,7 +297,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 将消息缓存转换成页面列表模型。
      */
     private fun refreshMessageList() {
-        val messages = messageCache.values.sortedBy { it.time }
+        val messages = messageCache.values.sortedBy { localSendMessageTimes[it.messageClientId] ?: it.time }
         val items = messages.mapIndexed { index, message ->
             buildMessageItem(message, buildMessageTime(messages.getOrNull(index - 1), message))
         }
