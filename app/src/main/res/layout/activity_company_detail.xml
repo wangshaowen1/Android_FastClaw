@@ -82,17 +82,18 @@
                             tools:text="互联网/AI·10000人以上·已上市上" />
                     </LinearLayout>
 
-                    <ImageView
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_company_logo"
                         android:layout_width="54dp"
                         android:layout_height="54dp"
-                        android:background="@drawable/bg_2f6bff_r11"
                         android:clipToOutline="true"
                         app:layout_constraintBottom_toBottomOf="parent"
                         android:contentDescription="@{layout.companyName}"
+                        placeHolder="@{@drawable/ic_compan_log}"
                         android:scaleType="centerCrop"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearanceOverlay="@style/roundStyle_r11"
                         app:loadUri="@{layout.companyDetail.logoUrl}" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

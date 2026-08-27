@@ -889,7 +889,7 @@
     <string name="str_agent_memory">我对你的理解</string>
     <string name="str_agent_send_hint">发消息或者按住说话...</string>
     <string name="str_agent_question_replied">已回复：%1$s</string>
-    <string name="str_agent_understanding_upgrade_title">理解升级！</string>
+    <string name="str_agent_understanding_upgrade_title">对你的理解升级！</string>
     <string name="str_agent_understanding_align_title">我与你对齐度达到%1$s！</string>
     <!--<string name="str_agent_understanding_align_subtitle">对你的理解飙升，对齐度到达%1$d%%</string>-->
     <string name="str_agent_understanding_align_subtitle">点击修改</string>

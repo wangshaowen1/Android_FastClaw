@@ -110,7 +110,7 @@ class OpportunityDetailActivity :
         renderJobDescription(detail.jobDescription)
         binding.tvLocationCompany.text = detail.companyName
         binding.tvCompanyProfile.text = listOf(
-            detail.companyIndustry,
+            detail.companyIndustry?.substringBefore('/') ?: "",
             detail.companyScale,
             detail.financingStage
         ).filter(String::isNotBlank).joinToString(" · ")
