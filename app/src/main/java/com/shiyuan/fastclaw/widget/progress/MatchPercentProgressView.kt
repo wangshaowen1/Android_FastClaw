@@ -104,8 +104,13 @@ class MatchPercentProgressView @JvmOverloads constructor(
         val percent = context.getString(R.string.percent_symbol)
         val numberWidth = numberPaint.measureText(number)
         val percentWidth = percentPaint.measureText(percent)
-        val startX = centerX - (numberWidth + percentWidth) / 2f
+        val textWidth = numberWidth + percentWidth
+        val availableTextWidth = min(width, height) - strokeWidth * 2f
+        val textScale = min(1f, availableTextWidth / textWidth)
+        val startX = centerX - textWidth / 2f
 
+        canvas.save()
+        canvas.scale(textScale, textScale, centerX, centerY)
         canvas.drawText(number, startX, centerTextBaseline(centerY, numberPaint), numberPaint)
         canvas.drawText(
             percent,
@@ -113,6 +118,7 @@ class MatchPercentProgressView @JvmOverloads constructor(
             centerTextBaseline(centerY, percentPaint),
             percentPaint,
         )
+        canvas.restore()
     }
 
     private fun createTextPaint(textSizeSp: Float) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
