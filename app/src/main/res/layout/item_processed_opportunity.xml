@@ -96,7 +96,7 @@
                android:text="@{item.data.salaryText}"
                android:textColor="@color/color_2f6bff"
                android:textSize="15sp"
-               android:visibility="@{item.data.jobClosed ? View.INVISIBLE  : View.GONE}"
+               android:visibility="@{item.data.jobClosed ? View.GONE  : View.VISIBLE}"
                tools:text="13-30K·15薪" />
 
 
