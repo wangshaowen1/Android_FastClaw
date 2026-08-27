@@ -1,6 +1,6 @@
 ---
 name: android-paging-state-ui
-description: "Android Paging3 分页加载与状态 UI 实现规范。仅在本次实际涉及分页列表、Paging3、PagingSource、PagingDataAdapter、RemoteMediator、SmartRefreshLayout 分页刷新、LoadStateViewHolder、MyMultiStatePagingFooterAdapter、分页 empty/error/loading/footer/loadState UI、分页 retry 或 Room 缓存分页时使用。普通非分页列表状态 UI 不触发本 skill。"
+description: "Android Paging3 分页加载与状态 UI 实现规范。仅在本次实际涉及分页列表、Paging3、PagingSource、PagingDataAdapter、RemoteMediator、SmartRefreshLayout 分页刷新、LoadStateViewHolder、FooterAdapter、MyMultiStatePagingFooterAdapter、分页 empty/error/loading/footer/loadState UI、分页 retry 或 Room 缓存分页时使用。普通非分页列表状态 UI 不触发本 skill。"
 ---
 
 # Android 分页状态 UI
@@ -9,11 +9,9 @@ description: "Android Paging3 分页加载与状态 UI 实现规范。仅在本�
 
 ## 默认结构
 
-- 默认 `PagingSource + PagingDataAdapter + LoadStateViewHolder`。
-- 新页面优先 `SmartRefreshLayout -> LoadStateViewHolder -> RecyclerView`；当前 feature 已稳定使用 `CoolRefreshView` 等容器时沿用其现有扩展，同一页面不混用两套状态链路。
-- Footer 使用 `MyMultiStatePagingFooterAdapter`。
+- 分页默认使用 Paging3。新页面默认 `SmartRefreshLayout -> LoadStateViewHolder -> RecyclerView`，Footer 使用 `FooterAdapter`；当前 feature 已稳定使用 `CoolRefreshView`、`MyMultiStatePagingFooterAdapter` 等现有实现时沿用，不混用两套方案。
+- 全页 `LoadStateViewHolder` 内的 RecyclerView 默认使用 `match_parent`；外层负责测量或滚动时除外。
 - 只有明确需要 Room 离线缓存、本地优先或跨会话持久化时使用 `RemoteMediator`。
-- 全页 LoadState 容器内的 RecyclerView 通常为 `match_parent`；只有外层明确负责测量和滚动时使用 `wrap_content`。
 
 ## Pager 与查询条件
 
@@ -45,19 +43,19 @@ description: "Android Paging3 分页加载与状态 UI 实现规范。仅在本�
 - DataBinding item 使用 `ItemXxxVM` 时，变量名遵循实际 `BR.item`。
 - 仅在模型存在非空、稳定、唯一的业务 key 时使用 `binding.getVm(key, ...)`；不使用 null、position、可变展示字段或废弃 position 重载。
 - XML 可直接读取实体展示字段时，不生成 ItemVM 透传 getter/Observable。
-- 多选、跨页刷新、批量操作和复杂 item 动作通过当前 feature 事件 VM/callback/ViewModel 收敛；Adapter 不请求网络或直接导航。
+- 多选、跨页刷新、批量操作和复杂 item 动作通过当前 feature 事件 VM/callback/ViewModel 收敛。
 
 ## 多 Tab 与缓存分支
 
 - 每个 Tab 子 Fragment 独立持有参数、ViewModel、Pager、PagingSource、Adapter 和 LoadState；容器不共享 PagingData 或可变查询字段。
 - `RemoteMediator` 使用事务、作用域清理和可靠 remote key；API 失败返回 `MediatorResult.Error`，取消异常继续抛出。
-- Room entity 在 Adapter 外映射成页面实际消费模型；不为普通网络分页默认新增数据库或 domain 层。
+- Room entity 在 Adapter 外映射成页面实际消费模型；普通网络分页不默认增加数据库缓存链路。
 
 ## 检查
 
 - Pager 没有重复创建或捕获失效条件，`startRefreshWithAdapter` 没有重复 refresh。
 - PagingSource 无 UI 副作用，业务失败和取消处理正确。
 - Fragment 收集与手动回调使用各自真实生命周期。
-- footer、网格 span、ConcatAdapter 空状态和 retry 语义已验证。
+- `FooterAdapter`、现有专用 Footer、网格 span、ConcatAdapter 空状态和 retry 语义已验证。
 - ItemVM key 稳定且非空，没有 position 重载或透传字段。
 - 多 Tab 子页独立；RemoteMediator 只在真实缓存需求下出现。

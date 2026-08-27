@@ -8,63 +8,77 @@ import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.databinding.LayoutPagingFooterBinding
+import com.nhsd.basic.ext.getResString
 import com.nhsd.basic.ext.setOnSingleClickListener
-import com.shiyuan.fastclaw.databinding.LayoutTrailingLoadMoreBinding
 
+/**
+ * 轻量 Paging 追加状态；首屏 loading/empty/error 由页面状态容器负责。
+ */
 open class FooterAdapter(
-    private val iconAlpha: Float = 1f,
-    private val hostAdapter:RecyclerView.Adapter<*>?=null,
+    private val hostAdapter: RecyclerView.Adapter<*>,
+    private val endStateMinItemCount: Int = 1,
+    private val endText: CharSequence = R.string.no_more_data.getResString(),
     private val retry: () -> Unit,
 ) : LoadStateAdapter<FooterAdapter.ViewHolder>() {
 
-    var showReachedSize = -1
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val binding = LayoutTrailingLoadMoreBinding.bind(view)
+    init {
+        require(endStateMinItemCount > 0) {
+            "endStateMinItemCount must be greater than 0"
+        }
     }
 
+    class ViewHolder(
+        val binding: LayoutPagingFooterBinding,
+    ) : RecyclerView.ViewHolder(binding.root)
 
     override fun onBindViewHolder(holder: ViewHolder, loadState: LoadState) {
-        val itemCount = hostAdapter?.itemCount ?: 0
-        if (showReachedSize > 0 && itemCount < showReachedSize) {
-            hideFooter(holder.binding)
-        } else {
-            hideFooter(holder.binding)
-            holder.binding.loadMoreLoadingView.visibility =
+        holder.binding.apply {
+            pagingFooterLoadingView.visibility =
                 if (loadState is LoadState.Loading) View.VISIBLE else View.GONE
-            holder.binding.loadMoreLoadEndView.visibility =
-                if (loadState is LoadState.NotLoading && loadState.endOfPaginationReached) View.VISIBLE else View.GONE
+            pagingFooterErrorView.visibility =
+                if (loadState is LoadState.Error) View.VISIBLE else View.GONE
+            pagingFooterEndView.visibility = if (
+                loadState is LoadState.NotLoading &&
+                loadState.endOfPaginationReached &&
+                shouldShowEndState()
+            ) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+            pagingFooterEndText.text = endText
         }
-        holder.binding.loadMoreLoadFailSmallView.visibility = if (loadState is LoadState.Error) View.VISIBLE else View.GONE
-        holder.binding.loadMoreLoadEmptyViewIcon.alpha = iconAlpha
-        holder.binding.loadMoreLoadFailViewIcon.alpha = iconAlpha
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): ViewHolder {
         val holder = ViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.layout_trailing_load_more, parent, false)
+            LayoutPagingFooterBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false,
+            ),
         )
-        holder.binding.loadMoreLoadFailSmallView.setOnSingleClickListener {
-            retry.invoke()
+        holder.binding.pagingFooterErrorView.setOnSingleClickListener {
+            retry()
         }
         return holder
     }
 
-    //重写该方法，否则底部LoadStatus不展示，闪过
     override fun displayLoadStateAsItem(loadState: LoadState): Boolean {
-        return loadState is LoadState.Loading ||
-                loadState is LoadState.Error ||
-                loadState is LoadState.NotLoading
+        return when (loadState) {
+            is LoadState.Loading,
+            is LoadState.Error,
+            -> hostAdapter.itemCount > 0
+
+            is LoadState.NotLoading -> {
+                loadState.endOfPaginationReached && shouldShowEndState()
+            }
+        }
     }
 
-    private fun hideFooter(footBinding: LayoutTrailingLoadMoreBinding) {
-        footBinding.loadMoreLoadEmptyView.visibility = View.GONE
-        footBinding.loadMoreLoadFailView.visibility = View.GONE
-        footBinding.loadMoreLoadingView.visibility = View.GONE
-        footBinding.loadMoreLoadCompleteView.visibility = View.GONE
-        footBinding.loadMoreLoadEndView.visibility = View.GONE
-        footBinding.loadMoreLoadFailSmallView.visibility = View.GONE
+    private fun shouldShowEndState(): Boolean {
+        return hostAdapter.itemCount >= endStateMinItemCount
     }
 
     override fun onViewAttachedToWindow(holder: ViewHolder) {

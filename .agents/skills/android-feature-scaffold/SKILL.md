@@ -44,6 +44,6 @@ description: "Android 页面骨架生成规范。仅在本次实际新增页面�
 
 - 页面位于最近业务包，Activity/Fragment、VM 和 XML 采用当前项目 Base 体系。
 - `layout`、Toolbar、start/newInstance、arguments/mBundle 与附近代码一致。
-- 页面层只做 View 初始化、观察、导航和展示，不直接请求网络或数据库。
+- 页面层只做 View 初始化、观察、导航和展示。
 - 没有空初始化函数、无需求附属层或过量 Observable。
 - 手动回调和长任务所有者、清理点已按当前基类确认。

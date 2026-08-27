@@ -46,7 +46,6 @@ description: "Android Retrofit 接口链路接入规范。仅在新增接口，�
 
 - `response.error` 处理接口业务失败；`launch.onError` 处理网络/协程异常；`launch.onComplete` 清理 `savingIds`、loading、progress 等临时状态。
 - 不在普通 `launch` 中再包一层 `try/catch/finally`；确需捕获时必须放行 `CancellationException`。
-- Activity/Fragment 不直接发起网络请求。
 
 ## Repository 边界
 
@@ -74,5 +73,5 @@ SSE 接口声明可返回 `Flow<SSEvent>`，其处理器与取消交给异步 sk
 - 契约字段都有证据，冲突和缺口已说明。
 - 已搜索并复用常量、方法、Body 和模型，目录与返回类型符合当前链路。
 - 用户操作与静默请求选择了正确 helper，失败没有被吞掉。
-- ViewModel 通过 `mRepo.api` 或必要 Repository 调用，页面层没有直接请求。
+- ViewModel 通过 `mRepo.api` 或必要 Repository 调用。
 - 没把分页、SSE 或轮询误写成一次性请求。

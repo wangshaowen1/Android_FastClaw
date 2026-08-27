@@ -5,7 +5,7 @@ description: "Android 弹窗实现规范。仅在本次实际新增、重构或�
 
 # Android 弹窗
 
-本次确实按 Figma/截图还原可见 UI，或弹窗内部实际新增列表时，才追加对应 skill。只有基类或工具用法不清楚时读取 [项目弹窗索引](references/project-examples.md)。
+本次同时实际新增列表、完整 API 链路或异步长任务时，才分别追加 `android-databinding-list`、`android-api-request` 或 `android-async-task`；按 Figma/截图还原可见 UI 时先走 Figma 快速规则。只有基类或工具用法不清楚时读取 [项目弹窗索引](references/project-examples.md)。
 
 ## 基类决策
 
@@ -39,7 +39,7 @@ description: "Android 弹窗实现规范。仅在本次实际新增、重构或�
 
 - 确认、提交、保存、支付、删除、生成和跳转等有副作用动作使用 `setOnSingleClickListener` 或项目同类单击绑定。
 - 关闭、取消、简单 toggle 可沿用附近 `setOnClickListener`。
-- 先校验输入/状态，再回调或调用 VM，最后按当前生命周期关闭；取消路径不触发确认逻辑。
+- 先校验输入/状态，再回调或调用 VM，最后按当前生命周期关闭；取消路径不触发提交或确认按钮对应的业务回调。
 - 属性 callback 只适合当前进程、当前宿主、可接受配置变更或进程重建丢失的一次性结果。
 - Fragment result、ActivityResult 或共享状态只能解决各自生命周期内的结果传递，不等于持久化。支付结果、任务 ID 等关键结果必须由 SavedState、持久存储或服务端状态承担。
 - 异步结果由 VM 暴露 LiveData/Flow，Dialog 观察成功后再关闭。
@@ -54,7 +54,7 @@ description: "Android 弹窗实现规范。仅在本次实际新增、重构或�
 
 ## 输入弹窗
 
-- 输入初始化放 `onPrepareView()`；未保存内容的返回/关闭走确认离开逻辑。
+- 未保存内容时，返回或关闭前执行确认离开逻辑。
 - 关闭时清理软键盘。
 - 敏感词检查、保存接口等异步逻辑交给 ViewModel 或已有扩展，Dialog 只组织 UI 流程。
 

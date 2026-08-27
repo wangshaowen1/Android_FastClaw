@@ -6,14 +6,14 @@
 | --- | --- |
 | Pager/PagingSource | `Pager(`、`PagingSource<`、`cachedIn` |
 | 页面状态绑定 | `startRefreshWithAdapter`、`LoadStateViewHolder` |
-| Footer/网格 | `MyMultiStatePagingFooterAdapter`、`applyGridSpanSizeLookup` |
+| Footer/网格 | `FooterAdapter`、`layout_paging_footer.xml`、`MyMultiStatePagingFooterAdapter`、`applyGridSpanSizeLookup` |
 | ItemVM 复用 | `BindingViewHolder`、`binding.getVm` |
 | 旧容器兼容 | `CoolRefreshView` 及当前 feature 扩展 |
 | Room 缓存 | `RemoteMediator`、`withTransaction`、remote key |
 
 ```powershell
 rg -n "Pager\(|PagingSource<|PagingDataAdapter|cachedIn" app/src/main/java
-rg -n "startRefreshWithAdapter|LoadStateViewHolder|MyMultiStatePagingFooterAdapter|applyGridSpanSizeLookup" app/src/main/java
+rg -n "startRefreshWithAdapter|LoadStateViewHolder|FooterAdapter|MyMultiStatePagingFooterAdapter|applyGridSpanSizeLookup" app/src/main/java app/src/main/res/layout
 rg -n "RemoteMediator|withTransaction|CoolRefreshView|ConcatAdapter" app/src/main/java
 ```
 
