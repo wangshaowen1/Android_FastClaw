@@ -1,5 +1,6 @@
 package com.shiyuan.fastclaw.feature.message
 
+import com.shiyuan.fastclaw.core.User
 import com.tulele.im.custom.CustomAttachment
 import com.tulele.im.entity.MessageWrapper
 import com.tulele.im.entity.UnknownAttachment
@@ -9,6 +10,9 @@ import java.util.Calendar
 import java.util.Locale
 
 object MessageFormatter {
+
+    // P2P 单聊会话类型值。
+    private const val P2P_CONVERSATION_TYPE = 1
 
     /**
      * 读取协议自定义消息附件 JSON。
@@ -24,6 +28,13 @@ object MessageFormatter {
         } catch (ignored: Exception) {
             null
         }
+    }
+
+    /**
+     * 拼接 P2P 单聊 conversationId。
+     */
+    fun buildP2pConversationId(targetId: String): String {
+        return "${User.get().imAccessId.orEmpty()}|$P2P_CONVERSATION_TYPE|$targetId"
     }
 
     /**

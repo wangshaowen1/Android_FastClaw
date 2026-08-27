@@ -22,19 +22,18 @@
         android:layout_width="wrap_content"
         android:layout_height="15dp"
         android:gravity="center"
-        android:minHeight="15dp"
-        android:minWidth="15dp"
         android:includeFontPadding="false"
+        android:minWidth="15dp"
+        android:minHeight="15dp"
         android:textColor="@color/white"
         android:textSize="9sp"
         app:layout_constraintEnd_toEndOf="@id/ivAvatar"
         app:layout_constraintTop_toTopOf="@id/ivAvatar"
-        tools:text="99"
-        app:sSizeWidth="0dp"
-        tools:visibility="visible"
         app:sCornersRadius="8dp"
+        app:sSizeWidth="0dp"
         app:sSolidColor="@color/color_fb415e"
-        />
+        tools:text="99"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/tvName"
@@ -88,35 +87,46 @@
         app:layout_constraintTop_toTopOf="@id/tvName"
         tools:text="17:24" />
 
-    <TextView
-        android:id="@+id/tvDraft"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:gravity="center_vertical"
-        android:includeFontPadding="false"
-        android:text="@string/message_draft_prefix"
-        android:textColor="@color/color_ff9100"
-        android:textSize="13sp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/tvName"
-        app:layout_constraintTop_toBottomOf="@id/tvName"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/tvLastMessage"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:includeFontPadding="false"
-        android:maxLines="1"
-        android:textColor="@color/color_75_3c3c43"
-        android:textSize="13sp"
+        app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tvDraft"
-        app:layout_constraintTop_toBottomOf="@id/tvName"
-        tools:text="我们希望了解下你做过的模型，方便发个简方便发个简方便发个简" />
+        app:layout_constraintStart_toStartOf="@id/tvName"
+        app:layout_constraintTop_toBottomOf="@id/tvName">
+
+        <TextView
+            android:id="@+id/tvDraft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:text="@string/message_draft_prefix"
+            android:textColor="@color/color_ff9100"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvLastMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:textColor="@color/color_75_3c3c43"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tvDraft"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="我们希望了解下你做过的模型，方便发个简方便发个简方便发个简" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

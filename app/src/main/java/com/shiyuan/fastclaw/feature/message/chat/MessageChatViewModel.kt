@@ -54,7 +54,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private val localSendMessageIds = mutableSetOf<String>()
     // 本机主动发送消息的展示顺序时间，避免连续发送多条消息时 SDK 回填顺序抖动。
     private val localSendMessageTimes = mutableMapOf<String, Long>()
-    // 下一条 间。
+    // 下一条本机主动发送消息的展示顺序时间。
     private var nextLocalSendMessageTime = 0L
     // 是否还有更早历史消息。
     private var hasMoreHistory = true
@@ -206,10 +206,8 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      */
     fun sendResumeDeliveryMessage(resume: ResumeListData) {
         val currentChat = chat ?: return
-        val resumeId = resume.resumeId?.takeIf { it.isNotBlank() }
-        val resumeName = (resume.resumeName ?: resume.fileName)?.takeIf { it.isNotBlank() }
-        val resumeUrl = resume.resumeUrl?.takeIf { it.isNotBlank() }
-        if (resumeId == null || resumeName == null || resumeUrl == null) {
+        val resumeName = resume.resumeName.orEmpty().ifBlank { resume.fileName.orEmpty() }
+        if (resume.resumeId.isNullOrBlank() || resumeName.isBlank() || resume.resumeUrl.isNullOrBlank()) {
             showToast(R.string.message_chat_resume_empty_tip)
             return
         }
