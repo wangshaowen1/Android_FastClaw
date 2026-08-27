@@ -1,5 +1,7 @@
 package com.shiyuan.fastclaw.feature.message
 
+import android.util.Log
+import com.alibaba.fastjson.JSON
 import com.shiyuan.fastclaw.feature.message.MessageAdapter.Companion.TYPE_CONVERSATION
 import com.shiyuan.fastclaw.feature.message.data.MessageListItem
 import com.shiyuan.fastclaw.feature.message.data.UnsuitableEntry
@@ -12,8 +14,7 @@ class MessageViewModel : BaseConversationViewModel() {
      */
     override fun refreshConversationList() {
         val items = mutableListOf<MessageListItem>()
-        var unsuitableConversationCount = 0
-        getCachedConversations().forEach { conversation ->
+        var unsuitableConversationCount = 0getCachedConversations().forEach { conversation ->
             if (!isMarkedUnsuitable(conversation)) {
                 items.add(buildConversationItem(conversation, TYPE_CONVERSATION))
             } else {
@@ -23,6 +24,7 @@ class MessageViewModel : BaseConversationViewModel() {
         if (unsuitableConversationCount > 0) {
             items.add(UnsuitableEntry(unsuitableConversationCount))
         }
+        Log.d("MessageViewModel", "消息列表数据=${JSON.toJSONString(items)}")
         refreshMessageList(items)
     }
 }
