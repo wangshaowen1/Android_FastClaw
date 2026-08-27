@@ -47,81 +47,99 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/statusBar" />
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/layoutMessagesScroll"
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/layoutRefresh"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:clipToPadding="false"
-            android:paddingBottom="76dp"
-            setVisible="@{!layout.isEmpty}"
-            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintVertical_bias="0.0"
+            app:srlEnableLoadMore="false">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvMessages"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_ffffff_r20"
-                android:nestedScrollingEnabled="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:clipToPadding="false"
-                android:paddingTop="9dp"
-                android:paddingBottom="9dp"
-                tools:itemCount="3"
-                tools:listitem="@layout/item_message_conversation" />
+                android:layout_height="match_parent">
 
-        </androidx.core.widget.NestedScrollView>
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/layoutMessagesScroll"
+                    setVisible="@{!layout.isEmpty}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:clipToPadding="false"
+                    android:paddingBottom="76dp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/layoutEmpty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            setVisible="@{layout.isEmpty}"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle"
-            app:layout_constraintVertical_bias="0.38"
-            tools:visibility="gone">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvMessages"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_ffffff_r20"
+                        android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingTop="9dp"
+                        android:paddingBottom="9dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_message_conversation" />
 
-            <ImageView
-                android:layout_width="132dp"
-                android:layout_height="111dp"
-                android:contentDescription="@null"
-                android:scaleType="fitCenter"
-                android:src="@drawable/img_message_empty" />
+                </androidx.core.widget.NestedScrollView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:includeFontPadding="false"
-                android:paddingStart="16dp"
-                android:text="@string/message_empty_tip"
-                android:textColor="@color/color_60_3c3c43"
-                android:textSize="14sp" />
-        </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/layoutEmpty"
+                    setVisible="@{layout.isEmpty}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.38"
+                    tools:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="132dp"
+                        android:layout_height="111dp"
+                        android:contentDescription="@null"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/img_message_empty" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:includeFontPadding="false"
+                        android:paddingStart="16dp"
+                        android:text="@string/message_empty_tip"
+                        android:textColor="@color/color_60_3c3c43"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
         <com.shiyuan.fastclaw.widget.super_button.SuperButton
-            android:visibility="gone"
             android:id="@+id/sb_test"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginBottom="150dp"
             android:text="测试IM"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

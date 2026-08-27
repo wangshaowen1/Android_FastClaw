@@ -22,7 +22,7 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
      */
     fun bind(item: JobChatItem) {
         val company = item.brandName?.takeIf { it.isNotBlank() } ?: item.companyName
-        val stage = item.companyName?.takeIf { it.isNotBlank() && it != company }
+        val stage = item.financingStage?.takeIf { it.isNotBlank() }
         val tags = listOfNotNull(item.cityName, item.experienceText, item.educationText)
         binding.tvTime.text = item.timeText
         binding.tvTime.visibility = if (item.timeText.isBlank()) View.GONE else View.VISIBLE

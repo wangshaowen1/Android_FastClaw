@@ -51,6 +51,8 @@ data class JobChatItem(
     val companyId: String?,
     /** 公司名称快照。 */
     val companyName: String?,
+    /** 公司融资阶段。 */
+    val financingStage: String?,
     /** 城市编码。 */
     val cityCode: String?,
     /** 城市名称。 */

@@ -41,6 +41,9 @@ class MessageJobAttachment : CustomAttachment(MSG_TYPE) {
     // 公司名称快照。
     var companyName: String? = null
 
+    // 公司融资阶段。
+    var financingStage: String? = null
+
     // 城市编码。
     var cityCode: String? = null
 
@@ -79,6 +82,7 @@ class MessageJobAttachment : CustomAttachment(MSG_TYPE) {
             .put(KEY_BRAND_NAME, brandName)
             .put(KEY_COMPANY_ID, companyId)
             .put(KEY_COMPANY_NAME, companyName)
+            .put(KEY_FINANCING_STAGE, financingStage)
             .put(KEY_CITY_CODE, cityCode)
             .put(KEY_CITY_NAME, cityName)
             .put(KEY_EXPERIENCE_CODE, experienceCode)
@@ -113,6 +117,7 @@ class MessageJobAttachment : CustomAttachment(MSG_TYPE) {
         private const val KEY_BRAND_NAME = "brandName"
         private const val KEY_COMPANY_ID = "companyId"
         private const val KEY_COMPANY_NAME = "companyName"
+        private const val KEY_FINANCING_STAGE = "financingStage"
         private const val KEY_CITY_CODE = "cityCode"
         private const val KEY_CITY_NAME = "cityName"
         private const val KEY_EXPERIENCE_CODE = "experienceCode"
@@ -140,6 +145,7 @@ class MessageJobAttachment : CustomAttachment(MSG_TYPE) {
                 brandName = job?.optString(KEY_BRAND_NAME),
                 companyId = job?.optString(KEY_COMPANY_ID),
                 companyName = job?.optString(KEY_COMPANY_NAME),
+                financingStage = job?.optString(KEY_FINANCING_STAGE),
                 cityCode = job?.optString(KEY_CITY_CODE),
                 cityName = job?.optString(KEY_CITY_NAME),
                 experienceCode = job?.optString(KEY_EXPERIENCE_CODE),

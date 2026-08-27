@@ -5,6 +5,7 @@ import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.core.Events
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.databinding.FragmentMessageBinding
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
 import com.shiyuan.fastclaw.feature.message.data.ConversationItem
@@ -57,6 +58,10 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
         }
         binding.sbTest.setOnSingleClickListener {
             sendTestImMessage()
+        }
+        binding.layoutRefresh.setOnRefreshListener {
+            binding.layoutRefresh.finishRefresh()
+            mRealVM.getConversationList()
         }
     }
 
