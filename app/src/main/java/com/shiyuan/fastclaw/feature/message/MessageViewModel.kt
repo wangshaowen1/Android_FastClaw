@@ -25,7 +25,6 @@ class MessageViewModel : BaseConversationViewModel() {
         if (unsuitableConversationCount > 0) {
             items.add(UnsuitableEntry(unsuitableConversationCount))
         }
-        Log.d("MessageViewModel", "消息列表数据=${JSON.toJSONString(items)}")
         refreshMessageList(items)
     }
 }

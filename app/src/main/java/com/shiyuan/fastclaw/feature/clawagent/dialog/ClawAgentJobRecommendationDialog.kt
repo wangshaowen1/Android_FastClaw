@@ -28,7 +28,7 @@ class ClawAgentJobRecommendationDialog(context: Context) : CenterPopupView(conte
         XPopup.Builder(activity)
             .isDestroyOnDismiss(false)
             .dismissOnBackPressed(false)
-            .dismissOnTouchOutside(true)
+            .dismissOnTouchOutside(false)
             .setPopupCallback(object : SimpleCallback() {
                 override fun onDismiss(popupView: BasePopupView) {
                     onDismissListener?.invoke()
