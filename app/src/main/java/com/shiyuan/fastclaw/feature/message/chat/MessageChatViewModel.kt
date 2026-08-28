@@ -309,10 +309,13 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 将消息缓存转换成页面列表模型。
      */
     private fun refreshMessageList() {
+        // 本地即时上屏消息优先使用本地排序时间，避免连续发送时 SDK 回填时间导致顺序抖动。
         val messages = messageCache.values.sortedBy { localSendMessageTimes[it.messageClientId] ?: it.time }
+        // 构建页面 item 时顺带根据上一条消息计算时间标签，超过间隔才展示时间。
         val items = messages.mapIndexed { index, message ->
             buildMessageItem(message, buildMessageTime(messages.getOrNull(index - 1), message))
         }
+        // 内容没有变化时不重复发布，减少 RecyclerView 无意义刷新。
         if (messageList.value == items) return
         messageList.value = items
     }

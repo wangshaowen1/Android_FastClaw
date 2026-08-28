@@ -70,6 +70,8 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         private const val PREFETCH_THRESHOLD = 5
         // 新消息平滑滚动到底部的速度，复用小虾对话的滚动手感。
         private const val MESSAGE_SCROLL_SPEED = 0.1f
+        // 距离底部超过该数量时直接贴底，避免长列表慢速滚动。
+        private const val MESSAGE_DIRECT_SCROLL_THRESHOLD = 10
         // 键盘弹起时输入区和键盘顶部的目标间距。
         private const val INPUT_KEYBOARD_GAP = 9
         // 发送按钮多行输入时距离输入框底部的间距。
@@ -229,17 +231,19 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
             // 如果用户在底部，就跟随新消息滚到底；如果用户往上翻历史，就不打断。
-            val hadMessages = messageAdapter.items.isNotEmpty()
-            val hasNewTailMessage = items.size > messageAdapter.items.size
+            val hasNewTailMessage = messageAdapter.items.isNotEmpty() && items.size > messageAdapter.items.size
             val scrollToLatest = forceScrollToBottom || RecyclerViewScrollHelper.isScrollBottom(
                 binding.rvMessages,
                 binding.rvMessages.paddingBottom
             )
+            // 提交新列表前计算离底部还有多少条，超过阈值直接贴底，距离近才保留平滑滚动。
+            val lastVisiblePosition = messageLayoutManager.findLastVisibleItemPosition()
+            val shouldSmoothScroll = hasNewTailMessage && items.lastIndex - lastVisiblePosition <= MESSAGE_DIRECT_SCROLL_THRESHOLD
             forceScrollToBottom = false
             messageAdapter.submitList(items)
             if (items.isNotEmpty() && scrollToLatest) {
-                // 首次加载和普通状态刷新直接贴底；新增尾部消息复用小虾对话的平滑滚动动画。
-                if (hadMessages && hasNewTailMessage) {
+                // 首次加载、普通状态刷新和长距离滚动直接贴底；短距离新增尾部消息才平滑滚动。
+                if (shouldSmoothScroll) {
                     RecyclerViewScrollHelper.smoothScrollToBottom(binding.rvMessages, 100L, MESSAGE_SCROLL_SPEED)
                 } else {
                     RecyclerViewScrollHelper.scrollToBottom(binding.rvMessages, 100L)
