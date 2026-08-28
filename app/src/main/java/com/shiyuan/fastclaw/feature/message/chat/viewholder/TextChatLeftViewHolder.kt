@@ -3,7 +3,9 @@ package com.shiyuan.fastclaw.feature.message.chat.viewholder
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.blankj.utilcode.util.ClipboardUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemChatTextLeftBinding
 import com.shiyuan.fastclaw.feature.message.data.TextChatItem
@@ -30,5 +32,10 @@ class TextChatLeftViewHolder(private val binding: ItemChatTextLeftBinding) : Rec
             .circleCrop()
             .into(binding.ivAvatar)
         binding.ivAvatar.setOnSingleClickListener { onAvatarClickListener(item) }
+        binding.tvContent.setOnLongClickListener {
+            binding.root.context.getString(R.string.toast_copied).showToast()
+            ClipboardUtils.copyText(item.content)
+            true
+        }
     }
 }
