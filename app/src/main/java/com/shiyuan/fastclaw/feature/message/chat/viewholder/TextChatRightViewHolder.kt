@@ -3,6 +3,8 @@ package com.shiyuan.fastclaw.feature.message.chat.viewholder
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.blankj.utilcode.util.ClipboardUtils
+import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemChatTextRightBinding
 import com.shiyuan.fastclaw.feature.message.data.TextChatItem
@@ -25,5 +27,10 @@ class TextChatRightViewHolder(private val binding: ItemChatTextRightBinding) : R
             .error(R.drawable.icon_default_avatar)
             .circleCrop()
             .into(binding.ivAvatar)
+        binding.tvContent.setOnLongClickListener {
+            binding.root.context.getString(R.string.toast_copied).showToast()
+            ClipboardUtils.copyText(item.content)
+            true
+        }
     }
 }

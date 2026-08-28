@@ -3,32 +3,17 @@ package com.shiyuan.fastclaw.feature.message
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nhsd.basic.BaseViewModelFragment
 import com.nhsd.basic.bus.observeEvents
-import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.core.Events
-import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.databinding.FragmentMessageBinding
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
 import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
-import com.tulele.im.Chat
-import com.tulele.im.ImSession
-import com.tulele.im.entity.Contact
-import com.tulele.im.entity.MessageWrapper
 
 class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageViewModel>() {
 
     private val msgAdapter by lazy { MessageAdapter() }
 
     companion object {
-        // 测试消息接收账号。
-        private const val TEST_IM_ACCOUNT = "c_66269210513841"//c_47643556327426//c_66269210513841
-
-        // 测试消息内容。
-        private const val TEST_IM_CONTENT = "消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息消息"
-
-        /**
-         * 创建消息 Tab 页面实例，保持主 Tab Fragment 创建方式一致。
-         */
         fun newInstance() = MessageFragment()
     }
 
@@ -55,9 +40,6 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
         }
         msgAdapter.onMarkedUnsuitableClick = {
             UnableMessageActivity.start(requireContext())
-        }
-        binding.sbTest.setOnSingleClickListener {
-            sendTestImMessage()
         }
         binding.layoutRefresh.setOnRefreshListener {
             binding.layoutRefresh.finishRefresh()
@@ -108,31 +90,5 @@ class MessageFragment : BaseViewModelFragment<FragmentMessageBinding, MessageVie
         currentJobId = item.jobId,
         currentJobName = item.targetPosition,)
         )
-    }
-
-    /**
-     * 发送 IM 测试文本消息，用于验证云信 V2 单聊发送链路。
-     */
-    private fun sendTestImMessage() {
-        var chat: Chat? = null
-        try {
-            chat = ImSession.get().openChat(Contact(TEST_IM_ACCOUNT))
-            chat.onMessageSendResultListener = object : Chat.OnMessageSendResultListener {
-                override fun onSendSuccess(message: MessageWrapper, antispamResult: String?) {
-                    showMessage("IM 测试消息发送成功")
-                    //mRealVM.getConversationList()
-                    chat?.close()
-                }
-
-                override fun onSendFailed(message: MessageWrapper, errorCode: Int, throwable: Throwable?) {
-                    showMessage("IM 测试消息发送失败：$errorCode")
-                    chat?.close()
-                }
-            }
-            chat.sendTextMessage(TEST_IM_CONTENT)
-        } catch (exception: Exception) {
-            chat?.close()
-            showMessage("IM 测试消息发送异常：${exception.message.orEmpty()}")
-        }
     }
 }
