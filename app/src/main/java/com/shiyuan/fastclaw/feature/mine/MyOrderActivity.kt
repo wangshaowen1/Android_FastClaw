@@ -36,6 +36,14 @@ class MyOrderActivity : BaseViewModelActivity<ActivityMyOrderBinding, MineViewMo
         intent.getIntExtra(EXTRA_SELECTED_INDEX, 0).coerceIn(0, 1)
     }
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageScrolled(
+            position: Int,
+            positionOffset: Float,
+            positionOffsetPixels: Int
+        ) {
+            updateTabSlider(position, positionOffset)
+        }
+
         override fun onPageSelected(position: Int) {
             updateTabState(position.coerceIn(0, 1))
         }
@@ -67,6 +75,7 @@ class MyOrderActivity : BaseViewModelActivity<ActivityMyOrderBinding, MineViewMo
         binding.vpOrderPages.offscreenPageLimit = 2
         binding.vpOrderPages.setCurrentItem(selectedIndex, false)
         updateTabState(selectedIndex)
+        binding.layoutOrderTab.post { updateTabSlider(selectedIndex, 0f) }
         binding.llTabShrimpRecord.setOnSingleClickListener {
             binding.vpOrderPages.setCurrentItem(0, false)
         }
@@ -78,12 +87,6 @@ class MyOrderActivity : BaseViewModelActivity<ActivityMyOrderBinding, MineViewMo
 
     private fun updateTabState(index: Int) {
         val shrimpSelected = index == 0
-        binding.llTabShrimpRecord.setBackgroundResource(
-            if (shrimpSelected) R.drawable.bg_2f6bff_r100 else 0
-        )
-        binding.llTabOrderRecord.setBackgroundResource(
-            if (shrimpSelected) 0 else R.drawable.bg_2f6bff_r100
-        )
         binding.tvTabShrimpRecord.setTextColor(
             tabTextColor(if (shrimpSelected) R.color.white else R.color.color_75_3c3c43)
         )
@@ -92,6 +95,19 @@ class MyOrderActivity : BaseViewModelActivity<ActivityMyOrderBinding, MineViewMo
         )
         binding.tvTabShrimpRecord.typeface = typefaceForSelected(shrimpSelected)
         binding.tvTabOrderRecord.typeface = typefaceForSelected(!shrimpSelected)
+    }
+
+    private fun updateTabSlider(position: Int, positionOffset: Float) {
+        val startTab = if (position.coerceIn(0, 1) == 0) {
+            binding.llTabShrimpRecord
+        } else {
+            binding.llTabOrderRecord
+        }
+        val endTab = if (position <= 0) binding.llTabOrderRecord else startTab
+        val slider = binding.vOrderTabSlider
+        val startX = startTab.left + (startTab.width - slider.width) / 2f - slider.left
+        val endX = endTab.left + (endTab.width - slider.width) / 2f - slider.left
+        slider.translationX = startX + (endX - startX) * positionOffset.coerceIn(0f, 1f)
     }
 
     private fun tabTextColor(colorRes: Int): Int {
