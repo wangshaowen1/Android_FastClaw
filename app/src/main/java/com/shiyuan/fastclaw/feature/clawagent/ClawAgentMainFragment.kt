@@ -1,31 +1,22 @@
 package com.shiyuan.fastclaw.feature.clawagent
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.MeasureSpec
-import android.view.ViewGroup
-import android.widget.PopupWindow
-import android.widget.TextView
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
-import com.blankj.utilcode.util.ScreenUtils
-import com.blankj.utilcode.util.SpanUtils
 import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.bus.observeEvents
 import com.nhsd.basic.ext.dp
-import com.nhsd.basic.ext.getResColor
 import com.nhsd.basic.ext.getResString
-import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.Constants
 import com.shiyuan.fastclaw.common.Constants.COMPANY_BACKGROUND_RESULT_URL
@@ -40,13 +31,10 @@ import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_INTERVIEW_PASS
-import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_LOGOUT
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_RESUME_TEST
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_SALARY_TEST
 import com.shiyuan.fastclaw.core.manager.AppEvent.KLX_CLICK_SELECT_JOB_STATUS
-import com.shiyuan.fastclaw.core.manager.AppEventParam.BAODIAN_TAB
 import com.shiyuan.fastclaw.core.manager.AppEventParam.KLX_ENTRY_SOURCE
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_COMPANY_CHECK
@@ -54,18 +42,18 @@ import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_INTERVIEW_PAS
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_MOCK_INTERVIEW
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_RESUME_TEST
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_SALARY_TEST
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_SELECT_JOB_STATUS
+import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_UPLOAD_RESUME
+import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_XIAOXIA_RESUME_UPLOAD
-import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStartBody
 import com.shiyuan.fastclaw.core.network.apis.response.ActivityPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ActivityStatusData
-import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
-import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_MODEL_FAILED
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_NOT_COMPANY
@@ -74,18 +62,9 @@ import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.QUICK
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentInsufficientShrimpDialog
+import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentJobRecommendationDialog
 import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentStatusDialog
 import com.shiyuan.fastclaw.feature.clawagent.dialog.NotificationsSwitchDialog
-import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
-import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
-import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
-import com.shiyuan.fastclaw.feature.information.JobWelfareSelectorActivity
-import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
-import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
-import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
 import com.shiyuan.fastclaw.feature.interview.InterviewActivity
 import com.shiyuan.fastclaw.feature.interview.dialog.InterviewRecoverDialog
 import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
@@ -94,15 +73,8 @@ import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.UUID
 import kotlin.math.abs
-import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_SELECT_JOB_STATUS
-import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_UPLOAD_RESUME
-import com.shiyuan.fastclaw.core.manager.EventManager
-import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentJobRecommendationDialog
 
 /** 
  * @createtime 2026年05月20日 10:25
@@ -111,9 +83,28 @@ import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentJobRecommendationD
 
 class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding, ClawAgentViewModel>() {
 
-    private val msgAdapter by lazy { ClawAgentMsgAdapter() }
+    private val itemEvents by lazy { ItemEventsViewModel<ClawAgentItemEvent>() }
+
+    private val msgAdapter by lazy {
+        ClawAgentMsgAdapter(
+            itemEvents = itemEvents,
+            onCompanySearchQuery = { keyword, callback ->
+                mRealVM.queryCompanyBackgroundCompanySearch(keyword, callback)
+            },
+        )
+    }
 
     private val actionAdapter by lazy { ClawQuickActionAdapter(::onQuickClick) }
+
+    private val questionActionCoordinator by lazy {
+        ClawAgentQuestionActionCoordinator(this, mRealVM)
+    }
+
+    private val memoryPopupCoordinator by lazy {
+        ClawAgentMemoryPopupCoordinator(this, mRealVM) {
+            forceScrollToBottom = true
+        }
+    }
 
     /** 消息 item 之间的基础底部间距，同时作为贴底判断的容差。 */
     private val messageItemBottomSpace = 12.dp
@@ -142,9 +133,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     /** 触发上传简历的消息 item，提交上传结果时回传 sourceMessageId。 */
     private var resumeData: ClawAgentMessageInfo? = null
 
-    /** 首页恢复时拉取消息的轮询任务，页面销毁或超时时取消。 */
-    private var resumeEventPullJob: Job? = null
-
     /** 是否处于语音输入模式，用于切换底部输入区展示。 */
     private var isVoiceInputMode = false
 
@@ -172,6 +160,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
 
     override fun onPrepareView() {
         super.onPrepareView()
+        observeItemEvents()
+        observeUiEffects()
         initView()
         initObserve()
         initEvents()
@@ -196,321 +186,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.rvAction.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         binding.rvAction.adapter = actionAdapter
 
-        msgAdapter.onUploadClickAction = { data,reUpload ->
-            if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_UPLOAD_RESUME)) {
-                // 上传/重传埋点统一收敛到 onTrackingEvent
-                onTrackingEvent(trackingType = if (reUpload) TrackingType.UPLOAD_RESUME_RETRY else TrackingType.UPLOAD_RESUME)
-                showUploadResumeDialog(data)
-            }
-        }
-
-        // 历史简历确认卡 确认/否认：actionCode 用端侧动作枚举，回传 resumeId/resumeStructId/resumeTaskId
-        msgAdapter.onResumeConfirmClickAction = { item, confirmed ->
-            if (!interceptIfStreaming()) {
-                // 确认/否认埋点统一收敛到 onTrackingEvent，原有 forceScrollToBottom 判定保留
-                onTrackingEvent(
-                    trackingType = if (forceScrollToBottom) TrackingType.RESUME_CONFIRM else TrackingType.RESUME_DENY
-                )
-                forceScrollToBottom = true
-                val payload = item.metaData?.let {
-                    runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
-                }
-                val payloadMap = buildMap {
-                    payload?.resumeId?.let { put("resumeId", it) }
-                    payload?.resumeStructId?.let { put("resumeStructId", it) }
-                    payload?.resumeTaskId?.let { put("resumeTaskId", it) }
-                }
-                mRealVM.sendAction(
-                    content = getString(if (confirmed) R.string.confirm_my_resume else R.string.not_my_resume),
-                    actionData = AgentMsgAction(
-                        actionCode = (if (confirmed) CandidateJobAgentClientActionEnum.RESUME_CONFIRM_YES
-                        else CandidateJobAgentClientActionEnum.RESUME_CONFIRM_NO).name,
-                        sourceMessageId = item.id,
-                        actionPayloadJson = payloadMap.takeIf { it.isNotEmpty() }?.let { GsonUtils.toJson(it) },
-                    )
-                )
-            }
-        }
-        // 公司背调 - 开始背调
-        msgAdapter.onCompanyStartClickAction = { _, _, data ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.submitCompanyBackgroundPreCheck(data.companyId)
-            }
-        }
-        // 公司背调 - 搜索公司
-        msgAdapter.onCompanySearchQueryAction = { keyword, callback ->
-            mRealVM.queryCompanyBackgroundCompanySearch(keyword, callback)
-        }
-        // 公司背调 - 查看报告
-        msgAdapter.onCompanyDoneClickAction = { _, _, data ->
-            if (!interceptIfStreaming()) {
-                SimpleBrowserActivity.launch(requireActivity(), COMPANY_BACKGROUND_RESULT_URL + data?.reportId)
-            }
-        }
-        // 公司背调 - 重新生成
-        msgAdapter.onCompanyRetryClickAction = { _, _, data ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.retryGenerateCompanyBackgroundReport(data?.reportId)
-            }
-        }
-        // 模拟面试 - 开始面试
-        msgAdapter.onInterviewStartClickAction = { item, action, data ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.startInterview(data?.entryMessageId, data?.entrySource, data?.resumeId)
-            }
-        }
-        // 模拟面试 - 暂不需要
-        msgAdapter.onInterviewNotNeedClickAction = { item, action, data ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.sendAction(
-                    content = action?.text.orEmpty(),
-                    actionData = AgentMsgAction(
-                        actionCode = action?.actionCode,
-                        sourceMessageId = item.id,
-                        actionPayloadJson = action?.actionPayload?.let { GsonUtils.toJson(it) },
-                    )
-                )
-            }
-        }
-        // 模拟面试报告 - 面试报告
-        msgAdapter.onInterviewDoneClickAction = { item, action, data ->
-            if (!interceptIfStreaming()) {
-                SimpleBrowserActivity.launch(
-                    requireActivity(),
-                    MOCK_INTERVIEW_RESULT_URL + data?.interviewId + "&interview_mrId=" + data?.mockReportId
-                )
-            }
-        }
-        // 模拟面试报告 - 重新生成
-        msgAdapter.onInterviewRetryClickAction = { _, _, data ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.retryGenerateMockInterviewReport(data?.mockReportId, data?.interviewId)
-            }
-        }
-        // 面试通关包 - 查看报告
-        msgAdapter.onPassPackageDoneClickAction = { item, action, data ->
-            if (!interceptIfStreaming()) {
-                SimpleBrowserActivity.launch(
-                    requireActivity(),
-                    MOCK_PASS_PACKET_RESULT_URL + data?.packageId
-                )
-            }
-        }
-        // 面试通关包 - 重新生成
-        msgAdapter.onPassPackageRetryClickAction = { _, _, data ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.retryGeneratePassPackageReport(data?.packageId)
-            }
-        }
-
-        // 活动卡片当前承接“测薪资”入口，点击后复用底部快捷入口的跳转和埋点。
-        msgAdapter.onActivityClickAction = {
-            if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
-                EventManager.onAppTrack(KLX_CLICK_SALARY_TEST, mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB))
-                SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL/*, title = getString(R.string.home_treasury_salary_check)*/)
-            }
-        }
-
-        // 补问卡动作按钮（如跳过）：actionCode 取自 payload action
-        msgAdapter.onDefaultActionClickAction = { item, action, queueId ->
-            if (!interceptIfStreaming()) {
-                forceScrollToBottom = true
-                mRealVM.sendAction(
-                    content = action.text.orEmpty(),
-                    actionData = AgentMsgAction(
-                        questionQueueId = queueId,
-                        actionCode = action.actionCode,
-                        sourceMessageId = item.id,
-                        actionPayloadJson = action.actionPayload?.let { GsonUtils.toJson(it) },
-                    )
-                )
-            }
-        }
-        // 补问卡选项点击：actionCode 取自 payload option（如 QUESTION_OPTION_SUBMIT），actionPayload 原样回传
-        msgAdapter.onQuestionOptionClickAction = { item, option, queueId ->
-            if (!interceptIfStreaming()) {
-                val payload = item.metaData?.let {
-                    runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
-                }
-                forceScrollToBottom = true
-                mRealVM.sendAction(
-                    content = option.text ?: option.label.orEmpty(),
-                    actionData = AgentMsgAction(
-                        questionQueueId = queueId,
-                        actionCode = option.actionCode,
-                        sourceMessageId = item.id,
-                        actionPayloadJson = option.actionPayload?.let { GsonUtils.toJson(it) },
-                    )
-                )
-                if (payload?.isJobStatus() ?: false) {// 求职状态
-                    mRealVM.jobStatusResult.value = mRealVM.jobStatusResult.value?.copy(displayValue = option.text) //先本来更新更新状态
-                   // mRealVM.queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS) //然后请求更新状态
-                }
-                onTrackingEvent(payload  = payload)
-            }
-        }
-        // 文本补问卡点击“重新回答”时，聚焦底部输入框并拉起输入法
-        msgAdapter.onQuestionInputClickAction = { item, action, queueId ->
-            if (!interceptIfStreaming()) {
-                mCurrentMessage = item
-                mCurrentAction = action
-                mCurrentQuestionId = queueId
-                isReplyMode = true
-                isVoiceInputMode = false
-                binding.layoutReanswer.visible()
-                binding.layoutSend.setCorners(20f)
-                binding.etSend.setText(action.actionPayload?.skipBubbleText?:"")
-                binding.etSend.setSelection(binding.etSend.text.length)
-                updateInputModeView()
-                binding.etSend.post {
-                    binding.etSend.requestFocus()
-                    binding.etSend.setSelection(binding.etSend.text?.length ?: 0)
-                    KeyboardUtils.showKeyboard(binding.etSend)
-                }
-            }
-        }
-        // 补问卡动作按钮：actionCode 取自 payload action
-        msgAdapter.onQuestionActionClickAction = { item, action, queueId ->
-            if (!interceptIfStreaming()) {
-                val payload = item.metaData?.let {
-                    mCurrentMessage = item
-                    mCurrentAction = action
-                    mCurrentQuestionId = queueId
-                    runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
-                }
-                if (payload?.isLocationCity() ?: false) {// 现居住城市
-                    JobCitySelectorActivity.start(activity, JobCityQueryBody.LOCATION)
-                } else if (payload?.isExpectedCity() ?: false) { //意向城市
-                    JobCitySelectorActivity.start(activity, JobCityQueryBody.EXPECTED_CITY)
-                } else if (payload?.isJobIntention() ?: false) { //意向岗位
-                    JobSelectionActivity.start(activity,true,mRealVM.sessionId,mRealVM.conversationId, multipleNum = 10)
-                } else if (payload?.isExpectedIndustry() ?: false) { //期望行业
-                    IndustrySelectionActivity.start(activity, true, mRealVM.sessionId,mRealVM.conversationId)
-                }  else if (payload?.isWelfarePreference() ?: false) { //福利偏好
-                    JobWelfareSelectorActivity.start(activity, mRealVM.sessionId, mRealVM.conversationId)
-                } else if (payload?.isBirthday() ?: false) { //出生年月
-                    BirthYearMonthPickerDialog.show(
-                        manager = childFragmentManager,
-                        maxTimestamp = 1767143497521,
-                        selectedYear = 2000,
-                        selectedMonth = 1,
-                        title = "出生年月",
-                        onConfirmWithTimestamp = { year, month, _ ->
-                            FlowEventBus.postSticky(Events.ClawAgentEvent("$year-$month"))
-                        }
-                    )
-                } else if (payload?.isExpectedSalary() ?: false) { //薪资范围
-                    SalaryRangePickerDialog.show(
-                        manager = childFragmentManager
-                    ) { minSalary, maxSalary ->
-                        val salaryPayloadJson = SalaryRangePayload.fromPicker(minSalary, maxSalary).toJson()
-                        FlowEventBus.postSticky(Events.ClawAgentEvent(salaryPayloadJson,AppEvent.KLX_C_EXPECTED_SALARY_COMPLETED))
-                    }
-                } else if (payload?.isWorkExperience() ?: false) { //工作经历
-                    if(mRealVM.currentRequestId.isNullOrEmpty()){
-                        mRealVM.currentRequestId = UUID.randomUUID().toString()
-                    }
-                    WorkExperienceDialog.show(
-                        manager = childFragmentManager,
-                        questionQueueId = queueId,
-                        attributeGroupCode = payload.attributeGroupCode,
-                        clientRequestId = mRealVM.currentRequestId,
-                        sessionId = mRealVM.sessionId,
-                        conversationId = mRealVM.conversationId,
-                        onCompleteClick = { ->
-                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                        }
-                    )
-                } else if (payload?.isEducationInfo() ?: false) { //教育经历
-                    if(mRealVM.currentRequestId.isNullOrEmpty()){
-                        mRealVM.currentRequestId = UUID.randomUUID().toString()
-                    }
-                    EducationExperienceDialog.show(
-                        manager = childFragmentManager,
-                        questionQueueId = queueId,
-                        attributeGroupCode = payload.attributeGroupCode,
-                        clientRequestId = mRealVM.currentRequestId,
-                        sessionId = mRealVM.sessionId,
-                        conversationId = mRealVM.conversationId,
-                        onCompleteClick = { ->
-                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                        }
-                    )
-                } else if (payload?.isProjectExperience() ?: false) { //项目经历
-                    if(mRealVM.currentRequestId.isNullOrEmpty()){
-                        mRealVM.currentRequestId = UUID.randomUUID().toString()
-                    }
-                    ProjectExperienceDialog.show(
-                        manager = childFragmentManager,
-                        questionQueueId = queueId,
-                        attributeGroupCode = payload.attributeGroupCode,
-                        clientRequestId = mRealVM.currentRequestId,
-                        sessionId = mRealVM.sessionId,
-                        conversationId = mRealVM.conversationId,
-                        onCompleteClick = { ->
-                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                        }
-                    )
-                } else if (payload?.isSkills() ?: false) { //技能
-                    if(mRealVM.currentRequestId.isNullOrEmpty()){
-                        mRealVM.currentRequestId = UUID.randomUUID().toString()
-                    }
-                    CertificateSkillsAwardsDialog.show(
-                        manager = childFragmentManager,
-                        type = payload.attributeGroupCode ?: "",
-                        questionQueueId = queueId,
-                        attributeGroupCode = payload.attributeGroupCode,
-                        clientRequestId = mRealVM.currentRequestId,
-                        sessionId = mRealVM.sessionId,
-                        conversationId = mRealVM.conversationId,
-                        onCompleteClick = { ->
-                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                        }
-                    )
-                } else if (payload?.isCertificates() ?: false) { //证书
-                    if(mRealVM.currentRequestId.isNullOrEmpty()){
-                        mRealVM.currentRequestId = UUID.randomUUID().toString()
-                    }
-                    CertificateSkillsAwardsDialog.show(
-                        manager = childFragmentManager,
-                        type = payload.attributeGroupCode ?: "",
-                        questionQueueId = queueId,
-                        attributeGroupCode = payload.attributeGroupCode,
-                        clientRequestId = mRealVM.currentRequestId,
-                        sessionId = mRealVM.sessionId,
-                        conversationId = mRealVM.conversationId,
-                        onCompleteClick = { ->
-                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                        }
-                    )
-                } else if (payload?.isAwards() ?: false) { //奖项
-                    if(mRealVM.currentRequestId.isNullOrEmpty()){
-                        mRealVM.currentRequestId = UUID.randomUUID().toString()
-                    }
-                    CertificateSkillsAwardsDialog.show(
-                        manager = childFragmentManager,
-                        type = payload.attributeGroupCode ?: "",
-                        questionQueueId = queueId,
-                        attributeGroupCode = payload.attributeGroupCode,
-                        clientRequestId = mRealVM.currentRequestId,
-                        sessionId = mRealVM.sessionId,
-                        conversationId = mRealVM.conversationId,
-                        onCompleteClick = { ->
-                            FlowEventBus.postSticky(Events.ClawAgentEvent(null))
-                        }
-                    )
-                }  else {
-                    startMsgAction(item, action, queueId)
-                }
-                onTrackingEvent(payload = payload)
-            }
-        }
         // 无感知加载：向上滚动到接近顶部时提前预取更早历史（DiffUtil 顶部静默插入，不出现下拉转圈）
         binding.rvMsg.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
@@ -587,6 +262,303 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         ).also { it.attach() }
     }
 
+    private fun observeItemEvents() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            itemEvents.events.collect(::handleItemEvent)
+        }
+    }
+
+    private fun observeUiEffects() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mRealVM.uiEffects.collect(::handleUiEffect)
+            }
+        }
+    }
+
+    private fun handleUiEffect(effect: ClawAgentUiEffect) {
+        when (effect) {
+            is ClawAgentUiEffect.ShowStreamError -> {
+                if (canShowStreamErrorToast()) {
+                    showMessage(effect.error.message ?: "对话出错")
+                }
+            }
+
+            is ClawAgentUiEffect.ShowMemoryConfirm -> {
+                memoryPopupCoordinator.show(effect.message, binding.root)
+            }
+            ClawAgentUiEffect.ShowNotificationSwitch -> showNotificationSwitchDialog()
+            ClawAgentUiEffect.ShowHelpYouFindJob -> showHelpYouFindJobDialog()
+
+            is ClawAgentUiEffect.ShowInterviewRecovery -> {
+                if (effect.data.hasUnfinished == true) {
+                    showInterviewRecoverDialog(effect.data.interviewId)
+                }
+            }
+
+            is ClawAgentUiEffect.HandleInterviewStart -> {
+                when {
+                    effect.data?.isDeductSuccess() == true -> {
+                        InterviewActivity.start(requireActivity(), effect.data.interviewId)
+                    }
+
+                    effect.data?.isDeductFailed() == true -> showInsufficientShrimpDialog()
+                    else -> showMessage(effect.data?.message ?: "模拟面试创建失败")
+                }
+            }
+
+            is ClawAgentUiEffect.HandleCompanyBackgroundPreCheck -> {
+                when (effect.data?.errorCode) {
+                    ERROR_CODE_NOT_COMPANY -> {
+                        showToast(R.string.str_agent_company_background_error_not_company)
+                    }
+
+                    ERROR_CODE_POINTS_INSUFFICIENT -> {
+                        showToast(R.string.str_agent_company_background_error_points_insufficient)
+                    }
+
+                    ERROR_CODE_MODEL_FAILED -> {
+                        showToast(R.string.str_agent_company_background_error_model_failed)
+                    }
+
+                    else -> showToast(R.string.str_agent_company_background_precheck_failed)
+                }
+                if (effect.data?.errorCode == ERROR_CODE_POINTS_INSUFFICIENT) {
+                    showInsufficientShrimpDialog()
+                }
+            }
+
+            is ClawAgentUiEffect.OpenInterviewPassPackage -> {
+                val url = if (effect.data?.resumeCheckId == null) {
+                    Constants.PASS_PACKAGE_INDEX_URL
+                } else {
+                    "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${effect.data.resumeCheckId}"
+                }
+                SimpleBrowserActivity.launch(requireActivity(), url)
+            }
+        }
+    }
+
+    private fun handleItemEvent(event: ClawAgentItemEvent) {
+        when (event) {
+            is ClawAgentItemEvent.UploadResume -> {
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_UPLOAD_RESUME)) {
+                    onTrackingEvent(
+                        trackingType = if (event.reUpload) {
+                            TrackingType.UPLOAD_RESUME_RETRY
+                        } else {
+                            TrackingType.UPLOAD_RESUME
+                        }
+                    )
+                    showUploadResumeDialog(event.item)
+                }
+            }
+
+            is ClawAgentItemEvent.ResumeConfirm -> handleResumeConfirm(event)
+
+            is ClawAgentItemEvent.CompanyStart -> {
+                if (!interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.submitCompanyBackgroundPreCheck(event.data.companyId)
+                }
+            }
+
+            is ClawAgentItemEvent.CompanyDone -> {
+                if (!interceptIfStreaming()) {
+                    SimpleBrowserActivity.launch(
+                        requireActivity(),
+                        COMPANY_BACKGROUND_RESULT_URL + event.data?.reportId,
+                    )
+                }
+            }
+
+            is ClawAgentItemEvent.CompanyRetry -> {
+                if (!interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.retryGenerateCompanyBackgroundReport(event.data?.reportId)
+                }
+            }
+
+            is ClawAgentItemEvent.InterviewStart -> {
+                if (!interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.startInterview(
+                        event.data?.entryMessageId,
+                        event.data?.entrySource,
+                        event.data?.resumeId,
+                    )
+                }
+            }
+
+            is ClawAgentItemEvent.InterviewNotNeed -> {
+                if (!interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.sendAction(
+                        content = event.action?.text.orEmpty(),
+                        actionData = AgentMsgAction(
+                            actionCode = event.action?.actionCode,
+                            sourceMessageId = event.item.id,
+                            actionPayloadJson = event.action?.actionPayload?.let { GsonUtils.toJson(it) },
+                        )
+                    )
+                }
+            }
+
+            is ClawAgentItemEvent.InterviewDone -> {
+                if (!interceptIfStreaming()) {
+                    SimpleBrowserActivity.launch(
+                        requireActivity(),
+                        MOCK_INTERVIEW_RESULT_URL + event.data?.interviewId +
+                            "&interview_mrId=" + event.data?.mockReportId,
+                    )
+                }
+            }
+
+            is ClawAgentItemEvent.InterviewRetry -> {
+                if (!interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.retryGenerateMockInterviewReport(
+                        event.data?.mockReportId,
+                        event.data?.interviewId,
+                    )
+                }
+            }
+
+            is ClawAgentItemEvent.PassPackageDone -> {
+                if (!interceptIfStreaming()) {
+                    SimpleBrowserActivity.launch(
+                        requireActivity(),
+                        MOCK_PASS_PACKET_RESULT_URL + event.data?.packageId,
+                    )
+                }
+            }
+
+            is ClawAgentItemEvent.PassPackageRetry -> {
+                if (!interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.retryGeneratePassPackageReport(event.data?.packageId)
+                }
+            }
+
+            is ClawAgentItemEvent.ActivityClick -> {
+                if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_SALARY_TEST)) {
+                    EventManager.onAppTrack(
+                        KLX_CLICK_SALARY_TEST,
+                        mutableMapOf(KLX_ENTRY_SOURCE to XIAOXIA_TAB),
+                    )
+                    SimpleBrowserActivity.launch(requireActivity(), Constants.SALARY_URL)
+                }
+            }
+
+            is ClawAgentItemEvent.DefaultAction -> {
+                if (!interceptIfStreaming()) {
+                    forceScrollToBottom = true
+                    mRealVM.sendAction(
+                        content = event.action.text.orEmpty(),
+                        actionData = AgentMsgAction(
+                            questionQueueId = event.questionQueueId,
+                            actionCode = event.action.actionCode,
+                            sourceMessageId = event.item.id,
+                            actionPayloadJson = event.action.actionPayload?.let { GsonUtils.toJson(it) },
+                        )
+                    )
+                }
+            }
+
+            is ClawAgentItemEvent.QuestionOption -> handleQuestionOption(event)
+            is ClawAgentItemEvent.QuestionInput -> handleQuestionInput(event)
+            is ClawAgentItemEvent.QuestionAction -> handleQuestionAction(event)
+        }
+    }
+
+    private fun handleResumeConfirm(event: ClawAgentItemEvent.ResumeConfirm) {
+        if (interceptIfStreaming()) return
+        // 保留旧实现按 forceScrollToBottom 判断埋点类型的行为，不在本次重构中修正业务语义。
+        onTrackingEvent(
+            trackingType = if (forceScrollToBottom) {
+                TrackingType.RESUME_CONFIRM
+            } else {
+                TrackingType.RESUME_DENY
+            }
+        )
+        forceScrollToBottom = true
+        val payload = event.item.metaData?.let {
+            runCatching { GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java) }.getOrNull()
+        }
+        val payloadMap = buildMap {
+            payload?.resumeId?.let { put("resumeId", it) }
+            payload?.resumeStructId?.let { put("resumeStructId", it) }
+            payload?.resumeTaskId?.let { put("resumeTaskId", it) }
+        }
+        mRealVM.sendAction(
+            content = getString(
+                if (event.confirmed) R.string.confirm_my_resume else R.string.not_my_resume
+            ),
+            actionData = AgentMsgAction(
+                actionCode = (
+                    if (event.confirmed) CandidateJobAgentClientActionEnum.RESUME_CONFIRM_YES
+                    else CandidateJobAgentClientActionEnum.RESUME_CONFIRM_NO
+                    ).name,
+                sourceMessageId = event.item.id,
+                actionPayloadJson = payloadMap.takeIf { it.isNotEmpty() }?.let { GsonUtils.toJson(it) },
+            )
+        )
+    }
+
+    private fun handleQuestionOption(event: ClawAgentItemEvent.QuestionOption) {
+        if (interceptIfStreaming()) return
+        val payload = event.item.metaData?.let {
+            runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
+        }
+        forceScrollToBottom = true
+        mRealVM.sendAction(
+            content = event.option.text ?: event.option.label.orEmpty(),
+            actionData = AgentMsgAction(
+                questionQueueId = event.questionQueueId,
+                actionCode = event.option.actionCode,
+                sourceMessageId = event.item.id,
+                actionPayloadJson = event.option.actionPayload?.let { GsonUtils.toJson(it) },
+            )
+        )
+        if (payload?.isJobStatus() ?: false) {
+            mRealVM.updateJobStatusDisplayValue(event.option.text)
+        }
+        onTrackingEvent(payload = payload)
+    }
+
+    private fun handleQuestionInput(event: ClawAgentItemEvent.QuestionInput) {
+        if (interceptIfStreaming()) return
+        mCurrentMessage = event.item
+        mCurrentAction = event.action
+        mCurrentQuestionId = event.questionQueueId
+        isReplyMode = true
+        isVoiceInputMode = false
+        binding.layoutReanswer.visible()
+        binding.layoutSend.setCorners(20f)
+        binding.etSend.setText(event.action.actionPayload?.skipBubbleText ?: "")
+        binding.etSend.setSelection(binding.etSend.text.length)
+        updateInputModeView()
+        binding.etSend.post {
+            binding.etSend.requestFocus()
+            binding.etSend.setSelection(binding.etSend.text?.length ?: 0)
+            KeyboardUtils.showKeyboard(binding.etSend)
+        }
+    }
+
+    private fun handleQuestionAction(event: ClawAgentItemEvent.QuestionAction) {
+        if (interceptIfStreaming()) return
+        val payload = event.item.metaData?.let {
+            mCurrentMessage = event.item
+            mCurrentAction = event.action
+            mCurrentQuestionId = event.questionQueueId
+            runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
+        }
+        if (!questionActionCoordinator.handle(payload, event.questionQueueId)) {
+            startMsgAction(event.item, event.action, event.questionQueueId)
+        }
+        onTrackingEvent(payload = payload)
+    }
+
     private fun initObserve() {
         mRealVM.messageList.observe(viewLifecycleOwner) { list ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
@@ -629,62 +601,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         mRealVM.activityStatus.observe(viewLifecycleOwner) {
             refreshActivityCard()
         }
-        mRealVM.streamError.observe(viewLifecycleOwner) { e ->
-            e ?: return@observe
-            if (!canShowStreamErrorToast()) {
-                mRealVM.streamError.value = null
-                return@observe
-            }
-            showMessage(e.message ?: "对话出错")
-            mRealVM.streamError.value = null
-        }
-        // 收到属性确认卡：弹出记忆确认弹窗（一次性事件，消费后置空防重入）
-        mRealVM.attributeConfirmPopup.observe(viewLifecycleOwner) { info ->
-            info ?: return@observe
-            showMemoryCardPopup(info)
-            mRealVM.attributeConfirmPopup.value = null
-        }
-        // 达到开启消息通知弹窗
-        mRealVM.understandingSummaryDialog.observe(viewLifecycleOwner) { info ->
-            info ?: return@observe
-            showNotificationSwitchDialog()
-            mRealVM.understandingSummaryDialog.value = null
-        }
-        // 达到帮你找工作弹窗
-        mRealVM.helpYouFindJobDialog.observe(viewLifecycleOwner) { info ->
-            info ?: return@observe
-            showHelpYouFindJobDialog()
-        }
-
-        // 模拟面试查询未
-        mRealVM.interviewUnfinishedResult.observe(this) {
-            val data = it ?: return@observe
-            mRealVM.interviewUnfinishedResult.value = null
-            if (data.hasUnfinished == true) {
-                showInterviewRecoverDialog(data.interviewId)
-            }
-        }
-        mRealVM.interviewStartResult.observe(this) {
-            if (it?.isDeductSuccess() == true) {
-                InterviewActivity.start(requireActivity(), it.interviewId)
-            } else if(it?.isDeductFailed() == true){
-                showInsufficientShrimpDialog()
-            } else{
-                showMessage(it?.message ?: "模拟面试创建失败")
-            }
-        }
-        //公司背调 - 前置校验失败提示：优先展示后端 errorMessage，兜底使用文档约定 errorCode 对应文案。
-        mRealVM.companyBackgroundResult.observe(this) {
-            when (it?.errorCode) {
-                ERROR_CODE_NOT_COMPANY -> showToast(R.string.str_agent_company_background_error_not_company)
-                ERROR_CODE_POINTS_INSUFFICIENT -> showToast(R.string.str_agent_company_background_error_points_insufficient)
-                ERROR_CODE_MODEL_FAILED -> showToast(R.string.str_agent_company_background_error_model_failed)
-                else -> showToast( R.string.str_agent_company_background_precheck_failed)
-            }
-            if (it?.errorCode == ERROR_CODE_POINTS_INSUFFICIENT) {
-                showInsufficientShrimpDialog()
-            }
-        }
         // 监听求职状态属性，使用线上简历属性接口结果同步顶部状态展示
         mRealVM.jobStatusResult.observe(this) { data ->
             val statusCode = data?.options.orEmpty().firstOrNull { it.name == data?.displayValue }?.code
@@ -694,15 +610,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 "AVAILABLE_IMMEDIATELY", "AVAILABLE_WITHIN_MONTH", "OPEN_TO_OPPORTUNITY" -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_15D173)).setUseShape()
                 else -> binding.tvAgentStatus.setShapeSolidColor(requireActivity().getColor(R.color.color_ff8D28)).setUseShape()
             }
-        }
-        //面试通关包
-        mRealVM.interviewPassPackageResumeStatus.observe(this) { data ->
-            val url = if (data?.resumeCheckId == null) {
-                Constants.PASS_PACKAGE_INDEX_URL
-            } else {
-                "${Constants.PASS_PACKAGE_INDEX_URL}&resumeCheckId=${data?.resumeCheckId}"
-            }
-            SimpleBrowserActivity.launch(requireActivity(), url)
         }
     }
 
@@ -719,8 +626,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                         }
                     }
                     Events.UserChangedEvent.SIGN_OUT -> {
-                        mRealVM.hardPreMsgListCard(insertPreCard())
-                        mRealVM.sessionData.value = mRealVM.sessionData.value?.copy(jobSearchStatus = null) //清除求职状态
+                        mRealVM.showLocalMessageCards(insertPreCard())
+                        mRealVM.clearSessionJobSearchStatus()
                     }
                 }
             }
@@ -852,7 +759,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         mRealVM.getAgentModuleList()
         mRealVM.queryActivityStatus()
         if (User.get().isVisitor) {
-            mRealVM.hardPreMsgListCard(insertPreCard())
+            mRealVM.showLocalMessageCards(insertPreCard())
         } else {
             mRealVM.enterSession()
         }
@@ -969,7 +876,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             ))
         }
         // 目标列表没变化时不重复提交，避免 RecyclerView 做无意义刷新。
-        if (currentList != targetList) mRealVM.hardPreMsgListCard(targetList)
+        if (currentList != targetList) mRealVM.showLocalMessageCards(targetList)
     }
 
     /**
@@ -997,22 +904,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
      */
     private fun  uploadResumePullMessages(){
         uploadResumeDialog?.dismissAllowingStateLoss()
-        // 上传简历通知拉取
-        if (User.get().isVisitor) return@uploadResumePullMessages
-        if (mRealVM.hasInitSession.value == true) {
-            mRealVM.pullMessages(mRealVM.getLastMessageCursor())
-            resumeEventPullJob?.cancel()
-            resumeEventPullJob = lifecycleScope.launch {
-                val startTime = System.currentTimeMillis()
-                while (!User.get().isVisitor
-                    && mRealVM.hasInitSession.value == true
-                    && System.currentTimeMillis() - startTime < BaseClawAgentFragment.RESUME_EVENT_POLL_TIMEOUT
-                ) {
-                    delay(BaseClawAgentFragment.RESUME_EVENT_POLL_INTERVAL)
-                    mRealVM.pullMessages(mRealVM.getLastMessageCursor())
-                }
-            }
-        }
+        mRealVM.startResumeMessagePolling()
     }
 
     /**
@@ -1048,7 +940,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     private fun showHelpYouFindJobDialog() {
         ClawAgentJobRecommendationDialog(requireContext()).apply {
             onDismissListener = {
-                mRealVM.helpYouFindJobDialog.value = null
                 mRealVM.pullMessages()
                 FlowEventBus.postSticky(Events.OpportunityJobUpCompletedEvent())
             }
@@ -1111,7 +1002,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
                 )
             }
         },{
-            mRealVM.resumeCode.value = it
+            mRealVM.setResumeCode(it)
         })
     }
 
@@ -1134,141 +1025,12 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         }.showDialog(binding.tvAgentDesc)
     }
 
-    // 记忆卡片
-    private var popup: PopupWindow? = null
-
-    /** 记忆卡片弹出后自动确认的延时任务（手动点击或关闭时取消，避免重复触发） */
-    private var autoConfirmJob: Job? = null
-
-    private fun showMemoryCardPopup(item: ClawAgentMessageInfo) {
-        dismissMemoryCard()
-        val payload = item.metaData?.let {
-            runCatching { GsonUtils.fromJson(it, AttributeConfirmPayloadBean::class.java) }.getOrNull()
-        }
-        val queueId = payload?.questionQueueId
-        val contentView = LayoutInflater.from(context).inflate(R.layout.popup_memory_card_select, null, false)
-        val contentTv = contentView.findViewById<TextView>(R.id.tv_content)
-        val confirmBtn = contentView.findViewById<TextView>(R.id.tv_confirm)
-        val negationBtn = contentView.findViewById<TextView>(R.id.tv_negation)
-        val jumpMemory = contentView.findViewById<TextView>(R.id.tv_all_memory)
-
-        val spanUtils = SpanUtils.with(contentTv)
-        if (payload?.confirmationItems.isNullOrEmpty()) {
-            // 单个改动，取外层
-            spanUtils.append("${payload?.fieldName}：")
-                .append("${payload?.displayText}")
-                .setForegroundColor(R.color.color_90_000000.getResColor())
-                .setBold()
-        } else {
-            // 多个改动，取里层
-            val confirmationItems = payload.confirmationItems
-            val size = confirmationItems.size
-            confirmationItems.forEachIndexed { index, actionItem ->
-                spanUtils.append("${actionItem.fieldName}：")
-                    .append("${actionItem.displayText}")
-                    .setForegroundColor(R.color.color_90_000000.getResColor())
-                    .setBold()
-                // 添加换行
-                if (index < size - 1) {
-                    spanUtils.append("\n")
-                }
-            }
-        }
-
-        spanUtils.create()
-
-        jumpMemory.setOnSingleClickListener {
-            if(!AppNavigator.checkLoginIntercepted(false)){
-                OnlineResumeActivity.start(requireActivity(),0)
-            }
-        }
-
-        // 根据后台消息设置卡片按钮文案
-        payload?.actions?.forEach { action ->
-            when (action.actionCode) {
-                CandidateJobAgentClientActionEnum.ATTRIBUTE_CONFIRM.name -> {
-                    confirmBtn.text = "${action.text ?: R.string.str_agent_memory_confirm.getResString()}"
-                }
-                CandidateJobAgentClientActionEnum.ATTRIBUTE_REJECT.name -> {
-                    negationBtn.text = "${action.text ?: R.string.str_agent_memory_negation.getResString()}"
-                }
-            }
-        }
-
-        // 确认：ATTRIBUTE_CONFIRM
-        confirmBtn.setOnClickListener {
-            forceScrollToBottom = true
-            val str = R.string.str_agent_memory_confirm.getResString()
-            mRealVM.sendAction(
-                content = str,
-                actionData = AgentMsgAction(
-                    actionCode = CandidateJobAgentClientActionEnum.ATTRIBUTE_CONFIRM.name,
-                    sourceMessageId = item.id,
-                    questionQueueId = queueId,
-                    actionPayloadJson = buildAttributeActionPayload(payload, str),
-                )
-            )
-            dismissMemoryCard()
-        }
-        // 拒绝：ATTRIBUTE_REJECT
-        negationBtn.setOnClickListener {
-            forceScrollToBottom = true
-            val str = R.string.str_agent_memory_negation.getResString()
-            mRealVM.sendAction(
-                content = str,
-                actionData = AgentMsgAction(
-                    actionCode = CandidateJobAgentClientActionEnum.ATTRIBUTE_REJECT.name,
-                    sourceMessageId = item.id,
-                    questionQueueId = queueId,
-                    actionPayloadJson = buildAttributeActionPayload(payload, str),
-                )
-            )
-            dismissMemoryCard()
-        }
-        contentView.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED)
-        popup = PopupWindow(context)
-        popup?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-        popup?.contentView = contentView
-        popup?.width = ScreenUtils.getScreenWidth()
-        popup?.height = ViewGroup.LayoutParams.WRAP_CONTENT
-        popup?.isFocusable = false
-        popup?.isOutsideTouchable = false
-        popup?.showAtLocation(binding.root, Gravity.TOP, 0, 0)
-
-        // 弹出 5s 后自动触发"确认"事件并关闭弹窗（随 view 生命周期取消）
-        autoConfirmJob?.cancel()
-        autoConfirmJob = viewLifecycleOwner.lifecycleScope.launch {
-            delay(BaseClawAgentFragment.MEMORY_CARD_WAIT_TIME)
-            confirmBtn.performClick()
-        }
-    }
-
-    /** 组装属性确认动作回传 payload：questionQueueId / 分组 / 元属性 / 候选值 + 选择文案 */
-    private fun buildAttributeActionPayload(payload: AttributeConfirmPayloadBean?, selectedText: String): String {
-        val map = buildMap {
-            payload?.questionQueueId?.let { put("questionQueueId", it) }
-            payload?.attributeGroupCode?.let { put("attributeGroupCode", it) }
-            payload?.metaCode?.let { put("metaCode", it) }
-            payload?.confirmMode?.let { put("confirmMode", it) }
-//            payload?.candidateValue?.let { put("candidateValue", it) }
-            put("selectedText", selectedText)
-        }
-        return GsonUtils.toJson(map)
-    }
-
-    private fun dismissMemoryCard() {
-        autoConfirmJob?.cancel()
-        autoConfirmJob = null
-        popup?.dismiss()
-        popup = null
-    }
 
     override fun onDestroyView() {
         imeAnimationCoordinator?.release()
         imeAnimationCoordinator = null
         isScrollBottomKeyboardShowing = false
-        resumeEventPullJob?.cancel()
-        resumeEventPullJob = null
+        mRealVM.stopResumeMessagePolling()
         agentStatusPopup?.dismiss()
         agentStatusPopup = null
         super.onDestroyView()

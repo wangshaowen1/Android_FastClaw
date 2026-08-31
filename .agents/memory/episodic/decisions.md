@@ -204,3 +204,14 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 已静态确认旧图片处理 API 和 Room KAPT 配置无残留，FastClaw 包名、动态域名字段、IM/支付初始化顺序保持不变；按项目规则未运行 Gradle，待本地构建与图片加载回归。
+
+## 本轮 ClawAgent 页面 MVVM 职责收敛
+
+### 变更了什么
+`ClawAgentMsgAdapter` 的多类型 item 事件统一改由现有 `ItemEventsViewModel<ClawAgentItemEvent>` 转发，公司搜索结果保留单回调；`ClawAgentViewModel` 的一次性页面动作改为局部 `ClawAgentUiEffect`，稳定状态只读暴露。消息存储与映射、补问选择器路由、记忆卡弹窗分别拆为单职责协作类，简历恢复消息轮询迁入 ViewModel。
+
+### 为什么
+避免 Adapter 暴露大量零散回调、Fragment 反向清空 ViewModel 事件和页面直接持有长任务，同时不向公共 `BaseViewModel` 增加 ClawAgent 专属 UIEvent，也不新增契约接口。
+
+### 验证结论
+静态确认 16 类 ItemEvent 均有发送与消费、8 类 UiEffect 均有消费，旧一次性 LiveData、Adapter 多事件回调和 Fragment 对 ViewModel 状态的反向写入无残留；`git diff --check` 无空白错误。用户已完成构建和运行验证，未发现业务异常。

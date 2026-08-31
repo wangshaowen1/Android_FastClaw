@@ -106,12 +106,6 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         /** 键盘收起时底部输入栏的基础底部间距，单位 dp。 */
         const val KEYBOARD_BASE_BOTTOM_OFFSET = 95
 
-        /** 首页恢复后补拉消息的轮询间隔，单位毫秒。 */
-        const val RESUME_EVENT_POLL_INTERVAL = 10000L
-
-        /** 首页恢复后补拉消息的最长轮询时长，单位毫秒。 */
-        const val RESUME_EVENT_POLL_TIMEOUT = 60000L
-
         /** 语音输入最短有效按压时长。 */
         private const val MIN_VOICE_INPUT_DURATION_MS = 1000L
 

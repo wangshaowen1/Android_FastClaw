@@ -1,14 +1,15 @@
 package com.shiyuan.fastclaw.feature.clawagent
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.showToast
-import com.shiyuan.fastclaw.BuildConfig
 import com.shiyuan.fastclaw.common.utils.LogUtils
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
+import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.PollingState
 import com.shiyuan.fastclaw.core.ext.launch
 import com.shiyuan.fastclaw.core.ext.launchPolling
@@ -42,37 +43,30 @@ import com.shiyuan.fastclaw.core.network.apis.request.SESSION_PAGE_SIZE
 import com.shiyuan.fastclaw.core.network.apis.request.SessionEnterBody
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.core.network.apis.response.ActionSubmitData
-import com.shiyuan.fastclaw.core.network.apis.response.ActivityPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ActivityStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeArrayQueryData
-import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyInfo
-import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheckResultData
-import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.ConversationQueryData
-import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CurrentResumeData
-import com.shiyuan.fastclaw.core.network.apis.response.PassPackageReportPayloadBean
-import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentMessage
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePageData
 import com.shiyuan.fastclaw.core.network.apis.response.MessagePullData
-import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewForceCancelData
-import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloadBean
-import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
-import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
 import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
-import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.ClawAgentSseProcessor
 import com.shiyuan.fastclaw.core.response
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
@@ -83,13 +77,16 @@ import java.util.UUID
 class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 流是否正在输出中 */
-    val streaming = MutableLiveData<Boolean>(false)
+    private val _streaming = MutableLiveData(false)
+    val streaming: LiveData<Boolean> = _streaming
 
-    /** 流式错误（一次性） */
-    val streamError = MutableLiveData<Throwable?>()
+    /** 页面一次性效果；使用缓冲 Channel，避免 LiveData 重放和页面反向清空。 */
+    private val _uiEffects = Channel<ClawAgentUiEffect>(Channel.BUFFERED)
+    val uiEffects = _uiEffects.receiveAsFlow()
 
     /** 进入/恢复会话返回的数据（会话状态 + 历史消息） */
-    val sessionData = MutableLiveData<SessionEnterData?>()
+    private val _sessionData = MutableLiveData<SessionEnterData?>()
+    val sessionData: LiveData<SessionEnterData?> = _sessionData
 
     /** 查询通信会话返回的数据（实例/对话/流式请求状态） */
     val conversationData = MutableLiveData<ConversationQueryData?>()
@@ -104,12 +101,14 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     val pulledMessages = MutableLiveData<MessagePullData?>()
 
     /** 渲染用消息列表：已按端侧 itemType 映射并按序号排序，供 [ClawAgentMsgAdapter] submitList */
-    val messageList = MutableLiveData<List<ClawAgentMessageInfo>>()
+    private val _messageList = MutableLiveData<List<ClawAgentMessageInfo>>()
+    val messageList: LiveData<List<ClawAgentMessageInfo>> = _messageList
 
     /**
      * 下拉刷新是否开启
      */
-    val hasCanRefresh = MutableLiveData<Boolean>(false)
+    private val _hasCanRefresh = MutableLiveData(false)
+    val hasCanRefresh: LiveData<Boolean> = _hasCanRefresh
 
     /** 当前可确认简历摘要 */
     val currentResume = MutableLiveData<CurrentResumeData?>()
@@ -120,29 +119,12 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 提交简历上传结果的返回 */
     val resumeUploadResult = MutableLiveData<ResumeUploadSubmitData?>()
 
-    /** 收到 ATTRIBUTE_CONFIRM 卡时触发记忆确认弹窗（一次性事件，携带消息供弹窗解析展示） */
-    val attributeConfirmPopup = MutableLiveData<ClawAgentMessageInfo?>()
-
-    /** 开启消息通知弹窗 */
-    val understandingSummaryDialog = MutableLiveData<ClawAgentMessageInfo?>()
-
-    /** 帮你找工作 */
-    val helpYouFindJobDialog = MutableLiveData<ClawAgentMessageInfo?>()
-
     /** 查询属性数组候选值结果（工作经历/教育经历等表单数据） */
     val attributeArrayResult = MutableLiveData<AttributeArrayQueryData?>()
 
     /** 查询线上简历单个普通属性结果 */
-    val jobStatusResult = MutableLiveData<OnlineResumeAttributeData?>()
-
-    /** 模拟面试启动结果，用于页面进入面试房间或处理启动失败状态。 */
-    val interviewStartResult = MutableLiveData<MockInterviewStartData?>()
-
-    /** 查询可恢复未结束模拟面试结果 */
-    val interviewUnfinishedResult = MutableLiveData<MockInterviewUnfinishedData?>()
-
-    /** 公司背调报告生成前置校验轮询结果 */
-    val companyBackgroundResult = MutableLiveData<CompanyBackgroundPreCheckResultData?>()
+    private val _jobStatusResult = MutableLiveData<OnlineResumeAttributeData?>()
+    val jobStatusResult: LiveData<OnlineResumeAttributeData?> = _jobStatusResult
 
     /** 当前会话 ID，发送消息/提交动作时回传 */
     public var sessionId: String? = null
@@ -162,29 +144,18 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 历史分页：是否正在加载，防并发下拉 */
     private var loadingHistory: Boolean = false
 
-    /** 按消息 ID 去重保存的原始消息，便于增量/历史合并后统一映射并按 sequenceNo 排序 */
-    private val messageStore = LinkedHashMap<String, JobAgentMessage>()
-
     /** 当前 SSE 请求 ID（meta 事件下发），用于取消/断线重连 */
      var currentRequestId: String? = null
 
     /** 当前 SSE 完成后是否需要拉取增量消息兜底 */
     private var shouldPullMessagesOnStreamComplete: Boolean = true
 
-    /** 收到这些卡片类型后，当前 SSE 完成时不再拉取增量消息兜底 */
-    private val skipPullAfterStreamCompleteCardTypes = setOf(CARD_UNDERSTANDING_SUMMARY)
-
     /** 已接收的最后一条 SSE 事件序号，用于断线重连 lastSeq */
     private var lastSeq: Long? = null
 
-    /** 本地乐观插入的用户消息 ID，待服务端回显后把服务端字段填充进同一占位（保留 id） */
-    private val optimisticUserMessageIds = LinkedHashSet<String>()
-
-    /** 服务端用户消息真实 key -> 本地乐观占位 key，避免 SSE 合并后 pull/page 再按真实 messageId 插入重复项 */
-    private val serverUserMessageKeyToLocalKey = HashMap<String, String>()
-
     /** 记录是否初始化会话id, 用于判断是否拉取增量数据 */
-    val hasInitSession = MutableLiveData<Boolean>(false)
+    private val _hasInitSession = MutableLiveData(false)
+    val hasInitSession: LiveData<Boolean> = _hasInitSession
 
     /** 公司背调报告生成结果轮询任务 */
     private var companyBackgroundGeneratePollingJob: Job? = null
@@ -195,24 +166,37 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     /** 面试通关包报告生成状态轮询任务，只保留最后一个轮询 */
     private var passPackageReportPollingJob: Job? = null
 
-    /** 简历上传绑定流程中的临时 code，请求完成后清空，避免重复绑定。 */
-    val resumeCode = MutableLiveData<String?>()
+    /** 简历恢复完成后的消息补拉轮询任务，只保留最后一个轮询。 */
+    private var resumeMessagePollingJob: Job? = null
 
-    /** 面试通关包开始前的简历状态，用于判断是否已有可用简历或需要先上传简历。 */
-    val interviewPassPackageResumeStatus = MutableLiveData<InterviewPassPackageResumeStatusData?>()
+    /** 简历上传绑定流程中的临时 code，请求完成后清空，避免重复绑定。 */
+    private val _resumeCode = MutableLiveData<String?>()
+    val resumeCode: LiveData<String?> = _resumeCode
 
     /** 宝典页业务模块列表，按服务端返回顺序展示底部快捷入口。 */
-    val jobAgentModuleList = MutableLiveData<List<JobAgentModuleData>>()
+    private val _jobAgentModuleList = MutableLiveData<List<JobAgentModuleData>>()
+    val jobAgentModuleList: LiveData<List<JobAgentModuleData>> = _jobAgentModuleList
 
     /** 首页测薪资活动状态，用于游客欢迎卡后是否追加活动卡片。 */
-    val activityStatus = MutableLiveData<ActivityStatusData?>()
+    private val _activityStatus = MutableLiveData<ActivityStatusData?>()
+    val activityStatus: LiveData<ActivityStatusData?> = _activityStatus
+
+    private val messageStore by lazy {
+        ClawAgentMessageStore(
+            onMessagesChanged = { messages ->
+                _messageList.value = messages
+            },
+            onUiEffect = ::emitUiEffect,
+            onMockInterviewReportPolling = ::pollMockInterviewReportProgress,
+            onPassPackageReportPolling = ::pollPassPackageReportProgress,
+        )
+    }
 
     private val sseProcessor by lazy {
         ClawAgentSseProcessor(
             onStart = {
                 shouldPullMessagesOnStreamComplete = true
-                streaming.value = true
-                streamError.value = null
+                _streaming.value = true
             },
             onMeta = { requestId, seq ->
                 // 保存本次请求 ID 与序号，供取消/重连使用
@@ -222,9 +206,10 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             onMessage = { msg ->
                 // 记录游标
                 latestCursor = msg.cursor
-                shouldPullMessagesOnStreamComplete = !msg.shouldSkipPullAfterStreamComplete()
+                shouldPullMessagesOnStreamComplete =
+                    !messageStore.shouldSkipPullAfterStreamComplete(msg)
                 // message/snapshot 是完整消息，按 messageId upsert
-                sseInsertMessages(msg)
+                messageStore.insertSseMessage(msg)
             },
             onPatch = { patch ->
                 // patch 也携带 seq，记录后可用于断线重连 lastSeq。
@@ -232,32 +217,44 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 patch.seq?.let { lastSeq = it }
                 // 目前文档只要求处理 REMOVE：重新回答后移除旧答案气泡和旧下游问题卡。
                 if (patch.patchType == PATCH_TYPE_REMOVE) {
-                    removeMessageById(patch.messageId)
+                    messageStore.removeById(patch.messageId)
                 }
             },
             onDone = { _, seq ->
                 seq?.let { lastSeq = it }
-                streaming.value = false
+                _streaming.value = false
             },
             onComplete = {
-                checkLastMessages()
+                messageStore.removeLastThinkMessage()
                 // 拉取增量消息 前端兜底
                 if (shouldPullMessagesOnStreamComplete) {
                     pullMessages()
                 }
                 shouldPullMessagesOnStreamComplete = true
-                streaming.value = false
+                _streaming.value = false
             },
             onErrorCallback = { e ->
                 shouldPullMessagesOnStreamComplete = true
-                streaming.value = false
-                streamError.value = e
+                _streaming.value = false
+                e?.let { emitUiEffect(ClawAgentUiEffect.ShowStreamError(it)) }
             }
         )
     }
 
     private val sseHandler by lazy {
         RawSSEStreamHandler(viewModelScope, sseProcessor)
+    }
+
+    private fun emitUiEffect(effect: ClawAgentUiEffect) {
+        _uiEffects.trySend(effect)
+    }
+
+    private fun emitSessionNotReady() {
+        emitUiEffect(
+            ClawAgentUiEffect.ShowStreamError(
+                IllegalStateException("会话未就绪，请先进入会话")
+            )
+        )
     }
 
     // region 会话相关
@@ -281,20 +278,20 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             },
             showToast = true,
             onError = {
-                hasCanRefresh.value = true
+                _hasCanRefresh.value = true
             }
         ) {
-            hasInitSession.value = true
+            _hasInitSession.value = true
             val result = this.data ?: return@request
             // 记录会话上下文，供后续发送消息/增量恢复使用
             sessionId = result.sessionId
             conversationId = result.conversationId
             latestCursor = result.latestCursor
-            sessionData.value = result
+            _sessionData.value = result
             val hashMore = result.messages.orEmpty().size >= SESSION_PAGE_SIZE
             queryJobStatus(ATTRIBUTE_GROUP_JOB_STATUS)
 
-            hasCanRefresh.value = result.sessionId.isNullOrBlank() || result.conversationId.isNullOrBlank()
+            _hasCanRefresh.value = result.sessionId.isNullOrBlank() || result.conversationId.isNullOrBlank()
             // 恢复的最近消息为终态数据，过滤掉残留的思考态(think)中间态消息；并在 UPLOAD_RESUME 卡前补自我介绍卡
             val messages = result.messages?.filterNot { it.isThinkMessage() }
             ingestMessages(expandIntroduceBeforeUploadResume(messages, !hashMore))
@@ -341,7 +338,6 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            //streamError.value = IllegalStateException("会话未就绪，请先进入会话")
             return
         }
         request(
@@ -375,6 +371,33 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     /**
+     * 简历恢复完成后立即补拉一次，并在限定时间内继续轮询。
+     * 任务归 ViewModel 持有，页面销毁或账户重置时显式停止。
+     */
+    fun startResumeMessagePolling() {
+        if (User.get().isVisitor || hasInitSession.value != true) return
+        pullMessages(getLastMessageCursor())
+        resumeMessagePollingJob?.cancel()
+        resumeMessagePollingJob = viewModelScope.launch {
+            val startTime = System.currentTimeMillis()
+            while (
+                isActive &&
+                !User.get().isVisitor &&
+                hasInitSession.value == true &&
+                System.currentTimeMillis() - startTime < RESUME_MESSAGE_POLL_TIMEOUT_MS
+            ) {
+                delay(RESUME_MESSAGE_POLL_INTERVAL_MS)
+                pullMessages(getLastMessageCursor())
+            }
+        }
+    }
+
+    fun stopResumeMessagePolling() {
+        resumeMessagePollingJob?.cancel()
+        resumeMessagePollingJob = null
+    }
+
+    /**
      * 加载更早历史消息（向上翻页 /message/page）。同时供「滚动接近顶部的无感知预取」和「下拉手动/重试」调用。
      * 首页用当前最早一条消息的 cursor 作为 beforeCursor，之后沿用服务端返回的 nextBeforeCursor；
      */
@@ -394,7 +417,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         }
         loadingHistory = true
         val beforeCursor = historyBeforeCursor
-            ?: messageStore.values.minByOrNull { it.sequenceNo ?: Long.MAX_VALUE }?.cursor
+            ?: messageStore.oldestCursor()
         // 用 invokeOnCompletion 兜底复位：业务错误走 request 的 onError，但 IO/解析异常被基础库 launch 的
         // CoroutineExceptionHandler 直接吞掉，不会回到这里的 onError，导致 loadingHistory 卡死
         request(
@@ -431,508 +454,21 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     private fun generateClientMessageId(): String = "${UUID.randomUUID()}_${System.currentTimeMillis()}"
 
-    /**
-     * 获取消息缓存中最后一条的Cursor
-     */
-    fun getLastMessageCursor(): String? {
-        val lastEntry = messageStore.entries.lastOrNull()
-        val lastMsg = lastEntry?.value
-        return lastMsg?.cursor
+    /** 获取消息缓存中最后一条的 Cursor。 */
+    fun getLastMessageCursor(): String? = messageStore.lastCursor()
+
+    private fun ingestMessages(messages: List<JobAgentMessage>?) {
+        messageStore.ingest(messages)
     }
 
-    /**
-     * stream 结束 or 断开时如果最近消息是 Think类型，则移除
-     */
-    private fun checkLastMessages() {
-        val lastEntry = messageStore.entries.lastOrNull()
-        val lastMsg = lastEntry?.value
-        if (lastMsg != null && resolveItemType(lastMsg) == ClawAgentMsgAdapter.TYPE_AGENT_THINK) {
-            messageStore.remove(lastEntry.key)
-        }
+    private fun expandIntroduceBeforeUploadResume(
+        messages: List<JobAgentMessage>?,
+        shouldInsertIntroduce: Boolean,
+    ): List<JobAgentMessage> {
+        return messageStore.expandIntroduceBeforeUploadResume(messages, shouldInsertIntroduce)
     }
 
-    /**
-     * 乐观插入本地用户消息：分配比当前最大序号更大的 sequenceNo 以排到列表末尾，messageId 取 clientMessageId。
-     * 服务端随后会通过 SSE message(USER) 回显（不同 messageId），由 [ingestMessages] 按内容把服务端字段填充进本占位（保留占位 id，不刷新）。
-     */
-    private fun appendLocalUserMessage(clientMessageId: String, content: String) {
-        val nextSeq = (messageStore.values.mapNotNull { it.sequenceNo }.maxOrNull() ?: 0L) + 1
-        optimisticUserMessageIds.add(clientMessageId)
-        ingestMessages(
-            listOf(
-                JobAgentMessage(
-                    messageId = clientMessageId,
-                    sequenceNo = nextSeq,
-                    senderType = SENDER_USER,
-                    messageType = MSG_TEXT,
-                    content = content,
-                )
-            )
-        )
-    }
-
-    /**
-     * SSE 流-单条消息插入：按文档 5.3 displayPolicy 在插入前对「链表上一条思考态消息」做即时收口。
-     * SSE 是顺序流，结果消息通常紧跟在 think 占位之后，故先取 [messageStore] 最后一条（上一条）：
-     * 若它是 think 中间态、且与新消息非同一条（messageId 不同，排除 think→RESULT 的同条更新），
-     * 再按其 displayPolicy 决定去留——
-     * REPLACE_ON_TERMINAL（被结果替换）/ DISMISS_ON_TERMINAL（结果到达后收起）→ 移除该 think；
-     * APPEND（追加）/ KEEP（保留）/ 其它 → 原样保留。最后统一交 [ingestMessages] upsert 并刷新。
-     */
-    private fun sseInsertMessages(newMsg: JobAgentMessage?) {
-        newMsg ?: return
-        val lastEntry = messageStore.entries.lastOrNull()
-        val lastMsg = lastEntry?.value
-        if (lastMsg != null &&
-            lastMsg.messageId != newMsg.messageId &&
-            resolveItemType(lastMsg) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
-        ) {
-            when (lastMsg.displayPolicy) {
-                // 终态替换：结果消息取代 think 占位
-                POLICY_REPLACE_ON_TERMINAL -> messageStore.remove(lastEntry.key)
-                // 终态移除：think / 轻提示在结果到达后收起
-                POLICY_DISMISS_ON_TERMINAL -> messageStore.remove(lastEntry.key)
-                // APPEND / KEEP / 其它：保留上一条 think
-                else -> Unit
-            }
-        }
-        // ATTRIBUTE_CONFIRM 卡：触发记忆确认弹窗（不进列表，由 ingestMessages 统一过滤）
-        if (newMsg.isAttributeConfirm()) {
-            val payload = newMsg.payloadJson?.let {
-                runCatching { GsonUtils.fromJson(newMsg.payloadJson, AttributeConfirmPayloadBean::class.java) }.getOrNull()
-            }
-            payload?.interactionState?.let { state ->
-                // 未消费，消费过的卡片不再弹
-                if (state.disabled == false) {
-                    attributeConfirmPopup.value = newMsg.toMessageInfo()
-                }
-            }
-        }
-        initDialog(newMsg)
-        ingestMessages(listOf(newMsg), isReal = true)
-    }
-
-    /**
-     * see 消息 弹窗（当触发 这个消息 时 弹窗出来）
-     */
-    private fun initDialog(newMsg: JobAgentMessage){
-        if (newMsg.isNotificationSwitch() ) {
-            understandingSummaryDialog.value = newMsg.toMessageInfo()
-        }
-        if (newMsg.isUnderstandingSummaryCard()) {
-            helpYouFindJobDialog.value = newMsg.toMessageInfo()
-        }
-    }
-
-    /**
-     * 测试记忆卡片弹窗
-     */
-//    fun testPopupMsg() {
-//        attributeConfirmPopup.value = ClawAgentMessageInfo(
-//            id = generateClientMessageId(),
-//            messageType = 1,
-//            sendObj = SENDER_AGENT,
-//            receiveObj = SENDER_USER,
-//            content = "记忆卡片测试",
-//            metaData = GsonUtils.toJson(mapOf<String, String>("memoryText" to "记忆卡片 - 问题"))
-//        )
-//    }
-
-    /**
-     * 合并并刷新渲染列表：按消息 ID 去重（同 ID 覆盖以实现更新/替换），
-     * 再按 sequenceNo 升序映射为端侧 [ClawAgentMessageInfo] 后回推 [messageList]。
-     */
-    private fun ingestMessages(messages: List<JobAgentMessage>?, isReal: Boolean = false) {
-        if (messages.isNullOrEmpty()) return
-        messages.forEach { newMsg ->
-            // ATTRIBUTE_CONFIRM 走记忆确认弹窗，不进对话列表（enterSession / 历史分页 / 增量拉取统一过滤）
-            if (newMsg.isAttributeConfirm()) return@forEach
-            if (newMsg.isNotificationSwitch()) return@forEach
-            val rawKey = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString() ?: return@forEach
-            // HISTORY_RESUME_CONFIRM 已操作过（interactionState.disabled=true）的不展示：
-            // 覆盖 SSE 实时操作后服务端回写禁用态 与 enterSession / 历史分页里已操作过的残留两种场景；
-            // 同时把 messageStore 里已渲染的同 id 旧卡移除，避免之前的可点击态滞留在列表
-            /*if (newMsg.isHistoryResumeConfirmCard()) {
-                val disabled = newMsg.payloadJson?.let {
-                    runCatching {
-                        GsonUtils.fromJson(it, HistoryResumeConfirmPayloadBean::class.java)?.interactionState?.disabled
-                    }.getOrNull()
-                }
-                if (disabled == true) {
-                    val key = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString()
-                    key?.let { messageStore.remove(it) }
-                    return@forEach
-                }
-            }*/
-            // 待上传和上传失败 在历史消息中已操作过的不展示，在实时sse的消息中要进行更新展示
-            /*if (newMsg.isUploadResumeCard()) {
-                val interactionState = newMsg.payloadJson?.let {
-                    runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.interactionState }.getOrNull()
-                }
-                if (interactionState?.disabled == true) {
-                    // 实时sse需要删除操作过的消息，历史和拉取
-                    if (isReal) {
-                        val key = newMsg.messageId ?: newMsg.cursor ?: newMsg.sequenceNo?.toString()
-                        key?.let { messageStore.remove(it) }
-                    }
-                    return@forEach
-                }
-            }*/
-            // 简历待上传/失败/确认流程卡类型合并只展示最新一张
-            /*if (newMsg.isLatestOnlyResumeCard()) {
-                val msgSeq = newMsg.sequenceNo ?: Long.MIN_VALUE
-                // 筛选出所有关于“简历流程卡”类型的消息列表
-                val resumeCards = messageStore.filterValues { it.isLatestOnlyResumeCard() }
-                // 历史分页可能返回旧卡，不能覆盖当前更新的简历流程状态
-                // 有没有任意一个元素满足条件
-                if (resumeCards.any { it.key != rawKey && msgSeq < (it.value.sequenceNo ?: Long.MIN_VALUE) }) {
-                    return@forEach
-                }
-                // 当前卡将要入库，先移除其它简历流程卡，保证列表只展示最新一张
-                resumeCards.keys
-                    .filter { it != rawKey }
-                    .forEach { messageStore.remove(it) }
-            }*/
-            // 自我介绍卡是端侧补充卡，折叠屏重建或会话恢复可能重复补充，这里只保留最新一张
-            if (newMsg.isIntroduceYourselfCard()) {
-                messageStore.filterValues { it.isIntroduceYourselfCard() }
-                    .keys
-                    .filter { it != rawKey }
-                    .forEach { messageStore.remove(it) }
-            }
-            var key = rawKey
-            if (newMsg.senderType == SENDER_USER) {
-                // 已合并过的服务端用户消息，继续复用本地占位 key，避免 pull/page 重复插入
-                key = serverUserMessageKeyToLocalKey[rawKey] ?: rawKey
-                if (key != rawKey) {
-                    messageStore.remove(rawKey)
-                    messageStore[key] = newMsg.copy(messageId = key)
-                    newMsg.rememberServerKeys(key)
-                    return@forEach
-                }
-            }
-            // 服务端回显的用户消息：把服务端字段填充进本地乐观占位，但保留占位的 messageId
-            // 以维持 item 身份（id 不变 → 不触发 remove+insert，仅静默 change），避免气泡刷两次
-            if (newMsg.senderType == SENDER_USER && key !in optimisticUserMessageIds) {
-                val localKey = optimisticUserMessageIds.firstOrNull { messageStore[it]?.content == newMsg.content }
-                if (localKey != null) {
-                    messageStore.remove(rawKey)
-                    messageStore[localKey] = newMsg.copy(messageId = localKey)
-                    optimisticUserMessageIds.remove(localKey)
-                    // 首次把服务端回显合并进本地占位时，记录真实 key 到本地 key 的映射
-                    newMsg.rememberServerKeys(localKey)
-                    // 已填充进占位，不再以服务端 messageId 另存，避免重复
-                    return@forEach
-                }
-            }
-            // 同一响应组内，REPLACE_ON_TERMINAL 的中间态消息由后续终态/结果消息替换。
-            // 移除需要替换的消息
-            newMsg.responseGroupId?.takeIf { it.isNotBlank() }?.let { groupId ->
-                    messageStore.filterValues { it.responseGroupId == groupId && (it.displayPolicy == POLICY_REPLACE_ON_TERMINAL
-                            || it.displayPolicy == POLICY_DISMISS_ON_TERMINAL) }
-                        .keys
-                        .filter { it != key }
-                        .forEach { messageStore.remove(it) }
-                }
-            // 最后如果是Toast消息，将被丢弃不插入处理
-            if (!newMsg.isToastCard()) {
-                // 插入或替换消息，显示位置最终会按[sequenceNo]排序
-                messageStore[key] = newMsg
-            }
-        }
-        startPollingIfVisible()
-        refreshMessageList()
-    }
-
-    /** 对本批消息中最终仍展示在 messageStore 里的生成中报告卡启动轮询 */
-    private fun startPollingIfVisible() {
-        messageStore.values.forEach { msg ->
-            // 是否模拟面试报告生成中，启动面试报告轮询接口
-            if (msg.isMockInterviewReportCard()) {
-                val payload = msg.payloadJson?.let {
-                    runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
-                }
-                if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
-                    pollMockInterviewReportProgress(payload.mockReportId, payload.interviewId)
-                }
-            }
-            // 是否面试通关包报告生成中，启动通关包报告轮询接口
-            if (msg.isPassPackageReportCard()) {
-                val payload = msg.payloadJson?.let {
-                    runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
-                }
-                if (payload?.reportStatus == REPORT_STATUS_GENERATING) {
-                    pollPassPackageReportProgress(payload.packageId)
-                }
-            }
-        }
-    }
-
-    /**
-     * 处理 SSE patch REMOVE：按服务端 messageId 从当前内存列表移除消息。
-     * 用户消息可能已合并到本地乐观占位 key，这里同时通过 serverUserMessageKeyToLocalKey 找到本地 key 删除。
-     */
-    private fun removeMessageById(messageId: String?) {
-        if (messageId.isNullOrBlank()) return
-        // 用户气泡可能已被服务端回显合并到本地乐观占位，patch 给的是服务端 messageId，
-        // 所以先查映射表，找到真正展示在 messageStore 里的本地 key。
-        val localKey = serverUserMessageKeyToLocalKey[messageId]
-        val keysToRemove = messageStore
-            .filter { (key, msg) ->
-                // messageStore 的 key 通常是 messageId；历史/兜底场景也可能使用 cursor 或 sequenceNo。
-                key == messageId ||
-                    key == localKey ||
-                    msg.messageId == messageId ||
-                    msg.cursor == messageId ||
-                    msg.sequenceNo?.toString() == messageId
-            }
-            .keys
-            .toMutableSet()
-        // 如果命中了本地乐观占位 key，即使当前 filter 没扫到，也加入待删除集合。
-        localKey?.let(keysToRemove::add)
-        if (keysToRemove.isEmpty()) return
-        keysToRemove.forEach { key ->
-            messageStore.remove(key)
-            optimisticUserMessageIds.remove(key)
-        }
-        // 清理服务端 key -> 本地 key 映射，避免后续 pull/page 再把已删除消息映射回本地占位。
-        serverUserMessageKeyToLocalKey.entries.removeAll { (serverKey, mappedLocalKey) ->
-            serverKey == messageId || serverKey in keysToRemove || mappedLocalKey in keysToRemove
-        }
-        Log.d("sseProcessor_onPatch=",messageId)
-        refreshMessageList()
-    }
-
-    /** 按 sequenceNo 升序映射并回推渲染列表。 */
-    private fun refreshMessageList() {
-        val rawMessages = messageStore.values
-            .sortedBy { it.sequenceNo ?: Long.MAX_VALUE }
-        val renderMessages = rawMessages.map { it.toMessageInfo() }
-        // 列表内容没有变化时不重复派发，避免 Fragment 反复 submitList 打断滚动。
-        if (messageList.value == renderMessages) return
-        messageList.value = renderMessages
-        if (BuildConfig.DEBUG) {
-            println("messageList=---------------------------------------------------------")
-            rawMessages.forEachIndexed { index, msg ->
-                println("messageList[$index]=${GsonUtils.toJson(msg)}")
-            }
-        }
-    }
-
-    // 同一条服务端消息可能用 messageId/cursor/sequenceNo 再次返回，都映射到同一个本地占位
-    private fun JobAgentMessage.rememberServerKeys(localKey: String) {
-        listOfNotNull(messageId, cursor, sequenceNo?.toString())
-            .filter { it != localKey }
-            .forEach { serverUserMessageKeyToLocalKey[it] = localKey }
-    }
-
-    /** 将服务端消息映射为端侧渲染模型，messageType 取 [ClawAgentMsgAdapter] 的 TYPE_* itemType */
-    private fun JobAgentMessage.toMessageInfo(): ClawAgentMessageInfo {
-        val sender = senderType ?: ""
-        return ClawAgentMessageInfo(
-            id = messageId ?: cursor ?: sequenceNo?.toString() ?: UUID.randomUUID().toString(),
-            messageType = resolveItemType(this),
-            sendObj = sender,
-            receiveObj = if (sender == SENDER_USER) SENDER_AGENT else SENDER_USER,
-            content = content,
-            metaData = payloadJson,
-            messagePhase = messagePhase,
-            groupStatus = groupStatus,
-            displayPolicy = displayPolicy,
-            replaceTargetMessageId = replaceTargetMessageId,
-        )
-    }
-
-    /** 依据 senderType / messageType / messagePhase / cardType 解析端侧 itemType */
-    private fun resolveItemType(msg: JobAgentMessage): Int {
-        // 用户消息
-        if (msg.senderType == SENDER_USER) {
-            return if (msg.messageType == MSG_CARD && msg.cardType == CARD_FILE_CARD) {
-                ClawAgentMsgAdapter.TYPE_USER_FILE
-            } else {
-                ClawAgentMsgAdapter.TYPE_USER_TEXT
-            }
-        }
-        // 非卡片的处理中/流式消息按思考态展示
-        if (msg.messageType != MSG_CARD && (msg.messagePhase == PHASE_PROCESSING || msg.messageStatus == STATUS_STREAMING)) {
-            return ClawAgentMsgAdapter.TYPE_AGENT_THINK
-        }
-        // 展示文本居中显示
-        if (msg.messageType == MSG_TEXT_TIP) {
-            return ClawAgentMsgAdapter.TYPE_TEXT_TIP
-        }
-        // 卡片消息按 cardType 分发
-        if (msg.messageType == MSG_CARD) {
-            return when (msg.cardType) {
-                // 引导上传、上传状态
-                CARD_INTRODUCE_YOURSELF -> ClawAgentMsgAdapter.TYPE_WELCOME
-                CARD_ACTIVITY -> resolveActivityItemType(msg)
-                CARD_UPLOAD_RESUME -> resolveUploadResumeItemType(msg)
-                CARD_HISTORY_RESUME_CONFIRM -> ClawAgentMsgAdapter.TYPE_PENDING_CONFIRM
-                CARD_CORE_QUESTION -> resolveQuestionItemType(msg)
-                CARD_UNDERSTANDING_SUMMARY -> ClawAgentMsgAdapter.TYPE_UNDERSTANDING_UPGRADE
-                CARD_RESUME_RECEIVED -> ClawAgentMsgAdapter.TYPE_UPLOAD_SUCCESS
-                CARD_JOB_SEARCHING -> ClawAgentMsgAdapter.TYPE_SEARCHING_JOBS
-                CARD_NO_JOB -> ClawAgentMsgAdapter.TYPE_NO_JOBS_FOUND
-                CARD_COMPANY_BACKGROUND_ENTRY -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_ENTRY
-                CARD_COMPANY_BACKGROUND_REPORT -> resolveCompanyBackgroundReportItemType(msg)
-                CARD_MOCK_INTERVIEW_ENTRY -> resolveMockInterviewEntryItemType(msg)
-                CARD_MOCK_INTERVIEW_REPORT -> resolveMockInterviewReportItemType(msg)
-                CARD_INTERVIEW_PASS_PACKAGE_REPORT -> resolveInterviewPassPackageReportItemType(msg)
-                // todo: v1.2 暂时不做
-//                CARD_JOB_MATCH_REPORT -> ClawAgentMsgAdapter.TYPE_MATCH_REPORT
-//                CARD_TODAY_PROGRESS -> ClawAgentMsgAdapter.TYPE_TODAY_PROGRESS
-                else -> ClawAgentMsgAdapter.TYPE_AGENT_TEXT
-            }
-        }
-        // 兜底：Agent 普通文本, 防止适配器报错
-        return ClawAgentMsgAdapter.TYPE_AGENT_TEXT
-    }
-
-    /** UPLOAD_RESUME 按 resumeUploadStatus 路由：解析成功/失败走独立卡，引导/解析中走欢迎卡（同 messageId upsert 后切卡） */
-    private fun resolveUploadResumeItemType(msg: JobAgentMessage): Int {
-        val status = msg.payloadJson?.let {
-            runCatching { GsonUtils.fromJson(it, UploadResumePayloadBean::class.java)?.resumeUploadStatus }.getOrNull()
-        }
-        return when (status) {
-            UPLOAD_STATUS_PARSE_FAILED -> ClawAgentMsgAdapter.TYPE_UPLOAD_FAILED
-            UPLOAD_STATUS_WAITING_UPLOAD -> ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT
-            else -> ClawAgentMsgAdapter.TYPE_UPLOAD_WAIT // WAITING_UPLOAD / PARSING / null
-        }
-    }
-
-    /** CARD_ACTIVITY 大类下，再按 activityType 细分具体活动卡片。 */
-    private fun resolveActivityItemType(msg: JobAgentMessage): Int {
-        val activityType = msg.payloadJson?.let {
-            runCatching { GsonUtils.fromJson(it, ActivityPayloadBean::class.java)?.activityType }.getOrNull()
-        }
-        return when (activityType) {
-            ActivityPayloadBean.TYPE_SALARY -> ClawAgentMsgAdapter.TYPE_ACTIVITY_SALARY
-            else -> ClawAgentMsgAdapter.TYPE_AGENT_TEXT
-        }
-    }
-
-    private fun resolveQuestionItemType(msg: JobAgentMessage): Int {
-        val inputMode = msg.payloadJson?.let {
-            runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java)?.inputMode }.getOrNull()
-        }
-        return when (inputMode) {
-            CoreQuestionPayloadBean.MODE_ARRAY_FORM -> ClawAgentMsgAdapter.TYPE_TABLE_FORM
-            else -> ClawAgentMsgAdapter.TYPE_QUESTION
-        }
-    }
-
-    private fun resolveCompanyBackgroundReportItemType(msg: JobAgentMessage): Int {
-        // 公司背调卡
-        val reportStatus = msg.payloadJson?.let {
-            runCatching { GsonUtils.fromJson(it, CompanyBackgroundReportPayloadBean::class.java)?.reportStatus }.getOrNull()
-        }
-        return when (reportStatus) {
-            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_FAILED
-            REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_DONE
-            REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
-            else -> ClawAgentMsgAdapter.TYPE_COMPANY_BACKGROUND_REPORT_GENERATING
-        }
-    }
-
-    private fun resolveMockInterviewEntryItemType(msg: JobAgentMessage): Int {
-        // 模拟面试卡
-        val entryPayload = msg.payloadJson?.let {
-            runCatching { GsonUtils.fromJson(it, MockInterviewEntryPayloadBean::class.java) }.getOrNull()
-        }
-        return if (entryPayload?.entrySource == RESUME_UNDERSTANDING_UPGRADE) {
-            ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE
-        } else {
-            ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_ENTRY
-        }
-    }
-
-    private fun resolveMockInterviewReportItemType(msg: JobAgentMessage): Int {
-        // 模拟面试报告卡
-        val defaultPayload = msg.payloadJson?.let {
-            runCatching { GsonUtils.fromJson(it, MockInterviewReportPayloadBean::class.java) }.getOrNull()
-        }
-        return when (defaultPayload?.reportStatus) {
-            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_FAILED
-            REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_DONE
-            REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
-            else -> ClawAgentMsgAdapter.TYPE_MOCK_INTERVIEW_REPORT_GENERATING
-        }
-    }
-
-    private fun resolveInterviewPassPackageReportItemType(msg: JobAgentMessage): Int {
-        // 面试通关包报告卡
-        val payload = msg.payloadJson?.let {
-            runCatching { GsonUtils.fromJson(it, PassPackageReportPayloadBean::class.java) }.getOrNull()
-        }
-        return when (payload?.reportStatus) {
-            REPORT_STATUS_FAILED -> ClawAgentMsgAdapter.TYPE_PASS_PACKAGE_REPORT_FAILED
-            REPORT_STATUS_SUCCESS -> ClawAgentMsgAdapter.TYPE_PASS_PACKAGE_REPORT_DONE
-            REPORT_STATUS_GENERATING -> ClawAgentMsgAdapter.TYPE_PASS_PACKAGE_REPORT_GENERATING
-            else -> ClawAgentMsgAdapter.TYPE_PASS_PACKAGE_REPORT_GENERATING
-        }
-    }
-
-    /**
-     * shouldInsertIntroduce=true 时说明当前已经包含所有消息，需要把自我介绍卡插入到列表第一条。
-     */
-    private fun expandIntroduceBeforeUploadResume(messages: List<JobAgentMessage>?, shouldInsertIntroduce: Boolean): List<JobAgentMessage> {
-        // 还有更早历史时先不补首卡，等加载到最早一页再展示。
-        return if (shouldInsertIntroduce) listOf(
-            JobAgentMessage(
-                messageId = LOCAL_INTRODUCE_MESSAGE_ID,
-                senderType = SENDER_AGENT,
-                messageType = MSG_CARD,
-                cardType = CARD_INTRODUCE_YOURSELF,
-                sequenceNo = 0L
-            )
-        ) + messages.orEmpty() else messages.orEmpty()
-    }
-
-    /** 是否思考态（think）中间态消息：enterSession / 历史分页等终态数据里的此类残留不再展示 */
-    private fun JobAgentMessage.isThinkMessage(): Boolean =
-        resolveItemType(this) == ClawAgentMsgAdapter.TYPE_AGENT_THINK
-
-    /** 是否TOAST类型卡片 */
-    private fun JobAgentMessage.isToastCard(): Boolean = messageType == MSG_TOAST
-
-    /** 是否属性确认卡（ATTRIBUTE_CONFIRM）：走记忆确认弹窗，不进对话列表 */
-    private fun JobAgentMessage.isAttributeConfirm(): Boolean = messageType == MSG_CARD && cardType == CARD_ATTRIBUTE_CONFIRM
-
-    /** 是否对齐度达到要求唤起开启通知弹窗，不进对话列表 */
-    private fun JobAgentMessage.isNotificationSwitch(): Boolean = messageType == MSG_CARD && cardType == CARD_NOTIFICATION_SWITCH
-
-    /** 是否上传简历卡（UPLOAD_RESUME） */
-    private fun JobAgentMessage.isUploadResumeCard(): Boolean =
-        messageType == MSG_CARD && cardType == CARD_UPLOAD_RESUME
-
-    /** 是否自我介绍卡（CARD_INTRODUCE_YOURSELF） */
-    private fun JobAgentMessage.isIntroduceYourselfCard(): Boolean =
-        messageType == MSG_CARD && cardType == CARD_INTRODUCE_YOURSELF
-
-    /** 是否历史简历确认卡（HISTORY_RESUME_CONFIRM） */
-    private fun JobAgentMessage.isHistoryResumeConfirmCard(): Boolean =
-        messageType == MSG_CARD && cardType == CARD_HISTORY_RESUME_CONFIRM
-
-    /** 是否理解升级（UNDERSTANDING_SUMMARY） */
-    private fun JobAgentMessage.isUnderstandingSummaryCard(): Boolean =
-        messageType == MSG_CARD && cardType == CARD_UNDERSTANDING_SUMMARY
-
-    /** 当前消息是否无需在 SSE 完成后增量拉取兜底 */
-    private fun JobAgentMessage.shouldSkipPullAfterStreamComplete(): Boolean =
-        messageType == MSG_CARD && cardType in skipPullAfterStreamCompleteCardTypes
-
-    /** 是否简历流程互斥卡，只保留最新一张 */
-    private fun JobAgentMessage.isLatestOnlyResumeCard(): Boolean =
-        messageType == MSG_CARD && cardType in setOf(CARD_UPLOAD_RESUME, CARD_RESUME_RECEIVED, CARD_HISTORY_RESUME_CONFIRM)
-
-    /** 是否模拟面试报告生成中（CARD_MOCK_INTERVIEW_REPORT） */
-    private fun JobAgentMessage.isMockInterviewReportCard(): Boolean =
-        messageType == MSG_CARD && cardType == CARD_MOCK_INTERVIEW_REPORT
-
-    /** 是否面试通关包报告生成中（CARD_INTERVIEW_PASS_PACKAGE_REPORT） */
-    private fun JobAgentMessage.isPassPackageReportCard(): Boolean =
-        messageType == MSG_CARD && cardType == CARD_INTERVIEW_PASS_PACKAGE_REPORT
+    private fun JobAgentMessage.isThinkMessage(): Boolean = messageStore.isThinkMessage(this)
 
     /**
      * 流式发送用户消息：复用 enterSession 缓存的会话上下文，通过 SSE 接收增量回复。
@@ -942,13 +478,13 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            emitSessionNotReady()
             return
         }
         val clientMessageId = generateClientMessageId()
         // 乐观插入：先把用户消息加入列表立即反馈；服务端随后回显由 ingestMessages 插入服务端数据，
         // 但id用本地生成的，用服务端回显消息的话会因为id不同导致刷新两次体验不佳，(跟后端对齐过，这个消息的id只在sse流式中存在，拉历史数据影响不大)
-        appendLocalUserMessage(clientMessageId, content)
+        messageStore.appendLocalUserMessage(clientMessageId, content)
         val body = JobAgentStreamBody(
             sessionId = currentSessionId,
             conversationId = currentConversationId,
@@ -968,7 +504,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            emitSessionNotReady()
             return
         }
         val clientMessageId = generateClientMessageId()
@@ -1011,7 +547,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             }
         }
         sseHandler.cancel()
-        streaming.value = false
+        _streaming.value = false
     }
 
     // endregion
@@ -1028,7 +564,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            emitSessionNotReady()
             return
         }
         request(
@@ -1060,7 +596,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            emitSessionNotReady()
             return
         }
         request(
@@ -1113,7 +649,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            emitSessionNotReady()
             return
         }
         request(
@@ -1151,7 +687,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                 )
             }
         ) {
-            jobStatusResult.value = data
+            _jobStatusResult.value = data
         }
     }
 
@@ -1162,7 +698,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty() || statusCode.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            emitSessionNotReady()
             return
         }
         request(
@@ -1180,10 +716,26 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         ) {
             //val result = this.data ?: return@request
             //sessionData.value = sessionData.value?.copy(jobSearchStatus = result)
-            val jobStatusData = jobStatusResult.value
+            val jobStatusData = _jobStatusResult.value
             val selectedOption = jobStatusData?.options.orEmpty().firstOrNull { it.code == statusCode }
-            jobStatusResult.value = jobStatusData?.copy(displayValue = selectedOption?.name ?: jobStatusData.displayValue,)
+            _jobStatusResult.value = jobStatusData?.copy(displayValue = selectedOption?.name ?: jobStatusData.displayValue)
         }
+    }
+
+    /** 补问选项提交后先按旧逻辑乐观更新顶部求职状态文案。 */
+    fun updateJobStatusDisplayValue(displayValue: String?) {
+        _jobStatusResult.value = _jobStatusResult.value?.copy(displayValue = displayValue)
+    }
+
+    /** 退出登录时清除会话中的求职状态，保留会话对象其它字段。 */
+    fun clearSessionJobSearchStatus() {
+        _sessionData.value = _sessionData.value?.copy(jobSearchStatus = null)
+    }
+
+    /** 表单类补问共用同一个请求 ID；缺失时按旧逻辑即时生成。 */
+    fun getOrCreateCurrentRequestId(): String {
+        return currentRequestId?.takeIf { it.isNotEmpty() }
+            ?: UUID.randomUUID().toString().also { currentRequestId = it }
     }
 
     fun queryCompanyBackgroundCompanySearch(keyword: String, onResult: (keyword: String, companies: List<CompanyBackgroundCompanyInfo>) -> Unit, ) {
@@ -1214,7 +766,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            emitSessionNotReady()
             return
         }
         val clientRequestId = "company-bg-precheck-${System.currentTimeMillis()}-${UUID.randomUUID()}"
@@ -1232,7 +784,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         ) {
             val reportId = data?.reportId
             if (reportId.isNullOrBlank()) {
-                companyBackgroundResult.value = data
+                emitUiEffect(ClawAgentUiEffect.HandleCompanyBackgroundPreCheck(data))
                 return@requestWithLoading
             }
             // 权益可用时后端会写入“正在识别公司名称”，提交成功后先拉取一次增量消息展示处理中状态。
@@ -1283,7 +835,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         ) {
             val reportId = data?.reportId
             if (reportId.isNullOrBlank()) {
-                companyBackgroundResult.value = data
+                emitUiEffect(ClawAgentUiEffect.HandleCompanyBackgroundPreCheck(data))
                 return@requestWithLoading
             }
             pullMessages(getLastMessageCursor())
@@ -1418,7 +970,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         val currentSessionId = sessionId
         val currentConversationId = conversationId
         if (currentSessionId.isNullOrEmpty() || currentConversationId.isNullOrEmpty()) {
-            streamError.value = IllegalStateException("会话未就绪，请先进入会话")
+            emitSessionNotReady()
             return
         }
         requestWithLoading(
@@ -1455,9 +1007,8 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
                it?.message?.showToast()
             }
         ) {
-            interviewStartResult.value = data
+            emitUiEffect(ClawAgentUiEffect.HandleInterviewStart(data))
         }
-        //interviewStartResult.value = MockInterviewStartData(interviewId = "id666666666", chargeStatus = "DEDUCT_SUCCESS")
     }
 
     /**
@@ -1490,7 +1041,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             showLoading = true,
             showToastError = true,
         ) {
-            interviewPassPackageResumeStatus.postValue(this.data)
+            emitUiEffect(ClawAgentUiEffect.OpenInterviewPassPackage(this.data))
         }
     }
 
@@ -1502,7 +1053,9 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             apiBlock = { mRepo.api.queryMockInterviewUnfinished() },
             showToast = false,
         ) {
-            interviewUnfinishedResult.value = data
+            data?.let {
+                emitUiEffect(ClawAgentUiEffect.ShowInterviewRecovery(it))
+            }
         }
     }
 
@@ -1522,8 +1075,12 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
 
                 })
         }, onComplete = {
-            this.resumeCode.value = null
+            _resumeCode.value = null
         })
+    }
+
+    fun setResumeCode(code: String?) {
+        _resumeCode.value = code
     }
 
     /** 获取宝典页业务模块列表，用于动态渲染首页底部快捷入口。 */
@@ -1532,7 +1089,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             apiBlock = { mRepo.api.queryJobAgentModuleList() },
             showToast = false,
         ) {
-            jobAgentModuleList.postValue(this.data.orEmpty())
+            _jobAgentModuleList.postValue(this.data.orEmpty())
         }
     }
 
@@ -1542,7 +1099,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
             apiBlock = { mRepo.api.queryActivityStatus() },
             showToast = false,
         ) {
-            activityStatus.postValue(data)
+            _activityStatus.postValue(data)
         }
     }
 
@@ -1559,7 +1116,7 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         // 消息列表重置
         latestCursor = null
         messageStore.clear()
-        messageList.value = listOf()
+        _messageList.value = emptyList()
         // 下拉判定条件重置
         historyBeforeCursor = null
         hasMoreHistory = true
@@ -1568,14 +1125,16 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
         mockInterviewReportPollingJob = null
         passPackageReportPollingJob?.cancel()
         passPackageReportPollingJob = null
+        stopResumeMessagePolling()
     }
 
-    fun hardPreMsgListCard(list: List<ClawAgentMessageInfo>) {
-        messageList.value = list
+    fun showLocalMessageCards(list: List<ClawAgentMessageInfo>) {
+        messageStore.showLocalMessages(list)
     }
 
     override fun onDestroy() {
         sseHandler.cancel()
+        stopResumeMessagePolling()
         companyBackgroundGeneratePollingJob?.cancel()
         mockInterviewReportPollingJob?.cancel()
         mockInterviewReportPollingJob = null
@@ -1585,137 +1144,28 @@ class ClawAgentViewModel : CommonRepositoryViewModel<AppRepository>() {
     }
 
     companion object {
-        /** 历史消息分页每页条数 */
         private const val HISTORY_PAGE_SIZE = 20
-        /** 公司背调前置校验/报告生成轮询间隔 */
-        private const val COMPANY_BACKGROUND_POLL_INTERVAL_MS = 3000L
-        // actionType
-        /** 文本交互类型 */
+        private const val RESUME_MESSAGE_POLL_INTERVAL_MS = 10000L
+        private const val RESUME_MESSAGE_POLL_TIMEOUT_MS = 60000L
         private const val INTERACTION_TYPE_TEXT = "TEXT"
-        /** 操作交互类型 */
         private const val INTERACTION_TYPE_ACTION = "ACTION"
 
-        // 显示开启消息通知弹窗分值
-        const val SHOW_DIALOG_SCORE = 85
-
-        // senderType
-        /** 用户发送方 */
         const val SENDER_USER = "USER"
-        /** 智能体发送方 */
         const val SENDER_AGENT = "AGENT"
-
-        // messageType
-        /** 普通文本消息 */
-        private const val MSG_TEXT = "TEXT"
-        /** 卡片消息 */
-        private const val MSG_CARD = "CARD"
-        /** Toast 提示消息 */
-        private const val MSG_TOAST = "TOAST"
-        /** 文本提示消息 */
-        private const val MSG_TEXT_TIP = "TEXT_TIP"
-
-        // messagePhase / messageStatus（思考态判定）
-        /** 消息处于处理中 */
-        private const val PHASE_PROCESSING = "PROCESSING"
-        /** 消息处理失败 */
-        private const val PHASE_ERROR = "ERROR"
-        /** 消息处理完成并返回结果 */
-        private const val PHASE_RESULT = "RESULT"
-        /** 消息流式输出中 */
-        private const val STATUS_STREAMING = "STREAMING"
-
-        /** 响应组处理失败 */
-        private const val GROUP_STATUS_FAILED = "FAILED"
-        /** 响应组处理完成 */
-        private const val GROUP_STATUS_COMPLETED = "COMPLETED"
-
-        /** APP点击快捷入口后推送 */
         const val QUICK_ENTRY = "QUICK_ENTRY"
         const val ATTRIBUTE_GROUP_JOB_STATUS = "jobStatus"
-        /** 小虾对话里理解度升级后推送 */
-        const val RESUME_UNDERSTANDING_UPGRADE = "RESUME_UNDERSTANDING_UPGRADE"
-
-        /** 错误码：输入内容不是公司 */
         const val ERROR_CODE_NOT_COMPANY = "NOT_COMPANY"
-        /** 错误码：权益点数不足 */
         const val ERROR_CODE_POINTS_INSUFFICIENT = "POINTS_INSUFFICIENT"
-        /** 错误码：模型生成失败 */
         const val ERROR_CODE_MODEL_FAILED = "MODEL_FAILED"
 
-        /** 报告生成中 */
-        private const val REPORT_STATUS_GENERATING = "GENERATING"
-        /** 报告生成成功 */
         private const val REPORT_STATUS_SUCCESS = "SUCCESS"
-        /** 报告生成失败 */
         private const val REPORT_STATUS_FAILED = "FAILED"
-        /** 报告生成失败，但仍可重试 */
         private const val REPORT_STATUS_FAILED_RETRYABLE = "FAILED_RETRYABLE"
-        /** 报告生成最终失败，需停止轮询 */
         private const val REPORT_STATUS_FAILED_FINAL = "FAILED_FINAL"
-        /** 面试通关包生成成功 */
         private const val PASS_PACKAGE_STATUS_SUCCESS = 2
-        /** 面试通关包生成失败，需停止轮询 */
         private const val PASS_PACKAGE_STATUS_FAILED = 3
-        /** 面试通关包生成异常阻断，需停止轮询 */
         private const val PASS_PACKAGE_STATUS_BLOCKED = 4
-
-        // displayPolicy（端侧展示策略）：think 等中间态消息在结果消息到达后的收口方式
-        private const val POLICY_REPLACE_ON_TERMINAL = "REPLACE_ON_TERMINAL"
-        private const val POLICY_DISMISS_ON_TERMINAL = "DISMISS_ON_TERMINAL"
-        private const val POLICY_REPLACE_TARGET = "REPLACE_TARGET"
-
-        /** SSE patch 删除当前内存列表消息 */
         private const val PATCH_TYPE_REMOVE = "REMOVE"
-
-        // resumeUploadStatus：上传简历卡状态机（PARSE_SUCCESS / PARSE_FAILED 路由到独立卡）
-        private const val UPLOAD_STATUS_PARSE_SUCCESS = "PARSE_SUCCESS"
-        private const val UPLOAD_STATUS_PARSE_FAILED = "PARSE_FAILED"
-        private const val UPLOAD_STATUS_WAITING_UPLOAD = "WAITING_UPLOAD"
-
-        // cardType：以下 5 个为接口已定义取值
-        private const val CARD_UPLOAD_RESUME = "UPLOAD_RESUME"
-        // 收到简历
-        private const val CARD_RESUME_RECEIVED = "RESUME_RECEIVED"
-        // 历史已上传过简历确认卡片
-        private const val CARD_HISTORY_RESUME_CONFIRM = "HISTORY_RESUME_CONFIRM"
-        // 问答卡片
-        private const val CARD_CORE_QUESTION = "CORE_QUESTION"
-        // 记忆卡片
-        private const val CARD_ATTRIBUTE_CONFIRM = "ATTRIBUTE_CONFIRM"
-        // 对齐度85 唤起消息通知
-        private const val CARD_NOTIFICATION_SWITCH = "NOTIFICATION_SWITCH"
-        // 理解升级
-        private const val CARD_UNDERSTANDING_SUMMARY = "UNDERSTANDING_SUMMARY"
-        // 自我介绍
-        private const val CARD_INTRODUCE_YOURSELF = "CARD_INTRODUCE_YOURSELF"
-        // 活动卡片
-        private const val CARD_ACTIVITY = "ACTIVITY"
-        /** 端侧固定自我介绍卡 ID，用于稳定 DiffUtil 判断首卡身份。 */
-        private const val LOCAL_INTRODUCE_MESSAGE_ID = "-1"
-        // 公司背调卡片
-        private const val CARD_COMPANY_BACKGROUND_ENTRY = "COMPANY_BACKGROUND_ENTRY"
-        // 公司背调报告卡片
-        private const val CARD_COMPANY_BACKGROUND_REPORT = "COMPANY_BACKGROUND_REPORT"
-        // 模拟面试卡片
-        private const val CARD_MOCK_INTERVIEW_ENTRY = "MOCK_INTERVIEW_ENTRY"
-        // 面试复盘报告卡片
-        private const val CARD_MOCK_INTERVIEW_REPORT = "MOCK_INTERVIEW_REPORT"
-        //面试通关报告卡片
-        private const val CARD_INTERVIEW_PASS_PACKAGE_REPORT = "INTERVIEW_PASS_PACKAGE_REPORT"
-        // 用户侧文件卡片
-        private const val CARD_FILE_CARD = "FILE_CARD"
-        //TODO 以下 cardType 取值为端侧样式占位，需与服务端最终下发的 cardType 对齐后修正
-
-        // 寻找岗位中
-        private const val CARD_JOB_SEARCHING = "JOB_SEARCHING"
-        // 暂未找到合适岗位
-        private const val CARD_NO_JOB = "NO_JOB_TEMPORARILY"
-        // 岗位匹配-快速能力提升
-        private const val CARD_JOB_MATCH_REPORT = "JOB_MATCH_REPORT"
-        // 今日进展卡片 TODO: 后端未给出type
-        private const val CARD_TODAY_PROGRESS = "TODAY_PROGRESS"
-
-        /** 强制结束原因：用户主动结束。 */
         private const val FORCE_CANCEL_REASON_USER = "USER_FORCE_CANCEL"
     }
 }
