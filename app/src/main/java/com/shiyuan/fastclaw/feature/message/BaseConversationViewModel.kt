@@ -218,12 +218,11 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
                         ?.takeIf { it.isNotBlank() }
                         ?: App.instance.getString(R.string.resume_attachment)
                 }
+                TYPE_RESUME_REQUEST_RESULT -> { //候选人已同意发送简历
+                    App.instance.getString(R.string.message_conversation_candidate_send_resume)
+                }
                 TYPE_JOB_CARD -> {  //切换了职位
-                    if(payload.optString(OPERATOR_ROLE) == CANDIDATE){
-                        App.instance.getString(R.string.message_conversation_switched_roles)
-                    } else {
-                        App.instance.getString(R.string.message_conversation_switched_roles)
-                    }
+                    App.instance.getString(R.string.message_conversation_switched_roles)
                 }
                 else -> defaultPreview
             }
@@ -351,6 +350,9 @@ abstract class BaseConversationViewModel : AppRepositoryViewModel<AppRepository>
 
         // 求职者主动发送简历协议类型。
         private const val TYPE_RESUME_DELIVERY = "resumeDelivery"
+
+        //
+        private const val TYPE_RESUME_REQUEST_RESULT = "resumeRequestResult"
 
 
         // 切换职位。

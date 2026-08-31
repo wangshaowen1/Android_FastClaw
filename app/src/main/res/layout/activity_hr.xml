@@ -52,16 +52,33 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+
             <ImageView
-                android:layout_width="83dp"
-                android:layout_height="22dp"
+                android:id="@+id/iv_log"
+                android:layout_width="@dimen/dp20"
+                android:layout_height="@dimen/dp20"
                 android:layout_marginTop="53dp"
                 android:contentDescription="@string/app_name"
-                android:scaleType="fitXY"
-                android:src="@drawable/img_hr_logo"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_logo"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_title"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/iv_title"
+                android:layout_marginLeft="2.5dp"
+                app:layout_constraintStart_toEndOf="@id/iv_log"
+                app:layout_constraintBottom_toBottomOf="@id/iv_log"
+                app:layout_constraintTop_toTopOf="@id/iv_log"
+                android:layout_width="51dp"
+                android:layout_height="25dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/img_hr_title"
+               />
 
             <ImageView
                 android:layout_width="0dp"

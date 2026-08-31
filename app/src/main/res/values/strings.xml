@@ -80,6 +80,7 @@
     <string name="message_chat_resume_file_default">我的简历</string>
     <string name="message_conversation_resume_request_pending">对方请求查看你的附件简历</string>
      <string name="message_conversation_switched_roles">你切换了沟通职位</string>
+     <string name="message_conversation_candidate_send_resume">候选人已同意发送简历</string>
     <string name="message_conversation_resume_request_accepted">附件简历已发送</string>
     <string name="message_conversation_resume_request_rejected">你已拒绝发送附件简历</string>
     <string name="message_chat_resume_accept">同意</string>
