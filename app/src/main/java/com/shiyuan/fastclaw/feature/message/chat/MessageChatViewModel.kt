@@ -3,6 +3,8 @@ package com.shiyuan.fastclaw.feature.message.chat
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.alibaba.fastjson.JSON
+import com.blankj.utilcode.util.LogUtils
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
@@ -93,6 +95,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         val currentChat = chat ?: return
         viewModelScope.launch {
             currentChat.observeMessages().collectLatest { messages ->
+                LogUtils.d("监听收到的消息", JSON.toJSONString(messages))
                 mergeMessages(messages)
                 clearUnreadReceiving(messages)
             }

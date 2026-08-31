@@ -329,22 +329,6 @@ class OpportunityFragment :
         }
     }
 
-    /** 文件上传期间展示的加载弹窗。 */
-    private var commonLoadingDialog: CommonLoadingDialog? = null
-    /** 展示加载弹窗，已有实例显示时不重复创建。 */
-    fun showLoading(text: String? = null) {
-        if (commonLoadingDialog?.isAdded == true) return
-        commonLoadingDialog = CommonLoadingDialog.newInstance(text).apply {
-            show(this@OpportunityFragment.childFragmentManager)
-        }
-    }
-
-    /** 关闭并释放加载弹窗引用。 */
-    fun hideLoading() {
-        commonLoadingDialog?.dismissAllowingStateLoss()
-        commonLoadingDialog = null
-    }
-
     /** 简历来源选择弹窗。 */
     private var uploadResumeDialog: UploadResumeDialog? = null
     /**
@@ -360,22 +344,22 @@ class OpportunityFragment :
             bizType = BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
             { fileInfo ->
                 if (fileInfo != null) {
-                    showLoading("上传中")
+                    CommonLoadingDialog.show(childFragmentManager, "上传中")
                     mRealVM.uploadFilesWithSecurityCheck(
                         listOf(fileInfo.uri), BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
                         onSuccess = { successUrls ->
-                            hideLoading()
+                            CommonLoadingDialog.hide(childFragmentManager)
                             mRealVM.submitResumeUpload(
                                 successUrls.first(),
                                 fileInfo.fileName,
                                 replaceResumeTaskId,
                                 false
                             ) {
-                                hideLoading()
+                                CommonLoadingDialog.hide(childFragmentManager)
                             }
                         },
                         onFailure = {
-                            hideLoading()
+                            CommonLoadingDialog.hide(childFragmentManager)
                             it.showToast()
                         })
                 }

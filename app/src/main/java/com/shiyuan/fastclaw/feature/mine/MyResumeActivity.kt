@@ -178,22 +178,22 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         uploadResumeDialog =
             UploadResumeDialog.show(manager = this.supportFragmentManager, false,  bizType =BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,{ fileInfo ->
                 if (fileInfo != null) {
-                    showLoading("上传中")
+                    CommonLoadingDialog.show(this@MyResumeActivity.supportFragmentManager, "上传中")
                     mRealVM.uploadFilesWithSecurityCheck(
                         listOf(fileInfo.uri), BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A,
                         onSuccess = { successUrls ->
-                            hideLoading()
+                            CommonLoadingDialog.hide(this@MyResumeActivity.supportFragmentManager)
                             mRealVM.submitResumeUpload(
                                 successUrls.first(),
                                 fileInfo.fileName,
                                 replaceResumeTaskId,
                                 false
                             ) {
-                                hideLoading()
+                                CommonLoadingDialog.hide(this@MyResumeActivity.supportFragmentManager)
                             }
                         },
                         onFailure = {
-                            hideLoading()
+                            CommonLoadingDialog.hide(this@MyResumeActivity.supportFragmentManager)
                             it.showToast()
                         })
                 }
@@ -216,23 +216,6 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
             }
         }
     }
-
-
-    private var commonLoadingDialog: CommonLoadingDialog? = null
-
-    fun showLoading(text: String? = null) {
-        if (commonLoadingDialog?.isAdded == true) return
-        commonLoadingDialog = CommonLoadingDialog.newInstance(text).apply {
-            show(this@MyResumeActivity.supportFragmentManager)
-        }
-    }
-
-
-    fun hideLoading() {
-        commonLoadingDialog?.dismissAllowingStateLoss()
-        commonLoadingDialog = null
-    }
-
 
     private fun initObservers() {
         mRealVM.resumeListData.observe(this) { data ->

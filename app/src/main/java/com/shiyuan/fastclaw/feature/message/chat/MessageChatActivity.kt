@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -151,12 +152,17 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             }
         }
         binding.etContent.doAfterTextChanged {
+            //保存当前会话草稿 根据conversationId
             MessageDraftStore.save(conversationId, it?.toString().orEmpty())
+            //更新右侧按钮图标
             updateSendButton()
+            //调整发送按钮位置
             updateSendPosition()
         }
         binding.layoutSendResume.setOnSingleClickListener {
+            //请求简历
             mRealVM.queryResumeForDelivery()
+            //关闭更多面板
             hideMorePanel()
         }
         messageAdapter.onResumeRequestAcceptClick = {
@@ -169,6 +175,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             //showMessage(getString(R.string.message_chat_resume_action_waiting))
         }
         messageAdapter.onHrAvatarClick = {
+           // Log.d("onHrAvatarClick",currentJobId?:"")
             OpportunityDetailActivity.start(this, currentJobId?:"")
         }
         messageAdapter.onJobCardClick = {

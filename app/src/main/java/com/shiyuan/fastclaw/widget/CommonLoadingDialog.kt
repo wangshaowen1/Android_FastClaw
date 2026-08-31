@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.animation.LinearInterpolator
+import androidx.fragment.app.FragmentManager
 import com.nhsd.basic.BaseDialogFragment
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.DialogCommonLoadingBinding
@@ -21,6 +22,19 @@ class CommonLoadingDialog : BaseDialogFragment<DialogCommonLoadingBinding>() {
                     putCharSequence(ARG_TEXT, text)
                 }
             }
+        }
+        fun show(manager: FragmentManager, text: CharSequence? = null) {
+            if (manager.isStateSaved) return
+            val dialog = manager.findFragmentByTag(TAG) as? CommonLoadingDialog
+                ?: newInstance(text)
+            if (!dialog.isAdded) {
+                dialog.showNow(manager, TAG)
+            }
+        }
+
+        fun hide(manager: FragmentManager) {
+            (manager.findFragmentByTag(TAG) as? CommonLoadingDialog)
+                ?.dismissAllowingStateLoss()
         }
     }
 
