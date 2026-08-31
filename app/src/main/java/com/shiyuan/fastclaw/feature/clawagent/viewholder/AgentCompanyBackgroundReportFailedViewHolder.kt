@@ -3,18 +3,20 @@ package com.shiyuan.fastclaw.feature.clawagent.viewholder
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundReportPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundReportFailedBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 /**
  * 公司背调报告 - 生成失败
  */
-class AgentCompanyBackgroundReportFailedViewHolder(private val binding: ItemMsgAgentCompanyBackgroundReportFailedBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    var onCompanyRetryClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: CompanyBackgroundReportPayloadBean?) -> Unit = { _, _, _ -> }
+class AgentCompanyBackgroundReportFailedViewHolder(
+    private val binding: ItemMsgAgentCompanyBackgroundReportFailedBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -27,7 +29,7 @@ class AgentCompanyBackgroundReportFailedViewHolder(private val binding: ItemMsgA
         binding.tvAction.isEnabled = enabled
         binding.tvAction.alpha = if (enabled) 1f else 0.5f
         binding.tvAction.setOnSingleClickListener {
-            onCompanyRetryClickListener(item, action, payload)
+            itemEvents.postEvent(ClawAgentItemEvent.CompanyRetry(item, action, payload))
         }
     }
 }

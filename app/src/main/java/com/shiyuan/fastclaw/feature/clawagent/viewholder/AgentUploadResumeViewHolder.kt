@@ -5,14 +5,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.manager.AppEventParam.XIAOXIA_TAB_NO_RESUME
-import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_NO_RESUME_START_QUESTIONING
 import com.shiyuan.fastclaw.core.network.apis.response.UploadResumePayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadResumeBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.router.AppNavigator
 
@@ -22,12 +23,10 @@ import com.shiyuan.fastclaw.router.AppNavigator
  * @author TooWhiteT
  */
 
-class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentUploadResumeBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    var onUploadClickListener: (itemData: ClawAgentMessageInfo) -> Unit = {}
-
-    /** 我没有简历 */
-    var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+class AgentUploadResumeViewHolder(
+    private val binding: ItemMsgAgentUploadResumeBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
         val payload = item.metaData?.let {
@@ -46,7 +45,7 @@ class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentUploadResumeB
         binding.btnUploadResume.alpha = if (enabled) 1f else 0.5f
 
         binding.btnUploadResume.setOnSingleClickListener {
-            if (enabled) onUploadClickListener(item)
+            if (enabled) itemEvents.postEvent(ClawAgentItemEvent.UploadResume(item, false))
         }
         bindNotAction(item, payload)
     }
@@ -63,7 +62,7 @@ class AgentUploadResumeViewHolder(private val binding: ItemMsgAgentUploadResumeB
         binding.tvNotResume.setOnSingleClickListener {
             //showToast(R.string.toast_resume_not_conversation)
             if (!AppNavigator.checkLoginIntercepted(false, loginSource = XIAOXIA_TAB_NO_RESUME)) {
-                onDefaultClickListener(item, action, null)
+                itemEvents.postEvent(ClawAgentItemEvent.DefaultAction(item, action, null))
             }
         }
     }

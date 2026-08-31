@@ -5,14 +5,15 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
-import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_QUESTION_REANSWER_SUBMIT
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentTableFormBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -21,13 +22,10 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  * @author：CaoWei
  * @date：2026/6/11 10:51
  */
-class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    /** 动作按钮点击回调（B 方案：仅暴露，提交后续统一接） */
-    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
-
-    /** 动作按钮（如跳过）点击回调 */
-    var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+class AgentTableFormViewHolder(
+    private val binding: ItemMsgAgentTableFormBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -66,7 +64,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
             binding.flowOptions.isEnabled = payload.isDisabled() != true
             binding.flowOptions.setOnSingleClickListener {
                 action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT.name
-                onActionClickListener(item, action, payload.questionQueueId)
+                itemEvents.postEvent(ClawAgentItemEvent.QuestionAction(item, action, payload.questionQueueId))
             }
         }
     }
@@ -85,7 +83,7 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
         binding.tvReanswer.isEnabled = action.disabled != true
         binding.tvReanswer.setOnSingleClickListener {
             action.actionCode = CandidateJobAgentClientActionEnum.QUESTION_REANSWER_SUBMIT.name
-            onActionClickListener(item, action, payload.questionQueueId)
+            itemEvents.postEvent(ClawAgentItemEvent.QuestionAction(item, action, payload.questionQueueId))
         }
     }
 
@@ -123,6 +121,8 @@ class AgentTableFormViewHolder(private val binding: ItemMsgAgentTableFormBinding
         }
         binding.tvSkip.visible()
         binding.tvSkip.isEnabled = action.disabled != true
-        binding.tvSkip.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }
+        binding.tvSkip.setOnSingleClickListener {
+            itemEvents.postEvent(ClawAgentItemEvent.DefaultAction(item, action, payload.questionQueueId))
+        }
     }
 }

@@ -7,19 +7,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewEntryBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 /**
  * 模拟面试入口卡
  */
-class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInterviewEntryBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    /** 点击“开始模拟面试/上传简历”时回调给 Fragment，由外层决定提交动作或打开上传流程。 */
-    var onInterviewStartClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
+class AgentMockInterviewEntryViewHolder(
+    private val binding: ItemMsgAgentMockInterviewEntryBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     /** 人物入场动画是否已播放，避免列表上下滑动复用时重复播放。 */
     private var hasPlayedPersonEnterAnim = false
@@ -54,7 +55,7 @@ class AgentMockInterviewEntryViewHolder(private val binding: ItemMsgAgentMockInt
             binding.tvCost.visibility = View.GONE
         }
         binding.layoutAction.setOnSingleClickListener {
-            if (enabled) onInterviewStartClickListener(item, action, payload)
+            if (enabled) itemEvents.postEvent(ClawAgentItemEvent.InterviewStart(item, action, payload))
         }
         if (isNewCard && binding.root.isAttachedToWindow) {
             // 已经 attach 的新卡片，post 到下一帧确保起点状态先完成绘制。

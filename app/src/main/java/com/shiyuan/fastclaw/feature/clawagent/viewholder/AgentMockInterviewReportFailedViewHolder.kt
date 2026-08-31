@@ -3,18 +3,20 @@ package com.shiyuan.fastclaw.feature.clawagent.viewholder
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
-import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewReportPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewReportFailedBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 /**
  * 面试复盘报告 - 生成失败
  */
-class AgentMockInterviewReportFailedViewHolder(private val binding: ItemMsgAgentMockInterviewReportFailedBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    var onInterviewRetryClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewReportPayloadBean?) -> Unit = { _, _, _ -> }
+class AgentMockInterviewReportFailedViewHolder(
+    private val binding: ItemMsgAgentMockInterviewReportFailedBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo) {
         val payload = item.metaData?.let {
@@ -27,7 +29,7 @@ class AgentMockInterviewReportFailedViewHolder(private val binding: ItemMsgAgent
         binding.tvAction.isEnabled = enabled
         binding.tvAction.alpha = if (enabled) 1f else 0.5f*/
         binding.tvAction.setOnSingleClickListener {
-            onInterviewRetryClickListener(item, action, payload)
+            itemEvents.postEvent(ClawAgentItemEvent.InterviewRetry(item, action, payload))
         }
     }
 }

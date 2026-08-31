@@ -20,25 +20,29 @@ import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.afterTextChanged
 import com.shiyuan.fastclaw.core.network.apis.request.CompanyBackgroundStartBody
-import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundCompanyInfo
 import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundEntryPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentCompanyBackgroundEntryBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 /**
- * 公司背调入口卡
+ * 公司背调入口卡。
+ *
+ * 公司搜索需要将异步结果返回当前卡片，因此保留单一结果回调；其余点击统一发送 item 事件。
  */
-class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCompanyBackgroundEntryBinding, ) : RecyclerView.ViewHolder(binding.root) {
-
-    /** 点击“开始背调”时回调给 Fragment，由外层提交卡片动作。 */
-    var onCompanyStartClickListener: (item: ClawAgentMessageInfo, action: CardAction?, companyData: CompanyBackgroundStartBody) -> Unit = { _, _, _ -> }
-
-    /** 输入公司名后的搜索回调，由外层请求候选公司列表后通过 callback 回传。 */
-    var onCompanySearchQueryListener: (keyword: String, callback: (keyword: String, companies: List<CompanyBackgroundCompanyInfo>) -> Unit, ) -> Unit = { keyword, callback -> callback(keyword, emptyList()) }
+class AgentCompanyBackgroundEntryViewHolder(
+    private val binding: ItemMsgAgentCompanyBackgroundEntryBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+    private val onCompanySearchQuery: (
+        keyword: String,
+        callback: (keyword: String, companies: List<CompanyBackgroundCompanyInfo>) -> Unit,
+    ) -> Unit,
+) : RecyclerView.ViewHolder(binding.root) {
 
     /** 搜索输入防抖用 Handler，避免每次输入都立刻请求接口。 */
     private val searchHandler = Handler(Looper.getMainLooper())
@@ -86,7 +90,13 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
             binding.etSearch.setText("")
             selectedCompanyId = null
             // 只有输入内容来自候选公司时才允许发起背调，避免把未确认文本提交成公司 ID。
-            onCompanyStartClickListener(item, action, CompanyBackgroundStartBody(companyName, companyId))
+            itemEvents.postEvent(
+                ClawAgentItemEvent.CompanyStart(
+                    item,
+                    action,
+                    CompanyBackgroundStartBody(companyName, companyId),
+                )
+            )
         }
 
         binding.ivDelete.setOnSingleClickListener {
@@ -123,7 +133,7 @@ class AgentCompanyBackgroundEntryViewHolder(private val binding: ItemMsgAgentCom
         }
         searchRunnable = Runnable {
             // 真正的搜索请求交给外层处理，ViewHolder 只负责收集关键字和展示结果。
-            onCompanySearchQueryListener(keyword) { resultKeyword, companies ->
+            onCompanySearchQuery(keyword) { resultKeyword, companies ->
                 val currentKeyword = binding.etSearch.text?.toString().orEmpty().trim()
                 if (currentKeyword == resultKeyword) {
                     // 只展示与当前输入一致的结果，过滤掉慢请求回来的旧关键字数据。

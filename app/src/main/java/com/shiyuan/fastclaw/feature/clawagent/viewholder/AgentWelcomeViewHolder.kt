@@ -7,10 +7,12 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
 import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentWelcomeBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -20,12 +22,10 @@ import com.shiyuan.fastclaw.router.AppNavigator
  * @author TooWhiteT
  */
 
-class AgentWelcomeViewHolder(private val binding: ItemMsgAgentWelcomeBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    var onUploadClickListener: (item: ClawAgentMessageInfo) -> Unit = {}
-
-    /** 我没有简历 */
-    var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+class AgentWelcomeViewHolder(
+    private val binding: ItemMsgAgentWelcomeBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
         if (isLastItem) {
@@ -34,11 +34,17 @@ class AgentWelcomeViewHolder(private val binding: ItemMsgAgentWelcomeBinding) : 
             binding.layoutAction.gone()
         }
         binding.btnUploadResume.setOnSingleClickListener {
-            onUploadClickListener(item)
+            itemEvents.postEvent(ClawAgentItemEvent.UploadResume(item, false))
         }
         binding.tvNotResume.setOnSingleClickListener {
             if (!AppNavigator.checkLoginIntercepted(false)) {
-                onDefaultClickListener(item, CardAction(CandidateJobAgentClientActionEnum.NO_RESUME_START_QUESTIONING.name), null)
+                itemEvents.postEvent(
+                    ClawAgentItemEvent.DefaultAction(
+                        item,
+                        CardAction(CandidateJobAgentClientActionEnum.NO_RESUME_START_QUESTIONING.name),
+                        null,
+                    )
+                )
             }
         }
         //updateContainerMargin()

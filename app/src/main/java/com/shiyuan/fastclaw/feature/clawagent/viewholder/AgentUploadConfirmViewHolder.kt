@@ -4,9 +4,11 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.response.HistoryResumeConfirmPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentUploadConfirmBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 /** agent历史简历确认卡（HISTORY_RESUME_CONFIRM）
@@ -14,13 +16,10 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  * @author TooWhiteT
  */
 
-class AgentUploadConfirmViewHolder(private val binding: ItemMsgAgentUploadConfirmBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    /** 确认是本人简历点击（B 方案：仅暴露，提交后续统一接 sendAction(RESUME_CONFIRM_YES)） */
-    var onConfirmClickListener: (item: ClawAgentMessageInfo) -> Unit = {}
-
-    /** 否认（不是我的简历）点击（B 方案：仅暴露，提交后续统一接 sendAction(RESUME_CONFIRM_NO)） */
-    var onRejectClickListener: (item: ClawAgentMessageInfo) -> Unit = {}
+class AgentUploadConfirmViewHolder(
+    private val binding: ItemMsgAgentUploadConfirmBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
         val payload = item.metaData?.let {
@@ -37,7 +36,11 @@ class AgentUploadConfirmViewHolder(private val binding: ItemMsgAgentUploadConfir
         binding.btnReUpload.isEnabled = !disabled
         binding.btnConfirm.alpha = if (disabled) 0.5f else 1f
         binding.btnReUpload.alpha = if (disabled) 0.5f else 1f
-        binding.btnConfirm.setOnSingleClickListener { if (!disabled) onConfirmClickListener(item) }
-        binding.btnReUpload.setOnSingleClickListener { if (!disabled) onRejectClickListener(item) }
+        binding.btnConfirm.setOnSingleClickListener {
+            if (!disabled) itemEvents.postEvent(ClawAgentItemEvent.ResumeConfirm(item, true))
+        }
+        binding.btnReUpload.setOnSingleClickListener {
+            if (!disabled) itemEvents.postEvent(ClawAgentItemEvent.ResumeConfirm(item, false))
+        }
     }
 }

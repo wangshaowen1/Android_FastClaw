@@ -14,11 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
-import com.shiyuan.fastclaw.core.network.apis.response.CardAction
-import com.shiyuan.fastclaw.core.network.apis.response.CardOption
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_QUESTION_REANSWER_SUBMIT
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_SKIP_CURRENT_QUESTION
@@ -30,6 +29,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.C
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_SINGLE_CHOICE
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.MODE_TEXT
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentQuestionBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
@@ -38,19 +38,10 @@ import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
  * @author TooWhiteT
  */
 
-class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    /** 选项点击回调（B 方案：仅暴露，提交由后续统一接 sendAction(QUESTION_OPTION_SUBMIT)） */
-    var onOptionClickListener: (item: ClawAgentMessageInfo, option: CardOption, questionQueueId: String?) -> Unit = { _, _, _ -> }
-
-    /** 动作按钮点击回调（B 方案：仅暴露，提交后续统一接） */
-    var onActionClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
-
-    /** 动作按钮（如跳过）点击回调 */
-    var onDefaultClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
-
-    /** 点击拉起输入法 */
-    var onInputClickListener: (item: ClawAgentMessageInfo, action: CardAction, questionQueueId: String?) -> Unit = { _, _, _ -> }
+class AgentQuestionViewHolder(
+    private val binding: ItemMsgAgentQuestionBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     /** 上次动态添加的选项/动作行，复用前先移除 */
     private val optionRows = ArrayList<View>()
@@ -105,7 +96,7 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             //tvContent.isEnabled = option.disabled != true
             tvContent.setOnSingleClickListener(700L) {
                 option.actionCode = if (payload.isAnswered()) CandidateJobAgentClientActionEnum.QUESTION_REANSWER_SUBMIT.name else option.actionCode
-                onOptionClickListener(item, option, payload.questionQueueId)
+                itemEvents.postEvent(ClawAgentItemEvent.QuestionOption(item, option, payload.questionQueueId))
             }
             view.id = View.generateViewId()
             parent.addView(view)
@@ -144,7 +135,13 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             ivInto.visible()
             tvContent.isEnabled = payload.isDisabled() != true
             tvContent.setOnSingleClickListener {
-                onActionClickListener(item, payload.buildAction(CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT), payload.questionQueueId)
+                itemEvents.postEvent(
+                    ClawAgentItemEvent.QuestionAction(
+                        item,
+                        payload.buildAction(CandidateJobAgentClientActionEnum.QUESTION_OPTION_SUBMIT),
+                        payload.questionQueueId,
+                    )
+                )
             }
             view.id = View.generateViewId()
             parent.addView(view)
@@ -170,9 +167,15 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
             if (payload.inputMode == MODE_SINGLE_CHOICE || payload.inputMode == MODE_MULTI_CHOICE) { //单选/多选枚举
                 expandReAnswerOptions(item)
             } else if (payload.inputMode == MODE_TEXT) { //文本
-                onInputClickListener(item, action, payload.questionQueueId)
+                itemEvents.postEvent(ClawAgentItemEvent.QuestionInput(item, action, payload.questionQueueId))
             } else {
-                onActionClickListener(item, payload.buildAction(CandidateJobAgentClientActionEnum.QUESTION_REANSWER_SUBMIT), payload.questionQueueId)
+                itemEvents.postEvent(
+                    ClawAgentItemEvent.QuestionAction(
+                        item,
+                        payload.buildAction(CandidateJobAgentClientActionEnum.QUESTION_REANSWER_SUBMIT),
+                        payload.questionQueueId,
+                    )
+                )
             }
         }
     }
@@ -193,7 +196,9 @@ class AgentQuestionViewHolder(private val binding: ItemMsgAgentQuestionBinding) 
         }
         binding.tvSkip.visible()
         binding.tvSkip.isEnabled = action.disabled != true
-        binding.tvSkip.setOnSingleClickListener { onDefaultClickListener(item, action, payload.questionQueueId) }
+        binding.tvSkip.setOnSingleClickListener {
+            itemEvents.postEvent(ClawAgentItemEvent.DefaultAction(item, action, payload.questionQueueId))
+        }
     }
 
     /**

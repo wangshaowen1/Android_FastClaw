@@ -106,72 +106,49 @@ class ClawAgentMsgAdapter(
         // 欢迎引导卡
         register(TYPE_WELCOME,
             { i, p ->
-                AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false)).apply {
-                    onUploadClickListener = { item -> itemEvents.postEvent(ClawAgentItemEvent.UploadResume(item, false)) }
-                    onDefaultClickListener = { item, action, queueId -> itemEvents.postEvent(ClawAgentItemEvent.DefaultAction(item, action, queueId)) }
-                }
+                AgentWelcomeViewHolder(ItemMsgAgentWelcomeBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item, items.lastOrNull { !it.isLastIgnoreItem() }?.id == item.id) }
         // 活动测薪资卡片
         register(TYPE_ACTIVITY_SALARY,
             { i, p ->
-                AgentActivitySalaryViewHolder(ItemMsgAgentActivityBinding.inflate(i, p, false)).apply {
-                    onActivityClickListener = { item -> itemEvents.postEvent(ClawAgentItemEvent.ActivityClick(item)) }
-                }
+                AgentActivitySalaryViewHolder(ItemMsgAgentActivityBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         // 历史简历确认卡
         register(TYPE_PENDING_CONFIRM,
             { i, p ->
-                AgentUploadConfirmViewHolder(ItemMsgAgentUploadConfirmBinding.inflate(i, p, false)).apply {
-                    onConfirmClickListener = { itemEvents.postEvent(ClawAgentItemEvent.ResumeConfirm(it, true)) }
-                    onRejectClickListener = { itemEvents.postEvent(ClawAgentItemEvent.ResumeConfirm(it, false)) }
-                }
+                AgentUploadConfirmViewHolder(ItemMsgAgentUploadConfirmBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
         // 简历上传成功
         register(TYPE_UPLOAD_SUCCESS, { i, p -> AgentUploadSuccessViewHolder(ItemMsgAgentUploadSuccessBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 简历上传指引
         register(TYPE_UPLOAD_WAIT,
             { i, p ->
-                AgentUploadResumeViewHolder(ItemMsgAgentUploadResumeBinding.inflate(i, p, false)).apply {
-                    onUploadClickListener = { item -> itemEvents.postEvent(ClawAgentItemEvent.UploadResume(item, false)) }
-                    onDefaultClickListener = { item, action, queueId -> itemEvents.postEvent(ClawAgentItemEvent.DefaultAction(item, action, queueId)) }
-                }
+                AgentUploadResumeViewHolder(ItemMsgAgentUploadResumeBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
         // 简历上传失败
         register(TYPE_UPLOAD_FAILED,
             { i, p ->
-                AgentUploadFailedViewHolder(ItemMsgAgentUploadFailedBinding.inflate(i, p, false)).apply {
-                    onReUploadClickListener = { itemEvents.postEvent(ClawAgentItemEvent.UploadResume(it, true)) }
-                }
+                AgentUploadFailedViewHolder(ItemMsgAgentUploadFailedBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
         // 文本居中卡
         register(TYPE_TEXT_TIP, { i, p -> AgentTextTipViewHolder(ItemMsgAgentTextTipBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }
         // 核心补问卡
         register(TYPE_QUESTION,
             { i, p ->
-                AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false)).apply {
-                    onOptionClickListener = { item, option, queueId ->
-                        collapseExpandedQuestionItem()
-                        itemEvents.postEvent(ClawAgentItemEvent.QuestionOption(item, option, queueId))
-                    }
-                    onActionClickListener = { item, action, queueId -> itemEvents.postEvent(ClawAgentItemEvent.QuestionAction(item, action, queueId)) }
-                    onInputClickListener = { item, action, queueId -> itemEvents.postEvent(ClawAgentItemEvent.QuestionInput(item, action, queueId)) }
-                    onDefaultClickListener = { item, action, queueId -> itemEvents.postEvent(ClawAgentItemEvent.DefaultAction(item, action, queueId)) }
-                }
+                AgentQuestionViewHolder(ItemMsgAgentQuestionBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         register(TYPE_TABLE_FORM,
             { i, p ->
-                AgentTableFormViewHolder(ItemMsgAgentTableFormBinding.inflate(i, p, false)).apply {
-                    onActionClickListener = { item, action, queueId -> itemEvents.postEvent(ClawAgentItemEvent.QuestionAction(item, action, queueId)) }
-                    onDefaultClickListener = { item, action, queueId -> itemEvents.postEvent(ClawAgentItemEvent.DefaultAction(item, action, queueId)) }
-                }
+                AgentTableFormViewHolder(ItemMsgAgentTableFormBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         // 公司背调入口卡
         register(TYPE_COMPANY_BACKGROUND_ENTRY,
             { i, p ->
-                AgentCompanyBackgroundEntryViewHolder(ItemMsgAgentCompanyBackgroundEntryBinding.inflate(i, p, false)).apply {
-                    onCompanyStartClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.CompanyStart(item, action, data)) }
-                    onCompanySearchQueryListener = { keyword, callback -> onCompanySearchQuery(keyword, callback) }
-                }
+                AgentCompanyBackgroundEntryViewHolder(
+                    binding = ItemMsgAgentCompanyBackgroundEntryBinding.inflate(i, p, false),
+                    itemEvents = itemEvents,
+                    onCompanySearchQuery = onCompanySearchQuery,
+                )
             }) { h, item -> h.bind(item) }
         // 公司背调报告卡：生成中
         register(TYPE_COMPANY_BACKGROUND_REPORT_GENERATING,
@@ -179,31 +156,22 @@ class ClawAgentMsgAdapter(
         //公司背调报告卡：失败
         register(TYPE_COMPANY_BACKGROUND_REPORT_FAILED,
             { i, p ->
-                AgentCompanyBackgroundReportFailedViewHolder(ItemMsgAgentCompanyBackgroundReportFailedBinding.inflate(i, p, false)).apply {
-                    onCompanyRetryClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.CompanyRetry(item, action, data)) }
-                }
+                AgentCompanyBackgroundReportFailedViewHolder(ItemMsgAgentCompanyBackgroundReportFailedBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         //公司背调报告卡：成功
         register(TYPE_COMPANY_BACKGROUND_REPORT_DONE,
             { i, p ->
-                AgentCompanyBackgroundReportDoneViewHolder(ItemMsgAgentCompanyBackgroundReportDoneBinding.inflate(i, p, false)).apply {
-                    onCompanyDoneClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.CompanyDone(item, action, data)) }
-                }
+                AgentCompanyBackgroundReportDoneViewHolder(ItemMsgAgentCompanyBackgroundReportDoneBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         // 模拟面试入口卡
         register(TYPE_MOCK_INTERVIEW_ENTRY,
             { i, p ->
-                AgentMockInterviewEntryViewHolder(ItemMsgAgentMockInterviewEntryBinding.inflate(i, p, false)).apply {
-                    onInterviewStartClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.InterviewStart(item, action, data)) }
-                }
+                AgentMockInterviewEntryViewHolder(ItemMsgAgentMockInterviewEntryBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         // 模拟面试理解升级入口卡
         register(TYPE_MOCK_INTERVIEW_ENTRY_UPGRADE,
             { i, p ->
-                AgentMockInterviewEntryUpgradeViewHolder(ItemMsgAgentMockInterviewEntryUpgradeBinding.inflate(i, p, false)).apply {
-                    onInterviewStartClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.InterviewStart(item, action, data)) }
-                    onInterviewNotNeedClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.InterviewNotNeed(item, action, data)) }
-                }
+                AgentMockInterviewEntryUpgradeViewHolder(ItemMsgAgentMockInterviewEntryUpgradeBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item, items.lastOrNull()?.id == item.id) }
         // 面试复盘报告卡：生成中
         register(TYPE_MOCK_INTERVIEW_REPORT_GENERATING,
@@ -211,16 +179,12 @@ class ClawAgentMsgAdapter(
         // 面试复盘报告卡：失败
         register(TYPE_MOCK_INTERVIEW_REPORT_FAILED,
             { i, p ->
-                AgentMockInterviewReportFailedViewHolder(ItemMsgAgentMockInterviewReportFailedBinding.inflate(i, p, false)).apply {
-                    onInterviewRetryClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.InterviewRetry(item, action, data)) }
-                }
+                AgentMockInterviewReportFailedViewHolder(ItemMsgAgentMockInterviewReportFailedBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         // 面试复盘报告卡：成功
         register(TYPE_MOCK_INTERVIEW_REPORT_DONE,
             { i, p ->
-                AgentMockInterviewReportDoneViewHolder(ItemMsgAgentMockInterviewReportDoneBinding.inflate(i, p, false)).apply {
-                    onInterviewDoneClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.InterviewDone(item, action, data)) }
-                }
+                AgentMockInterviewReportDoneViewHolder(ItemMsgAgentMockInterviewReportDoneBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         // 面试通关包报告卡：生成中
         register(TYPE_PASS_PACKAGE_REPORT_GENERATING,
@@ -228,16 +192,12 @@ class ClawAgentMsgAdapter(
         // 面试通关包报告卡：失败
         register(TYPE_PASS_PACKAGE_REPORT_FAILED,
             { i, p ->
-                AgentPassPackageReportFailedViewHolder(ItemMsgAgentPassPackageReportFailedBinding.inflate(i, p, false)).apply {
-                    onPassPackageRetryClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.PassPackageRetry(item, action, data)) }
-                }
+                AgentPassPackageReportFailedViewHolder(ItemMsgAgentPassPackageReportFailedBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         // 面试通关包报告卡：成功
         register(TYPE_PASS_PACKAGE_REPORT_DONE,
             { i, p ->
-                AgentPassPackageReportDoneViewHolder(ItemMsgAgentPassPackageReportDoneBinding.inflate(i, p, false)).apply {
-                    onPassPackageDoneClickListener = { item, action, data -> itemEvents.postEvent(ClawAgentItemEvent.PassPackageDone(item, action, data)) }
-                }
+                AgentPassPackageReportDoneViewHolder(ItemMsgAgentPassPackageReportDoneBinding.inflate(i, p, false), itemEvents)
             }) { h, item -> h.bind(item) }
         // 正在寻找岗位
         register(TYPE_SEARCHING_JOBS, { i, p -> AgentSearchingJobsViewHolder(ItemMsgAgentSearchingJobsBinding.inflate(i, p, false)) }) { h, item -> h.bind(item) }

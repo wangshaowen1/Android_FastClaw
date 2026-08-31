@@ -5,25 +5,23 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.GsonUtils
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
-import com.shiyuan.fastclaw.core.network.apis.response.CardAction
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean.Companion.ACTION_MOCK_INTERVIEW_NOT_NEEDED
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewEntryPayloadBean
 import com.shiyuan.fastclaw.databinding.ItemMsgAgentMockInterviewEntryUpgradeBinding
+import com.shiyuan.fastclaw.feature.clawagent.ClawAgentItemEvent
 import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
 
 /**
  * 模拟面试理解升级入口卡
  */
-class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgentMockInterviewEntryUpgradeBinding) : RecyclerView.ViewHolder(binding.root) {
-
-    /** 点击“开始模拟面试”时回调给 Adapter/Fragment，由外层统一提交卡片动作。 */
-    var onInterviewStartClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
-
-    /** 点击“暂不需要”时回调给 Adapter/Fragment，由外层统一提交跳过动作。 */
-    var onInterviewNotNeedClickListener: (item: ClawAgentMessageInfo, action: CardAction?, data: MockInterviewEntryPayloadBean?) -> Unit = { _, _, _ -> }
+class AgentMockInterviewEntryUpgradeViewHolder(
+    private val binding: ItemMsgAgentMockInterviewEntryUpgradeBinding,
+    private val itemEvents: ItemEventsViewModel<ClawAgentItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
     /** 绑定模拟面试理解升级入口卡内容和按钮状态。 */
     fun bind(item: ClawAgentMessageInfo, isLastItem: Boolean) {
@@ -44,7 +42,7 @@ class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgent
         binding.tvSkip.visibility = if (isLastItem && enabled) View.VISIBLE else View.GONE
         binding.btnAction.isEnabled = enabled
         binding.btnAction.setOnSingleClickListener {
-            onInterviewStartClickListener(item, action, payload)
+            itemEvents.postEvent(ClawAgentItemEvent.InterviewStart(item, action, payload))
         }
         bindSkipAction(item, payload)
     }
@@ -56,7 +54,9 @@ class AgentMockInterviewEntryUpgradeViewHolder(private val binding: ItemMsgAgent
             binding.tvSkip.visible()
             // action.disabled 只控制当前动作能否点，不影响整张入口卡展示。
             binding.tvSkip.isEnabled = action.disabled != true
-            binding.tvSkip.setOnSingleClickListener { onInterviewNotNeedClickListener(item, action, payload) }
+            binding.tvSkip.setOnSingleClickListener {
+                itemEvents.postEvent(ClawAgentItemEvent.InterviewNotNeed(item, action, payload))
+            }
         } else {
             binding.tvSkip.gone()
         }

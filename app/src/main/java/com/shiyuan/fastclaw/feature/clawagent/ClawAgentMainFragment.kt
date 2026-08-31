@@ -506,6 +506,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     }
 
     private fun handleQuestionOption(event: ClawAgentItemEvent.QuestionOption) {
+        // 保持原 Adapter 回调顺序：先收起所有重新回答项，再处理选项提交。
+        msgAdapter.collapseExpandedQuestionItem()
         if (interceptIfStreaming()) return
         val payload = event.item.metaData?.let {
             runCatching { GsonUtils.fromJson(it, CoreQuestionPayloadBean::class.java) }.getOrNull()
