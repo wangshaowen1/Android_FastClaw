@@ -577,6 +577,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             rootView = binding.root,
             inputView = binding.layoutBottom,
             recyclerView = binding.rvMsg,
+            imeHiddenView = binding.rvAction,
             closedOffsetPx = 12.dp,
             visibleGapPx = 12.dp,
             onImeVisibilityChanged = { visible ->
