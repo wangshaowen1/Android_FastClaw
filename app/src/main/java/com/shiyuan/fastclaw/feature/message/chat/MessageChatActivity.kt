@@ -127,6 +127,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
                 }
             }
         })
+        //点击或滑动聊天记录区域时，收起输入区域，但不拦截消息列表的操作。
         binding.rvMessages.setOnTouchListener { _, event ->
             if (KeyboardUtils.isSoftInputShown(window)) {
                 hideKeyboard(binding.etContent)
@@ -139,10 +140,13 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
         binding.ivSend.setOnSingleClickListener {
             val hasContent = binding.etContent.text?.toString()?.isNotBlank() == true
             if (hasContent) {
+                // 输入框有非空白内容：发送文字消息。
                 sendTextMessage()
             } else if (isMorePanelVisible) {
+                //输入框为空，并且更多面板已显示：关闭更多面板
                 hideMorePanel()
             } else {
+                //输入框为空，并且更多面板未显示：打开更多面板。
                 showMorePanel()
             }
         }
