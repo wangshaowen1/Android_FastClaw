@@ -12,10 +12,6 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsAnimationCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,10 +33,10 @@ import com.shiyuan.fastclaw.common.Constants.MOCK_INTERVIEW_RESULT_URL
 import com.shiyuan.fastclaw.common.Constants.MOCK_PASS_PACKET_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.common.utils.ImeInsetsAnimationCoordinator
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
-import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.User
@@ -128,8 +124,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     /** 是否已经收到过非空消息列表，用于区分首次渲染和后续增量刷新。 */
     private var hasObservedNonEmptyMessageList = false
 
-    /** IME 动画进行中flag */
-    private var hasRunningImeAnimation = false
+    /** 统一驱动输入区位置与消息列表留白的 IME 动画协调器。 */
+    private var imeAnimationCoordinator: ImeInsetsAnimationCoordinator? = null
 
     /** 当前正在重新回答的消息，文本输入提交时使用。 */
     private var mCurrentMessage: ClawAgentMessageInfo? = null
@@ -577,67 +573,17 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         binding.etSend.setOnTouchListener { _, event ->
             handleEtSendVoiceTouch(event)
         }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.layoutSend) { v, insets ->
-            // IME 底部高度表示键盘占用区域，键盘未显示时通常为 0。
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            // 导航栏高度忽略可见性读取，兼容全屏手势和虚拟按键两种模式。
-            val navigationBottom = insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars()).bottom
-            // 动画期间不再改变margin，防多次分发触发动画
-            if (!hasRunningImeAnimation) {
-                v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                    // 根据键盘高度和导航栏高度统一计算输入栏底部间距。
-                    bottomMargin = resolveBottomMargin(imeBottom, navigationBottom)
-                }
-            }
-            insets
-        }
-        // 键盘动画监听期间逐帧跟随 IME，键盘弹/收过程中 layoutSend 跟随改变底部边距
-        ViewCompat.setWindowInsetsAnimationCallback(binding.layoutSend, object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-                override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-                    if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
-                        // 标记 IME 动画开始，避免普通 insets 回调和动画回调同时改 margin。
-                        hasRunningImeAnimation = true
-                    }
-                }
-
-                override fun onProgress(insets: WindowInsetsCompat, runningAnimations: MutableList<WindowInsetsAnimationCompat>): WindowInsetsCompat {
-                    // 动画进行中每一帧读取键盘和导航栏高度，让输入栏跟随键盘移动。
-                    val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-                    val navigationBottom = insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars()).bottom
-                    binding.layoutSend.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                        bottomMargin = resolveBottomMargin(imeBottom, navigationBottom)
-                    }
-                    return insets
-                }
-
-                override fun onEnd(animation: WindowInsetsAnimationCompat) {
-                    if (animation.typeMask and WindowInsetsCompat.Type.ime() != 0) {
-                        // IME 动画结束后释放锁，后续静态 insets 变化可以正常修正 margin。
-                        hasRunningImeAnimation = false
-                    }
-                }
-            }
-        )
-        SoftKeyBoardListener(activity).setOnSoftKeyBoardChangeListener(object : SoftKeyBoardListener.OnSoftKeyBoardChangeListener {
-            override fun keyBoardShow(height: Int) {
-                isScrollBottomKeyboardShowing = true
-                // 键盘真正展开后隐藏快捷入口和贴底按钮，避免遮挡输入区域。
-                binding.rvAction.gone()
-                binding.ivScrollBottom.gone()
-            }
-
-            override fun keyBoardHide(height: Int) {
-                isScrollBottomKeyboardShowing = false
-                // 键盘收起后恢复贴底按钮判断和快捷入口展示。
+        imeAnimationCoordinator = ImeInsetsAnimationCoordinator(
+            rootView = binding.root,
+            inputView = binding.layoutBottom,
+            recyclerView = binding.rvMsg,
+            closedOffsetPx = 12.dp,
+            visibleGapPx = 12.dp,
+            onImeVisibilityChanged = { visible ->
+                isScrollBottomKeyboardShowing = visible
                 updateScrollBottomButton()
-                binding.rvAction.visible()
-                // 延迟 100 毫秒后重置动画锁并请求重新分发 Insets
-                binding.layoutSend.postDelayed({
-                    hasRunningImeAnimation = false
-                    ViewCompat.requestApplyInsets(binding.layoutSend)
-                }, 250L)
-            }
-        })
+            },
+        ).also { it.attach() }
     }
 
     private fun initObserve() {
@@ -1309,12 +1255,6 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         return GsonUtils.toJson(map)
     }
 
-    // 计算 layoutSend 相对父容器底部应有的 margin，兼容三键导航和全屏手势导航。
-    private fun resolveBottomMargin(imeBottom: Int, navigationBottom: Int): Int {
-        val gestureInsetOffset = (binding.layoutContainer.paddingBottom - navigationBottom).coerceAtLeast(0)
-        return maxOf(12.dp, imeBottom - BaseClawAgentFragment.KEYBOARD_BASE_BOTTOM_OFFSET.dp + gestureInsetOffset)
-    }
-
     private fun dismissMemoryCard() {
         autoConfirmJob?.cancel()
         autoConfirmJob = null
@@ -1323,6 +1263,9 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     }
 
     override fun onDestroyView() {
+        imeAnimationCoordinator?.release()
+        imeAnimationCoordinator = null
+        isScrollBottomKeyboardShowing = false
         resumeEventPullJob?.cancel()
         resumeEventPullJob = null
         agentStatusPopup?.dismiss()
