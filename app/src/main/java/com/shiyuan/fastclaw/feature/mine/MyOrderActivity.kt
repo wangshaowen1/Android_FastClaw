@@ -78,9 +78,11 @@ class MyOrderActivity : BaseViewModelActivity<ActivityMyOrderBinding, MineViewMo
         binding.layoutOrderTab.post { updateTabSlider(selectedIndex, 0f) }
         binding.llTabShrimpRecord.setOnSingleClickListener {
             binding.vpOrderPages.setCurrentItem(0, false)
+            updateTabSlider(0, 0f)
         }
         binding.llTabOrderRecord.setOnSingleClickListener {
             binding.vpOrderPages.setCurrentItem(1, false)
+            updateTabSlider(1, 0f)
         }
         binding.vpOrderPages.registerOnPageChangeCallback(pageChangeCallback)
     }
