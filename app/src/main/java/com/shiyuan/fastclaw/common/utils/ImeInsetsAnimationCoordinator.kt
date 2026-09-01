@@ -435,13 +435,15 @@ class ImeInsetsAnimationCoordinator(
             postImeActionInterpolator?.let { interpolator = it }
             addUpdateListener { valueAnimator ->
                 applyImeHiddenViewOpenFraction(valueAnimator.animatedValue as Float)
+                if (valueAnimator.currentPlayTime >= AUXILIARY_VIEW_REVEAL_DELAY_MILLIS) {
+                    dispatchImeVisibility(0)
+                }
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
                     if (postImeActionAnimator !== animation) return
                     postImeActionAnimator = null
                     applyImeHiddenViewOpenFraction(0f)
-                    // Action 区恢复完成后再允许附属按钮展示，保持其历史稳定间距。
                     dispatchImeVisibility(0)
                 }
             })
@@ -510,5 +512,6 @@ class ImeInsetsAnimationCoordinator(
         const val DEFAULT_ACTION_REVEAL_DURATION_MILLIS = 200L
         const val MIN_ACTION_REVEAL_DURATION_MILLIS = 160L
         const val MAX_ACTION_REVEAL_DURATION_MILLIS = 300L
+        const val AUXILIARY_VIEW_REVEAL_DELAY_MILLIS = 60L
     }
 }
