@@ -131,6 +131,16 @@
 
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
+        <View
+            android:id="@+id/view_input_action_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/color_f6f9ff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/rv_action" />
+
         <com.shiyuan.fastclaw.widget.super_button.SuperButton
             android:id="@+id/view_action_gradient"
             android:layout_width="match_parent"

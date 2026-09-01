@@ -255,6 +255,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             inputView = binding.layoutBottom,
             recyclerView = binding.rvMsg,
             imeHiddenView = binding.rvAction,
+            imeBackgroundView = binding.viewInputActionBackground,
             imeHiddenDecorationView = binding.viewActionGradient,
             closedOffsetPx = 12.dp,
             visibleGapPx = 12.dp,
