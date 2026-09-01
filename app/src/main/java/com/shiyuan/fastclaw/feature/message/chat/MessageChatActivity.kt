@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.doAfterTextChanged
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelActivity
@@ -23,6 +24,7 @@ import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.setupTranslucentStatus
 import com.nhsd.basic.ext.showToast
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
@@ -35,14 +37,17 @@ import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
 import com.shiyuan.fastclaw.feature.message.dialog.JobSwitchConfirmDialog
 import com.shiyuan.fastclaw.feature.message.dialog.ResumeConfirmDialog
 import com.shiyuan.fastclaw.feature.opportunity.OpportunityDetailActivity
+import kotlinx.coroutines.launch
 
 /**
  * IM 单聊详情页，承接消息会话列表进入后的聊天展示和文本发送。
  */
 class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, MessageChatViewModel>() {
 
+    // 消息 item 点击事件，由 Adapter/ViewHolder 发送、页面统一消费。
+    private val itemEvents by lazy { ItemEventsViewModel<MessageChatItemEvent>() }
     // 单聊消息列表适配器。
-    private val messageAdapter by lazy { MessageChatAdapter() }
+    private val messageAdapter by lazy { MessageChatAdapter(itemEvents) }
     // 单聊消息列表布局管理器。
     private lateinit var messageLayoutManager: LinearLayoutManager
     // 下一次列表刷新后是否滚动到底部。
@@ -165,22 +170,6 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             //关闭更多面板
             hideMorePanel()
         }
-        messageAdapter.onResumeRequestAcceptClick = {
-            mRealVM.acceptResumeForRequest(sessionId, it)
-        }
-        messageAdapter.onResumeRequestRejectClick = {
-            mRealVM.rejectResumeForRequest(sessionId, it)
-        }
-        messageAdapter.onResumeFileClick = {
-            //showMessage(getString(R.string.message_chat_resume_action_waiting))
-        }
-        messageAdapter.onHrAvatarClick = {
-           // Log.d("onHrAvatarClick",currentJobId?:"")
-            OpportunityDetailActivity.start(this, currentJobId?:"")
-        }
-        messageAdapter.onJobCardClick = {
-            OpportunityDetailActivity.start(this, it.jobId?:"")
-        }
         ViewCompat.setOnApplyWindowInsetsListener(binding.layoutInput) { view, insets ->
             val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             if (!hasRunningImeAnimation) {
@@ -238,6 +227,9 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
      * 监听 ViewModel 消息列表变化并刷新适配器。
      */
     private fun initObserve() {
+        lifecycleScope.launch {
+            itemEvents.events.collect(::handleItemEvent)
+        }
         mRealVM.messageList.observe(this) { items ->
             // 是否滚到最新：用户刚发送(forceScrollToBottom)强制滚动；否则仅在原本已在底部时
             // 跟随新消息，避免打断向上浏览历史。判定须在 submitList 之前取(反映旧位置)。
@@ -269,6 +261,31 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             ResumeConfirmDialog.show(supportFragmentManager, resume) {
                 forceScrollToBottom = true
                 mRealVM.sendResumeDeliveryMessage(it)
+            }
+        }
+    }
+
+    /**
+     * 统一处理消息列表点击事件，事件保留原始消息项及其 messageType。
+     */
+    private fun handleItemEvent(event: MessageChatItemEvent) {
+        when (event) {
+            is MessageChatItemEvent.ResumeRequestAccept -> {
+                mRealVM.acceptResumeForRequest(sessionId, event.item)
+            }
+
+            is MessageChatItemEvent.ResumeRequestReject -> {
+                mRealVM.rejectResumeForRequest(sessionId, event.item)
+            }
+
+            is MessageChatItemEvent.ResumeFile -> Unit
+
+            is MessageChatItemEvent.HrAvatar -> {
+                OpportunityDetailActivity.start(this, currentJobId.orEmpty())
+            }
+
+            is MessageChatItemEvent.JobCard -> {
+                OpportunityDetailActivity.start(this, event.item.jobId.orEmpty())
             }
         }
     }

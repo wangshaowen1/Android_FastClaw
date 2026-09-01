@@ -183,7 +183,7 @@ android {
             //阿里语音
             buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-ws-H.RYYXRXP.FWhj.MEUCIBlCS4I-U7oziLE2jWrlZgr9yb8QjvpbPC_SnOVkVfXxAiEAvknGCA_1nhWiF6Ar0gJrNxZnktLX1cSl5Fh_VvZEgZc"'
             // imkey-ba8e330981fd9468ebf3dfc9349259fd
-            buildConfigField "String", "NIM_APP_KEY", '"aef89804213aa471176586e8cc8edc71"'
+            buildConfigField "String", "NIM_APP_KEY", '"20a0fcf88259f32cbad2300feac75d38"'
             manifestPlaceholders = [
                     qqappid            : "YOUR_QQ_APP_ID",
             ]
@@ -218,7 +218,7 @@ android {
             //阿里语音
             buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-ws-H.RXPIRMX.iEam.MEUCIQDJ2FzvD1GhRNdyIuCiZCeZW0xZu708zEdlThIFn11XzQIgY5nOMeGzoFHIxhE3dSlM1S8Tz_RJduq326scot52mFw"'
             // imkey
-            buildConfigField "String", "NIM_APP_KEY", '"20a0fcf88259f32cbad2300feac75d38"'
+            buildConfigField "String", "NIM_APP_KEY", '"aef89804213aa471176586e8cc8edc71"'
 
             versionNameSuffix ""
             signingConfig signingConfigs.debug

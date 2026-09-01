@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.databinding.ItemChatJobCardBinding
 import com.shiyuan.fastclaw.databinding.ItemChatResumeDeliveryBinding
 import com.shiyuan.fastclaw.databinding.ItemChatResumeRequestBinding
@@ -23,35 +24,22 @@ import com.shiyuan.fastclaw.feature.message.data.ResumeRequestChatItem
 import com.shiyuan.fastclaw.feature.message.data.TextChatItem
 
 // IM 单聊消息适配器，负责职位、文本、简历请求和简历投递消息的多类型展示。
-class MessageChatAdapter : BaseMultiItemAdapter<ChatMessageItem>() {
-
-    // 简历请求同意点击回调，后续接入业务接口时由页面层处理。
-    var onResumeRequestAcceptClick: (ResumeRequestChatItem) -> Unit = {}
-
-    // 简历请求拒绝点击回调，后续接入业务接口时由页面层处理。
-    var onResumeRequestRejectClick: (ResumeRequestChatItem) -> Unit = {}
-
-    // 简历文件点击回调，后续接入预览或下载时由页面层处理。
-    var onResumeFileClick: (ResumeDeliveryChatItem) -> Unit = {}
-
-    // 职位卡片点击回调。
-    var onJobCardClick: (JobChatItem) -> Unit = {}
-
-    // HR 头像点击回调。
-    var onHrAvatarClick: () -> Unit = {}
+class MessageChatAdapter(
+    private val itemEvents: ItemEventsViewModel<MessageChatItemEvent>,
+) : BaseMultiItemAdapter<ChatMessageItem>() {
 
     init {
         // 职位卡片消息，展示首次沟通或切换职位的职位快照。
         register<JobChatViewHolder, JobChatItem>(TYPE_JOB_CARD, { inflater, parent ->
             JobChatViewHolder(ItemChatJobCardBinding.inflate(inflater, parent, false)).apply {
-                onCardClickListener = { onJobCardClick(it) }
+                onCardClickListener = { itemEvents.postEvent(MessageChatItemEvent.JobCard(it)) }
             }
         }) { holder, item -> holder.bind(item) }
 
         // 左侧文本消息，展示对方发送的普通文本内容。
         register<TextChatLeftViewHolder, TextChatItem>(TYPE_TEXT_LEFT, { inflater, parent ->
             TextChatLeftViewHolder(ItemChatTextLeftBinding.inflate(inflater, parent, false)).apply {
-                onAvatarClickListener = { onHrAvatarClick() }
+                onAvatarClickListener = { itemEvents.postEvent(MessageChatItemEvent.HrAvatar(it)) }
             }
         }) { holder, item -> holder.bind(item) }
 
@@ -63,16 +51,16 @@ class MessageChatAdapter : BaseMultiItemAdapter<ChatMessageItem>() {
         // 索要简历消息，展示 HR 请求简历以及同意、拒绝操作状态。
         register<ResumeRequestViewHolder, ResumeRequestChatItem>(TYPE_RESUME_REQUEST, { inflater, parent ->
             ResumeRequestViewHolder(ItemChatResumeRequestBinding.inflate(inflater, parent, false)).apply {
-                onAcceptClickListener = { onResumeRequestAcceptClick(it) }
-                onRejectClickListener = { onResumeRequestRejectClick(it) }
-                onAvatarClickListener = { onHrAvatarClick() }
+                onAcceptClickListener = { itemEvents.postEvent(MessageChatItemEvent.ResumeRequestAccept(it)) }
+                onRejectClickListener = { itemEvents.postEvent(MessageChatItemEvent.ResumeRequestReject(it)) }
+                onAvatarClickListener = { itemEvents.postEvent(MessageChatItemEvent.HrAvatar(it)) }
             }
         }) { holder, item -> holder.bind(item) }
 
         // 主动发送简历消息，展示求职者发送的简历文件信息。
         register<ResumeDeliveryViewHolder, ResumeDeliveryChatItem>(TYPE_RESUME_DELIVERY, { inflater, parent ->
             ResumeDeliveryViewHolder(ItemChatResumeDeliveryBinding.inflate(inflater, parent, false)).apply {
-                onFileClickListener = { onResumeFileClick(it) }
+                onFileClickListener = { itemEvents.postEvent(MessageChatItemEvent.ResumeFile(it)) }
             }
         }) { holder, item -> holder.bind(item) }
         onItemViewType { position, list -> list[position].itemType }
