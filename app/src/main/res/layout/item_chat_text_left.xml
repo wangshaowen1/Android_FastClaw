@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <import type="com.blankj.utilcode.util.ScreenUtils" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,15 +48,19 @@
             android:layout_marginStart="6dp"
             android:background="@drawable/bg_msg_agent_left"
             android:includeFontPadding="false"
-            android:maxWidth="278dp"
             android:paddingStart="16dp"
             android:paddingTop="14dp"
             android:paddingEnd="16dp"
             android:paddingBottom="14dp"
             android:textColor="@color/color_242424"
             android:textSize="15sp"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/ivAvatar"
             app:layout_constraintTop_toTopOf="@id/ivAvatar"
-            tools:text="你好，想和你进一步沟通一下。" />
+            app:setMaxWidth="@{ScreenUtils.getScreenWidth() * 73 / 100}"
+            tools:text="你好。" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
