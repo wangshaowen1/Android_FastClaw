@@ -152,12 +152,13 @@
             app:sGradientEndColor="#00F6F9FF"
             app:sGradientStartColor="#FFF6F9FF" />
 
+        <!-- 历史位置的 12dp 消息区底边距减去 8dp 重叠量，迁移锚点后等效为 4dp。 -->
         <ImageView
             android:id="@+id/iv_scroll_bottom"
             singleClick="@{layout.clickHandler::onClick}"
             android:layout_width="54dp"
             android:layout_height="54dp"
-            android:layout_marginBottom="-8dp"
+            android:layout_marginBottom="4dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_agent_scroll_bottom"
             android:visibility="gone"

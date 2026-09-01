@@ -163,6 +163,10 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
      * 根据列表是否离开底部、键盘状态和屏蔽状态，刷新“滚动到底部”按钮可见性。
      */
     protected fun updateScrollBottomButton() {
+        if (isScrollBottomKeyboardShowing) {
+            hideScrollBottomButton(immediate = true)
+            return
+        }
         if (isScrollBottomButtonSuppressed) {
             // 自动滚到底部期间强制隐藏按钮，避免新增消息时按钮闪一下又消失。
             suppressScrollBottomButton()
@@ -170,7 +174,7 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
         }
         // 列表有内容、还能继续向下滚、且键盘未展示时，说明用户已经离开底部，需要露出回到底部按钮。
         val itemCount = binding.rvMsg.adapter?.itemCount ?: 0
-        if (itemCount > 1 && binding.rvMsg.canScrollVertically(1) && !isScrollBottomKeyboardShowing) {
+        if (itemCount > 1 && binding.rvMsg.canScrollVertically(1)) {
             showScrollBottomButton()
         } else {
             hideScrollBottomButton()
@@ -198,9 +202,16 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
     }
 
     /**
-     * 从上往下隐藏“滚动到底部”按钮；隐藏中再次触发时不重启动画。
+     * 从上往下隐藏“滚动到底部”按钮；IME 弹出时可跳过动画直接隐藏。
      */
-    protected fun hideScrollBottomButton() {
+    protected fun hideScrollBottomButton(immediate: Boolean = false) {
+        if (immediate) {
+            isScrollBottomButtonShown = false
+            binding.ivScrollBottom.animate().cancel()
+            binding.ivScrollBottom.gone()
+            binding.ivScrollBottom.translationY = 0f
+            return
+        }
         if (!isScrollBottomButtonShown) {
             if (binding.ivScrollBottom.visibility != View.VISIBLE) {
                 // 已经隐藏时兜底重置位移，避免下次显示从错误位置开始。

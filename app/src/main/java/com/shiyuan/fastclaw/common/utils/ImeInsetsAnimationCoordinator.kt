@@ -145,6 +145,8 @@ class ImeInsetsAnimationCoordinator(
                     cancelPostImeActionReveal()
                     postImeActionRevealStarted = false
                     imeAnimating = true
+                    // IME 终态布局会先于首个进度帧落位，提前通知可避免附属按钮先跳到键盘上方。
+                    if (currentImeHeight <= 0) dispatchImeVisibility(1)
                     finalLayoutPrepared = false
                     animationStartImeHeight = currentImeHeight
                     animationStartOffset = lastAppliedOffset
@@ -198,11 +200,11 @@ class ImeInsetsAnimationCoordinator(
                     setExtraLayoutSpace(0)
                     if (targetImeHeight > 0) {
                         applyImeHiddenViewOpenFraction(1f)
+                        dispatchImeVisibility(targetImeHeight)
                     } else if (!postImeActionRevealStarted) {
                         postImeActionRevealStarted = true
                         startPostImeActionReveal()
                     }
-                    dispatchImeVisibility(targetImeHeight)
                 }
             },
         )
@@ -424,7 +426,10 @@ class ImeInsetsAnimationCoordinator(
     }
 
     private fun startPostImeActionReveal() {
-        if (imeHiddenView == null) return
+        if (imeHiddenView == null) {
+            dispatchImeVisibility(0)
+            return
+        }
         val animator = ValueAnimator.ofFloat(imeHiddenViewOpenFraction, 0f).apply {
             duration = postImeActionDurationMillis
             postImeActionInterpolator?.let { interpolator = it }
@@ -436,6 +441,8 @@ class ImeInsetsAnimationCoordinator(
                     if (postImeActionAnimator !== animation) return
                     postImeActionAnimator = null
                     applyImeHiddenViewOpenFraction(0f)
+                    // Action 区恢复完成后再允许附属按钮展示，保持其历史稳定间距。
+                    dispatchImeVisibility(0)
                 }
             })
         }
