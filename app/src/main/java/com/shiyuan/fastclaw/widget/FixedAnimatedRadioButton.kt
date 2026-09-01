@@ -64,6 +64,7 @@ class FixedAnimatedRadioButton : AppCompatRadioButton, ValueAnimator.AnimatorUpd
             recycle()
         }
         valueAnimator = ValueAnimator()
+        initTypeface()
     }
 
     override fun setButtonDrawable(buttonDrawable: Drawable?) {
@@ -91,20 +92,21 @@ class FixedAnimatedRadioButton : AppCompatRadioButton, ValueAnimator.AnimatorUpd
 
 
     private var normalTypeface: Typeface? = null
-    private var boldTypeface: Typeface? = null
+    private var selectedTypeface: Typeface? = null
 
     private fun initTypeface() {
         normalTypeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-        boldTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+        selectedTypeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        setTypeface(if (isChecked) selectedTypeface else normalTypeface, Typeface.NORMAL)
     }
 
     override fun setChecked(checked: Boolean) {
         super.setChecked(checked)
 
 
-        // 设置字体加粗
+        // 设置选中字体字重
         if (checked) {
-            setTypeface(boldTypeface, Typeface.BOLD)
+            setTypeface(selectedTypeface, Typeface.NORMAL)
         } else {
             setTypeface(normalTypeface, Typeface.NORMAL)
         }
