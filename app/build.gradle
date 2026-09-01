@@ -112,8 +112,6 @@ android {
         buildConfigField "String", "DATANEXUS_USER_ACTION_SET_ID", '""'
         buildConfigField "String", "DATANEXUS_APP_SECRET_KEY", '""'
         buildConfigField "boolean", "ENABLE_DATANEXUS", "false"
-        // imkey-ba8e330981fd9468ebf3dfc9349259fd
-        buildConfigField "String", "NIM_APP_KEY", '"aef89804213aa471176586e8cc8edc71"'
 
         buildConfigField "boolean", "DATANEXUS_ANID_ENABLE", "true"
         buildConfigField "String", "DASHSCOPE_SPEECH_URL", '"wss://dashscope.aliyuncs.com/api-ws/v1/inference"'
@@ -184,7 +182,8 @@ android {
             buildConfigField "String", "SHANYAN_APP_KEY", '"BjfmxHIp"' //闪验APPKEY
             //阿里语音
             buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-ws-H.RYYXRXP.FWhj.MEUCIBlCS4I-U7oziLE2jWrlZgr9yb8QjvpbPC_SnOVkVfXxAiEAvknGCA_1nhWiF6Ar0gJrNxZnktLX1cSl5Fh_VvZEgZc"'
-
+            // imkey-ba8e330981fd9468ebf3dfc9349259fd
+            buildConfigField "String", "NIM_APP_KEY", '"aef89804213aa471176586e8cc8edc71"'
             manifestPlaceholders = [
                     qqappid            : "YOUR_QQ_APP_ID",
             ]
@@ -218,6 +217,8 @@ android {
             buildConfigField "String", "SHANYAN_APP_KEY", '"BjfmxHIp"' //闪验APPKEY
             //阿里语音
             buildConfigField "String", "DASHSCOPE_API_KEY", '"sk-ws-H.RXPIRMX.iEam.MEUCIQDJ2FzvD1GhRNdyIuCiZCeZW0xZu708zEdlThIFn11XzQIgY5nOMeGzoFHIxhE3dSlM1S8Tz_RJduq326scot52mFw"'
+            // imkey
+            buildConfigField "String", "NIM_APP_KEY", '"20a0fcf88259f32cbad2300feac75d38"'
 
             versionNameSuffix ""
             signingConfig signingConfigs.debug
