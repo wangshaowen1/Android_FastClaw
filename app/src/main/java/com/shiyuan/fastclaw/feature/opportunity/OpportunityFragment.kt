@@ -141,7 +141,7 @@ class OpportunityFragment :
     }
 
     private fun initObservers() {
-        // 返回简历列表成功的 一份如果为null 后取上传时间最新的一份，并按解析状态切换上传、解析中、成功或失败 UI。
+        // 选取第一个
         mRealVM.resumeListData.observe(this) { data ->
             val resume = data?.firstOrNull()
             mRealVM.isJobUpCompleted.value = resume?.parseStatus == 2

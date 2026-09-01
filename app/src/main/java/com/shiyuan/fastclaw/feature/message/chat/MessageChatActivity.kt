@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.BaseViewModelActivity
+import com.nhsd.basic.bus.FlowEventBus
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.setOnSingleClickListener
 import com.nhsd.basic.ext.setupTranslucentStatus
@@ -30,6 +31,7 @@ import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.RecyclerViewScrollHelper
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
 import com.shiyuan.fastclaw.common.utils.SoftKeyBoardListener
+import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
@@ -313,7 +315,9 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     private fun showJobSwitchDialog(params: MessageChatParams?) {
         if (params?.isJobSwitched == false || params?.currentJobName.isNullOrBlank()) return
         JobSwitchConfirmDialog.show(supportFragmentManager, params.currentJobName) {
-            mRealVM.switchTargetJob(params.currentJobId)
+            mRealVM.switchTargetJob(params.currentJobId){
+                FlowEventBus.postSticky(Events.OpportunityListRefreshEvent(2))
+            }
         }
     }
 

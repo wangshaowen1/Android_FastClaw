@@ -47,6 +47,10 @@ class OpportunityDetailActivity :
             .build()
     }
 
+    private val jobId by lazy {
+        intent.getStringExtra(EXTRA_JOB_ID).orEmpty()
+    }
+
     companion object {
         private const val EXTRA_JOB_ID = "extra_job_id"
         private const val EXTRA_UNREAD = "extra_unread"
@@ -69,10 +73,10 @@ class OpportunityDetailActivity :
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.toolbar.setVariable(BR.toolbar, mRealVM.mToolbarVMOpportunityDetail)
-        val jobId = intent.getStringExtra(EXTRA_JOB_ID).orEmpty()
         if (jobId.isBlank()) {
             finish()
             return
@@ -83,6 +87,11 @@ class OpportunityDetailActivity :
             renderDetail(detail)
             notifyOpportunityReadIfNeeded()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (jobId.isBlank()) return
         mRealVM.queryOpportunityDetail(jobId)
     }
 
@@ -245,7 +254,7 @@ class OpportunityDetailActivity :
         }
         mRealVM.createEnterpriseImSession(detail.jobId) { session ->
 
-            mRealVM.queryOpportunityDetail(detail.jobId)
+            //mRealVM.queryOpportunityDetail(detail.jobId)
             FlowEventBus.postSticky(Events.OpportunityListRefreshEvent(2))
 
             MessageChatActivity.start(

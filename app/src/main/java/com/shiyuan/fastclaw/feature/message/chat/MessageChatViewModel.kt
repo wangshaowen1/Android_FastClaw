@@ -397,11 +397,13 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     /**
      * 调用后端接口切换当前 IM 会话沟通职位。
      */
-    fun switchTargetJob(currentJobId: String?) {
+    fun switchTargetJob(currentJobId: String?, onSuccess: () -> Unit = {}) {
         currentJobId ?: return
         requestWithLoading(apiBlock = {
             mRepo.api.switchImJob(ImJobSwitchBody(currentJobId))
-        }) {}
+        }) {
+            onSuccess()
+        }
     }
 
     /**
