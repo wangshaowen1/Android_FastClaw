@@ -24,6 +24,7 @@ import com.shiyuan.fastclaw.common.Constants.MOCK_INTERVIEW_RESULT_URL
 import com.shiyuan.fastclaw.common.Constants.MOCK_PASS_PACKET_RESULT_URL
 import com.shiyuan.fastclaw.common.ext.gone
 import com.shiyuan.fastclaw.common.ext.visible
+import com.shiyuan.fastclaw.common.utils.ImeAnimationLinearLayoutManager
 import com.shiyuan.fastclaw.common.utils.ImeInsetsAnimationCoordinator
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.common.utils.KeyboardUtils.hideKeyboard
@@ -171,7 +172,8 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         // 消息列表：聊天场景内容自底部对齐
-        binding.rvMsg.layoutManager = LinearLayoutManager(context).apply { stackFromEnd = true }
+        binding.rvMsg.layoutManager =
+            ImeAnimationLinearLayoutManager(requireContext()).apply { stackFromEnd = true }
         binding.rvMsg.itemAnimator = null
         // 列表 item 统一留 12dp 间距，首项额外撑开顶部距离。
         binding.rvMsg.addItemDecoration(object : RecyclerView.ItemDecoration() {
@@ -253,6 +255,7 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
             inputView = binding.layoutBottom,
             recyclerView = binding.rvMsg,
             imeHiddenView = binding.rvAction,
+            imeHiddenDecorationView = binding.viewActionGradient,
             closedOffsetPx = 12.dp,
             visibleGapPx = 12.dp,
             onImeVisibilityChanged = { visible ->

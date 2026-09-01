@@ -132,9 +132,10 @@
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
         <com.shiyuan.fastclaw.widget.super_button.SuperButton
+            android:id="@+id/view_action_gradient"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            app:layout_constraintBottom_toTopOf="@id/layout_bottom"
+            app:layout_constraintBottom_toTopOf="@id/rv_action"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:sGradientAngle="90"
@@ -150,34 +151,36 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_agent_scroll_bottom"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/layout_bottom"
+            app:layout_constraintBottom_toTopOf="@id/rv_action"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="visible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_action"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:background="@color/color_f6f9ff"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingBottom="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toTopOf="@id/layout_bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:itemCount="5"
+            tools:listitem="@layout/item_claw_agent_quick_action" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/color_f6f9ff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_action"
-                android:layout_width="match_parent"
-                android:layout_height="34dp"
-                android:layout_marginBottom="12dp"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingStart="16dp"
-                android:paddingEnd="8dp"
-                android:scrollbars="none"
-                app:layout_constraintBottom_toTopOf="@id/layout_send"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:itemCount="5"
-                tools:listitem="@layout/item_claw_agent_quick_action" />
 
             <com.shiyuan.fastclaw.widget.shape.SuperConstraintLayout
                 android:id="@+id/layout_send"

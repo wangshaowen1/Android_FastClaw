@@ -1,5 +1,10 @@
 package com.shiyuan.fastclaw.common.utils
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.TimeInterpolator
+import android.animation.ValueAnimator
+import android.content.Context
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
@@ -8,16 +13,46 @@ import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * 使用同一份 IME 动画进度同步底部输入区、消息列表与快捷操作区，避免二次动画造成跳动。
+ * 为 IME 动画多布局少量额外 item，防止列表子项整体位移时边缘短暂露白。
+ * [stackFromEnd] 只参与动画前后的静态布局，不参与动画逐帧计算。
+ */
+class ImeAnimationLinearLayoutManager(context: Context) : LinearLayoutManager(context) {
+
+    private var imeAnimationExtraLayoutSpace = 0
+
+    fun setImeAnimationExtraLayoutSpace(extraLayoutSpace: Int) {
+        val normalizedSpace = extraLayoutSpace.coerceAtLeast(0)
+        if (imeAnimationExtraLayoutSpace == normalizedSpace) return
+        val needsLayout = normalizedSpace > imeAnimationExtraLayoutSpace
+        imeAnimationExtraLayoutSpace = normalizedSpace
+        // 增大预布局范围需要立即重排；缩小时保留既有缓存，避免动画末帧再触发一次布局。
+        if (needsLayout) requestLayout()
+    }
+
+    override fun calculateExtraLayoutSpace(
+        state: RecyclerView.State,
+        extraLayoutSpace: IntArray,
+    ) {
+        super.calculateExtraLayoutSpace(state, extraLayoutSpace)
+        extraLayoutSpace[0] = maxOf(extraLayoutSpace[0], imeAnimationExtraLayoutSpace)
+        extraLayoutSpace[1] = maxOf(extraLayoutSpace[1], imeAnimationExtraLayoutSpace)
+    }
+}
+
+/**
+ * IME 开始前记录首帧位置，先完成一次终态布局，再仅通过 translation/子项 offset 跟随动画。
+ * 这样可避免 stackFromEnd 在每次 padding 变化后反复选锚点和修正尾部间隙。
  */
 class ImeInsetsAnimationCoordinator(
     private val rootView: View,
     private val inputView: View,
     private val recyclerView: RecyclerView,
     private val imeHiddenView: View? = null,
+    private val imeHiddenDecorationView: View? = null,
     private val closedOffsetPx: Int,
     private val visibleGapPx: Int,
     private val onImeVisibilityChanged: (Boolean) -> Unit,
@@ -27,45 +62,66 @@ class ImeInsetsAnimationCoordinator(
     private val initialRecyclerPaddingTop = recyclerView.paddingTop
     private val initialRecyclerPaddingRight = recyclerView.paddingRight
     private val initialRecyclerPaddingBottom = recyclerView.paddingBottom
+    private val animatedInputBackground = inputView.background?.mutate()
     private val initialImeHiddenViewHeight = imeHiddenView?.layoutParams?.height ?: 0
     private val initialImeHiddenViewBottomMargin =
         (imeHiddenView?.layoutParams as? MarginLayoutParams)?.bottomMargin ?: 0
+    private val initialImeHiddenViewSpace =
+        initialImeHiddenViewHeight + initialImeHiddenViewBottomMargin
 
     private var imeAnimating = false
+    private var finalLayoutPrepared = false
     private var hasAppliedInsets = false
     private var keepListAtBottom = false
     private var currentImeHeight = 0
     private var targetImeHeight = 0
+    private var animationStartImeHeight = 0
+    private var animationStartOffset = closedOffsetPx
+    private var animationStartInputTop = 0
+    private var animationStartRecyclerPaddingBottom = initialRecyclerPaddingBottom
+    private var animationStartOpenFraction = 0f
+    private var animationStartListAnchorEnd = 0
+    private var animationInputTranslationY = 0f
+    private var listStartVisualOffset = 0
+    private var currentListVisualOffset = 0
     private var lastAppliedOffset = closedOffsetPx
-    private var imeAnimationStartOpenFraction = 0f
+    private var lastAppliedActionSpace = initialImeHiddenViewSpace
     private var imeHiddenViewOpenFraction = 0f
+    private var postImeActionAnimator: ValueAnimator? = null
+    private var postImeActionRevealStarted = false
+    private var postImeActionDurationMillis = DEFAULT_ACTION_REVEAL_DURATION_MILLIS
+    private var postImeActionInterpolator: TimeInterpolator? = null
     private var listAnchorPosition = RecyclerView.NO_POSITION
     private var listAnchorEndGap = 0
+    private var listAnchorDecoratedHeight = 0
     private val listAnchorBounds = Rect()
-    private var laidOutOffset =
-        (inputView.layoutParams as? MarginLayoutParams)?.bottomMargin ?: 0
     private var lastImeVisible: Boolean? = null
 
     private val inputLayoutChangeListener =
         View.OnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
-            laidOutOffset =
-                (inputView.layoutParams as? MarginLayoutParams)?.bottomMargin ?: laidOutOffset
-            syncInputTranslation()
             if (bottom - top == oldBottom - oldTop) return@OnLayoutChangeListener
+            if (imeAnimating) return@OnLayoutChangeListener
             keepListAtBottom = captureListAnchor()
-            applyOffset(lastAppliedOffset)
+            applyFinalGeometry(lastAppliedOffset, lastAppliedActionSpace)
         }
 
-    /** 注册 Insets 与输入区尺寸监听，页面销毁时必须调用 [release]。 */
     fun attach() {
         inputView.addOnLayoutChangeListener(inputLayoutChangeListener)
         ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
             val appliedImeHeight = insets.imeHeightAboveNavigationBars()
             targetImeHeight = appliedImeHeight
-            if (!imeAnimating && (!hasAppliedInsets || currentImeHeight != appliedImeHeight)) {
+            if (imeAnimating) {
+                if (!finalLayoutPrepared) {
+                    prepareAnimationFinalLayout(appliedImeHeight)
+                }
+            } else if (!hasAppliedInsets || currentImeHeight != appliedImeHeight) {
                 keepListAtBottom = captureListAnchor()
-                applyImeHiddenViewOpenFraction(if (appliedImeHeight > 0) 1f else 0f)
-                applyOffset(offsetForSettledIme(appliedImeHeight))
+                val openFraction = if (appliedImeHeight > 0) 1f else 0f
+                applyImeHiddenViewOpenFraction(openFraction)
+                applyFinalGeometry(
+                    offsetForSettledIme(appliedImeHeight),
+                    imeHiddenViewSpace(openFraction),
+                )
                 currentImeHeight = appliedImeHeight
                 hasAppliedInsets = true
                 dispatchImeVisibility(appliedImeHeight)
@@ -77,27 +133,48 @@ class ImeInsetsAnimationCoordinator(
             object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
                 override fun onPrepare(animation: WindowInsetsAnimationCompat) {
                     if (!animation.affectsIme()) return
+                    cancelPostImeActionReveal()
+                    postImeActionRevealStarted = false
                     imeAnimating = true
-                    imeAnimationStartOpenFraction = imeHiddenViewOpenFraction
+                    finalLayoutPrepared = false
+                    animationStartImeHeight = currentImeHeight
+                    animationStartOffset = lastAppliedOffset
+                    animationStartInputTop = inputView.top
+                    animationStartRecyclerPaddingBottom = recyclerView.paddingBottom
+                    animationStartOpenFraction = imeHiddenViewOpenFraction
+                    if (animation.durationMillis > 0L) {
+                        postImeActionDurationMillis = animation.durationMillis.coerceIn(
+                            MIN_ACTION_REVEAL_DURATION_MILLIS,
+                            MAX_ACTION_REVEAL_DURATION_MILLIS,
+                        )
+                    }
+                    postImeActionInterpolator = animation.interpolator
                     keepListAtBottom = captureListAnchor()
+                    animationStartListAnchorEnd = if (keepListAtBottom) {
+                        listAnchorBounds.bottom
+                    } else {
+                        0
+                    }
                     recyclerView.stopScroll()
+                }
+
+                override fun onStart(
+                    animation: WindowInsetsAnimationCompat,
+                    bounds: WindowInsetsAnimationCompat.BoundsCompat,
+                ): WindowInsetsAnimationCompat.BoundsCompat {
+                    if (!animation.affectsIme()) return bounds
+                    restoreAnimationStartPositions()
+                    return bounds
                 }
 
                 override fun onProgress(
                     insets: WindowInsetsCompat,
                     runningAnimations: MutableList<WindowInsetsAnimationCompat>,
                 ): WindowInsetsCompat {
-                    val imeAnimation = runningAnimations.firstOrNull { it.affectsIme() }
-                        ?: return insets
+                    if (runningAnimations.none { it.affectsIme() }) return insets
                     currentImeHeight = insets.imeHeightAboveNavigationBars()
-                    val targetOpenFraction = if (targetImeHeight > 0) 1f else 0f
-                    val animationFraction = imeAnimation.interpolatedFraction.coerceIn(0f, 1f)
-                    applyImeHiddenViewOpenFraction(
-                        imeAnimationStartOpenFraction +
-                            (targetOpenFraction - imeAnimationStartOpenFraction) * animationFraction
-                    )
-                    applyOffset(offsetForSettledIme(currentImeHeight))
-                    // 部分系统会在键盘表面动画结束前先把 IME inset 降为 0，隐藏态延后到 onEnd。
+                    val progress = calculateImeProgress(currentImeHeight)
+                    applyAnimationProgress(progress)
                     if (currentImeHeight > 0) dispatchImeVisibility(currentImeHeight)
                     return insets
                 }
@@ -105,44 +182,117 @@ class ImeInsetsAnimationCoordinator(
                 override fun onEnd(animation: WindowInsetsAnimationCompat) {
                     if (!animation.affectsIme()) return
                     imeAnimating = false
+                    finalLayoutPrepared = false
                     currentImeHeight = targetImeHeight
-                    applyImeHiddenViewOpenFraction(if (targetImeHeight > 0) 1f else 0f)
-                    applyOffset(offsetForSettledIme(targetImeHeight))
-                    dispatchImeVisibility(currentImeHeight)
+                    clearVisualOffsets()
+                    setExtraLayoutSpace(0)
+                    if (targetImeHeight > 0) {
+                        applyImeHiddenViewOpenFraction(1f)
+                    } else if (!postImeActionRevealStarted) {
+                        postImeActionRevealStarted = true
+                        startPostImeActionReveal()
+                    }
+                    dispatchImeVisibility(targetImeHeight)
                 }
-            }
+            },
         )
         ViewCompat.requestApplyInsets(rootView)
     }
 
-    /** 移除页面级监听，避免 Fragment 重建后旧 View 继续接收回调。 */
     fun release() {
+        cancelPostImeActionReveal()
+        clearVisualOffsets()
+        setExtraLayoutSpace(0)
         inputView.removeOnLayoutChangeListener(inputLayoutChangeListener)
-        inputView.translationY = 0f
         restoreImeHiddenView()
         ViewCompat.setWindowInsetsAnimationCallback(rootView, null)
         ViewCompat.setOnApplyWindowInsetsListener(rootView, null)
     }
 
-    /** 根布局已有底部导航占位，IME 展开时只补足到键盘顶部的剩余距离。 */
-    private fun offsetForSettledIme(imeHeight: Int): Int {
-        if (imeHeight <= 0) return closedOffsetPx
-        return (imeHeight + visibleGapPx - rootView.paddingBottom).coerceAtLeast(closedOffsetPx)
+    /** 动画期间只在终态 Insets 到达时执行一次真实布局。 */
+    private fun prepareAnimationFinalLayout(imeHeight: Int) {
+        val targetOpenFraction = if (imeHeight > 0) 1f else 0f
+        val targetOffset = offsetForSettledIme(imeHeight)
+        val targetActionSpace = imeHiddenViewSpace(targetOpenFraction)
+        val targetRecyclerPaddingBottom = recyclerBottomPadding(targetOffset, targetActionSpace)
+        setExtraLayoutSpace(
+            abs(targetRecyclerPaddingBottom - animationStartRecyclerPaddingBottom),
+        )
+        applyFinalGeometry(targetOffset, targetActionSpace)
+        finalLayoutPrepared = true
+        hasAppliedInsets = true
     }
 
-    /** 同帧更新输入区位置与列表留白，列表原本贴底时同步保持尾项间距。 */
-    private fun applyOffset(offset: Int) {
-        val layoutParams = inputView.layoutParams as? MarginLayoutParams ?: return
-        if (layoutParams.bottomMargin != offset) {
-            layoutParams.bottomMargin = offset
-            inputView.requestLayout()
+    /**
+     * onApplyWindowInsets 已经完成终态布局；onStart 在绘制前把输入区和列表还原到动画首帧。
+     */
+    private fun restoreAnimationStartPositions() {
+        val fallbackInputTranslation = (lastAppliedOffset - animationStartOffset).toFloat()
+        val measuredInputTranslation = (animationStartInputTop - inputView.top).toFloat()
+        animationInputTranslationY = if (
+            measuredInputTranslation != 0f || fallbackInputTranslation == 0f
+        ) {
+            measuredInputTranslation
+        } else {
+            fallbackInputTranslation
         }
-        lastAppliedOffset = offset
-        // margin 会在下一次布局才落位，先用 translation 补到当前 IME 帧，避免收起时慢一拍。
-        syncInputTranslation()
+        applyInputTranslation(animationInputTranslationY)
 
-        val targetBottomPadding = initialRecyclerPaddingBottom + inputView.height + offset
-        if (targetBottomPadding != recyclerView.paddingBottom) {
+        if (!keepListAtBottom) return
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        val anchorView = layoutManager.findViewByPosition(listAnchorPosition)
+        val measuredListOffset = anchorView?.let {
+            layoutManager.getDecoratedBoundsWithMargins(it, listAnchorBounds)
+            animationStartListAnchorEnd - listAnchorBounds.bottom
+        } ?: 0
+        val fallbackListOffset =
+            recyclerView.paddingBottom - animationStartRecyclerPaddingBottom
+        listStartVisualOffset = if (measuredListOffset != 0 || fallbackListOffset == 0) {
+            measuredListOffset
+        } else {
+            fallbackListOffset
+        }
+        setListVisualOffset(listStartVisualOffset)
+    }
+
+    private fun applyAnimationProgress(progress: Float) {
+        val remainingFraction = 1f - progress
+        applyInputTranslation(animationInputTranslationY * remainingFraction)
+        setListVisualOffset((listStartVisualOffset * remainingFraction).roundToInt())
+
+        if (targetImeHeight > 0) {
+            applyImeHiddenViewOpenFraction(
+                animationStartOpenFraction +
+                    (1f - animationStartOpenFraction) * progress,
+            )
+        } else if (!postImeActionRevealStarted) {
+            applyImeHiddenViewOpenFraction(1f)
+            if (abs(inputView.translationY) <= 1f) {
+                postImeActionRevealStarted = true
+                startPostImeActionReveal()
+            }
+        }
+    }
+
+    private fun calculateImeProgress(imeHeight: Int): Float {
+        val heightRange = targetImeHeight - animationStartImeHeight
+        if (heightRange == 0) return 1f
+        return ((imeHeight - animationStartImeHeight).toFloat() / heightRange)
+            .coerceIn(0f, 1f)
+    }
+
+    private fun offsetForSettledIme(imeHeight: Int): Int {
+        if (imeHeight <= 0) return closedOffsetPx
+        // 本页根布局已为主导航预留 52dp，IME 展开时需扣掉这份既有占位。
+        return (imeHeight + visibleGapPx - rootView.paddingBottom)
+            .coerceAtLeast(closedOffsetPx)
+    }
+
+    /** 更新终态几何；动画逐帧回调不会调用本方法。 */
+    private fun applyFinalGeometry(offset: Int, actionSpace: Int) {
+        val targetBottomPadding = recyclerBottomPadding(offset, actionSpace)
+        prepareListAnchorForFinalLayout(targetBottomPadding)
+        if (recyclerView.paddingBottom != targetBottomPadding) {
             recyclerView.setPadding(
                 initialRecyclerPaddingLeft,
                 initialRecyclerPaddingTop,
@@ -150,87 +300,128 @@ class ImeInsetsAnimationCoordinator(
                 targetBottomPadding,
             )
         }
-        if (keepListAtBottom) alignListAnchor(targetBottomPadding)
+        val layoutParams = inputView.layoutParams as? MarginLayoutParams
+        if (layoutParams != null && layoutParams.bottomMargin != offset) {
+            layoutParams.bottomMargin = offset
+            inputView.requestLayout()
+        }
+        lastAppliedOffset = offset
+        lastAppliedActionSpace = actionSpace
     }
 
-    /** 快捷操作区随键盘进度同步收缩或展开，不额外启动独立 View 动画。 */
+    private fun recyclerBottomPadding(offset: Int, actionSpace: Int): Int {
+        return initialRecyclerPaddingBottom + inputView.height + offset + actionSpace
+    }
+
+    /** 记录动画前尾项相对可见底边的间距。 */
+    private fun captureListAnchor(): Boolean {
+        if (!RecyclerViewScrollHelper.isScrollBottom(recyclerView, 1)) return false
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return false
+        val lastPosition = layoutManager.itemCount - 1
+        if (lastPosition < 0) return false
+        val lastView = layoutManager.findViewByPosition(lastPosition) ?: return false
+        layoutManager.getDecoratedBoundsWithMargins(lastView, listAnchorBounds)
+        listAnchorPosition = lastPosition
+        listAnchorEndGap = recyclerView.height -
+            recyclerView.paddingBottom - listAnchorBounds.bottom
+        listAnchorDecoratedHeight = listAnchorBounds.height()
+        return true
+    }
+
+    /** 给终态布局写入一次尾项锚点，之后不再逐帧触发 LinearLayoutManager 布局。 */
+    private fun prepareListAnchorForFinalLayout(targetBottomPadding: Int) {
+        if (!keepListAtBottom || listAnchorPosition == RecyclerView.NO_POSITION) return
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        val desiredEnd = recyclerView.height - targetBottomPadding - listAnchorEndGap
+        val offsetFromStart = desiredEnd - listAnchorDecoratedHeight - recyclerView.paddingTop
+        layoutManager.scrollToPositionWithOffset(listAnchorPosition, offsetFromStart)
+    }
+
+    private fun applyInputTranslation(translationY: Float) {
+        inputView.translationY = translationY
+        imeHiddenView?.translationY = translationY
+        // ConstraintLayout 不会把目标 View 的 translation 传给依赖它的兄弟 View，装饰层需显式同步。
+        imeHiddenDecorationView?.translationY = translationY
+    }
+
+    private fun setListVisualOffset(targetOffset: Int) {
+        val offsetDelta = targetOffset - currentListVisualOffset
+        if (offsetDelta == 0) return
+        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        layoutManager.offsetChildrenVertical(offsetDelta)
+        currentListVisualOffset = targetOffset
+    }
+
+    private fun clearVisualOffsets() {
+        applyInputTranslation(0f)
+        setListVisualOffset(0)
+        animationInputTranslationY = 0f
+        listStartVisualOffset = 0
+    }
+
+    private fun setExtraLayoutSpace(extraLayoutSpace: Int) {
+        (recyclerView.layoutManager as? ImeAnimationLinearLayoutManager)
+            ?.setImeAnimationExtraLayoutSpace(extraLayoutSpace)
+    }
+
+    private fun startPostImeActionReveal() {
+        if (imeHiddenView == null) return
+        val animator = ValueAnimator.ofFloat(imeHiddenViewOpenFraction, 0f).apply {
+            duration = postImeActionDurationMillis
+            postImeActionInterpolator?.let { interpolator = it }
+            addUpdateListener { valueAnimator ->
+                applyImeHiddenViewOpenFraction(valueAnimator.animatedValue as Float)
+            }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    if (postImeActionAnimator !== animation) return
+                    postImeActionAnimator = null
+                    applyImeHiddenViewOpenFraction(0f)
+                }
+            })
+        }
+        postImeActionAnimator = animator
+        animator.start()
+    }
+
+    private fun cancelPostImeActionReveal() {
+        val animator = postImeActionAnimator ?: return
+        postImeActionAnimator = null
+        animator.cancel()
+    }
+
+    /** 快捷操作区保留固定布局尺寸，只改变视觉属性，不再推动列表重新布局。 */
     private fun applyImeHiddenViewOpenFraction(openFraction: Float) {
         val view = imeHiddenView ?: return
         val normalizedOpenFraction = openFraction.coerceIn(0f, 1f)
         val visibleFraction = 1f - normalizedOpenFraction
-        if (visibleFraction > 0f && view.visibility != View.VISIBLE) {
-            view.visibility = View.VISIBLE
-        }
+        if (view.visibility != View.VISIBLE) view.visibility = View.VISIBLE
+        if (view.height > 0) view.pivotY = (view.height - view.paddingBottom).toFloat()
         view.alpha = visibleFraction
-
-        val layoutParams = view.layoutParams as? MarginLayoutParams
-        if (layoutParams != null) {
-            // ConstraintLayout 中 height=0 表示 MATCH_CONSTRAINT，隐藏终帧会重新撑回内容高度。
-            // 动画过程最低保留 1px，完全隐藏时交给 GONE 真正移除布局占位。
-            val targetHeight = maxOf(
-                1,
-                (initialImeHiddenViewHeight * visibleFraction).roundToInt(),
-            )
-            val targetBottomMargin =
-                (initialImeHiddenViewBottomMargin * visibleFraction).roundToInt()
-            if (layoutParams.height != targetHeight ||
-                layoutParams.bottomMargin != targetBottomMargin
-            ) {
-                layoutParams.height = targetHeight
-                layoutParams.bottomMargin = targetBottomMargin
-                view.requestLayout()
-            }
-        }
-
-        if (visibleFraction == 0f) view.visibility = View.GONE
+        view.scaleY = visibleFraction
+        imeHiddenDecorationView?.alpha = visibleFraction
+        animatedInputBackground?.alpha = (255 * visibleFraction).roundToInt()
         imeHiddenViewOpenFraction = normalizedOpenFraction
     }
 
+    private fun imeHiddenViewSpace(openFraction: Float): Int {
+        val visibleFraction = 1f - openFraction.coerceIn(0f, 1f)
+        return (initialImeHiddenViewSpace * visibleFraction).roundToInt()
+    }
+
     private fun restoreImeHiddenView() {
-        val view = imeHiddenView ?: return
-        val layoutParams = view.layoutParams as? MarginLayoutParams
-        if (layoutParams != null) {
-            layoutParams.height = initialImeHiddenViewHeight
-            layoutParams.bottomMargin = initialImeHiddenViewBottomMargin
-            view.requestLayout()
+        imeHiddenView?.let { view ->
+            view.alpha = 1f
+            view.scaleY = 1f
+            view.translationY = 0f
+            view.visibility = View.VISIBLE
         }
-        view.alpha = 1f
-        view.visibility = View.VISIBLE
+        imeHiddenDecorationView?.let { view ->
+            view.alpha = 1f
+            view.translationY = 0f
+        }
+        animatedInputBackground?.alpha = 255
         imeHiddenViewOpenFraction = 0f
-    }
-
-    /** 记录尾项当前的可见间距，动画中始终保持这份间距不变。 */
-    private fun captureListAnchor(): Boolean {
-        if (!RecyclerViewScrollHelper.isLastItemVisible(recyclerView)) return false
-        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return false
-        val anchorPosition = (recyclerView.adapter?.itemCount ?: 0) - 1
-        if (anchorPosition < 0) return false
-        val anchorView = layoutManager.findViewByPosition(anchorPosition) ?: return false
-        layoutManager.getDecoratedBoundsWithMargins(anchorView, listAnchorBounds)
-        listAnchorPosition = anchorPosition
-        listAnchorEndGap = recyclerView.height - recyclerView.paddingBottom - listAnchorBounds.bottom
-        return true
-    }
-
-    /**
-     * setPadding 会触发 stackFromEnd 的再次布局，不能再叠加 scrollBy。
-     * 先把当前子项移到本帧目标位置，再给下一次布局写入同一个锚点，避免首帧抢跑或下一帧回弹。
-     */
-    private fun alignListAnchor(targetBottomPadding: Int) {
-        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
-        val anchorView = layoutManager.findViewByPosition(listAnchorPosition) ?: return
-        layoutManager.getDecoratedBoundsWithMargins(anchorView, listAnchorBounds)
-        val decoratedHeight = listAnchorBounds.height()
-        val desiredEnd = recyclerView.height - targetBottomPadding - listAnchorEndGap
-        val childOffset = desiredEnd - listAnchorBounds.bottom
-        if (childOffset != 0) layoutManager.offsetChildrenVertical(childOffset)
-
-        val offsetFromStart = desiredEnd - decoratedHeight - recyclerView.paddingTop
-        layoutManager.scrollToPositionWithOffset(listAnchorPosition, offsetFromStart)
-    }
-
-    private fun syncInputTranslation() {
-        inputView.translationY = (laidOutOffset - lastAppliedOffset).toFloat()
     }
 
     private fun dispatchImeVisibility(imeHeight: Int) {
@@ -244,12 +435,15 @@ class ImeInsetsAnimationCoordinator(
         return typeMask and WindowInsetsCompat.Type.ime() != 0
     }
 
-    /** 页面内容区已避让系统导航栏，IME 位移需扣除导航栏高度。 */
     private fun WindowInsetsCompat.imeHeightAboveNavigationBars(): Int {
         val imeBottom = getInsets(WindowInsetsCompat.Type.ime()).bottom
-        val navigationBottom = getInsetsIgnoringVisibility(
-            WindowInsetsCompat.Type.navigationBars()
-        ).bottom
+        val navigationBottom = getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
         return (imeBottom - navigationBottom).coerceAtLeast(0)
+    }
+
+    private companion object {
+        const val DEFAULT_ACTION_REVEAL_DURATION_MILLIS = 200L
+        const val MIN_ACTION_REVEAL_DURATION_MILLIS = 160L
+        const val MAX_ACTION_REVEAL_DURATION_MILLIS = 300L
     }
 }
