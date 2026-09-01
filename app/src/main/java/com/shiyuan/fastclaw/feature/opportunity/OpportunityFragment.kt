@@ -141,15 +141,16 @@ class OpportunityFragment :
     }
 
     private fun initObservers() {
-        // 返回简历列表后取上传时间最新的一份，并按解析状态切换上传、解析中、成功或失败 UI。
+        // 返回简历列表成功的 一份如果为null 后取上传时间最新的一份，并按解析状态切换上传、解析中、成功或失败 UI。
         mRealVM.resumeListData.observe(this) { data ->
-            val resume = data.orEmpty().find { it.parseStatus == 2 } ?: data.orEmpty().maxByOrNull { it.uploadTime.orEmpty() }
+            val resume = data?.firstOrNull()
             mRealVM.isJobUpCompleted.value = resume?.parseStatus == 2
             if (resume?.parseStatus == 0 || resume?.parseStatus == 1) {
                 mRealVM.startResumePolling()
                 binding.llState.visible()
                 binding.vLine.gone()
                 binding.cardUploadResumeAction.gone()
+                binding.cardUploadAlready.gone()
                 binding.ivState.setImageResource(R.drawable.ic_running2)
                 startRotation(binding.ivState)
                 binding.tvState.setTextColor(resources.getColor(R.color.color_2f6bff))
@@ -429,7 +430,6 @@ class OpportunityFragment :
      */
     private fun handleWechatResumeReturn() {
         if (!mRealVM.code.value.isNullOrEmpty()) {
-            Log.d("uploadResumeDialog", mRealVM.code.value.toString())
             uploadResumeDialog?.dismissAllowingStateLoss()
             mRealVM.queryCodeResumeBinding(mRealVM.code.value ?: "") { resume ->
                 mRealVM.submitResumeUpload(

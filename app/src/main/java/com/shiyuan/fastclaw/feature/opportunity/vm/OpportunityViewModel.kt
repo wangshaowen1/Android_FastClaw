@@ -225,8 +225,7 @@ class OpportunityViewModel : HomeReportViewModel() {
                 if (response?.isSuccess != true) {
                     PollingState.CONTINUE
                 } else {
-                    val latestResume = response.data?.items.orEmpty()
-                        .maxByOrNull { it.uploadTime.orEmpty() }
+                    val latestResume = response.data?.items.orEmpty().firstOrNull()
                     if (latestResume?.parseStatus == 0 || latestResume?.parseStatus == 1) {
                         PollingState.CONTINUE
                     } else {
@@ -259,6 +258,8 @@ class OpportunityViewModel : HomeReportViewModel() {
      * 返回：[OpportunityNewItemData] 列表，成功后写入 [matchingData]。
      */
     fun queryNewOpportunities() {
+        if (User.get().isVisitor) return
+
         request(
             apiBlock = { mRepo.api.queryNewOpportunities() },
             onSuccess = {
@@ -274,7 +275,7 @@ class OpportunityViewModel : HomeReportViewModel() {
      * 返回：新机会列表；请求成功后写入 [matchingData]，并继续下一轮轮询。
      */
     fun startNewOpportunityPolling() {
-        if (newOpportunityPollingJob?.isActive == true) return
+        if (User.get().isVisitor || newOpportunityPollingJob?.isActive == true) return
 
         newOpportunityPollingJob = launchPolling(
             intervalMs = 15000L,
