@@ -36,16 +36,6 @@ data class MockInterviewUnfinishedData(
     val roomState: String? = null,
 )
 
-data class MockInterviewAudioTokenData(
-    /** 语音识别 ASR token */
-    val asrToken: String? = null,
-    /** 语音合成 TTS token */
-    val ttsToken: String? = null,
-    /** token 过期时间 */
-    val expireAt: String? = null,
-    /** 建议提前刷新秒数 */
-    val refreshBeforeSeconds: Int? = null,
-)
 
 data class MockInterviewForceCancelData(
     /** 模拟面试会话 ID */

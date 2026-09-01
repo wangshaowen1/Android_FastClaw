@@ -13,7 +13,6 @@ import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.ext.request
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_MOCK_INTERVIEW_JD_UPLOAD
-import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewAudioTokenBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewForceCancelBody
 import com.shiyuan.fastclaw.core.network.apis.request.MockInterviewStreamBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentMessage
@@ -68,9 +67,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
 
     /** 目标岗位截图上传成功后的 OSS key 列表。 */
     val uploadList = MutableLiveData<List<String>>()
-
-    /** TTS 临时 token。 */
-    val ttsToken = MutableLiveData<String>()
 
     /** 需要播放的 TTS 文本事件。 */
     val ttsSpeakEvent = MutableLiveData<String>()
@@ -158,7 +154,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
      */
     fun enterOrRecover(interviewId: String?, isRecover: Boolean) {
         mInterviewId = interviewId
-        queryAudioToken()
         if (!isRecover) {
             sendAction(ACTION_ENTER_ROOM, emptyMap())
         } else {
@@ -843,18 +838,6 @@ class InterviewViewModel : CommonRepositoryViewModel<AppRepository>() {
     private fun formatAnswerDuration(remainingSeconds: Int): String {
         val seconds = remainingSeconds.coerceAtLeast(0)
         return "%02d:%02d".format(seconds / 60, seconds % 60)
-    }
-
-    /**
-     * 查询模拟面试音频 token，用于 TTS 初始化。
-     */
-    private fun queryAudioToken() {
-        request(
-                apiBlock = { mRepo.api.queryMockInterviewAudioToken(MockInterviewAudioTokenBody(interviewId = mInterviewId)) },
-                showToast = false,
-        ) {
-            this.data?.ttsToken?.takeIf { it.isNotBlank() }?.let { ttsToken.value = it }
-        }
     }
 
     /**

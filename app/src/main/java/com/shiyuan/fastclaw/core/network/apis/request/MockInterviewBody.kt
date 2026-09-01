@@ -26,15 +26,6 @@ data class MockInterviewStreamBody(
     val clientSnapshot: Map<String, Any?>? = null,
 )
 
-data class MockInterviewAudioTokenBody(
-    /** 模拟面试会话 ID */
-    val interviewId: String? = null,
-    /** 音频 token 所属业务类型 */
-    val bizType: String = "MOCK_INTERVIEW",
-    /** 需要申请的音频服务类型列表 */
-    val serviceTypes: List<String> = listOf("ASR", "TTS"),
-)
-
 data class MockInterviewForceCancelBody(
     /** 模拟面试会话 ID */
     val interviewId: String? = null,

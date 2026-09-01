@@ -540,7 +540,7 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
             context = applicationContext,
             configProvider = {
                 DashCosyVoiceStreamTtsPlayer.Config(
-                    apiKey = mRealVM.ttsToken.value?.takeIf { it.isNotBlank() } ?: BuildConfig.DASHSCOPE_API_KEY,
+                    apiKey = BuildConfig.DASHSCOPE_API_KEY,
                     url = BuildConfig.DASHSCOPE_SPEECH_URL,
                 )
             },
