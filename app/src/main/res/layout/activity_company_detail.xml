@@ -9,7 +9,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.opportunity.CompanyDetailViewModel" />
+            type="com.shiyuan.fastclaw.feature.opportunity.company.CompanyDetailViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

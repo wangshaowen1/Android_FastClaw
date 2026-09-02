@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.opportunity
+package com.shiyuan.fastclaw.feature.opportunity.detail
 
 import android.graphics.Color
 import androidx.lifecycle.MutableLiveData

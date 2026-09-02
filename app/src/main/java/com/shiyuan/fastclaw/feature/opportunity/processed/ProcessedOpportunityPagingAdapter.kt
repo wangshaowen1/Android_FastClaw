@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.opportunity
+package com.shiyuan.fastclaw.feature.opportunity.processed
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,6 +8,7 @@ import com.nhsd.basic.item.BindingViewHolder
 import com.shiyuan.fastclaw.common.ext.getVm
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.ItemProcessedOpportunityBinding
+import com.shiyuan.fastclaw.feature.opportunity.ItemProcessedOpportunityVM
 
 /**
  * 已处理机会 Paging3 适配器。

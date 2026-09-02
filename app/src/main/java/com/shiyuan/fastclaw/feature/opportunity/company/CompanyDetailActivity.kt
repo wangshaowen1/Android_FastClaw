@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.opportunity
+package com.shiyuan.fastclaw.feature.opportunity.company
 
 import android.app.Activity
 import android.content.Intent

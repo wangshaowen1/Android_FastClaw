@@ -36,7 +36,7 @@ import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
-import com.shiyuan.fastclaw.feature.opportunity.OpportunityDetailActivity
+import com.shiyuan.fastclaw.feature.opportunity.detail.OpportunityDetailActivity
 import kotlinx.coroutines.launch
 
 /**

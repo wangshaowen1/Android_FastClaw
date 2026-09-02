@@ -12,6 +12,7 @@ import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.core.network.apis.response.BindThirdPartyData
 import com.shiyuan.fastclaw.databinding.ActivityAccountSettingsBinding
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewChangeActivity
+import com.shiyuan.fastclaw.feature.settings.logoff.LogoffNewActivity
 import com.umeng.socialize.UMShareAPI
 import com.umeng.socialize.bean.SHARE_MEDIA
 

@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.settings
+package com.shiyuan.fastclaw.feature.settings.logoff
 
 import android.app.Activity
 import android.content.Intent

@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.settings
+package com.shiyuan.fastclaw.feature.settings.phone
 
 import android.content.Context
 import android.content.Intent

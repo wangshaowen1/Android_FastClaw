@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.opportunity
+package com.shiyuan.fastclaw.feature.opportunity.processed
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

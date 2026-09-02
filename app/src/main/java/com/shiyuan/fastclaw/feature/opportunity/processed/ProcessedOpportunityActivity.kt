@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.opportunity
+package com.shiyuan.fastclaw.feature.opportunity.processed
 
 import android.app.Activity
 import android.content.Intent
@@ -13,6 +13,7 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.FragmentStateCacheAdapter
 import com.shiyuan.fastclaw.databinding.ActivityProcessedOpportunityBinding
+import com.shiyuan.fastclaw.feature.opportunity.OpportunityViewModel
 
 /**
  * 已处理机会容器页。

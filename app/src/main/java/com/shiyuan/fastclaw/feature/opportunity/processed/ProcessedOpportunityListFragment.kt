@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.opportunity
+package com.shiyuan.fastclaw.feature.opportunity.processed
 
 import android.os.Bundle
 import androidx.lifecycle.Lifecycle
@@ -14,6 +14,8 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.FragmentProcessedOpportunityListBinding
+import com.shiyuan.fastclaw.feature.opportunity.OpportunityViewModel
+import com.shiyuan.fastclaw.feature.opportunity.detail.OpportunityDetailActivity
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.shiyuan.fastclaw.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import kotlinx.coroutines.flow.collectLatest

@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.settings
+package com.shiyuan.fastclaw.feature.settings.phone
 
 import com.nhsd.basic.ext.getResString
 import com.shiyuan.fastclaw.R

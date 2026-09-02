@@ -49,6 +49,9 @@ feature/
 │   └── data/
 ├── mine/
 ├── opportunity/
+│   ├── company/
+│   ├── detail/
+│   └── processed/
 ├── order/
 ├── payment/
 ├── report/
@@ -62,6 +65,8 @@ feature/
 │   ├── profile/
 │   └── upload/
 ├── settings/
+│   ├── logoff/
+│   └── phone/
 ├── shrimp/
 ├── splash/
 ├── upgrade/
@@ -132,6 +137,8 @@ bind/
 
 这些文件直接放在对应页面或子流程的包中。
 
+参考其他工程时只沿用划分方法；目录名必须对应当前项目已有功能，不复制来源工程的业务包。
+
 ## 共享能力和平台入口
 
 与具体业务无关、会被多个功能复用的代码不放在 `feature/`。
@@ -142,6 +149,8 @@ bind/
 - 厂商推送入口位于 `platform/push/`；
 - 首页视频流的数据访问代码位于 `feature/home/data/`；
 - 手机号绑定位于 `feature/login/phonebinding/`。
+- 机会下的公司信息、岗位详情和已处理列表分别位于 `company/`、`detail/`、`processed/`；
+- 设置下的注销和手机号页面分别位于 `logoff/`、`phone/`。
 
 名称通用不代表职责通用。例如 `web/` 仍包含报告等业务动作，因此继续保留在 `feature/`。如果以后要下沉为公共 Web 容器，需要先拆开容器能力和业务处理。
 

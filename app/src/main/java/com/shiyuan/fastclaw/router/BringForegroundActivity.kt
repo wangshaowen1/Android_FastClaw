@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.main
+package com.shiyuan.fastclaw.router
 
 import android.os.Bundle
 import com.nhsd.basic.BaseActivity

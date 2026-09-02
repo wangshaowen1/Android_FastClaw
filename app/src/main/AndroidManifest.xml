@@ -174,7 +174,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name="com.shiyuan.fastclaw.feature.main.BringForegroundActivity"
+            android:name="com.shiyuan.fastclaw.router.BringForegroundActivity"
             android:screenOrientation="portrait" />
 
         <!--主页-->
@@ -312,17 +312,17 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.opportunity.ProcessedOpportunityActivity"
+            android:name=".feature.opportunity.processed.ProcessedOpportunityActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.opportunity.OpportunityDetailActivity"
+            android:name=".feature.opportunity.detail.OpportunityDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.opportunity.CompanyDetailActivity"
+            android:name=".feature.opportunity.company.CompanyDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
@@ -339,7 +339,7 @@
             android:name=".feature.shrimp.MineShrimpRechargeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--注销-->
-        <activity android:name=".feature.settings.LogoffNewActivity" />
+        <activity android:name=".feature.settings.logoff.LogoffNewActivity" />
         <!--绑定手机号-->
         <activity
             android:name=".feature.login.phonebinding.BindPhoneActivity"
@@ -433,7 +433,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature.settings.PhoneShowActivity"
+            android:name=".feature.settings.phone.PhoneShowActivity"
             android:screenOrientation="portrait" />
     </application>
     <queries>

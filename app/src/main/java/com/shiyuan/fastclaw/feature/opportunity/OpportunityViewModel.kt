@@ -38,6 +38,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.feature.report.data.ReportRepository
 import com.shiyuan.fastclaw.feature.report.HomeReportViewModel
+import com.shiyuan.fastclaw.feature.opportunity.processed.ProcessedOpportunityPagingSource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID

@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentActivity
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.Utils
 import com.shiyuan.fastclaw.common.SP
-import com.shiyuan.fastclaw.feature.main.BringForegroundActivity
 import com.shiyuan.fastclaw.feature.splash.SplashActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.nhsd.basic.utils.Logger

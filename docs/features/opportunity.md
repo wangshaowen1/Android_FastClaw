@@ -110,9 +110,9 @@ last_verified: 2026-09-02
 | 内容 | 代码位置 | 当前状态或差异 |
 | --- | --- | --- |
 | 机会首页匹配资格、状态展示和轮询 | `app/src/main/java/com/shiyuan/fastclaw/feature/opportunity/OpportunityFragment.kt`、`OpportunityViewModel.kt` | in-progress：资格判断、三类首页展示、简历/新机会轮询已实现；仍需真机确认前后台和 ViewPager2 可见性边界 |
-| 已处理机会分页与计数 | `ProcessedOpportunityActivity.kt`、`ProcessedOpportunityListFragment.kt`、`ProcessedOpportunityPagingSource.kt` | complete：两个状态、分页键、错误转换、计数刷新和事件刷新已实现；未执行运行时验证 |
-| 岗位详情、状态操作和 IM 入口 | `OpportunityDetailActivity.kt`、`OpportunityDetailViewModel.kt` | in-progress：服务端 actions 驱动、关闭岗位优先级、详情重查和 IM 会话入口已实现；端到端状态与聊天联调未在本次验证 |
-| 公司主页 | `CompanyDetailActivity.kt`、`CompanyDetailViewModel.kt` | complete：企业 ID 校验、名称回退、摘要和福利标签渲染已实现；缺少接口异常/空数据的设备证据 |
+| 已处理机会分页与计数 | `processed/ProcessedOpportunityActivity.kt`、`processed/ProcessedOpportunityListFragment.kt`、`processed/ProcessedOpportunityPagingSource.kt` | complete：两个状态、分页键、错误转换、计数刷新和事件刷新已实现；未执行运行时验证 |
+| 岗位详情、状态操作和 IM 入口 | `detail/OpportunityDetailActivity.kt`、`detail/OpportunityDetailViewModel.kt` | in-progress：服务端 actions 驱动、关闭岗位优先级、详情重查和 IM 会话入口已实现；端到端状态与聊天联调未在本次验证 |
+| 公司主页 | `company/CompanyDetailActivity.kt`、`company/CompanyDetailViewModel.kt` | complete：企业 ID 校验、名称回退、摘要和福利标签渲染已实现；缺少接口异常/空数据的设备证据 |
 | 求职宝典分发 | `HomeTreasuryFragment.kt`、`HomeReportViewModel.kt` | in-progress：五类 reportType 过滤和入口分发已实现；服务端新增类型会被隐藏，游客预加载请求是否允许需确认 |
 | 主 Tab 未处理数量 | `feature/main/MainActivity.kt`、`MainViewModel.kt` | in-progress：登录恢复时查询、游客/退出时清零和 99 上限已实现；当前代码只找到事件消费者，机会状态变化后没有明确的事件生产点，可能要等主页面恢复才刷新 |
 
