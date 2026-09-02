@@ -61,7 +61,6 @@ open class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
 
     override fun onCreate() {
         super.onCreate()
-        initBannerData()
     }
 
     fun queryCodeResumeBinding(code: String, onSuccess: (data: ResumeData?) -> Unit) {
@@ -110,16 +109,6 @@ open class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
 
-    }
-
-    private fun initBannerData() {
-        val fakeBannerImages = listOf(
-            R.drawable.img_home_banner1,
-            R.drawable.img_home_banner2,
-            R.drawable.img_home_banner3,
-            R.drawable.img_home_banner4,
-        )
-        bannerList.set(fakeBannerImages)
     }
 
 
