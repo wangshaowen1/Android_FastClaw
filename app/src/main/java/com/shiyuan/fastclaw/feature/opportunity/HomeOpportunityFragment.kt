@@ -9,8 +9,6 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.FragmentStateCacheAdapter
 import com.shiyuan.fastclaw.databinding.FragmentHomeOpportunityBinding
-import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
-import com.shiyuan.fastclaw.feature.report.HomeTreasuryFragment
 
 /**
  * 机会模块顶部容器。

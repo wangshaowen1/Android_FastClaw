@@ -12,11 +12,6 @@ import com.shiyuan.fastclaw.databinding.ItemChatResumeDeliveryBinding
 import com.shiyuan.fastclaw.databinding.ItemChatResumeRequestBinding
 import com.shiyuan.fastclaw.databinding.ItemChatTextLeftBinding
 import com.shiyuan.fastclaw.databinding.ItemChatTextRightBinding
-import com.shiyuan.fastclaw.feature.message.chat.viewholder.JobChatViewHolder
-import com.shiyuan.fastclaw.feature.message.chat.viewholder.ResumeDeliveryViewHolder
-import com.shiyuan.fastclaw.feature.message.chat.viewholder.ResumeRequestViewHolder
-import com.shiyuan.fastclaw.feature.message.chat.viewholder.TextChatLeftViewHolder
-import com.shiyuan.fastclaw.feature.message.chat.viewholder.TextChatRightViewHolder
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
 import com.shiyuan.fastclaw.feature.message.data.JobChatItem
 import com.shiyuan.fastclaw.feature.message.data.ResumeDeliveryChatItem

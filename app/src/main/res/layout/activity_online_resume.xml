@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.information.viewModel.InformationViewModel" />
+            type="com.shiyuan.fastclaw.feature.resume.InformationViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

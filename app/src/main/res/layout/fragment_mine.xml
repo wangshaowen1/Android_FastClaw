@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel" />
+            type="com.shiyuan.fastclaw.feature.mine.MineViewModel" />
 
         <import type="android.view.View" />
 

@@ -18,7 +18,7 @@ import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.databinding.DialogFlashLoginBinding
 import com.shiyuan.fastclaw.feature.login.LoginActivity
-import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
+import com.shiyuan.fastclaw.feature.login.PhoneNewPolicyDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewBindActivity
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel

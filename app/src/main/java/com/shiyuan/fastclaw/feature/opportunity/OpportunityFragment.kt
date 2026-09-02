@@ -36,11 +36,8 @@ import com.shiyuan.fastclaw.core.network.apis.response.OpportunityNewItemData
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.FragmentNotOpportunityBinding
 import com.shiyuan.fastclaw.feature.main.MainActivity
-import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
-import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityIsCanMatchState
-import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityMatchState
-import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
-import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
+import com.shiyuan.fastclaw.feature.resume.OnlineResumeActivity
+import com.shiyuan.fastclaw.feature.resume.upload.UploadResumeDialog
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration

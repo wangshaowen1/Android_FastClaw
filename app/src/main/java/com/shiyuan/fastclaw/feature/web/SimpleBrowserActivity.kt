@@ -61,7 +61,7 @@ import com.shiyuan.fastclaw.core.model.UriEntity
 import com.shiyuan.fastclaw.core.network.ObjectTypeAdapter
 import com.shiyuan.fastclaw.core.network.apis.AppHeader
 import com.shiyuan.fastclaw.databinding.ActivityBrowserBinding
-import com.shiyuan.fastclaw.feature.PhotoPagerActivity
+import com.shiyuan.fastclaw.core.ui.imagepreview.PhotoPagerActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.router.AppRouter
 import com.shiyuan.fastclaw.widget.AndroidBug5497Workaround
@@ -77,7 +77,7 @@ import com.nhsd.basic.utils.Logger
 import com.nhsd.mattise.Matisse
 import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.databinding.backgroundColor
-import com.shiyuan.fastclaw.feature.mine.InterviewReportActivity
+import com.shiyuan.fastclaw.feature.report.interview.InterviewReportActivity
 import com.shiyuan.fastclaw.router.AppRouter.startWechatMini
 import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram

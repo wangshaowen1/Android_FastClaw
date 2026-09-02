@@ -57,7 +57,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.OnlineResumeAttributeData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeConfirmData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.SessionEnterData
-import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.clawagent.message.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.ClawAgentSseProcessor
 import com.shiyuan.fastclaw.core.response
@@ -68,6 +68,8 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.UUID
+import com.shiyuan.fastclaw.feature.clawagent.message.ClawAgentMessageStore
+import com.shiyuan.fastclaw.feature.clawagent.message.ClawAgentMsgAdapter
 
 /**
  * @createtime 2026年05月20日 10:27

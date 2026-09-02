@@ -14,7 +14,6 @@ import com.shiyuan.fastclaw.core.Events
 import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
 import com.shiyuan.fastclaw.core.network.apis.response.OpportunityProcessedItemData
 import com.shiyuan.fastclaw.databinding.FragmentProcessedOpportunityListBinding
-import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityViewModel
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import com.shiyuan.fastclaw.widget.stateful.paging.MyMultiStatePagingFooterAdapter
 import kotlinx.coroutines.flow.collectLatest

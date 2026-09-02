@@ -28,7 +28,7 @@ import com.shiyuan.fastclaw.core.manager.ShareManager
 import com.shiyuan.fastclaw.core.network.apis.request.LoginByThirdBody
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewLoginBinding
-import com.shiyuan.fastclaw.feature.login.dialog.PhoneNewPolicyDialog
+import com.shiyuan.fastclaw.feature.login.PhoneNewPolicyDialog
 import com.shiyuan.fastclaw.feature.main.MainActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.umeng.socialize.UMShareAPI

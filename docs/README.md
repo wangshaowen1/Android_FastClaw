@@ -2,7 +2,7 @@
 title: FastClaw 开发者导览
 type: overview
 status: active
-last_verified: 2026-08-14
+last_verified: 2026-09-02
 ---
 
 # FastClaw 开发者导览
@@ -17,19 +17,20 @@ last_verified: 2026-08-14
 | --- | --- | --- | --- |
 | 小虾对话 | 会话恢复、SSE 消息、卡片动作、历史合并与报告状态 | `app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [聊天对话](features/chat-conversation.md) |
 | 模拟面试 | 面试创建、房间状态、语音作答、SSE 文本流、恢复与报告轮询 | `app/src/main/java/com/shiyuan/fastclaw/feature/interview/`、`app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [模拟面试](features/mock-interview.md) |
-| 在线简历 | 结构化简历、求职偏好、理解度与附件解析任务 | `app/src/main/java/com/shiyuan/fastclaw/feature/mine/`、`app/src/main/java/com/shiyuan/fastclaw/feature/information/` | [在线简历](features/online-resume.md) |
+| 在线简历 | 结构化简历、求职偏好、理解度与附件解析任务 | `app/src/main/java/com/shiyuan/fastclaw/feature/resume/` | [在线简历](features/online-resume.md) |
 | IMSDK | 私有依赖、账号凭据、登录登出、会话生命周期与离线推送边界 | `app/src/main/java/com/shiyuan/fastclaw/App.kt`、`app/src/main/java/com/shiyuan/fastclaw/core/User.kt`、`app/src/main/java/com/shiyuan/fastclaw/core/im/` | 当前没有独立功能文档，按任务读取代码 |
 | 网络与流式传输 | Retrofit 接口、统一响应处理与原始 SSE 分发 | `app/src/main/java/com/shiyuan/fastclaw/core/network/` | 当前没有独立架构文档，按任务读取代码 |
-| 公共应用基础 | Base 类、事件、导航、资源与通用组件 | `app/src/main/java/com/shiyuan/fastclaw/` | [App 分层架构](architecture/app-layering.md) |
+| 公共应用基础 | Base 类、事件、导航、资源与通用组件 | `app/src/main/java/com/shiyuan/fastclaw/` | [App 分层架构](architecture/app-layering.md)、[Feature 包结构](architecture/feature-package-structure.md) |
 
 ## 应用怎么启动和打开页面
 
 | 入口或容器 | 职责 | 代码入口 |
 | --- | --- | --- |
 | App 启动与邀请归因 | 展示启动页、处理隐私同意、在同意后初始化能力；收到 URI 时由 ULink 保存邀请归因 | `feature/splash/SplashActivity`、`core/manager/ULinkManager` |
-| 主界面 | 承载“小虾、宝典、我的”三个主 Tab；调用方传入 scheme 时再交给公共路由 | `feature/main/MainActivity` |
+| 主界面 | 承载“小虾、机会/宝典、消息、我的”四个主 Tab；调用方传入 scheme 时再交给公共路由 | `feature/main/MainActivity` |
 | 小虾 Tab | 对话与智能体主入口 | `feature/clawagent/ClawAgentMainFragment` |
-| 宝典 Tab | 面试报告和求职工具入口 | `feature/report/HomeTreasuryFragment` |
+| 机会/宝典 Tab | 机会、面试报告和求职工具入口 | `feature/opportunity/HomeOpportunityFragment` |
+| 消息 Tab | 招聘沟通会话入口 | `feature/message/MessageFragment` |
 | 我的 Tab | 账号、简历和个人功能入口 | `feature/mine/MineFragment` |
 | 公共 scheme 路由 | 解析当前 App scheme，并把已支持的 host 分发到业务入口 | `router/AppRouter` |
 | 推送跳转 | 接收推送 `jumpUri`，处理冷启动或切回前台后的延迟分发 | `core/manager/PushManager`、`router/AppLaunchJump` |
@@ -57,6 +58,7 @@ last_verified: 2026-08-14
 | --- | --- | --- |
 | 修改 AGENTS、规则路由、Skill、校验器或 AI 文档读取方式 | [AI Skill 与规则治理架构](architecture/ai-skill-governance.md) | active |
 | 调整 `baselibrary` 与 App 共享代码的职责或依赖 | [App 分层架构](architecture/app-layering.md) | active |
+| 新增、移动或审查 `feature` 包和子包 | [Feature 包结构与边界](architecture/feature-package-structure.md) | active |
 | 处理聊天、通用卡片、SSE 或消息列表 | [聊天对话](features/chat-conversation.md) | active；实现中 |
 | 处理面试房间、语音作答、恢复或面试报告轮询 | [模拟面试](features/mock-interview.md) | active；实现中 |
 | 处理简历、求职偏好、理解度或附件上传 | [在线简历](features/online-resume.md) | active；实现中 |

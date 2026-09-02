@@ -27,7 +27,7 @@ import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.SchemeData
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.response
-import com.shiyuan.fastclaw.feature.mine.UserPointPagingSource
+import com.shiyuan.fastclaw.feature.shrimp.UserPointPagingSource
 import com.shiyuan.fastclaw.feature.report.data.ReportPagingSource
 import com.shiyuan.fastclaw.widget.decoration.SpaceDecoration
 import kotlinx.coroutines.Dispatchers

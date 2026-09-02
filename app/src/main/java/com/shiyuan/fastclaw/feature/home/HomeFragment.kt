@@ -28,11 +28,11 @@ import com.shiyuan.fastclaw.feature.login.PrivacyPolicyDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginDialog
 import com.shiyuan.fastclaw.feature.login.phone.PhoneLoginViewModel
 import com.shiyuan.fastclaw.feature.main.MainActivity
-import com.shiyuan.fastclaw.feature.mine.MyShrimpChipsActivity
-import com.shiyuan.fastclaw.feature.report.MyHistoryReportActivity
-import com.shiyuan.fastclaw.feature.report.ResumeListDialog
-import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
-import com.shiyuan.fastclaw.feature.report.genner.GenerateReportActivity
+import com.shiyuan.fastclaw.feature.shrimp.MyShrimpChipsActivity
+import com.shiyuan.fastclaw.feature.report.history.MyHistoryReportActivity
+import com.shiyuan.fastclaw.feature.resume.upload.ResumeListDialog
+import com.shiyuan.fastclaw.feature.resume.upload.UploadResumeDialog
+import com.shiyuan.fastclaw.feature.report.generation.GenerateReportActivity
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.umeng.socialize.bean.SHARE_MEDIA

@@ -226,3 +226,14 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 静态确认旧 `Session` 渠道 API、`AdStrategyManager`、BaseLibrary 2.0.3 和宽泛 FileProvider 路径无残留；渠道判断顺序与 FastClaw 原映射保持一致，Manifest/XML 可解析且 Provider 仅一处。按项目规则未运行 Gradle，待本地构建及渠道包真机回归。
+
+## 本轮 feature 包按业务能力重组
+
+### 变更了什么
+`feature` 从 `information/mine` 与 `adapter/dialog/viewholder/vm/bean` 混合分包，重组为 `resume`、`report`、`order`、`shrimp`、`hr`、`settings` 等业务能力；页面、ViewModel、Adapter、Dialog 就近放置，只保留 `data` 和 `resume/{profile,experience,preference,upload}`、`report/{generation,history,interview}` 等真实边界。
+
+### 为什么
+对齐 Android 官方示例的 feature-first 组织方式，避免业务包与技术角色包并列、同一功能跨多层目录查找；单模块内不为目录整洁额外引入 Gradle Module、domain 或 UseCase。
+
+### 验证结论
+共迁移 152 个源码文件，已同步 Kotlin/Java package、import、Manifest Activity 与 DataBinding 类型引用；目录/package、项目内 feature import、Manifest/XML 类型和旧包残留静态检查通过，迁移文件剔除 package/import 后与原实现一致。按项目规则未运行 Gradle。

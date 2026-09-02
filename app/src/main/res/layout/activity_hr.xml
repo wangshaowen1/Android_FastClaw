@@ -6,7 +6,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.mine.viewModel.HrViewModel" />
+            type="com.shiyuan.fastclaw.feature.hr.HrViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView

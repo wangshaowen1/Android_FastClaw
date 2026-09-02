@@ -55,7 +55,7 @@ import com.shiyuan.fastclaw.core.model.UriEntity
 import com.shiyuan.fastclaw.core.network.ObjectTypeAdapter
 import com.shiyuan.fastclaw.core.network.apis.AppHeader
 import com.shiyuan.fastclaw.databinding.FragmentBrowserBinding
-import com.shiyuan.fastclaw.feature.PhotoPagerActivity
+import com.shiyuan.fastclaw.core.ui.imagepreview.PhotoPagerActivity
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity.Companion.launch
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.router.AppRouter

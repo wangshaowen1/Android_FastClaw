@@ -1,4 +1,4 @@
-package com.shiyuan.fastclaw.feature.report
+package com.shiyuan.fastclaw.feature.opportunity
 
 import android.text.SpannableString
 import android.text.Spanned
@@ -26,7 +26,7 @@ import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.databinding.FragmentHomeTreasuryBinding
 import com.shiyuan.fastclaw.databinding.ItemHomeTreasuryBinding
-import com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel
+import com.shiyuan.fastclaw.feature.report.HomeReportViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 

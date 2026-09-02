@@ -23,7 +23,7 @@ import com.kuaige.imageloader.GlideImageLoader;
 import com.nhsd.basic.utils.Logger;
 import com.shiyuan.fastclaw.R;
 import com.shiyuan.fastclaw.common.utils.Utils;
-import com.shiyuan.fastclaw.feature.PhotoPagerActivity;
+import com.shiyuan.fastclaw.core.ui.imagepreview.PhotoPagerActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;

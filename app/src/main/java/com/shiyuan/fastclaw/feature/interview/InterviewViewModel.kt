@@ -1,4 +1,4 @@
-﻿package com.shiyuan.fastclaw.feature.interview
+package com.shiyuan.fastclaw.feature.interview
 
 import android.net.Uri
 import android.util.Log
@@ -19,8 +19,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.InterviewAgentMessage
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewForceCancelData
 import com.shiyuan.fastclaw.core.network.sse.RawSSEStreamHandler
 import com.shiyuan.fastclaw.core.network.sse.processor.InterviewSseProcessor
-import com.shiyuan.fastclaw.feature.interview.bean.InterviewMessageInfo
-import com.shiyuan.fastclaw.feature.interview.bean.InterviewRoomState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive

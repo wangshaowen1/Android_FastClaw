@@ -17,7 +17,7 @@ import com.shiyuan.fastclaw.common.utils.KeyboardUtils
 import com.shiyuan.fastclaw.core.network.apis.request.SendSmsValidateCodeBody
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
 import com.shiyuan.fastclaw.databinding.ActivityPhoneNewCodeLoginBinding
-import com.shiyuan.fastclaw.feature.login.dialog.LoginNewLoadingDialog
+import com.shiyuan.fastclaw.feature.login.LoginNewLoadingDialog
 import com.shiyuan.fastclaw.feature.main.MainActivity
 
 /**

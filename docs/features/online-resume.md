@@ -4,7 +4,7 @@ type: feature
 status: active
 implementation: in-progress
 applies_to: Android app 模块的候选人在线简历
-last_verified: 2026-08-04
+last_verified: 2026-09-02
 ---
 
 # 在线简历
@@ -62,8 +62,8 @@ last_verified: 2026-08-04
 ## 契约与依赖
 
 - 在线简历接口与模型：`app/src/main/java/com/shiyuan/fastclaw/core/network/apis/`。
-- 页面和附件入口：`app/src/main/java/com/shiyuan/fastclaw/feature/mine/`。
-- 字段保存与理解度查询：`app/src/main/java/com/shiyuan/fastclaw/feature/information/viewModel/InformationViewModel.kt`。
+- 页面和附件入口：`app/src/main/java/com/shiyuan/fastclaw/feature/resume/`。
+- 字段保存与理解度查询：`app/src/main/java/com/shiyuan/fastclaw/feature/resume/InformationViewModel.kt`。
 - 跨页面刷新事件：`app/src/main/java/com/shiyuan/fastclaw/core/Events.java`。事件只表示需要重新查询，不携带新的服务端事实。
 
 ## 验收与验证
@@ -80,10 +80,10 @@ last_verified: 2026-08-04
 
 | 关注点 | 稳定代码锚点 | 状态或偏差 |
 | --- | --- | --- |
-| 页签与理解度 | `app/src/main/java/com/shiyuan/fastclaw/feature/mine/OnlineResumeActivity.kt` | complete：入口索引、双向页签同步与字段更新后刷新已实现；0 分时波浪视觉值固定为 10 |
-| 结构化简历 | `app/src/main/java/com/shiyuan/fastclaw/feature/mine/fragment/ResumeInfoFragment.kt`、`app/src/main/java/com/shiyuan/fastclaw/feature/information/` | in-progress：查询、常见分组和增删改已实现；新增依赖服务端模板 |
-| 求职偏好 | `app/src/main/java/com/shiyuan/fastclaw/feature/mine/fragment/JobPreferencesFragment.kt` | in-progress：专用选择器和通用单选已实现；未知选择事件会被当作福利偏好 |
-| 附件简历 | `app/src/main/java/com/shiyuan/fastclaw/feature/mine/MyResumeActivity.kt`、`app/src/main/java/com/shiyuan/fastclaw/feature/report/report/HomeReportViewModel.kt` | in-progress：上传、删除与轮询已实现；刷新衔接和可见生命周期未闭合 |
+| 页签与理解度 | `app/src/main/java/com/shiyuan/fastclaw/feature/resume/OnlineResumeActivity.kt` | complete：入口索引、双向页签同步与字段更新后刷新已实现；0 分时波浪视觉值固定为 10 |
+| 结构化简历 | `app/src/main/java/com/shiyuan/fastclaw/feature/resume/ResumeInfoFragment.kt`、`app/src/main/java/com/shiyuan/fastclaw/feature/resume/experience/`、`app/src/main/java/com/shiyuan/fastclaw/feature/resume/profile/` | in-progress：查询、常见分组和增删改已实现；新增依赖服务端模板 |
+| 求职偏好 | `app/src/main/java/com/shiyuan/fastclaw/feature/resume/preference/JobPreferencesFragment.kt` | in-progress：专用选择器和通用单选已实现；未知选择事件会被当作福利偏好 |
+| 附件简历 | `app/src/main/java/com/shiyuan/fastclaw/feature/resume/MyResumeActivity.kt`、`app/src/main/java/com/shiyuan/fastclaw/feature/report/HomeReportViewModel.kt` | in-progress：上传、删除与轮询已实现；刷新衔接和可见生命周期未闭合 |
 
 ## 风险与待确认问题
 

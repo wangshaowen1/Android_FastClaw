@@ -163,7 +163,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.shiyuan.fastclaw.feature.PhotoPagerActivity"
+            android:name="com.shiyuan.fastclaw.core.ui.imagepreview.PhotoPagerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PhotoPager" />
@@ -174,7 +174,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name="com.shiyuan.fastclaw.feature.BringForegroundActivity"
+            android:name="com.shiyuan.fastclaw.feature.main.BringForegroundActivity"
             android:screenOrientation="portrait" />
 
         <!--主页-->
@@ -200,78 +200,78 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.SkillActivity"
+            android:name=".feature.resume.experience.SkillActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.AwardActivity"
+            android:name=".feature.resume.experience.AwardActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.CertificateActivity"
+            android:name=".feature.resume.experience.CertificateActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.JobCitySelectorActivity"
+            android:name=".feature.resume.preference.JobCitySelectorActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".feature.information.JobWelfareSelectorActivity"
+            android:name=".feature.resume.preference.JobWelfareSelectorActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.EducationalActivity"
+            android:name=".feature.resume.experience.EducationalActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.WorkActivity"
+            android:name=".feature.resume.experience.WorkActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.PersonalInformationActivity"
+            android:name=".feature.resume.profile.PersonalInformationActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.ProjectActivity"
+            android:name=".feature.resume.experience.ProjectActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
 
         <activity
-            android:name=".feature.information.IndustrySelectionActivity"
+            android:name=".feature.resume.preference.IndustrySelectionActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.JobSelectionActivity"
+            android:name=".feature.resume.preference.JobSelectionActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.PublicFreeFillInActivity"
+            android:name=".feature.resume.profile.PublicFreeFillInActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <activity
-            android:name=".feature.information.PublicDescriptionActivity"
+            android:name=".feature.resume.profile.PublicDescriptionActivity"
             android:windowSoftInputMode="stateVisible" />
 
         <activity
-            android:name="com.shiyuan.fastclaw.feature.mine.ShrimpUnderstandsActivity"
+            android:name="com.shiyuan.fastclaw.feature.shrimp.ShrimpUnderstandsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name="com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity"
+            android:name="com.shiyuan.fastclaw.feature.resume.OnlineResumeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.information.PersonaFreeFillInActivity"
+            android:name=".feature.resume.profile.PersonaFreeFillInActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <activity
-            android:name=".feature.information.PersonaDescriptionActivity"
+            android:name=".feature.resume.profile.PersonaDescriptionActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <activity
-            android:name="com.shiyuan.fastclaw.feature.mine.MyResumeActivity"
+            android:name="com.shiyuan.fastclaw.feature.resume.MyResumeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
@@ -289,26 +289,26 @@
             android:name=".feature.settings.RecordFilingInformationActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".feature.mine.InterviewReportActivity"
+            android:name=".feature.report.interview.InterviewReportActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".feature.report.MyHistoryReportActivity"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <activity
-            android:name=".feature.report.genner.GenerateReportActivity"
+            android:name=".feature.report.history.MyHistoryReportActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.report.genner.ReportProgressActivity"
+            android:name=".feature.report.generation.GenerateReportActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.mine.MyShrimpChipsActivity"
+            android:name=".feature.report.generation.ReportProgressActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.mine.MyOrderActivity"
+            android:name=".feature.shrimp.MyShrimpChipsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".feature.order.MyOrderActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
@@ -327,7 +327,7 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.mine.HrActivity"
+            android:name=".feature.hr.HrActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
@@ -336,13 +336,13 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".feature.mine.MineShrimpRechargeActivity"
+            android:name=".feature.shrimp.MineShrimpRechargeActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--注销-->
         <activity android:name=".feature.settings.LogoffNewActivity" />
         <!--绑定手机号-->
         <activity
-            android:name=".feature.login.bind.BindPhoneActivity"
+            android:name=".feature.login.phonebinding.BindPhoneActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--手机号登录-->
         <activity
@@ -401,7 +401,7 @@
         <!--闪验 end-->
         <!-- 友盟厂商推送相关内容 -->
         <activity
-            android:name=".feature.push.MfrMessageActivity"
+            android:name=".platform.push.MfrMessageActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
@@ -433,7 +433,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature.mine.PhoneShowActivity"
+            android:name=".feature.settings.PhoneShowActivity"
             android:screenOrientation="portrait" />
     </application>
     <queries>

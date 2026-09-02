@@ -9,7 +9,6 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.databinding.ActivityRecordFilingInfomationBinding
-import com.shiyuan.fastclaw.feature.settings.vm.SettingsViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 
 

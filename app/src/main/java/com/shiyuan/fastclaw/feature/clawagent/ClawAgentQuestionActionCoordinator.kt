@@ -6,16 +6,16 @@ import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.network.apis.request.JobCityQueryBody
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.core.network.apis.response.SalaryRangePayload
-import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
-import com.shiyuan.fastclaw.feature.information.JobCitySelectorActivity
-import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
-import com.shiyuan.fastclaw.feature.information.JobWelfareSelectorActivity
-import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
-import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
-import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
+import com.shiyuan.fastclaw.feature.resume.preference.IndustrySelectionActivity
+import com.shiyuan.fastclaw.feature.resume.preference.JobCitySelectorActivity
+import com.shiyuan.fastclaw.feature.resume.preference.JobSelectionActivity
+import com.shiyuan.fastclaw.feature.resume.preference.JobWelfareSelectorActivity
+import com.shiyuan.fastclaw.feature.resume.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.resume.experience.CertificateSkillsAwardsDialog
+import com.shiyuan.fastclaw.feature.resume.experience.EducationExperienceDialog
+import com.shiyuan.fastclaw.feature.resume.experience.ProjectExperienceDialog
+import com.shiyuan.fastclaw.feature.resume.preference.SalaryRangePickerDialog
+import com.shiyuan.fastclaw.feature.resume.experience.WorkExperienceDialog
 
 /** 负责补问卡的页面选择器与表单弹窗路由。 */
 internal class ClawAgentQuestionActionCoordinator(

@@ -33,8 +33,7 @@ import com.shiyuan.fastclaw.core.manager.AppEventParam
 import com.shiyuan.fastclaw.core.manager.EventManager
 import com.shiyuan.fastclaw.core.network.apis.response.CoreQuestionPayloadBean
 import com.shiyuan.fastclaw.databinding.FragmentClawAgentMainBinding
-import com.shiyuan.fastclaw.feature.clawagent.dialog.VoiceRecordingDialog
-import com.shiyuan.fastclaw.feature.login.dialog.LoginNewLoadingDialog
+import com.shiyuan.fastclaw.feature.login.LoginNewLoadingDialog
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 

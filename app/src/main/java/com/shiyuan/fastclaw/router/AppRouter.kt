@@ -22,7 +22,7 @@ import com.shiyuan.fastclaw.core.manager.IRouter
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity.Companion.launch
 import com.nhsd.basic.utils.Logger
 import com.shiyuan.fastclaw.feature.main.MainActivity
-import com.shiyuan.fastclaw.feature.mine.InterviewReportActivity
+import com.shiyuan.fastclaw.feature.report.interview.InterviewReportActivity
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
 import com.tencent.mm.opensdk.openapi.WXAPIFactory
 

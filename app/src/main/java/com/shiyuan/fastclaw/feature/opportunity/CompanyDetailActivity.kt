@@ -12,7 +12,6 @@ import com.nhsd.basic.ext.dp
 import com.shiyuan.fastclaw.BR
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ActivityCompanyDetailBinding
-import com.shiyuan.fastclaw.feature.opportunity.vm.CompanyDetailViewModel
 
 /** 公司主页，展示机会详情接口关联企业的公开信息和福利标签。 */
 class CompanyDetailActivity :

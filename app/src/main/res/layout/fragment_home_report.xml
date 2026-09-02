@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.report.report.HomeReportViewModel" />
+            type="com.shiyuan.fastclaw.feature.report.HomeReportViewModel" />
 
         <import type="android.view.View" />
 

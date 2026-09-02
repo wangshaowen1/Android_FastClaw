@@ -8,9 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.shiyuan.fastclaw.databinding.ItemInterviewAiBinding
 import com.shiyuan.fastclaw.databinding.ItemInterviewUserBinding
-import com.shiyuan.fastclaw.feature.interview.bean.InterviewMessageInfo
-import com.shiyuan.fastclaw.feature.interview.viewholder.InterviewAiViewHolder
-import com.shiyuan.fastclaw.feature.interview.viewholder.InterviewUserViewHolder
 
 /**
  * 面试房间消息列表适配器，负责区分面试官消息和用户消息并做局部刷新。

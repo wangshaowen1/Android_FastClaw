@@ -4,7 +4,7 @@ import com.shiyuan.fastclaw.core.network.apis.response.CompanyBackgroundPreCheck
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewStartData
 import com.shiyuan.fastclaw.core.network.apis.response.MockInterviewUnfinishedData
-import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.clawagent.message.ClawAgentMessageInfo
 
 /** 仅消费一次的页面效果，不承载可恢复页面状态。 */
 sealed class ClawAgentUiEffect {

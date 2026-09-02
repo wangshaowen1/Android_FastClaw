@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.shiyuan.fastclaw.feature.mine.fragment.ItemMyOrderRecordVM" />
+            type="com.shiyuan.fastclaw.feature.order.ItemMyOrderRecordVM" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -8,7 +8,6 @@ import com.nhsd.basic.BaseViewModelActivity
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.ext.showConfirmPrompt
 import com.shiyuan.fastclaw.databinding.ActivityLogoffNewBinding
-import com.shiyuan.fastclaw.feature.settings.vm.LogoffViewModel
 
 /**
  * @desc：新版注销页面

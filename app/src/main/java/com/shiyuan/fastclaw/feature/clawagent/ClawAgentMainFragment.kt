@@ -60,23 +60,21 @@ import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_NOT_COMPANY
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.ERROR_CODE_POINTS_INSUFFICIENT
 import com.shiyuan.fastclaw.feature.clawagent.ClawAgentViewModel.Companion.QUICK_ENTRY
-import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
-import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
-import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentInsufficientShrimpDialog
-import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentJobRecommendationDialog
-import com.shiyuan.fastclaw.feature.clawagent.dialog.ClawAgentStatusDialog
-import com.shiyuan.fastclaw.feature.clawagent.dialog.NotificationsSwitchDialog
+import com.shiyuan.fastclaw.feature.clawagent.message.CandidateJobAgentClientActionEnum
+import com.shiyuan.fastclaw.feature.clawagent.message.ClawAgentMessageInfo
 import com.shiyuan.fastclaw.feature.interview.InterviewActivity
-import com.shiyuan.fastclaw.feature.interview.dialog.InterviewRecoverDialog
+import com.shiyuan.fastclaw.feature.interview.InterviewRecoverDialog
 import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
-import com.shiyuan.fastclaw.feature.mine.MineShrimpRechargeActivity
-import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
-import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
+import com.shiyuan.fastclaw.feature.shrimp.MineShrimpRechargeActivity
+import com.shiyuan.fastclaw.feature.resume.OnlineResumeActivity
+import com.shiyuan.fastclaw.feature.resume.upload.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import com.shiyuan.fastclaw.feature.clawagent.message.ClawAgentItemEvent
+import com.shiyuan.fastclaw.feature.clawagent.message.ClawAgentMsgAdapter
 
 /** 
  * @createtime 2026年05月20日 10:25

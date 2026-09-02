@@ -6,7 +6,7 @@
     <data>
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.mine.viewModel.InterviewReportViewModel" />
+            type="com.shiyuan.fastclaw.feature.report.interview.InterviewReportViewModel" />
     </data>
 
     <LinearLayout

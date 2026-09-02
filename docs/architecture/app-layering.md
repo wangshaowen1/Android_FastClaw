@@ -2,31 +2,31 @@
 title: App 分层架构
 type: architecture
 status: active
-last_verified: 2026-08-04
+last_verified: 2026-09-02
 ---
 
 # App 分层架构
 
 ## 背景与目的
 
-主应用按 `base`、`common`、`core`、`kit` 和 `feature` 等包组织。分层用于指导职责、依赖和新增代码归属，不以目录绝对纯净为目标。
+主应用按 `base`、`common`、`core`、`kit`、`platform` 和 `feature` 等包组织。分层用于指导职责、依赖和新增代码归属，不以目录绝对纯净为目标。
 
 ## 范围与非目标
 
-本文覆盖 `app/src/main/java/com/shiyuan/fastclaw/` 下共享代码和功能代码的归属，以及 `baselibrary` 与主应用的边界。
+本文覆盖 `app/src/main/java/com/shiyuan/fastclaw/` 下共享代码、平台入口和功能代码的归属，以及 `baselibrary` 与主应用的边界。
 
 本文不要求搬迁或清空 `app/base`，不启动 Gradle 模块化，也不要求仅为符合架构图而批量重写 import。代码位置以是否更容易理解、复用、测试和维护为判断依据。
 
 ## 当前模型
 
 - `app` 通过 `modules.gradle` 和 `app/build.gradle` 使用 Maven 制品 `com.kuaige:baselibrary`，当前没有启用本地 `:baselibrary` 模块。
-- `base`、`common`、`core`、`kit` 和 `feature` 是 `app` 内的 Kotlin/Java 包，不是五个独立 Gradle 模块。
+- `base`、`common`、`core`、`kit`、`platform` 和 `feature` 是 `app` 内的 Kotlin/Java 包，不是独立 Gradle 模块。
 - `app/base` 是基于 `baselibrary` 的 App 级适配集合，包含应用 ViewModel、UI 基类及少量业务适配；它不是独立架构层。
 - 当前存在 `core` 或 `kit` 直接引用具体 `feature` 的实现。是否处理取决于真实耦合和维护风险，但共享能力绑定具体页面属于优先收敛方向。
 
 ## 职责与边界
 
-推荐分层链为 `baselibrary → common → core / kit → feature`。箭头表示基础能力向业务功能的供给方向；右侧通常使用左侧能力，但不要求每个依赖逐层中转，也不代表强制物理模块边界。
+推荐分层链为 `baselibrary → common → core / kit → feature`。箭头表示基础能力向业务功能的供给方向；右侧通常使用左侧能力，但不要求每个依赖逐层中转，也不代表强制物理模块边界。`platform` 是 Android 或厂商 SDK 的入站适配边界，可把外部回调交给应用路由，不属于这条可复用能力链。
 
 | 位置 | 负责 | 不负责 |
 | --- | --- | --- |
@@ -34,6 +34,7 @@ last_verified: 2026-08-04
 | `common/` | 与具体业务无关的应用内工具、扩展、UI 组件和常量 | 全局业务状态和完整功能流程 |
 | `core/` | 全局数据源、网络、数据库、用户与配置状态、路由及共享业务管理 | 具体 `feature` 页面的交互编排 |
 | `kit/` | 可复用的领域能力；与 `core` 的边界按职责和复用方式判断 | 绑定某个具体业务页面 |
+| `platform/` | Android 系统或厂商 SDK 要求的入口、回调与应用适配 | 用户业务页面、可复用领域逻辑 |
 | `feature/` | 面向用户的页面、交互和完整业务流程 | 向共享层泄漏页面实现 |
 | `base/` | 基于 `baselibrary` 的既有 App 级基类和适配代码 | 作为新架构层持续扩张 |
 
@@ -72,6 +73,7 @@ last_verified: 2026-08-04
 | 构建模块 | `settings.gradle` | 核对实际 include 的模块 |
 | `baselibrary` 依赖 | `modules.gradle`、`app/build.gradle` | 核对依赖坐标和使用方式 |
 | App 分层包 | `app/src/main/java/com/shiyuan/fastclaw/` | 检查跨包 import 和职责 |
+| 厂商平台入口 | `app/src/main/java/com/shiyuan/fastclaw/platform/` | 检查 SDK 入口、Manifest 与路由交接 |
 | App 级适配 | `app/src/main/java/com/shiyuan/fastclaw/base/` | 修改前检查调用方、反射、资源和变体引用 |
 
 仅有包名差异不构成架构问题。处理必须级问题或迁移既有代码时，再编译受影响变体并回归对应页面。

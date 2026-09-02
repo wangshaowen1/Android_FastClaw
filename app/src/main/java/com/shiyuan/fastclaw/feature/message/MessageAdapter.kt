@@ -11,8 +11,6 @@ import com.shiyuan.fastclaw.databinding.ItemMessageMarkedUnsuitableBinding
 import com.shiyuan.fastclaw.feature.message.data.ConversationItem
 import com.shiyuan.fastclaw.feature.message.data.MessageListItem
 import com.shiyuan.fastclaw.feature.message.data.UnsuitableEntry
-import com.shiyuan.fastclaw.feature.message.viewholder.ConversationViewHolder
-import com.shiyuan.fastclaw.feature.message.viewholder.ConversationUnsuitableViewHolder
 
 // 消息会话列表适配器，负责普通会话和不合适会话入口的多类型展示。
 class MessageAdapter : BaseMultiItemAdapter<MessageListItem>() {

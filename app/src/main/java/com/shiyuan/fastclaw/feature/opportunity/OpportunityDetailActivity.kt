@@ -27,8 +27,6 @@ import com.shiyuan.fastclaw.core.network.apis.response.OpportunityDetailData
 import com.shiyuan.fastclaw.databinding.ActivityOpportunityDetailBinding
 import com.shiyuan.fastclaw.feature.message.chat.MessageChatActivity
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
-import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailActionState
-import com.shiyuan.fastclaw.feature.opportunity.vm.OpportunityDetailViewModel
 import com.shiyuan.fastclaw.widget.listmoretextview.MyClickSpan
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin

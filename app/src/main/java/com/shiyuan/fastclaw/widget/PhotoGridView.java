@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import com.blankj.utilcode.util.SizeUtils;
 import com.shiyuan.fastclaw.R;
 import com.shiyuan.fastclaw.common.utils.Utils;
-import com.shiyuan.fastclaw.feature.PhotoPagerActivity;
+import com.shiyuan.fastclaw.core.ui.imagepreview.PhotoPagerActivity;
 import com.shiyuan.fastclaw.widget.roundedimageview.RoundedImageView;
 import com.kuaige.imageloader.GlideImageLoader;
 import com.nhsd.basic.ext.ViewUtils;

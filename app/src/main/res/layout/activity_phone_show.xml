@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.mine.viewModel.PhoneShowViewModel" />
+            type="com.shiyuan.fastclaw.feature.settings.PhoneShowViewModel" />
     </data>
 
     <LinearLayout

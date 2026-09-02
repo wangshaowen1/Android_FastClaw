@@ -1,6 +1,6 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
-import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
+import com.shiyuan.fastclaw.feature.clawagent.message.CandidateJobAgentClientActionEnum
 
 /**
  * 求职 Agent 各 cardType 的 payloadJson 端侧渲染模型。

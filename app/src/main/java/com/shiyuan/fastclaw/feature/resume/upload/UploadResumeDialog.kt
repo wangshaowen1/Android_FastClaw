@@ -1,0 +1,141 @@
+package com.shiyuan.fastclaw.feature.resume.upload
+
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.fragment.app.FragmentManager
+import com.shiyuan.fastclaw.R
+import com.shiyuan.fastclaw.databinding.DialogUploadResumeBinding
+import com.nhsd.basic.BaseBottomPushVMDialogFragment
+import com.nhsd.basic.ext.getResString
+import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.ext.showToast
+import com.shiyuan.fastclaw.BuildConfig
+import com.shiyuan.fastclaw.base.BaseBottomDialogVmFragment
+import com.shiyuan.fastclaw.feature.resume.upload.UploadResumeDialog.Companion.onWxSelected
+import com.shiyuan.fastclaw.router.AppRouter.startWechatMini
+import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram
+import com.shiyuan.fastclaw.feature.report.ReportViewModel
+
+/**
+ * 上传简历dialog
+ * 新增：通过 tvTrue 选择本地文件（PDF/Word/图片）并回调
+ */
+class UploadResumeDialog :
+    BaseBottomDialogVmFragment<DialogUploadResumeBinding, ReportViewModel>() {
+
+    companion object {
+        const val TAG = "UploadResumeDialog"
+        var onFileSelected: ((SelectedFileInfo?) -> Unit)? = null
+        var onWxSelected: ((code: String?) -> Unit)? = null
+
+        var bizType: String? = null
+
+        fun show(
+            manager: FragmentManager,
+            canSelectImage: Boolean = true,
+            bizType: String? = null,
+            fileSelectedListener: ((SelectedFileInfo?) -> Unit)? = null,
+            wxSelected: ((code: String?) -> Unit)? = null
+        ): UploadResumeDialog {
+            val dialog = UploadResumeDialog()
+            dialog.canSelectImage = canSelectImage
+            this.bizType = bizType
+            onFileSelected = fileSelectedListener
+            onWxSelected = wxSelected
+            dialog.show(manager)
+            return dialog
+        }
+    }
+
+    private lateinit var fileChooser: FileChooser
+    private var canSelectImage = true
+
+    override fun onViewModelCreated() {
+        super.onViewModelCreated()
+        initView()
+        dataUpdate()
+        initFileChooser()
+    }
+
+    private fun initView() {
+        binding.tvUploadTypeTip.text = if (canSelectImage) {
+            R.string.upload_type_tip.getResString()
+        } else {
+            R.string.upload_type_tip_without_image.getResString()
+        }
+        binding.ivClose.setOnSingleClickListener { dismiss() }
+        binding.llWx.setOnSingleClickListener { performWxUpload() }
+        binding.llFolder.setOnSingleClickListener { fileChooser.openFileChooser() }
+    }
+
+    private fun initFileChooser() {
+        fileChooser = FileChooser(
+            fragment = this,
+            maxSizeBytes = 10 * 1024 * 1024, // 10MB
+            canSelectImage = canSelectImage,
+            onResult = { fileInfo ->
+                if (fileInfo != null) {
+                    onFileSelected?.invoke(fileInfo)
+                    // "已选择: ${fileInfo.fileName}".showToast()
+                    dismiss()
+                } else {
+                    // 这里只处理非大小超限的错误（例如无法读取文件）
+                    "文件选择失败".showToast()
+                }
+            },
+            onSizeExceeded = {
+                "文件大小不能超过10MB".showToast()
+            }
+        )
+    }
+
+    private fun performWxUpload() {
+
+        mRealVM.getScheme(bizType)
+        //  onWxSelected?.invoke()
+        // R.string.wx_upload_developing.getResString().showToast()
+    }
+
+    private fun dataUpdate() {
+        mRealVM.schemeData.observe(this) {
+            //wx5dafb966df52fc55
+            onWxSelected?.invoke(it.code) //返回业务参数然后拼接给 小程序
+            startWechatMini(
+                BuildConfig.UPLOAD_RESUME_WECHAT_MINIID,
+                it.url,
+                if (BuildConfig.DEBUG) WXLaunchMiniProgram.Req.MINIPROGRAM_TYPE_PREVIEW else WXLaunchMiniProgram.Req.MINIPTOGRAM_TYPE_RELEASE
+            )
+
+        }
+    }
+
+    fun openInWeChat(urlScheme: String): Boolean {
+        // 确保传入的是 weixin:// 开头的小程序专用链接
+        if (!urlScheme.startsWith("weixin://")) {
+            "仅支持 weixin:// 格式的链接".showToast()
+            return false
+        }
+        return try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(urlScheme)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                setPackage("com.tencent.mm")
+            }
+            startActivity(intent)
+            true
+        } catch (e: ActivityNotFoundException) {
+            "请先安装微信".showToast()
+            false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override fun <Data> onClick(view: View, data: Data?) {
+        super.onClick(view, data)
+    }
+}

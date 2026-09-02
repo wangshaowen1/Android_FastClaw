@@ -19,9 +19,9 @@ import com.nhsd.basic.ext.setOnSingleClickListener
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.core.network.apis.request.AgentMsgAction
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeConfirmPayloadBean
-import com.shiyuan.fastclaw.feature.clawagent.bean.CandidateJobAgentClientActionEnum
-import com.shiyuan.fastclaw.feature.clawagent.bean.ClawAgentMessageInfo
-import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
+import com.shiyuan.fastclaw.feature.clawagent.message.CandidateJobAgentClientActionEnum
+import com.shiyuan.fastclaw.feature.clawagent.message.ClawAgentMessageInfo
+import com.shiyuan.fastclaw.feature.resume.OnlineResumeActivity
 import com.shiyuan.fastclaw.router.AppNavigator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

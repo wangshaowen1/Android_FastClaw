@@ -9,7 +9,7 @@
 
         <variable
             name="item"
-            type="com.shiyuan.fastclaw.feature.report.ItemReportVM" />
+            type="com.shiyuan.fastclaw.feature.report.history.ItemReportVM" />
     </data>
 
     <RelativeLayout

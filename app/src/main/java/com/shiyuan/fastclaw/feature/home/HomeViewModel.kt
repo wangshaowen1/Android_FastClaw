@@ -12,7 +12,7 @@ import com.shiyuan.fastclaw.core.network.apis.entity.BannerInfo
 import com.shiyuan.fastclaw.core.network.apis.entity.WorkInfo
 import com.shiyuan.fastclaw.core.network.apis.request.BannerBody
 import com.shiyuan.fastclaw.core.response
-import com.shiyuan.fastclaw.feature.play.data.FeedRepository
+import com.shiyuan.fastclaw.feature.home.data.FeedRepository
 import kotlinx.coroutines.flow.Flow
 
 

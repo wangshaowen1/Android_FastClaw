@@ -8,7 +8,7 @@ import com.shiyuan.fastclaw.core.User
 import com.shiyuan.fastclaw.core.ext.onUserStatusChanged
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
 import com.shiyuan.fastclaw.databinding.FragmentMineBinding
-import com.shiyuan.fastclaw.feature.information.dialog.WorkExperienceDialog
+import com.shiyuan.fastclaw.feature.resume.experience.WorkExperienceDialog
 import com.shiyuan.fastclaw.feature.main.MainViewModel
 import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.shiyuan.fastclaw.router.AppNavigator
@@ -45,21 +45,25 @@ import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldItem
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldTree
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeFieldValue
 import com.shiyuan.fastclaw.core.network.apis.response.AttributeOption
-import com.shiyuan.fastclaw.feature.information.AwardActivity
-import com.shiyuan.fastclaw.feature.information.EducationalActivity
-import com.shiyuan.fastclaw.feature.information.IndustrySelectionActivity
-import com.shiyuan.fastclaw.feature.information.JobSelectionActivity
-import com.shiyuan.fastclaw.feature.information.PersonalInformationActivity
-import com.shiyuan.fastclaw.feature.information.SkillActivity
-import com.shiyuan.fastclaw.feature.information.dialog.BirthYearMonthPickerDialog
-import com.shiyuan.fastclaw.feature.information.dialog.CertificateSkillsAwardsDialog
-import com.shiyuan.fastclaw.feature.information.dialog.EducationExperienceDialog
-import com.shiyuan.fastclaw.feature.information.dialog.ProjectExperienceDialog
-import com.shiyuan.fastclaw.feature.information.dialog.SalaryRangePickerDialog
+import com.shiyuan.fastclaw.feature.resume.experience.AwardActivity
+import com.shiyuan.fastclaw.feature.resume.experience.EducationalActivity
+import com.shiyuan.fastclaw.feature.resume.preference.IndustrySelectionActivity
+import com.shiyuan.fastclaw.feature.resume.preference.JobSelectionActivity
+import com.shiyuan.fastclaw.feature.resume.profile.PersonalInformationActivity
+import com.shiyuan.fastclaw.feature.resume.experience.SkillActivity
+import com.shiyuan.fastclaw.feature.resume.BirthYearMonthPickerDialog
+import com.shiyuan.fastclaw.feature.resume.experience.CertificateSkillsAwardsDialog
+import com.shiyuan.fastclaw.feature.resume.experience.EducationExperienceDialog
+import com.shiyuan.fastclaw.feature.resume.experience.ProjectExperienceDialog
+import com.shiyuan.fastclaw.feature.resume.preference.SalaryRangePickerDialog
 import com.shiyuan.fastclaw.feature.invite.InviteFriendsActivity
 import com.shiyuan.fastclaw.feature.login.phone.PhoneNewLoginActivity
-import com.shiyuan.fastclaw.feature.mine.viewModel.MineViewModel
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
+import com.shiyuan.fastclaw.feature.hr.HrActivity
+import com.shiyuan.fastclaw.feature.order.MyOrderActivity
+import com.shiyuan.fastclaw.feature.report.interview.InterviewReportActivity
+import com.shiyuan.fastclaw.feature.resume.OnlineResumeActivity
+import com.shiyuan.fastclaw.feature.shrimp.MineShrimpRechargeActivity
 
 /**
  *

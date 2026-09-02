@@ -7,7 +7,7 @@
 
         <variable
             name="layout"
-            type="com.shiyuan.fastclaw.feature.login.bind.BindPhoneViewModel" />
+            type="com.shiyuan.fastclaw.feature.login.phonebinding.BindPhoneViewModel" />
 
     </data>
 

@@ -36,8 +36,6 @@ import com.shiyuan.fastclaw.databinding.ActivityMessageChatBinding
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
 import com.shiyuan.fastclaw.feature.message.data.MessageDraftStore
-import com.shiyuan.fastclaw.feature.message.dialog.JobSwitchConfirmDialog
-import com.shiyuan.fastclaw.feature.message.dialog.ResumeConfirmDialog
 import com.shiyuan.fastclaw.feature.opportunity.OpportunityDetailActivity
 import kotlinx.coroutines.launch
 
