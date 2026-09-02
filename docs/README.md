@@ -18,6 +18,7 @@ last_verified: 2026-09-02
 | 小虾对话 | 会话恢复、SSE 消息、卡片动作、历史合并与报告状态 | `app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [聊天对话](features/chat-conversation.md) |
 | 模拟面试 | 面试创建、房间状态、语音作答、SSE 文本流、恢复与报告轮询 | `app/src/main/java/com/shiyuan/fastclaw/feature/interview/`、`app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [模拟面试](features/mock-interview.md) |
 | 在线简历 | 结构化简历、求职偏好、理解度与附件解析任务 | `app/src/main/java/com/shiyuan/fastclaw/feature/resume/` | [在线简历](features/online-resume.md) |
+| 机会与求职宝典 | 机会匹配、已处理机会、岗位/公司详情与求职工具入口 | `app/src/main/java/com/shiyuan/fastclaw/feature/opportunity/` | [机会与求职宝典](features/opportunity.md) |
 | IMSDK | 私有依赖、账号凭据、登录登出、会话生命周期与离线推送边界 | `app/src/main/java/com/shiyuan/fastclaw/App.kt`、`app/src/main/java/com/shiyuan/fastclaw/core/User.kt`、`app/src/main/java/com/shiyuan/fastclaw/core/im/` | 当前没有独立功能文档，按任务读取代码 |
 | 网络与流式传输 | Retrofit 接口、统一响应处理与原始 SSE 分发 | `app/src/main/java/com/shiyuan/fastclaw/core/network/` | 当前没有独立架构文档，按任务读取代码 |
 | 公共应用基础 | Base 类、事件、导航、资源与通用组件 | `app/src/main/java/com/shiyuan/fastclaw/` | [App 分层架构](architecture/app-layering.md)、[Feature 包结构](architecture/feature-package-structure.md) |
@@ -62,6 +63,7 @@ last_verified: 2026-09-02
 | 处理聊天、通用卡片、SSE 或消息列表 | [聊天对话](features/chat-conversation.md) | active；实现中 |
 | 处理面试房间、语音作答、恢复或面试报告轮询 | [模拟面试](features/mock-interview.md) | active；实现中 |
 | 处理简历、求职偏好、理解度或附件上传 | [在线简历](features/online-resume.md) | active；实现中 |
+| 处理机会匹配、已处理机会、岗位/公司详情或求职宝典 | [机会与求职宝典](features/opportunity.md) | active；实现中 |
 | 处理 IM 私有依赖、账号凭据、登录登出、消息、会话生命周期或离线推送 | `App.kt`、`core/User.kt` 和 `core/im/` | 当前没有独立功能文档 |
 
 新开发者先读根 `README.md`、`AGENTS.md` 和本页，再选一篇与负责功能直接相关的文档。进入代码后，以表格中的稳定目录或入口继续定位，不需要从头阅读全部 docs。
