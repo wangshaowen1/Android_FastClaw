@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--为了适配所有路径可以设置 path = "." -->
-
+    <!-- 第三方分享 SDK 的应用专属临时目录。 -->
     <external-files-path
         name="opensdk_external"
-        path="Images/tmp" />
+        path="Images/tmp/" />
     <external-files-path
         name="umeng_cache"
         path="umeng_cache/" />
-    <root-path
-        name="opensdk_root"
-        path="" />
     <external-files-path
-        name="share_files"
-        path="." />
+        name="share_transform_output"
+        path="transform/" />
 
-    <!--表示 content.getFileDir() 获取到的目录-->
-    <files-path name="files-path" path="." />
-    <!--表示 content.getCacheDir() 获取到的目录-->
-    <cache-path name="cache-path" path="." />
-    <!--表示 ContextCompat.getExternalFilesDirs() 获取到的目录-->
-    <external-files-path name="external_file_path" path="." />
-    <!--表示 ContextCompat.getExternalCacheDirs() 获取到的目录-->
-    <external-cache-path name="external_cache_path" path="." />
+    <!-- Matisse 拍照：Android 10+ 使用应用专属 Pictures，内部目录作为不可用时的回退。 -->
+    <external-files-path
+        name="matisse_capture"
+        path="Pictures/album/" />
+    <files-path
+        name="matisse_capture_fallback"
+        path="Pictures/album/" />
+
+    <!-- Android 9 及以下 Matisse 会写公共相册；仅开放明确的非敏感拍照目录。 -->
+    <external-path
+        name="legacy_matisse_capture"
+        path="Pictures/album/" />
+
+    <!-- FileManager 使用外部缓存，存储不可用时回退到同名内部缓存目录。 -->
+    <cache-path name="internal_common_cache" path="cache-files/" />
+    <cache-path name="internal_image_cache" path="cache-images/" />
+    <cache-path name="internal_media_cache" path="cache-media/" />
+    <cache-path name="internal_apk_cache" path="cache-apks/" />
+    <external-cache-path name="external_common_cache" path="cache-files/" />
+    <external-cache-path name="external_image_cache" path="cache-images/" />
+    <external-cache-path name="external_media_cache" path="cache-media/" />
+    <external-cache-path name="external_apk_cache" path="cache-apks/" />
+    <external-cache-path name="external_transform_cache" path="transform/" />
+    <external-cache-path name="external_mv_publish_cache" path="MVPublish/" />
 </paths>

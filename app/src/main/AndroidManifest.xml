@@ -399,17 +399,7 @@
             android:screenOrientation="behind"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--闪验 end-->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            tools:replace="android:authorities">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths"
-                tools:replace="android:resource" />
-        </provider> <!-- 友盟厂商推送相关内容 -->
+        <!-- 友盟厂商推送相关内容 -->
         <activity
             android:name=".feature.push.MfrMessageActivity"
             android:exported="true"

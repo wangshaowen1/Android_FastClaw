@@ -21,7 +21,7 @@ import com.shiyuan.fastclaw.common.SP
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.UmInitConfig
 import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.manager.AdStrategyManager
+import com.shiyuan.fastclaw.core.manager.AppChannelManager
 import com.shiyuan.fastclaw.core.manager.DataNexusManager
 import com.shiyuan.fastclaw.core.manager.FlashLoginManager
 import com.shiyuan.fastclaw.core.manager.OssManager
@@ -107,7 +107,6 @@ class App : ImApplication() {
     private val sdkConfigTask = object : Task("sdkConfigTask") {
         override fun run() {
             initSdkAfterAgreeLicense()
-            fileManager.providerName = "fileprovider"
 
             if (ProcessUtils.isMainProcess()) {
                 val releaseEnv = listOf("production", "preview")
@@ -168,7 +167,9 @@ class App : ImApplication() {
             ),
         )
         super.onCreate()
+        fileManager.providerName = "fileprovider"
         instance = this
+        AppChannelManager.init(this)
 
 //                StrictMode.setVmPolicy(
 //            StrictMode.VmPolicy.Builder()
@@ -209,7 +210,7 @@ class App : ImApplication() {
 
         mainThreadHandler = Handler(Looper.getMainLooper())
 
-        val objectId = AdStrategyManager.getDefaultObjectId()
+        val objectId = AppChannelManager.objectId
         config.storeObjectId(objectId)
 
         MVCHelper.setLoadViewFactory(MyLoadViewFactory())
@@ -430,7 +431,7 @@ class App : ImApplication() {
 
             CrashReport.setIsDevelopmentDevice(instance, BuildConfig.DEBUG)
             val strategy = CrashReport.UserStrategy(instance)
-            strategy.appChannel = Session.getInstance().channel
+            strategy.appChannel = AppChannelManager.channel
             strategy.deviceID = Session.getInstance().androidId
             strategy.deviceModel = Session.getInstance().model
 
@@ -454,7 +455,7 @@ class App : ImApplication() {
             .setDataSourceId(BuildConfig.GROWING_DATA_SOURCE_ID)
             .setDebugEnabled(BuildConfig.DEBUG)
             .setAndroidIdEnabled(true)
-            .setChannel(Session.getInstance().channel)
+            .setChannel(AppChannelManager.channel)
             .setRequireAppProcessesEnabled(true)
             .setDataCollectionEnabled(hasAgree())
             .setAutotrack(true)

@@ -349,6 +349,9 @@ dependencies {
     implementation libs.androidx.databinding.common
     implementation libs.androidx.splashscreen
     implementation rootProject.ext.modules.baselibrary.gav
+    implementation 'com.tencent.vasdolly:helper:3.0.6'
+    implementation libs.kuaishou.channelsdk
+    implementation libs.humesdk
     implementation rootProject.ext.modules.imageloader.gav
     implementation(rootProject.ext.modules.oss.gav) {
         exclude group: 'com.kuaige', module: 'imageloader'

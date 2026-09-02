@@ -15,6 +15,7 @@ import com.shiyuan.fastclaw.common.SP
 import com.shiyuan.fastclaw.common.ext.ioScope
 import com.shiyuan.fastclaw.common.utils.DateUtil
 import com.shiyuan.fastclaw.common.utils.MmkvDelegate
+import com.shiyuan.fastclaw.core.manager.AppChannelManager
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory.apiService
 import com.shiyuan.fastclaw.core.network.apis.request.InviteAttribution
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
@@ -129,7 +130,7 @@ class Config : NetworkChangedListener {
     }
 
     private fun ifInitialStatusInReview(): Boolean {
-        when (Session.getInstance().channel) {
+        when (AppChannelManager.channel) {
             "huawei" -> return true
         }
         return false

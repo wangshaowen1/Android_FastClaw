@@ -4,10 +4,10 @@ import android.app.Application;
 import android.content.Context;
 
 import com.shiyuan.fastclaw.BuildConfig;
+import com.shiyuan.fastclaw.core.manager.AppChannelManager;
 import com.shiyuan.fastclaw.core.manager.IRouter;
 import com.shiyuan.fastclaw.core.manager.PushManager;
 import com.shiyuan.fastclaw.core.manager.ULinkManager;
-import com.nhsd.basic.Session;
 import com.nhsd.share.KS;
 import com.nhsd.share.XHS;
 import com.umeng.analytics.MobclickAgent;
@@ -25,11 +25,11 @@ public class UmInitConfig {
         this.context = context;
         pushManager = new PushManager(context);
         UMConfigure.setLogEnabled(BuildConfig.DEBUG);
-        UMConfigure.preInit(context, BuildConfig.UMENG_APP_KEY, Session.getInstance().getChannel());
+        UMConfigure.preInit(context, BuildConfig.UMENG_APP_KEY, AppChannelManager.getChannel());
     }
 
     public void init(Application application, IRouter router) {
-        UMConfigure.init(context, BuildConfig.UMENG_APP_KEY, Session.getInstance().getChannel(), UMConfigure.DEVICE_TYPE_PHONE, BuildConfig.UMENG_MESSAGE_SECRET);
+        UMConfigure.init(context, BuildConfig.UMENG_APP_KEY, AppChannelManager.getChannel(), UMConfigure.DEVICE_TYPE_PHONE, BuildConfig.UMENG_MESSAGE_SECRET);
         PushAgent.getInstance(context).setPackageListenerEnable(false);
         String fileProvider = BuildConfig.APPLICATION_ID + ".fileprovider";
         PlatformConfig.setFileProvider(fileProvider);

@@ -25,8 +25,6 @@ public class Constants {
 
     public static final String APP_SCHEME = "fastclaw";
 
-    public static final String DEFAULT_CHANNEL_ID = "1";
-
     public static final String SERVICE_URL = "https://res.aishiyuan.cn/agreement/userAgreement.html";
     public static final String PRIVACY_URL = "https://res.aishiyuan.cn/agreement/privacyPolicy.html";
 

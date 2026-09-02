@@ -215,3 +215,14 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 静态确认 16 类 ItemEvent 均有发送与消费、8 类 UiEffect 均有消费，旧一次性 LiveData、Adapter 多事件回调和 Fragment 对 ViewModel 状态的反向写入无残留；`git diff --check` 无空白错误。用户已完成构建和运行验证，未发现业务异常。
+
+## 本轮 BaseLibrary 2.1.0 宿主职责迁移
+
+### 变更了什么
+基础库依赖升级到 2.1.0；渠道识别、`objectId` 映射和渠道 SDK 依赖迁入宿主工程的 `AppChannelManager`；`FileProvider` 合并为单一声明，并将共享目录收敛为业务实际使用的白名单路径。
+
+### 为什么
+渠道规则和业务标识会随 App 变化，不属于多应用共用的基础库职责；文件共享范围也应由宿主按实际业务目录声明，避免重复 Provider 和过宽授权。
+
+### 验证结论
+静态确认旧 `Session` 渠道 API、`AdStrategyManager`、BaseLibrary 2.0.3 和宽泛 FileProvider 路径无残留；渠道判断顺序与 FastClaw 原映射保持一致，Manifest/XML 可解析且 Provider 仅一处。按项目规则未运行 Gradle，待本地构建及渠道包真机回归。

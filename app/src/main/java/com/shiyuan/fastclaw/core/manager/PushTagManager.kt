@@ -29,7 +29,7 @@ object PushTagManager {
             tags = listOfNotNull(
                 "day_$dayKey",
                 "minute_$minuteKey",
-                Session.getInstance().channel,
+                AppChannelManager.channel,
                 if (User.get().isFemale()) "female" else "male",
                 "version_" + Session.getInstance().versionName,
             )

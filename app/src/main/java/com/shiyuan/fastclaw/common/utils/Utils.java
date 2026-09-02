@@ -501,6 +501,7 @@ public class Utils {
                         imagePath.delete();
                     Uri outputFileUri = getFileUri(activity, imagePath);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                     if (intent.resolveActivity(activity.getPackageManager()) != null) {
                         activity.startActivityForResult(intent, requestCode);
                     }

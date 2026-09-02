@@ -10,14 +10,13 @@ import com.shiyuan.fastclaw.App;
 import com.shiyuan.fastclaw.common.Oaid;
 import com.shiyuan.fastclaw.common.utils.EncryptUtils;
 import com.shiyuan.fastclaw.core.Config;
-import com.shiyuan.fastclaw.core.manager.AdStrategyManager;
+import com.shiyuan.fastclaw.core.manager.AppChannelManager;
 import com.nhsd.basic.Session;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AppHeader {
-    public static final String DEFAULT_CHANNEL_ID = "1";
     private int emulatorStatus;
     //APP版本
     private String appVersion;
@@ -83,8 +82,8 @@ public class AppHeader {
             this.riskKey = getRandomLowerCaseLetter() + keyString;
         }
         this.mobileType = String.valueOf(1);
-        this.channelId = AdStrategyManager.getDefaultObjectId();//取本地objectId，默认1
-        this.channelCode = Session.getInstance().getChannel();
+        this.channelId = AppChannelManager.getObjectId();//取本地objectId，默认1
+        this.channelCode = AppChannelManager.getChannel();
     }
 
     public static char getRandomLowerCaseLetter() {
