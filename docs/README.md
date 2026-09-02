@@ -16,6 +16,7 @@ last_verified: 2026-09-02
 | 领域 | 负责什么 | 先看哪里 | 详细说明 |
 | --- | --- | --- | --- |
 | 小虾对话 | 会话恢复、SSE 消息、卡片动作、历史合并与报告状态 | `app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [聊天对话](features/chat-conversation.md) |
+| 消息沟通 | 招聘会话列表、P2P 沟通、简历/职位消息卡片与未读草稿 | `app/src/main/java/com/shiyuan/fastclaw/feature/message/` | [消息沟通](features/message.md) |
 | 模拟面试 | 面试创建、房间状态、语音作答、SSE 文本流、恢复与报告轮询 | `app/src/main/java/com/shiyuan/fastclaw/feature/interview/`、`app/src/main/java/com/shiyuan/fastclaw/feature/clawagent/` | [模拟面试](features/mock-interview.md) |
 | 在线简历 | 结构化简历、求职偏好、理解度与附件解析任务 | `app/src/main/java/com/shiyuan/fastclaw/feature/resume/` | [在线简历](features/online-resume.md) |
 | 机会与求职宝典 | 机会匹配、已处理机会、岗位/公司详情与求职工具入口 | `app/src/main/java/com/shiyuan/fastclaw/feature/opportunity/` | [机会与求职宝典](features/opportunity.md) |
@@ -61,6 +62,7 @@ last_verified: 2026-09-02
 | 调整 `baselibrary` 与 App 共享代码的职责或依赖 | [App 分层架构](architecture/app-layering.md) | active |
 | 新增、移动或审查 `feature` 包和子包 | [Feature 包结构与边界](architecture/feature-package-structure.md) | active |
 | 处理聊天、通用卡片、SSE 或消息列表 | [聊天对话](features/chat-conversation.md) | active；实现中 |
+| 处理招聘消息列表、P2P 沟通或 IM 业务卡片 | [消息沟通](features/message.md) | active；实现中 |
 | 处理面试房间、语音作答、恢复或面试报告轮询 | [模拟面试](features/mock-interview.md) | active；实现中 |
 | 处理简历、求职偏好、理解度或附件上传 | [在线简历](features/online-resume.md) | active；实现中 |
 | 处理机会匹配、已处理机会、岗位/公司详情或求职宝典 | [机会与求职宝典](features/opportunity.md) | active；实现中 |
