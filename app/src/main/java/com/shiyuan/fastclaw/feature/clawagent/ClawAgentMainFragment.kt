@@ -74,6 +74,7 @@ import com.shiyuan.fastclaw.feature.mine.OnlineResumeActivity
 import com.shiyuan.fastclaw.feature.report.UploadResumeDialog
 import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.router.AppNavigator
+import com.shiyuan.fastclaw.widget.CommonLoadingDialog
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -992,18 +993,18 @@ class ClawAgentMainFragment : BaseClawAgentFragment<FragmentClawAgentMainBinding
         resumeData = data
         uploadResumeDialog = UploadResumeDialog.show(manager = this.parentFragmentManager,false, bizType =BIZ_TYPE_XIAOXIA_RESUME_UPLOAD, { fileInfo ->
             if (fileInfo != null) {
-                showLoading("上传中...")
+                CommonLoadingDialog.show(childFragmentManager, "上传中")
                 mRealVM.uploadFilesWithSecurityCheck(
                     uriList = listOf(fileInfo.uri),
                     bizType = BIZ_TYPE_XIAOXIA_RESUME_UPLOAD,
                     onSuccess = onSuccess@{ successUrls ->
-                        hideLoading()
+                        CommonLoadingDialog.hide(childFragmentManager)
                         // 文件上传完成回调里可能 AI 已开始回复，此时拦截避免新开 SSE 打断当前流
                         if (interceptIfStreaming()) return@onSuccess
                         uploadResumePushMessages(successUrls.first(),fileInfo.fileName ?:"")
                     },
                     onFailure = { reason ->
-                        hideLoading()
+                        CommonLoadingDialog.hide(childFragmentManager)
                         reason.showToast() },
                 )
             }

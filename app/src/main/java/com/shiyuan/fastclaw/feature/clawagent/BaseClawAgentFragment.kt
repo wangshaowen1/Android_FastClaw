@@ -595,21 +595,4 @@ open class BaseClawAgentFragment<VB : FragmentClawAgentMainBinding, VM : BaseLay
             }
         }
     }
-
-
-    private var commonLoadingDialog: CommonLoadingDialog? = null
-
-    fun showLoading(text: String? = null) {
-        if (commonLoadingDialog?.isAdded == true) return
-        commonLoadingDialog = CommonLoadingDialog.newInstance(text).apply {
-            show(this@BaseClawAgentFragment.childFragmentManager)
-        }
-    }
-
-
-     fun hideLoading() {
-        commonLoadingDialog?.dismissAllowingStateLoss()
-        commonLoadingDialog = null
-    }
-
 }
