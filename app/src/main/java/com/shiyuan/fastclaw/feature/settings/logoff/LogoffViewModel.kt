@@ -14,6 +14,8 @@ import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
 import com.shiyuan.fastclaw.core.network.apis.request.UserTokenBody
 import com.shiyuan.fastclaw.core.response
+import com.shiyuan.fastclaw.feature.settings.AccountSettingsActivity
+import com.shiyuan.fastclaw.feature.settings.SettingsActivity
 import com.shiyuan.fastclaw.kit.SignUtils
 
 /**
