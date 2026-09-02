@@ -8,16 +8,12 @@ import com.shiyuan.fastclaw.feature.message.data.ResumeRequestChatItem
 /**
  * IM 单聊消息列表 item 事件。
  *
- * Adapter/ViewHolder 只负责转发，页面统一消费；messageType 透传被点击消息的列表类型。
+ * Adapter、ViewHolder 和内容 Provider 只负责转发，页面统一消费。
  */
 sealed class MessageChatItemEvent {
 
     /** 被点击的原始消息项。 */
     abstract val item: ChatMessageItem
-
-    /** 被点击消息的列表类型，对应 MessageChatAdapter 中注册的 TYPE 常量。 */
-    val messageType: Int
-        get() = item.itemType
 
     /** 点击职位卡片。 */
     data class JobCard(

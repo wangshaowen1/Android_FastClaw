@@ -266,7 +266,7 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
     }
 
     /**
-     * 统一处理消息列表点击事件，事件保留原始消息项及其 messageType。
+     * 统一处理消息列表点击事件，事件保留对应的强类型消息项。
      */
     private fun handleItemEvent(event: MessageChatItemEvent) {
         when (event) {
@@ -440,6 +440,18 @@ class MessageChatActivity : BaseViewModelActivity<ActivityMessageChatBinding, Me
             binding.etContent.setText(draft)
             binding.etContent.setSelection(binding.etContent.text?.length ?: 0)
         }
+    }
+
+    /** 页面可见时激活当前 IM 会话并清理未读。 */
+    override fun onResume() {
+        super.onResume()
+        mRealVM.setPageActive(true)
+    }
+
+    /** 页面退到后台时退出 SDK 当前会话，恢复正常未读与通知语义。 */
+    override fun onPause() {
+        mRealVM.setPageActive(false)
+        super.onPause()
     }
 
     /**

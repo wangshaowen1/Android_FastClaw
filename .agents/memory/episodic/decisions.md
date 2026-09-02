@@ -237,3 +237,14 @@ H5 `webPay` 入参里的 `payInfo` 如果被 Gson 按 `Any/Map` 解析，未加�
 
 ### 验证结论
 共迁移 152 个源码文件，已同步 Kotlin/Java package、import、Manifest Activity 与 DataBinding 类型引用；目录/package、项目内 feature import、Manifest/XML 类型和旧包残留静态检查通过，迁移文件剔除 package/import 后与原实现一致。按项目规则未运行 Gradle。
+
+## 本轮 Chat 参考 AIMarry 的版本无关设计对齐
+
+### 变更了什么
+FastClaw `MessageChatViewModel` 将实时消息和消息修改订阅保存为独立 Job，会话初始化增加同账号幂等保护、切换前统一释放、异步回调会话身份校验；首屏历史改为并入现有缓存，避免覆盖查询期间收到的实时消息。`MessageChatActivity` 在 `onResume/onPause` 同步 SDK 会话 active/inActive，且移除完整消息内容日志。SDK 消息统一经 `MessageChatItemFactory` 转成不可变页面模型；文本、简历请求与简历投递均改为 `ChatBubbleViewHolder` 公共方向壳层与类型化 `ChatContentProvider` 组合，删除按左右方向或业务卡片重复实现的 ViewHolder。聊天 Item 使用 DataBinding，列表业务事件由 Holder/Provider 直接投递至 `ItemEventsViewModel`，头像统一走 `loadThumbnailUri` 的 OSS 缩略图链路。
+
+### 为什么
+AIMarry 使用 imsdk `2.0.0-rc04` 并混用旧 NIM 消息枚举，FastClaw 使用 V2-only 的 `2.0.0-rc09`，具体 SDK 类型、SDK 实体直入 Adapter、重复 Provider 分发和页面业务下沉不应复制；但会话订阅所有权、页面可见性、过期回调防串、历史/实时合并，以及“方向壳层与消息内容解耦”的 Provider 边界属于版本无关的正确设计。FastClaw 保留不可变页面 Item 和统一 Item 事件链，不照搬 AIMarry 的 SDK Message 直入 Adapter、按 key 创建 ItemVM 或零散 lambda 回调。新增音频或视频时应增加一个内容模型和一个 Provider，而不是再增加左右两套 ViewHolder。
+
+### 验证结论
+静态确认 rc09 源码支持 `inActive()` 与发送监听器置空，订阅 Job 均在 `onDestroy()` 取消，同会话重复初始化不会重复 collect，旧会话历史回调不会写入新会话；Adapter/Provider 不再依赖 IM SDK，`ChatMessageItem` 不再反向依赖 Adapter viewType，所有聊天 item XML 均声明 `item`，聊天 Holder/Provider 无直接 Glide 和可变业务回调残留。按项目规则未运行 Gradle。

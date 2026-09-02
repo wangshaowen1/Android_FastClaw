@@ -3,6 +3,7 @@ package com.shiyuan.fastclaw.feature.message.chat
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.nhsd.basic.ext.setOnSingleClickListener
+import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.databinding.ItemChatJobCardBinding
 import com.shiyuan.fastclaw.feature.message.data.JobChatItem
@@ -12,31 +13,21 @@ import java.util.Locale
 /**
  * 职位卡片消息 ViewHolder，负责渲染当前会话关联的岗位信息。
  */
-class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerView.ViewHolder(binding.root) {
+class JobChatViewHolder(
+    private val binding: ItemChatJobCardBinding,
+    private val itemEvents: ItemEventsViewModel<MessageChatItemEvent>,
+) : RecyclerView.ViewHolder(binding.root) {
 
-    // 职位卡片点击回调。
-    var onCardClickListener: (JobChatItem) -> Unit = {}
-
-    /**
-     * 绑定职位卡片标题、薪资、公司信息和标签。
-     */
+    /** 绑定需要代码计算的标签、操作文案和点击事件，其余稳定字段由 DataBinding 处理。 */
     fun bind(item: JobChatItem) {
-        val company = item.brandName?.takeIf { it.isNotBlank() } ?: item.companyName
-        val stage = item.financingStage?.takeIf { it.isNotBlank() }
         val tags = listOfNotNull(item.cityName, item.experienceText, item.educationText)
-        binding.tvTime.text = item.timeText
-        binding.tvTime.visibility = if (item.timeText.isBlank()) View.GONE else View.VISIBLE
-        binding.tvTitle.text = item.jobName.orEmpty()
-        binding.tvSalary.text = item.salaryText.orEmpty()
-        binding.tvSalary.visibility = if (item.salaryText.isNullOrBlank()) View.GONE else View.VISIBLE
-        binding.tvCompany.text = company.orEmpty()
-        binding.tvCompany.visibility = if (company.isNullOrBlank()) View.GONE else View.VISIBLE
-        binding.tvStage.text = stage.orEmpty()
-        binding.tvStage.visibility = if (stage.isNullOrBlank()) View.GONE else View.VISIBLE
-        binding.layoutCompany.visibility = if (company.isNullOrBlank() && stage.isNullOrBlank()) View.GONE else View.VISIBLE
+        binding.item = item
         bindTagViews(tags)
         bindActionState(item)
-        binding.layoutCard.setOnSingleClickListener { onCardClickListener(item) }
+        binding.layoutCard.setOnSingleClickListener {
+            itemEvents.postEvent(MessageChatItemEvent.JobCard(item))
+        }
+        binding.executePendingBindings()
     }
 
     /**
@@ -57,9 +48,6 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
      */
     private fun bindActionState(item: JobChatItem) {
         val context = binding.root.context
-        binding.tvJobChange.visibility = if (item.isJobChanged) View.VISIBLE else View.GONE
-        binding.tvActionTime.visibility = if (item.isJobChanged) View.GONE else View.VISIBLE
-        binding.viewDivider.visibility = if (item.isJobChanged) View.GONE else View.VISIBLE
         if (item.isJobChanged) {
             binding.tvJobChange.text = when (item.operatorRole) {
                 OPERATOR_ROLE_CANDIDATE -> context.getString(R.string.message_chat_job_changed_by_self)
@@ -84,7 +72,8 @@ class JobChatViewHolder(private val binding: ItemChatJobCardBinding) : RecyclerV
      */
     private fun formatActionTime(timestamp: Long): String {
         if (timestamp <= 0L) return ""
-        return SimpleDateFormat("M月d日 H:mm", Locale.getDefault()).format(timestamp)
+        val pattern = binding.root.context.getString(R.string.message_chat_job_time_pattern)
+        return SimpleDateFormat(pattern, Locale.getDefault()).format(timestamp)
     }
 
     companion object {

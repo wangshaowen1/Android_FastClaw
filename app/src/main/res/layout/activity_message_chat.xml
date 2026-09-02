@@ -88,7 +88,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:itemCount="3"
-                tools:listitem="@layout/item_chat_text_left" />
+                tools:listitem="@layout/item_chat_bubble_incoming" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

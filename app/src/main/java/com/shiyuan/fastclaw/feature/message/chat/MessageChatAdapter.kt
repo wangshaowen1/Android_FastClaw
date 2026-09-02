@@ -8,62 +8,66 @@ import androidx.recyclerview.widget.RecyclerView
 import com.chad.library.adapter.base.BaseMultiItemAdapter
 import com.nhsd.basic.item.ItemEventsViewModel
 import com.shiyuan.fastclaw.databinding.ItemChatJobCardBinding
-import com.shiyuan.fastclaw.databinding.ItemChatResumeDeliveryBinding
-import com.shiyuan.fastclaw.databinding.ItemChatResumeRequestBinding
-import com.shiyuan.fastclaw.databinding.ItemChatTextLeftBinding
-import com.shiyuan.fastclaw.databinding.ItemChatTextRightBinding
+import com.shiyuan.fastclaw.feature.message.data.BubbleChatItem
+import com.shiyuan.fastclaw.feature.message.data.ChatMessageContentType
+import com.shiyuan.fastclaw.feature.message.data.ChatMessageDirection
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
 import com.shiyuan.fastclaw.feature.message.data.JobChatItem
 import com.shiyuan.fastclaw.feature.message.data.ResumeDeliveryChatItem
 import com.shiyuan.fastclaw.feature.message.data.ResumeRequestChatItem
 import com.shiyuan.fastclaw.feature.message.data.TextChatItem
 
-// IM 单聊消息适配器，负责职位、文本、简历请求和简历投递消息的多类型展示。
+// IM 单聊消息适配器；气泡内容由 Provider 扩展，业务卡片保持独立强类型实现。
 class MessageChatAdapter(
     private val itemEvents: ItemEventsViewModel<MessageChatItemEvent>,
 ) : BaseMultiItemAdapter<ChatMessageItem>() {
 
     init {
-        // 职位卡片消息，展示首次沟通或切换职位的职位快照。
-        register<JobChatViewHolder, JobChatItem>(TYPE_JOB_CARD, { inflater, parent ->
-            JobChatViewHolder(ItemChatJobCardBinding.inflate(inflater, parent, false)).apply {
-                onCardClickListener = { itemEvents.postEvent(MessageChatItemEvent.JobCard(it)) }
-            }
+        // 每个内容 Provider 自动组合两个方向壳层；新增内容类型时只需再注册一个 Provider。
+        registerBubble<TextChatItem>(TextChatContentProvider())
+        registerBubble<ResumeRequestChatItem>(ResumeRequestChatContentProvider(itemEvents))
+        registerBubble<ResumeDeliveryChatItem>(ResumeDeliveryChatContentProvider(itemEvents))
+
+        // 职位卡片是会话级业务内容，保持全宽独立布局。
+        register<JobChatViewHolder, JobChatItem>(MessageChatViewType.TYPE_JOB_CARD, { inflater, parent ->
+            JobChatViewHolder(
+                binding = ItemChatJobCardBinding.inflate(inflater, parent, false),
+                itemEvents = itemEvents,
+            )
         }) { holder, item -> holder.bind(item) }
 
-        // 左侧文本消息，展示对方发送的普通文本内容。
-        register<TextChatLeftViewHolder, TextChatItem>(TYPE_TEXT_LEFT, { inflater, parent ->
-            TextChatLeftViewHolder(ItemChatTextLeftBinding.inflate(inflater, parent, false)).apply {
-                onAvatarClickListener = { itemEvents.postEvent(MessageChatItemEvent.HrAvatar(it)) }
-            }
-        }) { holder, item -> holder.bind(item) }
-
-        // 右侧文本消息，展示当前账号发送的普通文本内容。
-        register<TextChatRightViewHolder, TextChatItem>(TYPE_TEXT_RIGHT, { inflater, parent ->
-            TextChatRightViewHolder(ItemChatTextRightBinding.inflate(inflater, parent, false))
-        }) { holder, item -> holder.bind(item) }
-
-        // 索要简历消息，展示 HR 请求简历以及同意、拒绝操作状态。
-        register<ResumeRequestViewHolder, ResumeRequestChatItem>(TYPE_RESUME_REQUEST, { inflater, parent ->
-            ResumeRequestViewHolder(ItemChatResumeRequestBinding.inflate(inflater, parent, false)).apply {
-                onAcceptClickListener = { itemEvents.postEvent(MessageChatItemEvent.ResumeRequestAccept(it)) }
-                onRejectClickListener = { itemEvents.postEvent(MessageChatItemEvent.ResumeRequestReject(it)) }
-                onAvatarClickListener = { itemEvents.postEvent(MessageChatItemEvent.HrAvatar(it)) }
-            }
-        }) { holder, item -> holder.bind(item) }
-
-        // 主动发送简历消息，展示求职者发送的简历文件信息。
-        register<ResumeDeliveryViewHolder, ResumeDeliveryChatItem>(TYPE_RESUME_DELIVERY, { inflater, parent ->
-            ResumeDeliveryViewHolder(ItemChatResumeDeliveryBinding.inflate(inflater, parent, false)).apply {
-                onFileClickListener = { itemEvents.postEvent(MessageChatItemEvent.ResumeFile(it)) }
-            }
-        }) { holder, item -> holder.bind(item) }
-        onItemViewType { position, list -> list[position].itemType }
+        onItemViewType { position, list ->
+            MessageChatViewType.of(list[position])
+        }
     }
 
-    /**
-     * 提交聊天消息列表并通过 DiffUtil 做差量刷新。
-     */
+    /** 一个内容 Provider 自动注册 Incoming/Outgoing 两个公共壳层。 */
+    private inline fun <reified Item : BubbleChatItem> registerBubble(
+        provider: ChatContentProvider<Item>,
+    ) {
+        ChatMessageDirection.values().forEach { direction ->
+            register<ChatBubbleViewHolder<Item>, Item>(
+                itemType = MessageChatViewType.bubble(provider.contentType, direction),
+                create = { inflater, parent ->
+                    ChatBubbleViewHolder.create(
+                        inflater = inflater,
+                        parent = parent,
+                        direction = direction,
+                        contentProvider = provider,
+                        itemEvents = itemEvents,
+                    )
+                },
+                bind = { holder, item ->
+                    check(item.contentType == provider.contentType) {
+                        "Bubble content mismatch, expected=${provider.contentType}, actual=${item.contentType}"
+                    }
+                    holder.bind(item)
+                },
+            )
+        }
+    }
+
+    /** 提交聊天消息列表并通过 DiffUtil 做差量刷新。 */
     override fun submitList(list: List<ChatMessageItem>?) {
         val newList = list.orEmpty()
         val result = DiffUtil.calculateDiff(MessageDiffCallback(items, newList))
@@ -71,26 +75,22 @@ class MessageChatAdapter(
         result.dispatchUpdatesTo(this)
     }
 
-    /**
-     * 注册单聊消息多类型 ViewHolder，统一封装 inflate 与类型安全 bind。
-     */
+    /** 注册单聊消息多类型 ViewHolder，统一封装 inflate 与类型安全 bind。 */
     private inline fun <VH : RecyclerView.ViewHolder, reified Item : ChatMessageItem> register(
         itemType: Int,
         crossinline create: (inflater: LayoutInflater, parent: ViewGroup) -> VH,
         crossinline bind: (holder: VH, item: Item) -> Unit,
     ) {
         addItemType(itemType, object : OnMultiItemAdapterListener<ChatMessageItem, VH> {
-            /**
-             * 创建当前 itemType 对应的 ViewHolder。
-             */
             override fun onCreate(context: Context, parent: ViewGroup, viewType: Int): VH =
                 create(LayoutInflater.from(context), parent)
 
-            /**
-             * 将父类透传的通用 item 安全转换为目标类型后再绑定。
-             */
             override fun onBind(holder: VH, position: Int, item: ChatMessageItem?) {
-                (item as? Item)?.let { bind(holder, it) }
+                check(item is Item) {
+                    "Message viewType/item mismatch, expected=${Item::class.java.simpleName}, " +
+                        "actual=${item?.javaClass?.simpleName}"
+                }
+                bind(holder, item)
             }
         })
     }
@@ -99,43 +99,36 @@ class MessageChatAdapter(
         private val oldList: List<ChatMessageItem>,
         private val newList: List<ChatMessageItem>,
     ) : DiffUtil.Callback() {
-        /**
-         * 返回旧消息列表数量，供 DiffUtil 计算差量。
-         */
         override fun getOldListSize(): Int = oldList.size
 
-        /**
-         * 返回新消息列表数量，供 DiffUtil 计算差量。
-         */
         override fun getNewListSize(): Int = newList.size
 
-        /**
-         * 使用消息 id 和 itemType 判断是否为同一条消息。
-         */
+        /** 消息 id 相同且最终视图类型一致，才视为同一列表项。 */
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
             oldList[oldItemPosition].id == newList[newItemPosition].id &&
-                oldList[oldItemPosition].itemType == newList[newItemPosition].itemType
+                MessageChatViewType.of(oldList[oldItemPosition]) == MessageChatViewType.of(newList[newItemPosition])
 
-        /**
-         * data class 全等即可覆盖当前消息项的全部可见内容差异。
-         */
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
             oldList[oldItemPosition] == newList[newItemPosition]
     }
 
-    companion object {
-        // 职位卡片消息类型。
-        const val TYPE_JOB_CARD = 1
-        // 左侧文本消息类型。
-        const val TYPE_TEXT_LEFT = 2
+    /** Adapter 内部 viewType 编码，避免数据模型依赖 RecyclerView 实现。 */
+    private object MessageChatViewType {
+        private const val OUTGOING_MASK = 1 shl 16
+        private const val STANDALONE_BASE = 1 shl 20
+        const val TYPE_JOB_CARD = STANDALONE_BASE + 1
 
-        // 右侧文本消息类型。
-        const val TYPE_TEXT_RIGHT = 3
+        fun bubble(contentType: ChatMessageContentType, direction: ChatMessageDirection): Int {
+            check(contentType.stableId in 1 until OUTGOING_MASK) {
+                "Chat content stableId must be in 1 until $OUTGOING_MASK"
+            }
+            return contentType.stableId or
+                (if (direction == ChatMessageDirection.OUTGOING) OUTGOING_MASK else 0)
+        }
 
-        // 简历请求卡片消息类型。
-        const val TYPE_RESUME_REQUEST = 4
-
-        // 简历投递卡片消息类型。
-        const val TYPE_RESUME_DELIVERY = 5
+        fun of(item: ChatMessageItem): Int = when (item) {
+            is BubbleChatItem -> bubble(item.contentType, item.direction)
+            is JobChatItem -> TYPE_JOB_CARD
+        }
     }
 }

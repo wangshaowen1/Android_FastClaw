@@ -5,7 +5,11 @@
 
     <data>
 
-        <import type="com.blankj.utilcode.util.ScreenUtils" />
+        <import type="android.view.View" />
+
+        <variable
+            name="item"
+            type="com.shiyuan.fastclaw.feature.message.data.BubbleChatItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,46 +25,44 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
+            android:text="@{item.timeText}"
             android:textColor="@color/color_75_3c3c43"
             android:textSize="10sp"
-            android:visibility="gone"
+            android:visibility="@{item.hasTimeText ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="17:24"
             tools:visibility="visible" />
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivAvatar"
+            loadThumbnailUri="@{item.avatar}"
+            placeHolder="@{@drawable/icon_default_avatar}"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginTop="12dp"
             android:contentDescription="@null"
+            android:scaleType="centerCrop"
             android:src="@drawable/icon_default_avatar"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTime"
-            app:layout_goneMarginTop="0dp" />
+            app:layout_goneMarginTop="0dp"
+            app:shapeAppearanceOverlay="@style/roundStyle_circle" />
 
-        <TextView
-            android:id="@+id/tvContent"
+        <FrameLayout
+            android:id="@+id/contentFrame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"
-            android:background="@drawable/bg_msg_user_right"
-            android:paddingStart="16dp"
-            android:paddingTop="14dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="14dp"
-            android:textColor="@color/color_ffffff"
-            android:textSize="15sp"
-            app:setMaxWidth="@{ScreenUtils.getScreenWidth() * 73 / 100}"
-            app:layout_constraintEnd_toStartOf="@id/ivAvatar"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/ivAvatar"
-            app:layout_constraintHorizontal_bias="1"
+            android:layout_marginStart="6dp"
             app:layout_constrainedWidth="true"
-            tools:text="好的，我想了解一下岗位职责和薪资范围我想了解一下岗位职责和薪资范围。" />
-
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/ivAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar"
+            tools:background="@drawable/bg_msg_agent_left"
+            tools:layout_height="48dp"
+            tools:layout_width="120dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

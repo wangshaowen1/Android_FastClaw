@@ -15,7 +15,7 @@ object MessageTextAttachment {
             id = message.messageClientId,
             content = message.content?.takeIf { it.isNotBlank() } ?: App.instance.getString(R.string.message_preview_custom),
             avatar = avatar,
-            isSelf = isSelf,
+            direction = if (isSelf) ChatMessageDirection.OUTGOING else ChatMessageDirection.INCOMING,
             time = message.time,
             timeText = timeText,
         )

@@ -48,11 +48,13 @@ class ResumeRequestAttachment : CustomAttachment(MSG_TYPE) {
     /**
      * 返回通知栏和会话摘要降级文案。
      */
-    override fun getPushContent(): CharSequence = when (status) {
-        STATUS_ACCEPTED -> PUSH_ACCEPTED
-        STATUS_REJECTED -> PUSH_REJECTED
-        else -> PUSH_PENDING
-    }
+    override fun getPushContent(): CharSequence = App.instance.getString(
+        when (status) {
+            STATUS_ACCEPTED -> R.string.message_conversation_resume_request_accepted
+            STATUS_REJECTED -> R.string.message_conversation_resume_request_rejected
+            else -> R.string.message_conversation_resume_request_pending
+        },
+    )
 
     /**
      * 序列化成协议约定的 attachment.raw JSON。
@@ -95,12 +97,6 @@ class ResumeRequestAttachment : CustomAttachment(MSG_TYPE) {
         private const val STATUS_REJECTED = "rejected"
         // 旧版本简历请求已发送状态。
         private const val STATUS_SENT = "sent"
-        // 待处理状态的通知栏和摘要文案。
-        private const val PUSH_PENDING = "对方请求查看你的附件简历"
-        // 已同意状态的通知栏和摘要文案。
-        private const val PUSH_ACCEPTED = "附件简历已发送"
-        // 已拒绝状态的通知栏和摘要文案。
-        private const val PUSH_REJECTED = "你已拒绝发送附件简历"
         // 协议版本字段。
         private const val KEY_VERSION = "v"
         // 协议类型字段。
@@ -164,7 +160,7 @@ class ResumeRequestAttachment : CustomAttachment(MSG_TYPE) {
         /**
          * 将 HR 索要简历消息转换成聊天列表展示模型。
          */
-        fun buildChat(message: MessageWrapper, isSelf: Boolean, timeText: String, avatar: String?): ResumeRequestChatItem {
+        fun buildChat(message: MessageWrapper, timeText: String, avatar: String?): ResumeRequestChatItem {
             val payload = message.customPayload()
             val resume = payload?.optJSONObject(KEY_RESUME)
             val status = payload?.optString(KEY_STATUS)
@@ -185,7 +181,7 @@ class ResumeRequestAttachment : CustomAttachment(MSG_TYPE) {
                 updatedAt = payload?.optLong(KEY_UPDATED_AT),
                 operatorId = payload?.optString(KEY_OPERATOR_ID),
                 avatar = avatar,
-                isSelf = isSelf,
+                direction = ChatMessageDirection.INCOMING,
                 time = message.time,
                 timeText = timeText,
             )

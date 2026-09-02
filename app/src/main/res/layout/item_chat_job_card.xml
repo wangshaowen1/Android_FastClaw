@@ -3,6 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="item"
+            type="com.shiyuan.fastclaw.feature.message.data.JobChatItem" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,9 +25,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
+            android:text="@{item.timeText}"
             android:textColor="@color/color_75_3c3c43"
             android:textSize="10sp"
-            android:visibility="gone"
+            android:visibility="@{item.hasTimeText ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -56,6 +66,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:includeFontPadding="false"
                 android:maxLines="1"
+                android:text="@{item.jobName}"
                 android:textColor="@color/color_000000"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@id/tvSalary"
@@ -70,8 +81,10 @@
                 android:layout_marginStart="8dp"
                 android:fontFamily="sans-serif-medium"
                 android:includeFontPadding="false"
+                android:text="@{item.salaryText}"
                 android:textColor="@color/color_2f6bff"
                 android:textSize="16sp"
+                android:visibility="@{item.hasSalary ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBaseline_toBaselineOf="@id/tvTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tvTitle"
@@ -83,6 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
+                android:visibility="@{item.hasCompanyInfo ? View.VISIBLE : View.GONE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvTitle">
@@ -94,8 +108,10 @@
                     android:ellipsize="end"
                     android:includeFontPadding="false"
                     android:maxLines="1"
+                    android:text="@{item.displayCompanyName}"
                     android:textColor="@color/color_75_3c3c43"
                     android:textSize="12sp"
+                    android:visibility="@{item.hasCompany ? View.VISIBLE : View.GONE}"
                     tools:text="小红书" />
 
                 <TextView
@@ -106,8 +122,10 @@
                     android:ellipsize="end"
                     android:includeFontPadding="false"
                     android:maxLines="1"
+                    android:text="@{item.displayFinancingStage}"
                     android:textColor="@color/color_75_3c3c43"
                     android:textSize="12sp"
+                    android:visibility="@{item.hasFinancingStage ? View.VISIBLE : View.GONE}"
                     tools:text="D轮及以上" />
             </LinearLayout>
 
@@ -179,6 +197,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/color_E9F0FE"
+                android:visibility="@{item.isJobChanged() ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/layoutTags"
@@ -192,6 +211,7 @@
                 android:includeFontPadding="false"
                 android:textColor="@color/color_55_3c3c43"
                 android:textSize="12sp"
+                android:visibility="@{item.isJobChanged() ? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/viewDivider"
@@ -205,9 +225,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:includeFontPadding="false"
-            android:text="你切换了沟通职位"
             android:textColor="@color/color_55_3c3c43"
             android:textSize="12sp"
+            android:visibility="@{item.isJobChanged() ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layoutCard"

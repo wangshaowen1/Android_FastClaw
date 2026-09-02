@@ -143,7 +143,7 @@ class ResumeDeliveryAttachment : CustomAttachment(MSG_TYPE) {
                 updatedAt = payload?.optLong(KEY_UPDATED_AT),
                 operatorId = payload?.optString(KEY_OPERATOR_ID),
                 avatar = if (isSelf) User.get().avatarUrl else null,
-                isSelf = isSelf,
+                direction = ChatMessageDirection.OUTGOING,
                 time = message.time,
                 timeText = timeText,
             )

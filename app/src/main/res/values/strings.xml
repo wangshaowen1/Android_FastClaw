@@ -68,6 +68,9 @@
     <string name="message_chat_input_hint">和TA聊一聊～</string>
     <string name="message_chat_send">发送</string>
     <string name="message_chat_send_resume">发简历</string>
+    <string name="message_chat_first_greeting">您好，认真看了岗位介绍，很感兴趣，可以深入聊聊吗？</string>
+    <string name="message_chat_resume_delivery_message">这是我的简历，您看看</string>
+    <string name="message_chat_resume_request_accept_message">您好，我已投递简历</string>
     <string name="message_chat_resume_confirm_title">发送附件简历</string>
     <string name="message_chat_resume_request_title">我想要您一份附件简历，您是否同意？</string>
     <string name="message_chat_resume_request_sent">已发送</string>
@@ -88,6 +91,7 @@
     <string name="message_chat_resume_action_waiting">功能接入中</string>
     <string name="message_chat_resume_empty_tip">暂无可发送的简历</string>
     <string name="message_chat_resume_request_failed">简历请求处理失败</string>
+    <string name="message_chat_job_time_pattern">M月d日 H:mm</string>
     <string name="message_chat_job_started_format">%1$s %2$s</string>
     <string name="message_chat_job_started_by_self">由你发起的沟通</string>
     <string name="message_chat_job_started_by_other">由对方发起的沟通</string>

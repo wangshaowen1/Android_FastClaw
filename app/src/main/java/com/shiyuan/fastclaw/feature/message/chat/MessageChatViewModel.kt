@@ -3,8 +3,6 @@ package com.shiyuan.fastclaw.feature.message.chat
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.alibaba.fastjson.JSON
-import com.blankj.utilcode.util.LogUtils
 import com.nhsd.basic.ext.showToast
 import com.shiyuan.fastclaw.App
 import com.shiyuan.fastclaw.R
@@ -21,9 +19,8 @@ import com.shiyuan.fastclaw.core.network.apis.request.ResumeSendAgreeBody.Compan
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.feature.message.MessageFormatter
 import com.shiyuan.fastclaw.feature.message.data.ChatMessageItem
+import com.shiyuan.fastclaw.feature.message.data.MessageChatItemFactory
 import com.shiyuan.fastclaw.feature.message.data.MessageChatParams
-import com.shiyuan.fastclaw.feature.message.data.MessageJobAttachment
-import com.shiyuan.fastclaw.feature.message.data.MessageTextAttachment
 import com.shiyuan.fastclaw.feature.message.data.ResumeDeliveryAttachment
 import com.shiyuan.fastclaw.feature.message.data.ResumeRequestAttachment
 import com.shiyuan.fastclaw.feature.message.data.ResumeRequestChatItem
@@ -37,6 +34,7 @@ import com.tulele.im.entity.MessageModifyParams
 import com.tulele.im.entity.MessageType
 import com.tulele.im.entity.MessageWrapper
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -51,6 +49,12 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
 
     // 当前打开的 IM 会话门面。
     private var chat: Chat? = null
+    // 当前会话新增消息订阅，同一 ViewModel 内只保留一个。
+    private var messageObserveJob: Job? = null
+    // 当前会话消息修改订阅，同一 ViewModel 内只保留一个。
+    private var modifiedMessageObserveJob: Job? = null
+    // 页面是否处于前台，仅前台时把当前聊天标记为 SDK 活跃会话。
+    private var isPageActive = false
     // 当前会话消息缓存，key 为 messageClientId。
     private val messageCache = linkedMapOf<String, MessageWrapper>()
     // 本机主动发送过的消息 id，用于 SDK 回填方向前保持右侧展示。
@@ -67,6 +71,11 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private var contactId: String = ""
     // 当前聊天对象头像。
     private var targetAvatar: String? = null
+    // SDK 消息到页面消息模型的唯一转换入口。
+    private val messageItemFactory = MessageChatItemFactory(
+        isLocalMessage = { messageClientId -> messageClientId in localSendMessageIds },
+        avatarProvider = ::messageAvatar,
+    )
     // 首次创建会话时是否需要自动发送开场白。
     private var autoSendGreeting: Boolean? = false
 
@@ -75,33 +84,65 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * 首次创建会话时是否自动发送开场白。
      */
     fun initChat(params: MessageChatParams?) {
+        val targetContactId = params?.contactId.orEmpty()
+        if (targetContactId.isBlank()) return
+        if (chat != null && contactId == targetContactId) return
+
+        releaseChat()
+        messageCache.clear()
+        localSendMessageIds.clear()
+        localSendMessageTimes.clear()
+        nextLocalSendMessageTime = 0L
+        hasMoreHistory = true
+        isLoadingHistory.set(false)
+        messageList.value = emptyList()
+
         this.sessionId = params?.sessionId.orEmpty()
-        this.contactId = params?.contactId.orEmpty()
+        this.contactId = targetContactId
         this.targetAvatar = params?.avatar
         this.autoSendGreeting = params?.isFirstCreate
-        chat = ImSession.get().openChat(Contact(contactId))
+        chat = ImSession.get().openChat(Contact(targetContactId))
         chat?.onMessageSendResultListener = this
-        chat?.active()
-        clearUnreadMessage(contactId)
-        fetchTargetAvatar(contactId)
+        if (isPageActive) {
+            chat?.active()
+            clearUnreadMessage(targetContactId)
+        }
+        fetchTargetAvatar(targetContactId)
         initObserve()
         loadDataList()
     }
 
     /**
+     * 同步页面可见状态，避免页面退到后台后仍占用 SDK 当前会话并吞掉未读语义。
+     */
+    fun setPageActive(active: Boolean) {
+        isPageActive = active
+        val currentChat = chat ?: return
+        if (active) {
+            currentChat.active()
+            clearUnreadMessage(contactId)
+        } else {
+            currentChat.inActive()
+        }
+    }
+
+    /**
      * 监听当前会话实时消息变化。
      */
-    fun initObserve() {
+    private fun initObserve() {
         val currentChat = chat ?: return
-        viewModelScope.launch {
+        messageObserveJob?.cancel()
+        messageObserveJob = viewModelScope.launch {
             currentChat.observeMessages().collectLatest { messages ->
-                LogUtils.d("监听收到的消息", JSON.toJSONString(messages))
+                if (chat !== currentChat) return@collectLatest
                 mergeMessages(messages)
-                clearUnreadReceiving(messages)
+                if (isPageActive) clearUnreadReceiving(messages)
             }
         }
-        viewModelScope.launch {
+        modifiedMessageObserveJob?.cancel()
+        modifiedMessageObserveJob = viewModelScope.launch {
             currentChat.observeModifiedMessages().collectLatest { messages ->
+                if (chat !== currentChat) return@collectLatest
                 mergeMessages(messages)
             }
         }
@@ -118,10 +159,10 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              * 首次历史消息加载成功时刷新当前消息缓存。
              */
             override fun onSuccess(result: List<MessageWrapper>?) {
+                if (chat !== currentChat) return
                 val messages = result.orEmpty().filterNot { it.shouldIgnore() }
-                messageCache.clear()
                 messages.forEach { message ->
-                    messageCache[message.messageClientId] = message
+                    messageCache.putIfAbsent(message.messageClientId, message)
                 }
                 hasMoreHistory = messages.size >= Chat.LOAD_MESSAGE_COUNT
                 refreshMessageList()
@@ -133,6 +174,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              * 首次历史消息加载失败时结束加载状态。
              */
             override fun onFailed(code: Int) {
+                if (chat !== currentChat) return
                 isLoadingHistory.set(false)
                 onLoadDataComplete()
             }
@@ -141,6 +183,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              * 首次历史消息加载异常时结束加载状态。
              */
             override fun onException(exception: Throwable) {
+                if (chat !== currentChat) return
                 isLoadingHistory.set(false)
                 onLoadDataComplete()
             }
@@ -160,6 +203,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              * 加载更早历史成功时追加到当前消息缓存。
              */
             override fun onSuccess(result: List<MessageWrapper>?) {
+                if (chat !== currentChat) return
                 val messages = result.orEmpty().filterNot { it.shouldIgnore() }
                 val newMessages = messages.filterNot { messageCache.containsKey(it.messageClientId) }
                 newMessages.forEach { message ->
@@ -174,6 +218,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              * 加载更早历史失败时结束加载状态。
              */
             override fun onFailed(code: Int) {
+                if (chat !== currentChat) return
                 isLoadingHistory.set(false)
             }
 
@@ -181,6 +226,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
              * 加载更早历史异常时结束加载状态。
              */
             override fun onException(exception: Throwable) {
+                if (chat !== currentChat) return
                 isLoadingHistory.set(false)
             }
         })
@@ -193,7 +239,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     private fun onLoadDataComplete() {
         if (autoSendGreeting == true) {
             autoSendGreeting = false
-            sendTextMessage(FIRST_CREATE_GREETING)
+            sendTextMessage(App.instance.getString(R.string.message_chat_first_greeting))
         }
     }
 
@@ -221,7 +267,9 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
             showToast(R.string.message_chat_resume_empty_tip)
             return
         }
-        val textMessage = currentChat.sendTextMessage(RESUME_DELIVERY_TEXT)
+        val textMessage = currentChat.sendTextMessage(
+            App.instance.getString(R.string.message_chat_resume_delivery_message),
+        )
         rememberLocalSendMessage(textMessage)
         val attachment = ResumeDeliveryAttachment.buildResume(resume)
         val message = currentChat.createCustomMessage(attachment)
@@ -254,17 +302,20 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         currentChat.modifyMessage(message, params, object : ImCallback<MessageWrapper> {
             //云端消息修改成功后刷新当前消息。
             override fun onSuccess(result: MessageWrapper?) {
+                if (chat !== currentChat) return
                 mergeMessages(listOfNotNull(result))
                 onSuccess()
             }
 
             //云端消息修改失败时提示错误码。
             override fun onFailed(code: Int) {
+                if (chat !== currentChat) return
                 showToast(R.string.message_chat_resume_request_failed)
             }
 
             //云端消息修改异常时提示失败。
             override fun onException(exception: Throwable) {
+                if (chat !== currentChat) return
                 showToast(R.string.message_chat_resume_request_failed)
             }
         })
@@ -316,7 +367,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
         val messages = messageCache.values.sortedBy { localSendMessageTimes[it.messageClientId] ?: it.time }
         // 构建页面 item 时顺带根据上一条消息计算时间标签，超过间隔才展示时间。
         val items = messages.mapIndexed { index, message ->
-            buildMessageItem(message, buildMessageTime(messages.getOrNull(index - 1), message))
+            messageItemFactory.create(message, buildMessageTime(messages.getOrNull(index - 1), message))
         }
         // 内容没有变化时不重复发布，减少 RecyclerView 无意义刷新。
         if (messageList.value == items) return
@@ -334,6 +385,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
                     ?.avatar
                     ?.takeIf { it.isNotBlank() }
                     ?: return@launch
+                if (this@MessageChatViewModel.contactId != contactId) return@launch
                 if (targetAvatar == avatar) return@launch
                 targetAvatar = avatar
                 refreshMessageList()
@@ -363,7 +415,7 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      */
     fun acceptResumeForRequest(sessionId: String, item: ResumeRequestChatItem) {
         handleResumeForRequest(sessionId, item, STATUS_ACCEPTED) {
-            sendTextMessage(RESUME_REQUEST_ACCEPT_TEXT)
+            sendTextMessage(App.instance.getString(R.string.message_chat_resume_request_accept_message))
         }
     }
 
@@ -418,31 +470,6 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
     }
 
     /**
-     * 根据云信消息类型转换成对应的页面消息模型。
-     */
-    private fun buildMessageItem(message: MessageWrapper, timeText: String): ChatMessageItem {
-        val isSelf = message.direct == MessageDirection.Out || message.messageClientId in localSendMessageIds
-        return when {
-            // HR 索要简历消息，按协议 attachment.raw 解析请求状态和简历信息。
-            message.messageType == MessageType.custom && message.subtype == SUBTYPE_RESUME_REQUEST -> {
-                ResumeRequestAttachment.buildChat(message, isSelf, timeText, messageAvatar(isSelf))
-            }
-            // 求职者主动发送简历消息，按协议 attachment.raw 解析投递状态和简历文件。
-            message.messageType == MessageType.custom && message.subtype == SUBTYPE_RESUME_DELIVERY -> {
-                ResumeDeliveryAttachment.buildChat(message, isSelf, timeText)
-            }
-            // 职业卡片消息，按协议 attachment.raw.job 解析职位快照字段。
-            message.messageType == MessageType.custom && message.subtype == SUBTYPE_JOB_CARD -> {
-                MessageJobAttachment.buildChat(message, timeText)
-            }
-            // 普通文本或暂不支持的消息类型，兜底展示为文本气泡。
-            else -> {
-                MessageTextAttachment.buildChat(message, isSelf, timeText, messageAvatar(isSelf))
-            }
-        }
-    }
-
-    /**
      * 按消息间隔规则生成时间文案，首条消息或间隔超过 5 分钟才展示。
      */
     private fun buildMessageTime(previous: MessageWrapper?, current: MessageWrapper): String {
@@ -477,21 +504,24 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
      * ViewModel 销毁时关闭当前 IM 会话并取消监听任务。
      */
     override fun onDestroy() {
-        chat?.close()
-        chat = null
+        releaseChat()
         super.onDestroy()
     }
 
+    /**
+     * 释放当前 IM 会话及其持续订阅，供切换会话和 ViewModel 销毁复用。
+     */
+    private fun releaseChat() {
+        messageObserveJob?.cancel()
+        messageObserveJob = null
+        modifiedMessageObserveJob?.cancel()
+        modifiedMessageObserveJob = null
+        chat?.onMessageSendResultListener = null
+        chat?.close()
+        chat = null
+    }
+
     companion object {
-        // 简历请求自定义消息 subtype。
-        private const val SUBTYPE_RESUME_REQUEST = 1001
-
-        // 简历投递自定义消息 subtype。
-        private const val SUBTYPE_RESUME_DELIVERY = 1002
-
-        // 职位卡片自定义消息 subtype。
-        private const val SUBTYPE_JOB_CARD = 1003
-
         // 简历请求结果消息 subtype，只过滤不展示。
         private const val SUBTYPE_RESUME_REQUEST_RESULT = 1004
 
@@ -500,15 +530,6 @@ class MessageChatViewModel : AppRepositoryViewModel<AppRepository>(), Chat.OnMes
 
         // 相邻消息超过 5 分钟时重新展示时间。
         private const val MESSAGE_TIME_INTERVAL = 5 * 60 * 1000L
-
-        // 主动发送简历前先发送的文本消息内容。
-        private const val RESUME_DELIVERY_TEXT = "这是我的简历，您看看"
-
-        // 同意 HR 索要简历后发送的文本消息内容。
-        private const val RESUME_REQUEST_ACCEPT_TEXT = "您好，我已投递简历"
-
-        // 首次创建会话时自动发送的开场白。
-        private const val FIRST_CREATE_GREETING = "您好，认真看了岗位介绍，很感兴趣，可以深入聊聊吗？"
 
     }
 }
