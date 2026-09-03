@@ -213,7 +213,7 @@ class OpportunityViewModel : HomeReportViewModel() {
      * 请求：第一页、最多 100 条简历。
      * 返回：简历列表；解析中持续轮询，进入成功或失败终态后写入 [resumeListData]。
      */
-    fun startResumePolling() {
+    override fun startResumePolling() {
         if (User.get().isVisitor || resumePollingJob?.isActive == true) return
 
         resumePollingJob = launchPolling(
@@ -246,7 +246,7 @@ class OpportunityViewModel : HomeReportViewModel() {
     }
 
     /** 停止简历解析状态轮询。 */
-    fun stopResumePolling() {
+    override fun stopResumePolling() {
         resumePollingJob?.cancel()
         resumePollingJob = null
     }

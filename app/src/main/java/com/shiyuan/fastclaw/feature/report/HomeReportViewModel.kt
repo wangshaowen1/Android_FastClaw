@@ -9,33 +9,31 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.core.CommonRepositoryViewModel
 import com.shiyuan.fastclaw.core.User
+import com.shiyuan.fastclaw.core.ext.PollingState
 import com.shiyuan.fastclaw.core.ext.launch
+import com.shiyuan.fastclaw.core.ext.launchPolling
 import com.shiyuan.fastclaw.core.ext.launchWithLoading
-import com.shiyuan.fastclaw.core.ext.parseMessage
 import com.shiyuan.fastclaw.core.ext.requestWithLoading
 import com.shiyuan.fastclaw.core.network.apis.ApiFactory
 import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
-import com.shiyuan.fastclaw.core.network.apis.request.AttributeConfirmBody
 import com.shiyuan.fastclaw.core.network.apis.request.InterviewPassPackageResumeStatusBody
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeListDeleteBody
-import com.shiyuan.fastclaw.core.network.apis.request.ResumeMaterialQualityBody
 import com.shiyuan.fastclaw.core.network.apis.request.ResumeUploadSubmitMyBody
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewPassPackageResumeStatusData
 import com.shiyuan.fastclaw.core.network.apis.response.JobAgentModuleData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
-import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitData
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeUploadSubmitMyData
 import com.shiyuan.fastclaw.core.response
 import com.shiyuan.fastclaw.feature.report.data.ReportRepository
-import com.shiyuan.fastclaw.feature.report.generation.GenerateReportActivity.Companion.FAILED
-import java.util.UUID
+import kotlinx.coroutines.Job
 
 /**
  * @Introduce:
  */
 open class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
 
+    private var resumePollingJob: Job? = null
 
     val mToolbarVMMyResume = ToolbarViewModel(
         navigationAction = { finish() },
@@ -88,6 +86,49 @@ open class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
             }, error = { this?.msg?.showToast() })
         }, onError = { it.message.toString().showToast() })
 
+    }
+
+    open fun startResumePolling() {
+        if (resumePollingJob?.isActive == true) return
+
+        resumePollingJob = launchPolling(
+            intervalMs = RESUME_POLLING_INTERVAL_MS,
+            retryOnNetworkError = true,
+            apiBlock = {
+                ApiFactory.apiService.resumeQuery(PagedBody(1, 100))
+            },
+            checkState = { response ->
+                when {
+                    response?.isSuccess != true -> PollingState.FAIL
+                    response.data?.items.orEmpty().any { it.parseStatus == 0 || it.parseStatus == 1 } -> {
+                        PollingState.CONTINUE
+                    }
+                    else -> PollingState.SUCCESS
+                }
+            },
+            onSuccess = { response ->
+                resumePollingJob = null
+                resumeListData.value = response?.data?.items.orEmpty()
+            },
+            onFail = { apiResponse, _ ->
+                resumePollingJob = null
+                response(
+                    apiResponse,
+                    result = {},
+                    error = { this?.msg?.showToast() },
+                )
+            },
+            onPolling = { apiResponse ->
+                if (apiResponse?.isSuccess == true) {
+                    resumeListData.value = apiResponse.data?.items.orEmpty()
+                }
+            },
+        )
+    }
+
+    open fun stopResumePolling() {
+        resumePollingJob?.cancel()
+        resumePollingJob = null
     }
 
     fun deleteResume(resumeTaskId: String?) {
@@ -165,6 +206,15 @@ open class HomeReportViewModel : CommonRepositoryViewModel<ReportRepository>() {
         ) {
             jobAgentModuleList.postValue(this.data.orEmpty())
         }
+    }
+
+    override fun onDestroy() {
+        stopResumePolling()
+        super.onDestroy()
+    }
+
+    private companion object {
+        const val RESUME_POLLING_INTERVAL_MS = 2000L
     }
 
 }

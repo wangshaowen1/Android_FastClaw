@@ -45,7 +45,6 @@ import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.SESSI
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_POSITION_SELECTED
 import com.shiyuan.fastclaw.feature.interview.InterviewViewModel.Companion.TARGET_JOB_INPUT_UPLOAD_IMAGE
 import com.shiyuan.fastclaw.core.network.apis.response.InterviewJobData
-import com.shiyuan.fastclaw.feature.report.generation.GenerateReportActivity.Companion.REQUEST_CODE_CHOOSE
 import com.shiyuan.fastclaw.router.AppNavigator
 import java.util.ArrayDeque
 import java.util.UUID
@@ -122,6 +121,8 @@ class InterviewActivity : BaseViewModelActivity<ActivityInterviewBinding, Interv
         private const val TAG = "InterviewActivity"
         private const val INTERVIEW_ID = "interviewId"
         private const val IS_RECOVER = "isRecover"
+
+        const val REQUEST_CODE_CHOOSE: Int = 0x110
 
         /**
          * 打开模拟面试房间。

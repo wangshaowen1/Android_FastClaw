@@ -3,8 +3,6 @@ package com.shiyuan.fastclaw.feature.resume
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -32,45 +30,20 @@ import com.shiyuan.fastclaw.R
 import com.shiyuan.fastclaw.common.adapter.SingleBindingAdapter
 import com.shiyuan.fastclaw.core.Config
 import com.shiyuan.fastclaw.core.Events
-import com.shiyuan.fastclaw.core.User
-import com.shiyuan.fastclaw.core.databinding.setLoadState
 import com.shiyuan.fastclaw.core.manager.AppEvent
 import com.shiyuan.fastclaw.core.manager.EventManager
-import com.shiyuan.fastclaw.core.network.apis.entity.ResumeData
-import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody
 import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_CANDIDATE_ONLINE_RESUME_A
-import com.shiyuan.fastclaw.core.network.apis.request.FileUploadCredentialItemBody.Companion.BIZ_TYPE_XIAOXIA_RESUME_UPLOAD
 import com.shiyuan.fastclaw.core.network.apis.response.ResumeListData
 import com.shiyuan.fastclaw.databinding.ActivityMyResumeBinding
-import com.shiyuan.fastclaw.databinding.ActivityMyShrimpChipsBinding
 import com.shiyuan.fastclaw.databinding.ItemMyResumeBinding
-import com.shiyuan.fastclaw.feature.report.generation.AnalysisLoadingDialog
-import com.shiyuan.fastclaw.feature.resume.upload.ResumeListDialog
 import com.shiyuan.fastclaw.feature.resume.upload.UploadResumeDialog
-import com.shiyuan.fastclaw.feature.report.generation.GenerateReportActivity
-import com.shiyuan.fastclaw.feature.report.generation.GenerateReportActivity.Companion.PASS
-import com.shiyuan.fastclaw.feature.report.generation.GenerateReportActivity.Companion.PENDING
-import com.shiyuan.fastclaw.feature.report.generation.GenerateReportActivity.Companion.RUNNING
 import com.shiyuan.fastclaw.feature.report.HomeReportViewModel
-import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.shiyuan.fastclaw.widget.CommonLoadingDialog
-import com.shiyuan.fastclaw.wxapi.WXEntryActivity
-import com.tencent.turingfd.sdk.ams.ad.`return`
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import org.jsoup.internal.SoftPool
-import kotlin.text.trim
 
 /**
- * @Introduce: 我的虾条
+ * @Introduce: 我的简历
  */
 class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeReportViewModel>() {
-
-    private val handler = Handler(Looper.getMainLooper())
-    private val POLLING_INTERVAL = 2000L // 2秒
-    private var resumePollingRunnable: Runnable? = null
-    private var isResumePolling = false
 
     private val resumeAdapter by lazy {
         SingleBindingAdapter<ItemMyResumeBinding, ResumeListData>(
@@ -150,7 +123,7 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         super.onCreate(savedInstanceState)
         initView()
         initObservers()
-        mRealVM.queryResumeList()
+        mRealVM.startResumePolling()
     }
 
     override fun setTranslucentStatus() {
@@ -234,20 +207,12 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
                 binding.btnUploadResume.visibility = View.VISIBLE
             }
             resumeAdapter.submitList(resumeList)
-            val isParseStatus2Exists = resumeList.any { it.parseStatus == 0 || it.parseStatus == 1 }
-            if (isParseStatus2Exists) {
-                if (!isResumePolling) {
-                    startResumePolling()
-                }
-            } else {
-                stopResumePolling()  // ✅ 停止轮询
-            }
         }
 
         mRealVM.resumeUploadResult.observe(this) { data -> //上传成功
             //解析简成功发送消息
             FlowEventBus.postSync(Events.ResumeEvent(true))
-            startResumePolling()
+            mRealVM.startResumePolling()
         }
     }
 
@@ -275,37 +240,4 @@ class MyResumeActivity : BaseViewModelActivity<ActivityMyResumeBinding, HomeRepo
         view.clearAnimation()
     }
 
-
-    private fun startResumePolling() {
-        if (isResumePolling) return  // ✅ 防止重复启动
-
-        isResumePolling = true
-        resumePollingRunnable = object : Runnable {
-            override fun run() {
-                if (!isFinishing && !isDestroyed && isResumePolling) {
-                    Log.d("Polling", "轮询检查状态...")
-                    mRealVM.queryResumeList()
-                    handler.postDelayed(this, POLLING_INTERVAL)
-                }
-            }
-        }
-        handler.postDelayed(resumePollingRunnable!!, POLLING_INTERVAL)
-        Log.d("Polling", "开始轮询")
-    }
-
-    private fun stopResumePolling() {
-        if (!isResumePolling) return  // ✅ 停止前检查
-
-        isResumePolling = false
-        resumePollingRunnable?.let {
-            handler.removeCallbacks(it)
-            resumePollingRunnable = null
-        }
-        Log.d("Polling", "停止轮询")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        stopResumePolling()
-    }
 }
