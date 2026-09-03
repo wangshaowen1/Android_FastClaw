@@ -1,7 +1,5 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
-import com.shiyuan.fastclaw.feature.clawagent.message.CandidateJobAgentClientActionEnum
-
 /**
  * 求职 Agent 各 cardType 的 payloadJson 端侧渲染模型。
  *
@@ -217,17 +215,6 @@ data class CoreQuestionPayloadBean(
         const val MODE_SALARY_RANGE = "SALARY_RANGE"
         /** 数组表单 */
         const val MODE_ARRAY_FORM = "ARRAY_FORM"
-    }
-
-    fun buildAction(enum: CandidateJobAgentClientActionEnum): CardAction {
-        return CardAction(
-            actionCode = enum.name,
-            actionPayload = CardActionPayloadBean(
-                questionQueueId = questionQueueId,
-                attributeGroupCode = attributeGroupCode,
-                metaCode = metaCode
-            )
-        )
     }
 
     /** 整卡是否已回答：状态机终态或整卡禁用 */
