@@ -14,7 +14,6 @@ import com.shiyuan.fastclaw.core.model.PhotoItem
 import com.shiyuan.fastclaw.core.network.apis.entity.PaymentData
 import com.shiyuan.fastclaw.core.network.apis.entity.ShortDramaInfo
 import com.shiyuan.fastclaw.core.network.apis.response.UserHomeData
-import com.shiyuan.fastclaw.feature.web.SimpleBrowserActivity
 import com.kuaige.payment.PaymentClient
 import com.kuaige.payment.entity.AliPayParams
 import com.kuaige.payment.entity.PaymentParams
@@ -55,15 +54,6 @@ fun Throwable.report() {
     printStackTrace()
 }
 
-
-fun Activity.openTheCustomerServiceCenter() {
-    Config.get().appConfig.customerServiceUrl?.let { customerCenterH5Url ->
-        SimpleBrowserActivity.launch(
-            this@openTheCustomerServiceCenter,
-            customerCenterH5Url,
-        )
-    }
-}
 
 fun ShortDramaInfo?.shortDramaVideoShareContent(): ShareContent {
     val title = "快来看看我的AI短剧${this?.dramasName ?: ""}"
