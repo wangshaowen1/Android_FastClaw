@@ -15,7 +15,6 @@ import com.shiyuan.fastclaw.base.viewmodel.ToolbarViewModel
 import com.shiyuan.fastclaw.common.LoadState
 import com.shiyuan.fastclaw.common.adapter.QuickAdapter
 import com.shiyuan.fastclaw.core.AppRepository
-import com.shiyuan.fastclaw.core.network.apis.response.toReportInfoList
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
 import com.nhsd.basic.ext.dp
 import com.nhsd.basic.ext.getResString

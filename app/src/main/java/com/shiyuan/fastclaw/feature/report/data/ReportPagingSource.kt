@@ -5,7 +5,6 @@ import androidx.paging.PagingState
 import com.shiyuan.fastclaw.core.AppRepository
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
 import com.shiyuan.fastclaw.core.network.apis.response.ReportListItem
-import com.shiyuan.fastclaw.core.network.apis.response.toReportInfoList
 import okio.IOException
 
 /**
