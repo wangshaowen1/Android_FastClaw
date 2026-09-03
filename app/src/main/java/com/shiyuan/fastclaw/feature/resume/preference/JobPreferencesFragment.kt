@@ -80,8 +80,9 @@ class JobPreferencesFragment :
         private const val CODE_JOB_TEAMATMOSPHEREPREFERENCE = "teamAtmospherePreference"
         private const val CODE_JOB_WELFAREPREFERENCE = "welfarePreference"
 
-        // 行业选择页允许由调用方指定回传事件，因此在本页单独定义事件名。
+        // 选择页允许由调用方指定回传事件，因此在本页单独定义事件名。
         private const val EVENT_EXPECTED_INDUSTRY_COMPLETED = "expectedIndustryCompleted"
+        private const val EVENT_JOB_WELFARE_COMPLETED = "jobWelfareCompleted"
 
         private const val CODE_EXPECTED_INDUSTRY = "expectedIndustry"
 
@@ -155,8 +156,15 @@ class JobPreferencesFragment :
                     EVENT_EXPECTED_INDUSTRY_COMPLETED -> {
                         handleSelected(event.msgGson, CODE_EXPECTED_INDUSTRY, INPUT_MODE_DICT_MULTI)
                     }
-                    else ->{
-                        handleSelected(event.msgGson, CODE_JOB_WELFAREPREFERENCE, INPUT_MODE_DICT_MULTI)
+                    EVENT_JOB_WELFARE_COMPLETED -> {
+                        handleSelected(
+                            event.msgGson,
+                            CODE_JOB_WELFAREPREFERENCE,
+                            INPUT_MODE_DICT_MULTI,
+                        )
+                    }
+                    else -> {
+                        Log.w("JobPreferences", "忽略未知 ClawAgentEvent，type=${event.type}")
                     }
                 }
 
@@ -417,6 +425,7 @@ class JobPreferencesFragment :
                     // 福利偏好是多选字段，由专用页面负责选择和回显。
                     JobWelfareSelectorActivity.start(
                         activity,
+                        resultEventType = EVENT_JOB_WELFARE_COMPLETED,
                         selectedValueJson = item.value?.let(JsonUtil::toJson),
                     )
                 }

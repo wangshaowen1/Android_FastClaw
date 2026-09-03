@@ -46,6 +46,7 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
     // 会话 ID / 对话 ID
     private val sessionId by lazy { intent.getStringExtra(EXTRA_SESSION_ID).orEmpty() }
     private val conversationId by lazy { intent.getStringExtra(EXTRA_CONVERSATION_ID).orEmpty() }
+    private val resultEventType by lazy { intent.getStringExtra(EXTRA_RESULT_EVENT_TYPE).orEmpty() }
     private val initialSelectedWelfare by lazy {
         Json.decodeFromString<List<CommonEnumItem>>(intent.getStringExtra(EXTRA_SELECTED_WELFARE) ?: "[]")
     }
@@ -54,6 +55,7 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
         // Intent 参数 key
         private const val EXTRA_SESSION_ID = "extra_session_id"
         private const val EXTRA_CONVERSATION_ID = "extra_conversation_id"
+        private const val EXTRA_RESULT_EVENT_TYPE = "extra_result_event_type"
         private const val EXTRA_SELECTED_WELFARE = "extra_selected_welfare"
 
         /**
@@ -62,18 +64,21 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
          * @param activity 当前页面 Activity。
          * @param sessionId 求职 Agent 会话 ID，用于接口反显当前会话已选福利。
          * @param conversationId 对话 ID，用于校验当前会话归属。
+         * @param resultEventType 调用方指定的回传事件类型，为空时保持原有无类型事件。
          * @param selectedValueJson 调用方传入的已选福利 JSON，非空时优先用于回显。
          */
         fun start(
             activity: Activity?,
             sessionId: String? = null,
             conversationId: String? = null,
+            resultEventType: String? = null,
             selectedValueJson: String? = null,
         ) {
             activity ?: return
             val intent = Intent(activity, JobWelfareSelectorActivity::class.java).apply {
                 putExtra(EXTRA_SESSION_ID, sessionId)
                 putExtra(EXTRA_CONVERSATION_ID, conversationId)
+                putExtra(EXTRA_RESULT_EVENT_TYPE, resultEventType)
                 putExtra(EXTRA_SELECTED_WELFARE, selectedValueJson ?: "[]")
             }
             activity.startActivity(intent)
@@ -134,7 +139,12 @@ class JobWelfareSelectorActivity : BaseViewModelActivity<ActivityJobWelfareSelec
                 return@setOnSingleClickListener
             }
             val msgGson = CommonEnumTreeUtil.toJson(selectedWelfare)
-            FlowEventBus.postSticky(Events.ClawAgentEvent(msgGson))
+            val event = if (resultEventType.isBlank()) {
+                Events.ClawAgentEvent(msgGson)
+            } else {
+                Events.ClawAgentEvent(msgGson, resultEventType)
+            }
+            FlowEventBus.postSticky(event)
             finish()
         }
         // 初始化已选区域

@@ -28,6 +28,8 @@ class SplashViewModel : AppRepositoryViewModel<AppRepository>() {
     }
 
     private fun proceedToNext() {
+        // TODO: 接入导航 Deep Link 后，将 SplashActivity 收到的原始 URI 传入 Home，
+        // 并在隐私确认及登录完成后交由 MainActivity/AppRouter 消费一次。
         // 不管登没登录，都跳转到首页
         launchDestination.value = LaunchDestination.Home(null)
     }
