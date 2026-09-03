@@ -1,9 +1,5 @@
 package com.shiyuan.fastclaw.core.network.apis.response
 
-import com.shiyuan.fastclaw.core.network.apis.PagedList
-import com.shiyuan.fastclaw.feature.report.data.ReportInfo
-import com.shiyuan.fastclaw.feature.report.data.ReportStatus
-
 /**
  * 面试报告列表项响应数据
  *
@@ -55,39 +51,4 @@ data class InterviewReportListItem(
     val detailPath: String?,
     val detailQuery: String?,
     val detailUrl: String?,
-) {
-    fun toReportInfo(): ReportInfo {
-        val cardTitle = displayTitle?.takeIf { it.isNotBlank() }
-        val useCardTitle = cardTitle != null
-        return ReportInfo(
-            id = reportId ?: sourceBizId.orEmpty(),
-            title = cardTitle ?: title ?: reportName.orEmpty(),
-            status = when (reportStatus) {
-                "RUNNING" -> ReportStatus.IN_PROGRESS
-                "FAILED" -> ReportStatus.FAILED
-                else -> ReportStatus.OTHER
-            },
-            companyName = if (useCardTitle) null else companyName,
-            position = if (useCardTitle) null else jobTitleStd,
-            tag = null,
-            tagColor = null,
-            progress = progress,
-            progressText = null,
-            jobTitleStd = if (useCardTitle) null else jobTitleStd,
-            reportType = reportType,
-            createTime = createTime.orEmpty(),
-            reportName = cardTitle ?: reportName,
-            canViewReport = canViewReport ?: false,
-            detailUrl = detailUrl,
-            detailQuery = detailQuery,
-            detailPath = detailPath,
-            estimateMessage = estimateMessage ?: displaySubtitle,
-            failReason = failReason,
-            totalScore = score ?: 0,
-        )
-    }
-}
-
-fun PagedList<InterviewReportListItem>.toInterviewReportInfoList(): List<ReportInfo> {
-    return getItems()?.map { it.toReportInfo() } ?: emptyList()
-}
+)

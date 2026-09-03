@@ -4,8 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.shiyuan.fastclaw.core.network.apis.ApiService
 import com.shiyuan.fastclaw.core.network.apis.request.PagedBody
-import com.shiyuan.fastclaw.core.network.apis.response.toInterviewReportInfoList
 import com.shiyuan.fastclaw.feature.report.data.ReportInfo
+import com.shiyuan.fastclaw.feature.report.data.toInterviewReportInfoList
 import java.io.IOException
 import kotlinx.coroutines.CancellationException
 
