@@ -6,8 +6,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.MotionEvent
@@ -73,16 +71,6 @@ class GenerateReportActivity :
     }
 
     var data: ResumeData? = null
-
-    private val handler = Handler(Looper.getMainLooper())
-    private val POLLING_INTERVAL = 2000L // 2秒
-
-    private var resumePollingRunnable: Runnable? = null
-    private var isResumePolling = false
-
-
-    private var isJdPolling = false
-    private var jdPollingRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -305,15 +293,15 @@ class GenerateReportActivity :
                    // mRealVM.setLoading(false)
                     initStateView(data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }
                         ?: "简历上传成功", data.safeCheckStatus)
-                    stopResumePolling()  // ✅ 停止轮询
+                    mRealVM.stopResumePolling()
                 }
 
                 RUNNING, PENDING -> {
                     initStateView(data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }
                         ?: "简历解析中", data.safeCheckStatus)
-                    // ✅ 只有在未轮询且 checkId 存在时才启动
-                    if (!isResumePolling && mRealVM.resumeData.value?.checkId != null) {
-                        startResumePolling()
+                    // ViewModel 内部负责防止重复启动
+                    if (mRealVM.resumeData.value?.checkId != null) {
+                        mRealVM.startResumePolling()
                     }
                 }
                 else -> {
@@ -321,7 +309,7 @@ class GenerateReportActivity :
                     // 处理失败
                     initStateView(data.blockingIssuesMessage?.takeIf { it.isNotEmpty() }
                         ?: "简历解析失败", data.safeCheckStatus)
-                    stopResumePolling()  // ✅ 停止轮询
+                    mRealVM.stopResumePolling()
                 }
             }
         }
@@ -332,14 +320,14 @@ class GenerateReportActivity :
                 PASS -> {
                     binding.llJdImageState.visibility = View.GONE
                     mRealVM.setLoading(false)
-                    stopJdPolling()  // ✅ 停止轮询
+                    mRealVM.stopJdPolling()
                 }
 
                RUNNING, PENDING -> {
                     binding.llJdImageState.visibility = View.GONE
-                    // ✅ 只有在未轮询且 checkId 存在时才启动
-                    if (!isJdPolling && mRealVM.jdImageData.value?.checkId != null) {
-                        startJdPolling()
+                    // ViewModel 内部负责防止重复启动
+                    if (mRealVM.jdImageData.value?.checkId != null) {
+                        mRealVM.startJdPolling(IMAGE)
                     }
                 }
 
@@ -349,7 +337,7 @@ class GenerateReportActivity :
                     binding.llJdImageState.visibility = View.VISIBLE
                    // val message = data.blockingIssues?.joinToString("\n") ?: ""
                     binding.tvJdImageState.text = data.blockingMessage?.takeIf { it.isNotEmpty() } ?: "检测失败"
-                    stopJdPolling()  // ✅ 停止轮询
+                    mRealVM.stopJdPolling()
                 }
             }
         }
@@ -360,14 +348,14 @@ class GenerateReportActivity :
                 PASS -> {
                     mRealVM.setLoading(false)
                     binding.llJdTxtState.visibility = View.GONE
-                    stopJdPolling()  // ✅ 停止轮询
+                    mRealVM.stopJdPolling()
                     ReportProgressActivity.start(this,resumeCheckId =mRealVM.resumeData.value?.checkId,jdCheckId = mRealVM.jdTextData.value?.checkId,reportType =JD_REPORT)
                 }
                 RUNNING, PENDING -> {
                     binding.llJdTxtState.visibility = View.GONE
-                    // ✅ 只有在未轮询且 checkId 存在时才启动
-                    if (!isJdPolling) {
-                        startJdPolling()
+                    // ViewModel 内部负责防止重复启动
+                    if (!mRealVM.jdTextData.value?.checkId.isNullOrEmpty()) {
+                        mRealVM.startJdPolling(TEXT)
                     }
                 }
 
@@ -377,7 +365,7 @@ class GenerateReportActivity :
                     binding.llJdTxtState.visibility = View.VISIBLE
                     // val message = data.blockingIssues?.joinToString("\n") ?: ""
                     binding.tvJdTxtState.text = data.blockingMessage?.takeIf { it.isNotEmpty() } ?: "检测失败"
-                    stopJdPolling()  // ✅ 停止轮询
+                    mRealVM.stopJdPolling()
                 }
             }
         }
@@ -446,57 +434,6 @@ class GenerateReportActivity :
 
     }
 
-    private fun startResumePolling() {
-        if (isResumePolling) return  // ✅ 防止重复启动
-
-        isResumePolling = true
-        resumePollingRunnable = object : Runnable {
-            override fun run() {
-                if (!isFinishing && !isDestroyed && isResumePolling) {
-                    Log.d("Polling", "轮询检查状态...")
-                    mRealVM.resumeMaterialQualityr()
-                    handler.postDelayed(this, POLLING_INTERVAL)
-                }
-            }
-        }
-        handler.postDelayed(resumePollingRunnable!!, POLLING_INTERVAL)
-        Log.d("Polling", "开始轮询")
-    }
-
-    private fun stopResumePolling() {
-        if (!isResumePolling) return  // ✅ 停止前检查
-
-        isResumePolling = false
-        resumePollingRunnable?.let {
-            handler.removeCallbacks(it)
-            resumePollingRunnable = null
-        }
-        Log.d("Polling", "停止轮询")
-    }
-
-    // 启动 JD 图片轮询
-    private fun startJdPolling() {
-        if (isJdPolling) return
-        isJdPolling = true
-        jdPollingRunnable = object : Runnable {
-            override fun run() {
-                if (!isFinishing && !isDestroyed && isJdPolling) {
-                    Log.d("Polling", "JD图片轮询...")
-                    mRealVM.jdMaterialQualityr(if (mRealVM.tableSelect.value == 0) IMAGE else TEXT)   // ★ 这里调用 JD 图片专用的检查方法
-                    handler.postDelayed(this, POLLING_INTERVAL)
-                }
-            }
-        }
-        handler.postDelayed(jdPollingRunnable!!, POLLING_INTERVAL)
-    }
-
-    private fun stopJdPolling() {
-        if (!isJdPolling) return
-        isJdPolling = false
-        jdPollingRunnable?.let { handler.removeCallbacks(it) }
-        jdPollingRunnable = null
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
@@ -531,8 +468,8 @@ class GenerateReportActivity :
     }
 
     override fun onDestroy() {
+        mRealVM.stopResumePolling()
+        mRealVM.stopJdPolling()
         super.onDestroy()
-        stopResumePolling()
-        stopJdPolling()
     }
 }

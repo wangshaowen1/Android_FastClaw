@@ -4,9 +4,6 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import android.view.animation.LinearInterpolator
 import androidx.lifecycle.lifecycleScope
 import com.gyf.immersionbar.ImmersionBar
@@ -48,35 +45,6 @@ class ReportProgressActivity :
         }
     }
 
-    private val handler = Handler(Looper.getMainLooper())
-    private val POLLING_INTERVAL = 2000L // 2秒
-
-
-    private var isReportPolling = false
-    private var reportPollingRunnable: Runnable? = null
-
-    // 启动 JD 图片轮询
-    private fun startJdPolling() {
-        if (isReportPolling) return
-        isReportPolling = true
-        reportPollingRunnable = object : Runnable {
-            override fun run() {
-                if (!isFinishing && !isDestroyed && isReportPolling) {
-                    mRealVM.interviewReportr()
-                    handler.postDelayed(this, POLLING_INTERVAL)
-                }
-            }
-        }
-        handler.postDelayed(reportPollingRunnable!!, POLLING_INTERVAL)
-    }
-
-    private fun stopJdPolling() {
-        if (!isReportPolling) return
-        isReportPolling = false
-        reportPollingRunnable?.let { handler.removeCallbacks(it) }
-        reportPollingRunnable = null
-    }
-
     private var rotationAnimator: ObjectAnimator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,13 +65,13 @@ class ReportProgressActivity :
         mRealVM.reportData.observe(this) {
             when (it.reportStatus) {
                 "SUCCESS","FAILED","CANCELLED" -> {
-                    stopJdPolling()
+                    mRealVM.stopReportPolling()
                     MyHistoryReportActivity.start(this)
                     finish()
                 }
                 else -> {
                     binding.viewFlipper.startFlipping()
-                    startJdPolling()
+                    mRealVM.startReportPolling()
                 }
             }
         }
@@ -133,7 +101,7 @@ class ReportProgressActivity :
 
     override fun onDestroy() {
         rotationAnimator?.cancel()
+        mRealVM.stopReportPolling()
         super.onDestroy()
-        stopJdPolling()
     }
 }
