@@ -248,3 +248,14 @@ AIMarry 使用 imsdk `2.0.0-rc04` 并混用旧 NIM 消息枚举，FastClaw 使�
 
 ### 验证结论
 静态确认 rc09 源码支持 `inActive()` 与发送监听器置空，订阅 Job 均在 `onDestroy()` 取消，同会话重复初始化不会重复 collect，旧会话历史回调不会写入新会话；Adapter/Provider 不再依赖 IM SDK，`ChatMessageItem` 不再反向依赖 Adapter viewType，所有聊天 item XML 均声明 `item`，聊天 Holder/Provider 无直接 Glide 和可变业务回调残留。按项目规则未运行 Gradle。
+
+## 本轮 App 网络接口清单与文档入口
+
+### 变更了什么
+新增 `docs/contracts/app-api-inventory.md`，按非注释调用点整理 `ApiService` 的当前使用接口，并在 `docs/README.md` 增加网络接口文档入口。静态核对得到 108 个已调用方法名、107 条去重后的后端路径，另记录 DashScope WebSocket、OSS 上传边界和未调用声明。
+
+### 为什么
+接口声明数量包含遗留方法、重载和同路径支付方法，单看 `ApiService` 会高估 App 当前使用面；文档采用“源码声明 + 实际调用点 + 路径去重”的口径，后续新增调用时可按业务域更新清单。
+
+### 验证结论
+源码路径集合与文档表格逐项比对为 107/107，无缺失或多余；文档 192 行、相对源码链接均可解析，`git diff --check` 通过。未运行 Gradle、设备测试或服务端联调；`audit_docs.py` 因环境缺少 `python` 未执行。
