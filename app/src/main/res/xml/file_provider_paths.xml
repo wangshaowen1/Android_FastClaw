@@ -7,9 +7,6 @@
     <external-files-path
         name="umeng_cache"
         path="umeng_cache/" />
-    <external-files-path
-        name="share_transform_output"
-        path="transform/" />
 
     <!-- Matisse 拍照：Android 10+ 使用应用专属 Pictures，内部目录作为不可用时的回退。 -->
     <external-files-path
@@ -33,6 +30,4 @@
     <external-cache-path name="external_image_cache" path="cache-images/" />
     <external-cache-path name="external_media_cache" path="cache-media/" />
     <external-cache-path name="external_apk_cache" path="cache-apks/" />
-    <external-cache-path name="external_transform_cache" path="transform/" />
-    <external-cache-path name="external_mv_publish_cache" path="MVPublish/" />
 </paths>
